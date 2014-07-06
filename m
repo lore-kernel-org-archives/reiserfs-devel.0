@@ -1,113 +1,85 @@
 From: Edward Shishkin <edward.shishkin@gmail.com>
-Subject: Re: reiser4: discard implementation, part 2: FITRIM ioctl aka batch
- mode
-Date: Tue, 01 Jul 2014 01:59:14 +0200
-Message-ID: <53B1F9D2.4050304@gmail.com>
-References: <1706370.uJ3CLsN3j1@intelfx-laptop> <53B155D5.4070700@gmail.com> <4560396.zXPdZqCS3Y@intelfx-laptop>
+Subject: Re: [PATCHv6 3/5] reiser4: discard support: initial implementation
+ using linked lists.
+Date: Mon, 07 Jul 2014 01:47:41 +0200
+Message-ID: <53B9E01D.10503@gmail.com>
+References: <1403434126-6390-1-git-send-email-intelfx100@gmail.com> <1403434126-6390-4-git-send-email-intelfx100@gmail.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20120113;
-        h=message-id:date:from:user-agent:mime-version:to:cc:subject
-         :references:in-reply-to:content-type:content-transfer-encoding;
-        bh=SrTVEaGRhoC0xMur3RaPCjuyKpCiN+ZhRZdlGIHH51c=;
-        b=DE/wevAefPK9w8rhQbGTo2gMuCnt6Y2QR+P7aSrE/tjq9GoQLj4rMhjXmthGh6xkfU
-         zzis85v/KE/PGnoUcXxtJ2V9Z9a3UNtN41bLtQpAI7lNMTl0pci3+G6IzdWcxWKT1O8E
-         K5yGDB9IL4NkqkwNasV0h7oHgqLGv2H38apxEqqjUsSK8oYcSnNqyXPyi9WbSbPLyPUs
-         mFHyKTovHnBsf4S7oyn4c/AiYsgsmJ31vdqmcDw4gZxICs20yhtuPxjwqRtvvVDRop+8
-         9+wp5A1mZVCcA+FC8fL3f7f0YEa/BDlm7v4DOuSgB1xBhSvDuJA/I90Q7CSqNGtUrJCO
-         xyzA==
-In-Reply-To: <4560396.zXPdZqCS3Y@intelfx-laptop>
+        h=message-id:date:from:user-agent:mime-version:to:subject:references
+         :in-reply-to:content-type:content-transfer-encoding;
+        bh=UXCI7ziPggQIGbl/wIR+h/Tr/iFgXhRGOf7fCJILJJA=;
+        b=a8G1L/lwxy7l0O+6O7XajvpY11ZwphZWu2fIhY6bT0e2s4gs4CZggy4rLmfvDq/qAv
+         mRnjAulWVY5rJ6cKoQX90NBGfevOAdgjLGYDYRWhuSQ4ABYayvk+IQQ1DCRvCrke2J+L
+         yCPL/NnWEbw4C0BlLwQMe90TV9pLqv6M/8UIsehZWi+6zrWWGys7ekqXvkAcM2nW6vFs
+         js0AVAj4i1cWw9Cb9nXSNZCwwW0jiU7zyqd1eRETkr7cx7V1XRWw7Xn3ZFnbqyFo/6EB
+         PeHbvz2HUZVBaVX1X3qNTrxB4V+9eJkoC2IRmIbG+wyt+hmd4dTQD8FGnWc5pfj5+onj
+         v7CQ==
+In-Reply-To: <1403434126-6390-4-git-send-email-intelfx100@gmail.com>
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: Ivan Shapovalov <intelfx100@gmail.com>
-Cc: reiserfs-devel@vger.kernel.org
+To: Ivan Shapovalov <intelfx100@gmail.com>, reiserfs-devel@vger.kernel.org
 
 
-On 06/30/2014 03:24 PM, Ivan Shapovalov wrote:
-> On Monday 30 June 2014 at 14:19:33, Edward Shishkin wrote:	
->> Hi Ivan,
->>
->> I think that everything should be quite simple.
->>
->> Let the FITRIM ioctl spawn a process, which scans all the bitmap blocks
->> and puts the free-space-extents to the deferred delete_set. At the same
->> time, we mark them as "busy" in the WORKING bitmap to make sure that
->> nobody will touch them (the post_commit_hook will make them clean
->> again). Basically, that's all: our transaction manager and the discard
->> code will do all the other work :)
-> As I've stated, I'm afraid that it will be very inoptimal. The current
-> algorithm used for "real-time" discard is not suited for discarding
-> big chunks of known free space:
+On 06/22/2014 12:48 PM, Ivan Shapovalov wrote:
+[...]
+> +++ b/fs/reiser4/discard.c
+> @@ -0,0 +1,216 @@
+> +/* Copyright 2001, 2002, 2003 by Hans Reiser, licensing governed by
+> + * reiser4/README */
+> +
+> +/* TRIM/discard interoperation subsystem for reiser4. */
+> +
+> +/*
+> + * This subsystem is responsible for populating an atom's ->discard_set and
+> + * (later) converting it into a series of discard calls to the kernel.
+> + *
+> + * The discard is an in-kernel interface for notifying the storage
+> + * hardware about blocks that are being logically freed by the filesystem.
+> + * This is done via calling the blkdev_issue_discard() function. There are
+> + * restrictions on block ranges: they should constitute at least one erase unit
+> + * in length and be correspondingly aligned. Otherwise a discard request will
+> + * be ignored.
+> + *
+> + * The erase unit size is kept in struct queue_limits as discard_granularity.
+> + * The offset from the partition start to the first erase unit is kept in
+> + * struct queue_limits as discard_alignment.
+> + *
+> + * At atom level, we record numbers of all blocks that happen to be deallocated
+> + * during the transaction. Then we read the generated set, filter out any blocks
+> + * that have since been allocated again and issue discards for everything still
+> + * valid. This is what discard.[ch] is here for.
+> + *
+> + * However, simply iterating through the recorded extents is not enough:
 
 
-So who knows the size of free-space extents when we run the ioctl?
+I still don't understand this explanation..
 
 
->   it verifies each discard unit by
-> querying the bitmap. (This is even worse as current implementation
-> is simplified to do one bitmap query per each discard unit, not checking
-> if a bitmap block is bigger than a discard unit,
+> + * - if a single extent is smaller than the erase unit, then this particular
+> + *   extent won't be discarded even if it is surrounded by enough free blocks
+> + *   to constitute a whole erase unit;
 
 
-Why do we need to check it? One bitmap block covers 128MiB.
-Are there such discard units in the nature?
+Why not to discard the aligned and padded extent, which coincides
+with the whole erase unit?
 
 
->   thus it can result
-> in doing multiple bitmap queries for the same block.)
->
-> However, we can add a per-transaction flag "batch mode discard" which changes
-> the discard algorithm to something suitable for this scenario.
-> If this "discard transaction" can be merged with usual ones, we still
-> need to verify all extents... But it can be done not so thoroughly.
-> - do one bitmap query per each recorded extent
-> - if OK, then discard
-> - if not, just skip the whole extent
+> + * - we won't be able to merge small adjacent extents forming an extent long
+> + *   enough to be discarded.
 
 
-The only optimization I can see is skipping the phases of sorting and
-merge. Because we scan bitmaps from left to right and nobody
-breaks the order of extents in the delete set (assuming that nobody
-joins our atom, see below). In other bits everything looks like in the
-case of "real-time" discard, that is like "capturing" free-space extents
-of random offsets and sizes. No?
+At this point we have already sorted and merged everything.
+So may be it makes sense just to check the head and tail of every resulted
+extent and discard the aligned and padded one?
 
+Please, consider such possibility. Iterating over erase units in 
+discard_extent()
+looks suboptimal.
 
->
->> Details
->>
->> First, the trim process reads up a bitmap node and puts it to the
->> transaction (see try_capture() and friends). Then we go from left to
-> Hm, bitmap nodes are never captured by current code, so won't this effectively
-> be a no-op?
-
-
-Perhaps, my information about the transaction manages is outdated.
-We don't fuse atoms on common bitmap nodes? Excellent. Don't capture
-bitmaps then and skip the sorting phase. Just add a check that extents
-go in the right order when issuing discard requests.
-
+Thanks,
 Edward.
-
->
->> right in the region of blocks covered by the bitmap node and handle
->> the "free extents". In every such iteration we lock the bitmap node,
->> locate the free extent, mark it dirty in the WORKING bitmap, put the
->> respective entry to the deferred delete_set and unlock the bitmap node.
-> This can be done on allocator level by adding an "iterate free space"
-> interface method...
->
->> NOTE that commit of atoms spawned by the trim process will be unusual:
->> no dirty jnodes, hence, no flush, no IOs (as RELOCATE and OVERWRITE
->> sets are empty). Only issuing discard requests.. Of course, this is
->> only in the case when other processes spawning dirty jnodes didn't
->> join our atom (they can do it perfectly, as we lock bitmaps only per a
->> free extent handling).
-> Again, bitmap nodes are not captured by current code. Is it critical that we
-> fuse with anything modifying the bitmaps?
->
-> Thanks,
-
