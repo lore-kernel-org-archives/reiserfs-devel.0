@@ -1,45 +1,76 @@
-From: Jose R R <Jose.r.r@metztli-it.com>
-Subject: Bootcd-based LIVE Reiser4 rescue/recovery/installation ISO
-Date: Wed, 16 Jul 2014 12:09:18 -0700
-Message-ID: <CAM12Q5RXUt3dGc+UNtiESe+dAuCPLKt0t_VS+qpr7pc4jh7b+w@mail.gmail.com>
+From: Edward Shishkin <edward.shishkin@gmail.com>
+Subject: Re: [veryRFC] [PATCH 0/2] reiser4: discard before dealloc: first
+ approximation.
+Date: Thu, 17 Jul 2014 01:35:20 +0200
+Message-ID: <53C70C38.3080002@gmail.com>
+References: <53C652BE.4010203@gmail.com> <1405509844-30070-1-git-send-email-intelfx100@gmail.com>
 Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20120113;
+        h=message-id:date:from:user-agent:mime-version:to:cc:subject
+         :references:in-reply-to:content-type:content-transfer-encoding;
+        bh=CiKt999MEtJGKg+ujZNXU2r52Z9lI+nBu7gSgiiyGwk=;
+        b=aPCyxT2wBgEGUrBQxyHPWmSrYb7MDSKZ5etSEvLLIONqII1IVTUB5/rzd6Em+1HRop
+         CypqXv1hH/xCI95Z8hCn1NniWxP+qS240PWHwDgZuwn6D8YaLhV0QzJZ7vsMR2Ekwm2s
+         xNGQIkGEwxakUA7jAfLGppZpmmw+S5VQlSDGqVM56hWt5ndYwkhhr6Eq3BWZSymeadmD
+         eK+gotJWiQfeG2uk+htQglW0F9u6zus0d8KGACNyxobgIweWraSCaE/R1pbBugw2zSso
+         jWMY11TjhTcuFIQbIFbmuLvaWNY3U7ojmVERuw1R3RR+Aril4mtUnGshAIjHvQzw9oHH
+         +jJQ==
+In-Reply-To: <1405509844-30070-1-git-send-email-intelfx100@gmail.com>
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: ReiserFS Development List <reiserfs-devel@vger.kernel.org>, Debian Live <debian-live@lists.debian.org>, debian-cloud <debian-cloud@lists.debian.org>
+Content-Type: text/plain; charset="us-ascii"; format="flowed"
+To: Ivan Shapovalov <intelfx100@gmail.com>
+Cc: reiserfs-devel@vger.kernel.org
 
-Niltze!
-
-I uploaded to SF a bootcd-based live ISO made from a small 20GB pure
-Reiser4 partition in my dev machine.
-
-I patched a recent Linux kernel 3.15.2 as explained in Metztli IT's
-blog < http://www.metztli-it.com/blog/index.php/aG2?blog=4 >, patched
-legacy Grub97, and installed utilities gparted and testdisk.
-
-Since Debian bootcd < https://packages.debian.org/sid/bootcd > may
-also install a GNU/Linux system, I surmise that an (Reiser4)
-installation is also possible, please read man and configuration files
-under /etc/bootcd/
-
-I tested ISO image under VirtualBox 4.3.12 and here is a snapshot: <
-https://pbs.twimg.com/media/BsoJVE3CQAENw-t.png:large >
-
-If interested in giving it a spin, please download at:
-
-< https://sourceforge.net/projects/xonecuiltzin/ >
+On 07/16/2014 01:24 PM, Ivan Shapovalov wrote:
+> This needs your version of discard algorithm, because blocks inside extents of
+> discard set are now marked as allocated.
 
 
-Best Professional Regards.
+OK, I'll try to finish it in weekends..
 
 
--- 
-Jose R R
-http://www.metztli-it.com
----------------------------------------------------------------------------------------------
-NEW Apache OpenOffice 4.1.0! Download for GNU/Linux, Mac OS, Windows.
----------------------------------------------------------------------------------------------
-Daylight Saving Time in USA & Canada ends: Sunday, November 02, 2014
----------------------------------------------------------------------------------------------
+> BTW, have you dropped the case with erase unit size < block size?
+
+
+In my version all erase units are supported except ones which are
+not a power of 2. We can support all erase units without exceptions,
+if needed.
+
+
+>   This is
+> probably OK, but configurations with nonzero alignments are then broken.
+
+
+I support alignments with (bdev_discard_alignment % sb->s_blocksize == 0)
+We can support all alignments without exceptions, but it will lead to 
+complications
+in discard_sorted_extents().
+
+
+>   Not
+> worth handling these, I think, but nevertheless a warning could be useful ;)
+
+Agreed. It is important.
+
+Thanks!
+Edward.
+
+
+>
+> Ivan Shapovalov (2):
+>    reiser4: discard support: perform discards and deallocations after writing logs.
+>    reiser4: discard support: proof-of-concept for "discard before dealloc".
+>
+>   fs/reiser4/block_alloc.c | 48 +++++++++++++++++++-------------------
+>   fs/reiser4/discard.c     | 60 ++++++++++++++++++++++++++++++++++--------------
+>   fs/reiser4/discard.h     |  4 +++-
+>   fs/reiser4/txnmgr.c      | 35 ----------------------------
+>   fs/reiser4/txnmgr.h      | 13 ++---------
+>   fs/reiser4/wander.c      |  3 ++-
+>   6 files changed, 73 insertions(+), 90 deletions(-)
+>
+
