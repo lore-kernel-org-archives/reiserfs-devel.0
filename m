@@ -1,9 +1,9 @@
 From: Edward Shishkin <edward.shishkin@gmail.com>
-Subject: Re: [veryRFC] [PATCH 0/2] reiser4: discard before dealloc: first
- approximation.
-Date: Thu, 17 Jul 2014 13:14:06 +0200
-Message-ID: <53C7AFFE.3050905@gmail.com>
-References: <53C652BE.4010203@gmail.com> <1405509844-30070-1-git-send-email-intelfx100@gmail.com> <53C70C38.3080002@gmail.com> <1921159.vPDThm1Mru@intelfx-laptop>
+Subject: Re: [PATCHv6 3/5] reiser4: discard support: initial implementation
+ using linked lists.
+Date: Sat, 19 Jul 2014 23:20:46 +0200
+Message-ID: <53CAE12E.7090504@gmail.com>
+References: <1403434126-6390-1-git-send-email-intelfx100@gmail.com> <2333335.ugWK4TrHUo@intelfx-laptop> <53C2D82B.7030201@gmail.com> <2160912.yche19jEn0@intelfx-laptop> <53C338DB.7070603@gmail.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
@@ -11,47 +11,47 @@ DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20120113;
         h=message-id:date:from:user-agent:mime-version:to:cc:subject
          :references:in-reply-to:content-type:content-transfer-encoding;
-        bh=5JdlCD5F0nK0sKMUHWnES954kL1qioRrcssmstw822M=;
-        b=zg7LR9PGWvk1nxvbccQJD6iGrbUF9EU+wCHkDTTbp5JsFb6TxHDF3I73E8s+hrAODS
-         EmfAP6ZJJ3uWYlZsMwrDFwp6PjSpB0Ion4zrLlRgey2I4anLvlUZMGDhApmzDW8pqHv4
-         xD8dBtKxR7+B82g7dj3Dw7m+DiI+FQ/ZXt2tcU4Xd/M9K27E2BE3X7froRK9yArdHwY5
-         Zk+GW7dPAa4h04/8ql1OKRSMqvpYDwzwoLl1BiD68e+aTWA2McZw4A8d9vGmjJnaNOdW
-         9wsjXo+jgfX9rZRauIrcY81gujNOby8DhhAlGeT4j31Lqw7UY04dQudpSbrQYwRXW7sg
-         nJjw==
-In-Reply-To: <1921159.vPDThm1Mru@intelfx-laptop>
+        bh=IjPbrvtECS29dysSeFQZsed8xT5hEogLSCatrNCQFB0=;
+        b=HqkhSU4MI2gmlwRwxSftplujYjhCq3R8EA/U70ZSX6CnfWrCF7LxUCDQC81dI9xsvo
+         xG+SxPrqWmV1Lvi+qOS7uVaZsAsnAQcGER/3h9g9zP0l4dZpDL2ZoLamtdyRmx9vwW8g
+         +lM+zE9ov7ysJ5zXM4erMbIGu9zMUxnaKXymT+n4UUwYbU2ZYrb/aczIxDmn+NFEPKkn
+         ccX71fErG3DrMS2Qi41mzcfFFAfK4tX5N8JLYwgYiYOf6ETRgGLlJh05DKzFP0RYepyU
+         kvGdljfuy0vDSA3YIGYN81/qKao9JLZ8nzob2NZqQPiU73+1vGv0KI+dy+LY6a7eObDd
+         S6Hg==
+In-Reply-To: <53C338DB.7070603@gmail.com>
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"; format="flowed"
 To: Ivan Shapovalov <intelfx100@gmail.com>
 Cc: reiserfs-devel@vger.kernel.org
 
-On 07/17/2014 11:46 AM, Ivan Shapovalov wrote:
-> On Thursday 17 July 2014 at 01:35:20, Edward Shishkin wrote:	
->> On 07/16/2014 01:24 PM, Ivan Shapovalov wrote:
->>> This needs your version of discard algorithm, because blocks inside extents of
->>> discard set are now marked as allocated.
->>
->> OK, I'll try to finish it in weekends..
->>
->>
->>> BTW, have you dropped the case with erase unit size < block size?
->>
->> In my version all erase units are supported except ones which are
->> not a power of 2. We can support all erase units without exceptions,
->> if needed.
-> I mean, when erase unit size < block size, erase unit size is forced to be
-> exactly one block. Again, this is OK, but in this case any alignment (by
-> definition less than one block then) will be dropped and represented as zero,
-> and _this_ deserves a warning :)
 
-
-The case of alignment % block_size != 0 deserves to disable discard
-support, because in this case all this science with heads and tails
-simply doesn't work.
-
-
+On 07/14/2014 03:56 AM, Edward Shishkin wrote:
 >
-> // btw, as you probably guess, these two patches are completely untested.
+> On 07/13/2014 09:18 PM, Ivan Shapovalov wrote:
+>>
+[...]
+>>
+>> Nothing seems to call at least check_free_blocks(begin, end)...
 >
-> Thanks,
+>
+> Oh, bad... I thought all this time that extents of the delete sets are 
+> still dirty
+> in the working bitmap at the moment of discard.
+> Hmm, I definitely don't want to check the whole extents for discard...
 
+
+False alarm, actually..
+
+Nothing is wrong if someone makes them dirty before issuing our discard
+requests: his changes will be committed in the next sessions of possessing
+the commit_mutex _after_ our discard. Everything is isolated.. For the same
+reason we don't care if someone allocate blocks in head and tail paddings
+before issuing our padded discard extents. We only need to make sure that
+they were clean at _our_ commit session.
+
+Anyway, let's use delayed deallocation. I like it better than 
+aux_delete_set.
+After all, we can roll everything back at every moment, if any problems..
+
+Edward.
