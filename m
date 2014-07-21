@@ -1,42 +1,34 @@
-From: =?UTF-8?B?4oCg?= <god12@niksula.hut.fi>
-Subject: Re: Reiserfs 4
-Date: Mon, 21 Jul 2014 11:09:28 +0200
-Message-ID: <53CCD8C8.4030900@niksula.hut.fi>
-References: <CAMRsyOdq8mTCtxGH0h1m4pTOKZoGvk+N0aG4ADSFBx5qSHmUAw@mail.gmail.com>	<CAMRsyOd8j3oQ2OACOBnXBR4Zyt09AU48KNmPPkm2qj01BMA9Aw@mail.gmail.com> <20140720194256.551f51f9@Ulf.tvoe.tv>
-Mime-Version: 1.0
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+From: Ivan Shapovalov <intelfx100@gmail.com>
+Subject: [PATCHv2 0/3] reiser4: discard support: perform discard before all deallocations.
+Date: Mon, 21 Jul 2014 22:19:28 +0400
+Message-ID: <1405966771-12575-1-git-send-email-intelfx100@gmail.com>
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
-In-Reply-To: <20140720194256.551f51f9@Ulf.tvoe.tv>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20120113;
+        h=from:to:cc:subject:date:message-id;
+        bh=qMhU0I3ToDkOCJ+6qrmyLD6Lksey5t/FZwJW2d4I1fQ=;
+        b=e30r0eINk06j1lm+IFyearr9uK5JDBUjMI6IszviOKFFJO+UDz01vm/mBQv2FrvkFH
+         pKCh39EUIgeb1TWpN4wkdlO72o+iLsZaOV5t0q0XkJtkfSJdkiTxuGno5crkzNXGLFZ/
+         rNrHBUnyYSlf82jiJCZC2TPzg2otIIu7hh/LSbFUjcQYrjCnNmoIN9QWHL5oyiXqVpvV
+         Xsr0iEL+eG/lyxSF8+hVhzooO1LEFspraNn3G1v4ZBjfOlX0igLNd3klsmBm4okZyhNa
+         s/JR/QCB8Lz2bATs7Fa0o1IXtAFqVCvPPMqrAi4qJzIqx3awDsjdO2NjM2mddSzf8Z2T
+         U5Wg==
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="utf-8"
-To: reiserfs-devel <reiserfs-devel@vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: reiserfs-devel@vger.kernel.org
+Cc: edward.shishkin@gmail.com, Ivan Shapovalov <intelfx100@gmail.com>
 
-20.07.2014 17:42, dimas =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
-> if you mean backup storage, why do you need such a complicated journa=
-led fs
-> like ext3 or r4? for mostly static storage, modified once a day or ev=
-en rarer,
-> i'd suggest ext2 as a simplest way.
->
-That's the worst possible recommendation: if you don't want to use jour=
-nal you can
-just switch it off on ext4. Using outdated ext2 code offers absolutely =
-no advantages.
+This applies on top of PATCHv6 of "initial implementation".
+The first patch has been already sent some time ago, but I've included it
+here for sake of clarity.
 
-Speaking of reiser4, unfortunately I would not expect it to be recommen=
-dable as a
-viable production-ready upgrade path for 3.6 in the near future. Sadly,=
- there's just
-not enough resources backing up development at the moment. Feel free to=
- change that
-though ;-)
+v2: fix disk space leak in error path, fix comments and commit messages, etc.
 
-cheers,
-Max.
+Ivan Shapovalov (3):
+  reiser4: fix reiser4_post_{commit,write_back}_hook() and their invocations.
+  reiser4: discard support: use reiser4_post_write_back_hook() for discarding and completing deferred deallocations.
+  reiser4: discard support: perform discard before all deallocations.
 
---
-To unsubscribe from this list: send the line "unsubscribe reiserfs-deve=
-l" in
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
