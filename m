@@ -1,61 +1,105 @@
-From: Edward Shishkin <edward.shishkin@gmail.com>
-Subject: Re: [PATCHv6 3/5] reiser4: discard support: initial implementation
- using linked lists.
-Date: Tue, 22 Jul 2014 10:57:03 +0200
-Message-ID: <53CE275F.5050605@gmail.com>
-References: <1403434126-6390-1-git-send-email-intelfx100@gmail.com> <53CC2EF1.8010705@gmail.com> <53CC476A.4000704@gmail.com> <7768685.ZxsNAV9AVN@intelfx-laptop>
+From: Christian Stroetmann <stroetmann@ontolinux.com>
+Subject: Re: Reiserfs 4
+Date: Tue, 22 Jul 2014 14:11:25 +0200
+Message-ID: <53CE54ED.70001@ontolinux.com>
+References: <CAMRsyOdq8mTCtxGH0h1m4pTOKZoGvk+N0aG4ADSFBx5qSHmUAw@mail.gmail.com>	<CAMRsyOd8j3oQ2OACOBnXBR4Zyt09AU48KNmPPkm2qj01BMA9Aw@mail.gmail.com> <20140720194256.551f51f9@Ulf.tvoe.tv> <53CCD8C8.4030900@niksula.hut.fi> <90CADE8A1B1C4C9FBBDEC0AB7376599D@DuSTmanPC>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20120113;
-        h=message-id:date:from:user-agent:mime-version:to:cc:subject
-         :references:in-reply-to:content-type:content-transfer-encoding;
-        bh=o1+NwxmaKV+hq7JM74a5TnnMGuPBLYpdgF60bMMAv5w=;
-        b=i8Vm4+ilH3NpFJu1YG5p+kNIDY8TP9OCXIakcIUrgy8nlfV1UH8ZkA7xhnwwW9Anjt
-         AUxp74sn4zg7Wnff2Fx07CVkQi/qndVtRNQxlEu8S1b3vmpS/lQurr94nNySCKnCM9I2
-         0LBWROhscmA29T/g8MHzg8lIvqp4eFKY8/Ay47OfSXQdD5ON88eylCDN+26kKn1JUpHU
-         lw2WX0znKU2PD/s9sK29BUnjIb1E3AhE2fT045hwo1KYN0ERHRUVk/hWTfGZSpoxrJlr
-         urvokaPG/mJtYMof5b0ZuwvKFFiyu6LXuYlU9lfrCc6rToBjifrdi50K7shmZ3Xg1aPc
-         E5+Q==
-In-Reply-To: <7768685.ZxsNAV9AVN@intelfx-laptop>
+In-Reply-To: <90CADE8A1B1C4C9FBBDEC0AB7376599D@DuSTmanPC>
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: Ivan Shapovalov <intelfx100@gmail.com>
-Cc: "reiserfs-devel@vger.kernel.org" <reiserfs-devel@vger.kernel.org>
+To: Linux Reiserfs Devel <reiserfs-devel@vger.kernel.org>
 
-
-On 07/21/2014 01:14 AM, Ivan Shapovalov wrote:
-> On Monday 21 July 2014 at 00:49:14, Edward Shishkin wrote:	
-[...]
->>
->> Actually, this is not so simple. E.g. I got a deadlock..
->> Another option is to make head/tail paddings dirty with the
->> following update of the extent of the delete_set.
->> One more option is to not support such discard params.
->>
->> Actually what we are trying to implement is "precise discard". This is
->> rather complicated task. I looked at other file systems: nobody bother
->> with paddings, just stupidly pass a freed extent to blkdev_issue_discard(),
->> which cuts the head and the tail. I suggest to do the same. We have done
->> our best. Someone can not afford even to accumulate the extents.
->>
->> Edward.
-> Let's do it ideally, after all, this is reiser4 ;) I also think that we can
-> just mark paddings as allocated and add them to extent in question (so that
-> they will be freed by reiser4_post_commit_hook). This looks simple enough.
+Am 21.07.2014 22:26, schrieb Daniel Horne:
 >
-> The block allocator interface, IIRC, allows us to tell it "allocate right here
-> or return failure".
+>> Speaking of reiser4, unfortunately I would not expect it to be 
+>> recommendable as a
+>> viable production-ready upgrade path for 3.6 in the near future. 
+>> Sadly, there's just
+>> not enough resources backing up development at the moment. Feel free 
+>> to change that
+>> though ;-)
+>>
 >
-> /* I had no time to look into any code during this weekend. Tomorrow I'll
-> hopefully repost the discard-before-dealloc patches and look into this.. */
+> I wonder if there would be any interest in a project to formally 
+> verify Reiser4? I mean, who needs a lot of testing effort when you've 
+> got a machine checked proof.
+>
+> SeL4, for example, is a microkernel of ~84000 lines iirc, and had its 
+> major correctness criterion proved through the isabelle/HOL theorem 
+> prover. Reiser4 is on the same order of magnitude in terms of lines of 
+> code, so could possibly be proven in roughly the same amount of 
+> effort. We could probably restrict the scope of a verification project 
+> to the consistency of the on-disk store to start with, and add in 
+> other correctness criteria (such as deadlock avoidance) later.
+>
+> I recall hans saying that he'd proven the leaf-first locking scheme of 
+> reiser4 - Did he do this as an informal pen-and-paper proof, or is 
+> there a proof script for a proof assistant lying around somewhere?
+>
+> -- 
+> DH
+> -- 
 
-I think we'll also need a "leftward" version of check_blocks() to check
-head paddings. The most unpleasant thing is when check fails at the
-next bitmap node. It seems that the most reasonable way in this case
-would be just to return 0 (dirty) and clear everything when applying
-the "updated" delete set.
+I promised not to sent any messages to this maling-list anymore, but 
+this is an exception because the work of my company and me is directly 
+addressed in a way that might mislead members of this mailing-list and 
+the broader public and also might have been an attack on our reputation.
 
-Edward.
+FYI, I would like to mention the following points, though only point 1. 
+and point 2. might be of interest for R4 developers and followers:
+1. The general concept about a formally verified R4 was already made in 
+the November 2006 with the start of OntoLinux [1] (see its 
+characteristics on the webpage Overview [2]). At that time, the OntoFS 
+[3] was based on R4.
+2. Actually, OntoLinux is also based on the L4 microkernel (see the 
+first section of the webpage Components [4] and its section OntoL4 [5]). 
+Hence, to use a formally verified L4 microkernel was suggested and 
+planned with OntoLinux even before the National Information and 
+Communications Technology Centre of Excellence Australia (NICTA) 
+conducted the formal verification of its L4 variant with only "7,500 
+lines of C code" in the October of 2009 (its case has been investigated 
+by us and documented on OntomaX [6]). There are other issues related 
+with the L4 variant of NICTA that I do not want to discuss here. But the 
+similarities between our works are no surprise.
+3. HiLog is included in the OntoBot component [7] by XSB [8] that 
+permits limited High-Order Logic (HOL) programming, though HOL is not 
+needed at all due to the rewriting logic of Maude [9] included as well 
+in the OntoBot.
+4. The generic proof assistant Isabelle [10] with its instance 
+Isabelle/HOL was added to the section Formal Verification of the webpage 
+Links to Software [11] with the OntoLinux Website update of the 23th of 
+August.2009 (see the related message on OntomaX [12]).
+5. OntoFS is not based on R4 anymore since quite some time now, but on 
+OntoBase [13].
+
+Last but not least, I am sure that pen-and-paper was the method at that 
+time, if a proof was done at all.
+
+
+
+Have fun with (Onto)logics
+Christian Stroetmann
+
+[1] OntoLinux www.ontolinux.com
+[2] OntoLinux - Overview www.ontolinux.com/technology/overview.htm
+[3] OntoLinux - OntoFS www.ontolinux.com/technology/ontofs.htm
+[4] OntoLinux - Components www.ontolinux.com/technology/components.htm
+[5] OntoLinux - Components - OntoL4 
+www.ontolinux.com/technology/components.htm#ontol4
+[6] OntomaX - News - 2009 - August 
+www.ontomax.com/newsarchive/2009/august.htm21.August.2009
+[7] OntoLinux - Components - OntoBot 
+www.ontolinux.com/technology/components.htm#ontobot
+[8] XSB xsb.sourceforge.net/
+[9] Maude maude.cs.uiuc.edu/
+[10] Isabelle www.cl.cam.ac.uk/research/hvg/Isabelle/
+[11] Links to Software - Formal Verification 
+www.ontolinux.com/community/software.htm#formalverification
+[12] OntomaX - News - 2009 - August 
+www.ontomax.com/newsarchive/2009/august.htm#23.August.2009
+[13] OntoLinux - OntoBase www.ontolinux.com/technology/ontobase/ontobase.htm
+
+
