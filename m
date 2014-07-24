@@ -1,50 +1,39 @@
-From: Christian Stroetmann <stroetmann@ontolab.com>
-Subject: Re: Reiserfs 4
-Date: Tue, 22 Jul 2014 17:17:55 +0200
-Message-ID: <53CE80A3.5040901@ontolab.com>
-References: <CAMRsyOdq8mTCtxGH0h1m4pTOKZoGvk+N0aG4ADSFBx5qSHmUAw@mail.gmail.com>	<CAMRsyOd8j3oQ2OACOBnXBR4Zyt09AU48KNmPPkm2qj01BMA9Aw@mail.gmail.com> <20140720194256.551f51f9@Ulf.tvoe.tv> <53CCD8C8.4030900@niksula.hut.fi> <90CADE8A1B1C4C9FBBDEC0AB7376599D@DuSTmanPC> <53CE54ED.70001@ontolinux.com> <5D2089180C8E421EA52837263C62D58C@DuSTmanPC>
+From: Jose R R <Jose.r.r@metztli-it.com>
+Subject: Deleting a 5 GB directory in Reiser4 hangs system(s)
+Date: Thu, 24 Jul 2014 04:24:01 -0700
+Message-ID: <CAM12Q5RGOuEMyVhTPcVcLDGAri6H9-NbBKOF2T_PXfq0=kMVoQ@mail.gmail.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
-In-Reply-To: <5D2089180C8E421EA52837263C62D58C@DuSTmanPC>
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: Daniel Horne <daniel.horne@gmail.com>
-Cc: Linux Reiserfs Devel <reiserfs-devel@vger.kernel.org>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: ReiserFS Development List <reiserfs-devel@vger.kernel.org>
 
-On the 22nd of July 2014 15:48, Daniel Horne wrote::
->> I promised not to sent any messages to this maling-list anymore, but 
->> this is an exception because the work of my company and me is 
->> directly addressed in a way that might mislead members of this 
->> mailing-list and the broader public and also might have been an 
->> attack on our reputation.
->
-> It wasn't intended as such - I'm new to the field of formal 
-> verification and wasn't aware of this work.
->
-> Thanks for the information, though. I'll read through those links.
->
-> -- 
-> DH
->
+Niltze!
 
-I do apologize for any harsh statement.
+I have a couple of root partitions with Debian which recently have
+been default-formatted with Reiser4.
 
-To the subject of formal verification:
-This is a highly complex task and if it makes sense to formally verify 
-R4 has to be approached from several sides:
-1. Is R4 in a state that it is matured enough?
-2. File systems for general use are a little bit different than the L4 
-microkernel, so the complexity that has to be verified might be higher.
-3. Is the environment verified as well, for example the operating system 
-kernel of Linux?
+I have applied at the very least Mahoney's patch set (<
+http://marc.info/?l=reiserfs-devel&r=1&b=201404&w=2 >) followed by
+reiser4 for 3.14.1 patch (<
+http://sourceforge.net/projects/reiser4/files/reiser4-for-linux-3.x/
+>) on kernels 3.14.4 and 3.15.2. Each kernel operates in a different
+OS with reiser4 root fs.
 
-Actually, I do not know if it makes sense to do it, but if you attempt 
-it, then I will have a look on your results.
+Attempting to remove a ~ 5 GB directory recursively (rm -r) the
+operation hangs either system.
 
+Has the bug has been reported before? Or is it a feature ;-)
 
+Cheers!
 
-Best regards
-Christian Stroetmann
-
+-- 
+Jose R R
+http://www.metztli-it.com
+---------------------------------------------------------------------------------------------
+NEW Apache OpenOffice 4.1.0! Download for GNU/Linux, Mac OS, Windows.
+---------------------------------------------------------------------------------------------
+Daylight Saving Time in USA & Canada ends: Sunday, November 02, 2014
+---------------------------------------------------------------------------------------------
