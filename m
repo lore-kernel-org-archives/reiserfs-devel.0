@@ -1,39 +1,47 @@
-From: Jose R R <Jose.r.r@metztli-it.com>
-Subject: Deleting a 5 GB directory in Reiser4 hangs system(s)
-Date: Thu, 24 Jul 2014 04:24:01 -0700
-Message-ID: <CAM12Q5RGOuEMyVhTPcVcLDGAri6H9-NbBKOF2T_PXfq0=kMVoQ@mail.gmail.com>
+From: Bhikkhu Mettavihari <tv.lists@gmail.com>
+Subject: Formating Reiserfs 3.6 with bad-blocks
+Date: Sat, 26 Jul 2014 13:46:55 +0530
+Message-ID: <CAMRsyOc5b+CejzE4R2Oz7367+N=v6dGR4P2eoVph=E=A9gMJYg@mail.gmail.com>
 Mime-Version: 1.0
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20120113;
+        h=mime-version:date:message-id:subject:from:to:content-type;
+        bh=bNKhd5Yf9snup5FTuJEGPQQVikXue+Y6r+EET0BcR40=;
+        b=y+W9wo58+NPpU/lR78vGASad6rLJL0zjwAdSFCiptmGJEIrTsCm1CBvQujLWD1Y4vB
+         KsAe4S9cBRfFMrEGjio+nGmKZf1M8WHfHmthi30AWDQbWtwrkfqzpgZo/ITMRnZ2cgkr
+         afuzlMl+vDrNpIv463sn17GU1xlwDdEPB+X6iZwTSi2MXMpCqA+OJYPYC3AiJsMZWC5+
+         Ijx0WW9IyuNTigoIisYPpkjyvcFFL9L+VH20DiVWNn+0DJsWqOEMjRwpMf2CeaZKaUzo
+         VDBTMMJFj/VVxZiKVW3Aza6Lq3ze1HNXTRZif5/+XEdC0OEMl2y1HLyUMqjAKk44j8Uo
+         Zc5g==
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: ReiserFS Development List <reiserfs-devel@vger.kernel.org>
+To: Linux Reiserfs Devel <reiserfs-devel@vger.kernel.org>
 
-Niltze!
+Greetings,
 
-I have a couple of root partitions with Debian which recently have
-been default-formatted with Reiser4.
+I have about 50 x 500GB to 2 TB hard disks in my setup.
+All them are using reiserfs 3.6
 
-I have applied at the very least Mahoney's patch set (<
-http://marc.info/?l=reiserfs-devel&r=1&b=201404&w=2 >) followed by
-reiser4 for 3.14.1 patch (<
-http://sourceforge.net/projects/reiser4/files/reiser4-for-linux-3.x/
->) on kernels 3.14.4 and 3.15.2. Each kernel operates in a different
-OS with reiser4 root fs.
+When I get slow reads on a hard disk then I do:
+# badblocks -b 4096 -o bad-blocks-finished-6-2.txt /dev/sdd1
 
-Attempting to remove a ~ 5 GB directory recursively (rm -r) the
-operation hangs either system.
+# tail -f bad-blocks-finished-6-2.txt
+77299721
+77299722
 
-Has the bug has been reported before? Or is it a feature ;-)
+after that I format the hard disk with this command:
 
-Cheers!
+mkfs.reiserfs -B /root/bad-blocks-finished-6-2.txt /dev/sdd1
 
--- 
-Jose R R
-http://www.metztli-it.com
----------------------------------------------------------------------------------------------
-NEW Apache OpenOffice 4.1.0! Download for GNU/Linux, Mac OS, Windows.
----------------------------------------------------------------------------------------------
-Daylight Saving Time in USA & Canada ends: Sunday, November 02, 2014
----------------------------------------------------------------------------------------------
+But my hard disk still seems to have problems with reading certain parts.
+I notice that the reading speed is going down to a very low level with
+some files.
+
+Is my method correct ?
+or have I done something incorrect ?
+
+with metta
+Mettavihari
