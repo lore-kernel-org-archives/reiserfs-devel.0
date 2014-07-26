@@ -1,47 +1,82 @@
-From: Bhikkhu Mettavihari <tv.lists@gmail.com>
-Subject: Formating Reiserfs 3.6 with bad-blocks
-Date: Sat, 26 Jul 2014 13:46:55 +0530
-Message-ID: <CAMRsyOc5b+CejzE4R2Oz7367+N=v6dGR4P2eoVph=E=A9gMJYg@mail.gmail.com>
+From: Jose R R <Jose.r.r@metztli-it.com>
+Subject: Re: Bootcd-based LIVE Reiser4 rescue/recovery/installation ISO
+Date: Sat, 26 Jul 2014 11:36:29 -0700
+Message-ID: <CAM12Q5T5iSDq90bohY2Wz8j2AmEHCX41xQkvrff05bOcfWEqsA@mail.gmail.com>
 Mime-Version: 1.0
-Return-path: <reiserfs-devel-owner@vger.kernel.org>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20120113;
-        h=mime-version:date:message-id:subject:from:to:content-type;
-        bh=bNKhd5Yf9snup5FTuJEGPQQVikXue+Y6r+EET0BcR40=;
-        b=y+W9wo58+NPpU/lR78vGASad6rLJL0zjwAdSFCiptmGJEIrTsCm1CBvQujLWD1Y4vB
-         KsAe4S9cBRfFMrEGjio+nGmKZf1M8WHfHmthi30AWDQbWtwrkfqzpgZo/ITMRnZ2cgkr
-         afuzlMl+vDrNpIv463sn17GU1xlwDdEPB+X6iZwTSi2MXMpCqA+OJYPYC3AiJsMZWC5+
-         Ijx0WW9IyuNTigoIisYPpkjyvcFFL9L+VH20DiVWNn+0DJsWqOEMjRwpMf2CeaZKaUzo
-         VDBTMMJFj/VVxZiKVW3Aza6Lq3ze1HNXTRZif5/+XEdC0OEMl2y1HLyUMqjAKk44j8Uo
-         Zc5g==
-Sender: reiserfs-devel-owner@vger.kernel.org
-List-ID: <reiserfs-devel.vger.kernel.org>
+Return-path: <bounce-debian-live=glddl-live-moved1=m.gmane.org@lists.debian.org>
+Sender: jose.r.r@metztli.com
+Resent-Message-ID: <SF7xg84CFYB.A.sxC.BV_0TB@bendel>
+List-Id: <reiserfs-devel.vger.kernel.org>
+List-URL: <http://lists.debian.org/debian-live/>
+List-Post: <mailto:debian-live@lists.debian.org>
+List-Help: <mailto:debian-live-request@lists.debian.org?subject=help>
+List-Subscribe: <mailto:debian-live-request@lists.debian.org?subject=subscribe>
+List-Unsubscribe: <mailto:debian-live-request@lists.debian.org?subject=unsubscribe>
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Linux Reiserfs Devel <reiserfs-devel@vger.kernel.org>
+To: ReiserFS Development List <reiserfs-devel@vger.kernel.org>, Debian Live <debian-live@lists.debian.org>, debian-cloud <debian-cloud@lists.debian.org>
 
-Greetings,
+Apologies for incorrect password, relevant text file has been updated:
 
-I have about 50 x 500GB to 2 TB hard disks in my setup.
-All them are using reiserfs 3.6
+I uploaded to SF a bootcd-based live ISO made from a small 20GB pure
+Reiser4 partition in my dev machine.
 
-When I get slow reads on a hard disk then I do:
-# badblocks -b 4096 -o bad-blocks-finished-6-2.txt /dev/sdd1
+I patched a recent Linux kernel 3.15.2 as explained in Metztli IT's
+blog < http://www.metztli-it.com/blog/index.php/aG2?blog=4 >, patched
+legacy Grub97, and installed utilities gparted and testdisk.
 
-# tail -f bad-blocks-finished-6-2.txt
-77299721
-77299722
+Since Debian bootcd < https://packages.debian.org/sid/bootcd > may
+also install a GNU/Linux system, I surmise that an (Reiser4)
+installation is also possible, please read man and configuration files
+under /etc/bootcd/
 
-after that I format the hard disk with this command:
+I tested ISO image under VirtualBox 4.3.12 and here is a snapshot: <
+https://pbs.twimg.com/media/BsoJVE3CQAENw-t.png:large >
 
-mkfs.reiserfs -B /root/bad-blocks-finished-6-2.txt /dev/sdd1
+If interested in giving it a spin, please download at:
 
-But my hard disk still seems to have problems with reading certain parts.
-I notice that the reading speed is going down to a very low level with
-some files.
+< https://sourceforge.net/projects/xonecuiltzin/ >
 
-Is my method correct ?
-or have I done something incorrect ?
 
-with metta
-Mettavihari
+Best Professional Regards.
+
+On Wed, Jul 16, 2014 at 12:09 PM, Jose R R <Jose.r.r@metztli-it.com> wrote:
+> Niltze!
+>
+> I uploaded to SF a bootcd-based live ISO made from a small 20GB pure
+> Reiser4 partition in my dev machine.
+>
+> I patched a recent Linux kernel 3.15.2 as explained in Metztli IT's
+> blog < http://www.metztli-it.com/blog/index.php/aG2?blog=4 >, patched
+> legacy Grub97, and installed utilities gparted and testdisk.
+>
+> Since Debian bootcd < https://packages.debian.org/sid/bootcd > may
+> also install a GNU/Linux system, I surmise that an (Reiser4)
+> installation is also possible, please read man and configuration files
+> under /etc/bootcd/
+>
+> I tested ISO image under VirtualBox 4.3.12 and here is a snapshot: <
+> https://pbs.twimg.com/media/BsoJVE3CQAENw-t.png:large >
+>
+> If interested in giving it a spin, please download at:
+>
+> < https://sourceforge.net/projects/xonecuiltzin/ >
+>
+[...]
+
+
+-- 
+Jose R R
+http://www.metztli-it.com
+---------------------------------------------------------------------------------------------
+NEW Apache OpenOffice 4.1.0! Download for GNU/Linux, Mac OS, Windows.
+---------------------------------------------------------------------------------------------
+Daylight Saving Time in USA & Canada ends: Sunday, November 02, 2014
+---------------------------------------------------------------------------------------------
+
+
+-- 
+To UNSUBSCRIBE, email to debian-live-request@lists.debian.org
+with a subject of "unsubscribe". Trouble? Contact listmaster@lists.debian.org
+Archive: https://lists.debian.org/CAM12Q5T5iSDq90bohY2Wz8j2AmEHCX41xQkvrff05bOcfWEqsA@mail.gmail.com
+
