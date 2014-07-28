@@ -1,58 +1,48 @@
-From: <doiggl@velocitynet.com.au>
-Subject: Re: Deleting a 5 GB directory in Reiser4 hangs system(s)
-Date: Sun, 27 Jul 2014 16:49:46 +1000
-Message-ID: <f651f508fe39c0bf8484b2996012d16c@mail.velocitynet.com.au>
-References: <CAM12Q5RGOuEMyVhTPcVcLDGAri6H9-NbBKOF2T_PXfq0=kMVoQ@mail.gmail.com> <CAM12Q5TqhZej_mehnmbvRx8vayd74HjBstEUewmXHKvbVXX=rQ@mail.gmail.com>
+From: Edward Shishkin <edward.shishkin@gmail.com>
+Subject: Re: [PATCHv2 0/3] reiser4: discard support: perform discard before
+ all deallocations.
+Date: Mon, 28 Jul 2014 13:46:01 +0200
+Message-ID: <53D637F9.2010304@gmail.com>
+References: <1405966771-12575-1-git-send-email-intelfx100@gmail.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
-In-Reply-To: <CAM12Q5TqhZej_mehnmbvRx8vayd74HjBstEUewmXHKvbVXX=rQ@mail.gmail.com>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20120113;
+        h=message-id:date:from:user-agent:mime-version:to:cc:subject
+         :references:in-reply-to:content-type:content-transfer-encoding;
+        bh=E34GwNgXVfRhd2hWA/UMnWZmexLQraFfwEClVIgAE8Y=;
+        b=SBsEEo6qsUB2S1PVZxAMmN0SGnchGsTPN+xOcZiZPh2Ofaklei6YSZNW3k76/9OgbQ
+         A9Uwt10ZgyU+J3CkgG0pmK5XVam7BeZDkl79J3liU36k0W5VJikiLz/vi2rCZp47LXhV
+         TuKkct4zHjICBTaP3Qq5u9XWnQ6+9hmM53RekoSBlvsUB6qO/kK13Qt51Uhwrr6CCxdc
+         zpsQy/jDjutDf+cvwa7QNTpd1sUXwFcAAkh/OHAG5SpF02ePZ6H29JHBCyKlQhJOnHCV
+         KFfZfw4u8Wp5328V+77yyVgQedFnz9BOQuLGCpfum0vtUDloDmF0b3VDsLxTmVYOoCBO
+         CAzw==
+In-Reply-To: <1405966771-12575-1-git-send-email-intelfx100@gmail.com>
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-To: Jose R R <Jose.r.r@metztli-it.com>
-Cc: ReiserFS Development List <reiserfs-devel@vger.kernel.org>
+Content-Type: text/plain; charset="us-ascii"; format="flowed"
+To: Ivan Shapovalov <intelfx100@gmail.com>
+Cc: reiserfs-devel@vger.kernel.org
 
-Hello,
-- Run following commands in another terminal while doing a rm command in
-the other.
-# iotop --only 
-- also does # dmesg show any messages in another terminal
---Glenn
+Thanks, looks OK (I haven't tested it yet though..)
 
-[1]
-This command shows only show processes or threads actually doing I/O
-# iotop --help
+I suggest to release a version without garbage collection for now
+(just pass the sorted and merged extents to blkdev_issue_discard).
 
-Usage: /usr/sbin/iotop [OPTIONS]
+Thanks,
+Edward.
 
-DISK READ and DISK WRITE are the block I/O bandwidth used during the
-sampling
-period. SWAPIN and IO are the percentages of time the thread spent
-respectively
-while swapping in and waiting on I/O more generally. PRIO is the I/O
-priority at
-which the thread is running (set using the ionice command).
-
-Controls: left and right arrows to change the sorting column, r to invert
-the
-sorting order, o to toggle the --only option, p to toggle the --processes
-option, a to toggle the --accumulated option, i to change I/O priority, q
-to
-quit, any other key to force a refresh.
-
-Options:
-  --version             show program's version number and exit
-  -h, --help            show this help message and exit
-  -o, --only            only show processes or threads actually doing I/O
-  -b, --batch           non-interactive mode
-  -n NUM, --iter=NUM    number of iterations before ending [infinite]
-  -d SEC, --delay=SEC   delay between iterations [1 second]
-  -p PID, --pid=PID     processes/threads to monitor [all]
-  -u USER, --user=USER  users to monitor [all]
-  -P, --processes       only show processes, not all threads
-  -a, --accumulated     show accumulated I/O instead of bandwidth
-  -k, --kilobytes       use kilobytes instead of a human friendly unit
-  -t, --time            add a timestamp on each line (implies --batch)
-  -q, --quiet           suppress some lines of header (implies --batch)
+On 07/21/2014 08:19 PM, Ivan Shapovalov wrote:
+> This applies on top of PATCHv6 of "initial implementation".
+> The first patch has been already sent some time ago, but I've included it
+> here for sake of clarity.
+>
+> v2: fix disk space leak in error path, fix comments and commit messages, etc.
+>
+> Ivan Shapovalov (3):
+>    reiser4: fix reiser4_post_{commit,write_back}_hook() and their invocations.
+>    reiser4: discard support: use reiser4_post_write_back_hook() for discarding and completing deferred deallocations.
+>    reiser4: discard support: perform discard before all deallocations.
+>
 
