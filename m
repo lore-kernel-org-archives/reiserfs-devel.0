@@ -1,185 +1,107 @@
-From: Jose R R <Jose.r.r@metztli-it.com>
-Subject: Re: Deleting a 5 GB directory in Reiser4 hangs system(s)
-Date: Tue, 29 Jul 2014 03:06:09 -0700
-Message-ID: <CAM12Q5SqkZXW7gV5r4WCTKwpbpfLwUytKghWNWvZd_agYk=NPw@mail.gmail.com>
-References: <CAM12Q5RGOuEMyVhTPcVcLDGAri6H9-NbBKOF2T_PXfq0=kMVoQ@mail.gmail.com>
-	<f651f508fe39c0bf8484b2996012d16c@mail.velocitynet.com.au>
-	<CAM12Q5RLQKTm15Sw4=NT0tUVq2LVbo90onGnq9fy6G1zhNd5fQ@mail.gmail.com>
-	<1825802.TSAWuTl8Lm@intelfx-laptop>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Subject: [PATCH 0/9] use correct structure type name in sizeof
+Date: Tue, 29 Jul 2014 17:16:42 +0200
+Message-ID: <1406647011-8543-1-git-send-email-Julia.Lawall@lip6.fr>
 Mime-Version: 1.0
-Return-path: <reiserfs-devel-owner@vger.kernel.org>
-In-Reply-To: <1825802.TSAWuTl8Lm@intelfx-laptop>
-Sender: reiserfs-devel-owner@vger.kernel.org
-List-ID: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Ivan Shapovalov <intelfx100@gmail.com>
-Cc: ReiserFS Development List <reiserfs-devel@vger.kernel.org>, doiggl@velocitynet.com.au
+Return-path: <driverdev-devel-bounces@linuxdriverproject.org>
+List-Id: <reiserfs-devel.vger.kernel.org>
+List-Unsubscribe: <http://driverdev.linuxdriverproject.org/mailman/options/driverdev-devel>, 
+ <mailto:driverdev-devel-request@linuxdriverproject.org?subject=unsubscribe>
+List-Archive: <http://driverdev.linuxdriverproject.org/pipermail/driverdev-devel>
+List-Post: <mailto:driverdev-devel@linuxdriverproject.org>
+List-Help: <mailto:driverdev-devel-request@linuxdriverproject.org?subject=help>
+List-Subscribe: <http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel>, 
+ <mailto:driverdev-devel-request@linuxdriverproject.org?subject=subscribe>
+Errors-To: driverdev-devel-bounces@linuxdriverproject.org
+Sender: driverdev-devel-bounces@linuxdriverproject.org
+To: linux-wireless@vger.kernel.org
+Cc: devel@driverdev.osuosl.org, linux-ia64@vger.kernel.org, linux-scsi@vger.kernel.org, e1000-devel@lists.sourceforge.net, toralf.foerster@gmx.de, linux-usb@vger.kernel.org, kernel-janitors@vger.kernel.org, reiserfs-devel@vger.kernel.org, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, hmh@hmh.eng.br, netdev@vger.kernel.org, ceph-devel@vger.kernel.org, linux-media@vger.kernel.org
 
-Thanks, Ivan!
+These patches fix typos in the name of a type referenced in a sizeof
+command.  These problems are not caught by the compiler, because they have
+no impact on execution - the size of a pointer is independent of the size
+of the pointed value.
 
-fsck.reiser4 --build-fs <unmounted reiser4 dev>
+The semantic patch that finds these problems is shown below
+(http://coccinelle.lip6.fr/).  This semantic patch distinguishes between
+structures that are defined in C files, and thus are expected to be visible
+in only that file, and structures that are defined in header files, which
+could potential be visible everywhere.  This distinction seems to be
+unnecessary in practice, though.
 
-(wait for long process)
+<smpl>
+virtual after_start
 
-but it worked: I was able to rm -rf old-directory/
+@initialize:ocaml@
+@@
 
-However, I do not think that the root fs corruption was caused by
-Reiser4 itself. Some background info below.
+type fl = C of string | H
 
-Out of the four or five Reiser4 instances that I am currently testing,
-that was the only root reiser4 fs instance/partition that I was having
-issues with.
+let structures = Hashtbl.create 101
+let restarted = ref false
 
-Couple of weeks prior to experiencing issue described, I had booted a
-program (from bootable media) in my dev/test machine where the problem
-partition resides. That program -- without warning -- executed:
-"parted -s /dev/${tgtdrive} mklabel gpt" effectively destroying my
-partition table.
+let add_if_not_present _ =
+  if not !restarted
+  then
+    begin
+      restarted := true;
+      let it = new iteration() in
+      it#add_virtual_rule After_start;
+      it#register()
+    end
 
-I was in a predicament because most (if not all) of the rescue
-bootable media out there do not support reiser4 and I had to hack my
-own < http://sourceforge.net/projects/xonecuiltzin/ >.
+let hashadd str file =
+  let cell =
+    try Hashtbl.find structures str
+    with Not_found ->
+      let cell = ref [] in
+      Hashtbl.add structures str cell;
+      cell in
+  if not (List.mem file !cell) then cell := file :: !cell
 
-Evidently I had to recover by using testdisk and gparted utilities to
-bring back my original partitions. The reiser4 partition in question
-initially was not bootable nor mountable; thus I had previously
-executed fsck.reiser4 --fix <unmounted-partition>.
+let get_file fl =
+  if Filename.check_suffix fl ".c"
+  then C fl
+  else H
 
-Afterwards, yes, I was able to mount/boot the reiser4 partition and I
-*assumed* it was *fixed*.
-But I was unaware that I had to use: --build-fs
-              "fixes all severe fs corruptions, except super block
-ones; rebuilds reiser4 filesystem from the scratch if needed."
+@script:ocaml depends on !after_start@
+@@
+add_if_not_present()
 
-Anyhow, Ivan & doiggl, appreciate your help. Issue was collateral
-damage of destroyed partition and not from Reiser4 per se.
+@r depends on !after_start@
+identifier nm;
+position p;
+@@
 
-On Mon, Jul 28, 2014 at 11:12 AM, Ivan Shapovalov <intelfx100@gmail.com> wrote:
-> On Monday 28 July 2014 at 10:45:03, Jose R R wrote:
->> Niltze, doiggl-
->>
->> On Sat, Jul 26, 2014 at 11:49 PM,  <doiggl@velocitynet.com.au> wrote:
->> > Hello,
->> > - Run following commands in another terminal while doing a rm command in
->> > the other.
->> > # iotop --only
->> > - also does # dmesg show any messages in another terminal
->> > --Glenn
->> >
->> > [1]
->> > This command shows only show processes or threads actually doing I/O
->> > # iotop --help
->> >
->> > Usage: /usr/sbin/iotop [OPTIONS]
->> >
->> > DISK READ and DISK WRITE are the block I/O bandwidth used during the
->> > sampling
->> > period. SWAPIN and IO are the percentages of time the thread spent
->> > respectively
->> > while swapping in and waiting on I/O more generally. PRIO is the I/O
->> > priority at
->> > which the thread is running (set using the ionice command).
->> >
->> > Controls: left and right arrows to change the sorting column, r to invert
->> > the
->> > sorting order, o to toggle the --only option, p to toggle the --processes
->> > option, a to toggle the --accumulated option, i to change I/O priority, q
->> > to
->> > quit, any other key to force a refresh.
->> >
->> > Options:
->> >   --version             show program's version number and exit
->> >   -h, --help            show this help message and exit
->> >   -o, --only            only show processes or threads actually doing I/O
->> >   -b, --batch           non-interactive mode
->> >   -n NUM, --iter=NUM    number of iterations before ending [infinite]
->> >   -d SEC, --delay=SEC   delay between iterations [1 second]
->> >   -p PID, --pid=PID     processes/threads to monitor [all]
->> >   -u USER, --user=USER  users to monitor [all]
->> >   -P, --processes       only show processes, not all threads
->> >   -a, --accumulated     show accumulated I/O instead of bandwidth
->> >   -k, --kilobytes       use kilobytes instead of a human friendly unit
->> >   -t, --time            add a timestamp on each line (implies --batch)
->> >   -q, --quiet           suppress some lines of header (implies --batch)
->> >
->>
->> Example: Reiser4-formatted /dev/sda10 partition has old data that I
->> copied over with (cp -a) but which I now want to remove with (rm -rf).
->> From my current Debian system I mount /dev/sda10 to a local mount
->> point and do on one shell window:
->>
->> nice rm -rf /mnt/sda10/copied-onto-reiser4-data-dir
->>
->> on another shell I follow your suggestion:
->>
->> iotop --only
->>
->> (output)
->> ----------------------------------------------------------
->> reiser4: sda10: found disk format 4.0.0.
->> reiser4: sda10: using Hybrid Transaction Model.
->> reiser4[rm(3352)]: parse_node40
->> (fs/reiser4/plugin/node/node40.c:672)[nikita-494]:
->> WARNING: Wrong level found in node: 1 != 0
->
-> Hello,
->
-> this looks like a filesystem corruption.
->
-> Could you please run fsck.reiser4 (if needed, with --build-fs switch)
-> and retry everything this?
->
-> If the corruption persists, please, post your kernel version, config
-> and tell which reiser4 patch have you used.
->
-> Thanks,
-> --
-> Ivan Shapovalov / intelfx /
->
->> reiser4[rm(3352)]: delete_object_cryptcompress
->> (fs/reiser4/plugin/file/cryptcompress.c:3734)[edward-430]:
->> WARNING: cannot truncate cryptcompress file  425684: -5
->> reiser4[rm(3352)]: parse_node40
->> (fs/reiser4/plugin/node/node40.c:672)[nikita-494]:
->> WARNING: Wrong level found in node: 1 != 0
->> reiser4[rm(3352)]: reiser4_cut_tree_object
->> (fs/reiser4/tree.c:1790)[nikita-2861]:
->> WARNING: failure: -5
->> reiser4[rm(3352)]: delete_object_cryptcompress
->> (fs/reiser4/plugin/file/cryptcompress.c:3734)[edward-430]:
->> WARNING: cannot truncate cryptcompress file  425688: -5
->> -----------------------------------------------------------
->>
->> and yet on another shell I execute:
->>
->> dmesg
->>
->> and I take a snapshot:
->>
->> < https://pbs.twimg.com/media/Bto5EF0CYAAhwhQ.png:large >
->>
->> waited 15 minutes but the process nice rm -rf hung -- and executing:
->>
->> kill -9 <process id>
->>
->> does not work either and the system fan strains with the unkillable process.
->>
->> Odd? Yes I know, but it only occurs on old data copied over onto a
->> newly formatted reiser4 partition. There is no issue with new data
->> that I create (say 5GB or more) once my root Debian system is
->> operating on a Reiser4 file system.
->>
+struct nm@p { ... };
 
+@script:ocaml@
+nm << r.nm;
+p << r.p;
+@@
 
-Best Professional Regards.
+hashadd nm (get_file (List.hd p).file)
 
+// -------------------------------------------------------------------------
 
--- 
-Jose R R
-http://www.metztli-it.com
----------------------------------------------------------------------------------------------
-NEW Apache OpenOffice 4.1.0! Download for GNU/Linux, Mac OS, Windows.
----------------------------------------------------------------------------------------------
-Daylight Saving Time in USA & Canada ends: Sunday, November 02, 2014
----------------------------------------------------------------------------------------------
+@sz depends on after_start@
+identifier nm;
+position p;
+@@
+
+sizeof(struct nm@p *)
+
+@script:ocaml@
+nm << sz.nm;
+p << sz.p;
+@@
+
+try
+  let allowed = !(Hashtbl.find structures nm) in
+  if List.mem H allowed or List.mem (get_file (List.hd p).file) allowed
+  then ()
+  else print_main nm p
+with Not_found -> print_main nm p
+</smpl>
