@@ -1,130 +1,81 @@
 From: Ivan Shapovalov <intelfx100@gmail.com>
-Subject: Re: [PATCHv2 0/3] reiser4: discard support: perform discard before all deallocations.
-Date: Fri, 01 Aug 2014 02:06:31 +0400
-Message-ID: <2591358.BvzLLDQF7r@intelfx-laptop>
-References: <1405966771-12575-1-git-send-email-intelfx100@gmail.com> <6214930.f2LU7SrKWL@intelfx-laptop> <53DAB521.4090902@gmail.com>
+Subject: Re: reiser4: FITRIM ioctl -- where to place the handler?
+Date: Fri, 01 Aug 2014 02:09:42 +0400
+Message-ID: <3068350.OYcdkFahEG@intelfx-laptop>
+References: <1888625.Xe1HFmG7T5@intelfx-laptop> <53DAB71E.5020303@gmail.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; boundary="nextPart2308758.COULkcVomL"; micalg="pgp-sha256"; protocol="application/pgp-signature"
+Content-Type: multipart/signed; boundary="nextPart234484090.oPzO4zPXoL"; micalg="pgp-sha256"; protocol="application/pgp-signature"
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20120113;
         h=from:to:cc:subject:date:message-id:user-agent:in-reply-to
          :references:mime-version:content-type;
-        bh=pPOMKr17bRKsJi2ItX1MuBA5185i9wGXqKg5+E/3/JI=;
-        b=ptEvGCG0bHlLLXxQY+FGfFL0iiCgfSzPSgElxLMF5ku15N+DLjVUjP84rLzAvbN/Cu
-         GaRs02HjABbnUhCfALahIqQzq349+moDdd3a7ch4gadv5z3Gix96aj9dpdupB6kCioji
-         3b3y90ObQ0ed3ZYEfJvt44rcLeHPAXYOChbS1W6/rfuoT/8j+36nsezIufG7ATANYjug
-         5bK4oa/SDYrkCDsZtlBTflLqKgvFBvK1kEXNiLuRj5S0+bld8f0QFiB4VI4YeMkBEHYF
-         2n3TqRrdZPdKD+zgnuATPOEaIli11I0A5jz+83MY6ibIunBCjoX+lffdfeyGMqOUf7fP
-         REMg==
-In-Reply-To: <53DAB521.4090902@gmail.com>
+        bh=Dm/RzEaP/phDLdb9p1luH1R+fDy1GGKNI/oqhSCbyTA=;
+        b=llSo8Gv+GESxQz5hrMYhYCUIRlauNbXflN1aLVkZ/xPOvoUiEUEbBzahCntwtBbpzm
+         14sJpqjzLMbAC7zlztRjqxAucj/Zc/MqJCJNWoKkhnuFAP7bjxQb7qIvW7W5O1xxyYbT
+         KzKEEWc0DHSYlEtOpjmHBuL3XgaHkQP9FKLscuZWNUAUXt0io8Y3lRPR+sq7yYOhHyqa
+         e7SyGPhjJRCSYcrzRM8F+YU9HPo6ov6XTqcGGZLKwfbCKDghxRPUA2ZinrqKRDaWiF3b
+         GljS2hnlgnbdBq+g9rSMsYZonlaVp77i16juudZZXFHdNr/SgwDQ7bj7vWF83zj0SMvE
+         HXSg==
+In-Reply-To: <53DAB71E.5020303@gmail.com>
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
 To: Edward Shishkin <edward.shishkin@gmail.com>
 Cc: reiserfs-devel@vger.kernel.org
 
 
---nextPart2308758.COULkcVomL
+--nextPart234484090.oPzO4zPXoL
 Content-Transfer-Encoding: quoted-printable
 Content-Type: text/plain; charset="us-ascii"
 
-On Thursday 31 July 2014 at 23:29:05, Edward Shishkin wrote:=09
->=20
-> On 07/29/2014 11:29 AM, Ivan Shapovalov wrote:
-> > On Monday 28 July 2014 at 13:46:01, Edward Shishkin wrote:=09
-> >> Thanks, looks OK (I haven't tested it yet though..)
-> >>
-> >> I suggest to release a version without garbage collection for now
-> >> (just pass the sorted and merged extents to blkdev_issue_discard).=
-
-> > Yeah, seems reasonable.
-> > I'll submit v7 of "initial implementation" shortly with simplified =
-discard_extent(),
-> > then we could apply two patchsets and that'll be it.
-> >
-> > ----
-> > Regarding the "ideal" solution
->=20
->=20
-> BTW, do we need this "ideal solution" at all?
-> For example, my SSD Samsung 840 EVO shows erase_unit =3D 512 bytes,
-> and alignment =3D 0. It means that in my case everything will be disc=
-arded
-> in the best form with the simplified discard_extent().
->=20
-> I am not lazy, just want to make sure we do useful work :)
-> May be it makes sense to perform a small investigation of the SSD mar=
-ket
-> first?
-
-Erase unit can't be 512 bytes. Well, it can, but this is _highly_ unlik=
-ely...
-(byte < page < block; writes are per-page, erases are per-block, and
-minimal common page size is 512 bytes)
-
-Try to check with `hdparm -I /dev/sdX | grep TRIM`, or, even better, pi=
-ck an
-unused sector, write something to it and try to discard it using
-`hdparm --trim-sector-ranges`, then check the sector's contents.
-
->=20
->=20
-> > ----
-> >
-> > It seems that reiser4_alloc_blocks() can't be told to "allocate thi=
-s exact
-> > count of blocks or fail". It allocates any number of blocks from 1 =
-to needed,
-> > and actual count is returned in *len.
-> >
-> > Is it better to add an "exact" flag to reiser4_blocknr_hint or to a=
-dd an
-> > "allocate" flag to reiser4_check_blocks()?
->=20
->=20
-> Let's decide what we want from check_blocks().
->=20
-> When (discard_offset % block_size !=3D 0) we'll always need (even in =
-the
-> case of empty headp (tailp) to check the left (right) neighbor block =
-of
-> the extent. If it is busy, then we'll need to reduce alen (alen -=3D =
-d_uni)
-> because of the "shift".
->=20
-> It means that we want check_blocks() to do the following:
-> . go leftward (rightward) and allocate not more than @count continuou=
-s
-> free blocks;
-> . return actual number of allocated blocks.
->=20
-> It seems that currently we don't have suitable primitives in our spac=
-e
-> allocator. I prefer to not modify existing ones and write a new primi=
-tive.
-
-Yeah, after another glance through bitmap code this seems to be the cle=
-anest
-way. The alloc_blocks_{forward,backward}_bitmap() functions simply conv=
-ert the
-hint to an "internal representation" (search start/end, length min/max)=
- and
-call bitmap_alloc_{forward,backward}().
-
-I'd write something like alloc_blocks_*_exact_bitmap(start, min_len, ma=
-x_len)
-eventually calling into the same bitmap_alloc_*() functions. They also =
-can be
-reused in the batch discard code (if we decide to implement it). OK?
-
+On Thursday 31 July 2014 at 23:37:34, Edward Shishkin wrote:=09
+> Do we really need this ioctl?
+> If we implement precise discard (with garbage collection),
+> then I don't see any applications for this ioctl..
 >=20
 > Edward.
 
+I think that we need it: think of unclean unmounts, fs corruptions (fsc=
+k does
+not discard new free space), forgotten 'discard' mount option, etc...
 
-Thanks,
+Having as much discarded space as possible is important not only for ha=
+ving
+faster writes, but also for the background firmware-based wear leveling=
+ to
+function efficiently.
+
 =2D-=20
 Ivan Shapovalov / intelfx /
---nextPart2308758.COULkcVomL
+>=20
+>=20
+> On 07/31/2014 04:23 PM, Ivan Shapovalov wrote:
+> > Hi,
+> >
+> > I've started to iterate on the batch mode discard implementation fo=
+r reiser4,
+> > and the first question is -- where to place the ioctl handler?
+> >
+> >  From what I've been able to understand, we need something like
+> > reiser4_ioctl_dir_common() in plugin/file_ops.c, pointer to which s=
+hould
+> > become ->{unlocked,compat}_ioctl() of directory_f_ops in plugin/obj=
+ect.c.
+> >
+> > However, in this case, what is DIRECTORY_FILE_PLUGIN_ID and corresp=
+onding
+> > entry in file_plugins array in plugin/object.c? How is it related t=
+o
+> > directories?
+> >
+> > I see that its ->{inode,file,as}_ops are empty, so it probably does=
+ not
+> > participate in dispatching ioctls, but I'd like to make sure this i=
+s the case.
+> >
+> > Thanks,
+> 
+--nextPart234484090.oPzO4zPXoL
 Content-Type: application/pgp-signature; name="signature.asc"
 Content-Description: This is a digitally signed message part.
 Content-Transfer-Encoding: 7Bit
@@ -132,10 +83,10 @@ Content-Transfer-Encoding: 7Bit
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2
 
-iF4EABEIAAYFAlPavecACgkQxUKljSIMAnC21gEA3gKP6eGGCllb6OS1D/jyDmGH
-Yl405X9yO1nBTmqraf8BAMzPfoKWO9WdzWNgcvDiQjtxkYtkcx4HhsXKFwYS60qC
-=6At3
+iF4EABEIAAYFAlPavqYACgkQxUKljSIMAnDx6wD+Jpu4bACS0iEdIo4Two8kechl
+ffNAX4kGll6Gs6ehPtIA/0Y7IjbyH803F8CR0zvEnu+P0HiJ2U5xmuYTUofan0bg
+=vods
 -----END PGP SIGNATURE-----
 
---nextPart2308758.COULkcVomL--
+--nextPart234484090.oPzO4zPXoL--
 
