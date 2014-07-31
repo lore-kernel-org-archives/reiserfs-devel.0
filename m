@@ -1,20 +1,18 @@
 From: Ivan Shapovalov <intelfx100@gmail.com>
-Subject: [PATCHv7 1/6] reiser4: fix reiser4_post_{commit,write_back}_hook() and their invocations.
-Date: Thu, 31 Jul 2014 14:19:44 +0400
-Message-ID: <1406801989-6884-2-git-send-email-intelfx100@gmail.com>
-References: <1406801989-6884-1-git-send-email-intelfx100@gmail.com>
+Subject: [PATCHv7 0/6] reiser4: discard support: simplified and race-free initial implementation.
+Date: Thu, 31 Jul 2014 14:19:43 +0400
+Message-ID: <1406801989-6884-1-git-send-email-intelfx100@gmail.com>
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20120113;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=KPOUDbb1ZegEba8P9ym+7MzuuXA9kXa3sTtzIP5H2BA=;
-        b=KVlRQOvgPqKGHlDz40mOif4Cb3zkr6o8P2R9NtX0soH4STca6VyaYjiSq6OStqnSEz
-         twVpgzYgdUkzHoFGcDXdl+vS6AwRqWcnB3kWW4wZEn72PnRjKKXAI5kv0XhcycQhWCy7
-         EPH37VNLAxrg6I/GdRShLLb7onPqU7lQAAcM43jWL2HkB4OapY9Q2fWrxWmBuAMnko0v
-         EgqjW6IIKXmRw9mz9Mda2Kp285Khyt/NqeMsSDeUM2A6MwWl+4jwkkVHVg7/LXPvpDJC
-         l2XU1rLcLCWVFCNbHrb7r+KgHa2d4ggfRYPZNtC+SqhI5UEdaA6FsSKe7e4BK3QSsY82
-         OvKw==
-In-Reply-To: <1406801989-6884-1-git-send-email-intelfx100@gmail.com>
+        h=from:to:cc:subject:date:message-id;
+        bh=YvBVPQ8PqxP43i9gsh+ERdYMGTFtkLfT0FRUaCIvD1Q=;
+        b=Hv08UH8dvAyfYBsm17JO+hS3QZwa2zwjG7raZw11M7X7vv6LGtd12IbCgQWsQ3sS3q
+         7OZ2KdewO5S7eDLIzl4gF+jfYw8QVNgLydn95T6WE57ZyDygD9w3G/QlLrdIqGGuG3cz
+         RdkFjI4AEhtFAFaEYDYYN+RuWzln1cTuv78soAe83bjRXxJcMTizgHnr8iWuazE0XpLA
+         1kjRcACrb3uWCWi//LrqyAt0xAKeJMvyNkxICUcGBDfpNa6fKzZ3vvt+yQl+vtWpp84W
+         k2Km3+TRCT5Fcg/ZYwQ+a5l2SxIuYexZfM7+3c5DpBU/44ghtde/iZz8BDoJ4Q1uvH2k
+         uSIw==
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
 MIME-Version: 1.0
@@ -23,57 +21,68 @@ Content-Transfer-Encoding: 7bit
 To: reiserfs-devel@vger.kernel.org
 Cc: edward.shishkin@gmail.com, Ivan Shapovalov <intelfx100@gmail.com>
 
-- let all hooks be called from one place (reiser4_write_logs())
-- don't call reiser4_post_write_back_hook() twice
-- fix reiser4_post_write_back_hook(): call the correct method of space allocator
+v1: - initial implementation (patches 1, 2)
 
-Signed-off-by: Ivan Shapovalov <intelfx100@gmail.com>
----
- fs/reiser4/block_alloc.c | 2 +-
- fs/reiser4/wander.c      | 3 +--
- 2 files changed, 2 insertions(+), 3 deletions(-)
+v2: - cleanup, fixes discovered in debug mode
+    - saner logging
+    - assertions
+    - enablement of discard through mount option
 
-diff --git a/fs/reiser4/block_alloc.c b/fs/reiser4/block_alloc.c
-index 81ed96f..3a4b667 100644
---- a/fs/reiser4/block_alloc.c
-+++ b/fs/reiser4/block_alloc.c
-@@ -1150,7 +1150,7 @@ void reiser4_post_write_back_hook(void)
- {
- 	assert("zam-504", get_current_super_private() != NULL);
- 
--	sa_post_commit_hook();
-+	sa_post_write_back_hook();
- }
- 
- /*
-diff --git a/fs/reiser4/wander.c b/fs/reiser4/wander.c
-index 0b518c3..4e29de8 100644
---- a/fs/reiser4/wander.c
-+++ b/fs/reiser4/wander.c
-@@ -1140,7 +1140,6 @@ static int write_tx_back(struct commit_handle * ch)
- 	int ret;
- 	int barrier;
- 
--	reiser4_post_commit_hook();
- 	fq = get_fq_for_current_atom();
- 	if (IS_ERR(fq))
- 		return  PTR_ERR(fq);
-@@ -1165,7 +1164,6 @@ static int write_tx_back(struct commit_handle * ch)
- 		if (ret)
- 			return ret;
- 	}
--	reiser4_post_write_back_hook();
- 	return 0;
- }
- 
-@@ -1251,6 +1249,7 @@ int reiser4_write_logs(long *nr_submitted)
- 	spin_lock_atom(atom);
- 	reiser4_atom_set_stage(atom, ASTAGE_POST_COMMIT);
- 	spin_unlock_atom(atom);
-+	reiser4_post_commit_hook();
- 
- 	ret = write_tx_back(&ch);
- 	reiser4_post_write_back_hook();
+v3: - fixed the extent merge loop in discard_atom()
+
+v4: - squashed fix-ups into the main patch (with exception of reiser4_debug())
+    - fixed bug in usage of division ops discovered while building on ARM
+
+v5: - squashed mount option into the main patch
+    - refactor based on discussion (see commit msg)
+      - splitted off blocknr_list code
+      - replaced ->discard_set with ->delete_set and ->aux_delete_set
+
+v6: - actualized in-code comments
+    - removed uber-verbose debug statements
+    - fixed code-to-patch mapping
+    - moved blocknrlist and blocknrset to kmem_cache instead of kmalloc/kfree
+      (in a separate commit for ease of reviewing)
+    - dropped the RFC label
+
+v7: - squashed with PATCHv2 "perform discard before all deallocations"
+    - dropped extent padding from discard_extent()
+    - completed in-code comments, cosmetic fixups
+    - added missing #include in block_alloc.c
+    - added missing spin_unlock_atom() in discard_atom()
+
+Ivan Shapovalov (6):
+  reiser4: fix reiser4_post_{commit,write_back}_hook() and their invocations.
+  reiser4: make space_allocator's check_blocks() reusable.
+  reiser4: add an implementation of "block lists", splitted off the discard code.
+  reiser4: blocknr_list: use kmem_cache instead of kmalloc for allocating entries.
+  reiser4: blocknr_set: use kmem_cache instead of kmalloc for allocating entries.
+  reiser4: discard support: initial implementation using blocknr_list, without extent padding.
+
+ fs/reiser4/Makefile                       |   2 +
+ fs/reiser4/block_alloc.c                  |  62 +++---
+ fs/reiser4/block_alloc.h                  |  14 +-
+ fs/reiser4/blocknrlist.c                  | 336 ++++++++++++++++++++++++++++++
+ fs/reiser4/blocknrset.c                   |  34 ++-
+ fs/reiser4/dformat.h                      |   2 +
+ fs/reiser4/discard.c                      | 179 ++++++++++++++++
+ fs/reiser4/discard.h                      |  42 ++++
+ fs/reiser4/forward.h                      |   1 +
+ fs/reiser4/init_super.c                   |   2 +
+ fs/reiser4/plugin/space/bitmap.c          |  82 +++++---
+ fs/reiser4/plugin/space/bitmap.h          |   2 +-
+ fs/reiser4/plugin/space/space_allocator.h |   4 +-
+ fs/reiser4/super.h                        |   4 +-
+ fs/reiser4/super_ops.c                    |  14 ++
+ fs/reiser4/txnmgr.c                       |  90 +++++++-
+ fs/reiser4/txnmgr.h                       |  60 +++++-
+ fs/reiser4/wander.c                       |   6 +-
+ fs/reiser4/znode.c                        |   9 +-
+ 19 files changed, 859 insertions(+), 86 deletions(-)
+ create mode 100644 fs/reiser4/blocknrlist.c
+ create mode 100644 fs/reiser4/discard.c
+ create mode 100644 fs/reiser4/discard.h
+
 -- 
 2.0.3
 
