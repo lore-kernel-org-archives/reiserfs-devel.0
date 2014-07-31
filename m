@@ -1,94 +1,79 @@
-From: Jose R R <Jose.r.r@metztli-it.com>
-Subject: Re: Bootcd-based LIVE Reiser4 rescue/recovery/installation ISO
-Date: Thu, 31 Jul 2014 01:53:47 -0700
-Message-ID: <CAM12Q5RfSnpW-YwKfe0hnh5Er0iC-pNNXdxWn6=m7QiWa0Dm1Q@mail.gmail.com>
-References: <CAM12Q5T5iSDq90bohY2Wz8j2AmEHCX41xQkvrff05bOcfWEqsA@mail.gmail.com>
-Mime-Version: 1.0
+From: Ivan Shapovalov <intelfx100@gmail.com>
+Subject: [PATCHv7 1/6] reiser4: fix reiser4_post_{commit,write_back}_hook() and their invocations.
+Date: Thu, 31 Jul 2014 14:19:44 +0400
+Message-ID: <1406801989-6884-2-git-send-email-intelfx100@gmail.com>
+References: <1406801989-6884-1-git-send-email-intelfx100@gmail.com>
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
-In-Reply-To: <CAM12Q5T5iSDq90bohY2Wz8j2AmEHCX41xQkvrff05bOcfWEqsA@mail.gmail.com>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20120113;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references;
+        bh=KPOUDbb1ZegEba8P9ym+7MzuuXA9kXa3sTtzIP5H2BA=;
+        b=KVlRQOvgPqKGHlDz40mOif4Cb3zkr6o8P2R9NtX0soH4STca6VyaYjiSq6OStqnSEz
+         twVpgzYgdUkzHoFGcDXdl+vS6AwRqWcnB3kWW4wZEn72PnRjKKXAI5kv0XhcycQhWCy7
+         EPH37VNLAxrg6I/GdRShLLb7onPqU7lQAAcM43jWL2HkB4OapY9Q2fWrxWmBuAMnko0v
+         EgqjW6IIKXmRw9mz9Mda2Kp285Khyt/NqeMsSDeUM2A6MwWl+4jwkkVHVg7/LXPvpDJC
+         l2XU1rLcLCWVFCNbHrb7r+KgHa2d4ggfRYPZNtC+SqhI5UEdaA6FsSKe7e4BK3QSsY82
+         OvKw==
+In-Reply-To: <1406801989-6884-1-git-send-email-intelfx100@gmail.com>
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
+MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: ReiserFS Development List <reiserfs-devel@vger.kernel.org>, Debian Live <debian-live@lists.debian.org>, debian-cloud <debian-cloud@lists.debian.org>
+To: reiserfs-devel@vger.kernel.org
+Cc: edward.shishkin@gmail.com, Ivan Shapovalov <intelfx100@gmail.com>
 
-Niltze, all-
+- let all hooks be called from one place (reiser4_write_logs())
+- don't call reiser4_post_write_back_hook() twice
+- fix reiser4_post_write_back_hook(): call the correct method of space allocator
 
-Just uploaded to SourceForge version .01 of Xonecuiltzin Reiser4
-bootcd-based LIVE rescue/installable ISO image:
-xonecuiltzin-v01-reiser4.iso.
+Signed-off-by: Ivan Shapovalov <intelfx100@gmail.com>
+---
+ fs/reiser4/block_alloc.c | 2 +-
+ fs/reiser4/wander.c      | 3 +--
+ 2 files changed, 2 insertions(+), 3 deletions(-)
 
-Bootable media includes latest gparted fix, gedit in addition to
-existing vim text editor.
-I included screenfetch utility to show some useful system info.
-Also updated to latest fix to libaal-1.0.6 and reiser4progs 1.0.9:
-debugfs.reiser4*  fsck.reiser4*  make_reiser4*  measurefs.reiser4*
-mkfs.reiser4*
-
-< https://pbs.twimg.com/media/Bt3BJuCCIAA52Oy.png:large >
-
-Download: < https://sourceforge.net/projects/xonecuiltzin/ >
-
-Enjoy!
-
-
-Best Professional Regards.
-
-On Sat, Jul 26, 2014 at 11:36 AM, Jose R R <Jose.r.r@metztli-it.com> wrote:
-> Apologies for incorrect password, relevant text file has been updated:
->
-> I uploaded to SF a bootcd-based live ISO made from a small 20GB pure
-> Reiser4 partition in my dev machine.
->
-> I patched a recent Linux kernel 3.15.2 as explained in Metztli IT's
-> blog < http://www.metztli-it.com/blog/index.php/aG2?blog=4 >, patched
-> legacy Grub97, and installed utilities gparted and testdisk.
->
-> Since Debian bootcd < https://packages.debian.org/sid/bootcd > may
-> also install a GNU/Linux system, I surmise that an (Reiser4)
-> installation is also possible, please read man and configuration files
-> under /etc/bootcd/
->
-> I tested ISO image under VirtualBox 4.3.12 and here is a snapshot: <
-> https://pbs.twimg.com/media/BsoJVE3CQAENw-t.png:large >
->
-> If interested in giving it a spin, please download at:
->
-> < https://sourceforge.net/projects/xonecuiltzin/ >
->
->
-> Best Professional Regards.
->
-> On Wed, Jul 16, 2014 at 12:09 PM, Jose R R <Jose.r.r@metztli-it.com> wrote:
->> Niltze!
->>
->> I uploaded to SF a bootcd-based live ISO made from a small 20GB pure
->> Reiser4 partition in my dev machine.
->>
->> I patched a recent Linux kernel 3.15.2 as explained in Metztli IT's
->> blog < http://www.metztli-it.com/blog/index.php/aG2?blog=4 >, patched
->> legacy Grub97, and installed utilities gparted and testdisk.
->>
->> Since Debian bootcd < https://packages.debian.org/sid/bootcd > may
->> also install a GNU/Linux system, I surmise that an (Reiser4)
->> installation is also possible, please read man and configuration files
->> under /etc/bootcd/
->>
->> I tested ISO image under VirtualBox 4.3.12 and here is a snapshot: <
->> https://pbs.twimg.com/media/BsoJVE3CQAENw-t.png:large >
->>
->> If interested in giving it a spin, please download at:
->>
->> < https://sourceforge.net/projects/xonecuiltzin/ >
->>
-> [...]
->
-
+diff --git a/fs/reiser4/block_alloc.c b/fs/reiser4/block_alloc.c
+index 81ed96f..3a4b667 100644
+--- a/fs/reiser4/block_alloc.c
++++ b/fs/reiser4/block_alloc.c
+@@ -1150,7 +1150,7 @@ void reiser4_post_write_back_hook(void)
+ {
+ 	assert("zam-504", get_current_super_private() != NULL);
+ 
+-	sa_post_commit_hook();
++	sa_post_write_back_hook();
+ }
+ 
+ /*
+diff --git a/fs/reiser4/wander.c b/fs/reiser4/wander.c
+index 0b518c3..4e29de8 100644
+--- a/fs/reiser4/wander.c
++++ b/fs/reiser4/wander.c
+@@ -1140,7 +1140,6 @@ static int write_tx_back(struct commit_handle * ch)
+ 	int ret;
+ 	int barrier;
+ 
+-	reiser4_post_commit_hook();
+ 	fq = get_fq_for_current_atom();
+ 	if (IS_ERR(fq))
+ 		return  PTR_ERR(fq);
+@@ -1165,7 +1164,6 @@ static int write_tx_back(struct commit_handle * ch)
+ 		if (ret)
+ 			return ret;
+ 	}
+-	reiser4_post_write_back_hook();
+ 	return 0;
+ }
+ 
+@@ -1251,6 +1249,7 @@ int reiser4_write_logs(long *nr_submitted)
+ 	spin_lock_atom(atom);
+ 	reiser4_atom_set_stage(atom, ASTAGE_POST_COMMIT);
+ 	spin_unlock_atom(atom);
++	reiser4_post_commit_hook();
+ 
+ 	ret = write_tx_back(&ch);
+ 	reiser4_post_write_back_hook();
 -- 
-Jose R R
-http://www.metztli-it.com
----------------------------------------------------------------------------------------------
-NEW Apache OpenOffice 4.1.0! Download for GNU/Linux, Mac OS, Windows.
----------------------------------------------------------------------------------------------
-Daylight Saving Time in USA & Canada ends: Sunday, November 02, 2014
----------------------------------------------------------------------------------------------
+2.0.3
+
