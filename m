@@ -1,68 +1,67 @@
-From: Ivan Shapovalov <intelfx100@gmail.com>
-Subject: reiser4: FITRIM ioctl -- where to place the handler?
-Date: Thu, 31 Jul 2014 18:23:59 +0400
-Message-ID: <1888625.Xe1HFmG7T5@intelfx-laptop>
+From: Jeff Mahoney <jeffm@suse.com>
+Subject: Re: Formating Reiserfs 3.6 with bad-blocks
+Date: Thu, 31 Jul 2014 11:25:41 -0400
+Message-ID: <53DA5FF5.5040706@suse.com>
+References: <CAMRsyOc5b+CejzE4R2Oz7367+N=v6dGR4P2eoVph=E=A9gMJYg@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; boundary="nextPart5062696.inTkE2rYaI"; micalg="pgp-sha256"; protocol="application/pgp-signature"
+Content-Transfer-Encoding: 7bit
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20120113;
-        h=from:to:cc:subject:date:message-id:user-agent:mime-version
-         :content-type;
-        bh=xwQt/C+7/dwYKL/wr52aOW+ciGlLMw3EwE3G9Csd7Ec=;
-        b=sv3+p+NSSIYr1j6VlPjzLBvt8quPEvnSwH0NAGNF4dXg+BYfwxbojb+RwXg4GOoq5e
-         ct61xCzOdfBtGxNg/6EQs2rwIllubOOBoemaU9jqJtQZvTiYaWXAvo13D8rpGjuCPFrT
-         a89pISr3XiErG9vTI+1pDMgZ25AbvJTVtF1gHFTTouGknv4qPCtzdN5s05JENUT4sAGT
-         6l4xxsgSvGffmg6LYyWrhl6zLhybln0TnHmk3+Z6/V1sDfHR2e5NgCHU9bPABTkBHRKr
-         5N9nF9jG2xJFEojHsAMv3Ja1jbq3LQULYxSOuY7KaPb0Mr6iJfOrUtO4CU8aX8Syx8zG
-         fTXA==
+In-Reply-To: <CAMRsyOc5b+CejzE4R2Oz7367+N=v6dGR4P2eoVph=E=A9gMJYg@mail.gmail.com>
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
-To: reiserfs-devel@vger.kernel.org
-Cc: Edward Shishkin <edward.shishkin@gmail.com>
-
-
---nextPart5062696.inTkE2rYaI
-Content-Transfer-Encoding: quoted-printable
 Content-Type: text/plain; charset="us-ascii"
+To: Bhikkhu Mettavihari <tv.lists@gmail.com>, Linux Reiserfs Devel <reiserfs-devel@vger.kernel.org>
 
-Hi,
+-----BEGIN PGP SIGNED MESSAGE-----
+Hash: SHA1
 
-I've started to iterate on the batch mode discard implementation for re=
-iser4,
-and the first question is -- where to place the ioctl handler?
+On 7/26/14, 4:16 AM, Bhikkhu Mettavihari wrote:
+> Greetings,
+> 
+> I have about 50 x 500GB to 2 TB hard disks in my setup. All them
+> are using reiserfs 3.6
+> 
+> When I get slow reads on a hard disk then I do: # badblocks -b 4096
+> -o bad-blocks-finished-6-2.txt /dev/sdd1
+> 
+> # tail -f bad-blocks-finished-6-2.txt 77299721 77299722
+> 
+> after that I format the hard disk with this command:
+> 
+> mkfs.reiserfs -B /root/bad-blocks-finished-6-2.txt /dev/sdd1
+> 
+> But my hard disk still seems to have problems with reading certain
+> parts. I notice that the reading speed is going down to a very low
+> level with some files.
+> 
+> Is my method correct ? or have I done something incorrect ?
 
-From=20what I've been able to understand, we need something like
-reiser4_ioctl_dir_common() in plugin/file_ops.c, pointer to which shoul=
-d
-become ->{unlocked,compat}_ioctl() of directory_f_ops in plugin/object.=
-c.
+I hate to be the bearer of bad news, but whatever disk is reporting
+the bad blocks probably needs to be replaced. Modern disks have the
+ability to remap sectors automatically. If you are getting bad sectors
+during writes, it means that the remapping table has been exhausted.
+If you're getting bad sectors during reads, your best bet is to try to
+copy those blocks elsewhere and hope for the best.
 
-However, in this case, what is DIRECTORY_FILE_PLUGIN_ID and correspondi=
-ng
-entry in file_plugins array in plugin/object.c? How is it related to
-directories?
+- -Jeff
 
-I see that its ->{inode,file,as}_ops are empty, so it probably does not=
-
-participate in dispatching ioctls, but I'd like to make sure this is th=
-e case.
-
-Thanks,
-=2D-=20
-Ivan Shapovalov / intelfx /
---nextPart5062696.inTkE2rYaI
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: This is a digitally signed message part.
-Content-Transfer-Encoding: 7Bit
-
+- -- 
+Jeff Mahoney
+SUSE Labs
 -----BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
+Version: GnuPG/MacGPG2 v2.0.19 (Darwin)
 
-iF4EABEIAAYFAlPaUX8ACgkQxUKljSIMAnA5HQEA2mkE2Nf6ffwQnhuWs1g9A9sa
-a9l1Z3P3PZLFNm89sB4A/1KvvRfx4lEUAuOG9w2E78mFHvcd0lAK2zamPl3wLxnL
-=GAKj
+iQIcBAEBAgAGBQJT2l/1AAoJEB57S2MheeWyt80QAKqaMGAS8rsWOeSi4fN0rRdR
+/pKoPOEIub/lIwVxct6wGyut5+D+11ihLDUTnZnskImq3l+uEZQuOXTzY57CbTeW
+34W8e5hZoUTb4fNXONYyIPrq6RsiLC82Hixkbt90A7V9r/zpyu0uMwqwHqtjfP3l
+QQw+IoucdxXdKn0d0udNfWZF9UbV9lNYQtBDCtz/7YGwf249al3dJfzuI0fx9gJ6
+0OSZboMeVYfzJ53bmi8NDMVACz75y9E8x5DJX40NgBZNB9TpahCK0ttCSJ3n5v8D
+CvEAGeUEThoJtMVcT93zRzLAky8AHOTQVS+OLNdbHm8eGKYULlbyJdNDFVo6q0/r
+QM1wFPolnZCOOKnRW9JciG/ZJl1KRK38U1ad+e42PblDZs/hZU3mixhT/zgf4gWd
+d2oG3AoDlSm2gxORq5Nf8Af9kxbSi55Rx/LuDB+DrW83nKlk6fbAM+zA2cBDbZjN
+84wh9xLmBWjsUkSPXcSvhWUjI5saBoxBXG7VO6lO6dOAkpP/QMwi2dgcuzEpuheS
+GINBUwGiPx1PLuwKXEZ3ho7cAarLbJ7j/u5YZdZ4MGeUGzkDsHsYQTN2epSe8RB8
+cDJdTForsiWlxegiJV/1CPkFQkZONomEW5xqjjByCtNG4eKX5EEp8c7VLDu1n/FV
+n5h2M9zt4EmW705M9nPf
+=iHxa
 -----END PGP SIGNATURE-----
-
---nextPart5062696.inTkE2rYaI--
-
