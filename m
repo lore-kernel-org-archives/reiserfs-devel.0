@@ -1,29 +1,32 @@
 From: Ivan Shapovalov <intelfx100@gmail.com>
-Subject: reiser4: FITRIM ioctl -- how to grab the space?
-Date: Fri, 01 Aug 2014 00:47:50 +0400
-Message-ID: <3405506.BC0S4TX54B@intelfx-laptop>
+Subject: Fwd: reiser4: FITRIM ioctl -- how to grab the space?
+Date: Fri, 01 Aug 2014 00:49:05 +0400
+Message-ID: <1829674.oYUdLFIApn@intelfx-laptop>
 Mime-Version: 1.0
-Content-Type: multipart/signed; boundary="nextPart6869975.uAER6AFDZ4"; micalg="pgp-sha256"; protocol="application/pgp-signature"
+Content-Type: multipart/signed; boundary="nextPart2387782.sMP0zpTAYx"; micalg="pgp-sha256"; protocol="application/pgp-signature"
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20120113;
-        h=from:to:subject:date:message-id:user-agent:mime-version
+        h=from:to:cc:subject:date:message-id:user-agent:mime-version
          :content-type;
-        bh=A4ZbWLb4tZRSRaA5AEGjnE4xEKs/DU3hQ1hyXYFQhU0=;
-        b=vVrzf7cr1I1NbyQ7G+dx5euaKmgsZFsLjcH6U6h44It0J0dXnRGPYrT/CHYHPNgoY2
-         XhU9oKOrkJA9cE6+oab389h+KIZjMjETDsl+SjYRmaHkiX/Yl8xlIl3LVPjTlQ20Rap1
-         ZK8EP03046CtCbS1QQL0+or50hEz+vR95Gp6hNB8eJvNgRHPvL5IkMeU7SSjHBfpobQG
-         GM/rQpHamUgm9NXGva+B2IulhLqZ/4xQFGok7tGP3zyH32uDgy+GuJAQh68DPBb+e3Ov
-         cIlmFWnHTyQZ3DBxuLw/ygWPf+Mrn7hGudKftxwrqONLnbYtb4/TU1SEB2TwZSIABdyr
-         Md+w==
+        bh=wCDOPi7tkFe3g0tFkhKydkNXw7024cKfCVYoLy15vdM=;
+        b=VMMscmEGE2N1C0bSMgopBm5B8TzJeHzjXkeNgSFtrRHalCn9QJUbDdPmW3HIcsd833
+         2Gshsz4KDcSChRYcyuw9t/X0gc82sZNU82ZDZQ9EGo3lSbtZjwYopySXxzUT8uTq40d+
+         MOG//4dYyawbDlxP8ASFCE2EYmJaRqdzLGcWJjNWfxFof1Gef8zhROZQpWzgr25k6NF0
+         tYxeMq3ubpt43YyV7bSRVk2pJDkc9z68/aq302ulXGurGOnxnle4KU2RH5OM3v7mV5Wo
+         WUKOlxib37mX65gkXg1RXCeA7DF0AbNBkcoftrmh0DOwCPMdMtCMpS6JaZVpxxgNXeEx
+         whCw==
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
 To: reiserfs-devel@vger.kernel.org
+Cc: Edward Shishkin <edward.shishkin@gmail.com>
 
 
---nextPart6869975.uAER6AFDZ4
+--nextPart2387782.sMP0zpTAYx
 Content-Transfer-Encoding: quoted-printable
 Content-Type: text/plain; charset="us-ascii"
+
+(resend -- forgot the Cc:, sorry for spamming)
 
 ...and here is volume 2 of my neverending question series :)
 
@@ -66,7 +69,7 @@ Could you explain these things?
 Thanks,
 =2D-=20
 Ivan Shapovalov / intelfx /
---nextPart6869975.uAER6AFDZ4
+--nextPart2387782.sMP0zpTAYx
 Content-Type: application/pgp-signature; name="signature.asc"
 Content-Description: This is a digitally signed message part.
 Content-Transfer-Encoding: 7Bit
@@ -74,10 +77,10 @@ Content-Transfer-Encoding: 7Bit
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2
 
-iF4EABEIAAYFAlPaq3oACgkQxUKljSIMAnBmzAD/aKWZjXPtHMWfWEp0X1SIb4SJ
-m5KIAl6iSsdM3yOuXokBAIT8k25TE3O1k174ylBZMdpgVOLohrPeUnzfELN8PpgE
-=joYb
+iF4EABEIAAYFAlPaq8EACgkQxUKljSIMAnDK0wD9GNAaUakAgxMFIXUIH6RmT+Zv
+OKW5UPbIwcjv9tA/2dYA/jm8LxBTHioixIIa5LfmZEYUJFV6WQpk6eY6c3NsnaK3
+=Pnqy
 -----END PGP SIGNATURE-----
 
---nextPart6869975.uAER6AFDZ4--
+--nextPart2387782.sMP0zpTAYx--
 
