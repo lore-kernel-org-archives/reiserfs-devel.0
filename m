@@ -1,67 +1,83 @@
-From: Jeff Mahoney <jeffm@suse.com>
-Subject: Re: Formating Reiserfs 3.6 with bad-blocks
-Date: Thu, 31 Jul 2014 11:25:41 -0400
-Message-ID: <53DA5FF5.5040706@suse.com>
-References: <CAMRsyOc5b+CejzE4R2Oz7367+N=v6dGR4P2eoVph=E=A9gMJYg@mail.gmail.com>
+From: Ivan Shapovalov <intelfx100@gmail.com>
+Subject: reiser4: FITRIM ioctl -- how to grab the space?
+Date: Fri, 01 Aug 2014 00:47:50 +0400
+Message-ID: <3405506.BC0S4TX54B@intelfx-laptop>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; boundary="nextPart6869975.uAER6AFDZ4"; micalg="pgp-sha256"; protocol="application/pgp-signature"
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
-In-Reply-To: <CAMRsyOc5b+CejzE4R2Oz7367+N=v6dGR4P2eoVph=E=A9gMJYg@mail.gmail.com>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20120113;
+        h=from:to:subject:date:message-id:user-agent:mime-version
+         :content-type;
+        bh=A4ZbWLb4tZRSRaA5AEGjnE4xEKs/DU3hQ1hyXYFQhU0=;
+        b=vVrzf7cr1I1NbyQ7G+dx5euaKmgsZFsLjcH6U6h44It0J0dXnRGPYrT/CHYHPNgoY2
+         XhU9oKOrkJA9cE6+oab389h+KIZjMjETDsl+SjYRmaHkiX/Yl8xlIl3LVPjTlQ20Rap1
+         ZK8EP03046CtCbS1QQL0+or50hEz+vR95Gp6hNB8eJvNgRHPvL5IkMeU7SSjHBfpobQG
+         GM/rQpHamUgm9NXGva+B2IulhLqZ/4xQFGok7tGP3zyH32uDgy+GuJAQh68DPBb+e3Ov
+         cIlmFWnHTyQZ3DBxuLw/ygWPf+Mrn7hGudKftxwrqONLnbYtb4/TU1SEB2TwZSIABdyr
+         Md+w==
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
+To: reiserfs-devel@vger.kernel.org
+
+
+--nextPart6869975.uAER6AFDZ4
+Content-Transfer-Encoding: quoted-printable
 Content-Type: text/plain; charset="us-ascii"
-To: Bhikkhu Mettavihari <tv.lists@gmail.com>, Linux Reiserfs Devel <reiserfs-devel@vger.kernel.org>
 
------BEGIN PGP SIGNED MESSAGE-----
-Hash: SHA1
+...and here is volume 2 of my neverending question series :)
 
-On 7/26/14, 4:16 AM, Bhikkhu Mettavihari wrote:
-> Greetings,
-> 
-> I have about 50 x 500GB to 2 TB hard disks in my setup. All them
-> are using reiserfs 3.6
-> 
-> When I get slow reads on a hard disk then I do: # badblocks -b 4096
-> -o bad-blocks-finished-6-2.txt /dev/sdd1
-> 
-> # tail -f bad-blocks-finished-6-2.txt 77299721 77299722
-> 
-> after that I format the hard disk with this command:
-> 
-> mkfs.reiserfs -B /root/bad-blocks-finished-6-2.txt /dev/sdd1
-> 
-> But my hard disk still seems to have problems with reading certain
-> parts. I notice that the reading speed is going down to a very low
-> level with some files.
-> 
-> Is my method correct ? or have I done something incorrect ?
+A stub ioctl, placed as I described, seems to work and log a warning ea=
+ch time
+I invoke `fstrim` on anything mounted.
 
-I hate to be the bearer of bad news, but whatever disk is reporting
-the bad blocks probably needs to be replaced. Modern disks have the
-ability to remap sectors automatically. If you are getting bad sectors
-during writes, it means that the remapping table has been exhausted.
-If you're getting bad sectors during reads, your best bet is to try to
-copy those blocks elsewhere and hope for the best.
+Now on to space allocation. This seems pretty easy in the first approxi=
+mation:
+reiser4_alloc_blocks_bitmap() seems to do what's needed, finding the ne=
+arest
+free extent, not the biggest one. So we could just call reiser4_alloc_b=
+locks()
+plus reiser4_dealloc_blocks(BA_DEFER) repeatedly, while allocations suc=
+ceed.
 
-- -Jeff
+However, I suppose we need to grab all free space before proceeding. Th=
+ere is
+no primitive for grabbing all free space, so we need to read block coun=
+ters,
+calculate amount of space to grab and then call reiser4_grab_reserved()=
 
-- -- 
-Jeff Mahoney
-SUSE Labs
+(as we want to allocate everything, including the reserved space. This =
+creates
+two problems (as I see it):
+=2D there is a race between reading block counters (under sb spinlock) an=
+d
+  performing the grab (which takes the spinlock on its own);
+=2D if anything will try to grab space during discarding, it will get an =
+ENOSPC,
+  while it's better to make the process wait until discarding is comple=
+ted.
+
+I'm not sure whether the last problem really exists (there is BA_CAN_CO=
+MMIT,
+but I don't know whether is it used consistently where possible).
+
+Could you explain these things?
+
+Thanks,
+=2D-=20
+Ivan Shapovalov / intelfx /
+--nextPart6869975.uAER6AFDZ4
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: This is a digitally signed message part.
+Content-Transfer-Encoding: 7Bit
+
 -----BEGIN PGP SIGNATURE-----
-Version: GnuPG/MacGPG2 v2.0.19 (Darwin)
+Version: GnuPG v2
 
-iQIcBAEBAgAGBQJT2l/1AAoJEB57S2MheeWyt80QAKqaMGAS8rsWOeSi4fN0rRdR
-/pKoPOEIub/lIwVxct6wGyut5+D+11ihLDUTnZnskImq3l+uEZQuOXTzY57CbTeW
-34W8e5hZoUTb4fNXONYyIPrq6RsiLC82Hixkbt90A7V9r/zpyu0uMwqwHqtjfP3l
-QQw+IoucdxXdKn0d0udNfWZF9UbV9lNYQtBDCtz/7YGwf249al3dJfzuI0fx9gJ6
-0OSZboMeVYfzJ53bmi8NDMVACz75y9E8x5DJX40NgBZNB9TpahCK0ttCSJ3n5v8D
-CvEAGeUEThoJtMVcT93zRzLAky8AHOTQVS+OLNdbHm8eGKYULlbyJdNDFVo6q0/r
-QM1wFPolnZCOOKnRW9JciG/ZJl1KRK38U1ad+e42PblDZs/hZU3mixhT/zgf4gWd
-d2oG3AoDlSm2gxORq5Nf8Af9kxbSi55Rx/LuDB+DrW83nKlk6fbAM+zA2cBDbZjN
-84wh9xLmBWjsUkSPXcSvhWUjI5saBoxBXG7VO6lO6dOAkpP/QMwi2dgcuzEpuheS
-GINBUwGiPx1PLuwKXEZ3ho7cAarLbJ7j/u5YZdZ4MGeUGzkDsHsYQTN2epSe8RB8
-cDJdTForsiWlxegiJV/1CPkFQkZONomEW5xqjjByCtNG4eKX5EEp8c7VLDu1n/FV
-n5h2M9zt4EmW705M9nPf
-=iHxa
+iF4EABEIAAYFAlPaq3oACgkQxUKljSIMAnBmzAD/aKWZjXPtHMWfWEp0X1SIb4SJ
+m5KIAl6iSsdM3yOuXokBAIT8k25TE3O1k174ylBZMdpgVOLohrPeUnzfELN8PpgE
+=joYb
 -----END PGP SIGNATURE-----
+
+--nextPart6869975.uAER6AFDZ4--
+
