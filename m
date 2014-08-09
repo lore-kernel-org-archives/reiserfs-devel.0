@@ -1,87 +1,87 @@
 From: Edward Shishkin <edward.shishkin@gmail.com>
-Subject: [patch 1/1] reiser4: Fixups
-Date: Sat, 09 Aug 2014 19:43:55 +0200
-Message-ID: <53E65DDB.2090306@gmail.com>
+Subject: Reiser4: discard support with delayed issuing of discard requests
+Date: Sun, 10 Aug 2014 01:00:01 +0200
+Message-ID: <53E6A7F1.6030006@gmail.com>
 Mime-Version: 1.0
-Content-Type: multipart/mixed;
- boundary="------------090208030007070206080003"
+Content-Transfer-Encoding: 7bit
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20120113;
         h=message-id:date:from:user-agent:mime-version:to:subject
-         :content-type;
-        bh=14z4bLevJE9nms42oogfHdO3sXRxBPByxNUUhced4s4=;
-        b=CWx8ZjescwJcDegC1pm7bGqac/0NCDm8rBCdXoOTe5rs0PQM7iAQQmo59CcUnl22zh
-         W+2h4Kq6DZVUsM4hS1QRkKCJlaLZPOjBCTbv/2FtiWq/NZcFqMjqJkQLbuf/BD7vbuI9
-         91Uhzu1+9TXD0pw5vwMEk0NNN+SWyr6s5XYaNz9GGTW3stCTJtEQ7dC5wpTPNlNcImc6
-         fKcCXzewfT+G7x3+rpX/qKPDxEeywWHo/D0loGGWhhkCeHyARkzihLRBEikGF8/Ywk2u
-         jQcu4+Z1FmpRtXpl5+dMWUcx8/eewJzMGrbVzsfGuYkbey+5mP80wLtAsjtcgp9RRmhI
-         B2hw==
+         :content-type:content-transfer-encoding;
+        bh=d5W+ZQ7yaAX2sA0pFooLNG1FHLlq6sGcFfOO1bdciOg=;
+        b=wQvI4pH/kcHKesejylbUjudMuBguytBuRICAmPOJp2voSSy3awmKlFFrHbNtYhG75z
+         5hrRtkGjIJhUI9N32Ad3h+kMVlhn8niC5suPOIIm4FBhg+sreha1OJow6Kg9QHiG5HkY
+         rOBBbV9ltiyBZhV2hp5mayTt7Fk4PherJOkDO0zhg1iNwZhX2yO9ib3jFuHflbPaPr1m
+         NDuEboP2lrcg0ItEEyuxOoLBAoLf6XyE0G71axx15RRrZ+YcqPgxKlM2utXiIMXXyVWl
+         cg5O4r30SCF9mt7niykN8ERYHA8TEaVhKxg35Qv1NYyzFP3dfH7vUSmw/7NDj4Fg2jUq
+         vkIQ==
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
+Content-Type: text/plain; charset="us-ascii"; format="flowed"
 To: ReiserFS development mailing list <reiserfs-devel@vger.kernel.org>
 
-This is a multi-part message in MIME format.
---------------090208030007070206080003
-Content-Type: text/plain; charset=ISO-8859-1; format=flowed
-Content-Transfer-Encoding: 7bit
+Hello everyone,
+
+Ivan Shapovalov kindly implemented discard support for us.
+
+Now SSD users can mount their reiser4 partitions with the option
+"discard" and the file system will issue discard requests to inform
+the device that blocks are not longer used.
+
+In reiser4 issuing discard requests is a delayed action (like many
+other actions including block allocation, compression, etc). It means
+that discard requests are accumulated as the release of blocks and
+issued as background process after issuing of all other usual
+requests.
+
+Such delayed technique allows to issue discard requests of better
+quality, because the discard requests get merged in the process of
+accumulation. Another advantage of the delayed discard is that the
+"non-queued TRIM" is not a problem for us.
 
 
+                     Implementation notes
 
---------------090208030007070206080003
-Content-Type: text/x-patch;
- name="reiser4-fixups-for-3.15.patch"
-Content-Transfer-Encoding: 7bit
-Content-Disposition: attachment;
- filename="reiser4-fixups-for-3.15.patch"
 
-. Fix up incorrect calculation of REISER4_SUPER_MAGIC_STRING size;
-. Fix up incorrect initialization of dataonstack, dotdot_entry,
-  dotdot_name variables in reiser4_rename_common().
+Managing discard requests is a business of reiser4 transaction
+manager. This is because blocks deallocation is a kind of events
+which are tracked by the transaction manager. Deallocted extents
+are captured by a respective transaction atom. At commit time all
+the extents are sorted, merged and discarded right after overwriting
+journalled blocks at their permanent location on disk. After issuing
+the discard requests we complete the transaction by deallocating
+respective blocks at working bitmap (which always resides in memory).
+Thus, we guarantee consistency (nobody touches our extents before
+discard completion). We don't record information about discard
+extents in the journal. The worst thing that can happen after system
+crash is missing a number of discard requests. It doesn't break
+consistency of the file systems however. For such unpleasant
+situations we'll provide support of FITRIM ioctl later.
 
-Signed-off-by: Edward Shishkin <edward.shishkin@gmail.com>
----
- fs/reiser4/plugin/inode_ops_rename.c |    6 +++---
- fs/reiser4/reiser4.h                 |    2 +-
- fs/reiser4/vfs_ops.c                 |    1 -
- 3 files changed, 4 insertions(+), 5 deletions(-)
+Also in plans: garbage collection at the head and tail of every
+extent to be discarded. The algorithms are complicated, however,
+the game is worth the candle.
+The patch against reiser4-for-3.15 can be found here:
+http://sourceforge.net/projects/reiser4/files/patches/
 
---- a/fs/reiser4/plugin/inode_ops_rename.c
-+++ b/fs/reiser4/plugin/inode_ops_rename.c
-@@ -572,10 +572,10 @@ int reiser4_rename_common(struct inode *
- 			   dotdot entry. */
- 			coord_t *dotdot_coord;
- 
--			memset(dataonstack, 0, sizeof dataonstack);
--			memset(dotdot_entry, 0, sizeof dotdot_entry);
-+			memset(dataonstack, 0, sizeof(*dataonstack));
-+			memset(dotdot_entry, 0, sizeof(*dotdot_entry));
- 			dotdot_entry->obj = old_dir;
--			memset(dotdot_name, 0, sizeof dotdot_name);
-+			memset(dotdot_name, 0, sizeof(*dotdot_name));
- 			dotdot_name->d_name.name = "..";
- 			dotdot_name->d_name.len = 2;
- 			/*
---- a/fs/reiser4/reiser4.h
-+++ b/fs/reiser4/reiser4.h
-@@ -54,7 +54,7 @@
-  * option
-  */
- 
--extern const char *REISER4_SUPER_MAGIC_STRING;
-+#define REISER4_SUPER_MAGIC_STRING "ReIsEr4"
- extern const int REISER4_MAGIC_OFFSET;	/* offset to magic string from the
- 					 * beginning of device */
- 
---- a/fs/reiser4/vfs_ops.c
-+++ b/fs/reiser4/vfs_ops.c
-@@ -213,7 +213,6 @@ void reiser4_throttle_write(struct inode
- 	current->journal_info = ctx;
- }
- 
--const char *REISER4_SUPER_MAGIC_STRING = "ReIsEr4";
- const int REISER4_MAGIC_OFFSET = 16 * 4096;	/* offset to magic string from the
- 						 * beginning of device */
- 
+WARNING: Don't use it for important data for now. Even in the case
+of no visible problems, please, check your partition by fsck.reiser4
+as frequently as possible. Report about found inconsistency.
 
---------------090208030007070206080003--
+
+                 Discard support in reiser4progs:
+
+
+When formatting your SSD partition by mkfs.reiser4 use the option -d:
+it will issue discard request for the whole partition before creating
+reiser4 structure on it. This option is available in reiser4progs-1.0.9,
+please find here:
+http://sourceforge.net/projects/reiser4/files/reiser4-utils/reiser4progs
+
+In order to build reiser4progs-1.0.9 you will need libaal-1.0.6,
+please find here:
+http://sourceforge.net/projects/reiser4/files/reiser4-utils/libaal
+
+Thanks,
+Edward.
