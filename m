@@ -1,132 +1,87 @@
-From: Jan Kara <jack@suse.cz>
-Subject: [PATCH 1/2] reiserfs: Avoid warning from unlock_new_inode()
-Date: Wed,  6 Aug 2014 20:03:59 +0200
-Message-ID: <1407348240-1991-2-git-send-email-jack@suse.cz>
-References: <1407348240-1991-1-git-send-email-jack@suse.cz>
+From: Edward Shishkin <edward.shishkin@gmail.com>
+Subject: [patch 1/1] reiser4: Fixups
+Date: Sat, 09 Aug 2014 19:43:55 +0200
+Message-ID: <53E65DDB.2090306@gmail.com>
+Mime-Version: 1.0
+Content-Type: multipart/mixed;
+ boundary="------------090208030007070206080003"
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
-In-Reply-To: <1407348240-1991-1-git-send-email-jack@suse.cz>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20120113;
+        h=message-id:date:from:user-agent:mime-version:to:subject
+         :content-type;
+        bh=14z4bLevJE9nms42oogfHdO3sXRxBPByxNUUhced4s4=;
+        b=CWx8ZjescwJcDegC1pm7bGqac/0NCDm8rBCdXoOTe5rs0PQM7iAQQmo59CcUnl22zh
+         W+2h4Kq6DZVUsM4hS1QRkKCJlaLZPOjBCTbv/2FtiWq/NZcFqMjqJkQLbuf/BD7vbuI9
+         91Uhzu1+9TXD0pw5vwMEk0NNN+SWyr6s5XYaNz9GGTW3stCTJtEQ7dC5wpTPNlNcImc6
+         fKcCXzewfT+G7x3+rpX/qKPDxEeywWHo/D0loGGWhhkCeHyARkzihLRBEikGF8/Ywk2u
+         jQcu4+Z1FmpRtXpl5+dMWUcx8/eewJzMGrbVzsfGuYkbey+5mP80wLtAsjtcgp9RRmhI
+         B2hw==
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+To: ReiserFS development mailing list <reiserfs-devel@vger.kernel.org>
+
+This is a multi-part message in MIME format.
+--------------090208030007070206080003
+Content-Type: text/plain; charset=ISO-8859-1; format=flowed
 Content-Transfer-Encoding: 7bit
-To: reiserfs-devel@vger.kernel.org
-Cc: jeffm@suse.de, Jan Kara <jack@suse.cz>
 
-xfstest run for reiserfs produces lots of warnings like:
 
-WARNING: CPU: 4 PID: 24572 at fs/inode.c:937 unlock_new_inode+0x76/0x80()
 
-because reiserfs uses new_inode() to allocate new inodes and that doesn't
-set I_NEW in i_state. This seems like it could cause subtle bugs because
-half-initialized inodes may be visible in superblock inode list or inode
-hashes. So make sure inode has I_NEW set before it's visible anywhere
-which also gets rid of the warning.
+--------------090208030007070206080003
+Content-Type: text/x-patch;
+ name="reiser4-fixups-for-3.15.patch"
+Content-Transfer-Encoding: 7bit
+Content-Disposition: attachment;
+ filename="reiser4-fixups-for-3.15.patch"
 
-Signed-off-by: Jan Kara <jack@suse.cz>
+. Fix up incorrect calculation of REISER4_SUPER_MAGIC_STRING size;
+. Fix up incorrect initialization of dataonstack, dotdot_entry,
+  dotdot_name variables in reiser4_rename_common().
+
+Signed-off-by: Edward Shishkin <edward.shishkin@gmail.com>
 ---
- fs/reiserfs/namei.c | 34 ++++++++++++++++++----------------
- 1 file changed, 18 insertions(+), 16 deletions(-)
+ fs/reiser4/plugin/inode_ops_rename.c |    6 +++---
+ fs/reiser4/reiser4.h                 |    2 +-
+ fs/reiser4/vfs_ops.c                 |    1 -
+ 3 files changed, 4 insertions(+), 5 deletions(-)
 
-diff --git a/fs/reiserfs/namei.c b/fs/reiserfs/namei.c
-index cd11358b10c7..c4f435c4e6fc 100644
---- a/fs/reiserfs/namei.c
-+++ b/fs/reiserfs/namei.c
-@@ -580,8 +580,8 @@ static int reiserfs_add_entry(struct reiserfs_transaction_handle *th,
- }
+--- a/fs/reiser4/plugin/inode_ops_rename.c
++++ b/fs/reiser4/plugin/inode_ops_rename.c
+@@ -572,10 +572,10 @@ int reiser4_rename_common(struct inode *
+ 			   dotdot entry. */
+ 			coord_t *dotdot_coord;
  
- /*
-- * quota utility function, call if you've had to abort after calling
-- * new_inode_init, and have not called reiserfs_new_inode yet.
-+ * Utility function to call if you've had to abort after calling
-+ * get_new_inode, and have not called reiserfs_new_inode yet.
-  * This should only be called on inodes that do not have stat data
-  * inserted into the tree yet.
+-			memset(dataonstack, 0, sizeof dataonstack);
+-			memset(dotdot_entry, 0, sizeof dotdot_entry);
++			memset(dataonstack, 0, sizeof(*dataonstack));
++			memset(dotdot_entry, 0, sizeof(*dotdot_entry));
+ 			dotdot_entry->obj = old_dir;
+-			memset(dotdot_name, 0, sizeof dotdot_name);
++			memset(dotdot_name, 0, sizeof(*dotdot_name));
+ 			dotdot_name->d_name.name = "..";
+ 			dotdot_name->d_name.len = 2;
+ 			/*
+--- a/fs/reiser4/reiser4.h
++++ b/fs/reiser4/reiser4.h
+@@ -54,7 +54,7 @@
+  * option
   */
-@@ -590,6 +590,7 @@ static int drop_new_inode(struct inode *inode)
- 	dquot_drop(inode);
- 	make_bad_inode(inode);
- 	inode->i_flags |= S_NOQUOTA;
-+	unlock_new_inode(inode);
- 	iput(inode);
- 	return 0;
- }
-@@ -600,8 +601,16 @@ static int drop_new_inode(struct inode *inode)
-  * outside of a transaction, so we had to pull some bits of
-  * reiserfs_new_inode out into this func.
-  */
--static int new_inode_init(struct inode *inode, struct inode *dir, umode_t mode)
-+static struct inode *get_new_inode(struct inode *dir, umode_t mode)
- {
-+	struct inode *inode = new_inode_pseudo(dir->i_sb);
-+
-+	if (!inode)
-+		return NULL;
-+	/* Make sure inode is invisible until it's fully set up */
-+	inode->i_state |= I_NEW;
-+	inode_sb_list_add(inode);
-+
- 	/*
- 	 * Make inode invalid - just in case we are going to drop it before
- 	 * the initialization happens
-@@ -614,7 +623,8 @@ static int new_inode_init(struct inode *inode, struct inode *dir, umode_t mode)
- 	 */
- 	inode_init_owner(inode, dir, mode);
- 	dquot_initialize(inode);
--	return 0;
-+
-+	return inode;
+ 
+-extern const char *REISER4_SUPER_MAGIC_STRING;
++#define REISER4_SUPER_MAGIC_STRING "ReIsEr4"
+ extern const int REISER4_MAGIC_OFFSET;	/* offset to magic string from the
+ 					 * beginning of device */
+ 
+--- a/fs/reiser4/vfs_ops.c
++++ b/fs/reiser4/vfs_ops.c
+@@ -213,7 +213,6 @@ void reiser4_throttle_write(struct inode
+ 	current->journal_info = ctx;
  }
  
- static int reiserfs_create(struct inode *dir, struct dentry *dentry, umode_t mode,
-@@ -635,10 +645,8 @@ static int reiserfs_create(struct inode *dir, struct dentry *dentry, umode_t mod
+-const char *REISER4_SUPER_MAGIC_STRING = "ReIsEr4";
+ const int REISER4_MAGIC_OFFSET = 16 * 4096;	/* offset to magic string from the
+ 						 * beginning of device */
  
- 	dquot_initialize(dir);
- 
--	if (!(inode = new_inode(dir->i_sb))) {
-+	if (!(inode = get_new_inode(dir, mode)))
- 		return -ENOMEM;
--	}
--	new_inode_init(inode, dir, mode);
- 
- 	jbegin_count += reiserfs_cache_default_acl(dir);
- 	retval = reiserfs_security_init(dir, inode, &dentry->d_name, &security);
-@@ -712,10 +720,8 @@ static int reiserfs_mknod(struct inode *dir, struct dentry *dentry, umode_t mode
- 
- 	dquot_initialize(dir);
- 
--	if (!(inode = new_inode(dir->i_sb))) {
-+	if (!(inode = get_new_inode(dir, mode)))
- 		return -ENOMEM;
--	}
--	new_inode_init(inode, dir, mode);
- 
- 	jbegin_count += reiserfs_cache_default_acl(dir);
- 	retval = reiserfs_security_init(dir, inode, &dentry->d_name, &security);
-@@ -797,10 +803,8 @@ static int reiserfs_mkdir(struct inode *dir, struct dentry *dentry, umode_t mode
- 	REISERFS_I(dir)->new_packing_locality = 1;
- #endif
- 	mode = S_IFDIR | mode;
--	if (!(inode = new_inode(dir->i_sb))) {
-+	if (!(inode = get_new_inode(dir, mode)))
- 		return -ENOMEM;
--	}
--	new_inode_init(inode, dir, mode);
- 
- 	jbegin_count += reiserfs_cache_default_acl(dir);
- 	retval = reiserfs_security_init(dir, inode, &dentry->d_name, &security);
-@@ -1097,10 +1101,8 @@ static int reiserfs_symlink(struct inode *parent_dir,
- 
- 	dquot_initialize(parent_dir);
- 
--	if (!(inode = new_inode(parent_dir->i_sb))) {
-+	if (!(inode = get_new_inode(parent_dir, mode)))
- 		return -ENOMEM;
--	}
--	new_inode_init(inode, parent_dir, mode);
- 
- 	retval = reiserfs_security_init(parent_dir, inode, &dentry->d_name,
- 					&security);
--- 
-1.8.1.4
 
+--------------090208030007070206080003--
