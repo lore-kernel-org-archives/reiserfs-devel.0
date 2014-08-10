@@ -1,63 +1,97 @@
-From: Edward Shishkin <edward.shishkin@gmail.com>
-Subject: Re: Reiser4: discard support with delayed issuing of discard requests
-Date: Sun, 10 Aug 2014 22:17:38 +0200
-Message-ID: <53E7D362.2090502@gmail.com>
-References: <53E6A7F1.6030006@gmail.com> <20140810190210.033a96da@Ulf.tvoe.tv> <3DCC0775ECF24DEFA5A598C0BACABA2E@DuSTmanPC>
+From: Ivan Shapovalov <intelfx100@gmail.com>
+Subject: Re: reiser4: FITRIM ioctl -- how to grab the space?
+Date: Mon, 11 Aug 2014 00:37:58 +0400
+Message-ID: <1857998.1bln76ELaS@intelfx-laptop>
+References: <3405506.BC0S4TX54B@intelfx-laptop> <1526377.TUs3NQt8ap@intelfx-laptop> <53E7CC75.2010500@gmail.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; boundary="nextPart3860037.x8jL24jL5r"; micalg="pgp-sha256"; protocol="application/pgp-signature"
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20120113;
-        h=message-id:date:from:user-agent:mime-version:to:subject:references
-         :in-reply-to:content-type:content-transfer-encoding;
-        bh=tz5YHBh3blvk9SJuWtAnv+A1cfeuMZVa96UMN9TaQAg=;
-        b=DEbJzMS+dFzebUY8ZBqFdzPcRO/s5DGDbybGn+GwGZrnCqJDkfD4ZJeWGey0FTErQA
-         ah2mB//fu97vc3UhzvCLQ7Ysc/bSCOM1k1/a1AVceZ0fQD4XPOLuMRkxjn4J/kK2M5Lg
-         XiZ/1eaFU/4Kh7Hr+Hm0xO88cRpxEeOeWcatrCqr9QBSDnAhSPy73y6Do11fEbsA/FeC
-         50/y99jgPt8SnwjLeODWPw7Ds1eNyBo3tsVqV7EqdNcc31C4a9dZbMQKolKFf20Kg3q1
-         eiPW98ZzO2QcL2KcGDQ67vLHPP8BgFfzrkp9usi3+KHv8FsC2m0VWFX9LOL6IwTEC0hc
-         KRYw==
-In-Reply-To: <3DCC0775ECF24DEFA5A598C0BACABA2E@DuSTmanPC>
+        h=from:to:cc:subject:date:message-id:user-agent:in-reply-to
+         :references:mime-version:content-type;
+        bh=+oZMSLsZ3R3h8yJy0rkbD6tzH4YLRRJ5g516pmyFSGc=;
+        b=cLI7DBYsHHedeIBSzT8OTWy3JBEMzjIZ3GF2dEuR8w/OXjl81bCOcb38HF/G4WUxmm
+         yEWIHfieqoZwd2ihqD48GwwbrBODGATawCZVvRlOwnLayxXdx/NLavLnllOgoM+ZKSJ6
+         9fSoZbufiNKtu5+sBxvok/aPl6wfKxg3gRxM5REiLpRAWY8X2TRfwqR5udiEzZBuU5Ur
+         56BsuKXCYZE5RQ152qorRSqwpwa35Aee0n8Nnn2k5U/566UWGfB6NIZvmbJn29ta4vfD
+         auV4OEUBs/GmeM5LAR+2+vQLdLWe0Dx54er/TyNZ4P4n27jfwLaiC5OaDpQF/jIQWOOU
+         EPPQ==
+In-Reply-To: <53E7CC75.2010500@gmail.com>
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: Daniel Horne <daniel.horne@gmail.com>, reiserfs-devel <reiserfs-devel@vger.kernel.org>
+To: Edward Shishkin <edward.shishkin@gmail.com>
+Cc: reiserfs-devel@vger.kernel.org
 
 
-On 08/10/2014 05:38 PM, Daniel Horne wrote:
-> If memory serves, VMware and virtualbox also use TRIM to help reclaim 
-> space on the virtual disk files.
+--nextPart3860037.x8jL24jL5r
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="us-ascii"
 
+On Sunday 10 August 2014 at 21:48:05, Edward Shishkin wrote:=09
+>=20
+> On 08/10/2014 08:52 PM, Ivan Shapovalov wrote:
+> > On Friday 01 August 2014 at 01:19:05, Edward Shishkin wrote:=09
+> >> [...]
+> >> Define maximal number of allocated blocks in one iteration
+> >> and reserve this amount of blocks at the beginning of each
+> >> iteration. Once the limit is exhausted, stop the scan and
+> >> force to commit the atom.
+> > This sounds pretty hackish... Isn't there a way to grab all possibl=
+e space
+> > at the same time?
+> > By all possible space I mean (sbinfo->block_count - sbinfo->blocks_=
+used),
+> > so that `fstrim <mountpoint>` will be efficient even if system is u=
+nder load
+> > and atoms are being created continuously.
+>=20
+>=20
+> I am afraid that other processes will return ENOSPC, whereas there is=
 
-Poor virtualization folks... ;)
+> a lot of free disk space.
+> Assume fstrim grabbed all possible space. A process X , who needs to
+> reserve space invokes txnmgr_force_commit_all(). Everyone waits for
+> commits completion. After this fstrim grabs all possible space again
+> (there is no any queue for free space reclaimers). Process X returns
+> ENOSPC.
+>=20
+> Edward.
 
+I've meant "grabbing all space and then allocating all space" -- so the=
+re won't
+be multiple grabs or multiple atoms.
 
->
-> -- 
-> DH
->
->
-> ----- Original Message ----- From: "dimas" <dimas000@ya.ru>
-> To: "reiserfs-devel" <reiserfs-devel@vger.kernel.org>
-> Sent: Sunday, August 10, 2014 4:02 PM
-> Subject: Re: Reiser4: discard support with delayed issuing of discard 
-> requests
->
->
->> thanks a lot for your explanations!
->> does it all make any sense for non-ssd?
->> will 3.16 contain this all-in-one, without extra patches to find 
->> somewhere else?
->> -- 
->> To unsubscribe from this list: send the line "unsubscribe 
->> reiserfs-devel" in
->> the body of a message to majordomo@vger.kernel.org
->> More majordomo info at http://vger.kernel.org/majordomo-info.html
->>
->
-> -- 
-> To unsubscribe from this list: send the line "unsubscribe 
-> reiserfs-devel" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Then all processes grabbing space with BA_CAN_COMMIT will wait for the =
+discard
+atom to commit. (Actually, there is a small race window between grabbin=
+g space
+and creating an atom...)
+
+The only problem is to wait for (sbinfo->block_count =3D=3D sbinfo->blo=
+cks_used +
+sbinfo->blocks_free) condition, i. e. until no blocks are reserved in a=
+ny form,
+and then to grab all space atomically wrt. reaching this condition.
+
+Again, if this is not feasible, I'll go with the multiple atoms approac=
+h. I
+just want to make sure.
+
+=2D-=20
+Ivan Shapovalov / intelfx /
+--nextPart3860037.x8jL24jL5r
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: This is a digitally signed message part.
+Content-Transfer-Encoding: 7Bit
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
+
+iF4EABEIAAYFAlPn2CYACgkQxUKljSIMAnDQjgEAt8KiJhToCx4pvZ8NumyxcoXI
+AQ7J80vld3aokXOdbcUBAINcQek+7pD1yxZzkI39iQ6OMKgPxvFYIla1trtZYH11
+=0GA3
+-----END PGP SIGNATURE-----
+
+--nextPart3860037.x8jL24jL5r--
 
