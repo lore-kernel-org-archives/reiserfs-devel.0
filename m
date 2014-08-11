@@ -1,120 +1,139 @@
-From: Ivan Shapovalov <intelfx100@gmail.com>
-Subject: Re: reiser4: FITRIM ioctl -- how to grab the space?
-Date: Mon, 11 Aug 2014 13:39:12 +0400
-Message-ID: <2275451.mu6kquuFD5@intelfx-laptop>
-References: <3405506.BC0S4TX54B@intelfx-laptop> <1857998.1bln76ELaS@intelfx-laptop> <53E80077.2060300@gmail.com>
+From: Jeff Mahoney <jeffm@suse.com>
+Subject: Re: [PATCH 1/2] reiserfs: Avoid warning from unlock_new_inode()
+Date: Mon, 11 Aug 2014 15:25:15 -0400
+Message-ID: <53E9189B.2080705@suse.com>
+References: <1407348240-1991-1-git-send-email-jack@suse.cz> <1407348240-1991-2-git-send-email-jack@suse.cz>
 Mime-Version: 1.0
-Content-Type: multipart/signed; boundary="nextPart1610076.AIAaL630gj"; micalg="pgp-sha256"; protocol="application/pgp-signature"
+Content-Transfer-Encoding: 7bit
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20120113;
-        h=from:to:cc:subject:date:message-id:user-agent:in-reply-to
-         :references:mime-version:content-type;
-        bh=seZJdmenN9a3yHbh3b44WVw8dDFDptL7u2Ucfc2RpFw=;
-        b=GHUMSE2Ucrrw+o6Zv6OIPG8TIRsqySglsVcTbOmpQC7SQx8BDPO5yN1DM6toUkEpcW
-         5MmsSSLO7v10D8B4wkfj6iuqHD+uuuAAGU/SZM7LqkTe1fWiubtoMBtxwbjUcPGLS9Oj
-         eCXOcWitA2xILG6jpG9pTPrE4pPmZbdZSyEigSN0VYgFcPhaTpllKY5Cf1f4+wqMW5r9
-         PBOPM69aiVafyy2OqDTu4owU5jFbI5xyXW/G/eK8X8p7G8aLE7I24PQR4KVL0PjPSfJZ
-         hS8688Xh1Ady1dMCOMwnuwIm2CbnaPZUyxwCDEZ07Yg+shnHHIPeNuwGjDHdn/cm1xxN
-         q51w==
-In-Reply-To: <53E80077.2060300@gmail.com>
+In-Reply-To: <1407348240-1991-2-git-send-email-jack@suse.cz>
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
-To: Edward Shishkin <edward.shishkin@gmail.com>
-Cc: reiserfs-devel@vger.kernel.org
-
-
---nextPart1610076.AIAaL630gj
-Content-Transfer-Encoding: quoted-printable
 Content-Type: text/plain; charset="us-ascii"
+To: Jan Kara <jack@suse.cz>, reiserfs-devel@vger.kernel.org
 
-On Monday 11 August 2014 at 01:29:59, Edward Shishkin wrote:=09
->=20
-> On 08/10/2014 10:37 PM, Ivan Shapovalov wrote:
-> > On Sunday 10 August 2014 at 21:48:05, Edward Shishkin wrote:=09
-> >> On 08/10/2014 08:52 PM, Ivan Shapovalov wrote:
-> >>> On Friday 01 August 2014 at 01:19:05, Edward Shishkin wrote:=09
-> >>>> [...]
-> >>>> Define maximal number of allocated blocks in one iteration
-> >>>> and reserve this amount of blocks at the beginning of each
-> >>>> iteration. Once the limit is exhausted, stop the scan and
-> >>>> force to commit the atom.
-> >>> This sounds pretty hackish... Isn't there a way to grab all possi=
-ble space
-> >>> at the same time?
-> >>> By all possible space I mean (sbinfo->block_count - sbinfo->block=
-s_used),
-> >>> so that `fstrim <mountpoint>` will be efficient even if system is=
- under load
-> >>> and atoms are being created continuously.
-> >>
-> >> I am afraid that other processes will return ENOSPC, whereas there=
- is
-> >> a lot of free disk space.
-> >> Assume fstrim grabbed all possible space. A process X , who needs =
-to
-> >> reserve space invokes txnmgr_force_commit_all(). Everyone waits fo=
-r
-> >> commits completion. After this fstrim grabs all possible space aga=
-in
-> >> (there is no any queue for free space reclaimers). Process X retur=
-ns
-> >> ENOSPC.
-> >>
-> >> Edward.
-> > I've meant "grabbing all space and then allocating all space" -- so=
- there won't
-> > be multiple grabs or multiple atoms.
-> >
-> > Then all processes grabbing space with BA_CAN_COMMIT will wait for =
-the discard
-> > atom to commit.
->=20
->=20
-> It seems such waiting will screw up the system. No?
+-----BEGIN PGP SIGNED MESSAGE-----
+Hash: SHA1
 
-I was afraid of such situations, but how would that happen? The discard=
- atom's
-commit will always be able to proceed as it doesn't grab space at all.
-
-> >   (Actually, there is a small race window between grabbing space
-> > and creating an atom...)
->=20
->=20
-> Which one?
-
-BA_CAN_COMMIT machinery does wait only for atoms, not for contexts. If
-process X happens to grab space between us grabbing space and creating =
-an atom,
-it will get -ENOSPC even with BA_CAN_COMMIT.
-
-=2D-=20
-Ivan Shapovalov / intelfx /
-
-> > The only problem is to wait for (sbinfo->block_count =3D=3D sbinfo-=
->blocks_used +
-> > sbinfo->blocks_free) condition, i. e. until no blocks are reserved =
-in any form,
-> > and then to grab all space atomically wrt. reaching this condition.=
-
-> >
-> > Again, if this is not feasible, I'll go with the multiple atoms app=
-roach. I
-> > just want to make sure.
-> >
+On 8/6/14, 2:03 PM, Jan Kara wrote:
+> xfstest run for reiserfs produces lots of warnings like:
 > 
---nextPart1610076.AIAaL630gj
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: This is a digitally signed message part.
-Content-Transfer-Encoding: 7Bit
+> WARNING: CPU: 4 PID: 24572 at fs/inode.c:937
+> unlock_new_inode+0x76/0x80()
+> 
+> because reiserfs uses new_inode() to allocate new inodes and that
+> doesn't set I_NEW in i_state. This seems like it could cause subtle
+> bugs because half-initialized inodes may be visible in superblock
+> inode list or inode hashes. So make sure inode has I_NEW set before
+> it's visible anywhere which also gets rid of the warning.
+> 
+> Signed-off-by: Jan Kara <jack@suse.cz>
 
+The problem is that reiserfs_new_inode drops down to the error
+handling case without having called insert_inode_locked4. I have a
+patch that just moves the quota check after the insertion so we don't
+need to do gross things like if (!inode_unhashed(inode))
+unlock_new_inode(inode) in the error path. It's consistent with how
+ext4 does it.
+
+- -Jeff
+
+
+> --- fs/reiserfs/namei.c | 34 ++++++++++++++++++---------------- 1
+> file changed, 18 insertions(+), 16 deletions(-)
+> 
+> diff --git a/fs/reiserfs/namei.c b/fs/reiserfs/namei.c index
+> cd11358b10c7..c4f435c4e6fc 100644 --- a/fs/reiserfs/namei.c +++
+> b/fs/reiserfs/namei.c @@ -580,8 +580,8 @@ static int
+> reiserfs_add_entry(struct reiserfs_transaction_handle *th, }
+> 
+> /* - * quota utility function, call if you've had to abort after
+> calling - * new_inode_init, and have not called reiserfs_new_inode
+> yet. + * Utility function to call if you've had to abort after
+> calling + * get_new_inode, and have not called reiserfs_new_inode
+> yet. * This should only be called on inodes that do not have stat
+> data * inserted into the tree yet. */ @@ -590,6 +590,7 @@ static
+> int drop_new_inode(struct inode *inode) dquot_drop(inode); 
+> make_bad_inode(inode); inode->i_flags |= S_NOQUOTA; +
+> unlock_new_inode(inode); iput(inode); return 0; } @@ -600,8 +601,16
+> @@ static int drop_new_inode(struct inode *inode) * outside of a
+> transaction, so we had to pull some bits of * reiserfs_new_inode
+> out into this func. */ -static int new_inode_init(struct inode
+> *inode, struct inode *dir, umode_t mode) +static struct inode
+> *get_new_inode(struct inode *dir, umode_t mode) { +	struct inode
+> *inode = new_inode_pseudo(dir->i_sb); + +	if (!inode) +		return
+> NULL; +	/* Make sure inode is invisible until it's fully set up */ 
+> +	inode->i_state |= I_NEW; +	inode_sb_list_add(inode); + /* * Make
+> inode invalid - just in case we are going to drop it before * the
+> initialization happens @@ -614,7 +623,8 @@ static int
+> new_inode_init(struct inode *inode, struct inode *dir, umode_t
+> mode) */ inode_init_owner(inode, dir, mode); 
+> dquot_initialize(inode); -	return 0; + +	return inode; }
+> 
+> static int reiserfs_create(struct inode *dir, struct dentry
+> *dentry, umode_t mode, @@ -635,10 +645,8 @@ static int
+> reiserfs_create(struct inode *dir, struct dentry *dentry, umode_t
+> mod
+> 
+> dquot_initialize(dir);
+> 
+> -	if (!(inode = new_inode(dir->i_sb))) { +	if (!(inode =
+> get_new_inode(dir, mode))) return -ENOMEM; -	} -
+> new_inode_init(inode, dir, mode);
+> 
+> jbegin_count += reiserfs_cache_default_acl(dir); retval =
+> reiserfs_security_init(dir, inode, &dentry->d_name, &security); @@
+> -712,10 +720,8 @@ static int reiserfs_mknod(struct inode *dir,
+> struct dentry *dentry, umode_t mode
+> 
+> dquot_initialize(dir);
+> 
+> -	if (!(inode = new_inode(dir->i_sb))) { +	if (!(inode =
+> get_new_inode(dir, mode))) return -ENOMEM; -	} -
+> new_inode_init(inode, dir, mode);
+> 
+> jbegin_count += reiserfs_cache_default_acl(dir); retval =
+> reiserfs_security_init(dir, inode, &dentry->d_name, &security); @@
+> -797,10 +803,8 @@ static int reiserfs_mkdir(struct inode *dir,
+> struct dentry *dentry, umode_t mode 
+> REISERFS_I(dir)->new_packing_locality = 1; #endif mode = S_IFDIR |
+> mode; -	if (!(inode = new_inode(dir->i_sb))) { +	if (!(inode =
+> get_new_inode(dir, mode))) return -ENOMEM; -	} -
+> new_inode_init(inode, dir, mode);
+> 
+> jbegin_count += reiserfs_cache_default_acl(dir); retval =
+> reiserfs_security_init(dir, inode, &dentry->d_name, &security); @@
+> -1097,10 +1101,8 @@ static int reiserfs_symlink(struct inode
+> *parent_dir,
+> 
+> dquot_initialize(parent_dir);
+> 
+> -	if (!(inode = new_inode(parent_dir->i_sb))) { +	if (!(inode =
+> get_new_inode(parent_dir, mode))) return -ENOMEM; -	} -
+> new_inode_init(inode, parent_dir, mode);
+> 
+> retval = reiserfs_security_init(parent_dir, inode,
+> &dentry->d_name, &security);
+> 
+
+
+- -- 
+Jeff Mahoney
+SUSE Labs
 -----BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
+Version: GnuPG/MacGPG2 v2.0.19 (Darwin)
 
-iF4EABEIAAYFAlPoj0QACgkQxUKljSIMAnCsHwD/fY1Ubh4xuzAogyH+GM+bJ0nN
-AzAqqnarzATwf9l7xkQBALrfgy3mHL762c3NwkkFgW1owyymNjrAVgzFxP/NCBs3
-=hxsN
+iQIcBAEBAgAGBQJT6RibAAoJEB57S2MheeWyQN8P/A9BE9Xbp0tSwBi1TklqE3Hm
+xKK1IHgdVPODpysKKbr6V2llVOl+Fis/1kT7SKyVZ5LraVhrfQU/37HzO0535ITR
+n1bBiQV/PgejEtkSqKDMispk0kGaVCCgg2o6scHg3Qr8w9qF2mmrTUUOQPcMsaEa
+YKmd7sN+3+RbvP7mHderAM4Yjb+EXzjlgfqyOZYg+jY8Id+b5Yn5TekMQJMvvsPh
+tWiGaDF9cYsVZL2fdNUvOXdUMycYx2xDTzcCNBOEHh9FHS3kIVrCtrwfXQJEys5a
+nB1Es94tAW2M3Au/8L3kugcy8iR7gxqGFctCtfmtUpm7SiusNDIfXyNpbRtgdbF5
+QFlqmNF2mLDYKNr93SbMLbF+fnl1NzkoFmrsu17bWiiQaxmqNDsnZeNUANWSrXsE
+QXS2Ardd24+BOW2aiSQXXwSkaHeQy3h/H9gX+TqbpUBdsRJO9bggm7IDFNn7n4ow
+mM0jRlu5tzyUHQRjzkwqqAqjBTB9l+rEV5zwikNE9QzWjovlKZ+NltW3mkMtYKKX
+P/wQs49zKT8g+InLiLFXanYrZkMpQ/HgQGw3rRMd5o5P2I0kih3Flaa2Gwlf4P7n
+6xcv+STczVUg/htRUIMppQVIkriOD92QVmKAzmIsPBXIPTpJNVjrknc0e8MDDfql
+8j0moTvJ8CloSg25k0W5
+=xfQ5
 -----END PGP SIGNATURE-----
-
---nextPart1610076.AIAaL630gj--
-
