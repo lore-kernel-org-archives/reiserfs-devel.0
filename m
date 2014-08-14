@@ -1,7 +1,7 @@
 From: <doiggl@velocitynet.com.au>
-Subject: Here is a plain kernel based on 3.15.x with the reiser4 patch enabled.
-Date: Thu, 14 Aug 2014 13:05:34 +1000
-Message-ID: <12790ad533337b5825f2c3ba3c05bb75@mail.velocitynet.com.au>
+Subject: Do these patches apply to reiser4-for-3.15.1.patch.gz version ?
+Date: Thu, 14 Aug 2014 15:53:54 +1000
+Message-ID: <eb16bdbc3416c9569dd881ab0826aa0f@mail.velocitynet.com.au>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
@@ -11,51 +11,23 @@ Content-Type: text/plain; charset="us-ascii"
 To: reiserfs-devel@vger.kernel.org
 
 Hello,
-Here is a plain kernel based on 3.15.x with the reiser4 patch built with
-the Opensuse build service [obs] system.
+Do these patches apply to reiser4-for-3.15.1.patch.gz version ?
+--Glenn
 
-The built rpms are here
+[PATCHv7 0/6] reiser4: discard support: simplified and race-free initial
+implementation., Ivan Shapovalov
 
-->https://build.opensuse.org/package/binaries/home:doiggl/kernel-reiser4?repository=openSUSE_13.1
- Architecture: i586
+    [PATCHv7 1/6] reiser4: fix reiser4_post_{commit,write_back}_hook() and
+their invocations., Ivan Shapovalov
+    [PATCHv7 2/6] reiser4: make space_allocator's check_blocks()
+reusable., Ivan Shapovalov
+    [PATCHv7 4/6] reiser4: blocknr_list: use kmem_cache instead of kmalloc
+for allocating entries., Ivan Shapovalov
+    [PATCHv7 3/6] reiser4: add an implementation of "block lists",
+splitted off the discard code., Ivan Shapovalov
+    [PATCHv7 5/6] reiser4: blocknr_set: use kmem_cache instead of kmalloc
+for allocating entries., Ivan Shapovalov
+    [PATCHv7 6/6] reiser4: discard support: initial implementation using
+blocknr_list, without extent padding., Ivan Shapovalov
 
-    kernel-reiser4-3.15.0-3.1.i686.rpm
-    kernel-reiser4-3.15.0-3.1.nosrc.rpm
-    kernel-reiser4-debuginfo-3.15.0-3.1.i686.rpm
-    kernel-reiser4-debugsource-3.15.0-3.1.i686.rpm
-    kernel-reiser4-devel-3.15.0-3.1.i686.rpm
-    kernel-reiser4-devel-debuginfo-3.15.0-3.1.i686.rpm
-    rpmlint.log
-
-
-Repository has been published Architecture: x86_64
-
-    kernel-reiser4-3.15.0-3.1.nosrc.rpm
-    kernel-reiser4-3.15.0-3.1.x86_64.rpm
-    kernel-reiser4-debuginfo-3.15.0-3.1.x86_64.rpm
-    kernel-reiser4-debugsource-3.15.0-3.1.x86_64.rpm
-    kernel-reiser4-devel-3.15.0-3.1.x86_64.rpm
-    kernel-reiser4-devel-debuginfo-3.15.0-3.1.x86_64.rpm
-    rpmlint.log
-
-
-The project is here
-->https://build.opensuse.org/package/show?package=kernel-reiser4&project=home%3Adoiggl
-
-The log of the build is here {x86_64} as an example. [Its a long buildlog]
-->https://build.opensuse.org/package/live_build_log/home:doiggl/kernel-reiser4/openSUSE_13.1/x86_64
-
-The .spec used file is here
-
-->https://build.opensuse.org/package/view_file/home:doiggl/kernel-reiser4?expand=1&file=kernel-reiser4.spec
-
-Thanks to the opensuse-kernel list members for compilation advice.
-http://lists.opensuse.org/opensuse-kernel/
-patch
-used:http://sourceforge.net/projects/reiser4/files/reiser4-for-linux-3.x/reiser4-for-3.15.1.patch.gz
-
-It looks like obs built the rpms.
-Post the results to the list.
-
-Cheers Glenn
-
+Source: http://www.spinics.net/lists/reiserfs-devel/msg04089.html
