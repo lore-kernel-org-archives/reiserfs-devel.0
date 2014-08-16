@@ -1,8 +1,8 @@
 From: Edward Shishkin <edward.shishkin@gmail.com>
 Subject: Re: reiser4: FITRIM ioctl -- how to grab the space?
-Date: Sat, 16 Aug 2014 14:15:29 +0200
-Message-ID: <53EF4B61.4080906@gmail.com>
-References: <3405506.BC0S4TX54B@intelfx-laptop> <2026408.Yl74NqGZKK@intelfx-laptop> <53EF11C8.20209@gmail.com> <1651199.WS1bpHXlZS@intelfx-laptop>
+Date: Sat, 16 Aug 2014 15:35:42 +0200
+Message-ID: <53EF5E2E.6000109@gmail.com>
+References: <3405506.BC0S4TX54B@intelfx-laptop> <53EF11C8.20209@gmail.com> <53EF14EC.1070101@gmail.com> <2295734.UIR3OjHuyC@intelfx-laptop>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
@@ -10,14 +10,14 @@ DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20120113;
         h=message-id:date:from:user-agent:mime-version:to:cc:subject
          :references:in-reply-to:content-type:content-transfer-encoding;
-        bh=WUGmCbtvo6iP6yM9KdU8Zc8mQI/vQ2hJmdD9E1Q0GAc=;
-        b=pGNbUK7F71Y9Inij8A6gDfUpeFGxg/WMRnwsh+jqs+kBi3ONNRW+xA7IEIB4GkZFdY
-         PkPbWrc3MGLi2YK69KZS5s6UGrO/5xpx9fbJIJUfnM8XWWOg43081+T6AtUFIWdsUx7o
-         ITdDfy58On1yuR9yEYaq4OiULL2WCVbjmmwZ33FEwfg67Dpo64YTGudI2hfndL0IxZlC
-         B4qi/ETnQXwGNbAW8iyjvLhTm6NoF9Cf+EN8xhhPCxxyq5md2ieyOqkovPPy5PtZr/d6
-         mjo8UB4vBoAx6p2GWqYM0uARAaBqmyWwh8i9o63UF6PNkjq6JzasrpQH30q0fW1v5ZDq
-         8VaA==
-In-Reply-To: <1651199.WS1bpHXlZS@intelfx-laptop>
+        bh=wLVNFJy8jH+NV/5mlpdSTxCn5pg16YR5XHQq/Mn2Fhg=;
+        b=Sqsc8oakPwSOXzoHNuRLqouhBlMXJ/jcH8M81yFScknah0NnJlwfxDVaTH2edoyxmV
+         r8NEoqLKllvgBaX7ma1L8Gt7giBq+eDkRn0ec9ktgIdpf0ovOX5sKT0jOEg72E4A14n3
+         KrYqCflyjwtsnK2SoO8yfpYPYDWh0aoUk7OcdzdOxHPqQO69voNlz+MHbe9/WgL9xZ0Z
+         bXBPiwiJwLP4OcwnpcS+KXc7207heKP6yraBuSUy43466zTvgguiZ0Pz3WzrTzcu0urH
+         Xd0ZL4IX56BEdPpsyyus7tsvqTvc7nJj9ObsLItAd6LzUb5hhCyEjLvTp11Xd/+KtfBm
+         dcDg==
+In-Reply-To: <2295734.UIR3OjHuyC@intelfx-laptop>
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"; format="flowed"
@@ -25,59 +25,65 @@ To: Ivan Shapovalov <intelfx100@gmail.com>
 Cc: reiserfs-devel@vger.kernel.org
 
 
-On 08/16/2014 01:17 PM, Ivan Shapovalov wrote:
-> On Saturday 16 August 2014 at 10:09:44, Edward Shishkin wrote:	
->> On 08/16/2014 02:44 AM, Ivan Shapovalov wrote:
->>> On Monday 11 August 2014 at 13:39:12, Ivan Shapovalov wrote:	
->>>> [...]
->>>>>> I've meant "grabbing all space and then allocating all space" -- so there won't
->>>>>> be multiple grabs or multiple atoms.
->>>>>>
->>>>>> Then all processes grabbing space with BA_CAN_COMMIT will wait for the discard
->>>>>> atom to commit.
->>>>> It seems such waiting will screw up the system. No?
->>>> I was afraid of such situations, but how would that happen? The discard atom's
->>>> commit will always be able to proceed as it doesn't grab space at all.
->>>>
->>>>>>     (Actually, there is a small race window between grabbing space
->>>>>> and creating an atom...)
->>>>> Which one?
->>>> BA_CAN_COMMIT machinery does wait only for atoms, not for contexts. If
->>>> process X happens to grab space between us grabbing space and creating an atom,
->>>> it will get -ENOSPC even with BA_CAN_COMMIT.
->>
->> I still don't see any "races" here. How atom creation is related to grabbing
->> space? Are we talking about races in the existing code? f so, please show
->> the racing paths..
-> Well, this is not a race per se - it does not involve locking. But it is
-> a race-like behavior.
->
-> taskA                                 taskB
-> --------------------------------------------------------------------------
-> grab very much space
-
-Ok, assume A wants X blocks.
-
->                                          grab some space with BA_CAN_COMMIT
-
-Assume B wants Y blocks.
-
-> create an atom using the grabbed space
+On 08/16/2014 01:27 PM, Ivan Shapovalov wrote:
+> On Saturday 16 August 2014 at 10:23:08, Edward Shishkin wrote:	
+>> [...]
+>>>> So I need to find a way to take rwsem in a read-biased mode... Any
+>>>> advice is
+>>>> accepted, including "give up with adding of yet another lock and go with
+>>>> multiple transactions" :)
+>>>
+>>> IMHO this is too complicated.
+>>>
+>>> Why don't you want to grab, say, 20M per iteration?
+>>> It should work without any problems, just maintain a
+>>> counter of blocks allocated in the iteration..
+> I see it mostly like a "good to have" thing.
 
 
-Please, specify which code is executing at this point.
+Nop, we discuss the reasonable implementation of the "must have" -
+space reservation by the fitrim process..
 
-Anyway, we don't need any reservation to _create_ an atom.
-Reservation is expended when allocating blocks on the low level
-(bitmaps). Reservation (grabbing space) is needed to avoid hard
-ENOSPC (=no free bits in bitmaps) in situation, when we can not
-fail (e.g. flush, commit, etc..,)
+
+>   When the system is under load,
+> FITRIM implemented in this "simple" way will be ineffective: it will miss
+> some blocks that are temporarily allocated (journal, etc.)
+
+
+It will be perfectly discarded by the realtime discard
+
+
+>   even though it is
+> theoretically possible to stop accepting new transactions, commit all existing
+> ones and perform discard while the system is artificially made idle, then
+> resume everything.
+
+
+IMHO complicated and not need.
+Anyway, missing 2 blocks per device is not critical.
 
 
 >
-> In this case, the taskB's grab will fail though it could wait for taskA's
-> not yet created atom.
+> So I've been trying to check if this is feasible. Looks like it isn't.
+>
+>> add the counter to the struct reiser4_context and
+>> set it to zero at the beginning of every iteration.
+>> use get_current_context() to access the counter.
+> Is it needed? The simple way is just a loop consisting of
+> - grab space
+> - allocate blocks forward from start position (initially 0) until end of
+>    partition or limit reached
+> - update start position to `last allocated block + 1`
+> - put allocated space to the delete set
+> - mark for force-committing
+> - reiser4_txn_restart_current()
+> - if we've reached end of partition earlier, break, otherwise loop
+>
 
 
-I still don't see why somebody should fail if X+Y < free-space-on-disk.
-If X+Y > free-space, then yes, someone will fail, and it is correct.
+Ok, it will also work (with more iterations, though),
+well, let's do so..
+
+Thanks,
+Edward.
+
