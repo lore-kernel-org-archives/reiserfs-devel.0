@@ -1,93 +1,83 @@
-From: Ivan Shapovalov <intelfx100@gmail.com>
+From: Edward Shishkin <edward.shishkin@gmail.com>
 Subject: Re: reiser4: FITRIM ioctl -- how to grab the space?
-Date: Sat, 16 Aug 2014 15:27:36 +0400
-Message-ID: <2295734.UIR3OjHuyC@intelfx-laptop>
-References: <3405506.BC0S4TX54B@intelfx-laptop> <53EF11C8.20209@gmail.com> <53EF14EC.1070101@gmail.com>
+Date: Sat, 16 Aug 2014 14:15:29 +0200
+Message-ID: <53EF4B61.4080906@gmail.com>
+References: <3405506.BC0S4TX54B@intelfx-laptop> <2026408.Yl74NqGZKK@intelfx-laptop> <53EF11C8.20209@gmail.com> <1651199.WS1bpHXlZS@intelfx-laptop>
 Mime-Version: 1.0
-Content-Type: multipart/signed; boundary="nextPart1418956.CgxTh0eCdJ"; micalg="pgp-sha256"; protocol="application/pgp-signature"
+Content-Transfer-Encoding: 7bit
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20120113;
-        h=from:to:cc:subject:date:message-id:user-agent:in-reply-to
-         :references:mime-version:content-type;
-        bh=qzlQA1f5isgvI6tjHLqjcNKFRxRDqyvZBDgjrO6TgcY=;
-        b=sy8VG8HpOjoSc/rtAmo3Y/75jcVlDUPCHn7efEvMbDvnUqiyANRZDNVOmFJFmhIbuN
-         I8Yx7qVnwbKuqnWlfRwpm7nBzqVoEYkxYvUdqOhI/UY9hakFsv3u9rhsXu+pPn5lkcyu
-         K/Tai7Fq/bk5S5NtdA8PyYmEuITmpFhw+vy/Ymc3ZPZWoTK819S5IVct758BQivZWxja
-         AYFCWcZ0D77OLFEKtm+whDt6y4pPDZcfjCc7MlHN9n4j67eJwegAtdOMKujkKpRvBKiU
-         deIz/aQSD34qZzXBa81/XtboHxIljKm2laVf/+EU75k4ZEly53cxy2ypHFk4DrDxJc9k
-         FYCg==
-In-Reply-To: <53EF14EC.1070101@gmail.com>
+        h=message-id:date:from:user-agent:mime-version:to:cc:subject
+         :references:in-reply-to:content-type:content-transfer-encoding;
+        bh=WUGmCbtvo6iP6yM9KdU8Zc8mQI/vQ2hJmdD9E1Q0GAc=;
+        b=pGNbUK7F71Y9Inij8A6gDfUpeFGxg/WMRnwsh+jqs+kBi3ONNRW+xA7IEIB4GkZFdY
+         PkPbWrc3MGLi2YK69KZS5s6UGrO/5xpx9fbJIJUfnM8XWWOg43081+T6AtUFIWdsUx7o
+         ITdDfy58On1yuR9yEYaq4OiULL2WCVbjmmwZ33FEwfg67Dpo64YTGudI2hfndL0IxZlC
+         B4qi/ETnQXwGNbAW8iyjvLhTm6NoF9Cf+EN8xhhPCxxyq5md2ieyOqkovPPy5PtZr/d6
+         mjo8UB4vBoAx6p2GWqYM0uARAaBqmyWwh8i9o63UF6PNkjq6JzasrpQH30q0fW1v5ZDq
+         8VaA==
+In-Reply-To: <1651199.WS1bpHXlZS@intelfx-laptop>
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
-To: Edward Shishkin <edward.shishkin@gmail.com>
+Content-Type: text/plain; charset="us-ascii"; format="flowed"
+To: Ivan Shapovalov <intelfx100@gmail.com>
 Cc: reiserfs-devel@vger.kernel.org
 
 
---nextPart1418956.CgxTh0eCdJ
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset="us-ascii"
+On 08/16/2014 01:17 PM, Ivan Shapovalov wrote:
+> On Saturday 16 August 2014 at 10:09:44, Edward Shishkin wrote:	
+>> On 08/16/2014 02:44 AM, Ivan Shapovalov wrote:
+>>> On Monday 11 August 2014 at 13:39:12, Ivan Shapovalov wrote:	
+>>>> [...]
+>>>>>> I've meant "grabbing all space and then allocating all space" -- so there won't
+>>>>>> be multiple grabs or multiple atoms.
+>>>>>>
+>>>>>> Then all processes grabbing space with BA_CAN_COMMIT will wait for the discard
+>>>>>> atom to commit.
+>>>>> It seems such waiting will screw up the system. No?
+>>>> I was afraid of such situations, but how would that happen? The discard atom's
+>>>> commit will always be able to proceed as it doesn't grab space at all.
+>>>>
+>>>>>>     (Actually, there is a small race window between grabbing space
+>>>>>> and creating an atom...)
+>>>>> Which one?
+>>>> BA_CAN_COMMIT machinery does wait only for atoms, not for contexts. If
+>>>> process X happens to grab space between us grabbing space and creating an atom,
+>>>> it will get -ENOSPC even with BA_CAN_COMMIT.
+>>
+>> I still don't see any "races" here. How atom creation is related to grabbing
+>> space? Are we talking about races in the existing code? f so, please show
+>> the racing paths..
+> Well, this is not a race per se - it does not involve locking. But it is
+> a race-like behavior.
+>
+> taskA                                 taskB
+> --------------------------------------------------------------------------
+> grab very much space
 
-On Saturday 16 August 2014 at 10:23:08, Edward Shishkin wrote:=09
-> [...]
-> >>
-> >> So I need to find a way to take rwsem in a read-biased mode... Any=
-=20
-> >> advice is
-> >> accepted, including "give up with adding of yet another lock and g=
-o with
-> >> multiple transactions" :)
-> >
-> >
-> > IMHO this is too complicated.
-> >
-> > Why don't you want to grab, say, 20M per iteration?
-> > It should work without any problems, just maintain a
-> > counter of blocks allocated in the iteration..
+Ok, assume A wants X blocks.
 
-I see it mostly like a "good to have" thing. When the system is under l=
-oad,
-FITRIM implemented in this "simple" way will be ineffective: it will mi=
-ss
-some blocks that are temporarily allocated (journal, etc.) even though =
-it is
-theoretically possible to stop accepting new transactions, commit all e=
-xisting
-ones and perform discard while the system is artificially made idle, th=
-en
-resume everything.
+>                                          grab some space with BA_CAN_COMMIT
 
-So I've been trying to check if this is feasible. Looks like it isn't.
+Assume B wants Y blocks.
 
-> add the counter to the struct reiser4_context and
-> set it to zero at the beginning of every iteration.
-> use get_current_context() to access the counter.
+> create an atom using the grabbed space
 
-Is it needed? The simple way is just a loop consisting of
-=2D grab space
-=2D allocate blocks forward from start position (initially 0) until end o=
-f
-  partition or limit reached
-=2D update start position to `last allocated block + 1`
-=2D put allocated space to the delete set
-=2D mark for force-committing
-=2D reiser4_txn_restart_current()
-=2D if we've reached end of partition earlier, break, otherwise loop
 
-=2D-=20
-Ivan Shapovalov / intelfx /
---nextPart1418956.CgxTh0eCdJ
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: This is a digitally signed message part.
-Content-Transfer-Encoding: 7Bit
+Please, specify which code is executing at this point.
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
+Anyway, we don't need any reservation to _create_ an atom.
+Reservation is expended when allocating blocks on the low level
+(bitmaps). Reservation (grabbing space) is needed to avoid hard
+ENOSPC (=no free bits in bitmaps) in situation, when we can not
+fail (e.g. flush, commit, etc..,)
 
-iF4EABEIAAYFAlPvQCgACgkQxUKljSIMAnAUEwEAxti+qa8KnsUtQsDTHyP0v9Ar
-REd4CngqvhH5WGsmN20BALIzH5O3TbDSgp9/1M7iMj358bFmPmafmCZHg0+7Ks1e
-=Or6O
------END PGP SIGNATURE-----
 
---nextPart1418956.CgxTh0eCdJ--
+>
+> In this case, the taskB's grab will fail though it could wait for taskA's
+> not yet created atom.
 
+
+I still don't see why somebody should fail if X+Y < free-space-on-disk.
+If X+Y > free-space, then yes, someone will fail, and it is correct.
