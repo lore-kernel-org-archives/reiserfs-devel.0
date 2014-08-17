@@ -1,69 +1,70 @@
 From: Ivan Shapovalov <intelfx100@gmail.com>
-Subject: Re: [RFC] [PATCH 0/7] reiser4: batch discard support (FITRIM ioctl): initial implementation.
-Date: Sun, 17 Aug 2014 20:18:37 +0400
-Message-ID: <5846460.pSnBE1QeaT@intelfx-laptop>
-References: <1408290206-7427-1-git-send-email-intelfx100@gmail.com> <CADW=+3kCURR6UB5Tm8OcJnSYV1cNcYtTmbNNrv_QCO3o1RzwDQ@mail.gmail.com>
-Mime-Version: 1.0
-Content-Type: multipart/signed; boundary="nextPart7493840.Oj7zHQonOH"; micalg="pgp-sha256"; protocol="application/pgp-signature"
+Subject: [RFC] [PATCHv2 1/7] reiser4: block_alloc: add BA_SOME_SPACE flag for grabbing a fixed amount of space.
+Date: Sun, 17 Aug 2014 20:26:29 +0400
+Message-ID: <1408292795-1841-2-git-send-email-intelfx100@gmail.com>
+References: <1408292795-1841-1-git-send-email-intelfx100@gmail.com>
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20120113;
-        h=from:to:cc:subject:date:message-id:user-agent:in-reply-to
-         :references:mime-version:content-type;
-        bh=sDWGgkV3Ku9ZCZIW3CimqsZG/zjZNe2Z1trNEgnM114=;
-        b=Z8LfSlYpl6lwn3yxhCKb+Dx6XK2UD3wlwtNpvh7Ev0bIPFAos4oa8RXh9JU2ya3YwJ
-         TiNQY512Rf+z/UIzNGqjl53SNV34pVKCxIW1fHU65LSX5+G/OLdbhrT/K/07RVtWCEWi
-         I/stvVk9uN7VNOi/OoALcz8oNRBxVGd2byNE83Dl86u2NwxwnHKVBSXETdNb8SHk9awf
-         JXLi5k8h5P+4NJSnPoAE6HbLgTo22ZqIXIJhPXHZr06OmGlM+WqWBBttjzhC/91brlkc
-         AOlRhl5t3wCK/eJxtG6+JKrmT4Qyuft2wS191jHbDY9iWVxANEKSpMhE2lW23dKhtTHw
-         0d2Q==
-In-Reply-To: <CADW=+3kCURR6UB5Tm8OcJnSYV1cNcYtTmbNNrv_QCO3o1RzwDQ@mail.gmail.com>
+        h=from:to:cc:subject:date:message-id:in-reply-to:references;
+        bh=bWxj6zzt6njtHZiL4qOCYsIxycM4MUC0ZZeeZu0lTWE=;
+        b=KiwA5OQKTJj2kNlW2rA6HapXPawhgT54als6qOltFKmWrxdlea2ygsZMIknuupszaQ
+         /QkJzgBW3jXbf4KxVDbuvmmyJCqYLc44fDgppxfMv2C+G92W0o8oNcK5UoZuPe/wAuTR
+         EB89CuxSEXFwNa/NxuY1iHskcJdaeXssfGJL1pvBgFLHnAFhOdqG4rztcQ7lTwJhwrjF
+         U6TSOnk/tpD7aVjdM/4aOPkAMGQrdUMMGLqujud/78TbHtxDTs9xQOh1G3IlD96iJF81
+         /pllL4Zqt7gGS1qCSs8gSN8lC7LEyNqg2/8yUuJvdDrHRgQTrJ3nWpMvhslfHHOOmo4o
+         9s6g==
+In-Reply-To: <1408292795-1841-1-git-send-email-intelfx100@gmail.com>
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
-To: =?utf-8?B?RHXFoWFuIMSMb2xpxIc=?= <dusanc@gmail.com>
-Cc: reiserfs-devel <reiserfs-devel@vger.kernel.org>, Edward Shishkin <edward.shishkin@gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: reiserfs-devel@vger.kernel.org
+Cc: edward.shishkin@gmail.com, Ivan Shapovalov <intelfx100@gmail.com>
 
+This is used for FITRIM ioctl which will iteratively grab, allocate and trim disk space
+bit by bit to avoid starving the rest of system.
 
---nextPart7493840.Oj7zHQonOH
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset="utf-8"
+Signed-off-by: Ivan Shapovalov <intelfx100@gmail.com>
+---
+ fs/reiser4/block_alloc.c | 6 ++++++
+ fs/reiser4/block_alloc.h | 5 ++++-
+ 2 files changed, 10 insertions(+), 1 deletion(-)
 
-On Sunday 17 August 2014 at 18:14:10, Du=C5=A1an =C4=8Coli=C4=87 wrote:=
-=09
-> [...]
-> >
-> > Points I'm really uncertain of:
-> > - grabbing fixed amount of space (new BA_SOME_SPACE flag, grabs 25%=
- of
-> disk space)
->=20
-> Maybe grabbing 25% of remaining empty disk space would be better?
-
-What do you mean by "remaining"? 25% is recalculated on each iteration.=
-
-However, the reserved and allocated disk space is reclaimed at the end
-of each iteration, so the amount really stays the same.
-
-=2D-=20
-Ivan Shapovalov / intelfx /
-
->=20
-> > - creation of empty atoms (reiser4_create_atom())
-> > - handling of empty atoms in commit_current_atom()
-> >
-> [...]
---nextPart7493840.Oj7zHQonOH
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: This is a digitally signed message part.
-Content-Transfer-Encoding: 7Bit
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
-
-iF4EABEIAAYFAlPw1eQACgkQxUKljSIMAnAEiAEA0kcztL87ljQWVHbGvPNl6Btu
-aRoeIBpXmNQriq7tkBoA/RF+dHtaw73L36Bfo2HVcPGnDiNv9bs/AOo8roQvhKN/
-=djYV
------END PGP SIGNATURE-----
-
---nextPart7493840.Oj7zHQonOH--
+diff --git a/fs/reiser4/block_alloc.c b/fs/reiser4/block_alloc.c
+index d3d730c..8797b43 100644
+--- a/fs/reiser4/block_alloc.c
++++ b/fs/reiser4/block_alloc.c
+@@ -276,6 +276,12 @@ reiser4_grab(reiser4_context * ctx, __u64 count, reiser4_ba_flags_t flags)
+ 
+ 	free_blocks = sbinfo->blocks_free;
+ 
++	if (flags & BA_SOME_SPACE) {
++		/* Reserve 25% of all free space. */
++		count = free_blocks;
++		do_div(count, 4);
++	}
++
+ 	if ((use_reserved && free_blocks < count) ||
+ 	    (!use_reserved && free_blocks < count + sbinfo->blocks_reserved)) {
+ 		ret = RETERR(-ENOSPC);
+diff --git a/fs/reiser4/block_alloc.h b/fs/reiser4/block_alloc.h
+index a4e98af..bfc6be9 100644
+--- a/fs/reiser4/block_alloc.h
++++ b/fs/reiser4/block_alloc.h
+@@ -79,7 +79,10 @@ enum reiser4_ba_flags {
+ 	BA_FORCE = (1 << 5),
+ 
+ 	/* use default start value for free blocks search. */
+-	BA_USE_DEFAULT_SEARCH_START = (1 << 6)
++	BA_USE_DEFAULT_SEARCH_START = (1 << 6),
++
++	/* reserve some fixed amount of space */
++	BA_SOME_SPACE = (1 << 7),
+ };
+ 
+ typedef enum reiser4_ba_flags reiser4_ba_flags_t;
+-- 
+2.0.4
 
