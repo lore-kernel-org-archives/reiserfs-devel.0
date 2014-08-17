@@ -1,19 +1,19 @@
 From: Ivan Shapovalov <intelfx100@gmail.com>
-Subject: [RFC] [PATCHv3 7/9] reiser4: batch discard support: actually implement the FITRIM ioctl handler.
-Date: Mon, 18 Aug 2014 01:52:57 +0400
-Message-ID: <1408312379-1990-8-git-send-email-intelfx100@gmail.com>
+Subject: [RFC] [PATCHv3 6/9] reiser4: batch discard support: add a dummy FITRIM ioctl handler for directories.
+Date: Mon, 18 Aug 2014 01:52:56 +0400
+Message-ID: <1408312379-1990-7-git-send-email-intelfx100@gmail.com>
 References: <1408312379-1990-1-git-send-email-intelfx100@gmail.com>
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20120113;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=xtuDMZDhvGkFjFKsb2HIruPt1HtzfTr1Th1KnrMVsHs=;
-        b=luGDARQjugXGl7PIKxN6G85Iqo57BmcG57Bp1OZXdXg+XJmBeAPOJxU4LC/Sav9jFA
-         zIigkojcwXTCVtaLPkuXbULGcST5StC5iPdwfLB5riplRbxnouS7uvFWDe1GChxEbwR/
-         4AFf2Ul2+aTm1ZeWQnxRJoNm1g5okMDJpoRdjPU0zuB+sRFyZw2CUw59MTtwEQo2I7tN
-         6ZIlVQ65/NaOn5VczOxczcglZlnOZrDk4ThiddKJNIaFTRmpJIMdHZ6mOThHPNwFSKi3
-         bdNLywaTNwDDXeNUZPsThvnsyLvpDt3SP4N7g3T2thlINKY8sx4a+XyI5SHwlKH+imu1
-         eoPg==
+        bh=kcYkrjJH1FcfhVzv8dUHpao7oiRw1SRyMbhBNiODgfk=;
+        b=wFK7Lo1mN0bIxOMokf1HK9BEpCqShUj9ELUciLoZMfEUttJifIyKu5P/v604+ITH5b
+         v+R/USHoU7HnRTnXIj0Mxk8kRH4jJoWPfvULluU/NFntIvDuBXMLXbWWhj3ibE1qQWku
+         CHdvZYGGf//V6L7lJgw2ohLvU6GKe46Hx23Kx+20sO9nVmpL84oJWuLC12NrVvbtv9aC
+         98ot7HomKRpZUrsDRZi6anrQ2M7cM4iAPn7bZ5U3wq51lFBuT77do2NuQUDvF1spyAsx
+         9Ww7aWYrn7P66mdHjaf9Ls8POJE804eVHRj0ozBDazVOioI1MKwCTpADg5S6Fe7O+kKe
+         pS4Q==
 In-Reply-To: <1408312379-1990-1-git-send-email-intelfx100@gmail.com>
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
@@ -23,226 +23,81 @@ Content-Transfer-Encoding: 7bit
 To: reiserfs-devel@vger.kernel.org
 Cc: edward.shishkin@gmail.com, Ivan Shapovalov <intelfx100@gmail.com>
 
-It works in an iterative way, grabbing some fixed amount of space and allocating
-blocks until grabbed space is exhausted or partition's end is reached.
-
-Blocks are scheduled for discard by allocating them and immediately adding them
-to the atom's delete set, which is read and processed at atom commit time.
-
-After reaching the allocation stop condition, the atom is force-committed and,
-if the allocation has been stopped due to grabbed space exhaustion (not due to
-reaching end of partition), another iteration happens.
-
 Signed-off-by: Ivan Shapovalov <intelfx100@gmail.com>
 ---
- fs/reiser4/plugin/file_ops.c |  41 +++++++++++++-
- fs/reiser4/super_ops.c       | 127 +++++++++++++++++++++++++++++++++++++++++++
- 2 files changed, 165 insertions(+), 3 deletions(-)
+ fs/reiser4/plugin/dir/dir.h  |  2 ++
+ fs/reiser4/plugin/file_ops.c | 27 +++++++++++++++++++++++++++
+ fs/reiser4/plugin/object.c   |  6 +++++-
+ 3 files changed, 34 insertions(+), 1 deletion(-)
 
+diff --git a/fs/reiser4/plugin/dir/dir.h b/fs/reiser4/plugin/dir/dir.h
+index 4a91ebe..5eb7bda 100644
+--- a/fs/reiser4/plugin/dir/dir.h
++++ b/fs/reiser4/plugin/dir/dir.h
+@@ -10,6 +10,8 @@
+ 
+ #include <linux/fs.h>*/
+ 
++long reiser4_ioctl_dir_common(struct file *file, unsigned int cmd, unsigned long arg);
++
+ /* declarations of functions implementing HASHED_DIR_PLUGIN_ID dir plugin */
+ 
+ /* "hashed" directory methods of dir plugin */
 diff --git a/fs/reiser4/plugin/file_ops.c b/fs/reiser4/plugin/file_ops.c
-index 65e2b02..7686406 100644
+index 466da64..65e2b02 100644
 --- a/fs/reiser4/plugin/file_ops.c
 +++ b/fs/reiser4/plugin/file_ops.c
-@@ -8,6 +8,9 @@
- #include "../inode.h"
- #include "object.h"
- 
-+#include <linux/fs.h>
-+#include <linux/blkdev.h>
-+
- /* file operations */
- 
- /* implementation of vfs's llseek method of struct file_operations for
-@@ -20,6 +23,9 @@ loff_t reiser4_llseek_dir_common(struct file *, loff_t, int origin);
- */
- int reiser4_iterate_common(struct file *, struct dir_context *);
- 
-+/* this function is implemented in super_ops.c */
-+int reiser4_trim_fs(struct super_block *super, struct fstrim_range* range);
-+
- /**
-  * reiser4_release_dir_common - release of struct file_operations
-  * @inode: inode of released file
-@@ -121,9 +127,38 @@ long reiser4_ioctl_dir_common(struct file *file, unsigned int cmd, unsigned long
- 		return PTR_ERR(ctx);
- 
- 	switch (cmd) {
--	case FITRIM:
--		warning("intelfx-62", "FITRIM ioctl not implemented");
--		/* fall-through to -ENOSYS */
-+	case FITRIM: {
-+		struct request_queue *q = bdev_get_queue(super->s_bdev);
-+		struct fstrim_range range;
-+
-+		if (!capable(CAP_SYS_ADMIN)) {
-+			ret = RETERR(-EPERM);
-+			break;
-+		}
-+
-+		if (!blk_queue_discard(q)) {
-+			ret = RETERR(-EOPNOTSUPP);
-+			break;
-+		}
-+
-+		if (copy_from_user(&range, (struct fstrim_range __user *)arg,
-+		    sizeof(range))) {
-+			ret = RETERR(-EFAULT);
-+			break;
-+		}
-+
-+		range.minlen = max((unsigned int)range.minlen,
-+				   q->limits.discard_granularity);
-+
-+		ret = reiser4_trim_fs(super, &range);
-+
-+		if (copy_to_user((struct fstrim_range __user *)arg, &range,
-+		    sizeof(range))) {
-+			ret = RETERR(-EFAULT);
-+		}
-+
-+		break;
-+	}
- 
- 	default:
- 		ret = RETERR(-ENOSYS);
-diff --git a/fs/reiser4/super_ops.c b/fs/reiser4/super_ops.c
-index bcd7fd6..d232f30 100644
---- a/fs/reiser4/super_ops.c
-+++ b/fs/reiser4/super_ops.c
-@@ -471,6 +471,133 @@ static int reiser4_show_options(struct seq_file *m, struct dentry *dentry)
+@@ -107,6 +107,33 @@ int reiser4_sync_file_common(struct file *file, loff_t start, loff_t end, int da
  	return 0;
  }
  
-+/**
-+ * reiser4_trim_fs - discards all free space in a filesystem
-+ * @super: the superblock of filesystem to discard
-+ * @range: parameters for discarding
-+ *
-+ * Called from @reiser4_ioctl_dir_common().
++/** reiser4_ioctl_dir_common - ioctl of struct file_operations for typical directory
 + */
-+int reiser4_trim_fs(struct super_block *super, struct fstrim_range* range)
++long reiser4_ioctl_dir_common(struct file *file, unsigned int cmd, unsigned long arg)
 +{
-+	reiser4_blocknr_hint hint;
-+	reiser4_block_nr start, end, len, minlen, discarded_count = 0;
++	struct inode *inode = file_inode(file);
++	struct super_block *super = inode->i_sb;
 +	reiser4_context *ctx;
-+	txn_atom *atom;
-+	int ret, finished = 0;
++	int ret;
 +
-+	reiser4_blocknr_hint_init(&hint);
-+	ctx = get_current_context();
++	ctx = reiser4_init_context(super);
++	if (IS_ERR(ctx))
++		return PTR_ERR(ctx);
 +
-+	/*
-+	 * Configure the hint for block allocator.
-+	 * We will allocate in forward direction only.
-+	 */
-+	hint.blk = range->start >> super->s_blocksize_bits;
-+	hint.max_dist = range->len >> super->s_blocksize_bits;
-+	hint.block_stage = BLOCK_GRABBED;
-+	hint.forward = 1;
++	switch (cmd) {
++	case FITRIM:
++		warning("intelfx-62", "FITRIM ioctl not implemented");
++		/* fall-through to -ENOSYS */
 +
-+	end = hint.blk + hint.max_dist;
-+	minlen = range->minlen >> super->s_blocksize_bits;
++	default:
++		ret = RETERR(-ENOSYS);
++		break;
++	}
 +
-+	/*
-+	 * We will perform the process in iterations in order not to starve
-+	 * the rest of the system of disk space.
-+	 * Each iteration we will grab some space (using the BA_SOME_SPACE
-+	 * flag, which currently grabs 25% of free disk space), create an empty
-+	 * atom and sequentially allocate extents of disk space while we can
-+	 * afford it (i. e. while we haven't reached the end of partition AND
-+	 * while we haven't exhausted the grabbed space).
-+	 */
-+	do {
-+		/*
-+		 * Grab some sane amount of space.
-+		 * We will allocate blocks until end of the partition or until
-+		 * the grabbed space is exhausted.
-+		 */
-+		ret = reiser4_grab_reserved(super, 0, BA_CAN_COMMIT | BA_SOME_SPACE);
-+		if (ret != 0)
-+			goto out;
-+		if (ctx->grabbed_blocks == 0)
-+			goto out;
-+
-+		/*
-+		 * We will not capture anything, so we need an empty atom.
-+		 */
-+		ret = reiser4_create_atom();
-+		if (ret != 0)
-+			goto out;
-+
-+		while (ctx->grabbed_blocks != 0) {
-+			/*
-+			 * Allocate no more than is grabbed.
-+			 * FIXME: use minlen.
-+			 */
-+			len = ctx->grabbed_blocks;
-+			ret = reiser4_alloc_blocks(&hint, &start, &len, 0 /* flags */);
-+			if (ret == -ENOSPC)
-+				break;
-+			if (ret != 0)
-+				goto out;
-+
-+			/*
-+			 * Update the hint in order for the next scan to start
-+			 * right after the newly allocated extent.
-+			 */
-+			hint.blk = start + len;
-+			hint.max_dist = end - hint.blk;
-+
-+			/*
-+			 * Mark the newly allocated extent for deallocation.
-+			 * Discard happens on deallocation.
-+			 */
-+			ret = reiser4_dealloc_blocks(&start, &len, BLOCK_NOT_COUNTED, BA_DEFER);
-+			if (ret != 0)
-+				goto out;
-+
-+			/*
-+			 * FIXME: get the actual discarded block count,
-+			 * accounting for speculative discard of extent heads and tails.
-+			 *
-+			 * PRIORITY: LOW because we have already allocated all
-+			 * possible space, so allocations of heads/tails will
-+			 * fail unless there is a concurrent process reclaiming
-+			 * space.
-+			 */
-+			discarded_count += len;
-+		}
-+
-+		assert("intelfx-64", (ret == 0) || (ret == -ENOSPC));
-+
-+		if (ret == -ENOSPC) {
-+			ret = 0;
-+			finished = 1;
-+		}
-+
-+		/*
-+		 * Extents marked for deallocation are discarded here, as part
-+		 * of committing current atom.
-+		 */
-+		atom = get_current_atom_locked();
-+		spin_lock_txnh(ctx->trans);
-+		force_commit_atom(ctx->trans);
-+		all_grabbed2free();
-+		grab_space_enable();
-+	} while (!finished);
-+
-+out:
-+	reiser4_release_reserved(super);
-+	reiser4_blocknr_hint_done(&hint);
-+
-+	/*
-+	 * Update the statistics.
-+	 */
-+	range->len = discarded_count << super->s_blocksize_bits;
-+
++	reiser4_exit_context(ctx);
 +	return ret;
 +}
 +
- struct super_operations reiser4_super_operations = {
- 	.alloc_inode = reiser4_alloc_inode,
- 	.destroy_inode = reiser4_destroy_inode,
+ /*
+  * Local variables:
+  * c-indentation-style: "K&R"
+diff --git a/fs/reiser4/plugin/object.c b/fs/reiser4/plugin/object.c
+index 553f1e2..ce09a8a 100644
+--- a/fs/reiser4/plugin/object.c
++++ b/fs/reiser4/plugin/object.c
+@@ -251,7 +251,11 @@ static struct file_operations directory_f_ops = {
+ 	.read = generic_read_dir,
+ 	.iterate = reiser4_iterate_common,
+ 	.release = reiser4_release_dir_common,
+-	.fsync = reiser4_sync_common
++	.fsync = reiser4_sync_common,
++#ifdef CONFIG_COMPAT
++	.compat_ioctl = reiser4_ioctl_dir_common,
++#endif
++	.unlocked_ioctl = reiser4_ioctl_dir_common
+ };
+ static struct address_space_operations directory_a_ops = {
+ 	.writepage = writepage_bugop,
 -- 
 2.0.4
 
