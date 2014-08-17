@@ -1,20 +1,18 @@
 From: Ivan Shapovalov <intelfx100@gmail.com>
-Subject: [RFC] [PATCH 2/7] reiser4: block_alloc: add a "forward" parameter to reiser4_blocknr_hint to allocate blocks only in forward direction.
-Date: Sun, 17 Aug 2014 19:43:21 +0400
-Message-ID: <1408290206-7427-3-git-send-email-intelfx100@gmail.com>
-References: <1408290206-7427-1-git-send-email-intelfx100@gmail.com>
+Subject: [RFC] [PATCH 0/7] reiser4: batch discard support (FITRIM ioctl): initial implementation.
+Date: Sun, 17 Aug 2014 19:43:19 +0400
+Message-ID: <1408290206-7427-1-git-send-email-intelfx100@gmail.com>
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20120113;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=mleSlEoSgie93V0hPsaILHcvR8iCZQ7UBO6f7XH4SmY=;
-        b=b79besi2a5brBn2A00i/Va7teIRjGhkjuLY09sdTXUsYCSMQGCgoi/W0vWX+5kY+vB
-         jnwVHjp8jzZxfjdecqiZCoS8XIrEIknzp99TIVQ7XkZtNK8ZLv1tq5z544i/8MupvYdV
-         XIS8R8t885ysGVeUth0zPiBuhqnFSk33fyM/qAeH0jX9D/dLw7HwF3AB2QiE0jS+jYvP
-         z2+RSKN+iXHuLJHJpkq7tCSv9veVLadzsRHwEpghanMufRammscr8ySOZkzJdbTXj8bH
-         Tar+BDPV97YJj/3LTauqMxACL3YylGVt3mLzYqg+llejApe20tLarlMND9iTgo9Kq5vi
-         piaw==
-In-Reply-To: <1408290206-7427-1-git-send-email-intelfx100@gmail.com>
+        h=from:to:cc:subject:date:message-id;
+        bh=HO9sP/aqQ40lHWRQzmluk3S+ulaP+UPjoGbKMfnAcs0=;
+        b=NX7Iwtridq+K7HpPs78erRKfk+4rhmpPG5uZpCjWIOOnqEBFV6cJgncVMxoEXHLDTo
+         EbjzExQ16z/GoxOEoZLI+ZLvJBXdgpaFayNSa7XN9ujDM84G29pfiW894wPwIH4pRHjR
+         qmJfCQ53rmBXnG0BzU0sCQ0qxtDXGH0tm4FPpGZFeOoLbxcaVLSjF6QNmtyQ3zg7r1EI
+         RwT2A+DCrGBicrwS1yHKR0LM3ygEEIlD0SVOyiqvBRRiJ7PJaE3CP45BE8EMEZeGIuLy
+         XHdo430I1vtvudTbg1+ILu9cmd2b2zmS9lyq046KzjelYgcCAhCRu/CvgRMk/XymIPjF
+         lVAg==
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
 MIME-Version: 1.0
@@ -23,43 +21,43 @@ Content-Transfer-Encoding: 7bit
 To: reiserfs-devel@vger.kernel.org
 Cc: edward.shishkin@gmail.com, Ivan Shapovalov <intelfx100@gmail.com>
 
-Signed-off-by: Ivan Shapovalov <intelfx100@gmail.com>
----
- fs/reiser4/block_alloc.h         | 5 +++--
- fs/reiser4/plugin/space/bitmap.c | 3 ++-
- 2 files changed, 5 insertions(+), 3 deletions(-)
+This patch series implements FITRIM ioctl support in reiser4.
 
-diff --git a/fs/reiser4/block_alloc.h b/fs/reiser4/block_alloc.h
-index bfc6be9..08b3941 100644
---- a/fs/reiser4/block_alloc.h
-+++ b/fs/reiser4/block_alloc.h
-@@ -51,9 +51,10 @@ struct reiser4_blocknr_hint {
- 	/* block allocator assumes that blocks, which will be mapped to disk,
- 	   are in this specified block_stage */
- 	block_stage_t block_stage;
--	/* If direction = 1 allocate blocks in backward direction from the end
--	 * of disk to the beginning of disk.  */
-+	/* Allocate blocks only in backward direction starting from blk. */
- 	unsigned int backward:1;
-+	/* Allocate blocks only in forward direction starting from blk. */
-+	unsigned int forward:1;
- 
- };
- 
-diff --git a/fs/reiser4/plugin/space/bitmap.c b/fs/reiser4/plugin/space/bitmap.c
-index 3da3f6b..9beaf66 100644
---- a/fs/reiser4/plugin/space/bitmap.c
-+++ b/fs/reiser4/plugin/space/bitmap.c
-@@ -1127,7 +1127,8 @@ static int alloc_blocks_forward(reiser4_blocknr_hint *hint, int needed,
- 	/* There is only one bitmap search if max_dist was specified or first
- 	   pass was from the beginning of the bitmap. We also do one pass for
- 	   scanning bitmap in backward direction. */
--	if (!(actual_len != 0 || hint->max_dist != 0 || search_start == 0)) {
-+	if (actual_len == 0 && search_start != 0 &&
-+	    hint->max_dist == 0 && hint->forward == 0) {
- 		/* next step is a scanning from 0 to search_start */
- 		search_end = search_start;
- 		search_start = 0;
+The FITRIM ioctl is supposed to be applied to any directory inside the target
+filesystem. At least, this can be deduced from `fstrim` utility behavior on
+mainstream filesystems (e. g. ext2/3/4).
+
+The idea of implementation is per Edward's advices: FITRIM handler iteratively
+grabs a portion of disk space, sequentially allocates extents within grabbed
+space and commits the resulting atom. This way we avoid starving concurrent
+processes of the disk space. This process is repeated until the partition has
+been fully scanned and processed.
+
+Points I'm really uncertain of:
+- grabbing fixed amount of space (new BA_SOME_SPACE flag, grabs 25% of disk space)
+- creation of empty atoms (reiser4_create_atom())
+- handling of empty atoms in commit_current_atom()
+
+Ivan Shapovalov (7):
+  reiser4: block_alloc: add BA_SOME_SPACE flag for grabbing a fixed amount of space.
+  reiser4: block_alloc: add a "forward" parameter to reiser4_blocknr_hint to allocate blocks only in forward direction.
+  reiser4: txnmgr: free allocated but unneeded atom in atom_begin_and_assign_to_txnh().
+  reiser4: txnmgr: add reiser4_create_atom() which creates an empty atom without capturing any nodes.
+  reiser4: txnmgr: call reiser4_post_write_back_hook() for empty atoms.
+  reiser4: batch discard support: add a dummy FITRIM ioctl handler for directories.
+  reiser4: batch discard support: actually implement the FITRIM ioctl handler.
+
+ fs/reiser4/block_alloc.c         |   6 ++
+ fs/reiser4/block_alloc.h         |  10 ++-
+ fs/reiser4/plugin/dir/dir.h      |   2 +
+ fs/reiser4/plugin/file_ops.c     |  62 ++++++++++++++++++
+ fs/reiser4/plugin/object.c       |   6 +-
+ fs/reiser4/plugin/space/bitmap.c |   3 +-
+ fs/reiser4/super_ops.c           | 131 +++++++++++++++++++++++++++++++++++++++
+ fs/reiser4/txnmgr.c              |  51 ++++++++++-----
+ fs/reiser4/txnmgr.h              |   2 +
+ 9 files changed, 252 insertions(+), 21 deletions(-)
+
 -- 
 2.0.4
 
