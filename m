@@ -1,19 +1,19 @@
 From: Ivan Shapovalov <intelfx100@gmail.com>
-Subject: [RFC] [PATCHv3 4/9] reiser4: txnmgr: add reiser4_create_atom() which creates an empty atom without capturing any nodes.
-Date: Mon, 18 Aug 2014 01:52:54 +0400
-Message-ID: <1408312379-1990-5-git-send-email-intelfx100@gmail.com>
+Subject: [RFC] [PATCHv3 3/9] reiser4: txnmgr: free allocated but unneeded atom in atom_begin_and_assign_to_txnh().
+Date: Mon, 18 Aug 2014 01:52:53 +0400
+Message-ID: <1408312379-1990-4-git-send-email-intelfx100@gmail.com>
 References: <1408312379-1990-1-git-send-email-intelfx100@gmail.com>
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20120113;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=YWkigmguDdItB1jzpjZA3jaI6clMZohG0jkAFn0X2zs=;
-        b=P7fyeMAvd7OAyrChcnhubwo28UiKvJ2DqLRa3LCyEcUuNfbKXJ/bELY8VUR8ZrPHyw
-         TAizGQRQ9iRUhaPvZaF+dz0HpTVawsfbZYvP84D40y+cnqS9elyCck4C0qtwKMnUDKnY
-         fnUxIcurdYoHNOFssexg0YVvR/nWkd5+NhK18U234cP7p3DSwkOY588FiySriP9HhBNT
-         DLxuVvJMtp/IN8UZEDT0HzhgMuRC5a1X6h2/8mWvZEjX6KS+DQZVcjZahaB1UGpaugJG
-         5/tM4i+ExKT2T8eK2+AA9W0n9i66xAKSK5nZgGSZuP60V65jjJNL96SdsfTpqLAUaxDE
-         6LDg==
+        bh=K29S+DyO1faBOvI6K1eGIBKPjE767LeRJE7SpOFWc5g=;
+        b=I/uN5vaAiSGnkEtBhNSi7yC1kAfumbWBjW+LRK0a0H1IN9JA4sbCaXrjTjnpufZan0
+         UWGlMyhSkvbOTcTX2E1/rHgpTjWdz5BU+gsKAxUx6qgSar9aIzOd2ieIF7S4O9uLdCA5
+         ZmG5VjQfCULp6jD4362sMRzzrbSStdc0gsRz+WNgP2giZ7edfztReOvAfA+Ypxjyl9yv
+         Jcdn+4SMOtUKSnr8nRZchH36DwDfChwX9V9l0lc/cXMbtBh0kbAURJioySWcQK0vYN9a
+         R44LciEGaZsac6ywa94oGED2+H0eWFps4ktyxCVl6UVYN7P3XDEWusQXuZkYjA/nDSDC
+         ktvQ==
 In-Reply-To: <1408312379-1990-1-git-send-email-intelfx100@gmail.com>
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
@@ -23,60 +23,68 @@ Content-Transfer-Encoding: 7bit
 To: reiserfs-devel@vger.kernel.org
 Cc: edward.shishkin@gmail.com, Ivan Shapovalov <intelfx100@gmail.com>
 
+It is unclear why it hasn't been done before, as there was a
+corresponding notice, and such change apparently does not carry any side
+effects.
+
+Do this to avoid duplicating code in the next commit.
+
 Signed-off-by: Ivan Shapovalov <intelfx100@gmail.com>
 ---
- fs/reiser4/txnmgr.c | 24 ++++++++++++++++++++++++
- fs/reiser4/txnmgr.h |  2 ++
- 2 files changed, 26 insertions(+)
+ fs/reiser4/txnmgr.c | 20 +++++---------------
+ 1 file changed, 5 insertions(+), 15 deletions(-)
 
 diff --git a/fs/reiser4/txnmgr.c b/fs/reiser4/txnmgr.c
-index 68070a9..2862940 100644
+index d73ecb9..68070a9 100644
 --- a/fs/reiser4/txnmgr.c
 +++ b/fs/reiser4/txnmgr.c
-@@ -2050,6 +2050,30 @@ int reiser4_try_capture(jnode *node, znode_lock_mode lock_mode,
- 	return ret;
- }
+@@ -709,6 +709,9 @@ static int atom_begin_and_assign_to_txnh(txn_atom ** atom_alloc, txn_handle * tx
+ 			return RETERR(-ENOMEM);
+ 	}
  
-+/* This function ensures that the current transcrash has an atom without
-+ * capturing anything. If needed, an empty atom is created and assigned.
-+ */
-+int reiser4_create_atom(void)
-+{
-+	txn_atom *atom_alloc = NULL;
-+	txn_handle *txnh = get_current_context()->trans;
-+	int ret;
++	atom = *atom_alloc;
++	*atom_alloc = NULL;
 +
-+	do {
-+		spin_lock_txnh(txnh);
-+		if (txnh->atom == NULL) {
-+			spin_unlock_txnh(txnh);
-+			/* assign empty atom to the txnh and repeat */
-+			ret = atom_begin_and_assign_to_txnh(&atom_alloc, txnh);
-+		} else {
-+			spin_unlock_txnh(txnh);
-+			ret = 0;
-+		}
-+	} while (ret == -E_REPEAT);
-+
-+	return ret;
-+}
-+
- static void release_two_atoms(txn_atom *one, txn_atom *two)
- {
- 	spin_unlock_atom(one);
-diff --git a/fs/reiser4/txnmgr.h b/fs/reiser4/txnmgr.h
-index 72b84a2..50a1f54 100644
---- a/fs/reiser4/txnmgr.h
-+++ b/fs/reiser4/txnmgr.h
-@@ -437,6 +437,8 @@ extern void reiser4_uncapture_jnode(jnode *);
- extern int reiser4_capture_inode(struct inode *);
- extern int reiser4_uncapture_inode(struct inode *);
+ 	/* and, also, txnmgr spin lock should be taken before jnode and txnh
+ 	   locks. */
+ 	mgr = &get_super_private(reiser4_get_current_sb())->tmgr;
+@@ -717,18 +720,14 @@ static int atom_begin_and_assign_to_txnh(txn_atom ** atom_alloc, txn_handle * tx
  
-+extern int reiser4_create_atom(void);
-+
- extern txn_atom *get_current_atom_locked_nocheck(void);
+ 	/* Check whether new atom still needed */
+ 	if (txnh->atom != NULL) {
+-		/* NOTE-NIKITA probably it is rather better to free
+-		 * atom_alloc here than thread it up to reiser4_try_capture() */
+-
+ 		spin_unlock_txnh(txnh);
+ 		spin_unlock_txnmgr(mgr);
  
- #if REISER4_DEBUG
++		kmem_cache_free(_atom_slab, atom);
++
+ 		return -E_REPEAT;
+ 	}
+ 
+-	atom = *atom_alloc;
+-	*atom_alloc = NULL;
+-
+ 	atom_init(atom);
+ 
+ 	assert("jmacd-17", atom_isclean(atom));
+@@ -2031,15 +2030,6 @@ int reiser4_try_capture(jnode *node, znode_lock_mode lock_mode,
+ 		goto repeat;
+ 	}
+ 
+-	/* free extra atom object that was possibly allocated by
+-	   try_capture_block().
+-
+-	   Do this before acquiring jnode spin lock to
+-	   minimize time spent under lock. --nikita */
+-	if (atom_alloc != NULL) {
+-		kmem_cache_free(_atom_slab, atom_alloc);
+-	}
+-
+ 	if (ret != 0) {
+ 		if (ret == -E_BLOCK) {
+ 			assert("nikita-3360",
 -- 
 2.0.4
 
