@@ -1,19 +1,19 @@
 From: Ivan Shapovalov <intelfx100@gmail.com>
-Subject: [RFC] [PATCH 1/7] reiser4: block_alloc: add BA_SOME_SPACE flag for grabbing a fixed amount of space.
-Date: Sun, 17 Aug 2014 19:43:20 +0400
-Message-ID: <1408290206-7427-2-git-send-email-intelfx100@gmail.com>
+Subject: [RFC] [PATCH 2/7] reiser4: block_alloc: add a "forward" parameter to reiser4_blocknr_hint to allocate blocks only in forward direction.
+Date: Sun, 17 Aug 2014 19:43:21 +0400
+Message-ID: <1408290206-7427-3-git-send-email-intelfx100@gmail.com>
 References: <1408290206-7427-1-git-send-email-intelfx100@gmail.com>
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20120113;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=bWxj6zzt6njtHZiL4qOCYsIxycM4MUC0ZZeeZu0lTWE=;
-        b=opKZDxGNKpG0VBBaP4kE4yv7z2k40uXYXG0+8AGXIM5UarPBlC6ascGCqrWccqEOvB
-         caHSPD1h05n8Jc/ByI1IWnsWwFo3OUlvyvRsXHhZ2ohHywp+Zz6GfIUJeYL3XLxGE5tv
-         gvAYELFyaMWJ62k4/Xz24Qa8TcAQzwO865+TMtuHSRGYHUAMUztOaFhqh4RHD3947MuY
-         g/BsQepYhIK/tx94iSrv/clnG5jzxYVt6fn95mgrQwZuvQ08b/0DfMN4h5/lmoBXg3tc
-         b4H6qarY5vY7w+fGCqYbVkTaSNwAYT8QHrR2ivnMYCQ0jc02XnJ5AvtD8Uc6WZ3r34jb
-         OXbg==
+        bh=mleSlEoSgie93V0hPsaILHcvR8iCZQ7UBO6f7XH4SmY=;
+        b=b79besi2a5brBn2A00i/Va7teIRjGhkjuLY09sdTXUsYCSMQGCgoi/W0vWX+5kY+vB
+         jnwVHjp8jzZxfjdecqiZCoS8XIrEIknzp99TIVQ7XkZtNK8ZLv1tq5z544i/8MupvYdV
+         XIS8R8t885ysGVeUth0zPiBuhqnFSk33fyM/qAeH0jX9D/dLw7HwF3AB2QiE0jS+jYvP
+         z2+RSKN+iXHuLJHJpkq7tCSv9veVLadzsRHwEpghanMufRammscr8ySOZkzJdbTXj8bH
+         Tar+BDPV97YJj/3LTauqMxACL3YylGVt3mLzYqg+llejApe20tLarlMND9iTgo9Kq5vi
+         piaw==
 In-Reply-To: <1408290206-7427-1-git-send-email-intelfx100@gmail.com>
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
@@ -23,48 +23,43 @@ Content-Transfer-Encoding: 7bit
 To: reiserfs-devel@vger.kernel.org
 Cc: edward.shishkin@gmail.com, Ivan Shapovalov <intelfx100@gmail.com>
 
-This is used for FITRIM ioctl which will iteratively grab, allocate and trim disk space
-bit by bit to avoid starving the rest of system.
-
 Signed-off-by: Ivan Shapovalov <intelfx100@gmail.com>
 ---
- fs/reiser4/block_alloc.c | 6 ++++++
- fs/reiser4/block_alloc.h | 5 ++++-
- 2 files changed, 10 insertions(+), 1 deletion(-)
+ fs/reiser4/block_alloc.h         | 5 +++--
+ fs/reiser4/plugin/space/bitmap.c | 3 ++-
+ 2 files changed, 5 insertions(+), 3 deletions(-)
 
-diff --git a/fs/reiser4/block_alloc.c b/fs/reiser4/block_alloc.c
-index d3d730c..8797b43 100644
---- a/fs/reiser4/block_alloc.c
-+++ b/fs/reiser4/block_alloc.c
-@@ -276,6 +276,12 @@ reiser4_grab(reiser4_context * ctx, __u64 count, reiser4_ba_flags_t flags)
- 
- 	free_blocks = sbinfo->blocks_free;
- 
-+	if (flags & BA_SOME_SPACE) {
-+		/* Reserve 25% of all free space. */
-+		count = free_blocks;
-+		do_div(count, 4);
-+	}
-+
- 	if ((use_reserved && free_blocks < count) ||
- 	    (!use_reserved && free_blocks < count + sbinfo->blocks_reserved)) {
- 		ret = RETERR(-ENOSPC);
 diff --git a/fs/reiser4/block_alloc.h b/fs/reiser4/block_alloc.h
-index a4e98af..bfc6be9 100644
+index bfc6be9..08b3941 100644
 --- a/fs/reiser4/block_alloc.h
 +++ b/fs/reiser4/block_alloc.h
-@@ -79,7 +79,10 @@ enum reiser4_ba_flags {
- 	BA_FORCE = (1 << 5),
+@@ -51,9 +51,10 @@ struct reiser4_blocknr_hint {
+ 	/* block allocator assumes that blocks, which will be mapped to disk,
+ 	   are in this specified block_stage */
+ 	block_stage_t block_stage;
+-	/* If direction = 1 allocate blocks in backward direction from the end
+-	 * of disk to the beginning of disk.  */
++	/* Allocate blocks only in backward direction starting from blk. */
+ 	unsigned int backward:1;
++	/* Allocate blocks only in forward direction starting from blk. */
++	unsigned int forward:1;
  
- 	/* use default start value for free blocks search. */
--	BA_USE_DEFAULT_SEARCH_START = (1 << 6)
-+	BA_USE_DEFAULT_SEARCH_START = (1 << 6),
-+
-+	/* reserve some fixed amount of space */
-+	BA_SOME_SPACE = (1 << 7),
  };
  
- typedef enum reiser4_ba_flags reiser4_ba_flags_t;
+diff --git a/fs/reiser4/plugin/space/bitmap.c b/fs/reiser4/plugin/space/bitmap.c
+index 3da3f6b..9beaf66 100644
+--- a/fs/reiser4/plugin/space/bitmap.c
++++ b/fs/reiser4/plugin/space/bitmap.c
+@@ -1127,7 +1127,8 @@ static int alloc_blocks_forward(reiser4_blocknr_hint *hint, int needed,
+ 	/* There is only one bitmap search if max_dist was specified or first
+ 	   pass was from the beginning of the bitmap. We also do one pass for
+ 	   scanning bitmap in backward direction. */
+-	if (!(actual_len != 0 || hint->max_dist != 0 || search_start == 0)) {
++	if (actual_len == 0 && search_start != 0 &&
++	    hint->max_dist == 0 && hint->forward == 0) {
+ 		/* next step is a scanning from 0 to search_start */
+ 		search_end = search_start;
+ 		search_start = 0;
 -- 
 2.0.4
 
