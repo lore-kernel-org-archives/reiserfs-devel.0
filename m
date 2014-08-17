@@ -1,20 +1,18 @@
 From: Ivan Shapovalov <intelfx100@gmail.com>
-Subject: [RFC] [PATCHv2 1/7] reiser4: block_alloc: add BA_SOME_SPACE flag for grabbing a fixed amount of space.
-Date: Sun, 17 Aug 2014 20:26:29 +0400
-Message-ID: <1408292795-1841-2-git-send-email-intelfx100@gmail.com>
-References: <1408292795-1841-1-git-send-email-intelfx100@gmail.com>
+Subject: [RFC] [PATCHv2 0/7] reiser4: batch discard support (FITRIM ioctl): initial implementation.
+Date: Sun, 17 Aug 2014 20:26:28 +0400
+Message-ID: <1408292795-1841-1-git-send-email-intelfx100@gmail.com>
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20120113;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=bWxj6zzt6njtHZiL4qOCYsIxycM4MUC0ZZeeZu0lTWE=;
-        b=KiwA5OQKTJj2kNlW2rA6HapXPawhgT54als6qOltFKmWrxdlea2ygsZMIknuupszaQ
-         /QkJzgBW3jXbf4KxVDbuvmmyJCqYLc44fDgppxfMv2C+G92W0o8oNcK5UoZuPe/wAuTR
-         EB89CuxSEXFwNa/NxuY1iHskcJdaeXssfGJL1pvBgFLHnAFhOdqG4rztcQ7lTwJhwrjF
-         U6TSOnk/tpD7aVjdM/4aOPkAMGQrdUMMGLqujud/78TbHtxDTs9xQOh1G3IlD96iJF81
-         /pllL4Zqt7gGS1qCSs8gSN8lC7LEyNqg2/8yUuJvdDrHRgQTrJ3nWpMvhslfHHOOmo4o
-         9s6g==
-In-Reply-To: <1408292795-1841-1-git-send-email-intelfx100@gmail.com>
+        h=from:to:cc:subject:date:message-id;
+        bh=tBX/XGU6mO228sHhTt6Vw7aHhWsYc4fltjtYDzq9KL0=;
+        b=AcUDZTfolVcyw3Ow/zJr4YSkTDvfgLTO9+zOycm7MXGZPAm7UUKkS4s+FjxCU8Skb2
+         9THvrEywc1rfwLt//ZExdTztDTa/67x6wBXzOokd+SjaHFFuD/LI60JzFU7uRq4TYLIg
+         mWHs0sgr/UwSC/LPx+ZoUj03dr5hDiS5OHh232L+hQUT3HpHPRmTBjAv/gTY10ArHIrB
+         DTLNDEEg+vn0cV42YH3odJYRGQRrzrW2gL9XG3PDbfFYrWA1roqwa8OwPYc2GpAJaDzC
+         VhTq6dhmdyKYnWkGP08aPNPwaj554nwyfT6kOha4y2OHI5qxiwY1SdstdBOTa7e2f2YD
+         8K5Q==
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
 MIME-Version: 1.0
@@ -23,48 +21,47 @@ Content-Transfer-Encoding: 7bit
 To: reiserfs-devel@vger.kernel.org
 Cc: edward.shishkin@gmail.com, Ivan Shapovalov <intelfx100@gmail.com>
 
-This is used for FITRIM ioctl which will iteratively grab, allocate and trim disk space
-bit by bit to avoid starving the rest of system.
+This patch series implements FITRIM ioctl support in reiser4.
 
-Signed-off-by: Ivan Shapovalov <intelfx100@gmail.com>
----
- fs/reiser4/block_alloc.c | 6 ++++++
- fs/reiser4/block_alloc.h | 5 ++++-
- 2 files changed, 10 insertions(+), 1 deletion(-)
+The FITRIM ioctl is supposed to be applied to any directory inside the target
+filesystem. At least, this can be deduced from `fstrim` utility behavior on
+mainstream filesystems (e. g. ext2/3/4).
 
-diff --git a/fs/reiser4/block_alloc.c b/fs/reiser4/block_alloc.c
-index d3d730c..8797b43 100644
---- a/fs/reiser4/block_alloc.c
-+++ b/fs/reiser4/block_alloc.c
-@@ -276,6 +276,12 @@ reiser4_grab(reiser4_context * ctx, __u64 count, reiser4_ba_flags_t flags)
- 
- 	free_blocks = sbinfo->blocks_free;
- 
-+	if (flags & BA_SOME_SPACE) {
-+		/* Reserve 25% of all free space. */
-+		count = free_blocks;
-+		do_div(count, 4);
-+	}
-+
- 	if ((use_reserved && free_blocks < count) ||
- 	    (!use_reserved && free_blocks < count + sbinfo->blocks_reserved)) {
- 		ret = RETERR(-ENOSPC);
-diff --git a/fs/reiser4/block_alloc.h b/fs/reiser4/block_alloc.h
-index a4e98af..bfc6be9 100644
---- a/fs/reiser4/block_alloc.h
-+++ b/fs/reiser4/block_alloc.h
-@@ -79,7 +79,10 @@ enum reiser4_ba_flags {
- 	BA_FORCE = (1 << 5),
- 
- 	/* use default start value for free blocks search. */
--	BA_USE_DEFAULT_SEARCH_START = (1 << 6)
-+	BA_USE_DEFAULT_SEARCH_START = (1 << 6),
-+
-+	/* reserve some fixed amount of space */
-+	BA_SOME_SPACE = (1 << 7),
- };
- 
- typedef enum reiser4_ba_flags reiser4_ba_flags_t;
+The idea of implementation is per Edward's advices: FITRIM handler iteratively
+grabs a portion of disk space, sequentially allocates extents within grabbed
+space and commits the resulting atom. This way we avoid starving concurrent
+processes of the disk space. This process is repeated until the partition has
+been fully scanned and processed.
+
+Points I'm really uncertain of:
+- grabbing fixed amount of space (new BA_SOME_SPACE flag, grabs 25% of disk space)
+- creation of empty atoms (reiser4_create_atom())
+- handling of empty atoms in commit_current_atom()
+
+v2: - fix PATCH 5/7 "reiser4: txnmgr: call reiser4_post_write_back_hook() for empty atoms."
+      * fix a typo
+      * release atom spinlock before calling reiser4_post_write_back_hook()
+
+Ivan Shapovalov (7):
+  reiser4: block_alloc: add BA_SOME_SPACE flag for grabbing a fixed amount of space.
+  reiser4: block_alloc: add a "forward" parameter to reiser4_blocknr_hint to allocate blocks only in forward direction.
+  reiser4: txnmgr: free allocated but unneeded atom in atom_begin_and_assign_to_txnh().
+  reiser4: txnmgr: add reiser4_create_atom() which creates an empty atom without capturing any nodes.
+  reiser4: txnmgr: call reiser4_post_write_back_hook() for empty atoms.
+  reiser4: batch discard support: add a dummy FITRIM ioctl handler for directories.
+  reiser4: batch discard support: actually implement the FITRIM ioctl handler.
+
+ fs/reiser4/block_alloc.c         |   6 ++
+ fs/reiser4/block_alloc.h         |  10 ++-
+ fs/reiser4/plugin/dir/dir.h      |   2 +
+ fs/reiser4/plugin/file_ops.c     |  62 ++++++++++++++++++
+ fs/reiser4/plugin/object.c       |   6 +-
+ fs/reiser4/plugin/space/bitmap.c |   3 +-
+ fs/reiser4/super_ops.c           | 131 +++++++++++++++++++++++++++++++++++++++
+ fs/reiser4/txnmgr.c              |  57 +++++++++++------
+ fs/reiser4/txnmgr.h              |   2 +
+ 9 files changed, 255 insertions(+), 24 deletions(-)
+
 -- 
 2.0.4
 
