@@ -1,125 +1,198 @@
-From: Edward Shishkin <edward.shishkin@gmail.com>
-Subject: Re: reiser4: porting to 3.16: any reason ->aio_read() of struct file_operations
- has been left out?
-Date: Wed, 20 Aug 2014 01:39:42 +0200
-Message-ID: <53F3E03E.7030805@gmail.com>
-References: <10671542.MCAVDCHSND@intelfx-laptop>
+From: <doiggl@velocitynet.com.au>
+Subject: Which patches can be applied on top of reiser4-for-3.15.1.patch.gz
+Date: Wed, 20 Aug 2014 17:42:52 +1000
+Message-ID: <f6e6b313d9543ba6a1ad9a5707637dc8@mail.velocitynet.com.au>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20120113;
-        h=message-id:date:from:user-agent:mime-version:to:subject:references
-         :in-reply-to:content-type:content-transfer-encoding;
-        bh=bLkauHz2moY57z8f1345bznv5WKhEvuMvkBsESJHfnM=;
-        b=YPn4sHeo5waHoNrdjLil+f7cUEs5ZtG4nY52/TEZk5qJ6pMb3afFqitx7EV8h+6wkr
-         1pwUmpdME0cwst0LzYXazcVJfNUpZamRIpt3G7LfrBx7gLlY06d/kpbpRuVhdMikjMsR
-         teQhQ1pqVJJUuQz4tD6s2WdZgJgcb9+i3ll5MniSZL91/nxggtlcIT2FYLHsj1m6Ufqu
-         hi0AnXcFA0ZTSgFcZinT9w5mKcfYn0D3zK6XFmOy3VVx9WzIL6vcWZC9OLzwSbGwcoFH
-         VRfPUyz3TfuUqXel9+NGv8F9jB8e7AjuM28Uq/EWr7HodgjB1ex1ZP3gLZEpWza08wO2
-         kZDw==
-In-Reply-To: <10671542.MCAVDCHSND@intelfx-laptop>
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: Ivan Shapovalov <intelfx100@gmail.com>, reiserfs-devel@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+To: reiserfs-devel@vger.kernel.org
 
+Hello,
 
-On 08/20/2014 12:32 AM, Ivan Shapovalov wrote:
->  From `git log` I've seen that VFS people intend to replace ->aio_read() and
-> ->aio_write() of struct file_operations with new methods ->read_iter() and
-> ->write_iter().
->
-> (Along with a couple of related new helpers, differing from previous just in
-> calling _iter methods instead of aio_ ones.)
->
->  From other filesystems it seems that these are simple drop-in replacements
-> (however, well, I have zero familiarity with VFS). So here is a question:
-> is there any intentional reason that generic_file_aio_write() is not used
-> in reiser4?
+Which patches can be applied on top of reiser4-for-3.15.1.patch.gz
+2014-08-09 616.4 kB 
+I see this listing[1]  [sorted by date] in
+http://www.spinics.net/lists/reiserfs-devel/maillist.html
+Thanks Glenn
 
+[1] long patch listing based on date.
+extracted via  # grep -i PATCHv listing.txt  | grep -i reiser4:| more
 
-Currently reiser4 is a set of two filesystems which differ in methods
-of handling regular files. For VFS we provide "dispatchers", which pass
-management to appropriate plugin (UNIX_FILE or CRYPTCOMPRESS).
-
-UNIX_FILE plugin doesn't use generic write for performance reasons
-(I'll try to find the respective mailing thread). CRYPTCOMPRESS doesn't
-use it for compatibility reasons: I don't know how how to rewrite it
-gracefully using the generic write method.
-
-Edward.
-
-
->
-> What follows is a simple patch that I've currently applied to my own kernel
-> (seems to be the only significant vfs change affecting filesystems), however,
-> I fear that these code-paths are not generally used, so my "works for me"
-> isn't really representative. Could you please clarify the situation here?
->
->  From 81172835255a01718c2c256942d5887825a0cd7a Mon Sep 17 00:00:00 2001
-> From: Ivan Shapovalov <intelfx100@gmail.com>
-> Date: Tue, 19 Aug 2014 14:33:35 +0400
-> Subject: [PATCH] Adjust reiser4 to 3.16: ->{read,write}_iter of struct
->   file_operations.
->
-> 1. ->aio_{read,write} of struct file_operations are being replaced with ->{read,write}_iter.
-> 2. do_sync_{read,write} are being replaced with new_sync_{read,write}.
-> 3. generic_file_splice_write is being replaced with iter_file_splice_write.
->
-> Signed-off-by: Ivan Shapovalov <intelfx100@gmail.com>
-> ---
->   fs/reiser4/plugin/file/cryptcompress.c | 2 +-
->   fs/reiser4/plugin/file/file.c          | 2 +-
->   fs/reiser4/plugin/object.c             | 4 ++--
->   3 files changed, 4 insertions(+), 4 deletions(-)
->
-> diff --git a/fs/reiser4/plugin/file/cryptcompress.c b/fs/reiser4/plugin/file/cryptcompress.c
-> index 8af388d..b0109fb 100644
-> --- a/fs/reiser4/plugin/file/cryptcompress.c
-> +++ b/fs/reiser4/plugin/file/cryptcompress.c
-> @@ -2964,7 +2964,7 @@ ssize_t read_cryptcompress(struct file * file, char __user *buf, size_t size,
->   		reiser4_exit_context(ctx);
->   		return result;
->   	}
-> -	result = do_sync_read(file, buf, size, off);
-> +	result = new_sync_read(file, buf, size, off);
->   
->   	context_set_commit_async(ctx);
->   	reiser4_exit_context(ctx);
-> diff --git a/fs/reiser4/plugin/file/file.c b/fs/reiser4/plugin/file/file.c
-> index 94029cd..e65c48d 100644
-> --- a/fs/reiser4/plugin/file/file.c
-> +++ b/fs/reiser4/plugin/file/file.c
-> @@ -1752,7 +1752,7 @@ ssize_t read_unix_file(struct file *file, char __user *buf,
->   	switch (uf_info->container) {
->   	case UF_CONTAINER_EXTENTS:
->   		if (!reiser4_inode_get_flag(inode, REISER4_PART_MIXED)) {
-> -			result = do_sync_read(file, buf, read_amount, off);
-> +			result = new_sync_read(file, buf, read_amount, off);
->   			break;
->   		}
->   	case UF_CONTAINER_TAILS:
-> diff --git a/fs/reiser4/plugin/object.c b/fs/reiser4/plugin/object.c
-> index 553f1e2..e431e1f 100644
-> --- a/fs/reiser4/plugin/object.c
-> +++ b/fs/reiser4/plugin/object.c
-> @@ -188,7 +188,7 @@ static struct file_operations regular_file_f_ops = {
->   	.llseek = generic_file_llseek,
->   	.read = reiser4_read_dispatch,
->   	.write = reiser4_write_dispatch,
-> -	.aio_read = generic_file_aio_read,
-> +	.read_iter = generic_file_read_iter,
->   	.unlocked_ioctl = reiser4_ioctl_dispatch,
->   #ifdef CONFIG_COMPAT
->   	.compat_ioctl = reiser4_ioctl_dispatch,
-> @@ -198,7 +198,7 @@ static struct file_operations regular_file_f_ops = {
->   	.release = reiser4_release_dispatch,
->   	.fsync = reiser4_sync_file_common,
->   	.splice_read = generic_file_splice_read,
-> -	.splice_write = generic_file_splice_write
-> +	.splice_write = iter_file_splice_write
->   };
->   static struct address_space_operations regular_file_a_ops = {
->   	.writepage = reiser4_writepage,
+Re: [RFC] [PATCHv3 0/9] reiser4: batch discard support (FITRIM ioctl):
+initial implementation.
+[RFC] [PATCHv3 9/9] reiser4: batch discard support: honor minimal extent
+length passed from the userspace.
+[RFC] [PATCHv3 8/9] reiser4: block_alloc: add a "min_len" parameter to
+reiser4_blocknr_hint to limit allocated extent length from below.
+[RFC] [PATCHv3 7/9] reiser4: batch discard support: actually implement the
+FITRIM ioctl handler.
+[RFC] [PATCHv3 6/9] reiser4: batch discard support: add a dummy FITRIM
+ioctl handler for directories.
+[RFC] [PATCHv3 5/9] reiser4: txnmgr: call reiser4_post_write_back_hook()
+also for empty atoms.
+[RFC] [PATCHv3 4/9] reiser4: txnmgr: add reiser4_create_atom() which
+creates an empty atom without capturing any nodes.
+[RFC] [PATCHv3 3/9] reiser4: txnmgr: free allocated but unneeded atom in
+atom_begin_and_assign_to_txnh().
+[RFC] [PATCHv3 2/9] reiser4: block_alloc: add a "forward" parameter to
+reiser4_blocknr_hint to allocate blocks only in forward direction.
+[RFC] [PATCHv3 1/9] reiser4: block_alloc: add BA_SOME_SPACE flag for
+grabbing a fixed amount of space.
+[RFC] [PATCHv3 0/9] reiser4: batch discard support (FITRIM ioctl): initial
+implementation.
+Re: [RFC] [PATCHv2 0/7] reiser4: batch discard support (FITRIM ioctl):
+initial implementation.
+Re: [RFC] [PATCHv2 0/7] reiser4: batch discard support (FITRIM ioctl):
+initial implementation.
+[RFC] [PATCHv2 7/7] reiser4: batch discard support: actually implement the
+FITRIM ioctl handler.
+[RFC] [PATCHv2 6/7] reiser4: batch discard support: add a dummy FITRIM
+ioctl handler for directories.
+[RFC] [PATCHv2 5/7] reiser4: txnmgr: call reiser4_post_write_back_hook()
+also for empty atoms.
+[RFC] [PATCHv2 4/7] reiser4: txnmgr: add reiser4_create_atom() which
+creates an empty atom without capturing any nodes.
+[RFC] [PATCHv2 3/7] reiser4: txnmgr: free allocated but unneeded atom in
+atom_begin_and_assign_to_txnh().
+[RFC] [PATCHv2 2/7] reiser4: block_alloc: add a "forward" parameter to
+reiser4_blocknr_hint to allocate blocks only in forward direction.
+[RFC] [PATCHv2 1/7] reiser4: block_alloc: add BA_SOME_SPACE flag for
+grabbing a fixed amount of space.
+[RFC] [PATCHv2 0/7] reiser4: batch discard support (FITRIM ioctl): initial
+implementation.
+Re: [PATCHv2 0/3] reiser4: discard support: perform discard before all
+deallocations.
+Re: [PATCHv2 0/3] reiser4: discard support: perform discard before all
+deallocations.
+Re: [PATCHv7 0/6] reiser4: discard support: simplified and race-free
+initial implementation.
+[PATCHv7 6/6] reiser4: discard support: initial implementation using
+blocknr_list, without extent padding.
+[PATCHv7 5/6] reiser4: blocknr_set: use kmem_cache instead of kmalloc for
+allocating entries.
+[PATCHv7 3/6] reiser4: add an implementation of "block lists", splitted
+off the discard code.
+[PATCHv7 4/6] reiser4: blocknr_list: use kmem_cache instead of kmalloc for
+allocating entries.
+[PATCHv7 2/6] reiser4: make space_allocator's check_blocks() reusable.
+[PATCHv7 1/6] reiser4: fix reiser4_post_{commit,write_back}_hook() and
+their invocations.
+[PATCHv7 0/6] reiser4: discard support: simplified and race-free initial
+implementation.
+Re: [PATCHv2 0/3] reiser4: discard support: perform discard before all
+deallocations.
+Re: [PATCHv2 0/3] reiser4: discard support: perform discard before all
+deallocations.
+Re: [PATCHv6 3/5] reiser4: discard support: initial implementation using
+linked lists.
+[PATCHv2 3/3] reiser4: discard support: perform discard before all
+deallocations.
+[PATCHv2 2/3] reiser4: discard support: use reiser4_post_write_back_hook()
+for discarding and completing deferred deallocations.
+[PATCHv2 1/3] reiser4: fix reiser4_post_{commit,write_back}_hook() and
+their invocations.
+[PATCHv2 0/3] reiser4: discard support: perform discard before all
+deallocations.
+Re: [PATCHv6 3/5] reiser4: discard support: initial implementation using
+linked lists.
+Re: [PATCHv6 3/5] reiser4: discard support: initial implementation using
+linked lists.
+Re: [PATCHv6 3/5] reiser4: discard support: initial implementation using
+linked lists.
+Re: [PATCHv6 3/5] reiser4: discard support: initial implementation using
+linked lists.
+Re: [PATCHv6 3/5] reiser4: discard support: initial implementation using
+linked lists.
+Re: [PATCHv6 3/5] reiser4: discard support: initial implementation using
+linked lists.
+Re: [PATCHv6 3/5] reiser4: discard support: initial implementation using
+linked lists.
+Re: [PATCHv6 3/5] reiser4: discard support: initial implementation using
+linked lists.
+Re: [PATCHv6 3/5] reiser4: discard support: initial implementation using
+linked lists.
+Re: [PATCHv6 3/5] reiser4: discard support: initial implementation using
+linked lists.
+Re: [PATCHv6 3/5] reiser4: discard support: initial implementation using
+linked lists.
+Re: [PATCHv6 3/5] reiser4: discard support: initial implementation using
+linked lists.
+Re: [PATCHv6 3/5] reiser4: discard support: initial implementation using
+linked lists.
+Re: [PATCHv6 3/5] reiser4: discard support: initial implementation using
+linked lists.
+Re: [PATCHv6 3/5] reiser4: discard support: initial implementation using
+linked lists.
+Re: [PATCHv6 3/5] reiser4: discard support: initial implementation using
+linked lists.
+Re: [PATCHv6 3/5] reiser4: discard support: initial implementation using
+linked lists.
+[PATCHv6 5/5] reiser4: blocknr_set: use kmem_cache instead of kmalloc for
+allocating entries.
+[PATCHv6 4/5] reiser4: blocknr_list: use kmem_cache instead of kmalloc for
+allocating entries.
+[PATCHv6 3/5] reiser4: discard support: initial implementation using
+linked lists.
+[PATCHv6 2/5] reiser4: add an implementation of "block lists", splitted
+off the discard code.
+[PATCHv6 1/5] reiser4: make space_allocator's check_blocks() reusable.
+[PATCHv6 0/5] reiser4: discard support: initial implementation.
+Re: [RFC] [PATCHv5 0/4] reiser4: discard support: initial implementation,
+refactored.
+Re: [RFC] [PATCHv5 0/4] reiser4: discard support: initial implementation,
+refactored.
+Re: [RFC] [PATCHv5 0/4] reiser4: discard support: initial implementation,
+refactored.
+Re: [RFC] [PATCHv5 0/4] reiser4: discard support: initial implementation,
+refactored.
+Re: [RFC] [PATCHv5 0/4] reiser4: discard support: initial implementation,
+refactored.
+[RFC] [PATCHv5 1/4] reiser4: make space_allocator's check_blocks()
+reusable.
+[RFC] [PATCHv5 3/4] reiser4: add reiser4_debug(): a conditional equivalent
+of reiser4_log().
+[RFC] [PATCHv5 4/4] reiser4: discard support: initial implementation using
+linked lists.
+[RFC] [PATCHv5 2/4] reiser4: add an implementation of "block lists",
+splitted off the discard code.
+[RFC] [PATCHv5 0/4] reiser4: discard support: initial implementation,
+refactored.
+[RFC] [PATCHv4 4/4] reiser4: discard support: enable discard functionality
+through a mount option.
+[RFC] [PATCHv4 3/4] reiser4: discard support: initial implementation using
+extent lists.
+[RFC] [PATCHv4 1/4] reiser4: discard support: make space_allocator's
+check_blocks() reusable.
+[RFC] [PATCHv4 2/4] reiser4: add reiser4_debug(): a conditional equivalent
+of reiser4_log().
+[RFC] [PATCHv4 0/4] reiser4: discard support: initial implementation.
+[RFC] [PATCHv3 5/5] reiser4: discard support: downgrade all reiser4_log()
+to reiser4_debug().
+[RFC] [PATCHv3 4/5] reiser4: discard support: add assertions to all code
+written within this feature.
+[RFC] [PATCHv3 3/5] reiser4: discard support: enable discard functionality
+through a mount option.
+[RFC] [PATCHv3 2/5] reiser4: discard support: initial implementation using
+extent lists.
+[RFC] [PATCHv3 1/5] reiser4: discard support: make space_allocator's
+check_blocks() reusable.
+[RFC] [PATCHv3 0/5] reiser4: discard support: initial implementation.
+Re: [RFC] [PATCHv2 0/5] reiser4: discard support: initial implementation.
+Re: [RFC] [PATCHv2 0/5] reiser4: discard support: initial implementation.
+[PATCHv2] reiser4: fix an assertion broken since 3.11.
+Re: [RFC] [PATCHv2 0/5] reiser4: discard support: initial implementation.
+[RFC] [PATCHv2 5/5] reiser4: discard support: downgrade all reiser4_log()
+to reiser4_debug().
+[RFC] [PATCHv2 4/5] reiser4: discard support: add assertions to all code
+written within this feature.
+[RFC] [PATCHv2 3/5] reiser4: discard support: enable discard functionality
+through a mount option.
+[RFC] [PATCHv2 2/5] reiser4: discard support: initial implementation using
+extent lists.
+[RFC] [PATCHv2 1/5] reiser4: discard support: make space_allocator's
+check_blocks() reusable.
+[RFC] [PATCHv2 0/5] reiser4: discard support: initial implementation.
 
