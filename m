@@ -1,7 +1,7 @@
 From: bugzilla-daemon@bugzilla.kernel.org
 Subject: [Bug 83121] reiserfs silent data corruption
-Date: Sun, 24 Aug 2014 13:59:00 +0000
-Message-ID: <bug-83121-695-0sdyhtT8Jz@https.bugzilla.kernel.org/>
+Date: Sun, 24 Aug 2014 19:25:45 +0000
+Message-ID: <bug-83121-695-QCTyATIEey@https.bugzilla.kernel.org/>
 References: <bug-83121-695@https.bugzilla.kernel.org/>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
@@ -14,12 +14,8 @@ To: reiserfs-devel@vger.kernel.org
 
 https://bugzilla.kernel.org/show_bug.cgi?id=83121
 
-Misha Labjuk <spike@ml.yaroslavl.ru> changed:
-
-           What    |Removed                     |Added
-----------------------------------------------------------------------------
-            Summary|silent data corruption      |reiserfs silent data
-                   |                            |corruption
+--- Comment #1 from Misha Labjuk <spike@ml.yaroslavl.ru> ---
+3.16.0 corrupt data too. 3.16.1 truncate short files more aggressive.
 
 -- 
 You are receiving this mail because:
