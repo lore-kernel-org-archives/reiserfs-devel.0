@@ -1,7 +1,7 @@
 From: bugzilla-daemon@bugzilla.kernel.org
-Subject: [Bug 83121] silent data corruption
-Date: Sun, 24 Aug 2014 13:05:34 +0000
-Message-ID: <bug-83121-695-36C0Y60rm2@https.bugzilla.kernel.org/>
+Subject: [Bug 83121] reiserfs silent data corruption
+Date: Sun, 24 Aug 2014 13:59:00 +0000
+Message-ID: <bug-83121-695-0sdyhtT8Jz@https.bugzilla.kernel.org/>
 References: <bug-83121-695@https.bugzilla.kernel.org/>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
@@ -18,7 +18,8 @@ Misha Labjuk <spike@ml.yaroslavl.ru> changed:
 
            What    |Removed                     |Added
 ----------------------------------------------------------------------------
-         Regression|No                          |Yes
+            Summary|silent data corruption      |reiserfs silent data
+                   |                            |corruption
 
 -- 
 You are receiving this mail because:
