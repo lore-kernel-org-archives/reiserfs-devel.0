@@ -1,119 +1,83 @@
-From: <doiggl@velocitynet.com.au>
-Subject: What can I do next to use R4 partition  sdb
-Date: Tue, 26 Aug 2014 16:52:13 +1000
-Message-ID: <114fff4391af47417e806586fb761345@mail.velocitynet.com.au>
+From: Ivan Shapovalov <intelfx100@gmail.com>
+Subject: Re: What can I do next to use R4 partition  sdb
+Date: Tue, 26 Aug 2014 11:03:35 +0400
+Message-ID: <24322648.R9GnluWRk3@intelfx-laptop>
+References: <114fff4391af47417e806586fb761345@mail.velocitynet.com.au>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; boundary="nextPart1615666.LCUHJIBpqz"; micalg="pgp-sha256"; protocol="application/pgp-signature"
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20120113;
+        h=from:to:cc:subject:date:message-id:user-agent:in-reply-to
+         :references:mime-version:content-type;
+        bh=0VDSuX7hcgTrWJq8/SI8Q6ExHkAipY0Vtknz8j4wDVo=;
+        b=vVBdNIGih/rsf776YiJCwb3mKSBn2Te6moDBrsCCy2u6tkHNko9emsY5awqD6iM8z7
+         bHRGkZVCBg0M03Ho2wBtAjkLQgCJ96At2mJnTgPFiSuGU9B1LSTlgU9pa+iQ6HqVS4fb
+         n2IK2FPFiiew5a4v1xr80ODD6Ey2LcJSTp1kWO7DIeAJCElv5r4x9NCeHudPQQ2QB1Cp
+         dPEv33ovTjDEIkc3sG0Y/1/MTDCIINYyb+wkVAYSnkc6CHDs27MrGOxOvaueqkDheiwE
+         uPkcis8+muzSyNjdF4Rwp64yp94xmgiwGtX3PnlawNmY2W1qqQeb4IFQwhr1XCQ7YuSI
+         Zsaw==
+In-Reply-To: <114fff4391af47417e806586fb761345@mail.velocitynet.com.au>
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
 To: reiserfs-devel@vger.kernel.org
-
-Hello.
-What can I do next to use R4 partition  sdb 
-Thanks Glenn
-
-- What I have done so far:
-
-# md /media/disk
-
-# ls -la  /media/disk
-total 0
-drwxr-xr-x 2 root users 48 Aug 18 16:05 .
-drwxr-xr-x 4 root root  96 Aug 19 18:21 ..
-
-mount command used.
-# strace mount /dev/sdb  /media/disk
-
-# strace shows {last few lines}
-stat("/sbin/mount.reiser4", 0x7fff82b08700) = -1 ENOENT (No such file or
-directory)
-stat("/sbin/fs.d/mount.reiser4", 0x7fff82b08700) = -1 ENOENT (No such file
-or directory)
-stat("/sbin/fs/mount.reiser4", 0x7fff82b08700) = -1 ENOENT (No such file
-or directory)
-mount("/dev/sdb", "/media/disk", "reiser4", MS_MGC_VAL, NULL) = -1 ENOENT
-(No such file or directory)
-lstat("/media/disk", {st_mode=S_IFDIR|0755, st_size=48, ...}) = 0
-stat("/media/disk", {st_mode=S_IFDIR|0755, st_size=48, ...}) = 0
-stat("/dev/sdb", {st_mode=S_IFBLK|0660, st_rdev=makedev(8, 16), ...}) = 0
-write(2, "mount: ", 7mount: )                  = 7
-write(2, "mount(2) failed", 15mount(2) failed)         = 15
-write(2, ": ", 2: )                       = 2
-write(2, "No such file or directory\n", 26No such file or directory
-) = 26
-close(1)                                = 0
-close(2)                                = 0
-exit_group(32)                          = ?
-+++ exited with 32 +++
+Cc: doiggl@velocitynet.com.au
 
 
+--nextPart1615666.LCUHJIBpqz
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="us-ascii"
 
-# cat /proc/filesystems
-nodev   sysfs
-nodev   rootfs
-nodev   ramfs
-nodev   bdev
-nodev   proc
-nodev   cgroup
-nodev   cpuset
-nodev   tmpfs
-nodev   devtmpfs
-nodev   debugfs
-nodev   securityfs
-nodev   sockfs
-nodev   pipefs
-nodev   devpts
-        ext3
-        ext2
-        ext4
-nodev   hugetlbfs
-nodev   autofs
-nodev   pstore
-nodev   mqueue
-        btrfs
-        reiserfs
-        reiser4
+On Tuesday 26 August 2014 at 16:52:13, doiggl@velocitynet.com.au wrote:=
+=09
+> Hello.
+> What can I do next to use R4 partition  sdb=20
+> Thanks Glenn
+>=20
+> - What I have done so far:
+>=20
+> [...]
+>
+> [14041.917702] Loading Reiser4. See www.namesys.com for a description=
+ of
+> Reiser4.
+> [14041.921930] reiser4: sdb: found disk format 4.0.0.
+> [14152.798878] reiser4[mount(7623)]: traverse_tree
+> (/home/abuild/rpmbuild/BUILD/kernel-reiser4-3.15.0/linux-3.15/fs/reis=
+er4/search.c:725)[nikita-373]:
+> WARNING: not found on internal node: level: 6, lock_level: 1, stop_le=
+vel:
+> 1 lock_mode: read, bias: exact
+> [14152.798896] reiser4[mount(7623)]: key_warning
+> (/home/abuild/rpmbuild/BUILD/kernel-reiser4-3.15.0/linux-3.15/fs/reis=
+er4/plugin/file_plugin_common.c:512)[nikita-717]:
+> WARNING: Error for inode 42 (-2)
 
-#dmesg shows atrer I plug in disk and run command #mount /dev/sdb 
-/media/disk
+Looks like the filesystem is damaged. Make sure that reiser4progs are i=
+nstalled
+and run
 
-13927.148926] usb 1-1: new high-speed USB device number 3 using ehci-pci
-[13927.285272] usb 1-1: New USB device found, idVendor=04fc,
-idProduct=0c25
-[13927.285284] usb 1-1: New USB device strings: Mfr=2, Product=3,
-SerialNumber=1
-[13927.285291] usb 1-1: Product: USB to Serial-ATA bridge
-[13927.285297] usb 1-1: Manufacturer: Sunplus Technology Inc.
-[13927.285302] usb 1-1: SerialNumber: ST32000542            5XW1ZMG4
-[13927.306242] usb-storage 1-1:1.0: USB Mass Storage device detected
-[13927.306757] scsi4 : usb-storage 1-1:1.0
-[13927.307043] usbcore: registered new interface driver usb-storage
-[13928.310186] scsi 4:0:0:0: Direct-Access     ST320005 42AS              
-  PQ: 0 ANSI: 2
-[13928.310793] sd 4:0:0:0: Attached scsi generic sg2 type 0
-[13928.313184] sd 4:0:0:0: [sdb] 3907029168 512-byte logical blocks: (2.00
-TB/1.81 TiB)
-[13928.317396] sd 4:0:0:0: [sdb] Write Protect is off
-[13928.317410] sd 4:0:0:0: [sdb] Mode Sense: 38 00 00 00
-[13928.320044] sd 4:0:0:0: [sdb] No Caching mode page found
-[13928.320056] sd 4:0:0:0: [sdb] Assuming drive cache: write through
-[13928.386115]  sdb: unknown partition table
-[13928.405823] sd 4:0:0:0: [sdb] Attached SCSI disk
-[14041.917702] Loading Reiser4. See www.namesys.com for a description of
-Reiser4.
-[14041.921930] reiser4: sdb: found disk format 4.0.0.
-[14152.798878] reiser4[mount(7623)]: traverse_tree
-(/home/abuild/rpmbuild/BUILD/kernel-reiser4-3.15.0/linux-3.15/fs/reiser4/search.c:725)[nikita-373]:
-WARNING: not found on internal node: level: 6, lock_level: 1, stop_level:
-1 lock_mode: read, bias: exact
-[14152.798896] reiser4[mount(7623)]: key_warning
-(/home/abuild/rpmbuild/BUILD/kernel-reiser4-3.15.0/linux-3.15/fs/reiser4/plugin/file_plugin_common.c:512)[nikita-717]:
-WARNING: Error for inode 42 (-2)
+# fsck.reiser4 --build-fs /dev/sdb
 
+(You may need to use --force because apparently you have R4 on a whole =
+disk,
+not on a partition.)
 
-# uname -a
-Linux test.site 3.15.8-1-vanilla #1 SMP Tue Aug 5 04:15:41 UTC 2014
-(258e3b0) x86_64 x86_64 x86_64 GNU/Linux
+Hope that helps,
+=2D-=20
+Ivan Shapovalov / intelfx /
+--nextPart1615666.LCUHJIBpqz
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: This is a digitally signed message part.
+Content-Transfer-Encoding: 7Bit
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
+
+iF4EABEIAAYFAlP8MUwACgkQxUKljSIMAnB3cQD+LmWkuu/S+gqlI8Z+aUEzYiG5
+Nwj+cyjZA7HKjZdV0wIBANSb7x9oPjDbnI/20ZGkUFGOej7D76KU+2rzIMsDDQsu
+=nqS9
+-----END PGP SIGNATURE-----
+
+--nextPart1615666.LCUHJIBpqz--
 
