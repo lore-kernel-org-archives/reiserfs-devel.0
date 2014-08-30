@@ -1,22 +1,58 @@
 From: <doiggl@velocitynet.com.au>
-Subject: Re: reiser4progs revision.
-Date: Sat, 30 Aug 2014 00:00:43 +1000
-Message-ID: <98647242b01322807ac01c0f03506a93@mail.velocitynet.com.au>
-References: <114fff4391af47417e806586fb761345@mail.velocitynet.com.au> <24322648.R9GnluWRk3@intelfx-laptop> <458361e3164a300c930420b3dd9e5b43@mail.velocitynet.com.au> <53FDD565.6030500@gmail.com> <4a7ae00218566234cc327500710d1a61@mail.velocitynet.com.au> <53FF26A2.2060300@gmail.com> <30cfa4f297251197e8b5fa1c669d13c9@mail.velocitynet.com.au> <54007FCF.6050500@gmail.com>
+Subject: Here is a plain kernel based on 3.15x  with the reiser4 patch enabled.
+Date: Sat, 30 Aug 2014 21:16:03 +1000
+Message-ID: <23ca3730bf91ff9e71b897a79dce4574@mail.velocitynet.com.au>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
-In-Reply-To: <54007FCF.6050500@gmail.com>
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: Edward Shishkin <edward.shishkin@gmail.com>
-Cc: Ivan Shapovalov <intelfx100@gmail.com>, reiserfs-devel@vger.kernel.org
+To: reiserfs-devel@vger.kernel.org
 
 Hello,
-I will wait for the reiser4progs release with the announce of fixed
-diagnostics in fsck and retest with 
-# fsck.reiser4 --build-fs --force  /dev/sdb
-and report back the results.
+Here is a plain kernel based on 3.15.x with the reiser4 patch built with
+the Opensuse build service [obs] system.
 
---Glenn
+The built rpms are here
+
+->https://build.opensuse.org/package/binaries/home:doiggl/kernel-reiser4?repository=openSUSE_13.1
+ Architecture: i586
+
+kernel-reiser4-3.15.0-1.1.i686.rpm
+kernel-reiser4-3.15.0-1.1.nosrc.rpm
+kernel-reiser4-debuginfo-3.15.0-1.1.i686.rpm
+kernel-reiser4-debugsource-3.15.0-1.1.i686.rpm
+kernel-reiser4-devel-3.15.0-1.1.i686.rpm
+kernel-reiser4-devel-debuginfo-3.15.0-1.1.i686.rpm
+
+
+Repository has been published Architecture: x86_64
+
+kernel-reiser4-3.15.0-1.1.nosrc.rpm
+kernel-reiser4-3.15.0-1.1.x86_64.rpm
+kernel-reiser4-debuginfo-3.15.0-1.1.x86_64.rpm
+kernel-reiser4-debugsource-3.15.0-1.1.x86_64.rpm
+kernel-reiser4-devel-3.15.0-1.1.x86_64.rpm
+kernel-reiser4-devel-debuginfo-3.15.0-1.1.x86_64.rpm
+
+The project is here
+->https://build.opensuse.org/package/show?package=kernel-reiser4&project=home%3Adoiggl
+
+The log of the build is here {x86_64} as an example. [Its a long buildlog]
+->https://build.opensuse.org/package/live_build_log/home:doiggl/kernel-reiser4/openSUSE_13.1/x86_64
+
+The .spec used file is here
+
+->https://build.opensuse.org/package/view_file/home:doiggl/kernel-reiser4?expand=1&file=kernel-reiser4.spec
+
+Thanks to the opensuse-kernel list members for compilation advice.
+
+patches applied:
+reiser4-for-3.15.2.patch
+3.15.1-reiser4-basic-discard-support.patch
+
+It looks like obs built the rpms.
+Post the results to the list.
+
+Cheers Glenn
