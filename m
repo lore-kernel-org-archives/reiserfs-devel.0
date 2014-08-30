@@ -1,8 +1,8 @@
 From: Edward Shishkin <edward.shishkin@gmail.com>
 Subject: Re: reiser4: porting to 3.16: any reason ->aio_read() of struct file_operations
  has been left out?
-Date: Sat, 30 Aug 2014 18:07:54 +0200
-Message-ID: <5401F6DA.50907@gmail.com>
+Date: Sat, 30 Aug 2014 18:22:51 +0200
+Message-ID: <5401FA5B.4050905@gmail.com>
 References: <10671542.MCAVDCHSND@intelfx-laptop> <5431496.Ue9YL3Eeu2@intelfx-laptop> <53F52195.1020900@gmail.com> <2194734.MaT6DR3706@intelfx-laptop>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
@@ -11,18 +11,19 @@ DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20120113;
         h=message-id:date:from:user-agent:mime-version:to:subject:references
          :in-reply-to:content-type:content-transfer-encoding;
-        bh=Ez/vJVvj2bZci4OjJ9KKP3gmu9iTBnny+LvOyj6VKNc=;
-        b=YeV/Tfym+34g0Nru3uop7YZfqkE9oXOQxXHmM5h7SBbbR8rXkAlYky7bjcXh1wpGun
-         9eNa0Age8/5Z0jQ7c/3QP8dEhj0Wu9JfwOUACmo7buBqY+YE/XyrmBN/sODHv1e8UPsG
-         WvqNrsw42oNW7d1hGrbVqAAkCzNrBU/oliOAMEvhuN0D1GsuvoUSTabQOyZKmD/ECgxo
-         FN38MVSEZa5SUnYcFzUk79+d2ge32DaRtVNa0Ukyv1QKviF/g1gKMx5HOupL+441a43d
-         3h511JEUVjFDs1ullEaCMl3cXOexpdqmTonS8DHhjn1zlOUEoCp1O5vQsW2NvjATSar2
-         t2vg==
+        bh=Ta977qlbOOOpZdwAhGUXuq3ePakqK9rP/vhQBx1FvKE=;
+        b=yHfNCXUhle7BagW42fZsgq5bhefDe5dN+08mC1bXdWK4rz5kRetIG2tnW4t3w7mK2s
+         BbaCcF6XHsa/J82nlV8YvqdeEfrCIDQSNtxvue1b/zk6FfJYyM6MYiyhBLWMeJRVyfXf
+         ++FHQZUc4zc5LGtoBBwERhJSvz3RmsYZ048VBEwdNBOefNbwnl8xtFXbrM1Z9lDQr2jz
+         ddI8XOIsmWojg7X0zDVqHjCp3b/JuKs31Fn7CpAnEh0jDERdg19uwpcUqbPL+rOAbsz1
+         la03xgwvhjv459Yk6stN8v7KHcEHZpxn8fkZXDzORXeWE+81kHH8HhsVjC2chYGlA04u
+         K/nQ==
 In-Reply-To: <2194734.MaT6DR3706@intelfx-laptop>
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"; format="flowed"
 To: Ivan Shapovalov <intelfx100@gmail.com>, reiserfs-devel@vger.kernel.org
+
 
 On 08/21/2014 05:05 PM, Ivan Shapovalov wrote:
 > On Thursday 21 August 2014 at 00:30:45, Edward Shishkin wrote:	
@@ -45,7 +46,17 @@ On 08/21/2014 05:05 PM, Ivan Shapovalov wrote:
 >>>> management to appropriate plugin (UNIX_FILE or CRYPTCOMPRESS).
 >>>>
 >>>> UNIX_FILE plugin doesn't use generic write for performance reasons
->>>> (I'll try to find the respective mailing thread). CRYPTCOMPRESS doesn't
+>>>> (I'll try to find the respective mailing thread).
+
+
+This mailing thread sheds the light on why we don't want to use generic 
+write:
+(this in only FYI, don't try to make friendship between reiser4 and VFS :))
+
+http://markmail.org/message/ydzplf6bxokfgkch#query:+page:1+mid:appoj72tdeop3f7f+state:results
+
+
+>>>>   CRYPTCOMPRESS doesn't
 >>>> use it for compatibility reasons: I don't know how how to rewrite it
 >>>> gracefully using the generic write method.
 >>>>
@@ -56,19 +67,6 @@ On 08/21/2014 05:05 PM, Ivan Shapovalov wrote:
 >>
 >> Thanks,
 >> Edward.
-
-
-I have looked at VFS changes 3.15->3.16.
-
-generic_file_aio_read()  was replaced with generic_file_read_iter()
-Respectively, all its users (including us) now call ->read_iter().
-
-Since we don't implement our own ->aio_read(), we should use
-new_sync_read() instead of do_sync_read().
-
-So, everything looks OK with our read/write.
-
-
 > Turned out it isn't.. The iter_file_splice_write() requires ->write_iter
 > to be set, or a NULL dereference happens.
 >
@@ -80,23 +78,6 @@ So, everything looks OK with our read/write.
 > corruptions").
 >
 > Could you please comment on this? :)
+>
+> Thanks,
 
-
-generic_file_splice_write() did:
-
-->write_begin()
-memcpy();
-->write_end()
-
-iter_file_splice_write() with generic_file_write_iter() does:
-
-->write_begin()
-copy_from_user();
-->write_end()
-
-So the question is why copy_from_user() works instead
-of memcpy()? TBH, I don't know. If interesting, ask VFS
-folks and tell us then ;)
-
-Thanks,
-Edward.
