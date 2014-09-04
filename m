@@ -1,19 +1,25 @@
-From: <doiggl@velocitynet.com.au>
-Subject: Will a reiser4 patch be made available for linux-3.16 as it has been released.
-Date: Wed, 03 Sep 2014 12:24:23 +1000
-Message-ID: <e311b06e9dc8ad73d8aa609c3cdf3e92@mail.velocitynet.com.au>
+From: bugzilla-daemon@bugzilla.kernel.org
+Subject: [Bug 83121] reiserfs silent data corruption
+Date: Thu, 04 Sep 2014 13:48:13 +0000
+Message-ID: <bug-83121-695-ZhqQAkzEeV@https.bugzilla.kernel.org/>
+References: <bug-83121-695@https.bugzilla.kernel.org/>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
+In-Reply-To: <bug-83121-695@https.bugzilla.kernel.org/>
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
 To: reiserfs-devel@vger.kernel.org
 
-Hello,
-Will a reiser4 patch be made available for linux-3.16 as it has been
-released.
-https://www.kernel.org/pub/linux/kernel/v3.x/linux-3.16.tar.xz
+https://bugzilla.kernel.org/show_bug.cgi?id=83121
 
-What patches will be included in this, is there a list of them ?
-Cheers Glenn
+Alexander Bezrukov <phmagic@mail.ru> changed:
+
+           What    |Removed                     |Added
+----------------------------------------------------------------------------
+                 CC|                            |phmagic@mail.ru
+
+-- 
+You are receiving this mail because:
+You are the assignee for the bug.
