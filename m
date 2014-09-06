@@ -1,7 +1,7 @@
 From: bugzilla-daemon@bugzilla.kernel.org
 Subject: [Bug 83121] reiserfs silent data corruption
-Date: Sat, 06 Sep 2014 12:48:52 +0000
-Message-ID: <bug-83121-695-RCVL2CdLdY@https.bugzilla.kernel.org/>
+Date: Sat, 06 Sep 2014 12:51:24 +0000
+Message-ID: <bug-83121-695-FXuXoBWLK3@https.bugzilla.kernel.org/>
 References: <bug-83121-695@https.bugzilla.kernel.org/>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
@@ -18,7 +18,10 @@ kouyu <ckyoog@gmail.com> changed:
 
            What    |Removed                     |Added
 ----------------------------------------------------------------------------
-                 CC|                            |ckyoog@gmail.com
+                 CC|ckyoog@gmail.com            |
+
+--- Comment #6 from kouyu <ckyoog@gmail.com> ---
+Mark for getting this bug updates.
 
 -- 
 You are receiving this mail because:
