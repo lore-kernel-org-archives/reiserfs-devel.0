@@ -1,61 +1,67 @@
-From: Ivan Shapovalov <intelfx100@gmail.com>
-Subject: [RFC] [PATCHv2 3/3] reiser4: block_alloc: get rid of discard-related hack in reiser4_dealloc_blocks().
-Date: Mon,  8 Sep 2014 22:43:51 +0400
-Message-ID: <1410201831-11722-4-git-send-email-intelfx100@gmail.com>
+From: Edward Shishkin <edward.shishkin@gmail.com>
+Subject: Re: [RFC] [PATCHv2 0/3] reiser4: block deallocation fixes.
+Date: Mon, 08 Sep 2014 21:03:17 +0200
+Message-ID: <540DFD75.8090003@gmail.com>
 References: <1410201831-11722-1-git-send-email-intelfx100@gmail.com>
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20120113;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=3peAPL4mM/76xIwgs+pzK+4rlLlqB+dQTKtemgcs9OM=;
-        b=j/M/ue24f/5e8L6Fr6s/Btl5bISDsMOgI+ZGUuv46gmzTc3YfVTTi4r0MSDqqQf0sa
-         JPm6eVIJaGFgSDKKbeuxUEOk/M2vPjvv4+bEifWoqQndJb7hvVW5ZHsYZAMUflEO+nM5
-         4Z4toBAKLOiDJ0vyKtZW25DNNzn9UGXNXxjkwo1wi5ObfLZMJawx5opKjNn4s8C2yGOu
-         F2STdE+cd1ETS9ytt/e8MhG5WRc14dsjE8lOW5S0LhBGvnMp3NPeRElQBNMh17mH04l9
-         IL86kbblZ6B1d3Xy1VNPjg3GMRnhdVTmah2ZmyQzt4ogtE2r9W2kG66jf2myepuuuVnJ
-         gOOQ==
+        h=message-id:date:from:user-agent:mime-version:to:cc:subject
+         :references:in-reply-to:content-type:content-transfer-encoding;
+        bh=FPMTGYDJdDDJDX1fpZrieF23mH6tbysMrG9OBSVOBwo=;
+        b=SJ3979OEZVcY9DvY4ZItCWE9PFUl1eU/1+DvJd66MV8LN6hI6mzUAXHZ1cag8N/lVO
+         +kgqYJiL09rC39iyj4zdog4XQRslmnnkRSpTUbZdGDXzJhvKi+pikcsg+Vj6zqTZmDqF
+         4vSf52cAk+xBarFQ7VnfkVFfNF1CnnzaQ3m5IjxskTnOPQFvaeB5TSUmhoytWsnihtmP
+         ZBsYiBj8Op593szTHwlg2lT48fog7MwAkB5D968boXts6yLC+AYF8GaLOtar2gBFXL/3
+         eviU35auxW4ysMkM7BMbmML/UC81X6yadUcJ8TicT5V/8mBLWRE5WNEDAuVgX++gRTM/
+         nCkg==
 In-Reply-To: <1410201831-11722-1-git-send-email-intelfx100@gmail.com>
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: reiserfs-devel@vger.kernel.org
-Cc: edward.shishkin@gmail.com, Ivan Shapovalov <intelfx100@gmail.com>
+Content-Type: text/plain; charset="us-ascii"; format="flowed"
+To: Ivan Shapovalov <intelfx100@gmail.com>
+Cc: reiserfs-devel@vger.kernel.org
 
-When discard was enabled, immediate deallocations were made deferred in order
-to record these extents in the atom's delete set and, consequently, allow
-their discarding.
+Ok, I'll include this to the 3.15.2-reiser4-basic-discard-support.patch
 
-However, this is wrong in the following way. Immediate deallocations make use
-of target allocation stage and ancillary flags like BA_PERMANENT and BA_FORMATTED.
-By converting immediate deallocations to deferred, these flags are essentially
-dropped, and application of deferred deallocations in reiser4_post_write_back_hook()
-uses an equivalent of BLOCK_NOT_COUNTED stage and BA_FORMATTED flag.
+As to 3.16: unfortunately the ancient bug, which leads to non-deleted
+directories raised the head in 3.16. I don't want to release buggy stuff.
+So let's work around the stable 3.15 for now..
 
-Dropping this hack does not hinder efficiency of the discard procedure, because
-immediate deallocations are now used only to deallocate "just allocated" and not
-yet written blocks, which actually do not need to be discarded.
+Thanks,
+Edward.
 
-Signed-off-by: Ivan Shapovalov <intelfx100@gmail.com>
----
- fs/reiser4/block_alloc.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
 
-diff --git a/fs/reiser4/block_alloc.c b/fs/reiser4/block_alloc.c
-index 6e7030a..fee1c18 100644
---- a/fs/reiser4/block_alloc.c
-+++ b/fs/reiser4/block_alloc.c
-@@ -1008,8 +1008,7 @@ reiser4_dealloc_blocks(const reiser4_block_nr * start,
- 		spin_unlock_reiser4_super(sbinfo);
- 	}
- 
--	if ((flags & BA_DEFER) ||
--	    reiser4_is_set(reiser4_get_current_sb(), REISER4_DISCARD)) {
-+	if (flags & BA_DEFER) {
- 		/*
- 		 * These blocks will be later deallocated by apply_dset().
- 		 * It is equivalent to a non-deferred deallocation with target
--- 
-2.1.0
+On 09/08/2014 08:43 PM, Ivan Shapovalov wrote:
+> Actually, the idea of converting immediate allocations into deferred when
+> discard is enabled was flawed. Deferred deallocations ignore block stage
+> and additional flags, while some immediate deallocations use non-standard
+> stage/flags which do not match what's done by reiser4_post_write_back_hook().
+>
+> While at it, I've removed specifications of block stage in deferred deallocations.
+> It is not used anyway. This is first commit.
+>
+> Next commit does the following. Actually, most of the immediate deallocations
+> do not need to be considered for discarding: these are deallocations done in
+> error paths, and respective blocks are never written between their allocation
+> and deallocation. Two exceptions are deallocations in wandering log code. In these
+> cases, blocks are allocated, then written, then deallocated without BA_DEFER.
+> I've just made these deallocations explicitly deferred, which is OK because they
+> have a suitable block stage.
+>
+> Last commit actually removes wrong code, again making immediate deallocations
+> always immediate.
+>
+> Ivan Shapovalov (3):
+>    reiser4: deferred (BA_DEFER) deallocations do not make use of target stage.
+>    reiser4: mark final deallocations in wandering log code as deferred.
+>    reiser4: block_alloc: get rid of discard-related hack in reiser4_dealloc_blocks().
+>
+>   fs/reiser4/block_alloc.c  |  9 +++++++--
+>   fs/reiser4/plugin/txmod.c | 15 +++++----------
+>   fs/reiser4/wander.c       |  6 +++---
+>   3 files changed, 15 insertions(+), 15 deletions(-)
+>
 
