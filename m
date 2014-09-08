@@ -1,19 +1,19 @@
 From: Ivan Shapovalov <intelfx100@gmail.com>
-Subject: [RFC] [PATCHv2 1/3] reiser4: deferred (BA_DEFER) deallocations do not make use of target stage.
-Date: Mon,  8 Sep 2014 22:43:49 +0400
-Message-ID: <1410201831-11722-2-git-send-email-intelfx100@gmail.com>
+Subject: [RFC] [PATCHv2 2/3] reiser4: mark final deallocations in wandering log code as deferred.
+Date: Mon,  8 Sep 2014 22:43:50 +0400
+Message-ID: <1410201831-11722-3-git-send-email-intelfx100@gmail.com>
 References: <1410201831-11722-1-git-send-email-intelfx100@gmail.com>
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20120113;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=T46W9CfXsECJZe2Dor1R1/vl4h5CsXux18WOiRH/w3M=;
-        b=ySIzaYIMlT/PRy5xQnwTsakCVPR2eHPdQEXTMzdYB92vUmEhqEkUYECg2NpBEiIdVj
-         fBiXoTFeqbUX6kXp2V7zFqr53FB3KJWzWj0SdsDPTb35TsIJS+M75CnDa/NK8jXaFTEt
-         H/QEKKM59vY/L8bi4K8X0a15ljFP0voyDDvaOW4DJLxrvlMB+CPrQ8L+GPDgkl0+gIsw
-         hBeVhj5prMpCbO6YAuOWuPX0uq8qTX401FDvzBuFASyvAdAOoY5E3wjylp3gGpnzilcE
-         9uZK5nLb8I3IZmDdNev4CARA1dITqyNWVU+NWqdPvphNBlP0qBJYldmzV4HwtqsP+K2N
-         5CkQ==
+        bh=iUbGOq0jRvYFOR683xQL/hNvjK30tCUodWiArnDI7tQ=;
+        b=UwzZvemXFGXokKpyDeUnHsdTWQcG6r3X7j17j0uQhV3k370EL9U1KtodR+hhohXu9h
+         2RhWlMmnzkHmxwNZ1ypGhuqa4/tananJg9q8UIlRDZ8RXg4TVWIus/OKOGyehjNU2WXM
+         Gx2+i3UPWfUI1byAg/4WGDae/6w1vFuanTtE6DbwmtozD8y9T7lNkCGoxpc2vbqKFH6B
+         0vECOf4CJV6P+QpOUgRdYGxEQO9jAgoeSxnlaOAEuL1ZqobEyGjJBNEIUXQN+Xm1++kb
+         wAlDHoI8dLAlhX3IgktL1oaa7ML05TH4lDqwIel9yGwNPJT1t0fgsnYYHINEXqNDsKN3
+         dfkQ==
 In-Reply-To: <1410201831-11722-1-git-send-email-intelfx100@gmail.com>
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
@@ -23,75 +23,44 @@ Content-Transfer-Encoding: 7bit
 To: reiserfs-devel@vger.kernel.org
 Cc: edward.shishkin@gmail.com, Ivan Shapovalov <intelfx100@gmail.com>
 
-...so remove it (set to 0) in all cases to avoid confusion.
+Now there is a clear semantic distinction between deferred and immediate
+deallocations. Deferred mode is used to deallocate blocks that were previously
+written, immediate mode is used to deallocate "just allocated" blocks in error
+paths or if some previously allocated blocks turn out to be unneeded.
+
+This way, we may get rid of discard-related hack in the deallocation routine,
+i. e. treating immediate deallocations as deferred (which messes up
+block accounting). This is done in the next commit.
 
 Signed-off-by: Ivan Shapovalov <intelfx100@gmail.com>
 ---
- fs/reiser4/block_alloc.c  |  6 ++++++
- fs/reiser4/plugin/txmod.c | 15 +++++----------
- 2 files changed, 11 insertions(+), 10 deletions(-)
+ fs/reiser4/wander.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/fs/reiser4/block_alloc.c b/fs/reiser4/block_alloc.c
-index 324b11c..6e7030a 100644
---- a/fs/reiser4/block_alloc.c
-+++ b/fs/reiser4/block_alloc.c
-@@ -1010,6 +1010,12 @@ reiser4_dealloc_blocks(const reiser4_block_nr * start,
+diff --git a/fs/reiser4/wander.c b/fs/reiser4/wander.c
+index 04ddec6..fd5954a 100644
+--- a/fs/reiser4/wander.c
++++ b/fs/reiser4/wander.c
+@@ -482,8 +482,8 @@ static void dealloc_tx_list(struct commit_handle *ch)
+ 		jnode *cur = list_entry(ch->tx_list.next, jnode, capture_link);
+ 		list_del(&cur->capture_link);
+ 		ON_DEBUG(INIT_LIST_HEAD(&cur->capture_link));
+-		reiser4_dealloc_block(jnode_get_block(cur), BLOCK_NOT_COUNTED,
+-				      BA_FORMATTED);
++		reiser4_dealloc_block(jnode_get_block(cur), 0,
++				      BA_DEFER | BA_FORMATTED);
  
- 	if ((flags & BA_DEFER) ||
- 	    reiser4_is_set(reiser4_get_current_sb(), REISER4_DISCARD)) {
-+		/*
-+		 * These blocks will be later deallocated by apply_dset().
-+		 * It is equivalent to a non-deferred deallocation with target
-+		 * stage BLOCK_NOT_COUNTED.
-+		 */
-+
- 		/* store deleted block numbers in the atom's deferred delete set
- 		   for further actual deletion */
- 		do {
-diff --git a/fs/reiser4/plugin/txmod.c b/fs/reiser4/plugin/txmod.c
-index 63d461f..5982b4c 100644
---- a/fs/reiser4/plugin/txmod.c
-+++ b/fs/reiser4/plugin/txmod.c
-@@ -287,8 +287,7 @@ static int forward_relocate_unformatted(flush_pos_t *flush_pos,
- 		 * on relocating - free nodes which are going to be
- 		 * relocated
- 		 */
--		reiser4_dealloc_blocks(&start, &allocated,
--				       BLOCK_ALLOCATED, BA_DEFER);
-+		reiser4_dealloc_blocks(&start, &allocated, 0, BA_DEFER);
+ 		unpin_jnode_data(cur);
+ 		reiser4_drop_io_head(cur);
+@@ -502,7 +502,7 @@ dealloc_wmap_actor(txn_atom * atom UNUSED_ARG,
+ 	assert("zam-500", *b != 0);
+ 	assert("zam-501", !reiser4_blocknr_is_fake(b));
  
- 	/* assign new block numbers to protected nodes */
- 	assign_real_blocknrs(flush_pos, oid, index, allocated, first_allocated);
-@@ -386,16 +385,13 @@ static squeeze_result squeeze_relocate_unformatted(znode *left,
- 	result = put_unit_to_end(left, key, &copy_extent);
+-	reiser4_dealloc_block(b, BLOCK_NOT_COUNTED, BA_FORMATTED);
++	reiser4_dealloc_block(b, 0, BA_DEFER | BA_FORMATTED);
+ 	return 0;
+ }
  
- 	if (result == -E_NODE_FULL) {
--		int target_block_stage;
- 		/*
- 		 * free blocks which were just allocated
- 		 */
--		target_block_stage =
--			(state ==
--			 ALLOCATED_EXTENT) ? BLOCK_FLUSH_RESERVED :
--			BLOCK_UNALLOCATED;
- 		reiser4_dealloc_blocks(&first_allocated, &allocated,
--				       target_block_stage,
-+				       (state == ALLOCATED_EXTENT)
-+				       ? BLOCK_FLUSH_RESERVED
-+				       : BLOCK_UNALLOCATED,
- 				       BA_PERMANENT);
- 		/*
- 		 * rewind the preceder
-@@ -408,8 +404,7 @@ static squeeze_result squeeze_relocate_unformatted(znode *left,
- 		/*
- 		 * free nodes which were relocated
- 		 */
--		reiser4_dealloc_blocks(&start, &allocated,
--				       BLOCK_ALLOCATED, BA_DEFER);
-+		reiser4_dealloc_blocks(&start, &allocated, 0, BA_DEFER);
- 	}
- 	/*
- 	 * assign new block numbers to protected nodes
 -- 
 2.1.0
 
