@@ -1,89 +1,130 @@
-From: Ivan Shapovalov <intelfx100@gmail.com>
-Subject: reiser4 (ccreg40): very slow mount, poor unlink performance, questions about compression modes
-Date: Wed, 10 Sep 2014 23:00:52 +0400
-Message-ID: <1466481.l6KPymqJEh@intelfx-laptop>
-Mime-Version: 1.0
-Content-Type: multipart/signed; boundary="nextPart5142621.rhNmMcrtan"; micalg="pgp-sha256"; protocol="application/pgp-signature"
+From: Jan Kara <jack@suse.cz>
+Subject: [PATCH 3/5] reiserfs: Don't use MAXQUOTAS value
+Date: Wed, 10 Sep 2014 21:22:50 +0200
+Message-ID: <1410376972-18417-4-git-send-email-jack@suse.cz>
+References: <1410376972-18417-1-git-send-email-jack@suse.cz>
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20120113;
-        h=from:to:subject:date:message-id:user-agent:mime-version
-         :content-type;
-        bh=+F1/rYDgzIuZKcamq/DqZiH6Q1HaCu91WiF723e2dwU=;
-        b=tbNaTWUyC2Q35PV+sOFSVIxjEfSkU3KNOjZo59f4xYLhf2mVFGR1X0ENJbRMuIEa4E
-         e4wXapGyQ9a0HFIY6HDA9w4U1dgmFbU7aoj5TTJgadUHC8oL0nauBcgJhX9qR/gSxbOF
-         UIH/3/2RAF1luGMMu0yDGmuuEaPrRP2uKO7B44esgHVggc3vhSjlfOiX66X6eSIhVaXQ
-         i+rIA3idczmvJnwiJCbF+UsVDdFfEPG3+Wnpt208sI+R+2KOOxPMyheyqutJqRKX6pjR
-         Vvlk4PmaQ8cYvblwDwvcg8QBcu4yWkIlWrHbF1lHEn1NQ/2Q9ALyMr+3XOiEXM2nsXjU
-         LKVQ==
+In-Reply-To: <1410376972-18417-1-git-send-email-jack@suse.cz>
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
-To: reiserfs-devel@vger.kernel.org
-
-
---nextPart5142621.rhNmMcrtan
-Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: linux-fsdevel@vger.kernel.org
+Cc: Jan Kara <jack@suse.cz>, reiserfs-devel@vger.kernel.org, Jeff Mahoney <jeffm@suse.de>
 
-Hi!
+MAXQUOTAS value defines maximum number of quota types VFS supports.
+This isn't necessarily the number of types reiserfs supports and with
+addition of project quotas these two numbers stop matching. So make
+reiserfs use its private definition.
 
-The preamble: recently I had to force-change my configuration (the old =
-laptop
-was stolen). What I have now is a combination of a tiny 16 GiB SSD and =
-a huge
-1 TiB HDD.
+CC: reiserfs-devel@vger.kernel.org
+CC: Jeff Mahoney <jeffm@suse.de>
+Signed-off-by: Jan Kara <jack@suse.cz>
+---
+ fs/reiserfs/reiserfs.h |  5 ++++-
+ fs/reiserfs/super.c    | 16 ++++++++--------
+ 2 files changed, 12 insertions(+), 9 deletions(-)
 
-...So I've placed my /home on HDD. Partition size is 800 GiB, formattin=
-g
-options are "create=3Dccreg40,compress=3Dgzip1,compressMode=3Dlatt" and=
- I have a few
-questions.
-
-1. What is the recommended compression mode?
-More specifically, what is the default "conv" mode? What is its purpose=
-, why is
-it the default?
-I'm asking, because I wasn't able to understand its purpose from code, =
-and the
-code itself looks hackish in some places (hardcoded fallback to extent-=
-only
-files, hardcoded policy, hardcoded fallback to "latt" in many cases, et=
-c).
-
-2. The mount time of a 800-GiB partition is >20 seconds. And with
-dont_load_bitmap it's around 1-2 seconds. Why so much? Why other filesy=
-stems
-have drastically less mount times? If they have an equivalent of
-dont_load_bitmap enabled by default, why don't we do it?
-
-3. Given a directory tree with ~20k files of total size around 20 GiB,
-its removal takes forever. From strace I see that a single unlink takes=
-
-~1 second. Again, why so much? Is it related to my choice of "latt" com=
-pression
-mode over the default "conv"?
-
-3a. I can reproduce the "directory not empty" bug :) Interestingly, it =
-is
-always the same directory under the aforementioned huge hierarchy. (I'v=
-e
-done the unpack-remove cycle a few times.)
-
-Thanks,
-=2D-=20
-Ivan Shapovalov / intelfx /
---nextPart5142621.rhNmMcrtan
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: This is a digitally signed message part.
-Content-Transfer-Encoding: 7Bit
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
-
-iF4EABEIAAYFAlQQn+gACgkQxUKljSIMAnCmOwEAzASNsnWlh/3UtgjLVvxlliMs
-9o8WJNFmxhK/kufHa2sBALcW9hI9LbybHr0mZmFx6MdO27j8aTQgKjs7QGYMNlx3
-=Ni2g
------END PGP SIGNATURE-----
-
---nextPart5142621.rhNmMcrtan--
+diff --git a/fs/reiserfs/reiserfs.h b/fs/reiserfs/reiserfs.h
+index 735c2c2b4536..1894d96ccb7c 100644
+--- a/fs/reiserfs/reiserfs.h
++++ b/fs/reiserfs/reiserfs.h
+@@ -506,6 +506,9 @@ typedef struct reiserfs_proc_info_data {
+ } reiserfs_proc_info_data_t;
+ #endif
+ 
++/* Number of quota types we support */
++#define REISERFS_MAXQUOTAS 2
++
+ /* reiserfs union of in-core super block data */
+ struct reiserfs_sb_info {
+ 	/* Buffer containing the super block */
+@@ -615,7 +618,7 @@ struct reiserfs_sb_info {
+ 	spinlock_t old_work_lock;     /* protects old_work and work_queued */
+ 
+ #ifdef CONFIG_QUOTA
+-	char *s_qf_names[MAXQUOTAS];
++	char *s_qf_names[REISERFS_MAXQUOTAS];
+ 	int s_jquota_fmt;
+ #endif
+ 	char *s_jdev;		/* Stored jdev for mount option showing */
+diff --git a/fs/reiserfs/super.c b/fs/reiserfs/super.c
+index d46e88a33b02..f1376c92cf74 100644
+--- a/fs/reiserfs/super.c
++++ b/fs/reiserfs/super.c
+@@ -206,7 +206,7 @@ static int finish_unfinished(struct super_block *s)
+ #ifdef CONFIG_QUOTA
+ 	int i;
+ 	int ms_active_set;
+-	int quota_enabled[MAXQUOTAS];
++	int quota_enabled[REISERFS_MAXQUOTAS];
+ #endif
+ 
+ 	/* compose key to look for "save" links */
+@@ -227,7 +227,7 @@ static int finish_unfinished(struct super_block *s)
+ 		s->s_flags |= MS_ACTIVE;
+ 	}
+ 	/* Turn on quotas so that they are updated correctly */
+-	for (i = 0; i < MAXQUOTAS; i++) {
++	for (i = 0; i < REISERFS_MAXQUOTAS; i++) {
+ 		quota_enabled[i] = 1;
+ 		if (REISERFS_SB(s)->s_qf_names[i]) {
+ 			int ret;
+@@ -370,7 +370,7 @@ static int finish_unfinished(struct super_block *s)
+ #ifdef CONFIG_QUOTA
+ 	/* Turn quotas off */
+ 	reiserfs_write_unlock(s);
+-	for (i = 0; i < MAXQUOTAS; i++) {
++	for (i = 0; i < REISERFS_MAXQUOTAS; i++) {
+ 		if (sb_dqopt(s)->files[i] && quota_enabled[i])
+ 			dquot_quota_off(s, i);
+ 	}
+@@ -1360,7 +1360,7 @@ static void handle_quota_files(struct super_block *s, char **qf_names,
+ {
+ 	int i;
+ 
+-	for (i = 0; i < MAXQUOTAS; i++) {
++	for (i = 0; i < REISERFS_MAXQUOTAS; i++) {
+ 		if (qf_names[i] != REISERFS_SB(s)->s_qf_names[i])
+ 			kfree(REISERFS_SB(s)->s_qf_names[i]);
+ 		REISERFS_SB(s)->s_qf_names[i] = qf_names[i];
+@@ -1381,7 +1381,7 @@ static int reiserfs_remount(struct super_block *s, int *mount_flags, char *arg)
+ 	struct reiserfs_journal *journal = SB_JOURNAL(s);
+ 	char *new_opts = kstrdup(arg, GFP_KERNEL);
+ 	int err;
+-	char *qf_names[MAXQUOTAS];
++	char *qf_names[REISERFS_MAXQUOTAS];
+ 	unsigned int qfmt = 0;
+ #ifdef CONFIG_QUOTA
+ 	int i;
+@@ -1400,7 +1400,7 @@ static int reiserfs_remount(struct super_block *s, int *mount_flags, char *arg)
+ 	    (s, arg, &mount_options, &blocks, NULL, &commit_max_age,
+ 	    qf_names, &qfmt)) {
+ #ifdef CONFIG_QUOTA
+-		for (i = 0; i < MAXQUOTAS; i++)
++		for (i = 0; i < REISERFS_MAXQUOTAS; i++)
+ 			if (qf_names[i] != REISERFS_SB(s)->s_qf_names[i])
+ 				kfree(qf_names[i]);
+ #endif
+@@ -1844,7 +1844,7 @@ static int reiserfs_fill_super(struct super_block *s, void *data, int silent)
+ 	char *jdev_name;
+ 	struct reiserfs_sb_info *sbi;
+ 	int errval = -EINVAL;
+-	char *qf_names[MAXQUOTAS] = {};
++	char *qf_names[REISERFS_MAXQUOTAS] = {};
+ 	unsigned int qfmt = 0;
+ 
+ 	save_mount_options(s, data);
+@@ -2169,7 +2169,7 @@ error_unlocked:
+ #ifdef CONFIG_QUOTA
+ 	{
+ 		int j;
+-		for (j = 0; j < MAXQUOTAS; j++)
++		for (j = 0; j < REISERFS_MAXQUOTAS; j++)
+ 			kfree(qf_names[j]);
+ 	}
+ #endif
+-- 
+1.8.1.4
 
