@@ -1,190 +1,154 @@
-From: Jeff Mahoney <jeffm@suse.com>
-Subject: Re: linux-3.16.2 queue (3.16.1+)
-Date: Thu, 11 Sep 2014 00:29:30 -0400
-Message-ID: <5411252A.1030901@suse.com>
-References: <CAG-aW06Q9VVyW-atZEsURs0rfjysdEbxb_dC4Tm3K-tZg++tQg@mail.gmail.com> <20140828152205.GA18432@kroah.com> <CAG-aW05qkQKgntBM87XHSMECjD-GMjeRt+m0-0CkezBG_weCOg@mail.gmail.com> <20140828153252.GA18868@kroah.com> <CAG-aW07Lx=WOEf+j=_+G5T57uzhvKiP3-ZpaadKvoafW=iJKrw@mail.gmail.com> <CAG-aW04YvZVxKBhSAYqhr5OBFovA3HHHWgdfEQU_jXKzQK7QdA@mail.gmail.com> <20140907031814.GA961@kroah.com>
+From: Edward Shishkin <edward.shishkin@gmail.com>
+Subject: Re: reiser4 (ccreg40): very slow mount, poor unlink performance,
+ questions about compression modes
+Date: Thu, 11 Sep 2014 19:16:40 +0200
+Message-ID: <5411D8F8.2070603@gmail.com>
+References: <1466481.l6KPymqJEh@intelfx-laptop> <5410B1CB.3080705@gmail.com> <4194447.EgbZsqfSzA@intelfx-laptop>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
-In-Reply-To: <20140907031814.GA961@kroah.com>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20120113;
+        h=message-id:date:from:user-agent:mime-version:to:subject:references
+         :in-reply-to:content-type:content-transfer-encoding;
+        bh=ypiP5naBbWP8cTd1x9KaXWvag25TgOD+XBe2LZxEfts=;
+        b=GwuC+PY9qNlFP0FdcEHWm1s4XpA6HMIT/CbDUzRJPcAsgPz+/WZlouCuBjEcCbWMju
+         ImbD/tG1q3Vk1ZR0rRbZHb2IqDhKUtPfBMrisWH/tMRp2DfkYBSTkN90UTZxWe6W8TEQ
+         t6o2lh7B4LYae1X6bq2hwYxpC/fyhk+2Czhn7DeQeG/z5GhK/PJ1POu8we3lTyCp8J5f
+         3aP6ArtBtHqm+Ii3Zyrr7xv7jNEh97n/tlqle69CHqamd1ZGw0+mcQbhBPm+MMVmcZbl
+         DwQBvSrQfXldEdD0Had8fB8SHXrbCzNkCki9TZ0/kbbQxdCl/VMXpsfWmXIyJNWTOSD0
+         MfEQ==
+In-Reply-To: <4194447.EgbZsqfSzA@intelfx-laptop>
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-To: Greg KH <gregkh@linuxfoundation.org>, Matt <jackdachef@gmail.com>
-Cc: Linux Kernel <linux-kernel@vger.kernel.org>, ReiserFS Mailing List <reiserfs-devel@vger.kernel.org>
+Content-Type: text/plain; charset="us-ascii"; format="flowed"
+To: Ivan Shapovalov <intelfx100@gmail.com>, ReiserFS Development mailing list <reiserfs-devel@vger.kernel.org>
 
------BEGIN PGP SIGNED MESSAGE-----
-Hash: SHA1
 
-On 9/6/14, 11:18 PM, Greg KH wrote:
-> On Sun, Sep 07, 2014 at 02:47:55AM +0200, Matt wrote:
->> On Thu, Aug 28, 2014 at 9:18 PM, Matt <jackdachef@gmail.com>
->> wrote:
->>> On Thu, Aug 28, 2014 at 5:32 PM, Greg KH
->>> <gregkh@linuxfoundation.org> wrote:
->>>> On Thu, Aug 28, 2014 at 05:27:27PM +0200, Matt wrote:
->>>>> On Thu, Aug 28, 2014 at 5:22 PM, Greg KH
->>>>> <gregkh@linuxfoundation.org> wrote:
->>>>>> On Thu, Aug 28, 2014 at 05:16:58PM +0200, Matt wrote:
->>>>>>> Hi Greg,
->>>>>>> 
->>>>>>> 
->>>>>>> please consider adding the following 2 patches to
->>>>>>> 3.16.2:
->>>>>>> 
->>>>>>> Jan Kara (1): reiserfs: Fix use after free in journal
->>>>>>> teardown
->>>>>>> 
->>>>>>> Jeff Mahoney (1): reiserfs: fix corruption introduced
->>>>>>> by balance_leaf refactor
->>>>>>> 
->>>>>>> 
->>>>>>> 
->>>>>>> Reason/Related:
->>>>>>> 
->>>>>>> https://bugzilla.kernel.org/show_bug.cgi?id=83121
->>>>>>> 
->>>>>>> https://bugzilla.kernel.org/show_bug.cgi?id=83321
->>>>>>> 
->>>>>>> http://forums.gentoo.org/viewtopic-t-998538-postdays-0-postorder-asc-start-0.html
->>>>>>>
->>>>>>>
->>>>>>>
->>>>>>> 
-Many thanks in advance
->>>>>> 
->>>>>> I need git commit ids of these patches in Linus's tree,
->>>>>> can you provide those please?
->>>>>> 
->>>>>> thanks,
->>>>>> 
->>>>>> greg k-h
->>>>> 
->>>>> 
->>>>> Sure:
->>>>> 
->>>>> https://git.kernel.org/cgit/linux/kernel/git/torvalds/linux.git/commit/?id=27d0e5bc85f3341b9ba66f0c23627cf9d7538c9d
->>>>>
->>>>> 
-reiserfs: fix corruption introduced by balance_leaf refactor
->>>>> 
->>>>> 
->>>>> https://git.kernel.org/cgit/linux/kernel/git/torvalds/linux.git/commit/?id=01777836c87081e4f68c4a43c9abe6114805f91e
->>>>>
->>>>> 
-reiserfs: Fix use after free in journal teardown
->>>>> 
->>>>> 
->>>>> 
->>>>> are checkpatch warnings usually also fixed within stable
->>>>> releases ?
->>>> 
->>>> No, not at all, please read
->>>> Documentation/stable_kernel_patches.txt for what is
->>>> acceptable for stable kernel patches.
->>>> 
->>>> thanks,
->>>> 
->>>> greg k-h
->>> 
->>> 
->>> okay, will do
->>> 
->>> thanks for pointing that out
->>> 
->>> 
->>> Regards
->>> 
->>> Matt
->> 
->> Hi Greg,
->> 
->> could you please add the above mentioned two patches
->> 
->> https://git.kernel.org/cgit/linux/kernel/git/torvalds/linux.git/commit/?id=27d0e5bc85f3341b9ba66f0c23627cf9d7538c9d
+On 09/10/2014 11:39 PM, Ivan Shapovalov wrote:
+> On Wednesday 10 September 2014 at 22:17:15, Edward Shishkin wrote:	
+>> On 09/10/2014 09:00 PM, Ivan Shapovalov wrote:
+>>> Hi!
+>>>
+>>> The preamble: recently I had to force-change my configuration (the old laptop
+>>> was stolen). What I have now is a combination of a tiny 16 GiB SSD and a huge
+>>> 1 TiB HDD.
+>>>
+>>> ...So I've placed my /home on HDD. Partition size is 800 GiB, formatting
+>>> options are "create=ccreg40,compress=gzip1,compressMode=latt" and I have a few
+>>> questions.
+>>>
+>>> 1. What is the recommended compression mode?
+>> The default one (conv).
+> OK, thanks.
+>
+>>> More specifically, what is the default "conv" mode? What is its purpose, why is
+>>> it the default?
+>> In this mode intelligent switches take place in 2 interfaces:
+>> 1) in FILE interface (if the first 64K of the file are incompressible, then
+>>       management is passed to unix-file plugin forever);
+>> 2) in COMPRESSION interface (turn on/off compression transform
+>>       on a dynamic lattice).
 >>
->> 
-reiserfs: fix corruption introduced by balance_leaf refactor
->> 
->> 
->> https://git.kernel.org/cgit/linux/kernel/git/torvalds/linux.git/commit/?id=01777836c87081e4f68c4a43c9abe6114805f91e
->>
->> 
-reiserfs: Fix use after free in journal teardown
->> 
->> in next stable (3.16.3) kernel ?
->> 
->> more and more people seem to be affected by the data corruption 
->> introduced by the recent changes.
->> 
->> 
->> Reading through Documentation/stable_kernel_rules.txt, 
->> http://cwe.mitre.org/data/definitions/416.html and 
->> http://www.hpenterprisesecurity.com/vulncat/en/vulncat/cpp/use_after_free.html
+>> In other compression modes switches take place only in COMPRESSION
+>> interface.
 >>
 >>
->> 
-both patches seem relevant enough (concerning data integrity
->> filesystem-wise and security) to be included for the stable
->> branch
-> 
-> I'll queue this up when I get a chance, there are over 300 patches 
-> pending for the stable kernels right now :(
-> 
-> Also, in the future, always cc stable@vger.kernel.org for any
-> stable requests so that they don't get lost.
+>>> I'm asking, because I wasn't able to understand its purpose from code, and the
+>>> code itself looks hackish in some places (hardcoded fallback to extent-only
+>>> files,
+>> Actually, this is implementation of a compression mode, not a hardcoded
+>> fallback.
+>>
+>>
+>>>    hardcoded policy, hardcoded fallback to "latt" in many cases, etc).
+>> ditto
+> Yes, I understand that this is implementation and it doesn't have an obligation
+> to be configurable in every aspect... but still it feels somewhat strange.
+> E. g. why "extents only" formatting is forced when a file is decided to be
+> incompressible?
 
-Hi Greg -
 
-27d0e5bc85f3341b9ba66f0c23627cf9d7538c9d
-Author: Jeff Mahoney <jeffm@suse.com>
-Date:   Mon Aug 4 19:51:47 2014 -0400
+"extents only" formatting policy was set to facilitate debugging process
+when implementing the "conv" compression mode.
 
-    reiserfs: fix corruption introduced by balance_leaf refactor
+When "conv" is set, cryptcompress plugin "sends a signal" to the upper
+dispatcher to perform switch to unix-file plugin, which, in turn, performs
+switches in the ITEM interface, if "smart" formatting policy is 
+installed (this is
+"classic" tail conversion: tails to extents, if file size >= 20K, and 
+backward).
 
-    Commits f1f007c308e (reiserfs: balance_leaf refactor, pull out
-    balance_leaf_insert_left) and cf22df182bf (reiserfs: balance_leaf
-    refactor, pull out balance_leaf_paste_left) missed that the `body'
-    pointer was getting repositioned. Subsequent users of the pointer
-    would expect it to be repositioned, and as a result, parts of the
-    tree would get overwritten. The most common observed corruption
-    is indirect block pointers being overwritten.
+Setting "extents only", or "tails only" disables the switches.
+Why "extents only" instead of "tails only"? When "conv" makes a decision
+about the switch, the file is 64K long, so extents are better than tails.
 
-    Since the body value isn't actually used anymore in the called
-routines,
-    we can pass back the offset it should be shifted. We constify the body
-    and ih pointers in the balance_leaf as a mostly-free preventative
-measure.
+I think that now we can set "smart" instead of "extents only": those
+switches won't step on each other.
 
-    Cc: <stable@vger.kernel.org> # 3.16
-    Reported-and-tested-by: Jeff Chua <jeff.chua.linux@gmail.com>
-    Signed-off-by: Jeff Mahoney <jeffm@suse.com>
-    Signed-off-by: Jan Kara <jack@suse.cz>
 
-Should there have been more? I thought it was enough to add the Cc
-tag. This one has been in the tree, with the tags and with
-"corruption" in the Subject since 13 Aug. I know you're busy but this
-seems like a pretty obvious candidate for stable inclusion.
+>   Why the heuristic in FILE interface check (compressible only if
+> size can be reduced twice) is different from the one in COMPRESSION interface
+> (compressible if size can be reduced at all)?
 
-- -Jeff
 
-- -- 
-Jeff Mahoney
-SUSE Labs
------BEGIN PGP SIGNATURE-----
-Version: GnuPG/MacGPG2 v2.0.19 (Darwin)
+I wanted to increase the portion of unix-files on the partition. It showed
+better performance than the heuristics that performs switches in the
+COMPRESSION interface. I still don't have satisfactory explanation of 
+this fact.
 
-iQIcBAEBAgAGBQJUESUpAAoJEB57S2MheeWyt9oQAIEnvZPojErvzzv4IcvVheSI
-Ju1XChkU4YDRW3W2e8PEjAhiPd1dMP7aEJvfq6AxlKYAYENaS/S2LdSbBbeVctFa
-1VwBVakDkmHduVcb2hl3ldIQlHRW0w/q/fSk+NKZavANS/maIK/mj2HE8S3Op17C
-iGsGZiluqaYp56yPHJK7XDorpWFoCVXIPlHUbec8lIxnyPqeytHo2W5UtfZZVeN3
-BfGICzR57i7YjOtQ/lsmusiUjp7Ym4REKX1GGnIcZ1Po5F8oX4phMVaUR0gR1NSA
-eYBcTyH245iWTQBFqE9D5AR0pHLnmi6EySEbNIWU3w0OYffDCBpqU7A7Dm5O2kng
-caIlNuf4TMEp7QzVC8hxCL61nxBWJ6L2RQ9NkOg9zLHXdaWhJSjHl7TdRUPV/C3V
-RzNCZEWvqEpMoju145Wez7JlcE/GlsBclNFGBqypEWN364B/MprKe5vhpeXJ+1H2
-yUq/qKlgQLZe5uPCwMdcyAB3xTX8mIzG4nz8RWez6WPjhAlb82xtBSl0btWjSnVM
-4YlWy/5jCWgyjXzrM3hd8P3SJi+l69rVUE+UcMvOqHq3oCFBddhlUh9tHM7pn9tH
-sXTo8f8s9Pe7+HvbA0bwtwbwTQ8tNxn87ovuVnAO86RLmeeM7HCfqBU/4lKEZ0WE
-TG7eSSLjQVBxo+kQCZOo
-=OOOa
------END PGP SIGNATURE-----
+
+> (I'm sorry for too many questions. I'm just curious.)
+>
+>>> 2. The mount time of a 800-GiB partition is >20 seconds. And with
+>>> dont_load_bitmap it's around 1-2 seconds. Why so much?
+>> By default all bitmap blocks are loaded to memory at mount time.
+>> Now calculate a number of bitmap blocks for 800-GiB partition that
+>> should be read from disk.
+> 25 MiB of bitmaps. 20 seconds still looks strange...
+> Are the blocks specially processed? Don't see anything.
+>
+>>>    Why other filesystems
+>>> have drastically less mount times? If they have an equivalent of
+>>> dont_load_bitmap enabled by default, why don't we do it?
+>> For historical reasons. I recommended to not use large partitions
+>> for reiser4, so there wasn't any need in this option.
+> OK...
+>
+>>> 3. Given a directory tree with ~20k files of total size around 20 GiB,
+>>> its removal takes forever. From strace I see that a single unlink takes
+>>> ~1 second. Again, why so much? Is it related to my choice of "latt" compression
+>>> mode over the default "conv"?
+>> Yes, in particular.
+>> "latt" means that all file bodies are represented by fragments in
+>> formatted nodes.
+> So... are all cryptcompress files stored in formatted nodes, without
+> any equivalent of extents?
+
+
+Yes, cryptcompress files are composed of items of only one type, so-called
+"ctails" (they resembles tails, but have a 1-byte header, which contain size
+of file's logical cluster). Unlike unix-file plugin cryptcompress plugin 
+doesn't
+perform switches in ITEM interface.
+
+
+>>> 3a. I can reproduce the "directory not empty" bug :) Interestingly, it is
+>>> always the same directory under the aforementioned huge hierarchy. (I've
+>>> done the unpack-remove cycle a few times.)
+>> I've made a conclusion that this is caused by unexpected disappearing
+>> of a record, which represents a directory entry in the directory item
+>> (currently directory items are managed by cde ITEM plugin, aka "compound
+>> directory entries"). In the error path (ENOENT) the size of the directory is
+>> not decremented, which makes the directory undeletable. I still don't know
+>> who kills the entries. Special debugging info is needed to find/fix it.
+> What kind of information is needed?
+
+
+We need to find all places, where the records are created / killed
+and insert a hook, which prints such events for the entry which
+unexpectedly disappears. This will get us a chance to find the culprit.
+I have to say: this is not a big fun...
+
+Thanks,
+Edward.
