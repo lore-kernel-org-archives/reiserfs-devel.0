@@ -1,178 +1,190 @@
-From: Ivan Shapovalov <intelfx100@gmail.com>
-Subject: Re: reiser4 (ccreg40): very slow mount, poor unlink performance, questions about compression modes
-Date: Thu, 11 Sep 2014 01:39:33 +0400
-Message-ID: <4194447.EgbZsqfSzA@intelfx-laptop>
-References: <1466481.l6KPymqJEh@intelfx-laptop> <5410B1CB.3080705@gmail.com>
+From: Jeff Mahoney <jeffm@suse.com>
+Subject: Re: linux-3.16.2 queue (3.16.1+)
+Date: Thu, 11 Sep 2014 00:29:30 -0400
+Message-ID: <5411252A.1030901@suse.com>
+References: <CAG-aW06Q9VVyW-atZEsURs0rfjysdEbxb_dC4Tm3K-tZg++tQg@mail.gmail.com> <20140828152205.GA18432@kroah.com> <CAG-aW05qkQKgntBM87XHSMECjD-GMjeRt+m0-0CkezBG_weCOg@mail.gmail.com> <20140828153252.GA18868@kroah.com> <CAG-aW07Lx=WOEf+j=_+G5T57uzhvKiP3-ZpaadKvoafW=iJKrw@mail.gmail.com> <CAG-aW04YvZVxKBhSAYqhr5OBFovA3HHHWgdfEQU_jXKzQK7QdA@mail.gmail.com> <20140907031814.GA961@kroah.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; boundary="nextPart1438289.GyvWse64EE"; micalg="pgp-sha256"; protocol="application/pgp-signature"
+Content-Transfer-Encoding: 7bit
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20120113;
-        h=from:to:cc:subject:date:message-id:user-agent:in-reply-to
-         :references:mime-version:content-type;
-        bh=4Ntyr76HLVa8UDf1mCQOtjf1LD46HY8mAwPfylo4BE4=;
-        b=uAsMNmVLlLU0ckuMvUEtkf3e9jzG5DnT7XI75KVbDrg23OOAjo8QiuGcx0nSDsqUwG
-         cIuNtZEfh3GC+6cuzMq0vDI8f4MuxJl/ZiVtgpNwMcxWVskPr0dytyz8/CkZrtRt36cG
-         7+tt62eE+KdSKrhVrQdLV387Gx+MUsSJRJJjamR75k//p4RMO/+X+lmC6DqgY+SUT5FL
-         +HiCQILrLOSkHI5bVH5ez3wSqYx5Io2ZqeTemfpXUwF8GAycOvI6sBHS6y5WhqiX8/Xr
-         uWtQ0tBAueb5+XDW7oovnJXqnrnTrskM2ez0brQb6pM4KgOVRux3ID6B9rZrZ0HCVTJp
-         NVRg==
-In-Reply-To: <5410B1CB.3080705@gmail.com>
+In-Reply-To: <20140907031814.GA961@kroah.com>
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
-To: Edward Shishkin <edward.shishkin@gmail.com>
-Cc: ReiserFS Development mailing list <reiserfs-devel@vger.kernel.org>
-
-
---nextPart1438289.GyvWse64EE
-Content-Transfer-Encoding: quoted-printable
 Content-Type: text/plain; charset="us-ascii"
+To: Greg KH <gregkh@linuxfoundation.org>, Matt <jackdachef@gmail.com>
+Cc: Linux Kernel <linux-kernel@vger.kernel.org>, ReiserFS Mailing List <reiserfs-devel@vger.kernel.org>
 
-On Wednesday 10 September 2014 at 22:17:15, Edward Shishkin wrote:=09
-> On 09/10/2014 09:00 PM, Ivan Shapovalov wrote:
-> > Hi!
-> >
-> > The preamble: recently I had to force-change my configuration (the =
-old laptop
-> > was stolen). What I have now is a combination of a tiny 16 GiB SSD =
-and a huge
-> > 1 TiB HDD.
-> >
-> > ...So I've placed my /home on HDD. Partition size is 800 GiB, forma=
-tting
-> > options are "create=3Dccreg40,compress=3Dgzip1,compressMode=3Dlatt"=
- and I have a few
-> > questions.
-> >
-> > 1. What is the recommended compression mode?
->=20
->=20
-> The default one (conv).
+-----BEGIN PGP SIGNED MESSAGE-----
+Hash: SHA1
 
-OK, thanks.
+On 9/6/14, 11:18 PM, Greg KH wrote:
+> On Sun, Sep 07, 2014 at 02:47:55AM +0200, Matt wrote:
+>> On Thu, Aug 28, 2014 at 9:18 PM, Matt <jackdachef@gmail.com>
+>> wrote:
+>>> On Thu, Aug 28, 2014 at 5:32 PM, Greg KH
+>>> <gregkh@linuxfoundation.org> wrote:
+>>>> On Thu, Aug 28, 2014 at 05:27:27PM +0200, Matt wrote:
+>>>>> On Thu, Aug 28, 2014 at 5:22 PM, Greg KH
+>>>>> <gregkh@linuxfoundation.org> wrote:
+>>>>>> On Thu, Aug 28, 2014 at 05:16:58PM +0200, Matt wrote:
+>>>>>>> Hi Greg,
+>>>>>>> 
+>>>>>>> 
+>>>>>>> please consider adding the following 2 patches to
+>>>>>>> 3.16.2:
+>>>>>>> 
+>>>>>>> Jan Kara (1): reiserfs: Fix use after free in journal
+>>>>>>> teardown
+>>>>>>> 
+>>>>>>> Jeff Mahoney (1): reiserfs: fix corruption introduced
+>>>>>>> by balance_leaf refactor
+>>>>>>> 
+>>>>>>> 
+>>>>>>> 
+>>>>>>> Reason/Related:
+>>>>>>> 
+>>>>>>> https://bugzilla.kernel.org/show_bug.cgi?id=83121
+>>>>>>> 
+>>>>>>> https://bugzilla.kernel.org/show_bug.cgi?id=83321
+>>>>>>> 
+>>>>>>> http://forums.gentoo.org/viewtopic-t-998538-postdays-0-postorder-asc-start-0.html
+>>>>>>>
+>>>>>>>
+>>>>>>>
+>>>>>>> 
+Many thanks in advance
+>>>>>> 
+>>>>>> I need git commit ids of these patches in Linus's tree,
+>>>>>> can you provide those please?
+>>>>>> 
+>>>>>> thanks,
+>>>>>> 
+>>>>>> greg k-h
+>>>>> 
+>>>>> 
+>>>>> Sure:
+>>>>> 
+>>>>> https://git.kernel.org/cgit/linux/kernel/git/torvalds/linux.git/commit/?id=27d0e5bc85f3341b9ba66f0c23627cf9d7538c9d
+>>>>>
+>>>>> 
+reiserfs: fix corruption introduced by balance_leaf refactor
+>>>>> 
+>>>>> 
+>>>>> https://git.kernel.org/cgit/linux/kernel/git/torvalds/linux.git/commit/?id=01777836c87081e4f68c4a43c9abe6114805f91e
+>>>>>
+>>>>> 
+reiserfs: Fix use after free in journal teardown
+>>>>> 
+>>>>> 
+>>>>> 
+>>>>> are checkpatch warnings usually also fixed within stable
+>>>>> releases ?
+>>>> 
+>>>> No, not at all, please read
+>>>> Documentation/stable_kernel_patches.txt for what is
+>>>> acceptable for stable kernel patches.
+>>>> 
+>>>> thanks,
+>>>> 
+>>>> greg k-h
+>>> 
+>>> 
+>>> okay, will do
+>>> 
+>>> thanks for pointing that out
+>>> 
+>>> 
+>>> Regards
+>>> 
+>>> Matt
+>> 
+>> Hi Greg,
+>> 
+>> could you please add the above mentioned two patches
+>> 
+>> https://git.kernel.org/cgit/linux/kernel/git/torvalds/linux.git/commit/?id=27d0e5bc85f3341b9ba66f0c23627cf9d7538c9d
+>>
+>> 
+reiserfs: fix corruption introduced by balance_leaf refactor
+>> 
+>> 
+>> https://git.kernel.org/cgit/linux/kernel/git/torvalds/linux.git/commit/?id=01777836c87081e4f68c4a43c9abe6114805f91e
+>>
+>> 
+reiserfs: Fix use after free in journal teardown
+>> 
+>> in next stable (3.16.3) kernel ?
+>> 
+>> more and more people seem to be affected by the data corruption 
+>> introduced by the recent changes.
+>> 
+>> 
+>> Reading through Documentation/stable_kernel_rules.txt, 
+>> http://cwe.mitre.org/data/definitions/416.html and 
+>> http://www.hpenterprisesecurity.com/vulncat/en/vulncat/cpp/use_after_free.html
+>>
+>>
+>> 
+both patches seem relevant enough (concerning data integrity
+>> filesystem-wise and security) to be included for the stable
+>> branch
+> 
+> I'll queue this up when I get a chance, there are over 300 patches 
+> pending for the stable kernels right now :(
+> 
+> Also, in the future, always cc stable@vger.kernel.org for any
+> stable requests so that they don't get lost.
 
-> > More specifically, what is the default "conv" mode? What is its pur=
-pose, why is
-> > it the default?
->=20
->=20
-> In this mode intelligent switches take place in 2 interfaces:
-> 1) in FILE interface (if the first 64K of the file are incompressible=
-, then
->      management is passed to unix-file plugin forever);
-> 2) in COMPRESSION interface (turn on/off compression transform
->      on a dynamic lattice).
->=20
-> In other compression modes switches take place only in COMPRESSION
-> interface.
->=20
->=20
-> > I'm asking, because I wasn't able to understand its purpose from co=
-de, and the
-> > code itself looks hackish in some places (hardcoded fallback to ext=
-ent-only
-> > files,
->=20
->=20
-> Actually, this is implementation of a compression mode, not a hardcod=
-ed
-> fallback.
->=20
->=20
-> >   hardcoded policy, hardcoded fallback to "latt" in many cases, etc=
-).
->=20
->=20
-> ditto
+Hi Greg -
 
-Yes, I understand that this is implementation and it doesn't have an ob=
-ligation
-to be configurable in every aspect... but still it feels somewhat stran=
-ge.
-E. g. why "extents only" formatting is forced when a file is decided to=
- be
-incompressible? Why the heuristic in FILE interface check (compressible=
- only if
-size can be reduced twice) is different from the one in COMPRESSION int=
-erface
-(compressible if size can be reduced at all)?
+27d0e5bc85f3341b9ba66f0c23627cf9d7538c9d
+Author: Jeff Mahoney <jeffm@suse.com>
+Date:   Mon Aug 4 19:51:47 2014 -0400
 
-(I'm sorry for too many questions. I'm just curious.)
+    reiserfs: fix corruption introduced by balance_leaf refactor
 
-> > 2. The mount time of a 800-GiB partition is >20 seconds. And with
-> > dont_load_bitmap it's around 1-2 seconds. Why so much?
->=20
->=20
-> By default all bitmap blocks are loaded to memory at mount time.
-> Now calculate a number of bitmap blocks for 800-GiB partition that
-> should be read from disk.
+    Commits f1f007c308e (reiserfs: balance_leaf refactor, pull out
+    balance_leaf_insert_left) and cf22df182bf (reiserfs: balance_leaf
+    refactor, pull out balance_leaf_paste_left) missed that the `body'
+    pointer was getting repositioned. Subsequent users of the pointer
+    would expect it to be repositioned, and as a result, parts of the
+    tree would get overwritten. The most common observed corruption
+    is indirect block pointers being overwritten.
 
-25 MiB of bitmaps. 20 seconds still looks strange...
-Are the blocks specially processed? Don't see anything.
+    Since the body value isn't actually used anymore in the called
+routines,
+    we can pass back the offset it should be shifted. We constify the body
+    and ih pointers in the balance_leaf as a mostly-free preventative
+measure.
 
-> >   Why other filesystems
-> > have drastically less mount times? If they have an equivalent of
-> > dont_load_bitmap enabled by default, why don't we do it?
->=20
->=20
-> For historical reasons. I recommended to not use large partitions
-> for reiser4, so there wasn't any need in this option.
+    Cc: <stable@vger.kernel.org> # 3.16
+    Reported-and-tested-by: Jeff Chua <jeff.chua.linux@gmail.com>
+    Signed-off-by: Jeff Mahoney <jeffm@suse.com>
+    Signed-off-by: Jan Kara <jack@suse.cz>
 
-OK...
+Should there have been more? I thought it was enough to add the Cc
+tag. This one has been in the tree, with the tags and with
+"corruption" in the Subject since 13 Aug. I know you're busy but this
+seems like a pretty obvious candidate for stable inclusion.
 
-> > 3. Given a directory tree with ~20k files of total size around 20 G=
-iB,
-> > its removal takes forever. From strace I see that a single unlink t=
-akes
-> > ~1 second. Again, why so much? Is it related to my choice of "latt"=
- compression
-> > mode over the default "conv"?
->=20
->=20
-> Yes, in particular.
-> "latt" means that all file bodies are represented by fragments in=20
-> formatted nodes.
+- -Jeff
 
-So... are all cryptcompress files stored in formatted nodes, without
-any equivalent of extents?
-
-> > 3a. I can reproduce the "directory not empty" bug :) Interestingly,=
- it is
-> > always the same directory under the aforementioned huge hierarchy. =
-(I've
-> > done the unpack-remove cycle a few times.)
->=20
->=20
-> I've made a conclusion that this is caused by unexpected disappearing=
-
-> of a record, which represents a directory entry in the directory item=
-
-> (currently directory items are managed by cde ITEM plugin, aka "compo=
-und
-> directory entries"). In the error path (ENOENT) the size of the direc=
-tory is
-> not decremented, which makes the directory undeletable. I still don't=
- know
-> who kills the entries. Special debugging info is needed to find/fix i=
-t.
-
-What kind of information is needed?
-
-Thanks for explanations and hints,
-=2D-=20
-Ivan Shapovalov / intelfx /
---nextPart1438289.GyvWse64EE
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: This is a digitally signed message part.
-Content-Transfer-Encoding: 7Bit
-
+- -- 
+Jeff Mahoney
+SUSE Labs
 -----BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
+Version: GnuPG/MacGPG2 v2.0.19 (Darwin)
 
-iF4EABEIAAYFAlQQxRoACgkQxUKljSIMAnBRDwEA1gJuJorK3GMSeu6dvYcvngwM
-axwppiyIXWJ8pZJQoZoA/0liYp6TQxgwuiwIHbdhBZZu3ZanfAX7TVvImjXcqx7v
-=gX6D
+iQIcBAEBAgAGBQJUESUpAAoJEB57S2MheeWyt9oQAIEnvZPojErvzzv4IcvVheSI
+Ju1XChkU4YDRW3W2e8PEjAhiPd1dMP7aEJvfq6AxlKYAYENaS/S2LdSbBbeVctFa
+1VwBVakDkmHduVcb2hl3ldIQlHRW0w/q/fSk+NKZavANS/maIK/mj2HE8S3Op17C
+iGsGZiluqaYp56yPHJK7XDorpWFoCVXIPlHUbec8lIxnyPqeytHo2W5UtfZZVeN3
+BfGICzR57i7YjOtQ/lsmusiUjp7Ym4REKX1GGnIcZ1Po5F8oX4phMVaUR0gR1NSA
+eYBcTyH245iWTQBFqE9D5AR0pHLnmi6EySEbNIWU3w0OYffDCBpqU7A7Dm5O2kng
+caIlNuf4TMEp7QzVC8hxCL61nxBWJ6L2RQ9NkOg9zLHXdaWhJSjHl7TdRUPV/C3V
+RzNCZEWvqEpMoju145Wez7JlcE/GlsBclNFGBqypEWN364B/MprKe5vhpeXJ+1H2
+yUq/qKlgQLZe5uPCwMdcyAB3xTX8mIzG4nz8RWez6WPjhAlb82xtBSl0btWjSnVM
+4YlWy/5jCWgyjXzrM3hd8P3SJi+l69rVUE+UcMvOqHq3oCFBddhlUh9tHM7pn9tH
+sXTo8f8s9Pe7+HvbA0bwtwbwTQ8tNxn87ovuVnAO86RLmeeM7HCfqBU/4lKEZ0WE
+TG7eSSLjQVBxo+kQCZOo
+=OOOa
 -----END PGP SIGNATURE-----
-
---nextPart1438289.GyvWse64EE--
-
