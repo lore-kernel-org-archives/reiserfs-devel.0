@@ -1,36 +1,50 @@
-From: Evgeniy <iron.udjin@gmail.com>
+From: Ivan Shapovalov <intelfx100@gmail.com>
 Subject: Re: [PATCH] reiser4: fix problem of non-deletable directories
-Date: Sat, 27 Sep 2014 05:22:07 +0300
-Message-ID: <CAL2jS+nSR9gc57sEhvhthkDB9oy16VhjQHmphKtcLz0568ogKA@mail.gmail.com>
+Date: Sun, 28 Sep 2014 03:16:51 +0400
+Message-ID: <3496060.ZNKtY66gHr@intelfx-laptop>
 References: <5425C5FD.6020907@gmail.com>
 Mime-Version: 1.0
+Content-Type: multipart/signed; boundary="nextPart2753521.SvqrG9jubf"; micalg="pgp-sha256"; protocol="application/pgp-signature"
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20120113;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc:content-type;
-        bh=WcbhvecLxa+LwoKRSd6S/yZaTctZaNLpc4ZGnt9AoK4=;
-        b=P/SP1d8azodzLM1SmPMfQTeXrmhWrkqkIS4xjLn5IhZOoJxCJwW9pIJjkZcQUBaMDL
-         ojhV1zmowiF/gzAinDKBkGcf9uffdvx8yWgGhDduehQt245EL7HwiT++VcWIux0jKB0W
-         aB26pmkkNS7vJHDXACChMUfWjA0mFARO/EwHcoKy8xlv54MF0cTrg6+O94GMP47ViNyV
-         dkV8IpyuoPlF0tRNBrM0rq/fhAD+06utDtDx9/2HEvZIsagqd0WrJdxUot/FwVB4UFvU
-         kiGqlM/aEJFBnbvNOJtB/LQGM3pzgNHkINIJsmX97E4U/8Uzw5HrKKRrGssXZNwK8RI5
-         QvMA==
+        h=from:to:cc:subject:date:message-id:user-agent:in-reply-to
+         :references:mime-version:content-type;
+        bh=GcDQwYF6Ldi0IzImHHNJqd5CqSxK9imLYPJ1fGhbLHQ=;
+        b=DvpsWlaDIpTJwGAxC0EHI1q5EbkPKCgRM7VRK2XGGhkgrURnNoXAS3rn1qB1vPdYJ1
+         6Ol6c43n4nNvaekGyS0h7u5otO31jf8L9ZNzFKsLHI6WZ7Xr0wGGD3bSZgah/I9vPxA5
+         eEkbsh1KLzDB0lcrr8qxtWlf/xUt49OYu8obdZDRbfAaWn7ZQ76whbNEfnPmlseljZhF
+         4NwaG2df0v+xicHuP0xITY5klBDnXxj6oZigbRZtTVj3skuOTgffC/Bx+1K1lJBVC7V8
+         HDW6XdN9mQaiSooNBDvRcDBMvHmQKUL2OAM8LiDuAnC62WbbCyvOlxJUSCs8xAuzxd6x
+         dmLQ==
 In-Reply-To: <5425C5FD.6020907@gmail.com>
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
+To: reiserfs-devel@vger.kernel.org
+Cc: Edward Shishkin <edward.shishkin@gmail.com>
+
+
+--nextPart2753521.SvqrG9jubf
+Content-Transfer-Encoding: quoted-printable
 Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Edward Shishkin <edward.shishkin@gmail.com>
-Cc: ReiserFS development mailing list <reiserfs-devel@vger.kernel.org>
 
-Thank you very much, Edward. I was waiting for this patch a few years.
-:) I just tested it and seems it fixes the problem with non-deletable
-directories. I'll test it a week or two and I'll provide feedback
-about the problem.
+Yeah, can also confirm that the problem is fixed for me.
 
-Thank you Edward and Ivan for your work, I'm really glad to see
-activity in development here.
+Thank you!
+=2D-=20
+Ivan Shapovalov / intelfx /
+--nextPart2753521.SvqrG9jubf
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: This is a digitally signed message part.
+Content-Transfer-Encoding: 7Bit
 
-On 26 September 2014 23:01, Edward Shishkin <edward.shishkin@gmail.com> wrote:
->
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
+
+iF4EABEIAAYFAlQnRWcACgkQxUKljSIMAnCS1gEAm5HXUX9+uk3hjtXSXplU8xnt
+vbjk5IH5JHC3AUwgrA0BAOvZ+HjZ1LYQ0xnHSxvXQH7Cr3chGcynrU4ATAA5gwNi
+=FE4G
+-----END PGP SIGNATURE-----
+
+--nextPart2753521.SvqrG9jubf--
+
