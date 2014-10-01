@@ -1,50 +1,107 @@
-From: Ivan Shapovalov <intelfx100@gmail.com>
-Subject: Re: [PATCH] reiser4: fix problem of non-deletable directories
-Date: Sun, 28 Sep 2014 03:16:51 +0400
-Message-ID: <3496060.ZNKtY66gHr@intelfx-laptop>
-References: <5425C5FD.6020907@gmail.com>
+From: Jan Kara <jack@suse.cz>
+Subject: [PATCH 01/12] quota: Allow each filesystem to specify which quota
+	types it supports
+Date: Wed,  1 Oct 2014 21:31:23 +0200
+Message-ID: <1412191894-9113-2-git-send-email-jack@suse.cz>
+References: <1412191894-9113-1-git-send-email-jack@suse.cz>
 Mime-Version: 1.0
-Content-Type: multipart/signed; boundary="nextPart2753521.SvqrG9jubf"; micalg="pgp-sha256"; protocol="application/pgp-signature"
-Return-path: <reiserfs-devel-owner@vger.kernel.org>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20120113;
-        h=from:to:cc:subject:date:message-id:user-agent:in-reply-to
-         :references:mime-version:content-type;
-        bh=GcDQwYF6Ldi0IzImHHNJqd5CqSxK9imLYPJ1fGhbLHQ=;
-        b=DvpsWlaDIpTJwGAxC0EHI1q5EbkPKCgRM7VRK2XGGhkgrURnNoXAS3rn1qB1vPdYJ1
-         6Ol6c43n4nNvaekGyS0h7u5otO31jf8L9ZNzFKsLHI6WZ7Xr0wGGD3bSZgah/I9vPxA5
-         eEkbsh1KLzDB0lcrr8qxtWlf/xUt49OYu8obdZDRbfAaWn7ZQ76whbNEfnPmlseljZhF
-         4NwaG2df0v+xicHuP0xITY5klBDnXxj6oZigbRZtTVj3skuOTgffC/Bx+1K1lJBVC7V8
-         HDW6XdN9mQaiSooNBDvRcDBMvHmQKUL2OAM8LiDuAnC62WbbCyvOlxJUSCs8xAuzxd6x
-         dmLQ==
-In-Reply-To: <5425C5FD.6020907@gmail.com>
-Sender: reiserfs-devel-owner@vger.kernel.org
-List-ID: <reiserfs-devel.vger.kernel.org>
-To: reiserfs-devel@vger.kernel.org
-Cc: Edward Shishkin <edward.shishkin@gmail.com>
-
-
---nextPart2753521.SvqrG9jubf
-Content-Transfer-Encoding: quoted-printable
 Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <xfs-bounces@oss.sgi.com>
+In-Reply-To: <1412191894-9113-1-git-send-email-jack@suse.cz>
+List-Id: <reiserfs-devel.vger.kernel.org>
+List-Unsubscribe: <http://oss.sgi.com/mailman/options/xfs>,
+	<mailto:xfs-request@oss.sgi.com?subject=unsubscribe>
+List-Archive: <http://oss.sgi.com/pipermail/xfs>
+List-Post: <mailto:xfs@oss.sgi.com>
+List-Help: <mailto:xfs-request@oss.sgi.com?subject=help>
+List-Subscribe: <http://oss.sgi.com/mailman/listinfo/xfs>,
+	<mailto:xfs-request@oss.sgi.com?subject=subscribe>
+Errors-To: xfs-bounces@oss.sgi.com
+Sender: xfs-bounces@oss.sgi.com
+To: linux-fsdevel@vger.kernel.org
+Cc: Dave Kleikamp <shaggy@kernel.org>, jfs-discussion@lists.sourceforge.net, tytso@mit.edu, Jeff Mahoney <jeffm@suse.de>, Mark Fasheh <mfasheh@suse.com>, reiserfs-devel@vger.kernel.org, xfs@oss.sgi.com, cluster-devel@redhat.com, Joel Becker <jlbec@evilplan.org>, Jan Kara <jack@suse.cz>, linux-ext4@vger.kernel.org, Steven Whitehouse <swhiteho@redhat.com>, ocfs2-devel@oss.oracle.com
 
-Yeah, can also confirm that the problem is fixed for me.
+Currently all filesystems supporting VFS quota support user and group
+quotas. With introduction of project quotas this is going to change so
+make sure filesystem isn't called for quota type it doesn't support by
+introduction of a bitmask determining which quota types each filesystem
+supports.
 
-Thank you!
-=2D-=20
-Ivan Shapovalov / intelfx /
---nextPart2753521.SvqrG9jubf
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: This is a digitally signed message part.
-Content-Transfer-Encoding: 7Bit
+Signed-off-by: Jan Kara <jack@suse.cz>
+---
+ fs/quota/quota.c      | 13 +++++++++++--
+ fs/super.c            |  7 +++++++
+ include/linux/quota.h |  1 +
+ 3 files changed, 19 insertions(+), 2 deletions(-)
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
+diff --git a/fs/quota/quota.c b/fs/quota/quota.c
+index 75621649dbd7..0f28eac6e638 100644
+--- a/fs/quota/quota.c
++++ b/fs/quota/quota.c
+@@ -47,8 +47,11 @@ static int check_quotactl_permission(struct super_block *sb, int type, int cmd,
+ 
+ static void quota_sync_one(struct super_block *sb, void *arg)
+ {
+-	if (sb->s_qcop && sb->s_qcop->quota_sync)
+-		sb->s_qcop->quota_sync(sb, *(int *)arg);
++	int type = *(int *)arg;
++
++	if (sb->s_qcop && sb->s_qcop->quota_sync &&
++	    (sb->s_dquot.allowed_types & (1 << type)))
++		sb->s_qcop->quota_sync(sb, type);
+ }
+ 
+ static int quota_sync_all(int type)
+@@ -297,8 +300,14 @@ static int do_quotactl(struct super_block *sb, int type, int cmd, qid_t id,
+ 
+ 	if (type >= (XQM_COMMAND(cmd) ? XQM_MAXQUOTAS : MAXQUOTAS))
+ 		return -EINVAL;
++	/*
++	 * Quota not supported on this fs? Check this before allowed_types
++	 * since they needn't be set if quota is not supported.
++	 */
+ 	if (!sb->s_qcop)
+ 		return -ENOSYS;
++	if (!(sb->s_dquot.allowed_types & (1 << type)))
++		return -EINVAL;
+ 
+ 	ret = check_quotactl_permission(sb, type, cmd, id);
+ 	if (ret < 0)
+diff --git a/fs/super.c b/fs/super.c
+index b9a214d2fe98..dc577370f5fd 100644
+--- a/fs/super.c
++++ b/fs/super.c
+@@ -215,6 +215,13 @@ static struct super_block *alloc_super(struct file_system_type *type, int flags)
+ 	atomic_set(&s->s_active, 1);
+ 	mutex_init(&s->s_vfs_rename_mutex);
+ 	lockdep_set_class(&s->s_vfs_rename_mutex, &type->s_vfs_rename_key);
++	/*
++	 * For now MAXQUOTAS check in do_quotactl() will limit quota type
++	 * appropriately. When each fs sets allowed_types, we can remove the
++	 * line below
++	 */
++	s->s_dquot.allowed_types = (1 << USRQUOTA) | (1 << GRPQUOTA) |
++				   (1 << PRJQUOTA);
+ 	mutex_init(&s->s_dquot.dqio_mutex);
+ 	mutex_init(&s->s_dquot.dqonoff_mutex);
+ 	s->s_maxbytes = MAX_NON_LFS;
+diff --git a/include/linux/quota.h b/include/linux/quota.h
+index 80d345a3524c..91f328971acc 100644
+--- a/include/linux/quota.h
++++ b/include/linux/quota.h
+@@ -388,6 +388,7 @@ static inline void quota_send_warning(struct kqid qid, dev_t dev,
+ 
+ struct quota_info {
+ 	unsigned int flags;			/* Flags for diskquotas on this device */
++	unsigned int allowed_types;		/* Bitmask of quota types this fs supports */
+ 	struct mutex dqio_mutex;		/* lock device while I/O in progress */
+ 	struct mutex dqonoff_mutex;		/* Serialize quotaon & quotaoff */
+ 	struct inode *files[MAXQUOTAS];		/* inodes of quotafiles */
+-- 
+1.8.1.4
 
-iF4EABEIAAYFAlQnRWcACgkQxUKljSIMAnCS1gEAm5HXUX9+uk3hjtXSXplU8xnt
-vbjk5IH5JHC3AUwgrA0BAOvZ+HjZ1LYQ0xnHSxvXQH7Cr3chGcynrU4ATAA5gwNi
-=FE4G
------END PGP SIGNATURE-----
-
---nextPart2753521.SvqrG9jubf--
-
+_______________________________________________
+xfs mailing list
+xfs@oss.sgi.com
+http://oss.sgi.com/mailman/listinfo/xfs
