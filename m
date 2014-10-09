@@ -1,142 +1,123 @@
-From: Jan Kara <jack@suse.cz>
-Subject: Re: [PATCH 04/12] fs: Generic infrastructure for optional inode fields
-Date: Wed, 8 Oct 2014 10:45:09 +0200
-Message-ID: <20141008084509.GC11781@quack.suse.cz>
-References: <1412191894-9113-1-git-send-email-jack@suse.cz>
-	<1412191894-9113-5-git-send-email-jack@suse.cz>
-	<3BFF1023-E198-4797-A96A-EA158137157E@dilger.ca>
+From: Ivan Shapovalov <intelfx100@gmail.com>
+Subject: Re: reiser4: porting to 3.16: any reason ->aio_read() of struct file_operations has been left out?
+Date: Thu, 09 Oct 2014 22:55:55 +0400
+Message-ID: <2652463.xKkjd4Oans@intelfx-laptop>
+References: <10671542.MCAVDCHSND@intelfx-laptop> <53F52195.1020900@gmail.com> <2194734.MaT6DR3706@intelfx-laptop>
 Mime-Version: 1.0
+Content-Type: multipart/signed; boundary="nextPart4015521.S5c43RX6qd"; micalg="pgp-sha256"; protocol="application/pgp-signature"
+Return-path: <reiserfs-devel-owner@vger.kernel.org>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20120113;
+        h=from:to:cc:subject:date:message-id:user-agent:in-reply-to
+         :references:mime-version:content-type;
+        bh=THJBdMYvtUPhncgzXedkKFLBCAEsqBgp2T5BMO3AcrQ=;
+        b=SJZ9JnDAESBSVeAhERZAel6MWI2CcUEN52f5gFO3OQ3zl6IedYaYVRfN/G+r3OmPzn
+         GQDPT/oVEXrCngDqKRw9ScKIKS2I7Snlttm7zQ07b3PsJBTS/6YDFw3jm5MaUHhtX1SQ
+         /df3WQn0VmtPoXkyExOSxw1xRva6kxZILbdTdtWEXcZYANoyPbd52S18wIjGcJuJtb8j
+         WUuOQG0F9PWSeMCrH9qKpwSBlvsxysKA0zg9FJ611lPMMYWYBEynP3ryhyh/1SW2HHdt
+         p8ftRrkrR1gFEPWnx1eJHQuygQku0Rw845wnjbMOPM9A0Q9SSMn93e0cimL8ItRQA2X+
+         2Tog==
+In-Reply-To: <2194734.MaT6DR3706@intelfx-laptop>
+Sender: reiserfs-devel-owner@vger.kernel.org
+List-ID: <reiserfs-devel.vger.kernel.org>
+To: reiserfs-devel@vger.kernel.org
+Cc: Edward Shishkin <edward.shishkin@gmail.com>
+
+
+--nextPart4015521.S5c43RX6qd
+Content-Transfer-Encoding: quoted-printable
 Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <xfs-bounces@oss.sgi.com>
-Content-Disposition: inline
-In-Reply-To: <3BFF1023-E198-4797-A96A-EA158137157E@dilger.ca>
-List-Id: <reiserfs-devel.vger.kernel.org>
-List-Unsubscribe: <http://oss.sgi.com/mailman/options/xfs>,
-	<mailto:xfs-request@oss.sgi.com?subject=unsubscribe>
-List-Archive: <http://oss.sgi.com/pipermail/xfs>
-List-Post: <mailto:xfs@oss.sgi.com>
-List-Help: <mailto:xfs-request@oss.sgi.com?subject=help>
-List-Subscribe: <http://oss.sgi.com/mailman/listinfo/xfs>,
-	<mailto:xfs-request@oss.sgi.com?subject=subscribe>
-Errors-To: xfs-bounces@oss.sgi.com
-Sender: xfs-bounces@oss.sgi.com
-To: Andreas Dilger <adilger@dilger.ca>
-Cc: Dave Kleikamp <shaggy@kernel.org>, jfs-discussion@lists.sourceforge.net, Jan Kara <jack@suse.cz>, Jeff Mahoney <jeffm@suse.de>, Mark Fasheh <mfasheh@suse.com>, reiserfs-devel@vger.kernel.org, xfs@oss.sgi.com, cluster-devel@redhat.com, Joel Becker <jlbec@evilplan.org>, linux-fsdevel@vger.kernel.org, tytso@mit.edu, linux-ext4@vger.kernel.org, Steven Whitehouse <swhiteho@redhat.com>, ocfs2-devel@oss.oracle.com
 
-On Wed 01-10-14 15:05:46, Andreas Dilger wrote:
-> On Oct 1, 2014, at 1:31 PM, Jan Kara <jack@suse.cz> wrote:
-> > There are parts of struct inode which are used only by a few filesystems
-> > (e.g. i_dquot pointers, i_mapping->private_list, ...). Thus all the
-> > other filesystems are just wasting memory with these fields. On the
-> > other hand it isn't simple to just move these fields to filesystem
-> > specific part of inode because there is generic code which needs to peek
-> > into the fields and it is cumbersome to provide helpers into which fs
-> > has to stuff the field it is storing elsewhere.
-> > 
-> > We create a simple infrastructure which allows for optional inode fields
-> > stored in the fs-specific part of the inode. Accessing these fields has
-> > a slightly worse performance as we have to lookup their offset in the
-> > offset table stored in the superblock but in most cases this is
-> > acceptable. Notably, this offset-table mechanism is faster than having
-> > fs-specific hook functions which would need to be called to provide
-> > pointers to desired fields.
-> > 
-> > Signed-off-by: Jan Kara <jack@suse.cz>
-> > ---
-> > include/linux/fs.h | 24 ++++++++++++++++++++++++
-> > 1 file changed, 24 insertions(+)
-> > 
-> > diff --git a/include/linux/fs.h b/include/linux/fs.h
-> > index 94187721ad41..977f8fb6ca88 100644
-> > --- a/include/linux/fs.h
-> > +++ b/include/linux/fs.h
-> > @@ -615,6 +615,11 @@ struct inode {
-> > 	void			*i_private; /* fs or device private pointer */
-> > };
-> > 
-> > +/* Optional inode fields (stored in filesystems inode if the fs needs them) */
-> > +enum {
-> 
-> This should be a named enum, like "enum inode_field" or similar, so it
-> can be referenced below.
-> 
-> > +	IF_FIELD_NR	/* Number of optional inode fields */
-> > +};
-> > +
-> > static inline int inode_unhashed(struct inode *inode)
-> > {
-> > 	return hlist_unhashed(&inode->i_hash);
-> > @@ -1236,6 +1241,11 @@ struct super_block {
-> > 	void 			*s_fs_info;	/* Filesystem private info */
-> > 	unsigned int		s_max_links;
-> > 	fmode_t			s_mode;
-> > +	/*
-> > +	 * We could have here just a pointer to the offsets array but this
-> > +	 * way we save one dereference when looking up field offsets
-> > +	 */
-> > +	int			s_inode_fields[IF_FIELD_NR];
-> > 
-> > 	/* Granularity of c/m/atime in ns.
-> > 	   Cannot be worse than a second */
-> > @@ -1286,6 +1296,20 @@ struct super_block {
-> > 	struct rcu_head		rcu;
-> > };
-> > 
-> > +static inline void *inode_field(const struct inode *inode, int field)
-> 
-> This should use "enum inode_field" instead of int, so the compiler could
-> warn about invalid parameter values.  It might make sense to add a check:
-  OK, makes sense.
+On Thursday 21 August 2014 at 19:05:32, Ivan Shapovalov wrote:=09
+> On Thursday 21 August 2014 at 00:30:45, Edward Shishkin wrote:=09
+> >=20
+> > On 08/20/2014 10:34 PM, Ivan Shapovalov wrote:
+> > > On Wednesday 20 August 2014 at 01:39:42, Edward Shishkin wrote:=09=
 
->         if (field < IF_FIELD_NR)
-> 
-> but I'm not sure if the overhead is worthwhile, unless it can always be
-> resolved at compile time.  That might be possible since this is a static
-> inline function.
-  Well, I can stick there BUG_ON(field >= IF_FIELD_NR). That looks like a
-sensible debugging measure with negligible overhead.
+> > >> On 08/20/2014 12:32 AM, Ivan Shapovalov wrote:
+> > >>>   From `git log` I've seen that VFS people intend to replace ->=
+aio_read() and
+> > >>> ->aio_write() of struct file_operations with new methods ->read=
+_iter() and
+> > >>> ->write_iter().
+> > >>>
+> > >>> (Along with a couple of related new helpers, differing from pre=
+vious just in
+> > >>> calling _iter methods instead of aio_ ones.)
+> > >>>
+> > >>>   From other filesystems it seems that these are simple drop-in=
+ replacements
+> > >>> (however, well, I have zero familiarity with VFS). So here is a=
+ question:
+> > >>> is there any intentional reason that generic_file_aio_write() i=
+s not used
+> > >>> in reiser4?
+> > >>
+> > >> Currently reiser4 is a set of two filesystems which differ in me=
+thods
+> > >> of handling regular files. For VFS we provide "dispatchers", whi=
+ch pass
+> > >> management to appropriate plugin (UNIX_FILE or CRYPTCOMPRESS).
+> > >>
+> > >> UNIX_FILE plugin doesn't use generic write for performance reaso=
+ns
+> > >> (I'll try to find the respective mailing thread). CRYPTCOMPRESS =
+doesn't
+> > >> use it for compatibility reasons: I don't know how how to rewrit=
+e it
+> > >> gracefully using the generic write method.
+> > >>
+> > >> Edward.
+> > >
+> > > Thanks for explanation! So, does this patch make any sense?
+> >=20
+> >=20
+> > I haven't looked at this carefully yet, but likely it is correct.
+> >=20
+> > Thanks,
+> > Edward.
+>=20
+> Turned out it isn't.. The iter_file_splice_write() requires ->write_i=
+ter
+> to be set, or a NULL dereference happens.
+>=20
+> At first I've thought that we're out of luck and will need to use the=
+ fallback
+> splice implementation (default_file_splice_write), but just setting
+> ->write_iter to generic_file_write_iter strangely worked.
+>=20
+> (By "it works" I mean "splice finishes successfully and does not caus=
+e data
+> corruptions").
 
-								Honza
-> > +{
-> > +	int offset = inode->i_sb->s_inode_fields[field];
-> > +
-> > +	if (!offset)	/* Field not present? */
-> > +		return NULL;
-> 
-> > +	return ((char *)inode) + offset;
-> > +}
-> > +
-> > +static inline void sb_init_inode_fields(struct super_block *sb, int *fields)
-> > +{
-> > +	memcpy(sb->s_inode_fields, fields, sizeof(int) * IF_FIELD_NR);
-> > +}
-> > +
-> > extern struct timespec current_fs_time(struct super_block *sb);
-> > 
-> > /*
-> > -- 
-> > 1.8.1.4
-> > 
-> > --
-> > To unsubscribe from this list: send the line "unsubscribe linux-fsdevel" in
-> > the body of a message to majordomo@vger.kernel.org
-> > More majordomo info at  http://vger.kernel.org/majordomo-info.html
-> 
-> 
-> Cheers, Andreas
-> 
-> 
-> 
-> 
-> 
+...aand... it doesn't. At least on reg40 (sic, NOT ccreg40):
+1) `kde-cp` and FF 32.0.3's downloader produce empty files;
+2) some applications (at least two games: luftrausers and x-plane 10, b=
+oth
+proprietary) deadlock somewhere inside of generic_file_write_iter().
 
+Removing ".splice_write =3D iter_file_splice_write" and
+".write_iter =3D generic_file_write_iter" fixes the described cases.
 
--- 
-Jan Kara <jack@suse.cz>
-SUSE Labs, CR
+Unfortunately, no time to dig deeper (MIPT is evil). Hopefully you will=
 
-_______________________________________________
-xfs mailing list
-xfs@oss.sgi.com
-http://oss.sgi.com/mailman/listinfo/xfs
+look into it someday... :)
+
+Thanks,
+=2D-=20
+Ivan Shapovalov / intelfx /
+--nextPart4015521.S5c43RX6qd
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: This is a digitally signed message part.
+Content-Transfer-Encoding: 7Bit
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
+
+iF4EABEIAAYFAlQ22j8ACgkQxUKljSIMAnBTTQD6A6ZWX6nWJYDnfpJWWi8q8u41
+nffSYn9XwAC0JT9/gcwBAM9Q75nNAk+W+7NBysWqpSrXbvEuk5LVEhkBDNSAT3fQ
+=TRmP
+-----END PGP SIGNATURE-----
+
+--nextPart4015521.S5c43RX6qd--
+
