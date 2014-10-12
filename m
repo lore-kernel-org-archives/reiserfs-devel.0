@@ -1,401 +1,151 @@
-From: Christoph Hellwig <hch@infradead.org>
-Subject: Re: [PATCH 0/12 v2] Moving i_dquot out of struct inode
-Date: Sat, 11 Oct 2014 06:34:52 -0700
-Message-ID: <20141011133452.GA29004@infradead.org>
-References: <1412952910-7142-1-git-send-email-jack@suse.cz>
+From: Edward Shishkin <edward.shishkin@gmail.com>
+Subject: Re: reiser4: porting to 3.16: any reason ->aio_read() of struct file_operations
+ has been left out?
+Date: Sun, 12 Oct 2014 11:37:29 +0200
+Message-ID: <543A4BD9.9090103@gmail.com>
+References: <10671542.MCAVDCHSND@intelfx-laptop> <53F52195.1020900@gmail.com> <2194734.MaT6DR3706@intelfx-laptop> <2652463.xKkjd4Oans@intelfx-laptop>
 Mime-Version: 1.0
+Content-Type: multipart/mixed;
+ boundary="------------020705020805060600070506"
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <1412952910-7142-1-git-send-email-jack@suse.cz>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20120113;
+        h=message-id:date:from:user-agent:mime-version:to:subject:references
+         :in-reply-to:content-type;
+        bh=lR24ZrQYJ1OeF6uUW/7GCuUU1ZwbiNjFPapTJYT/Axo=;
+        b=p/P+JpITiWMaAGs7kY0dPp8IcYGj+8DqkU1Yx7LNCWKKDpMWCHQh3B4EtbR23AZB6v
+         dysDsr2V+K9I/GGHZi0yBHSyJIim03XKxTqM6wtcFYmEAWlioZpXOSPld/3jsePAoSQQ
+         MUZS25/iPdhIGN39x/GkVp+sqTpsVpqzKTV+yz5V++GBKDG2kw+gEQr9dcKz9vHf+xGb
+         TwtadRhbsla+pWKsVcs1gjVsnxqKTJSxAnu2gineSTaGBBUIpmIJeNPtUwHPSVELFcRq
+         Zq1l4MgfebRPpPPBarCOhozqddBhDzPvUovzVDKSu81+MdgceKo171n6NnEx4iVlEmjF
+         6iDA==
+In-Reply-To: <2652463.xKkjd4Oans@intelfx-laptop>
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
+To: Ivan Shapovalov <intelfx100@gmail.com>, reiserfs-devel@vger.kernel.org
+
+This is a multi-part message in MIME format.
+--------------020705020805060600070506
+Content-Type: text/plain; charset=ISO-8859-1; format=flowed
 Content-Transfer-Encoding: 7bit
-To: Jan Kara <jack@suse.cz>
-Cc: linux-fsdevel@vger.kernel.org, linux-ext4@vger.kernel.org, Dave Chinner <david@fromorbit.com>, xfs@oss.sgi.com, cluster-devel@redhat.com, Steven Whitehouse <swhiteho@redhat.com>, Mark Fasheh <mfasheh@suse.com>, Joel Becker <jlbec@evilplan.org>, ocfs2-devel@oss.oracle.com, reiserfs-devel@vger.kernel.org, Jeff Mahoney <jeffm@suse.de>, Dave Kleikamp <shaggy@kernel.org>, jfs-discussion@lists.sourceforge.net, tytso@mit.edu, viro@zeniv.linux.org.uk
 
-I still very much disagree with the s_inode_fields indirection.  Please
-find a patch below to remove it, and use a get_dquots super_block
-operation instead.  This leads to less and better readable code,
-and serves 4 bytes in every inode in the system.  Additionally the
-indirection could easily be optimized away by directly passing the
-dquot array in various functions, but for now I'd like to keep it
-simple.
 
-diff --git a/fs/ext2/super.c b/fs/ext2/super.c
-index 47d97af..c330e90 100644
---- a/fs/ext2/super.c
-+++ b/fs/ext2/super.c
-@@ -307,6 +307,11 @@ static int ext2_show_options(struct seq_file *seq, struct dentry *root)
- #ifdef CONFIG_QUOTA
- static ssize_t ext2_quota_read(struct super_block *sb, int type, char *data, size_t len, loff_t off);
- static ssize_t ext2_quota_write(struct super_block *sb, int type, const char *data, size_t len, loff_t off);
-+
-+static struct dquot **ext2_get_dquots(struct inode *inode)
-+{
-+	return EXT2_I(inode)->i_dquot;
-+}
- #endif
+On 10/09/2014 08:55 PM, Ivan Shapovalov wrote:
+> On Thursday 21 August 2014 at 19:05:32, Ivan Shapovalov wrote:	
+>> On Thursday 21 August 2014 at 00:30:45, Edward Shishkin wrote:	
+>>> On 08/20/2014 10:34 PM, Ivan Shapovalov wrote:
+>>>> On Wednesday 20 August 2014 at 01:39:42, Edward Shishkin wrote:	
+>>>>> On 08/20/2014 12:32 AM, Ivan Shapovalov wrote:
+>>>>>>    From `git log` I've seen that VFS people intend to replace ->aio_read() and
+>>>>>> ->aio_write() of struct file_operations with new methods ->read_iter() and
+>>>>>> ->write_iter().
+>>>>>>
+>>>>>> (Along with a couple of related new helpers, differing from previous just in
+>>>>>> calling _iter methods instead of aio_ ones.)
+>>>>>>
+>>>>>>    From other filesystems it seems that these are simple drop-in replacements
+>>>>>> (however, well, I have zero familiarity with VFS). So here is a question:
+>>>>>> is there any intentional reason that generic_file_aio_write() is not used
+>>>>>> in reiser4?
+>>>>> Currently reiser4 is a set of two filesystems which differ in methods
+>>>>> of handling regular files. For VFS we provide "dispatchers", which pass
+>>>>> management to appropriate plugin (UNIX_FILE or CRYPTCOMPRESS).
+>>>>>
+>>>>> UNIX_FILE plugin doesn't use generic write for performance reasons
+>>>>> (I'll try to find the respective mailing thread). CRYPTCOMPRESS doesn't
+>>>>> use it for compatibility reasons: I don't know how how to rewrite it
+>>>>> gracefully using the generic write method.
+>>>>>
+>>>>> Edward.
+>>>> Thanks for explanation! So, does this patch make any sense?
+>>>
+>>> I haven't looked at this carefully yet, but likely it is correct.
+>>>
+>>> Thanks,
+>>> Edward.
+>> Turned out it isn't.. The iter_file_splice_write() requires ->write_iter
+>> to be set, or a NULL dereference happens.
+>>
+>> At first I've thought that we're out of luck and will need to use the fallback
+>> splice implementation (default_file_splice_write), but just setting
+>> ->write_iter to generic_file_write_iter strangely worked.
+>>
+>> (By "it works" I mean "splice finishes successfully and does not cause data
+>> corruptions").
+> ...aand... it doesn't. At least on reg40 (sic, NOT ccreg40):
+> 1) `kde-cp` and FF 32.0.3's downloader produce empty files;
+> 2) some applications (at least two games: luftrausers and x-plane 10, both
+> proprietary) deadlock somewhere inside of generic_file_write_iter().
+>
+> Removing ".splice_write = iter_file_splice_write" and
+> ".write_iter = generic_file_write_iter" fixes the described cases.
+
+
+Thanks for the observation,
+so the final port will look like this (attached)
+
+
+>
+> Unfortunately, no time to dig deeper (MIPT is evil). Hopefully you will
+> look into it someday... :)
+
+
+Yup, sure, study is the first deal.
+
+Thanks,
+Edward.
+
+--------------020705020805060600070506
+Content-Type: text/x-patch;
+ name="reiser4-port-for-3.16.patch"
+Content-Transfer-Encoding: 7bit
+Content-Disposition: attachment;
+ filename="reiser4-port-for-3.16.patch"
+
+Only in linux-3.15/fs/reiser4/: context.h~
+diff -u -r linux-3.15/fs/reiser4/plugin/file/cryptcompress.c linux-3.16.1/fs/reiser4/plugin/file/cryptcompress.c
+--- linux-3.15/fs/reiser4/plugin/file/cryptcompress.c	2014-08-24 14:10:36.186139150 +0200
++++ linux-3.16.1/fs/reiser4/plugin/file/cryptcompress.c	2014-09-25 11:43:01.000000000 +0200
+@@ -2964,7 +2964,7 @@
+ 		reiser4_exit_context(ctx);
+ 		return result;
+ 	}
+-	result = do_sync_read(file, buf, size, off);
++	result = new_sync_read(file, buf, size, off);
  
- static const struct super_operations ext2_sops = {
-@@ -324,13 +329,7 @@ static const struct super_operations ext2_sops = {
- #ifdef CONFIG_QUOTA
- 	.quota_read	= ext2_quota_read,
- 	.quota_write	= ext2_quota_write,
--#endif
--};
--
--static const int ext2_inode_fields[IF_FIELD_NR] = {
--#ifdef CONFIG_QUOTA
--	[IF_DQUOTS] = offsetof(struct ext2_inode_info, i_dquot) -
--		      offsetof(struct ext2_inode_info, vfs_inode),
-+	.get_dquots	= ext2_get_dquots,
- #endif
+ 	context_set_commit_async(ctx);
+ 	reiser4_exit_context(ctx);
+diff -u -r linux-3.15/fs/reiser4/plugin/file/file.c linux-3.16.1/fs/reiser4/plugin/file/file.c
+--- linux-3.15/fs/reiser4/plugin/file/file.c	2014-08-24 14:10:36.188139156 +0200
++++ linux-3.16.1/fs/reiser4/plugin/file/file.c	2014-09-25 11:43:01.000000000 +0200
+@@ -1752,7 +1752,7 @@
+ 	switch (uf_info->container) {
+ 	case UF_CONTAINER_EXTENTS:
+ 		if (!reiser4_inode_get_flag(inode, REISER4_PART_MIXED)) {
+-			result = do_sync_read(file, buf, read_amount, off);
++			result = new_sync_read(file, buf, read_amount, off);
+ 			break;
+ 		}
+ 	case UF_CONTAINER_TAILS:
+diff -u -r linux-3.15/fs/reiser4/plugin/object.c linux-3.16.1/fs/reiser4/plugin/object.c
+--- linux-3.15/fs/reiser4/plugin/object.c	2014-08-24 14:10:36.200139193 +0200
++++ linux-3.16.1/fs/reiser4/plugin/object.c	2014-09-25 11:43:01.000000000 +0200
+@@ -127,7 +127,7 @@
+ 	.llseek = generic_file_llseek,
+ 	.read = reiser4_read_dispatch,
+ 	.write = reiser4_write_dispatch,
+-	.aio_read = generic_file_aio_read,
++	.read_iter = generic_file_read_iter,
+ 	.unlocked_ioctl = reiser4_ioctl_dispatch,
+ #ifdef CONFIG_COMPAT
+ 	.compat_ioctl = reiser4_ioctl_dispatch,
+@@ -137,7 +138,6 @@
+ 	.release = reiser4_release_dispatch,
+ 	.fsync = reiser4_sync_file_common,
+ 	.splice_read = generic_file_splice_read,
+-	.splice_write = generic_file_splice_write
  };
- 
-@@ -1103,7 +1102,6 @@ static int ext2_fill_super(struct super_block *sb, void *data, int silent)
- 	sb->s_qcop = &dquot_quotactl_ops;
- 	sb_dqopt(sb)->allowed_types = QTYPE_MASK_USR | QTYPE_MASK_GRP;
- #endif
--	sb_init_inode_fields(sb, ext2_inode_fields);
- 
- 	root = ext2_iget(sb, EXT2_ROOT_INO);
- 	if (IS_ERR(root)) {
-diff --git a/fs/ext3/super.c b/fs/ext3/super.c
-index 9e15262..9ca145d 100644
---- a/fs/ext3/super.c
-+++ b/fs/ext3/super.c
-@@ -769,6 +769,11 @@ static ssize_t ext3_quota_read(struct super_block *sb, int type, char *data,
- static ssize_t ext3_quota_write(struct super_block *sb, int type,
- 				const char *data, size_t len, loff_t off);
- 
-+static struct dquot **ext3_get_dquots(struct inode *inode)
-+{
-+	return EXT3_I(inode)->i_dquot;
-+}
-+
- static const struct dquot_operations ext3_quota_operations = {
- 	.write_dquot	= ext3_write_dquot,
- 	.acquire_dquot	= ext3_acquire_dquot,
-@@ -807,17 +812,11 @@ static const struct super_operations ext3_sops = {
- #ifdef CONFIG_QUOTA
- 	.quota_read	= ext3_quota_read,
- 	.quota_write	= ext3_quota_write,
-+	.get_dquots	= ext3_get_dquots,
- #endif
- 	.bdev_try_to_free_page = bdev_try_to_free_page,
- };
- 
--static const int ext3_inode_fields[IF_FIELD_NR] = {
--#ifdef CONFIG_QUOTA
--	[IF_DQUOTS] = (int)offsetof(struct ext3_inode_info, i_dquot) -
--		      (int)offsetof(struct ext3_inode_info, vfs_inode),
--#endif
--};
--
- static const struct export_operations ext3_export_ops = {
- 	.fh_to_dentry = ext3_fh_to_dentry,
- 	.fh_to_parent = ext3_fh_to_parent,
-@@ -2021,7 +2020,6 @@ static int ext3_fill_super (struct super_block *sb, void *data, int silent)
- 	sb->dq_op = &ext3_quota_operations;
- 	sb_dqopt(sb)->allowed_types = QTYPE_MASK_USR | QTYPE_MASK_GRP;
- #endif
--	sb_init_inode_fields(sb, ext3_inode_fields);
- 	memcpy(sb->s_uuid, es->s_uuid, sizeof(es->s_uuid));
- 	INIT_LIST_HEAD(&sbi->s_orphan); /* unlinked but open files */
- 	mutex_init(&sbi->s_orphan_lock);
-diff --git a/fs/ext4/super.c b/fs/ext4/super.c
-index ceac3c1..f7d4332 100644
---- a/fs/ext4/super.c
-+++ b/fs/ext4/super.c
-@@ -1072,6 +1072,11 @@ static int ext4_quota_enable(struct super_block *sb, int type, int format_id,
- 			     unsigned int flags);
- static int ext4_enable_quotas(struct super_block *sb);
- 
-+static struct dquot **ext4_get_dquots(struct inode *inode)
-+{
-+	return EXT4_I(inode)->i_dquot;
-+}
-+
- static const struct dquot_operations ext4_quota_operations = {
- 	.get_reserved_space = ext4_get_reserved_space,
- 	.write_dquot	= ext4_write_dquot,
-@@ -1140,17 +1145,11 @@ static const struct super_operations ext4_nojournal_sops = {
- #ifdef CONFIG_QUOTA
- 	.quota_read	= ext4_quota_read,
- 	.quota_write	= ext4_quota_write,
-+	.get_dquots	= ext4_get_dquots,
- #endif
- 	.bdev_try_to_free_page = bdev_try_to_free_page,
- };
- 
--static const int ext4_inode_fields[IF_FIELD_NR] = {
--#ifdef CONFIG_QUOTA
--	[IF_DQUOTS] = offsetof(struct ext4_inode_info, i_dquot) -
--		      offsetof(struct ext4_inode_info, vfs_inode),
--#endif
--};
--
- static const struct export_operations ext4_export_ops = {
- 	.fh_to_dentry = ext4_fh_to_dentry,
- 	.fh_to_parent = ext4_fh_to_parent,
-@@ -3926,7 +3925,6 @@ static int ext4_fill_super(struct super_block *sb, void *data, int silent)
- 		sb->s_qcop = &ext4_qctl_operations;
- 	sb_dqopt(sb)->allowed_types = QTYPE_MASK_USR | QTYPE_MASK_GRP;
- #endif
--	sb_init_inode_fields(sb, ext4_inode_fields);
- 	memcpy(sb->s_uuid, es->s_uuid, sizeof(es->s_uuid));
- 
- 	INIT_LIST_HEAD(&sbi->s_orphan); /* unlinked but open files */
-diff --git a/fs/jfs/super.c b/fs/jfs/super.c
-index a13727d..a7b0447 100644
---- a/fs/jfs/super.c
-+++ b/fs/jfs/super.c
-@@ -54,7 +54,6 @@ static struct kmem_cache *jfs_inode_cachep;
- 
- static const struct super_operations jfs_super_operations;
- static const struct export_operations jfs_export_operations;
--static const int jfs_inode_fields[IF_FIELD_NR];
- static struct file_system_type jfs_fs_type;
- 
- #define MAX_COMMIT_THREADS 64
-@@ -543,7 +542,6 @@ static int jfs_fill_super(struct super_block *sb, void *data, int silent)
- 	sb->s_qcop = &dquot_quotactl_ops;
- 	sb_dqopt(sb)->allowed_types = QTYPE_MASK_USR | QTYPE_MASK_GRP;
- #endif
--	sb_init_inode_fields(sb, jfs_inode_fields);
- 
- 	/*
- 	 * Initialize direct-mapping inode/address-space
-@@ -842,6 +840,10 @@ out:
- 	return len - towrite;
- }
- 
-+static struct dquot **jfs_get_dquots(struct inode *inode)
-+{
-+	return JFS_IP(inode)->i_dquot;
-+}
- #endif
- 
- static const struct super_operations jfs_super_operations = {
-@@ -860,13 +862,7 @@ static const struct super_operations jfs_super_operations = {
- #ifdef CONFIG_QUOTA
- 	.quota_read	= jfs_quota_read,
- 	.quota_write	= jfs_quota_write,
--#endif
--};
--
--static const int jfs_inode_fields[IF_FIELD_NR] = {
--#ifdef CONFIG_QUOTA
--	[IF_DQUOTS] = (int)offsetof(struct jfs_inode_info, i_dquot) -
--		      (int)offsetof(struct jfs_inode_info, vfs_inode),
-+	.get_dquots	= jfs_get_dquots,
- #endif
- };
- 
-diff --git a/fs/ocfs2/super.c b/fs/ocfs2/super.c
-index 5d94b9a..c575bab 100644
---- a/fs/ocfs2/super.c
-+++ b/fs/ocfs2/super.c
-@@ -143,6 +143,11 @@ static int ocfs2_susp_quotas(struct ocfs2_super *osb, int unsuspend);
- static int ocfs2_enable_quotas(struct ocfs2_super *osb);
- static void ocfs2_disable_quotas(struct ocfs2_super *osb);
- 
-+static struct dquot **ocfs2_get_dquots(struct inode *inode)
-+{
-+	return OCFS2_I(inode)->i_dquot;
-+}
-+
- static const struct super_operations ocfs2_sops = {
- 	.statfs		= ocfs2_statfs,
- 	.alloc_inode	= ocfs2_alloc_inode,
-@@ -155,13 +160,7 @@ static const struct super_operations ocfs2_sops = {
- 	.show_options   = ocfs2_show_options,
- 	.quota_read	= ocfs2_quota_read,
- 	.quota_write	= ocfs2_quota_write,
--};
--
--static const int ocfs2_inode_fields[IF_FIELD_NR] = {
--#ifdef CONFIG_QUOTA
--	[IF_DQUOTS] = offsetof(struct ocfs2_inode_info, i_dquot) -
--		      offsetof(struct ocfs2_inode_info, vfs_inode),
--#endif
-+	.get_dquots	= ocfs2_get_dquots,
- };
- 
- enum {
-@@ -2081,7 +2080,6 @@ static int ocfs2_initialize_super(struct super_block *sb,
- 	sb->dq_op = &ocfs2_quota_operations;
- 	sb_dqopt(sb)->allowed_types = QTYPE_MASK_USR | QTYPE_MASK_GRP;
- 	sb->s_xattr = ocfs2_xattr_handlers;
--	sb_init_inode_fields(sb, ocfs2_inode_fields);
- 	sb->s_time_gran = 1;
- 	sb->s_flags |= MS_NOATIME;
- 	/* this is needed to support O_LARGEFILE */
-diff --git a/fs/quota/dquot.c b/fs/quota/dquot.c
-index ecb8732..b3af224 100644
---- a/fs/quota/dquot.c
-+++ b/fs/quota/dquot.c
-@@ -893,9 +893,9 @@ out:
- }
- EXPORT_SYMBOL(dqget);
- 
--static inline struct dquot **i_dquot(const struct inode *inode)
-+static inline struct dquot **i_dquot(struct inode *inode)
- {
--	return ((struct dquot **)inode_field(inode, IF_DQUOTS));
-+	return inode->i_sb->s_op->get_dquots(inode);
- }
- 
- static int dqinit_needed(struct inode *inode, int type)
-@@ -1648,7 +1648,7 @@ EXPORT_SYMBOL(__dquot_alloc_space);
- /*
-  * This operation can block, but only after everything is updated
-  */
--int dquot_alloc_inode(const struct inode *inode)
-+int dquot_alloc_inode(struct inode *inode)
- {
- 	int cnt, ret = 0, index;
- 	struct dquot_warn warn[MAXQUOTAS];
-@@ -1789,7 +1789,7 @@ EXPORT_SYMBOL(__dquot_free_space);
- /*
-  * This operation can block, but only after everything is updated
-  */
--void dquot_free_inode(const struct inode *inode)
-+void dquot_free_inode(struct inode *inode)
- {
- 	unsigned int cnt;
- 	struct dquot_warn warn[MAXQUOTAS];
-diff --git a/fs/reiserfs/super.c b/fs/reiserfs/super.c
-index 04babe5..72bdcc8 100644
---- a/fs/reiserfs/super.c
-+++ b/fs/reiserfs/super.c
-@@ -754,6 +754,11 @@ static ssize_t reiserfs_quota_write(struct super_block *, int, const char *,
- 				    size_t, loff_t);
- static ssize_t reiserfs_quota_read(struct super_block *, int, char *, size_t,
- 				   loff_t);
-+
-+static struct dquot **reiserfs_get_dquots(struct inode *inode)
-+{
-+	return REISERFS_I(inode)->i_dquot;
-+}
- #endif
- 
- static const struct super_operations reiserfs_sops = {
-@@ -772,13 +777,7 @@ static const struct super_operations reiserfs_sops = {
- #ifdef CONFIG_QUOTA
- 	.quota_read = reiserfs_quota_read,
- 	.quota_write = reiserfs_quota_write,
--#endif
--};
--
--static const int reiserfs_inode_fields[IF_FIELD_NR] = {
--#ifdef CONFIG_QUOTA
--	[IF_DQUOTS] = (int)offsetof(struct reiserfs_inode_info, i_dquot) -
--		      (int)offsetof(struct reiserfs_inode_info, vfs_inode),
-+	.get_dquots = reiserfs_get_dquots,
- #endif
- };
- 
-@@ -1646,7 +1645,6 @@ static int read_super_block(struct super_block *s, int offset)
- 	s->dq_op = &reiserfs_quota_operations;
- 	sb_dqopt(s)->allowed_types = QTYPE_MASK_USR | QTYPE_MASK_GRP;
- #endif
--	sb_init_inode_fields(s, reiserfs_inode_fields);
- 
- 	/*
- 	 * new format is limited by the 32 bit wide i_blocks field, want to
-diff --git a/include/linux/fs.h b/include/linux/fs.h
-index 6a801ca..3e1c596 100644
---- a/include/linux/fs.h
-+++ b/include/linux/fs.h
-@@ -612,12 +612,6 @@ struct inode {
- 	void			*i_private; /* fs or device private pointer */
- };
- 
--/* Optional inode fields (stored in filesystems inode if the fs needs them) */
--enum inode_fields {
--	IF_DQUOTS,	/* Quota pointers: struct dquot *foo[MAXQUOTAS] */
--	IF_FIELD_NR	/* Number of optional inode fields */
--};
--
- static inline int inode_unhashed(struct inode *inode)
- {
- 	return hlist_unhashed(&inode->i_hash);
-@@ -1239,11 +1233,6 @@ struct super_block {
- 	void 			*s_fs_info;	/* Filesystem private info */
- 	unsigned int		s_max_links;
- 	fmode_t			s_mode;
--	/*
--	 * We could have here just a pointer to the offsets array but this
--	 * way we save one dereference when looking up field offsets
--	 */
--	int			s_inode_fields[IF_FIELD_NR];
- 
- 	/* Granularity of c/m/atime in ns.
- 	   Cannot be worse than a second */
-@@ -1294,24 +1283,6 @@ struct super_block {
- 	struct rcu_head		rcu;
- };
- 
--static inline void *inode_field(const struct inode *inode,
--				enum inode_fields field)
--{
--	int offset;
--
--	BUG_ON(field >= IF_FIELD_NR);
--	offset = inode->i_sb->s_inode_fields[field];
--	if (!offset)	/* Field not present? */
--		return NULL;
--	return ((char *)inode) + offset;
--}
--
--static inline void sb_init_inode_fields(struct super_block *sb,
--					const int *fields)
--{
--	memcpy(sb->s_inode_fields, fields, sizeof(int) * IF_FIELD_NR);
--}
--
- extern struct timespec current_fs_time(struct super_block *sb);
- 
- /*
-@@ -1609,6 +1580,7 @@ struct super_operations {
- #ifdef CONFIG_QUOTA
- 	ssize_t (*quota_read)(struct super_block *, int, char *, size_t, loff_t);
- 	ssize_t (*quota_write)(struct super_block *, int, const char *, size_t, loff_t);
-+	struct dquot **(*get_dquots)(struct inode *);
- #endif
- 	int (*bdev_try_to_free_page)(struct super_block*, struct page*, gfp_t);
- 	long (*nr_cached_objects)(struct super_block *, int);
-diff --git a/include/linux/quotaops.h b/include/linux/quotaops.h
-index 1d3eee5..f23538a 100644
---- a/include/linux/quotaops.h
-+++ b/include/linux/quotaops.h
-@@ -64,10 +64,10 @@ void dquot_destroy(struct dquot *dquot);
- int __dquot_alloc_space(struct inode *inode, qsize_t number, int flags);
- void __dquot_free_space(struct inode *inode, qsize_t number, int flags);
- 
--int dquot_alloc_inode(const struct inode *inode);
-+int dquot_alloc_inode(struct inode *inode);
- 
- int dquot_claim_space_nodirty(struct inode *inode, qsize_t number);
--void dquot_free_inode(const struct inode *inode);
-+void dquot_free_inode(struct inode *inode);
- void dquot_reclaim_space_nodirty(struct inode *inode, qsize_t number);
- 
- int dquot_disable(struct super_block *sb, int type, unsigned int flags);
-@@ -213,12 +213,12 @@ static inline void dquot_drop(struct inode *inode)
- {
- }
- 
--static inline int dquot_alloc_inode(const struct inode *inode)
-+static inline int dquot_alloc_inode(struct inode *inode)
- {
- 	return 0;
- }
- 
--static inline void dquot_free_inode(const struct inode *inode)
-+static inline void dquot_free_inode(struct inode *inode)
- {
- }
- 
+ static struct address_space_operations regular_file_a_ops = {
+ 	.writepage = reiser4_writepage,
+
+--------------020705020805060600070506--
