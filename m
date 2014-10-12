@@ -1,36 +1,28 @@
-From: Edward Shishkin <edward.shishkin@gmail.com>
-Subject: Reiser4 for Linux-3.16
-Date: Sun, 12 Oct 2014 15:54:57 +0200
-Message-ID: <543A8831.3010103@gmail.com>
+From: Al Viro <viro@ZenIV.linux.org.uk>
+Subject: Re: [PATCH 0/12 v2] Moving i_dquot out of struct inode
+Date: Sun, 12 Oct 2014 19:53:16 +0100
+Message-ID: <20141012185316.GQ7996@ZenIV.linux.org.uk>
+References: <1412952910-7142-1-git-send-email-jack@suse.cz>
+ <20141011133452.GA29004@infradead.org>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20120113;
-        h=message-id:date:from:user-agent:mime-version:to:subject
-         :content-type:content-transfer-encoding;
-        bh=sRXbQ1X2WmOf+DqKV0m9hNyw6tedYtTvUI1ozDmfT7M=;
-        b=tki1L/eQJfZ/ZYQm0+q2JOCEtCFRFcDMk/TkFw8ZIg+ecQKhJ+hAm+KNbDJhjQykwO
-         9eyQhtrZFdm5qq155fWyXuIf8emwW/Po/VlvpWk2rHKmWAHawJ7osK50sW6/5PKfMEUA
-         RbfSXvnnDn1nd6Z3TX1XX6uY0lyk3CnaW6S/YsOj3MOzXjThzjM7T6Ik29bU7Lq2pCNz
-         y1j4H/d6NLiU2VRFBNQ/p5lUgowVqgd12FofcrKnhk6dpG00I9Fguv6ojsIAv3WgenJr
-         xPaCkCpn0dq4W5HT/hmJ5UhHDjGQ/1AdhR5w7ygvDXSuMaLXOl8HKbilAmkqADvtQTLu
-         Li+w==
+Content-Disposition: inline
+In-Reply-To: <20141011133452.GA29004@infradead.org>
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: ReiserFS development mailing list <reiserfs-devel@vger.kernel.org>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Christoph Hellwig <hch@infradead.org>
+Cc: Jan Kara <jack@suse.cz>, linux-fsdevel@vger.kernel.org, linux-ext4@vger.kernel.org, Dave Chinner <david@fromorbit.com>, xfs@oss.sgi.com, cluster-devel@redhat.com, Steven Whitehouse <swhiteho@redhat.com>, Mark Fasheh <mfasheh@suse.com>, Joel Becker <jlbec@evilplan.org>, ocfs2-devel@oss.oracle.com, reiserfs-devel@vger.kernel.org, Jeff Mahoney <jeffm@suse.de>, Dave Kleikamp <shaggy@kernel.org>, jfs-discussion@lists.sourceforge.net, tytso@mit.edu
 
-Changes since reiser4-for-3.15.2:
+On Sat, Oct 11, 2014 at 06:34:52AM -0700, Christoph Hellwig wrote:
+> I still very much disagree with the s_inode_fields indirection.  Please
+> find a patch below to remove it, and use a get_dquots super_block
+> operation instead.  This leads to less and better readable code,
+> and serves 4 bytes in every inode in the system.  Additionally the
+> indirection could easily be optimized away by directly passing the
+> dquot array in various functions, but for now I'd like to keep it
+> simple.
 
-Edward Shishkin:
-. Fix the ancient problem of non-deletable directories
-
-Ivan Shapovalov:
-. Add basic discard support for SSD devices
-
-Please, find at
-http://sourceforge.net/projects/reiser4/files/reiser4-for-linux-3.x/
-
-Thanks,
-Edward.
+Indeed.  This "array of offsets" approach is asking for trouble.  Please,
+don't go there - playing that way with type safety is a bad idea.
