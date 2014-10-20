@@ -1,121 +1,82 @@
 From: Ivan Shapovalov <intelfx100@gmail.com>
-Subject: Re: [PATCH 2/3] reiser4: block_alloc: sanitize grab_enabled modifications.
-Date: Mon, 20 Oct 2014 13:43:50 +0400
-Message-ID: <32143848.hSvPupG6vO@intelfx-laptop>
-References: <1408371283-1319-1-git-send-email-intelfx100@gmail.com> <1408371283-1319-3-git-send-email-intelfx100@gmail.com> <5442A7B1.2030407@gmail.com>
+Subject: Re: [RFC] [PATCHv3 1/9] reiser4: block_alloc: add BA_SOME_SPACE flag for grabbing a fixed amount of space.
+Date: Mon, 20 Oct 2014 14:36:42 +0400
+Message-ID: <3239928.cvXopdq3l9@intelfx-laptop>
+References: <1408312379-1990-1-git-send-email-intelfx100@gmail.com> <1408312379-1990-2-git-send-email-intelfx100@gmail.com> <54443577.3050700@gmail.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; boundary="nextPart6185862.lXm5eVn8rZ"; micalg="pgp-sha256"; protocol="application/pgp-signature"
+Content-Type: multipart/signed; boundary="nextPart5408259.T2Ip05MqF4"; micalg="pgp-sha256"; protocol="application/pgp-signature"
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20120113;
         h=from:to:cc:subject:date:message-id:user-agent:in-reply-to
          :references:mime-version:content-type;
-        bh=g3XCa2gwTp9ULnFlhXHtuoMTj4uVK7rVyH4jUnGLarE=;
-        b=y3CE4WEkjJ+++1Ye3Ffn+qEY1zlOBNPtQuolKLxMFoBrpqclnBmqHiTFPloB64rsD8
-         sPq9FydESL5e1KSWAyKJihIYny1RHQdidmNdAJSI+BJBQlEujTehGM0CJ4Aa3iBq4wCm
-         +uXn8qFWmXdsnjoJZLLjUDiCfRoFKXBGjqJf+7Ex1RoslQfer39ai1aem+Jb0i3Y0hQP
-         yWCpJVOatCyrC9g1rAsSz+ZVamKQq0c5Y95/l/M/dktyJGnbkM4/SnZw0dX0DzFdTzvC
-         eOiYS5tTybd7zc+JFt8wRgaYWhzygI6/rsPb0k3bD8U6x7aGIGwsffZFrEtmIrUZcQtI
-         l7mA==
-In-Reply-To: <5442A7B1.2030407@gmail.com>
+        bh=LX0T8QseYBEFjYuegZtkwp7VuIGkvwvtlIVhGugRBnw=;
+        b=RtpAtkivMFkOaQfOMG/33CJ4EaE1bGumw/Bzy2+Q7+DbanzBHOMSR9TEI3xM8zKw5N
+         2uS+Zg5rzZS9qJBRruTZE0TuQVsiSKHXLYzEhzgbtX+SZOHkcnR6FDZiWiDBuI+5SMVg
+         NAGBalU//HaQYvk1HFObu7zXQWIktnfC+yS9bs4BaokHfBdSKgsdYyZIufC67oWFylXb
+         0wWC0HQzAvS5bs+RUPV5tCfsoi8krBG5eJE9HVaN6qdf/8qugLBhCPwM6MIJrodbp6fN
+         e+QLLGgPARhv7O1eR5Y0mJlXYAIM0DjZMFzODua7aqxYcOjsyLuu/BF9wZ1XyZ60EEq1
+         eoPw==
+In-Reply-To: <54443577.3050700@gmail.com>
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
 To: reiserfs-devel@vger.kernel.org
 Cc: Edward Shishkin <edward.shishkin@gmail.com>
 
 
---nextPart6185862.lXm5eVn8rZ
+--nextPart5408259.T2Ip05MqF4
 Content-Transfer-Encoding: quoted-printable
 Content-Type: text/plain; charset="us-ascii"
 
-On Saturday 18 October 2014 at 19:47:29, Edward Shishkin wrote:=09
-> On 08/18/2014 04:14 PM, Ivan Shapovalov wrote:
-> > - move all grab_enabled checks and modifications into reiser4_grab_=
-space();
-> > - only disable grab if not BA_FORCE;
-> > - do not re-enable grab before doing second attempt in BA_CAN_COMMI=
-T sequence
-> >    (feels hackish and is unneeded after the first change).
+On Monday 20 October 2014 at 00:04:39, Edward Shishkin wrote:=09
+>=20
+> On 08/17/2014 11:52 PM, Ivan Shapovalov wrote:
+> > This is used for FITRIM ioctl which will iteratively grab, allocate=
+ and trim disk space
+> > bit by bit to avoid starving the rest of system.
 > >
 > > Signed-off-by: Ivan Shapovalov <intelfx100@gmail.com>
 > > ---
-> >   fs/reiser4/block_alloc.c | 22 ++++++++++++----------
-> >   1 file changed, 12 insertions(+), 10 deletions(-)
+> >   fs/reiser4/block_alloc.c | 5 +++++
+> >   fs/reiser4/block_alloc.h | 5 ++++-
+> >   2 files changed, 9 insertions(+), 1 deletion(-)
 > >
 > > diff --git a/fs/reiser4/block_alloc.c b/fs/reiser4/block_alloc.c
-> > index 7f9f910..a30f7b9 100644
+> > index d3d730c..9eed7fc 100644
 > > --- a/fs/reiser4/block_alloc.c
 > > +++ b/fs/reiser4/block_alloc.c
-> > @@ -270,12 +270,6 @@ reiser4_grab(reiser4_context * ctx, __u64 coun=
+> > @@ -276,6 +276,11 @@ reiser4_grab(reiser4_context * ctx, __u64 coun=
 t, reiser4_ba_flags_t flags)
 > >  =20
-> >   =09assert("vs-1276", ctx =3D=3D get_current_context());
+> >   =09free_blocks =3D sbinfo->blocks_free;
 > >  =20
-> > -=09/* Do not grab anything on ro-mounted fs. */
-> > -=09if (rofs_super(ctx->super)) {
-> > -=09=09ctx->grab_enabled =3D 0;
-> > -=09=09return 0;
-> > -=09}
-> > -
-> >   =09sbinfo =3D get_super_private(ctx->super);
-> >  =20
-> >   =09spin_lock_reiser4_super(sbinfo);
-> > @@ -300,9 +294,6 @@ reiser4_grab(reiser4_context * ctx, __u64 count=
-, reiser4_ba_flags_t flags)
-> >  =20
-> >   =09assert("nikita-2986", reiser4_check_block_counters(ctx->super)=
-);
-> >  =20
-> > -=09/* disable grab space in current context */
-> > -=09ctx->grab_enabled =3D 0;
-> > -
-> >   unlock_and_ret:
-> >   =09spin_unlock_reiser4_super(sbinfo);
-> >  =20
-> > @@ -321,6 +312,12 @@ int reiser4_grab_space(__u64 count, reiser4_ba=
-_flags_t flags)
-> >   =09if (!(flags & BA_FORCE) && !is_grab_enabled(ctx))
-> >   =09=09return 0;
-> >  =20
-> > +=09/* Do not grab anything on ro-mounted fs. */
-> > +=09if (rofs_super(ctx->super)) {
-> > +=09=09ctx->grab_enabled =3D 0;
-> > +=09=09return 0;
-> > +=09}
-> > +
-> >   =09ret =3D reiser4_grab(ctx, count, flags);
-> >   =09if (ret =3D=3D -ENOSPC) {
-> >  =20
-> > @@ -328,10 +325,15 @@ int reiser4_grab_space(__u64 count, reiser4_b=
-a_flags_t flags)
-> >   =09=09   present */
-> >   =09=09if (flags & BA_CAN_COMMIT) {
-> >   =09=09=09txnmgr_force_commit_all(ctx->super, 0);
-> > -=09=09=09ctx->grab_enabled =3D 1;
-> >   =09=09=09ret =3D reiser4_grab(ctx, count, flags);
-> >   =09=09}
-> >   =09}
-> > +
-> > +=09if (!(flags & BA_FORCE) && (ret =3D=3D 0)) {
+> > +=09if (flags & BA_SOME_SPACE) {
+> > +=09=09/* Reserve 25% of all free space. */
 >=20
+> if (free_blocks =3D=3D 0) {
+>          /* nothing to trim */
+>          ret=3D RETERR(-ENOSPC);
+>          goto unlock_and_ret;
+> }
+
+Makes sense, but IMO without returning error. TRIM'ing a completely ful=
+l
+filesystem is a no-op (=3D=3D all blocks busy, nothing to trim), not a =
+failure.
+
 >=20
-> Hmm, but we disabled it unconditionally in reiser4_grab().
-> Not sure, if this is equivalent...
+> > +=09=09count =3D free_blocks >> 2;
+>=20
+> if (count =3D=3D 0)
+>          /* there are 1, 2, or 3 free blocks  */
+>          count =3D free_blocks;
 
-Yes, you are right. I can't recall any particular justification for thi=
-s
-change... so it should probably say
+Done.
 
-    if (ret =3D=3D 0) {
-
+Thanks,
 =2D-=20
 Ivan Shapovalov / intelfx /
-
-> > +=09=09/* disable grab space in current context */
-> > +=09=09ctx->grab_enabled =3D 0;
-> > +=09}
-> 
---nextPart6185862.lXm5eVn8rZ
+--nextPart5408259.T2Ip05MqF4
 Content-Type: application/pgp-signature; name="signature.asc"
 Content-Description: This is a digitally signed message part.
 Content-Transfer-Encoding: 7Bit
@@ -123,10 +84,10 @@ Content-Transfer-Encoding: 7Bit
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2
 
-iF4EABEIAAYFAlRE2V4ACgkQxUKljSIMAnADUwD/WrF/UaCzWjMkXtKd1QRipBsx
-GbLz8zJTH3kbWoQkkbQA+wVaVkEpS8GhYpDeLUzsP/1Cccmrg3DzYwA9L4Jcmejc
-=zMKL
+iF4EABEIAAYFAlRE5b4ACgkQxUKljSIMAnA0FwD/X1W60J0lJBOEnSOPpxXePHIU
+qBlxoVW6yi5TZOHo0PgA/1svGNC6l4Npi29n3TxnAknkDKCcIuMwwlSUkvhLWqxh
+=nK/d
 -----END PGP SIGNATURE-----
 
---nextPart6185862.lXm5eVn8rZ--
+--nextPart5408259.T2Ip05MqF4--
 
