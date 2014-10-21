@@ -1,9 +1,9 @@
 From: Edward Shishkin <edward.shishkin@gmail.com>
-Subject: Re: [RFC] [PATCHv3 7/9] reiser4: batch discard support: actually
- implement the FITRIM ioctl handler.
-Date: Tue, 21 Oct 2014 12:14:02 +0200
-Message-ID: <544631EA.6090502@gmail.com>
-References: <1408312379-1990-1-git-send-email-intelfx100@gmail.com> <1408312379-1990-8-git-send-email-intelfx100@gmail.com> <5444E9D5.1090908@gmail.com> <1474324.CcTjzLnQHn@intelfx-laptop>
+Subject: Re: [RFC] [PATCHv3 1/9] reiser4: block_alloc: add BA_SOME_SPACE flag
+ for grabbing a fixed amount of space.
+Date: Tue, 21 Oct 2014 12:32:24 +0200
+Message-ID: <54463638.7090606@gmail.com>
+References: <1408312379-1990-1-git-send-email-intelfx100@gmail.com> <1408312379-1990-2-git-send-email-intelfx100@gmail.com> <54443577.3050700@gmail.com> <3239928.cvXopdq3l9@intelfx-laptop>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
@@ -11,59 +11,56 @@ DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20120113;
         h=message-id:date:from:user-agent:mime-version:to:subject:references
          :in-reply-to:content-type:content-transfer-encoding;
-        bh=hyxgwDp1+5qOTgd9ldyy/RbEsGWDSQCOC7r16sq4oIc=;
-        b=FGPCM1LcHw+Pe7Nz6XFBqBOq689qJr8Igy6xKvybDZCunuDoE+j1rzhDhM8buM+u8F
-         +BadQNUb3WzwBPe8YqY5vZ+3OmMiwej1t19uQfX05QZEdp1fRWnEHy7uHC9wtaJps7rB
-         dx3Pc4K+IjctA27eTQxXERkKYH2NnknoJB+d8gkmGvT3hRQGiJmVrmPdU+r3mR1RuvTz
-         OdT2vtiZ4K759zvQXLBwsXLHYmhqw7iMnxIkIDDpyGl6mrqdZ16kXc9MVMJydyLu8M9h
-         V/lPeBHLNRT3kK5cMA0l0w0G6ar7ItT/2TOEvNMMKbDI+wgDxSSF+9vo7utbcf4+qjQI
-         rjug==
-In-Reply-To: <1474324.CcTjzLnQHn@intelfx-laptop>
+        bh=8M7zNW8zTOuWkkRp6eKGfL9m1g+Zl3d1AJkP7gdp+Vs=;
+        b=n+Xi7mOx3mMRa3XWDP7znA2DmouEL3kcUhvonExtqAYCpsFftVSL6VLf6d92qC37hK
+         Osoo0aMJ+1BJCvb76PY89qjWN8U1yAk5NcRAwhKVQAs5BaRlGfPVZ7D3DYIdjhi1xxRO
+         1EVWH6aoFypdo5kHgRHrCzHGWnD/yTI2TOSGV7y1HrC7myeY8ZELveE29VYF8xn/FTTr
+         aK6ebaQomev+PycVoGu9GG4+FZwHP1s7U7EcomLhc2FjObIrhF6rNpQ0RtwB2rLPUYfk
+         uBPzLf0eBwymtpvJR7Doa+Z9Hjbz4G2/cxpWCagGFMmXdevks8mk+IC5IPRk3kmP9fvj
+         WOig==
+In-Reply-To: <3239928.cvXopdq3l9@intelfx-laptop>
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"; format="flowed"
 To: Ivan Shapovalov <intelfx100@gmail.com>, reiserfs-devel@vger.kernel.org
 
 
-On 10/21/2014 12:39 AM, Ivan Shapovalov wrote:
-> On Monday 20 October 2014 at 12:54:13, Edward Shishkin wrote:	
+On 10/20/2014 12:36 PM, Ivan Shapovalov wrote:
+> On Monday 20 October 2014 at 00:04:39, Edward Shishkin wrote:	
 >> On 08/17/2014 11:52 PM, Ivan Shapovalov wrote:
->>> [...]
->>> +		/*
->>> +		 * Grab some sane amount of space.
->>> +		 * We will allocate blocks until end of the partition or until
->>> +		 * the grabbed space is exhausted.
->>> +		 */
->>> +		ret = reiser4_grab_reserved(super, 0, BA_CAN_COMMIT | BA_SOME_SPACE);
->>
->> reiser4_grab_reserved() grabs space from the reserved area (5%).
->> This is needed to make sure that unlink(), truncate(), etc. won't
->> fail, if there is no free space on disk. I don't think that FITRIM
->> ioctl needs this reserved area.
-> Well, IIUC, it doesn't hurt:
+>>> This is used for FITRIM ioctl which will iteratively grab, allocate and trim disk space
+>>> bit by bit to avoid starving the rest of system.
+>>>
+>>> Signed-off-by: Ivan Shapovalov <intelfx100@gmail.com>
+>>> ---
+>>>    fs/reiser4/block_alloc.c | 5 +++++
+>>>    fs/reiser4/block_alloc.h | 5 ++++-
+>>>    2 files changed, 9 insertions(+), 1 deletion(-)
+>>>
+>>> diff --git a/fs/reiser4/block_alloc.c b/fs/reiser4/block_alloc.c
+>>> index d3d730c..9eed7fc 100644
+>>> --- a/fs/reiser4/block_alloc.c
+>>> +++ b/fs/reiser4/block_alloc.c
+>>> @@ -276,6 +276,11 @@ reiser4_grab(reiser4_context * ctx, __u64 count, reiser4_ba_flags_t flags)
+>>>    
+>>>    	free_blocks = sbinfo->blocks_free;
+>>>    
+>>> +	if (flags & BA_SOME_SPACE) {
+>>> +		/* Reserve 25% of all free space. */
+>> if (free_blocks == 0) {
+>>           /* nothing to trim */
+>>           ret= RETERR(-ENOSPC);
+>>           goto unlock_and_ret;
+>> }
+> Makes sense, but IMO without returning error. TRIM'ing a completely full
+> filesystem is a no-op (== all blocks busy, nothing to trim), not a failure.
 
 
-"doesn't hurt" is not enough. If you want to take a resource,
-you should be going to explain, why do you need this.
+(sbinfo->blocks_free) is a rather bad estimation of free space amount,
+but we have nothing better. I suggest to return -ENOSPC here, and use
+reiser4_grab_space() with BA_CAN_COMMIT to make sure that FITRIM
+ioctl gets the "second soft ENOSPC".
 
-
->   any "legitimate" user of the reserved space
-> will block on the mutex and eventually proceed. At the same time, given
-> a filesystem with (5% + eps) free space left, not using the reserved space
-> will result in trimming of (eps) blocks at a time.
->
-> Anyway, I should also fix calculation of space to grab in 1/9: if BA_RESERVED
-> is not set, then the amount to grab should be calculated as 25% of non-reserved
-> free space, not as 25% of all free space...
->
->> If BA_SOME_SPACE is set, then you lock a superblock, and grab 25% of
->> the current free space. It means that your grab will always succeed,
->> so that BA_CAN_COMMIT flag is also not needed.
-> If we decide on dropping BA_RESERVED, then you're right here;
-> reiser4_grab(...BA_SOME_SPACE...) won't return ENOSPC and so this is pointless.
->
-> If we decide on keeping BA_RESERVED, then this should also stay in order not to
-> trigger the assertion.
->
-> Thanks,
+Thanks,
+Edward.
 
