@@ -1,99 +1,77 @@
-From: Jan Kara <jack@suse.cz>
-Subject: [PATCH 09/12] ocfs2: Convert to private i_dquot
-	field
-Date: Tue, 21 Oct 2014 16:38:33 +0200
-Message-ID: <1413902316-17997-10-git-send-email-jack@suse.cz>
-References: <1413902316-17997-1-git-send-email-jack@suse.cz>
+From: Edward Shishkin <edward.shishkin@gmail.com>
+Subject: Re: [RFC] [PATCHv3 2/9] reiser4: block_alloc: add a "forward" parameter
+ to reiser4_blocknr_hint to allocate blocks only in forward direction.
+Date: Tue, 21 Oct 2014 17:50:23 +0200
+Message-ID: <544680BF.5040204@gmail.com>
+References: <1408312379-1990-1-git-send-email-intelfx100@gmail.com> <1408312379-1990-3-git-send-email-intelfx100@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <jfs-discussion-bounces@lists.sourceforge.net>
-In-Reply-To: <1413902316-17997-1-git-send-email-jack@suse.cz>
-List-Id: <reiserfs-devel.vger.kernel.org>
-List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/jfs-discussion>, 
-	<mailto:jfs-discussion-request@lists.sourceforge.net?subject=unsubscribe>
-List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=jfs-discussion>
-List-Post: <mailto:jfs-discussion@lists.sourceforge.net>
-List-Help: <mailto:jfs-discussion-request@lists.sourceforge.net?subject=help>
-List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/jfs-discussion>, 
-	<mailto:jfs-discussion-request@lists.sourceforge.net?subject=subscribe>
-Errors-To: jfs-discussion-bounces@lists.sourceforge.net
-To: linux-fsdevel@vger.kernel.org
-Cc: Dave Kleikamp <shaggy@kernel.org>, jfs-discussion@lists.sourceforge.net, tytso@mit.edu, Jeff Mahoney <jeffm@suse.de>, Mark Fasheh <mfasheh@suse.com>, Dave Chinner <david@fromorbit.com>, reiserfs-devel@vger.kernel.org, xfs@oss.sgi.com, cluster-devel@redhat.com, Joel Becker <jlbec@evilplan.org>, Jan Kara <jack@suse.cz>, linux-ext4@vger.kernel.org, hch@lst.de, Steven Whitehouse <swhiteho@redhat.com>, ocfs2-devel@oss.oracle.com, viro@zeniv.linux.org.uk
+Return-path: <reiserfs-devel-owner@vger.kernel.org>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20120113;
+        h=message-id:date:from:user-agent:mime-version:to:cc:subject
+         :references:in-reply-to:content-type:content-transfer-encoding;
+        bh=LNOgxm6LoKogw71zbiqt98OW+B1SsHAek3cbFw4OHlo=;
+        b=G8Pv8rjQtDD2prJyiquLtDlfOE7VnP1laIkAUgC+kRaSZYcvxNbl8bvmS62uEjnWUg
+         P41eYuuRmkoKrLATABy3nbP0EIRzT2YF1bFIBjMdd2gjAICGv2FWmc21R1HBSuRj8M1/
+         sSmCfdzWKx+xPerP1JgJbb3M+bArKi2XC644iTYQviLGXLx4FoLmTNK9Lj8+rh/7SIxN
+         7kijN5lQ03jvG0I4+HpctnpmXlw/Mu/p2RABIUkZT5JzVMCux5kryixB9mJeL52AGCvQ
+         xKuw3I/rdJy6m6r+9aXIIDox0fXOL7XuzhDCSFyvsT62Ggd1n/SJPYG02AGDC+X+df3Y
+         nniA==
+In-Reply-To: <1408312379-1990-3-git-send-email-intelfx100@gmail.com>
+Sender: reiserfs-devel-owner@vger.kernel.org
+List-ID: <reiserfs-devel.vger.kernel.org>
+Content-Type: text/plain; charset="us-ascii"; format="flowed"
+To: Ivan Shapovalov <intelfx100@gmail.com>
+Cc: reiserfs-devel@vger.kernel.org
 
-CC: Mark Fasheh <mfasheh@suse.com>
-CC: Joel Becker <jlbec@evilplan.org>
-CC: ocfs2-devel@oss.oracle.com
-Signed-off-by: Jan Kara <jack@suse.cz>
----
- fs/ocfs2/inode.h |  4 ++++
- fs/ocfs2/super.c | 10 ++++++++++
- 2 files changed, 14 insertions(+)
-
-diff --git a/fs/ocfs2/inode.h b/fs/ocfs2/inode.h
-index a9b76de46047..1bb2e27eaad7 100644
---- a/fs/ocfs2/inode.h
-+++ b/fs/ocfs2/inode.h
-@@ -80,6 +80,10 @@ struct ocfs2_inode_info
- 	 */
- 	tid_t i_sync_tid;
- 	tid_t i_datasync_tid;
-+
-+#ifdef CONFIG_QUOTA
-+	struct dquot *i_dquot[MAXQUOTAS];
-+#endif
- };
- 
- /*
-diff --git a/fs/ocfs2/super.c b/fs/ocfs2/super.c
-index 93c85bc745e1..9a97986d54f5 100644
---- a/fs/ocfs2/super.c
-+++ b/fs/ocfs2/super.c
-@@ -143,6 +143,11 @@ static int ocfs2_susp_quotas(struct ocfs2_super *osb, int unsuspend);
- static int ocfs2_enable_quotas(struct ocfs2_super *osb);
- static void ocfs2_disable_quotas(struct ocfs2_super *osb);
- 
-+static struct dquot **ocfs2_get_dquots(struct inode *inode)
-+{
-+	return OCFS2_I(inode)->i_dquot;
-+}
-+
- static const struct super_operations ocfs2_sops = {
- 	.statfs		= ocfs2_statfs,
- 	.alloc_inode	= ocfs2_alloc_inode,
-@@ -155,6 +160,7 @@ static const struct super_operations ocfs2_sops = {
- 	.show_options   = ocfs2_show_options,
- 	.quota_read	= ocfs2_quota_read,
- 	.quota_write	= ocfs2_quota_write,
-+	.get_dquots	= ocfs2_get_dquots,
- };
- 
- enum {
-@@ -563,6 +569,9 @@ static struct inode *ocfs2_alloc_inode(struct super_block *sb)
- 
- 	oi->i_sync_tid = 0;
- 	oi->i_datasync_tid = 0;
-+#ifdef CONFIG_QUOTA
-+	memset(&oi->i_dquot, 0, sizeof(oi->i_dquot));
-+#endif
- 
- 	jbd2_journal_init_jbd_inode(&oi->ip_jinode, &oi->vfs_inode);
- 	return &oi->vfs_inode;
-@@ -2073,6 +2082,7 @@ static int ocfs2_initialize_super(struct super_block *sb,
- 	sb->s_export_op = &ocfs2_export_ops;
- 	sb->s_qcop = &ocfs2_quotactl_ops;
- 	sb->dq_op = &ocfs2_quota_operations;
-+	sb_dqopt(sb)->allowed_types = QTYPE_MASK_USR | QTYPE_MASK_GRP;
- 	sb->s_xattr = ocfs2_xattr_handlers;
- 	sb->s_time_gran = 1;
- 	sb->s_flags |= MS_NOATIME;
--- 
-1.8.1.4
+On 08/17/2014 11:52 PM, Ivan Shapovalov wrote:
+> Signed-off-by: Ivan Shapovalov<intelfx100@gmail.com>
+> ---
+>   fs/reiser4/block_alloc.h         | 5 +++--
+>   fs/reiser4/plugin/space/bitmap.c | 3 ++-
+>   2 files changed, 5 insertions(+), 3 deletions(-)
+>
+> diff --git a/fs/reiser4/block_alloc.h b/fs/reiser4/block_alloc.h
+> index bfc6be9..08b3941 100644
+> --- a/fs/reiser4/block_alloc.h
+> +++ b/fs/reiser4/block_alloc.h
+> @@ -51,9 +51,10 @@ struct reiser4_blocknr_hint {
+>   	/* block allocator assumes that blocks, which will be mapped to disk,
+>   	   are in this specified block_stage */
+>   	block_stage_t block_stage;
+> -	/* If direction = 1 allocate blocks in backward direction from the end
+> -	 * of disk to the beginning of disk.  */
+> +	/* Allocate blocks only in backward direction starting from blk. */
+>   	unsigned int backward:1;
+> +	/* Allocate blocks only in forward direction starting from blk. */
+> +	unsigned int forward:1;
 
 
-------------------------------------------------------------------------------
-Comprehensive Server Monitoring with Site24x7.
-Monitor 10 servers for $9/Month.
-Get alerted through email, SMS, voice calls or mobile push notifications.
-Take corrective actions from your mobile device.
-http://p.sf.net/sfu/Zoho
+I suggest to call this bitfield "monotonic_forward"
+
+
+>   
+>   };
+>   
+> diff --git a/fs/reiser4/plugin/space/bitmap.c b/fs/reiser4/plugin/space/bitmap.c
+> index 3da3f6b..9beaf66 100644
+> --- a/fs/reiser4/plugin/space/bitmap.c
+> +++ b/fs/reiser4/plugin/space/bitmap.c
+> @@ -1127,7 +1127,8 @@ static int alloc_blocks_forward(reiser4_blocknr_hint *hint, int needed,
+>   	/* There is only one bitmap search if max_dist was specified or first
+>   	   pass was from the beginning of the bitmap. We also do one pass for
+>   	   scanning bitmap in backward direction. */
+> -	if (!(actual_len != 0 || hint->max_dist != 0 || search_start == 0)) {
+> +	if (actual_len == 0 && search_start != 0 &&
+> +	    hint->max_dist == 0 && hint->forward == 0) {
+>   		/* next step is a scanning from 0 to search_start */
+>   		search_end = search_start;
+>   		search_start = 0;
+
+
+OK with this patch,
+I'll continue to review this patch series at leisure.
+
+Thanks,
+Edward.
