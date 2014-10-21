@@ -1,70 +1,90 @@
-From: Edward Shishkin <edward.shishkin@gmail.com>
-Subject: Re: [RFC] [PATCHv3 7/9] reiser4: batch discard support: actually
- implement the FITRIM ioctl handler.
-Date: Tue, 21 Oct 2014 18:33:11 +0200
-Message-ID: <54468AC7.3040107@gmail.com>
-References: <1408312379-1990-1-git-send-email-intelfx100@gmail.com> <4858515.SiX86K8HSN@intelfx-laptop> <54468824.8060402@gmail.com> <44201008.TshRq3mBYC@intelfx-laptop>
+From: Ivan Shapovalov <intelfx100@gmail.com>
+Subject: Re: [RFC] [PATCHv3 7/9] reiser4: batch discard support: actually implement the FITRIM ioctl handler.
+Date: Tue, 21 Oct 2014 20:42:04 +0400
+Message-ID: <3623276.DiI5EXUh1u@intelfx-laptop>
+References: <1408312379-1990-1-git-send-email-intelfx100@gmail.com> <44201008.TshRq3mBYC@intelfx-laptop> <54468AC7.3040107@gmail.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; boundary="nextPart5907654.ftvh114HTG"; micalg="pgp-sha256"; protocol="application/pgp-signature"
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20120113;
-        h=message-id:date:from:user-agent:mime-version:to:cc:subject
-         :references:in-reply-to:content-type:content-transfer-encoding;
-        bh=Xro2bkNae5Hos8+snFYzHS2mSE/IvIdIFgOH5hhMSNM=;
-        b=GiO7zdqqzLMoZRn72f7IMErnHqCCJaM/liq2tMVsSPR5VNlTYtVt4FVCSYv0AX+DIl
-         OJ4SXrIMhnR05ZRJjS4FqGFDmW93mX9LuTHWKV4+8Q4PyGq5v42yaidvHQYwc4WeXGb6
-         1xGbXPaLdZXVXLlg3yLKt4yV7VDSLjRbMo5yrl/gUXjb08uR/ld+dVmhF3K2Y7vDUmkC
-         w+aeZAPQXrnzJjsy2jvYKZ626uRvyC4WXVfgW+x/yT6Qj7k8fCzlwxGqh94erM+T6lTh
-         HvYJKKY4dp0+n2+Tjska0OzSc6NDcY7yAgBhU94b2CVFlpDfeP7VslKjM7hzFlqrwuz6
-         w99Q==
-In-Reply-To: <44201008.TshRq3mBYC@intelfx-laptop>
+        h=from:to:cc:subject:date:message-id:user-agent:in-reply-to
+         :references:mime-version:content-type;
+        bh=H4LG5/cObLNnPUqd++S/eSX/cwwHgt+HWp38v3GyPRc=;
+        b=R7liPfEKHi4ePScdAYlMbzdW3yrKM/JITuvEUhc/jTYjIi1MD4ZpbAVpXdLcd4XYCH
+         pTxLYZeHSx9WEy3b3Thzq642ZA1o3PUsL4cP45MaBR6hzUoUiUdT5BFORcSwnIpvOcSk
+         FxL8LtdR1W/A399VfCADHBrHZ34J/H/X45ouwGZFQoN8Hf2RM/GBUgw8zPzhc2qLyDio
+         uKTbbqxbKwZtOTfoBDg+HB7DsyjUaDVLOgP5171PKjRbQv7flvqDxBnt8uPVvx7T65dU
+         Ju1q0JH9k8MqfLewWtZxjdGeOkGYtX59CDPYWizcFSNKhVzZkQdsn+01wDdo80b2WzyJ
+         87pg==
+In-Reply-To: <54468AC7.3040107@gmail.com>
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: Ivan Shapovalov <intelfx100@gmail.com>
+To: Edward Shishkin <edward.shishkin@gmail.com>
 Cc: reiserfs-devel@vger.kernel.org
 
-On 10/21/2014 06:23 PM, Ivan Shapovalov wrote:
-> On Tuesday 21 October 2014 at 18:21:56, Edward Shishkin wrote:	
->> On 10/21/2014 06:18 PM, Ivan Shapovalov wrote:
->>> On Tuesday 21 October 2014 at 12:14:02, Edward Shishkin wrote:	
->>>> On 10/21/2014 12:39 AM, Ivan Shapovalov wrote:
->>>>> On Monday 20 October 2014 at 12:54:13, Edward Shishkin wrote:	
->>>>>> On 08/17/2014 11:52 PM, Ivan Shapovalov wrote:
->>>>>>> [...]
->>>>>>> +		/*
->>>>>>> +		 * Grab some sane amount of space.
->>>>>>> +		 * We will allocate blocks until end of the partition or until
->>>>>>> +		 * the grabbed space is exhausted.
->>>>>>> +		 */
->>>>>>> +		ret = reiser4_grab_reserved(super, 0, BA_CAN_COMMIT | BA_SOME_SPACE);
->>>>>>    any "legitimate" user of the reserved space
->>>>>> will block on the mutex and eventually proceed. At the same time, given
->>>>>> a filesystem with (5% + eps) free space left, not using the reserved space
->>>>>> will result in trimming of (eps) blocks at a time.
->>>>>>
->>>>>> reiser4_grab_reserved() grabs space from the reserved area (5%).
->>>>>> This is needed to make sure that unlink(), truncate(), etc. won't
->>>>>> fail, if there is no free space on disk. I don't think that FITRIM
->>>>>> ioctl needs this reserved area.
->>>>> Well, IIUC, it doesn't hurt:
->>>> "doesn't hurt" is not enough. If you want to take a resource,
->>>> you should be going to explain, why do you need this.
->>> I've explained the reason below... isn't it sufficient?
->>
->> Sorry, but I don't see any explanation.
-> "given a filesystem with (5% + eps) free space left, not using the reserved
-> space will result in trimming of (eps) blocks at a time."
->
 
+--nextPart5907654.ftvh114HTG
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="us-ascii"
 
-This is something that I am not able to parse :)
+On Tuesday 21 October 2014 at 18:33:11, Edward Shishkin wrote:=09
+> On 10/21/2014 06:23 PM, Ivan Shapovalov wrote:
+> > On Tuesday 21 October 2014 at 18:21:56, Edward Shishkin wrote:=09
+> >> [...]
+> >>
+> >> Sorry, but I don't see any explanation.
+> > "given a filesystem with (5% + eps) free space left, not using the =
+reserved
+> > space will result in trimming of (eps) blocks at a time."
+> >
+>=20
+>=20
+> This is something that I am not able to parse :)
+>=20
+> Ok, it is clear, why we can not fail with -ENOSPC when trying to dele=
+te
+> a file from a full partition, yes?
 
-Ok, it is clear, why we can not fail with -ENOSPC when trying to delete
-a file from a full partition, yes?
-I want to see explanation, why FITRIM ioclt can not finish the work when
-there is no free space on disk.
+Sure. Please note that making reiser4_trim_fs's allocations BA_RESERVED=
+ will
+not hinder this: delete_mutex is there for a reason.
 
-Thanks,
-Edward.
+> I want to see explanation, why FITRIM ioclt can not finish the work w=
+hen
+> there is no free space on disk.
+
+Suppose we do not use reserved space for reiser4_trim_fs's allocations.=
+
+Let's analyze those two cases:
+
+1. There is <=3D 5% free space on disk.
+Initial grabbing fails, nothing can be trimmed.
+This is wrong.
+
+2. There is 5% + X (where X is some small number) free space on disk.
+We can grab only X blocks at a time, so a total of ((SIZE * 5% / X) + 1=
+)
+transactions will be created. BTW, if X < erase unit, nothing can be tr=
+immed.
+This is ineffective.
+
+Hope this makes sense.
+
+=2D-=20
+Ivan Shapovalov / intelfx /
+--nextPart5907654.ftvh114HTG
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: This is a digitally signed message part.
+Content-Transfer-Encoding: 7Bit
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
+
+iF4EABEIAAYFAlRGjOMACgkQxUKljSIMAnBI+gEA0s936UAKDdfz9RtCu48zrbcM
+HwM5DYKs2DJySlrTluUBAIMe+rRhbEQWJQJwK5CJTTydM1dWiM77dxKrCOqqxdcP
+=QVdS
+-----END PGP SIGNATURE-----
+
+--nextPart5907654.ftvh114HTG--
+
