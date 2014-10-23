@@ -1,62 +1,46 @@
-From: Jan Kara <jack@suse.cz>
-Subject: Re: [PATCH 02/12] quota: Allow each filesystem to specify which
-	quota types it supports
-Date: Wed, 22 Oct 2014 18:51:50 +0200
-Message-ID: <20141022165150.GA12809@quack.suse.cz>
-References: <1413902316-17997-1-git-send-email-jack@suse.cz>
-	<1413902316-17997-3-git-send-email-jack@suse.cz>
-	<20141022162915.GB18443@lst.de>
-Mime-Version: 1.0
+From: Ivan Shapovalov <intelfx100@gmail.com>
+Subject: [PATCHv2 0/3] reiser4: space grabbing fixes.
+Date: Thu, 23 Oct 2014 11:18:02 +0400
+Message-ID: <1414048685-4224-1-git-send-email-intelfx100@gmail.com>
+Return-path: <reiserfs-devel-owner@vger.kernel.org>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20120113;
+        h=from:to:cc:subject:date:message-id;
+        bh=plO9Fym/zk9LlsDMnDbvh653u89psOZh1S15aDp/eyM=;
+        b=p4PB64M55FXihqc2Kg/9DWXpocuPNyNyU1d2oVGFoNUaCCM4TOX6Etnt42TJhwXo7P
+         GhGCZdVLqxwl/dcBS7MbJER+sTp84wgYhsXDSqCsa1zk0I5QV/9C+AQNKBZqhOcKdEsH
+         WVAx3RNIQVcUDq0FdnqXDEtjVYUGLrD2yf0L9hqeqrnZq+77WHP4DF8LWCMzRAvIc3lG
+         WxNgGg0iq+XgP8+mfhvRC8wtes32qEZeKhK24kOBS/dSIbwDJuAgr4rukd116LFMXVFY
+         Uccqn8aq9vIFhhunoVbwzmPn6Y/6ON1Z6NHykr+aNZZcfg9GCpwKx/bdZ/x5tE8fuXjK
+         188w==
+Sender: reiserfs-devel-owner@vger.kernel.org
+List-ID: <reiserfs-devel.vger.kernel.org>
+MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <xfs-bounces@oss.sgi.com>
-Content-Disposition: inline
-In-Reply-To: <20141022162915.GB18443@lst.de>
-List-Id: <reiserfs-devel.vger.kernel.org>
-List-Unsubscribe: <http://oss.sgi.com/mailman/options/xfs>,
-	<mailto:xfs-request@oss.sgi.com?subject=unsubscribe>
-List-Archive: <http://oss.sgi.com/pipermail/xfs>
-List-Post: <mailto:xfs@oss.sgi.com>
-List-Help: <mailto:xfs-request@oss.sgi.com?subject=help>
-List-Subscribe: <http://oss.sgi.com/mailman/listinfo/xfs>,
-	<mailto:xfs-request@oss.sgi.com?subject=subscribe>
-Errors-To: xfs-bounces@oss.sgi.com
-Sender: xfs-bounces@oss.sgi.com
-To: Christoph Hellwig <hch@lst.de>
-Cc: Dave Kleikamp <shaggy@kernel.org>, jfs-discussion@lists.sourceforge.net, Jan Kara <jack@suse.cz>, Jeff Mahoney <jeffm@suse.de>, Mark Fasheh <mfasheh@suse.com>, reiserfs-devel@vger.kernel.org, xfs@oss.sgi.com, cluster-devel@redhat.com, Joel Becker <jlbec@evilplan.org>, linux-fsdevel@vger.kernel.org, tytso@mit.edu, linux-ext4@vger.kernel.org, Steven Whitehouse <swhiteho@redhat.com>, ocfs2-devel@oss.oracle.com, viro@zeniv.linux.org.uk
+To: reiserfs-devel@vger.kernel.org
+Cc: Ivan Shapovalov <intelfx100@gmail.com>
 
-On Wed 22-10-14 18:29:15, Christoph Hellwig wrote:
-> On Tue, Oct 21, 2014 at 04:38:26PM +0200, Jan Kara wrote:
-> > Currently all filesystems supporting VFS quota support user and group
-> > quotas. With introduction of project quotas this is going to change so
-> > make sure filesystem isn't called for quota type it doesn't support by
-> > introduction of a bitmask determining which quota types each filesystem
-> > supports.
-> 
-> Why don't you keep this bitmask in the dquot.c instead of pushing it
-> to the caller?  So far usage of s_dquot is mostly confined to dquot.c
-> (with a few leaks to the filesystems using it), so keeping it that
-> way seems like a good idea.
-  So there are two reasons:
-1) Currently if you call quotactl() with invalid quota type you'll get
-EINVAL. To maintain this with addition of project quotas you need to check
-the types early before calling check_quotactl_permission() and other
-checks.
+These are mostly equivalent transformations (aside from the first patch)
+I've done when I was experimenting with rwsems at zero-th iteration of
+batch discard support.
 
-2) I didn't want filesystem quotactl callbacks to deal with quota types
-they don't support. Sure each fs could do a type check in the callback but
-this looked easier.
+v2: - disable grab in current context unconditionally, not only if !BA_FORCE
 
-Now I see your point about s_dquot and I can move allowed_types out of
-s_dquot if that makes you happier. But otherwise what I did still seems as
-the best solution to me.
+Ivan Shapovalov (3):
+  reiser4: block_alloc: improve error handling in reiser4_grab_reserved().
+  reiser4: block_alloc: sanitize grab_enabled modifications.
+  reiser4: do not mess with grab_enabled; instead, use BA_FORCE.
 
-								Honza
+ fs/reiser4/block_alloc.c                 | 57 +++++++++++++++++---------------
+ fs/reiser4/plugin/file/file.c            | 12 +++----
+ fs/reiser4/plugin/file/file_conversion.c |  3 +-
+ fs/reiser4/plugin/file/tail_conversion.c | 11 +++---
+ fs/reiser4/plugin/item/extent_file_ops.c |  3 +-
+ fs/reiser4/plugin/item/tail.c            |  3 +-
+ fs/reiser4/safe_link.c                   |  4 +--
+ 7 files changed, 44 insertions(+), 49 deletions(-)
+
 -- 
-Jan Kara <jack@suse.cz>
-SUSE Labs, CR
+2.1.2
 
-_______________________________________________
-xfs mailing list
-xfs@oss.sgi.com
-http://oss.sgi.com/mailman/listinfo/xfs
