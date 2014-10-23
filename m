@@ -1,63 +1,105 @@
 From: Ivan Shapovalov <intelfx100@gmail.com>
-Subject: Re: [PATCHv2 0/3] reiser4: space grabbing fixes.
-Date: Thu, 23 Oct 2014 11:20:02 +0400
-Message-ID: <26188958.9NUTjoysPU@intelfx-laptop>
-References: <1414048685-4224-1-git-send-email-intelfx100@gmail.com>
+Subject: Re: [RFC] [PATCHv3 2/9] reiser4: block_alloc: add a "forward" parameter to reiser4_blocknr_hint to allocate blocks only in forward direction.
+Date: Thu, 23 Oct 2014 11:24:13 +0400
+Message-ID: <3138233.23nIal2kT0@intelfx-laptop>
+References: <1408312379-1990-1-git-send-email-intelfx100@gmail.com> <1408312379-1990-3-git-send-email-intelfx100@gmail.com> <544680BF.5040204@gmail.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; boundary="nextPart11315260.GSM5x99xW5"; micalg="pgp-sha256"; protocol="application/pgp-signature"
+Content-Type: multipart/signed; boundary="nextPart2205438.H2QEBUHNQO"; micalg="pgp-sha256"; protocol="application/pgp-signature"
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20120113;
-        h=from:to:subject:date:message-id:user-agent:in-reply-to:references
-         :mime-version:content-type;
-        bh=Ln6gcPkDWfgKhvgl8vN0+2+rDs8gLB9qAHEUKS0dH90=;
-        b=G7JSHznHszTG1NjJ5wZ2zuKbzgv0ytPkfmFj7csFmHwxVEziUkJv84uP8/5qRQscOd
-         fpaIOEcLoLhSqqg7Y+EKqSnpf/Qnu/7AMG6bA1ZKGni7SD9EZSaI5ZTxuF3HUy22waQf
-         imkHgjiX+mata8b+P2+czZKPjsxd6a0Vrv0HcXHEhyJ3n9MJWzZEFZQx0cjjDezvRWYB
-         M63QkZ4KtrUk3gisfh3+wN1T5Ph9i+4OgPbSesogL+ePbSCQYhOjiBisZ4IOYDjo1Et9
-         +9oz8Ztq8i7ff7lbQmNB0GSelWm1w1xORPAKW+/LUXKAmYhPbu/lrnJApijLaX8yXva1
-         3paA==
-In-Reply-To: <1414048685-4224-1-git-send-email-intelfx100@gmail.com>
+        h=from:to:cc:subject:date:message-id:user-agent:in-reply-to
+         :references:mime-version:content-type;
+        bh=2wrlA9H1d1Iaf2FlEX8l4VrNOehfDqgzGI0D867O2/0=;
+        b=CdSbLnKGIdn0Dz2k3xpbWi7kfU9+QsZCgorcscV/XVJ1iMldBhtMd7GZX02EhEIeIa
+         wR7njY/Wgx8jTPylzJZ1tyh7D3/fj48TTS83AoKbumLWCfwVnhWcTXNN5nF9Tex9X7en
+         BQG4mr1ukWq3bevmziet2yH9lZWwtC35aTt9yP2dU+koOg4xKklcAD03vBZGutM+0MaI
+         eDz79VgNDo8vj+Agt3v+mWp9wD/Y9/klXz6NyZKqNtX0PZ1c4PMDGLr8BoBLir1LaFiM
+         O/GP0H64+/Pe2KrzUVkfRfy3/aBYKnahD2Dc8U8he1zIPb9Bflp9bUWu8NJzwLB/wLZL
+         0fgg==
+In-Reply-To: <544680BF.5040204@gmail.com>
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
 To: reiserfs-devel@vger.kernel.org
+Cc: Edward Shishkin <edward.shishkin@gmail.com>
 
 
---nextPart11315260.GSM5x99xW5
+--nextPart2205438.H2QEBUHNQO
 Content-Transfer-Encoding: quoted-printable
 Content-Type: text/plain; charset="us-ascii"
 
-On Thursday 23 October 2014 at 11:18:02, Ivan Shapovalov wrote:=09
-> [...]
+On Tuesday 21 October 2014 at 17:50:23, Edward Shishkin wrote:=09
+> On 08/17/2014 11:52 PM, Ivan Shapovalov wrote:
+> > Signed-off-by: Ivan Shapovalov<intelfx100@gmail.com>
+> > ---
+> >   fs/reiser4/block_alloc.h         | 5 +++--
+> >   fs/reiser4/plugin/space/bitmap.c | 3 ++-
+> >   2 files changed, 5 insertions(+), 3 deletions(-)
+> >
+> > diff --git a/fs/reiser4/block_alloc.h b/fs/reiser4/block_alloc.h
+> > index bfc6be9..08b3941 100644
+> > --- a/fs/reiser4/block_alloc.h
+> > +++ b/fs/reiser4/block_alloc.h
+> > @@ -51,9 +51,10 @@ struct reiser4_blocknr_hint {
+> >   =09/* block allocator assumes that blocks, which will be mapped t=
+o disk,
+> >   =09   are in this specified block_stage */
+> >   =09block_stage_t block_stage;
+> > -=09/* If direction =3D 1 allocate blocks in backward direction fro=
+m the end
+> > -=09 * of disk to the beginning of disk.  */
+> > +=09/* Allocate blocks only in backward direction starting from blk=
+. */
+> >   =09unsigned int backward:1;
+> > +=09/* Allocate blocks only in forward direction starting from blk.=
+ */
+> > +=09unsigned int forward:1;
 >=20
-> Ivan Shapovalov (3):
->   reiser4: block_alloc: improve error handling in reiser4_grab_reserv=
-ed().
->   reiser4: block_alloc: sanitize grab_enabled modifications.
->   reiser4: do not mess with grab_enabled; instead, use BA_FORCE.
 >=20
-> [...]
+> I suggest to call this bitfield "monotonic_forward"
 
-This is a diff between v1 and v2, for ease of reviewing.
+Isn't it an opposite of "backward"? Should we rename both?
 
-diff --git a/fs/reiser4/block_alloc.c b/fs/reiser4/block_alloc.c
-index a30f7b9..9339de7 100644
-=2D-- a/fs/reiser4/block_alloc.c
-+++ b/fs/reiser4/block_alloc.c
-@@ -329,7 +329,7 @@ int reiser4_grab_space(__u64 count, reiser4_ba_flag=
-s_t flags)
- =09=09}
- =09}
-=20
-=2D=09if (!(flags & BA_FORCE) && (ret =3D=3D 0)) {
-+=09if (ret =3D=3D 0) {
- =09=09/* disable grab space in current context */
- =09=09ctx->grab_enabled =3D 0;
- =09}
+BTW, in plugin/space/bitmap.c:1141 (around that line)
+in function alloc_blocks_forward()
+shouldn't the second scan be done with bitmap_alloc_backward(), as per =
+the
+comment?
 
+Thanks,
 =2D-=20
 Ivan Shapovalov / intelfx /
---nextPart11315260.GSM5x99xW5
+
+> >  =20
+> >   };
+> >  =20
+> > diff --git a/fs/reiser4/plugin/space/bitmap.c b/fs/reiser4/plugin/s=
+pace/bitmap.c
+> > index 3da3f6b..9beaf66 100644
+> > --- a/fs/reiser4/plugin/space/bitmap.c
+> > +++ b/fs/reiser4/plugin/space/bitmap.c
+> > @@ -1127,7 +1127,8 @@ static int alloc_blocks_forward(reiser4_block=
+nr_hint *hint, int needed,
+> >   =09/* There is only one bitmap search if max_dist was specified o=
+r first
+> >   =09   pass was from the beginning of the bitmap. We also do one p=
+ass for
+> >   =09   scanning bitmap in backward direction. */
+> > -=09if (!(actual_len !=3D 0 || hint->max_dist !=3D 0 || search_star=
+t =3D=3D 0)) {
+> > +=09if (actual_len =3D=3D 0 && search_start !=3D 0 &&
+> > +=09    hint->max_dist =3D=3D 0 && hint->forward =3D=3D 0) {
+> >   =09=09/* next step is a scanning from 0 to search_start */
+> >   =09=09search_end =3D search_start;
+> >   =09=09search_start =3D 0;
+>=20
+>=20
+> OK with this patch,
+> I'll continue to review this patch series at leisure.
+>=20
+> Thanks,
+> Edward.
+--nextPart2205438.H2QEBUHNQO
 Content-Type: application/pgp-signature; name="signature.asc"
 Content-Description: This is a digitally signed message part.
 Content-Transfer-Encoding: 7Bit
@@ -65,10 +107,10 @@ Content-Transfer-Encoding: 7Bit
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2
 
-iF4EABEIAAYFAlRIrCYACgkQxUKljSIMAnB5EwEAiQaIampzlYvx+wN//VaDtjVw
-cCyrKDQB3xFfFVWpMd4A/2W5nL7I2uBVlMmtgtRn0CmxhvYX4WJZajVlAD0VcaIE
-=z/8J
+iF4EABEIAAYFAlRIrR0ACgkQxUKljSIMAnAQRwEAq7TtQZewKd7K1+2CKrmhiC7A
+7HzUJT/zfP+QD3RJ0C8BAJ21e/j5+uT/o6BrGMIxqJHK835PzWputczCDkNBjf6I
+=haKl
 -----END PGP SIGNATURE-----
 
---nextPart11315260.GSM5x99xW5--
+--nextPart2205438.H2QEBUHNQO--
 
