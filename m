@@ -1,114 +1,71 @@
-From: Jan Kara <jack@suse.cz>
-Subject: Re: [PATCH 09/12] ocfs2: Convert to private i_dquot field
-Date: Thu, 23 Oct 2014 14:05:29 +0200
-Message-ID: <20141023120529.GA20067@quack.suse.cz>
-References: <1413902316-17997-1-git-send-email-jack@suse.cz>
- <1413902316-17997-10-git-send-email-jack@suse.cz>
- <20141023102554.GB5238@localhost>
+From: Edward Shishkin <edward.shishkin@gmail.com>
+Subject: Re: [RFC] [PATCHv3 2/9] reiser4: block_alloc: add a "forward" parameter
+ to reiser4_blocknr_hint to allocate blocks only in forward direction.
+Date: Thu, 23 Oct 2014 16:37:00 +0200
+Message-ID: <5449128C.4040501@gmail.com>
+References: <1408312379-1990-1-git-send-email-intelfx100@gmail.com> <1408312379-1990-3-git-send-email-intelfx100@gmail.com> <544680BF.5040204@gmail.com> <3138233.23nIal2kT0@intelfx-laptop>
 Mime-Version: 1.0
-Return-path: <linux-fsdevel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20141023102554.GB5238@localhost>
-Sender: linux-fsdevel-owner@vger.kernel.org
-List-ID: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Joel Becker <jlbec@evilplan.org>
-Cc: Jan Kara <jack@suse.cz>, linux-fsdevel@vger.kernel.org, linux-ext4@vger.kernel.org, Dave Chinner <david@fromorbit.com>, xfs@oss.sgi.com, cluster-devel@redhat.com, Steven Whitehouse <swhiteho@redhat.com>, Mark Fasheh <mfasheh@suse.com>, ocfs2-devel@oss.oracle.com, reiserfs-devel@vger.kernel.org, Jeff Mahoney <jeffm@suse.de>, Dave Kleikamp <shaggy@kernel.org>, jfs-discussion@lists.sourceforge.net, tytso@mit.edu, viro@zeniv.linux.org.uk, hch@lst.de
+Return-path: <reiserfs-devel-owner@vger.kernel.org>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20120113;
+        h=message-id:date:from:user-agent:mime-version:to:cc:subject
+         :references:in-reply-to:content-type:content-transfer-encoding;
+        bh=UbceaEtxmKhpzVCvj34J7T5QM3D4tRbHvZpS/DJvE3M=;
+        b=RwAb2ZYhmCe+2E/vO/hx4fQcQeWgnPb6jqwse4q4m9QSg/tMu6Mmbk9GCfjts6mJl2
+         8oVfVm95YBltntJArW0ERYj4I3qkVHhFtLN/NBAejJPRvindrncJiBL0ldsMjdKLcR9T
+         GpsWm3aDIYAsAOVfFY5p0B+EYkpiu5Jf7CdYWcrL5wLjyJj7kQoDeEQZmwkmZM/4LTcQ
+         d8PDpX9DvljGhxGxrQ00gdXGggFCRAUZkZnxp3ewQ4M/VSHUfoN7Q+EjYPB+u/M/sdc5
+         rXF0dDyeJyvey5/541mbZHVEHeaFPJ0qlP3cB5o6mr1f3V0jyOjQ8QqIQHzr5na31plj
+         uHJQ==
+In-Reply-To: <3138233.23nIal2kT0@intelfx-laptop>
+Sender: reiserfs-devel-owner@vger.kernel.org
+List-ID: <reiserfs-devel.vger.kernel.org>
+Content-Type: text/plain; charset="us-ascii"; format="flowed"
+To: Ivan Shapovalov <intelfx100@gmail.com>
+Cc: reiserfs-devel@vger.kernel.org
 
-On Thu 23-10-14 11:25:57, Joel Becker wrote:
-> On Tue, Oct 21, 2014 at 04:38:33PM +0200, Jan Kara wrote:
-> > CC: Mark Fasheh <mfasheh@suse.com>
-> > CC: Joel Becker <jlbec@evilplan.org>
-> > CC: ocfs2-devel@oss.oracle.com
-> > Signed-off-by: Jan Kara <jack@suse.cz>
-> > ---
-> >  fs/ocfs2/inode.h |  4 ++++
-> >  fs/ocfs2/super.c | 10 ++++++++++
-> >  2 files changed, 14 insertions(+)
-> > 
-> > diff --git a/fs/ocfs2/inode.h b/fs/ocfs2/inode.h
-> > index a9b76de46047..1bb2e27eaad7 100644
-> > --- a/fs/ocfs2/inode.h
-> > +++ b/fs/ocfs2/inode.h
-> > @@ -80,6 +80,10 @@ struct ocfs2_inode_info
-> >  	 */
-> >  	tid_t i_sync_tid;
-> >  	tid_t i_datasync_tid;
-> > +
-> > +#ifdef CONFIG_QUOTA
-> > +	struct dquot *i_dquot[MAXQUOTAS];
-> > +#endif
-> >  };
-> >  
-> >  /*
-> > diff --git a/fs/ocfs2/super.c b/fs/ocfs2/super.c
-> > index 93c85bc745e1..9a97986d54f5 100644
-> > --- a/fs/ocfs2/super.c
-> > +++ b/fs/ocfs2/super.c
-> > @@ -143,6 +143,11 @@ static int ocfs2_susp_quotas(struct ocfs2_super *osb, int unsuspend);
-> >  static int ocfs2_enable_quotas(struct ocfs2_super *osb);
-> >  static void ocfs2_disable_quotas(struct ocfs2_super *osb);
-> >  
-> > +static struct dquot **ocfs2_get_dquots(struct inode *inode)
-> > +{
-> > +	return OCFS2_I(inode)->i_dquot;
-> > +}
-> 
-> Call me silly, but given that ocfs2_inode_info->i_dquot; is wrapped in
-> CONFIG_QUOTA, shouldn't this accessor be as well?  Is GCC really smart
-> enough to ignore the undefined member because ocfs2_get_dquots() isn't
-> called?
-  Actually, ocfs2 selects QUOTA so it cannot happen that CONFIG_QUOTA isn't
-defined for ocfs2. I'll remove the CONFIG_QUOTA checks from ocfs2 patch.
+On 10/23/2014 09:24 AM, Ivan Shapovalov wrote:
+> On Tuesday 21 October 2014 at 17:50:23, Edward Shishkin wrote:	
+>> On 08/17/2014 11:52 PM, Ivan Shapovalov wrote:
+>>> Signed-off-by: Ivan Shapovalov<intelfx100@gmail.com>
+>>> ---
+>>>    fs/reiser4/block_alloc.h         | 5 +++--
+>>>    fs/reiser4/plugin/space/bitmap.c | 3 ++-
+>>>    2 files changed, 5 insertions(+), 3 deletions(-)
+>>>
+>>> diff --git a/fs/reiser4/block_alloc.h b/fs/reiser4/block_alloc.h
+>>> index bfc6be9..08b3941 100644
+>>> --- a/fs/reiser4/block_alloc.h
+>>> +++ b/fs/reiser4/block_alloc.h
+>>> @@ -51,9 +51,10 @@ struct reiser4_blocknr_hint {
+>>>    	/* block allocator assumes that blocks, which will be mapped to disk,
+>>>    	   are in this specified block_stage */
+>>>    	block_stage_t block_stage;
+>>> -	/* If direction = 1 allocate blocks in backward direction from the end
+>>> -	 * of disk to the beginning of disk.  */
+>>> +	/* Allocate blocks only in backward direction starting from blk. */
+>>>    	unsigned int backward:1;
+>>> +	/* Allocate blocks only in forward direction starting from blk. */
+>>> +	unsigned int forward:1;
+>>
+>> I suggest to call this bitfield "monotonic_forward"
+> Isn't it an opposite of "backward"? Should we rename both?
 
-								Honza
-> 
-> Joel
-> 
-> > +
-> >  static const struct super_operations ocfs2_sops = {
-> >  	.statfs		= ocfs2_statfs,
-> >  	.alloc_inode	= ocfs2_alloc_inode,
-> > @@ -155,6 +160,7 @@ static const struct super_operations ocfs2_sops = {
-> >  	.show_options   = ocfs2_show_options,
-> >  	.quota_read	= ocfs2_quota_read,
-> >  	.quota_write	= ocfs2_quota_write,
-> > +	.get_dquots	= ocfs2_get_dquots,
-> >  };
-> >  
-> >  enum {
-> > @@ -563,6 +569,9 @@ static struct inode *ocfs2_alloc_inode(struct super_block *sb)
-> >  
-> >  	oi->i_sync_tid = 0;
-> >  	oi->i_datasync_tid = 0;
-> > +#ifdef CONFIG_QUOTA
-> > +	memset(&oi->i_dquot, 0, sizeof(oi->i_dquot));
-> > +#endif
-> >  
-> >  	jbd2_journal_init_jbd_inode(&oi->ip_jinode, &oi->vfs_inode);
-> >  	return &oi->vfs_inode;
-> > @@ -2073,6 +2082,7 @@ static int ocfs2_initialize_super(struct super_block *sb,
-> >  	sb->s_export_op = &ocfs2_export_ops;
-> >  	sb->s_qcop = &ocfs2_quotactl_ops;
-> >  	sb->dq_op = &ocfs2_quota_operations;
-> > +	sb_dqopt(sb)->allowed_types = QTYPE_MASK_USR | QTYPE_MASK_GRP;
-> >  	sb->s_xattr = ocfs2_xattr_handlers;
-> >  	sb->s_time_gran = 1;
-> >  	sb->s_flags |= MS_NOATIME;
-> > -- 
-> > 1.8.1.4
-> > 
-> 
-> -- 
-> 
-> "I'm so tired of being tired,
->  Sure as night will follow day.
->  Most things I worry about
->  Never happen anyway."
-> 
-> 			http://www.jlbec.org/
-> 			jlbec@evilplan.org
--- 
-Jan Kara <jack@suse.cz>
-SUSE Labs, CR
+
+No, it isn't. And this is the reason of the rename.
+monotonic_forward is to skip the second pass in alloc_blocks_forward()
+
+
+>
+> BTW, in plugin/space/bitmap.c:1141 (around that line)
+> in function alloc_blocks_forward()
+> shouldn't the second scan be done with bitmap_alloc_backward(), as per the
+> comment?
+
+
+I think that those comment means a jump in backward direction
+(to the start) and one more pass with bitmap_alloc_forward().
+Such a "compound, non-monotonic" forward...
+
+Edward.
