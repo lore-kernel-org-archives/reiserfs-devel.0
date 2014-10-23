@@ -1,18 +1,20 @@
 From: Ivan Shapovalov <intelfx100@gmail.com>
-Subject: [PATCHv2 0/3] reiser4: space grabbing fixes.
-Date: Thu, 23 Oct 2014 11:18:02 +0400
-Message-ID: <1414048685-4224-1-git-send-email-intelfx100@gmail.com>
+Subject: [PATCHv2 1/3] reiser4: block_alloc: improve error handling in reiser4_grab_reserved().
+Date: Thu, 23 Oct 2014 11:18:03 +0400
+Message-ID: <1414048685-4224-2-git-send-email-intelfx100@gmail.com>
+References: <1414048685-4224-1-git-send-email-intelfx100@gmail.com>
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20120113;
-        h=from:to:cc:subject:date:message-id;
-        bh=plO9Fym/zk9LlsDMnDbvh653u89psOZh1S15aDp/eyM=;
-        b=p4PB64M55FXihqc2Kg/9DWXpocuPNyNyU1d2oVGFoNUaCCM4TOX6Etnt42TJhwXo7P
-         GhGCZdVLqxwl/dcBS7MbJER+sTp84wgYhsXDSqCsa1zk0I5QV/9C+AQNKBZqhOcKdEsH
-         WVAx3RNIQVcUDq0FdnqXDEtjVYUGLrD2yf0L9hqeqrnZq+77WHP4DF8LWCMzRAvIc3lG
-         WxNgGg0iq+XgP8+mfhvRC8wtes32qEZeKhK24kOBS/dSIbwDJuAgr4rukd116LFMXVFY
-         Uccqn8aq9vIFhhunoVbwzmPn6Y/6ON1Z6NHykr+aNZZcfg9GCpwKx/bdZ/x5tE8fuXjK
-         188w==
+        h=from:to:cc:subject:date:message-id:in-reply-to:references;
+        bh=6u0qhjwyQVcC1kbIdWYwU+c7gw7x9vpPJ7kkSbkTsts=;
+        b=ap6pKaKHha4T1pJAqeyjNJPcpYG0Me+M905oT+Xp5jbgkglHka/M6BK05+nGqTyExQ
+         x/VVGl4hpZcYKkqu/KCCNu7u/cNcL3Cn0PtryYAjisrYdtdO28KaDlinJ6ID+eMD3zBJ
+         9CqUfVyMELNgohZRmj6WVl3fFsjCoXwZ0x4p7SsTLxd7F89cv2SWeTUAJ9WYqUZNTT0j
+         6kiYhsH45aasYp51ROLlTz6RwCwMISnAWzh1t2/etcxXNqlMzk9fgLIGsmXbh96o0A6q
+         aXfdYVVXx1riJqFRu/LIeeR+TKT0FZkqWnAKVsvI23e1Wj9IKzD719ZgbV0DzG8tvtkS
+         vNKQ==
+In-Reply-To: <1414048685-4224-1-git-send-email-intelfx100@gmail.com>
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
 MIME-Version: 1.0
@@ -21,26 +23,75 @@ Content-Transfer-Encoding: 7bit
 To: reiserfs-devel@vger.kernel.org
 Cc: Ivan Shapovalov <intelfx100@gmail.com>
 
-These are mostly equivalent transformations (aside from the first patch)
-I've done when I was experimenting with rwsems at zero-th iteration of
-batch discard support.
+In case of error in reiser4_grab_space(), return the original error code,
+not -ENOSPC unconditionally.
 
-v2: - disable grab in current context unconditionally, not only if !BA_FORCE
+Signed-off-by: Ivan Shapovalov <intelfx100@gmail.com>
+---
+ fs/reiser4/block_alloc.c | 35 +++++++++++++++++++----------------
+ 1 file changed, 19 insertions(+), 16 deletions(-)
 
-Ivan Shapovalov (3):
-  reiser4: block_alloc: improve error handling in reiser4_grab_reserved().
-  reiser4: block_alloc: sanitize grab_enabled modifications.
-  reiser4: do not mess with grab_enabled; instead, use BA_FORCE.
-
- fs/reiser4/block_alloc.c                 | 57 +++++++++++++++++---------------
- fs/reiser4/plugin/file/file.c            | 12 +++----
- fs/reiser4/plugin/file/file_conversion.c |  3 +-
- fs/reiser4/plugin/file/tail_conversion.c | 11 +++---
- fs/reiser4/plugin/item/extent_file_ops.c |  3 +-
- fs/reiser4/plugin/item/tail.c            |  3 +-
- fs/reiser4/safe_link.c                   |  4 +--
- 7 files changed, 44 insertions(+), 49 deletions(-)
-
+diff --git a/fs/reiser4/block_alloc.c b/fs/reiser4/block_alloc.c
+index 324b11c..7f9f910 100644
+--- a/fs/reiser4/block_alloc.c
++++ b/fs/reiser4/block_alloc.c
+@@ -360,37 +360,40 @@ int reiser4_grab_reserved(struct super_block *super,
+ 			  __u64 count, reiser4_ba_flags_t flags)
+ {
+ 	reiser4_super_info_data *sbinfo = get_super_private(super);
++	int ret;
+ 
+ 	assert("nikita-3175", flags & BA_CAN_COMMIT);
+ 
+ 	/* Check the delete mutex already taken by us, we assume that
+ 	 * reading of machine word is atomic. */
+ 	if (sbinfo->delete_mutex_owner == current) {
+-		if (reiser4_grab_space
+-		    (count, (flags | BA_RESERVED) & ~BA_CAN_COMMIT)) {
++		ret = reiser4_grab_space (count, (flags | BA_RESERVED) & ~BA_CAN_COMMIT);
++
++		if (ret != 0) {
+ 			warning("zam-1003",
+ 				"nested call of grab_reserved fails count=(%llu)",
+ 				(unsigned long long)count);
+ 			reiser4_release_reserved(super);
+-			return RETERR(-ENOSPC);
+ 		}
+-		return 0;
+-	}
++	} else {
++		ret = reiser4_grab_space(count, flags);
+ 
+-	if (reiser4_grab_space(count, flags)) {
+-		mutex_lock(&sbinfo->delete_mutex);
+-		assert("nikita-2929", sbinfo->delete_mutex_owner == NULL);
+-		sbinfo->delete_mutex_owner = current;
++		if (ret != 0) {
++			mutex_lock(&sbinfo->delete_mutex);
++			assert("nikita-2929", sbinfo->delete_mutex_owner == NULL);
++			sbinfo->delete_mutex_owner = current;
++			ret = reiser4_grab_space(count, flags | BA_RESERVED);
+ 
+-		if (reiser4_grab_space(count, flags | BA_RESERVED)) {
+-			warning("zam-833",
+-				"reserved space is not enough (%llu)",
+-				(unsigned long long)count);
+-			reiser4_release_reserved(super);
+-			return RETERR(-ENOSPC);
++			if (ret != 0) {
++				warning("zam-833",
++					"reserved space is not enough (%llu)",
++					(unsigned long long)count);
++				reiser4_release_reserved(super);
++			}
+ 		}
+ 	}
+-	return 0;
++
++	return ret;
+ }
+ 
+ void reiser4_release_reserved(struct super_block *super)
 -- 
 2.1.2
 
