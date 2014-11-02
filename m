@@ -1,9 +1,10 @@
 From: =?UTF-8?B?RHXFoWFuIMSMb2xpxIc=?= <dusanc@gmail.com>
 Subject: Re: Reiser4 for 3.16.2 problem: mount: mount /dev/md125 on
  /mnt/backup failed: Cannot allocate memory
-Date: Sun, 2 Nov 2014 10:55:44 +0100
-Message-ID: <CADW=+3mQysisPuriX=gPdvyARQyOmRJ=EW1zusBDdFmFPW=mXA@mail.gmail.com>
+Date: Sun, 2 Nov 2014 13:08:09 +0100
+Message-ID: <CADW=+3neHQ5RAQsVxYiPGM0ZQ7MV9cxMGAr-VmG-9RiK+nw-gQ@mail.gmail.com>
 References: <CADW=+3nWaMdFCpoKQSErTQPu7YHm=4UJEZfZFnn8wOKX9tKrKg@mail.gmail.com>
+	<CADW=+3mQysisPuriX=gPdvyARQyOmRJ=EW1zusBDdFmFPW=mXA@mail.gmail.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
@@ -11,492 +12,510 @@ DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20120113;
         h=mime-version:in-reply-to:references:date:message-id:subject:from:to
          :content-type:content-transfer-encoding;
-        bh=d72zkaFw9Ut//2NLWMbQOb4BI4nYLYfxb8jdphPDBzo=;
-        b=gygJY4qci+SB1ozCutQOry1QmepbpQc3GYoqZTUHJgw7UlhCFR5ra9paG4KXfcZGSw
-         1ozZaIPfbsKRTI44YGlJRucQSu6Y5GevXG+TyaNOn7V2Q5SALvFLdwCESii1solMC3EP
-         mKaKUnCZlgVVlSzoqU+P6S4timvi7oU6bOSxqb6c90TkeOOHhCSXbRPHRJIrsokxXYyP
-         SwTDURLhZ9DUWSHG+mbdA1BamKL6SmLMKskpN29Wvz0EcUoYthorehPYb2GIdtZpQ+cd
-         7/+uvUsGgLYRumAMaBma/lBayCiUw5TSw+3WyTqi4wK8M7PbET6ore7ES94mekVo2xH4
-         QUmA==
-In-Reply-To: <CADW=+3nWaMdFCpoKQSErTQPu7YHm=4UJEZfZFnn8wOKX9tKrKg@mail.gmail.com>
+        bh=Llms/H/pRwh/O7P91px8OuX3AYeD/jvvTfjvAa9CAT4=;
+        b=ezrZ2p3tBJIxL+Z7gedBTLy5dg7/MvpFPECg0/Dsbow4OOChbF0bpbJGGO8PJ1RqBm
+         AOhEj54LUtLARVxjl6uB1lGAH/jDJ3wlWQjcCydBWcoL1b0a+cY/DSJ91+s4OrAOhpc/
+         5PxO1UPQtZzk3NgAtupZgkh+66oLT5pYms7nvZ9xNVJBqwZunivyJg5ALqutH+cbUlHT
+         eu6Z9vLOFCfVAvoSJq+0HAtskqzYWgwbqLskRkrFC3o0nLhfstSXPiVXwbdD1/A+urYY
+         VI7wy/7dHnJIed1CdcEosCswq1xvotfDYX2e7KwcNeu4WWAHOa/C2qD4NNiHbhhx/r0A
+         ABXg==
+In-Reply-To: <CADW=+3mQysisPuriX=gPdvyARQyOmRJ=EW1zusBDdFmFPW=mXA@mail.gmail.com>
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="utf-8"
 To: reiserfs-devel <reiserfs-devel@vger.kernel.org>, Edward Shishkin <edward.shishkin@gmail.com>, Ivan Shapovalov <intelfx100@gmail.com>
 
-fsck reported no problems on partition, only it lasted pretty long for =
-60GB FS:
+Just for nothing I rebooted back to the same 3.16 kernel and remounted
+10 times /mnt/backup partition just fine without any problems.
+Dunno what happens :)
 
-krshina3 goran # fsck.reiser4 /dev/md125
-*******************************************************************
-This is an EXPERIMENTAL version of fsck.reiser4. Read README first.
-*******************************************************************
-
-=46scking the /dev/md125 block device.
-Will check the consistency of the Reiser4 SuperBlock.
-Will check the consistency of the Reiser4 FileSystem.
-Continue?
-(Yes/No): y
-***** fsck.reiser4 started at Sun Nov  2 09:47:29 2014
-Reiser4 fs was detected on /dev/md125.
-Master super block (16):
-magic:          ReIsEr4
-blksize:        4096
-format:         0x0 (format40)
-uuid:           184e9560-bdf9-42b0-896c-0af2a0c84066
-label:          <none>
-
-=46ormat super block (17):
-plugin:         format40
-description:    Disk-format plugin.
-version:        0
-magic:          ReIsEr40FoRmAt
-mkfs id:        0x2a685787
-flushes:        0
-blocks:         17091120
-free blocks:    2686399
-root block:     13259826
-tail policy:    0x2 (smart)
-next oid:       0xbbbe1d
-file count:     863269
-tree height:    5
-key policy:     LARGE
-
-
-CHECKING THE STORAGE TREE
-        Read nodes 10040995
-        Nodes left in the tree 10040995
-                Leaves of them 9923653, Twigs of them 115902
-        Time interval: Sun Nov  2 09:47:33 2014 - Sun Nov  2 09:58:30 2=
-014
-CHECKING EXTENT REGIONS.
-        Read twigs 115902
-        Time interval: Sun Nov  2 09:58:30 2014 - Sun Nov  2 10:05:43 2=
-014
-CHECKING THE SEMANTIC TREE
-        Found 2579213 objects (some could be encountered more then
-once).
-        Time interval: Sun Nov  2 10:05:43 2014 - Sun Nov  2 10:53:42 2=
-014
-***** fsck.reiser4 finished at Sun Nov  2 10:53:42 2014
-Closing fs...done
-
-=46S is consistent.
-
-On Sun, Nov 2, 2014 at 9:38 AM, Du=C5=A1an =C4=8Coli=C4=87 <dusanc@gmai=
-l.com> wrote:
-> When I try to mount a cc reiser4 partition (reiser4-for-3.16.2.patch)
-> I get: mount: mount /dev/md125 on /mnt/backup failed: Cannot allocate
-> memory
-> Uptime is almost 7 days and mounting of this partition worked every
-> day untill last night (I get automated messages on mail when somethin=
-g
-> goes wrong).
+On Sun, Nov 2, 2014 at 10:55 AM, Du=C5=A1an =C4=8Coli=C4=87 <dusanc@gma=
+il.com> wrote:
+> fsck reported no problems on partition, only it lasted pretty long fo=
+r 60GB FS:
 >
-> Now I tried on kernel 3.10 and everything works OK
+> krshina3 goran # fsck.reiser4 /dev/md125
+> *******************************************************************
+> This is an EXPERIMENTAL version of fsck.reiser4. Read README first.
+> *******************************************************************
 >
-> krshina3 goran # uname -a
-> Linux krshina3 3.10.6-gentoo #2 SMP Wed Aug 14 17:33:45 CEST 2013
-> x86_64 Intel(R) Core(TM) i3-3220 CPU @ 3.30GHz GenuineIntel GNU/Linux
+> Fscking the /dev/md125 block device.
+> Will check the consistency of the Reiser4 SuperBlock.
+> Will check the consistency of the Reiser4 FileSystem.
+> Continue?
+> (Yes/No): y
+> ***** fsck.reiser4 started at Sun Nov  2 09:47:29 2014
+> Reiser4 fs was detected on /dev/md125.
+> Master super block (16):
+> magic:          ReIsEr4
+> blksize:        4096
+> format:         0x0 (format40)
+> uuid:           184e9560-bdf9-42b0-896c-0af2a0c84066
+> label:          <none>
 >
-> krshina3 goran# free -m
->              total       used       free     shared    buffers     ca=
-ched
-> Mem:          7681       6794        887         30          0       =
-2933
-> -/+ buffers/cache:       3860       3821
-> Swap:          580        325        254
->
-> krshina3 goran# cat /etc/fstab | grep -v "#"
->
-> /dev/sda1               /boot           ext2            noauto,noatim=
-e  1 2
-> /dev/md123              none            swap            sw           =
-   0 0
-> /dev/sda2               /               reiser4
-> noatime,onerror=3Dremount-ro              0 0
-> /dev/md125              /mnt/backup     reiser4
-> noatime,noauto,onerror=3Dremount-ro       0 0
-> /dev/md126              /mnt/media      reiser4
-> noatime,users,onerror=3Dremount-ro        0 0
-> /dev/md127              /usr/portage    reiser4
-> noatime,onerror=3Dremount-ro              0 0
-> shm                     /dev/shm        tmpfs
-> nodev,nosuid,noexec     0 0
+> Format super block (17):
+> plugin:         format40
+> description:    Disk-format plugin.
+> version:        0
+> magic:          ReIsEr40FoRmAt
+> mkfs id:        0x2a685787
+> flushes:        0
+> blocks:         17091120
+> free blocks:    2686399
+> root block:     13259826
+> tail policy:    0x2 (smart)
+> next oid:       0xbbbe1d
+> file count:     863269
+> tree height:    5
+> key policy:     LARGE
 >
 >
-> krshina3 goran # df
-> Filesystem     1K-blocks      Used Available Use% Mounted on
-> /dev/sda2       37017728  24870384  12147344  68% /
-> tmpfs             786872       832    786040   1% /run
-> udev               10240         0     10240   0% /dev
-> shm              3934340        80   3934260   1% /dev/shm
-> /dev/md126     383034100 298007740  85026360  78% /mnt/media
-> /dev/md127       6113484   5427288    686196  89% /usr/portage
-> /dev/md125      64959612  57618884   7340728  89% /mnt/backup
+> CHECKING THE STORAGE TREE
+>         Read nodes 10040995
+>         Nodes left in the tree 10040995
+>                 Leaves of them 9923653, Twigs of them 115902
+>         Time interval: Sun Nov  2 09:47:33 2014 - Sun Nov  2 09:58:30=
+ 2014
+> CHECKING EXTENT REGIONS.
+>         Read twigs 115902
+>         Time interval: Sun Nov  2 09:58:30 2014 - Sun Nov  2 10:05:43=
+ 2014
+> CHECKING THE SEMANTIC TREE
+>         Found 2579213 objects (some could be encountered more then
+> once).
+>         Time interval: Sun Nov  2 10:05:43 2014 - Sun Nov  2 10:53:42=
+ 2014
+> ***** fsck.reiser4 finished at Sun Nov  2 10:53:42 2014
+> Closing fs...done
 >
-> I get these in logs:
+> FS is consistent.
 >
-> Nov  2 03:30:01 krshina3 kernel: [562035.221513] reiser4: md125: foun=
-d
-> disk format 4.0.0.
-> Nov  2 03:30:01 krshina3 kernel: [562035.221749] mount: page
-> allocation failure: order:4, mode:0x2040d0
-> Nov  2 03:30:01 krshina3 kernel: [562035.221752] CPU: 0 PID: 517 Comm=
-:
-> mount Not tainted 3.16.5-gentoo #1
-> Nov  2 03:30:01 krshina3 kernel: [562035.221753] Hardware name:
-> Gigabyte Technology Co., Ltd. To be filled by O.E.M./B75-D3V, BIOS F5
-> 07/04/2012
-> Nov  2 03:30:01 krshina3 kernel: [562035.221754]  0000000000000000
-> ffff88020ece7968 ffffffff816a31b4 0000000000000007
-> Nov  2 03:30:01 krshina3 kernel: [562035.221757]  00000000002040d0
-> ffff88020ece79f8 ffffffff810e609a ffffffff00000040
-> Nov  2 03:30:01 krshina3 kernel: [562035.221758]  0000000000000286
-> ffffffff819a8a78 fffffff00000000f ffff88020ece79c8
-> Nov  2 03:30:01 krshina3 kernel: [562035.221760] Call Trace:
-> Nov  2 03:30:01 krshina3 kernel: [562035.221765]  [<ffffffff816a31b4>=
-]
-> dump_stack+0x46/0x58
-> Nov  2 03:30:01 krshina3 kernel: [562035.221768]  [<ffffffff810e609a>=
-]
-> warn_alloc_failed+0xda/0x130
-> Nov  2 03:30:01 krshina3 kernel: [562035.221770]  [<ffffffff810e86c9>=
-]
-> __alloc_pages_nodemask+0x5d9/0x7a0
-> Nov  2 03:30:01 krshina3 kernel: [562035.221774]  [<ffffffff8111f16a>=
-]
-> cache_alloc_refill+0x31a/0x550
-> Nov  2 03:30:01 krshina3 kernel: [562035.221776]  [<ffffffff8111ee23>=
-]
-> kmem_cache_alloc+0xb3/0xe0
-> Nov  2 03:30:01 krshina3 kernel: [562035.221778]  [<ffffffff81186529>=
-]
-> znodes_tree_init+0xc9/0x120
-> Nov  2 03:30:01 krshina3 kernel: [562035.221781]  [<ffffffff8118e7b4>=
-]
-> reiser4_init_tree+0x44/0xd0
-> Nov  2 03:30:01 krshina3 kernel: [562035.221784]  [<ffffffff811cb905>=
-]
-> init_format_format40+0x265/0x5b0
-> Nov  2 03:30:01 krshina3 kernel: [562035.221787]  [<ffffffff8119e8b1>=
-]
-> fill_super+0x101/0x200
-> Nov  2 03:30:01 krshina3 kernel: [562035.221789]  [<ffffffff81126be4>=
-]
-> mount_bdev+0x194/0x1d0
-> Nov  2 03:30:01 krshina3 kernel: [562035.221792]  [<ffffffff8119e7b0>=
-]
-> ? reiser4_mount+0x20/0x20
-> Nov  2 03:30:01 krshina3 kernel: [562035.221794]  [<ffffffff8119e7a0>=
-]
-> reiser4_mount+0x10/0x20
-> Nov  2 03:30:01 krshina3 kernel: [562035.221796]  [<ffffffff81126e2b>=
-]
-> mount_fs+0x1b/0xd0
-> Nov  2 03:30:01 krshina3 kernel: [562035.221799]  [<ffffffff8114042f>=
-]
-> vfs_kern_mount+0x6f/0x130
-> Nov  2 03:30:01 krshina3 kernel: [562035.221801]  [<ffffffff81141f68>=
-]
-> do_mount+0x218/0xab0
-> Nov  2 03:30:01 krshina3 kernel: [562035.221803]  [<ffffffff810e88a2>=
-]
-> ? __get_free_pages+0x12/0x60
-> Nov  2 03:30:01 krshina3 kernel: [562035.221805]  [<ffffffff81141bf5>=
-]
-> ? copy_mount_options+0x35/0x150
-> Nov  2 03:30:01 krshina3 kernel: [562035.221808]  [<ffffffff81142ad9>=
-]
-> SyS_mount+0x89/0xd0
-> Nov  2 03:30:01 krshina3 kernel: [562035.221811]  [<ffffffff816ab1d2>=
-]
-> system_call_fastpath+0x16/0x1b
-> Nov  2 03:30:01 krshina3 kernel: [562035.221812] Mem-Info:
-> Nov  2 03:30:01 krshina3 kernel: [562035.221813] DMA per-cpu:
-> Nov  2 03:30:01 krshina3 kernel: [562035.221814] CPU    0: hi:    0,
-> btch:   1 usd:   0
-> Nov  2 03:30:01 krshina3 kernel: [562035.221815] CPU    1: hi:    0,
-> btch:   1 usd:   0
-> Nov  2 03:30:01 krshina3 kernel: [562035.221816] CPU    2: hi:    0,
-> btch:   1 usd:   0
-> Nov  2 03:30:01 krshina3 kernel: [562035.221817] CPU    3: hi:    0,
-> btch:   1 usd:   0
-> Nov  2 03:30:01 krshina3 kernel: [562035.221817] DMA32 per-cpu:
-> Nov  2 03:30:01 krshina3 kernel: [562035.221819] CPU    0: hi:  186,
-> btch:  31 usd:   0
-> Nov  2 03:30:01 krshina3 kernel: [562035.221819] CPU    1: hi:  186,
-> btch:  31 usd:   0
-> Nov  2 03:30:01 krshina3 kernel: [562035.221820] CPU    2: hi:  186,
-> btch:  31 usd:   0
-> Nov  2 03:30:01 krshina3 kernel: [562035.221821] CPU    3: hi:  186,
-> btch:  31 usd:   0
-> Nov  2 03:30:01 krshina3 kernel: [562035.221822] Normal per-cpu:
-> Nov  2 03:30:01 krshina3 kernel: [562035.221823] CPU    0: hi:  186,
-> btch:  31 usd:   0
-> Nov  2 03:30:01 krshina3 kernel: [562035.221824] CPU    1: hi:  186,
-> btch:  31 usd:   0
-> Nov  2 03:30:01 krshina3 kernel: [562035.221825] CPU    2: hi:  186,
-> btch:  31 usd:  56
-> Nov  2 03:30:01 krshina3 kernel: [562035.221826] CPU    3: hi:  186,
-> btch:  31 usd:   0
-> Nov  2 03:30:01 krshina3 kernel: [562035.221828] active_anon:701641
-> inactive_anon:138699 isolated_anon:0
-> Nov  2 03:30:01 krshina3 kernel: [562035.221828]  active_file:399519
-> inactive_file:396920 isolated_file:0
-> Nov  2 03:30:01 krshina3 kernel: [562035.221828]  unevictable:0
-> dirty:204 writeback:0 unstable:0
-> Nov  2 03:30:01 krshina3 kernel: [562035.221828]  free:155878
-> slab_reclaimable:126123 slab_unreclaimable:9074
-> Nov  2 03:30:01 krshina3 kernel: [562035.221828]  mapped:21535
-> shmem:5701 pagetables:10162 bounce:0
-> Nov  2 03:30:01 krshina3 kernel: [562035.221828]  free_cma:0
-> Nov  2 03:30:01 krshina3 kernel: [562035.221833] DMA free:15900kB
-> min:20kB low:24kB high:28kB active_anon:0kB inactive_anon:0kB
-> active_file:0kB inactive_file:0kB unevictable:0kB isolated(anon):0kB
-> isolated(file):0kB present:15984kB managed:15900kB mlocked:0kB
-> dirty:0kB writeback:0kB mapped:0kB shmem:0kB slab_reclaimable:0kB
-> slab_unreclaimable:0kB kernel_stack:0kB pagetables:0kB unstable:0kB
-> bounce:0kB free_cma:0kB writeback_tmp:0kB pages_scanned:0
-> all_unreclaimable? yes
-> Nov  2 03:30:01 krshina3 kernel: [562035.221834] lowmem_reserve[]: 0
-> 2950 7665 7665
-> Nov  2 03:30:01 krshina3 kernel: [562035.221839] DMA32 free:250180kB
-> min:4308kB low:5384kB high:6460kB active_anon:1026572kB
-> inactive_anon:257356kB active_file:616152kB inactive_file:612572kB
-> unevictable:0kB isolated(anon):0kB isolated(file):0kB
-> present:3098560kB managed:3022260kB mlocked:0kB dirty:4kB
-> writeback:0kB mapped:33232kB shmem:9336kB slab_reclaimable:180492kB
-> slab_unreclaimable:12176kB kernel_stack:2496kB pagetables:16872kB
-> unstable:0kB bounce:0kB free_cma:0kB writeback_tmp:0kB pages_scanned:=
-0
-> all_unreclaimable? no
-> Nov  2 03:30:01 krshina3 kernel: [562035.221840] lowmem_reserve[]: 0 =
-0 4714 4714
-> Nov  2 03:30:01 krshina3 kernel: [562035.221844] Normal free:357432kB
-> min:6884kB low:8604kB high:10324kB active_anon:1779992kB
-> inactive_anon:297440kB active_file:981924kB inactive_file:975108kB
-> unevictable:0kB isolated(anon):0kB isolated(file):0kB
-> present:4954112kB managed:4828124kB mlocked:0kB dirty:812kB
-> writeback:0kB mapped:52908kB shmem:13468kB slab_reclaimable:324000kB
-> slab_unreclaimable:24120kB kernel_stack:4160kB pagetables:23776kB
-> unstable:0kB bounce:0kB free_cma:0kB writeback_tmp:0kB
-> pages_scanned:24 all_unreclaimable? no
-> Nov  2 03:30:01 krshina3 kernel: [562035.221845] lowmem_reserve[]: 0 =
-0 0 0
-> Nov  2 03:30:01 krshina3 kernel: [562035.221847] DMA: 1*4kB (U) 1*8kB
-> (U) 1*16kB (U) 0*32kB 2*64kB (U) 1*128kB (U) 1*256kB (U) 0*512kB
-> 1*1024kB (U) 1*2048kB (R) 3*4096kB (M) =3D 15900kB
-> Nov  2 03:30:01 krshina3 kernel: [562035.221855] DMA32: 52520*4kB
-> (UEM) 5030*8kB (UE) 3*16kB (UR) 0*32kB 1*64kB (R) 0*128kB 0*256kB
-> 0*512kB 0*1024kB 0*2048kB 0*4096kB =3D 250432kB
-> Nov  2 03:30:01 krshina3 kernel: [562035.221861] Normal: 62961*4kB
-> (UEM) 11874*8kB (UEM) 640*16kB (UEMR) 17*32kB (UEMR) 1*64kB (E)
-> 0*128kB 0*256kB 0*512kB 0*1024kB 0*2048kB 0*4096kB =3D 357684kB
-> Nov  2 03:30:01 krshina3 kernel: [562035.221867] Node 0
-> hugepages_total=3D0 hugepages_free=3D0 hugepages_surp=3D0
-> hugepages_size=3D2048kB
-> Nov  2 03:30:01 krshina3 kernel: [562035.221868] 804788 total pagecac=
-he pages
-> Nov  2 03:30:01 krshina3 kernel: [562035.221869] 2600 pages in swap c=
-ache
-> Nov  2 03:30:01 krshina3 kernel: [562035.221870] Swap cache stats: ad=
-d
-> 91111, delete 88511, find 38599/41340
-> Nov  2 03:30:01 krshina3 kernel: [562035.221871] Free swap  =3D 27702=
-8kB
-> Nov  2 03:30:01 krshina3 kernel: [562035.221872] Total swap =3D 59430=
-0kB
-> Nov  2 03:30:01 krshina3 kernel: [562035.221873] 2017164 pages RAM
-> Nov  2 03:30:01 krshina3 kernel: [562035.221873] 0 pages HighMem/Mova=
-bleOnly
-> Nov  2 03:30:01 krshina3 kernel: [562035.221874] 31497 pages reserved
->
->
->
->
-> Nov  2 09:13:48 krshina3 kernel: [582660.900521] reiser4: md125: foun=
-d
-> disk format 4.0.0.
-> Nov  2 09:13:48 krshina3 kernel: [582660.900907] mount: page
-> allocation failure: order:4, mode:0x2040d0
-> Nov  2 09:13:48 krshina3 kernel: [582660.900910] CPU: 1 PID: 1414
-> Comm: mount Not tainted 3.16.5-gentoo #1
-> Nov  2 09:13:48 krshina3 kernel: [582660.900912] Hardware name:
-> Gigabyte Technology Co., Ltd. To be filled by O.E.M./B75-D3V, BIOS F5
-> 07/04/2012
-> Nov  2 09:13:48 krshina3 kernel: [582660.900914]  0000000000000000
-> ffff880148093968 ffffffff816a31b4 0000000000000007
-> Nov  2 09:13:48 krshina3 kernel: [582660.900917]  00000000002040d0
-> ffff8801480939f8 ffffffff810e609a ffffffff00000040
-> Nov  2 09:13:48 krshina3 kernel: [582660.900919]  0000000000000286
-> ffffffff819a8a78 fffffff00000000f ffff8801480939c8
-> Nov  2 09:13:48 krshina3 kernel: [582660.900922] Call Trace:
-> Nov  2 09:13:48 krshina3 kernel: [582660.900929]  [<ffffffff816a31b4>=
-]
-> dump_stack+0x46/0x58
-> Nov  2 09:13:48 krshina3 kernel: [582660.900933]  [<ffffffff810e609a>=
-]
-> warn_alloc_failed+0xda/0x130
-> Nov  2 09:13:48 krshina3 kernel: [582660.900937]  [<ffffffff810e86c9>=
-]
-> __alloc_pages_nodemask+0x5d9/0x7a0
-> Nov  2 09:13:48 krshina3 kernel: [582660.900941]  [<ffffffff8111f16a>=
-]
-> cache_alloc_refill+0x31a/0x550
-> Nov  2 09:13:48 krshina3 kernel: [582660.900945]  [<ffffffff8111ee23>=
-]
-> kmem_cache_alloc+0xb3/0xe0
-> Nov  2 09:13:48 krshina3 kernel: [582660.900948]  [<ffffffff81186529>=
-]
-> znodes_tree_init+0xc9/0x120
-> Nov  2 09:13:48 krshina3 kernel: [582660.900951]  [<ffffffff8118e7b4>=
-]
-> reiser4_init_tree+0x44/0xd0
-> Nov  2 09:13:48 krshina3 kernel: [582660.900955]  [<ffffffff811cb905>=
-]
-> init_format_format40+0x265/0x5b0
-> Nov  2 09:13:48 krshina3 kernel: [582660.900959]  [<ffffffff8119e8b1>=
-]
-> fill_super+0x101/0x200
-> Nov  2 09:13:48 krshina3 kernel: [582660.900963]  [<ffffffff81126be4>=
-]
-> mount_bdev+0x194/0x1d0
-> Nov  2 09:13:48 krshina3 kernel: [582660.900966]  [<ffffffff8119e7b0>=
-]
-> ? reiser4_mount+0x20/0x20
-> Nov  2 09:13:48 krshina3 kernel: [582660.900969]  [<ffffffff8119e7a0>=
-]
-> reiser4_mount+0x10/0x20
-> Nov  2 09:13:48 krshina3 kernel: [582660.900972]  [<ffffffff81126e2b>=
-]
-> mount_fs+0x1b/0xd0
-> Nov  2 09:13:48 krshina3 kernel: [582660.900976]  [<ffffffff8114042f>=
-]
-> vfs_kern_mount+0x6f/0x130
-> Nov  2 09:13:48 krshina3 kernel: [582660.900979]  [<ffffffff81141f68>=
-]
-> do_mount+0x218/0xab0
-> Nov  2 09:13:48 krshina3 kernel: [582660.900982]  [<ffffffff810e88a2>=
-]
-> ? __get_free_pages+0x12/0x60
-> Nov  2 09:13:48 krshina3 kernel: [582660.900986]  [<ffffffff81141bf5>=
-]
-> ? copy_mount_options+0x35/0x150
-> Nov  2 09:13:48 krshina3 kernel: [582660.900989]  [<ffffffff81142ad9>=
-]
-> SyS_mount+0x89/0xd0
-> Nov  2 09:13:48 krshina3 kernel: [582660.900993]  [<ffffffff816ab1d2>=
-]
-> system_call_fastpath+0x16/0x1b
-> Nov  2 09:13:48 krshina3 kernel: [582660.900994] Mem-Info:
-> Nov  2 09:13:48 krshina3 kernel: [582660.900996] DMA per-cpu:
-> Nov  2 09:13:48 krshina3 kernel: [582660.900997] CPU    0: hi:    0,
-> btch:   1 usd:   0
-> Nov  2 09:13:48 krshina3 kernel: [582660.900999] CPU    1: hi:    0,
-> btch:   1 usd:   0
-> Nov  2 09:13:48 krshina3 kernel: [582660.901000] CPU    2: hi:    0,
-> btch:   1 usd:   0
-> Nov  2 09:13:48 krshina3 kernel: [582660.901001] CPU    3: hi:    0,
-> btch:   1 usd:   0
-> Nov  2 09:13:48 krshina3 kernel: [582660.901002] DMA32 per-cpu:
-> Nov  2 09:13:48 krshina3 kernel: [582660.901004] CPU    0: hi:  186,
-> btch:  31 usd:   0
-> Nov  2 09:13:48 krshina3 kernel: [582660.901005] CPU    1: hi:  186,
-> btch:  31 usd:   0
-> Nov  2 09:13:48 krshina3 kernel: [582660.901006] CPU    2: hi:  186,
-> btch:  31 usd:   0
-> Nov  2 09:13:48 krshina3 kernel: [582660.901008] CPU    3: hi:  186,
-> btch:  31 usd:   0
-> Nov  2 09:13:48 krshina3 kernel: [582660.901009] Normal per-cpu:
-> Nov  2 09:13:48 krshina3 kernel: [582660.901010] CPU    0: hi:  186,
-> btch:  31 usd:   0
-> Nov  2 09:13:48 krshina3 kernel: [582660.901011] CPU    1: hi:  186,
-> btch:  31 usd:   0
-> Nov  2 09:13:48 krshina3 kernel: [582660.901013] CPU    2: hi:  186,
-> btch:  31 usd:  21
-> Nov  2 09:13:48 krshina3 kernel: [582660.901014] CPU    3: hi:  186,
-> btch:  31 usd:   0
-> Nov  2 09:13:48 krshina3 kernel: [582660.901017] active_anon:719713
-> inactive_anon:145280 isolated_anon:0
-> Nov  2 09:13:48 krshina3 kernel: [582660.901017]  active_file:390035
-> inactive_file:389999 isolated_file:0
-> Nov  2 09:13:48 krshina3 kernel: [582660.901017]  unevictable:0
-> dirty:1180 writeback:0 unstable:0
-> Nov  2 09:13:48 krshina3 kernel: [582660.901017]  free:161223
-> slab_reclaimable:112227 slab_unreclaimable:9155
-> Nov  2 09:13:48 krshina3 kernel: [582660.901017]  mapped:35966
-> shmem:7263 pagetables:10549 bounce:0
-> Nov  2 09:13:48 krshina3 kernel: [582660.901017]  free_cma:0
-> Nov  2 09:13:48 krshina3 kernel: [582660.901024] DMA free:15900kB
-> min:20kB low:24kB high:28kB active_anon:0kB inactive_anon:0kB
-> active_file:0kB inactive_file:0kB unevictable:0kB isolated(anon):0kB
-> isolated(file):0kB present:15984kB managed:15900kB mlocked:0kB
-> dirty:0kB writeback:0kB mapped:0kB shmem:0kB slab_reclaimable:0kB
-> slab_unreclaimable:0kB kernel_stack:0kB pagetables:0kB unstable:0kB
-> bounce:0kB free_cma:0kB writeback_tmp:0kB pages_scanned:0
-> all_unreclaimable? yes
-> Nov  2 09:13:48 krshina3 kernel: [582660.901026] lowmem_reserve[]: 0
-> 2950 7665 7665
-> Nov  2 09:13:48 krshina3 kernel: [582660.901033] DMA32 free:243456kB
-> min:4308kB low:5384kB high:6460kB active_anon:1055312kB
-> inactive_anon:268364kB active_file:605480kB inactive_file:605344kB
-> unevictable:0kB isolated(anon):0kB isolated(file):0kB
-> present:3098560kB managed:3022260kB mlocked:0kB dirty:1728kB
-> writeback:0kB mapped:55944kB shmem:11860kB slab_reclaimable:164900kB
-> slab_unreclaimable:12340kB kernel_stack:2496kB pagetables:17284kB
-> unstable:0kB bounce:0kB free_cma:0kB writeback_tmp:0kB pages_scanned:=
-0
-> all_unreclaimable? no
-> Nov  2 09:13:48 krshina3 kernel: [582660.901034] lowmem_reserve[]: 0 =
-0 4714 4714
-> Nov  2 09:13:48 krshina3 kernel: [582660.901040] Normal free:385536kB
-> min:6884kB low:8604kB high:10324kB active_anon:1823540kB
-> inactive_anon:312756kB active_file:954660kB inactive_file:954652kB
-> unevictable:0kB isolated(anon):0kB isolated(file):0kB
-> present:4954112kB managed:4828124kB mlocked:0kB dirty:2992kB
-> writeback:0kB mapped:87920kB shmem:17192kB slab_reclaimable:284008kB
-> slab_unreclaimable:24280kB kernel_stack:4368kB pagetables:24912kB
-> unstable:0kB bounce:0kB free_cma:0kB writeback_tmp:0kB
-> pages_scanned:21 all_unreclaimable? no
-> Nov  2 09:13:48 krshina3 kernel: [582660.901041] lowmem_reserve[]: 0 =
-0 0 0
-> Nov  2 09:13:48 krshina3 kernel: [582660.901044] DMA: 1*4kB (U) 1*8kB
-> (U) 1*16kB (U) 0*32kB 2*64kB (U) 1*128kB (U) 1*256kB (U) 0*512kB
-> 1*1024kB (U) 1*2048kB (R) 3*4096kB (M) =3D 15900kB
-> Nov  2 09:13:48 krshina3 kernel: [582660.901054] DMA32: 46552*4kB (UE=
+> On Sun, Nov 2, 2014 at 9:38 AM, Du=C5=A1an =C4=8Coli=C4=87 <dusanc@gm=
+ail.com> wrote:
+>> When I try to mount a cc reiser4 partition (reiser4-for-3.16.2.patch=
 )
-> 7159*8kB (U) 2*16kB (R) 0*32kB 1*64kB (R) 0*128kB 0*256kB 0*512kB
-> 0*1024kB 0*2048kB 0*4096kB =3D 243576kB
-> Nov  2 09:13:48 krshina3 kernel: [582660.901063] Normal: 40881*4kB
-> (UEM) 27461*8kB (UEM) 151*16kB (UR) 2*32kB (R) 0*64kB 0*128kB 0*256kB
-> 0*512kB 0*1024kB 0*2048kB 0*4096kB =3D 385692kB
-> Nov  2 09:13:48 krshina3 kernel: [582660.901072] Node 0
-> hugepages_total=3D0 hugepages_free=3D0 hugepages_surp=3D0
-> hugepages_size=3D2048kB
-> Nov  2 09:13:48 krshina3 kernel: [582660.901073] 789766 total pagecac=
-he pages
-> Nov  2 09:13:48 krshina3 kernel: [582660.901075] 2404 pages in swap c=
-ache
-> Nov  2 09:13:48 krshina3 kernel: [582660.901076] Swap cache stats: ad=
+>> I get: mount: mount /dev/md125 on /mnt/backup failed: Cannot allocat=
+e
+>> memory
+>> Uptime is almost 7 days and mounting of this partition worked every
+>> day untill last night (I get automated messages on mail when somethi=
+ng
+>> goes wrong).
+>>
+>> Now I tried on kernel 3.10 and everything works OK
+>>
+>> krshina3 goran # uname -a
+>> Linux krshina3 3.10.6-gentoo #2 SMP Wed Aug 14 17:33:45 CEST 2013
+>> x86_64 Intel(R) Core(TM) i3-3220 CPU @ 3.30GHz GenuineIntel GNU/Linu=
+x
+>>
+>> krshina3 goran# free -m
+>>              total       used       free     shared    buffers     c=
+ached
+>> Mem:          7681       6794        887         30          0      =
+ 2933
+>> -/+ buffers/cache:       3860       3821
+>> Swap:          580        325        254
+>>
+>> krshina3 goran# cat /etc/fstab | grep -v "#"
+>>
+>> /dev/sda1               /boot           ext2            noauto,noati=
+me  1 2
+>> /dev/md123              none            swap            sw          =
+    0 0
+>> /dev/sda2               /               reiser4
+>> noatime,onerror=3Dremount-ro              0 0
+>> /dev/md125              /mnt/backup     reiser4
+>> noatime,noauto,onerror=3Dremount-ro       0 0
+>> /dev/md126              /mnt/media      reiser4
+>> noatime,users,onerror=3Dremount-ro        0 0
+>> /dev/md127              /usr/portage    reiser4
+>> noatime,onerror=3Dremount-ro              0 0
+>> shm                     /dev/shm        tmpfs
+>> nodev,nosuid,noexec     0 0
+>>
+>>
+>> krshina3 goran # df
+>> Filesystem     1K-blocks      Used Available Use% Mounted on
+>> /dev/sda2       37017728  24870384  12147344  68% /
+>> tmpfs             786872       832    786040   1% /run
+>> udev               10240         0     10240   0% /dev
+>> shm              3934340        80   3934260   1% /dev/shm
+>> /dev/md126     383034100 298007740  85026360  78% /mnt/media
+>> /dev/md127       6113484   5427288    686196  89% /usr/portage
+>> /dev/md125      64959612  57618884   7340728  89% /mnt/backup
+>>
+>> I get these in logs:
+>>
+>> Nov  2 03:30:01 krshina3 kernel: [562035.221513] reiser4: md125: fou=
+nd
+>> disk format 4.0.0.
+>> Nov  2 03:30:01 krshina3 kernel: [562035.221749] mount: page
+>> allocation failure: order:4, mode:0x2040d0
+>> Nov  2 03:30:01 krshina3 kernel: [562035.221752] CPU: 0 PID: 517 Com=
+m:
+>> mount Not tainted 3.16.5-gentoo #1
+>> Nov  2 03:30:01 krshina3 kernel: [562035.221753] Hardware name:
+>> Gigabyte Technology Co., Ltd. To be filled by O.E.M./B75-D3V, BIOS F=
+5
+>> 07/04/2012
+>> Nov  2 03:30:01 krshina3 kernel: [562035.221754]  0000000000000000
+>> ffff88020ece7968 ffffffff816a31b4 0000000000000007
+>> Nov  2 03:30:01 krshina3 kernel: [562035.221757]  00000000002040d0
+>> ffff88020ece79f8 ffffffff810e609a ffffffff00000040
+>> Nov  2 03:30:01 krshina3 kernel: [562035.221758]  0000000000000286
+>> ffffffff819a8a78 fffffff00000000f ffff88020ece79c8
+>> Nov  2 03:30:01 krshina3 kernel: [562035.221760] Call Trace:
+>> Nov  2 03:30:01 krshina3 kernel: [562035.221765]  [<ffffffff816a31b4=
+>]
+>> dump_stack+0x46/0x58
+>> Nov  2 03:30:01 krshina3 kernel: [562035.221768]  [<ffffffff810e609a=
+>]
+>> warn_alloc_failed+0xda/0x130
+>> Nov  2 03:30:01 krshina3 kernel: [562035.221770]  [<ffffffff810e86c9=
+>]
+>> __alloc_pages_nodemask+0x5d9/0x7a0
+>> Nov  2 03:30:01 krshina3 kernel: [562035.221774]  [<ffffffff8111f16a=
+>]
+>> cache_alloc_refill+0x31a/0x550
+>> Nov  2 03:30:01 krshina3 kernel: [562035.221776]  [<ffffffff8111ee23=
+>]
+>> kmem_cache_alloc+0xb3/0xe0
+>> Nov  2 03:30:01 krshina3 kernel: [562035.221778]  [<ffffffff81186529=
+>]
+>> znodes_tree_init+0xc9/0x120
+>> Nov  2 03:30:01 krshina3 kernel: [562035.221781]  [<ffffffff8118e7b4=
+>]
+>> reiser4_init_tree+0x44/0xd0
+>> Nov  2 03:30:01 krshina3 kernel: [562035.221784]  [<ffffffff811cb905=
+>]
+>> init_format_format40+0x265/0x5b0
+>> Nov  2 03:30:01 krshina3 kernel: [562035.221787]  [<ffffffff8119e8b1=
+>]
+>> fill_super+0x101/0x200
+>> Nov  2 03:30:01 krshina3 kernel: [562035.221789]  [<ffffffff81126be4=
+>]
+>> mount_bdev+0x194/0x1d0
+>> Nov  2 03:30:01 krshina3 kernel: [562035.221792]  [<ffffffff8119e7b0=
+>]
+>> ? reiser4_mount+0x20/0x20
+>> Nov  2 03:30:01 krshina3 kernel: [562035.221794]  [<ffffffff8119e7a0=
+>]
+>> reiser4_mount+0x10/0x20
+>> Nov  2 03:30:01 krshina3 kernel: [562035.221796]  [<ffffffff81126e2b=
+>]
+>> mount_fs+0x1b/0xd0
+>> Nov  2 03:30:01 krshina3 kernel: [562035.221799]  [<ffffffff8114042f=
+>]
+>> vfs_kern_mount+0x6f/0x130
+>> Nov  2 03:30:01 krshina3 kernel: [562035.221801]  [<ffffffff81141f68=
+>]
+>> do_mount+0x218/0xab0
+>> Nov  2 03:30:01 krshina3 kernel: [562035.221803]  [<ffffffff810e88a2=
+>]
+>> ? __get_free_pages+0x12/0x60
+>> Nov  2 03:30:01 krshina3 kernel: [562035.221805]  [<ffffffff81141bf5=
+>]
+>> ? copy_mount_options+0x35/0x150
+>> Nov  2 03:30:01 krshina3 kernel: [562035.221808]  [<ffffffff81142ad9=
+>]
+>> SyS_mount+0x89/0xd0
+>> Nov  2 03:30:01 krshina3 kernel: [562035.221811]  [<ffffffff816ab1d2=
+>]
+>> system_call_fastpath+0x16/0x1b
+>> Nov  2 03:30:01 krshina3 kernel: [562035.221812] Mem-Info:
+>> Nov  2 03:30:01 krshina3 kernel: [562035.221813] DMA per-cpu:
+>> Nov  2 03:30:01 krshina3 kernel: [562035.221814] CPU    0: hi:    0,
+>> btch:   1 usd:   0
+>> Nov  2 03:30:01 krshina3 kernel: [562035.221815] CPU    1: hi:    0,
+>> btch:   1 usd:   0
+>> Nov  2 03:30:01 krshina3 kernel: [562035.221816] CPU    2: hi:    0,
+>> btch:   1 usd:   0
+>> Nov  2 03:30:01 krshina3 kernel: [562035.221817] CPU    3: hi:    0,
+>> btch:   1 usd:   0
+>> Nov  2 03:30:01 krshina3 kernel: [562035.221817] DMA32 per-cpu:
+>> Nov  2 03:30:01 krshina3 kernel: [562035.221819] CPU    0: hi:  186,
+>> btch:  31 usd:   0
+>> Nov  2 03:30:01 krshina3 kernel: [562035.221819] CPU    1: hi:  186,
+>> btch:  31 usd:   0
+>> Nov  2 03:30:01 krshina3 kernel: [562035.221820] CPU    2: hi:  186,
+>> btch:  31 usd:   0
+>> Nov  2 03:30:01 krshina3 kernel: [562035.221821] CPU    3: hi:  186,
+>> btch:  31 usd:   0
+>> Nov  2 03:30:01 krshina3 kernel: [562035.221822] Normal per-cpu:
+>> Nov  2 03:30:01 krshina3 kernel: [562035.221823] CPU    0: hi:  186,
+>> btch:  31 usd:   0
+>> Nov  2 03:30:01 krshina3 kernel: [562035.221824] CPU    1: hi:  186,
+>> btch:  31 usd:   0
+>> Nov  2 03:30:01 krshina3 kernel: [562035.221825] CPU    2: hi:  186,
+>> btch:  31 usd:  56
+>> Nov  2 03:30:01 krshina3 kernel: [562035.221826] CPU    3: hi:  186,
+>> btch:  31 usd:   0
+>> Nov  2 03:30:01 krshina3 kernel: [562035.221828] active_anon:701641
+>> inactive_anon:138699 isolated_anon:0
+>> Nov  2 03:30:01 krshina3 kernel: [562035.221828]  active_file:399519
+>> inactive_file:396920 isolated_file:0
+>> Nov  2 03:30:01 krshina3 kernel: [562035.221828]  unevictable:0
+>> dirty:204 writeback:0 unstable:0
+>> Nov  2 03:30:01 krshina3 kernel: [562035.221828]  free:155878
+>> slab_reclaimable:126123 slab_unreclaimable:9074
+>> Nov  2 03:30:01 krshina3 kernel: [562035.221828]  mapped:21535
+>> shmem:5701 pagetables:10162 bounce:0
+>> Nov  2 03:30:01 krshina3 kernel: [562035.221828]  free_cma:0
+>> Nov  2 03:30:01 krshina3 kernel: [562035.221833] DMA free:15900kB
+>> min:20kB low:24kB high:28kB active_anon:0kB inactive_anon:0kB
+>> active_file:0kB inactive_file:0kB unevictable:0kB isolated(anon):0kB
+>> isolated(file):0kB present:15984kB managed:15900kB mlocked:0kB
+>> dirty:0kB writeback:0kB mapped:0kB shmem:0kB slab_reclaimable:0kB
+>> slab_unreclaimable:0kB kernel_stack:0kB pagetables:0kB unstable:0kB
+>> bounce:0kB free_cma:0kB writeback_tmp:0kB pages_scanned:0
+>> all_unreclaimable? yes
+>> Nov  2 03:30:01 krshina3 kernel: [562035.221834] lowmem_reserve[]: 0
+>> 2950 7665 7665
+>> Nov  2 03:30:01 krshina3 kernel: [562035.221839] DMA32 free:250180kB
+>> min:4308kB low:5384kB high:6460kB active_anon:1026572kB
+>> inactive_anon:257356kB active_file:616152kB inactive_file:612572kB
+>> unevictable:0kB isolated(anon):0kB isolated(file):0kB
+>> present:3098560kB managed:3022260kB mlocked:0kB dirty:4kB
+>> writeback:0kB mapped:33232kB shmem:9336kB slab_reclaimable:180492kB
+>> slab_unreclaimable:12176kB kernel_stack:2496kB pagetables:16872kB
+>> unstable:0kB bounce:0kB free_cma:0kB writeback_tmp:0kB pages_scanned=
+:0
+>> all_unreclaimable? no
+>> Nov  2 03:30:01 krshina3 kernel: [562035.221840] lowmem_reserve[]: 0=
+ 0 4714 4714
+>> Nov  2 03:30:01 krshina3 kernel: [562035.221844] Normal free:357432k=
+B
+>> min:6884kB low:8604kB high:10324kB active_anon:1779992kB
+>> inactive_anon:297440kB active_file:981924kB inactive_file:975108kB
+>> unevictable:0kB isolated(anon):0kB isolated(file):0kB
+>> present:4954112kB managed:4828124kB mlocked:0kB dirty:812kB
+>> writeback:0kB mapped:52908kB shmem:13468kB slab_reclaimable:324000kB
+>> slab_unreclaimable:24120kB kernel_stack:4160kB pagetables:23776kB
+>> unstable:0kB bounce:0kB free_cma:0kB writeback_tmp:0kB
+>> pages_scanned:24 all_unreclaimable? no
+>> Nov  2 03:30:01 krshina3 kernel: [562035.221845] lowmem_reserve[]: 0=
+ 0 0 0
+>> Nov  2 03:30:01 krshina3 kernel: [562035.221847] DMA: 1*4kB (U) 1*8k=
+B
+>> (U) 1*16kB (U) 0*32kB 2*64kB (U) 1*128kB (U) 1*256kB (U) 0*512kB
+>> 1*1024kB (U) 1*2048kB (R) 3*4096kB (M) =3D 15900kB
+>> Nov  2 03:30:01 krshina3 kernel: [562035.221855] DMA32: 52520*4kB
+>> (UEM) 5030*8kB (UE) 3*16kB (UR) 0*32kB 1*64kB (R) 0*128kB 0*256kB
+>> 0*512kB 0*1024kB 0*2048kB 0*4096kB =3D 250432kB
+>> Nov  2 03:30:01 krshina3 kernel: [562035.221861] Normal: 62961*4kB
+>> (UEM) 11874*8kB (UEM) 640*16kB (UEMR) 17*32kB (UEMR) 1*64kB (E)
+>> 0*128kB 0*256kB 0*512kB 0*1024kB 0*2048kB 0*4096kB =3D 357684kB
+>> Nov  2 03:30:01 krshina3 kernel: [562035.221867] Node 0
+>> hugepages_total=3D0 hugepages_free=3D0 hugepages_surp=3D0
+>> hugepages_size=3D2048kB
+>> Nov  2 03:30:01 krshina3 kernel: [562035.221868] 804788 total pageca=
+che pages
+>> Nov  2 03:30:01 krshina3 kernel: [562035.221869] 2600 pages in swap =
+cache
+>> Nov  2 03:30:01 krshina3 kernel: [562035.221870] Swap cache stats: a=
+dd
+>> 91111, delete 88511, find 38599/41340
+>> Nov  2 03:30:01 krshina3 kernel: [562035.221871] Free swap  =3D 2770=
+28kB
+>> Nov  2 03:30:01 krshina3 kernel: [562035.221872] Total swap =3D 5943=
+00kB
+>> Nov  2 03:30:01 krshina3 kernel: [562035.221873] 2017164 pages RAM
+>> Nov  2 03:30:01 krshina3 kernel: [562035.221873] 0 pages HighMem/Mov=
+ableOnly
+>> Nov  2 03:30:01 krshina3 kernel: [562035.221874] 31497 pages reserve=
 d
-> 94924, delete 92520, find 40323/43073
-> Nov  2 09:13:48 krshina3 kernel: [582660.901077] Free swap  =3D 26188=
-8kB
-> Nov  2 09:13:48 krshina3 kernel: [582660.901078] Total swap =3D 59430=
-0kB
-> Nov  2 09:13:48 krshina3 kernel: [582660.901079] 2017164 pages RAM
-> Nov  2 09:13:48 krshina3 kernel: [582660.901080] 0 pages HighMem/Mova=
-bleOnly
-> Nov  2 09:13:48 krshina3 kernel: [582660.901081] 31497 pages reserved
->
->
-> Now I'm gonna fsck all partitions and report if anything comes up.
->
-> Ask if you need more info
->
-> Thanks in advance
-> Dushan
+>>
+>>
+>>
+>>
+>> Nov  2 09:13:48 krshina3 kernel: [582660.900521] reiser4: md125: fou=
+nd
+>> disk format 4.0.0.
+>> Nov  2 09:13:48 krshina3 kernel: [582660.900907] mount: page
+>> allocation failure: order:4, mode:0x2040d0
+>> Nov  2 09:13:48 krshina3 kernel: [582660.900910] CPU: 1 PID: 1414
+>> Comm: mount Not tainted 3.16.5-gentoo #1
+>> Nov  2 09:13:48 krshina3 kernel: [582660.900912] Hardware name:
+>> Gigabyte Technology Co., Ltd. To be filled by O.E.M./B75-D3V, BIOS F=
+5
+>> 07/04/2012
+>> Nov  2 09:13:48 krshina3 kernel: [582660.900914]  0000000000000000
+>> ffff880148093968 ffffffff816a31b4 0000000000000007
+>> Nov  2 09:13:48 krshina3 kernel: [582660.900917]  00000000002040d0
+>> ffff8801480939f8 ffffffff810e609a ffffffff00000040
+>> Nov  2 09:13:48 krshina3 kernel: [582660.900919]  0000000000000286
+>> ffffffff819a8a78 fffffff00000000f ffff8801480939c8
+>> Nov  2 09:13:48 krshina3 kernel: [582660.900922] Call Trace:
+>> Nov  2 09:13:48 krshina3 kernel: [582660.900929]  [<ffffffff816a31b4=
+>]
+>> dump_stack+0x46/0x58
+>> Nov  2 09:13:48 krshina3 kernel: [582660.900933]  [<ffffffff810e609a=
+>]
+>> warn_alloc_failed+0xda/0x130
+>> Nov  2 09:13:48 krshina3 kernel: [582660.900937]  [<ffffffff810e86c9=
+>]
+>> __alloc_pages_nodemask+0x5d9/0x7a0
+>> Nov  2 09:13:48 krshina3 kernel: [582660.900941]  [<ffffffff8111f16a=
+>]
+>> cache_alloc_refill+0x31a/0x550
+>> Nov  2 09:13:48 krshina3 kernel: [582660.900945]  [<ffffffff8111ee23=
+>]
+>> kmem_cache_alloc+0xb3/0xe0
+>> Nov  2 09:13:48 krshina3 kernel: [582660.900948]  [<ffffffff81186529=
+>]
+>> znodes_tree_init+0xc9/0x120
+>> Nov  2 09:13:48 krshina3 kernel: [582660.900951]  [<ffffffff8118e7b4=
+>]
+>> reiser4_init_tree+0x44/0xd0
+>> Nov  2 09:13:48 krshina3 kernel: [582660.900955]  [<ffffffff811cb905=
+>]
+>> init_format_format40+0x265/0x5b0
+>> Nov  2 09:13:48 krshina3 kernel: [582660.900959]  [<ffffffff8119e8b1=
+>]
+>> fill_super+0x101/0x200
+>> Nov  2 09:13:48 krshina3 kernel: [582660.900963]  [<ffffffff81126be4=
+>]
+>> mount_bdev+0x194/0x1d0
+>> Nov  2 09:13:48 krshina3 kernel: [582660.900966]  [<ffffffff8119e7b0=
+>]
+>> ? reiser4_mount+0x20/0x20
+>> Nov  2 09:13:48 krshina3 kernel: [582660.900969]  [<ffffffff8119e7a0=
+>]
+>> reiser4_mount+0x10/0x20
+>> Nov  2 09:13:48 krshina3 kernel: [582660.900972]  [<ffffffff81126e2b=
+>]
+>> mount_fs+0x1b/0xd0
+>> Nov  2 09:13:48 krshina3 kernel: [582660.900976]  [<ffffffff8114042f=
+>]
+>> vfs_kern_mount+0x6f/0x130
+>> Nov  2 09:13:48 krshina3 kernel: [582660.900979]  [<ffffffff81141f68=
+>]
+>> do_mount+0x218/0xab0
+>> Nov  2 09:13:48 krshina3 kernel: [582660.900982]  [<ffffffff810e88a2=
+>]
+>> ? __get_free_pages+0x12/0x60
+>> Nov  2 09:13:48 krshina3 kernel: [582660.900986]  [<ffffffff81141bf5=
+>]
+>> ? copy_mount_options+0x35/0x150
+>> Nov  2 09:13:48 krshina3 kernel: [582660.900989]  [<ffffffff81142ad9=
+>]
+>> SyS_mount+0x89/0xd0
+>> Nov  2 09:13:48 krshina3 kernel: [582660.900993]  [<ffffffff816ab1d2=
+>]
+>> system_call_fastpath+0x16/0x1b
+>> Nov  2 09:13:48 krshina3 kernel: [582660.900994] Mem-Info:
+>> Nov  2 09:13:48 krshina3 kernel: [582660.900996] DMA per-cpu:
+>> Nov  2 09:13:48 krshina3 kernel: [582660.900997] CPU    0: hi:    0,
+>> btch:   1 usd:   0
+>> Nov  2 09:13:48 krshina3 kernel: [582660.900999] CPU    1: hi:    0,
+>> btch:   1 usd:   0
+>> Nov  2 09:13:48 krshina3 kernel: [582660.901000] CPU    2: hi:    0,
+>> btch:   1 usd:   0
+>> Nov  2 09:13:48 krshina3 kernel: [582660.901001] CPU    3: hi:    0,
+>> btch:   1 usd:   0
+>> Nov  2 09:13:48 krshina3 kernel: [582660.901002] DMA32 per-cpu:
+>> Nov  2 09:13:48 krshina3 kernel: [582660.901004] CPU    0: hi:  186,
+>> btch:  31 usd:   0
+>> Nov  2 09:13:48 krshina3 kernel: [582660.901005] CPU    1: hi:  186,
+>> btch:  31 usd:   0
+>> Nov  2 09:13:48 krshina3 kernel: [582660.901006] CPU    2: hi:  186,
+>> btch:  31 usd:   0
+>> Nov  2 09:13:48 krshina3 kernel: [582660.901008] CPU    3: hi:  186,
+>> btch:  31 usd:   0
+>> Nov  2 09:13:48 krshina3 kernel: [582660.901009] Normal per-cpu:
+>> Nov  2 09:13:48 krshina3 kernel: [582660.901010] CPU    0: hi:  186,
+>> btch:  31 usd:   0
+>> Nov  2 09:13:48 krshina3 kernel: [582660.901011] CPU    1: hi:  186,
+>> btch:  31 usd:   0
+>> Nov  2 09:13:48 krshina3 kernel: [582660.901013] CPU    2: hi:  186,
+>> btch:  31 usd:  21
+>> Nov  2 09:13:48 krshina3 kernel: [582660.901014] CPU    3: hi:  186,
+>> btch:  31 usd:   0
+>> Nov  2 09:13:48 krshina3 kernel: [582660.901017] active_anon:719713
+>> inactive_anon:145280 isolated_anon:0
+>> Nov  2 09:13:48 krshina3 kernel: [582660.901017]  active_file:390035
+>> inactive_file:389999 isolated_file:0
+>> Nov  2 09:13:48 krshina3 kernel: [582660.901017]  unevictable:0
+>> dirty:1180 writeback:0 unstable:0
+>> Nov  2 09:13:48 krshina3 kernel: [582660.901017]  free:161223
+>> slab_reclaimable:112227 slab_unreclaimable:9155
+>> Nov  2 09:13:48 krshina3 kernel: [582660.901017]  mapped:35966
+>> shmem:7263 pagetables:10549 bounce:0
+>> Nov  2 09:13:48 krshina3 kernel: [582660.901017]  free_cma:0
+>> Nov  2 09:13:48 krshina3 kernel: [582660.901024] DMA free:15900kB
+>> min:20kB low:24kB high:28kB active_anon:0kB inactive_anon:0kB
+>> active_file:0kB inactive_file:0kB unevictable:0kB isolated(anon):0kB
+>> isolated(file):0kB present:15984kB managed:15900kB mlocked:0kB
+>> dirty:0kB writeback:0kB mapped:0kB shmem:0kB slab_reclaimable:0kB
+>> slab_unreclaimable:0kB kernel_stack:0kB pagetables:0kB unstable:0kB
+>> bounce:0kB free_cma:0kB writeback_tmp:0kB pages_scanned:0
+>> all_unreclaimable? yes
+>> Nov  2 09:13:48 krshina3 kernel: [582660.901026] lowmem_reserve[]: 0
+>> 2950 7665 7665
+>> Nov  2 09:13:48 krshina3 kernel: [582660.901033] DMA32 free:243456kB
+>> min:4308kB low:5384kB high:6460kB active_anon:1055312kB
+>> inactive_anon:268364kB active_file:605480kB inactive_file:605344kB
+>> unevictable:0kB isolated(anon):0kB isolated(file):0kB
+>> present:3098560kB managed:3022260kB mlocked:0kB dirty:1728kB
+>> writeback:0kB mapped:55944kB shmem:11860kB slab_reclaimable:164900kB
+>> slab_unreclaimable:12340kB kernel_stack:2496kB pagetables:17284kB
+>> unstable:0kB bounce:0kB free_cma:0kB writeback_tmp:0kB pages_scanned=
+:0
+>> all_unreclaimable? no
+>> Nov  2 09:13:48 krshina3 kernel: [582660.901034] lowmem_reserve[]: 0=
+ 0 4714 4714
+>> Nov  2 09:13:48 krshina3 kernel: [582660.901040] Normal free:385536k=
+B
+>> min:6884kB low:8604kB high:10324kB active_anon:1823540kB
+>> inactive_anon:312756kB active_file:954660kB inactive_file:954652kB
+>> unevictable:0kB isolated(anon):0kB isolated(file):0kB
+>> present:4954112kB managed:4828124kB mlocked:0kB dirty:2992kB
+>> writeback:0kB mapped:87920kB shmem:17192kB slab_reclaimable:284008kB
+>> slab_unreclaimable:24280kB kernel_stack:4368kB pagetables:24912kB
+>> unstable:0kB bounce:0kB free_cma:0kB writeback_tmp:0kB
+>> pages_scanned:21 all_unreclaimable? no
+>> Nov  2 09:13:48 krshina3 kernel: [582660.901041] lowmem_reserve[]: 0=
+ 0 0 0
+>> Nov  2 09:13:48 krshina3 kernel: [582660.901044] DMA: 1*4kB (U) 1*8k=
+B
+>> (U) 1*16kB (U) 0*32kB 2*64kB (U) 1*128kB (U) 1*256kB (U) 0*512kB
+>> 1*1024kB (U) 1*2048kB (R) 3*4096kB (M) =3D 15900kB
+>> Nov  2 09:13:48 krshina3 kernel: [582660.901054] DMA32: 46552*4kB (U=
+E)
+>> 7159*8kB (U) 2*16kB (R) 0*32kB 1*64kB (R) 0*128kB 0*256kB 0*512kB
+>> 0*1024kB 0*2048kB 0*4096kB =3D 243576kB
+>> Nov  2 09:13:48 krshina3 kernel: [582660.901063] Normal: 40881*4kB
+>> (UEM) 27461*8kB (UEM) 151*16kB (UR) 2*32kB (R) 0*64kB 0*128kB 0*256k=
+B
+>> 0*512kB 0*1024kB 0*2048kB 0*4096kB =3D 385692kB
+>> Nov  2 09:13:48 krshina3 kernel: [582660.901072] Node 0
+>> hugepages_total=3D0 hugepages_free=3D0 hugepages_surp=3D0
+>> hugepages_size=3D2048kB
+>> Nov  2 09:13:48 krshina3 kernel: [582660.901073] 789766 total pageca=
+che pages
+>> Nov  2 09:13:48 krshina3 kernel: [582660.901075] 2404 pages in swap =
+cache
+>> Nov  2 09:13:48 krshina3 kernel: [582660.901076] Swap cache stats: a=
+dd
+>> 94924, delete 92520, find 40323/43073
+>> Nov  2 09:13:48 krshina3 kernel: [582660.901077] Free swap  =3D 2618=
+88kB
+>> Nov  2 09:13:48 krshina3 kernel: [582660.901078] Total swap =3D 5943=
+00kB
+>> Nov  2 09:13:48 krshina3 kernel: [582660.901079] 2017164 pages RAM
+>> Nov  2 09:13:48 krshina3 kernel: [582660.901080] 0 pages HighMem/Mov=
+ableOnly
+>> Nov  2 09:13:48 krshina3 kernel: [582660.901081] 31497 pages reserve=
+d
+>>
+>>
+>> Now I'm gonna fsck all partitions and report if anything comes up.
+>>
+>> Ask if you need more info
+>>
+>> Thanks in advance
+>> Dushan
 --
 To unsubscribe from this list: send the line "unsubscribe reiserfs-deve=
 l" in
