@@ -1,44 +1,38 @@
-From: =?UTF-8?B?RHXFoWFuIMSMb2xpxIc=?= <dusanc@gmail.com>
-Subject: Re: Reiser4 for 3.16.2 problem: mount: mount /dev/md125 on
- /mnt/backup failed: Cannot allocate memory
-Date: Mon, 3 Nov 2014 14:33:31 +0100
-Message-ID: <CADW=+3n1042QZJO=Eyd1ePc1xZyS+bsYPup5s2vSk81_6JCO3g@mail.gmail.com>
-References: <CADW=+3nWaMdFCpoKQSErTQPu7YHm=4UJEZfZFnn8wOKX9tKrKg@mail.gmail.com>
-	<CADW=+3ms6zaqzpkRBEgApi=gkMNPLCzzex8ShK4CkCFD-WNk8Q@mail.gmail.com>
-	<5457629C.8040906@gmail.com>
-	<CADW=+3=XfcVJsYTitCHdAsehw61Vyk0vHqM7wLr0dQNLiP94Fw@mail.gmail.com>
-	<54576A09.6010901@gmail.com>
-	<CADW=+3k0rgockXeT_mnPFSoRr0Xm4ttRG5ZVpPjd3DqWCNL6gw@mail.gmail.com>
-	<CADW=+3nzgJaYqAav475to7W4G4q6CoRMq83y-oNOOFLdU6xdSg@mail.gmail.com>
+From: Edward Shishkin <edward.shishkin@gmail.com>
+Subject: Re: Reiser4 for 3.16.2 problem: mount: mount /dev/md125 on /mnt/backup
+ failed: Cannot allocate memory
+Date: Mon, 03 Nov 2014 14:36:33 +0100
+Message-ID: <545784E1.6000708@gmail.com>
+References: <CADW=+3nWaMdFCpoKQSErTQPu7YHm=4UJEZfZFnn8wOKX9tKrKg@mail.gmail.com> <CADW=+3ms6zaqzpkRBEgApi=gkMNPLCzzex8ShK4CkCFD-WNk8Q@mail.gmail.com> <5457629C.8040906@gmail.com> <CADW=+3=XfcVJsYTitCHdAsehw61Vyk0vHqM7wLr0dQNLiP94Fw@mail.gmail.com> <54576A09.6010901@gmail.com> <CADW=+3k0rgockXeT_mnPFSoRr0Xm4ttRG5ZVpPjd3DqWCNL6gw@mail.gmail.com> <CADW=+3nzgJaYqAav475to7W4G4q6CoRMq83y-oNOOFLdU6xdSg@mail.gmail.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20120113;
-        h=mime-version:in-reply-to:references:date:message-id:subject:from:to
-         :cc:content-type:content-transfer-encoding;
-        bh=7PwZUo47MqkBAHrQtgjEngA9ROfx56bxOfCHsoLYIww=;
-        b=ubkekwLp4IIz3yzy79NnkDQJSURbJ3c9EbAeHeobrBJuhzzgryPRQDCY0EN5BYdmtu
-         8UwqGoA2sjlUkid8pi7BSYZ04NiqjUcaEKgZptgpI2g+NO5ky1jzUskGZwwvj/OxCEt2
-         mVBONrR0RMtk1r041xCOyvX8VRqshC9vodONo+DPo5b2/tfmTbRs3BMvrP8sNhlqh6KB
-         IXoPgy4mg1WyxVX/E+i84o62qp8SjymbA7Txd0kTC5LQRsMNkKJhazVkx7OMw608d3cS
-         ouF+/Ic0ejRlDGl1XWMaakt2lGk98ZjmXxhkg1hHzy5fK3wtkdBcp92Mg/s0gvkq+wIE
-         qoBQ==
+        h=message-id:date:from:user-agent:mime-version:to:cc:subject
+         :references:in-reply-to:content-type:content-transfer-encoding;
+        bh=X6mC7BPnDdEz8qWhPAoxaSxnGJ3G+lDZf8p8R0dkbIU=;
+        b=0OfnnFVUE3lprefBan9e/9/oXe/nRPb5KMuP6A1e6/gpukWob14/DUs5+AHa/NoZzg
+         vlQc0tcfGTxRI6gO+Mphs6j/OHBATRmHkoFQqlJQCxW6jK3x6fNo8A7/55GlIdyEXpQc
+         Zdp+Q9b8NItvygM4+nRU5GXySf1VbtGnbZcGTMAl02RN3CGgH5y4KIsluuK8bOYUyMhO
+         iXTLGi8niaUsTyXHm6ztHG5jlTV00l1fh4CcIXrVttUbVjSGAHh1cPr25YgqRvaO0gKX
+         cooR0hyTNw3sVplUBTDbTG6fz6Ws/MBc0Qg7aGBD4J/uT2aVCUI2DmcgBFC0ITR8W19t
+         IwFA==
 In-Reply-To: <CADW=+3nzgJaYqAav475to7W4G4q6CoRMq83y-oNOOFLdU6xdSg@mail.gmail.com>
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="utf-8"
-To: Edward Shishkin <edward.shishkin@gmail.com>
+Content-Type: text/plain; charset="utf-8"; format="flowed"
+To: =?UTF-8?B?RHXFoWFuIMSMb2xpxIc=?= <dusanc@gmail.com>
 Cc: reiserfs-devel <reiserfs-devel@vger.kernel.org>, Ivan Shapovalov <intelfx100@gmail.com>
 
-I forgot:
-It was working for some time (deleting old directories etc.) and then c=
-rashed.
-Btw. why didn't that partition (/dev/md125) remounted read-only on
-error when I have that in /etc/fstab?
+Sorry, Can not reproduce.
+I have create a ticket http://sourceforge.net/p/reiser4/tickets/3/
+will keep this in mind.
 
-On Mon, Nov 3, 2014 at 2:28 PM, Du=C5=A1an =C4=8Coli=C4=87 <dusanc@gmai=
-l.com> wrote:
+Thanks!
+
+
+On 11/03/2014 02:28 PM, Du=C5=A1an =C4=8Coli=C4=87 wrote:
 > After an hour or more still nothing, one rsync went to zombie other
 > still in D state
 > I killed the main process and rebooted.
@@ -183,13 +177,10 @@ f
 ail.com> wrote:
 >> On Mon, Nov 3, 2014 at 12:42 PM, Edward Shishkin
 >> <edward.shishkin@gmail.com> wrote:
->>>
 >>> On 11/03/2014 12:12 PM, Du=C5=A1an =C4=8Coli=C4=87 wrote:
->>>>
 >>>> I fscked it yesterday before crash and now I'm fsck-ing it again b=
 ut
 >>>> as you remember it lasts 1hr+ for some reason.
->>>
 >>>
 >>>
 >>> For the full 70G partition it looks normal.
@@ -275,20 +266,20 @@ ed
 >>
 >>
 >> CHECKING THE STORAGE TREE
->>         Read nodes 9972078
->>         Nodes left in the tree 9972078
->>                 Leaves of them 9855619, Twigs of them 115030
->>         Time interval: Mon Nov  3 12:13:19 2014 - Mon Nov  3 12:27:3=
-5 2014
+>>          Read nodes 9972078
+>>          Nodes left in the tree 9972078
+>>                  Leaves of them 9855619, Twigs of them 115030
+>>          Time interval: Mon Nov  3 12:13:19 2014 - Mon Nov  3 12:27:=
+35 2014
 >> CHECKING EXTENT REGIONS.
->>         Read twigs 115030
->>         Time interval: Mon Nov  3 12:27:35 2014 - Mon Nov  3 12:34:5=
-0 2014
+>>          Read twigs 115030
+>>          Time interval: Mon Nov  3 12:27:35 2014 - Mon Nov  3 12:34:=
+50 2014
 >> CHECKING THE SEMANTIC TREE
->>         Found 2571171 objects (some could be encountered more then
+>>          Found 2571171 objects (some could be encountered more then
 >> once).
->>         Time interval: Mon Nov  3 12:34:50 2014 - Mon Nov  3 12:57:1=
-6 2014
+>>          Time interval: Mon Nov  3 12:34:50 2014 - Mon Nov  3 12:57:=
+16 2014
 >> ***** fsck.reiser4 finished at Mon Nov  3 12:57:16 2014
 >> Closing fs...done
 >>
@@ -305,10 +296,8 @@ ed
 >>>
 >>>
 >>>
->>>>
 >>>> On Mon, Nov 3, 2014 at 12:10 PM, Edward Shishkin
 >>>> <edward.shishkin@gmail.com> wrote:
->>>>>
 >>>>> On 11/03/2014 11:58 AM, Du=C5=A1an =C4=8Coli=C4=87 wrote:
 >>>>>
 >>>>> Now a Bug happened to me on this same ccreg40 partition with
@@ -549,7 +538,6 @@ d2>]
 >>>>>
 >>>>> On Sun, Nov 2, 2014 at 9:38 AM, Du=C5=A1an =C4=8Coli=C4=87 <dusan=
 c@gmail.com> wrote:
->>>>>>
 >>>>>> When I try to mount a cc reiser4 partition (reiser4-for-3.16.2.p=
 atch)
 >>>>>> I get: mount: mount /dev/md125 on /mnt/backup failed: Cannot all=
@@ -570,7 +558,7 @@ ething
 Linux
 >>>>>>
 >>>>>> krshina3 goran# free -m
->>>>>>               total       used       free     shared    buffers
+>>>>>>                total       used       free     shared    buffers
 >>>>>> cached
 >>>>>> Mem:          7681       6794        887         30          0
 >>>>>> 2933
@@ -1056,8 +1044,7 @@ p.
 >>>>>> Dushan
 >>>>>
 >>>>>
->>>>>
->>>
+
 --
 To unsubscribe from this list: send the line "unsubscribe reiserfs-deve=
 l" in
