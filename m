@@ -1,74 +1,64 @@
 From: =?UTF-8?B?RHXFoWFuIMSMb2xpxIc=?= <dusanc@gmail.com>
 Subject: Re: Reiser4 for 3.16.2 problem: mount: mount /dev/md125 on
  /mnt/backup failed: Cannot allocate memory
-Date: Mon, 3 Nov 2014 12:11:33 +0100
-Message-ID: <CADW=+3mfv8h8rEWBZ5Ty2qgJOUTX9k0ohoy0hh2rmGQ6fAh2vg@mail.gmail.com>
+Date: Mon, 3 Nov 2014 12:12:42 +0100
+Message-ID: <CADW=+3=XfcVJsYTitCHdAsehw61Vyk0vHqM7wLr0dQNLiP94Fw@mail.gmail.com>
 References: <CADW=+3nWaMdFCpoKQSErTQPu7YHm=4UJEZfZFnn8wOKX9tKrKg@mail.gmail.com>
 	<CADW=+3ms6zaqzpkRBEgApi=gkMNPLCzzex8ShK4CkCFD-WNk8Q@mail.gmail.com>
+	<5457629C.8040906@gmail.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20120113;
         h=mime-version:in-reply-to:references:date:message-id:subject:from:to
-         :content-type:content-transfer-encoding;
-        bh=fbdBGsOrhbxl0bC3AEycRE/PeoF+m8kdEDoSTYlh1Nk=;
-        b=YGuRI79w4DJbxbLURW6aFNyiQyt3b4vtod3WtXy3pNYUWgPJ59z9hVOONjJo95OWlv
-         H5qBO2qjPXRM8BnkkARQKSX9X4hV2UfsYv0+Fcu/c3o5IjjIpiGf2ZQ4DgM2WX/W0Tqp
-         0x3HCWKh2TlUw935XwuyA49/21xY4NByFiLMTP61L0Nd8SvKEjxuDLdisRFUTTHRoWN+
-         aDQfdiY0fdmv1RHBlnqH1gQvG97hG2M9Y6XmOsR0htCCBVoioy4fTWHF/hDjjNQ5ECkX
-         66ldGhnnwBm3DyWjxW5MhFI+nJYsqV1zxphLv8VC57HR4HoJG8bsNIVpYj+6e0wEnW0d
-         RD5g==
-In-Reply-To: <CADW=+3ms6zaqzpkRBEgApi=gkMNPLCzzex8ShK4CkCFD-WNk8Q@mail.gmail.com>
+         :cc:content-type:content-transfer-encoding;
+        bh=TG66KgmqZhucrqxMkSwHJplRwG9I3C0gxiCjxktU1r0=;
+        b=EPaunSTTuEZt+oygE+afPzt/ooMUafoN9rhwmX1Tuhn8BPTZ226fLl/wy8MGyuQzAv
+         nF1g/aj9vSmm6g1ab/5RuSIM6OyD0RWj5gtD0CYOfnMWzU6ZD66dXIJimPWUfjcUOPNE
+         yfvt5C8SorCNnIfrPoglljZcGXmQK+Y7kpEtA+nQv4OnyxVggAhohtsK4Y+mwDJFs3lj
+         /73zETurnf9fR9LbU6SeAAv31GyFArwi9JMwKjJwicj/eAX5BxF1Jxa/uOWnO6rC7yMb
+         thefiFFPrrHloXLIVVWxJl5tO3no6liEPBM8apMSDS6vSGoDMVAE1EcM7rrM4kQclsNG
+         QD4Q==
+In-Reply-To: <5457629C.8040906@gmail.com>
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="utf-8"
-To: reiserfs-devel <reiserfs-devel@vger.kernel.org>, Edward Shishkin <edward.shishkin@gmail.com>, Ivan Shapovalov <intelfx100@gmail.com>
+To: Edward Shishkin <edward.shishkin@gmail.com>
+Cc: reiserfs-devel <reiserfs-devel@vger.kernel.org>, Ivan Shapovalov <intelfx100@gmail.com>
 
-And just now I saw in logs that machine crashed some after starting
-that rsync job at 3:30AM
+I fscked it yesterday before crash and now I'm fsck-ing it again but
+as you remember it lasts 1hr+ for some reason.
 
-All I have in logs is:
-Nov  3 03:30:01 krshina3 cron[32611]: (root) CMD (test -x
-/usr/sbin/run-crons && /usr/sbin/run-crons )
-Nov  3 03:30:01 krshina3 run-crons[32620]: (root) CMD
-(/etc/cron.daily/logrotate)
-Nov  3 06:33:08 krshina3 syslog-ng[2482]: syslog-ng starting up; versio=
-n=3D'3.4.8'
-Nov  3 06:33:08  kernel: [    0.000000] Initializing cgroup subsys cpu
-
-That's the user restarting the crashed machine in 06:33 in the morning.
-
-Log should look like this:
-
-Oct 31 03:30:01 krshina3 cron[25344]: (root) CMD (test -x
-/usr/sbin/run-crons && /usr/sbin/run-crons )
-Oct 31 03:30:01 krshina3 run-crons[25353]: (root) CMD
-(/etc/cron.daily/logrotate)
-Oct 31 03:30:01 krshina3 run-crons[25357]: (root) CMD
-(/etc/cron.daily/makewhatis)
-Oct 31 03:30:01 krshina3 run-crons[25412]: (root) CMD (/etc/cron.daily/=
-prelink)
-Oct 31 03:30:11 krshina3 run-crons[27772]: (root) CMD
-(/etc/cron.daily/rsnapshot.daily)
-Oct 31 03:30:11 krshina3 kernel: [389256.309611] reiser4: md125: found
-disk format 4.0.0.
-Oct 31 03:30:14 krshina3 kernel: [389259.561553] reiser4: md125: using
-Hybrid Transaction Model.
-Oct 31 03:31:26 krshina3 logger: ### RSNAPSHOT DAILY OK###
-Oct 31 03:31:27 krshina3 sSMTP[27777]: Sent mail for ********** (221
-***********) uid=3D0 username=3Droot outbytes=3D669
-
-On Mon, Nov 3, 2014 at 11:58 AM, Du=C5=A1an =C4=8Coli=C4=87 <dusanc@gma=
-il.com> wrote:
+On Mon, Nov 3, 2014 at 12:10 PM, Edward Shishkin
+<edward.shishkin@gmail.com> wrote:
+>
+> On 11/03/2014 11:58 AM, Du=C5=A1an =C4=8Coli=C4=87 wrote:
+>
 > Now a Bug happened to me on this same ccreg40 partition with
 > Reiser4-for-3.16.2.patch and I don't know if it's related.
+>
+>
+>
+> It can not be related to inability to allocate memory at mount time.
+>
+>
 > I have a partition that I use for daily, weekly and monthly snapshots=
  -
 > /dev/md125 with rsnapshot.
-> I fsck-ed it yesterday. After mounting rsync starts and snapshots my =
-/home
-> directory. This Bug happened on rsync start.
+> I fsck-ed it yesterday.
+>
+>
+>
+> Did you fsck-ed it before, or after crash?
+>
+> Edward.
+>
+>
+>
+> After mounting rsync starts and snapshots my /home directory. This Bu=
+g
+> happened on rsync start.
 >
 >
 > rsnapshot log:
@@ -681,6 +671,7 @@ d
 >>
 >> Thanks in advance
 >> Dushan
+>
 >
 >
 --
