@@ -1,83 +1,69 @@
-From: Edward Shishkin <edward.shishkin@gmail.com>
-Subject: Re: Reiser4 for 3.16.2 problem: mount: mount /dev/md125 on /mnt/backup
- failed: Cannot allocate memory
-Date: Mon, 03 Nov 2014 16:42:58 +0100
-Message-ID: <5457A282.7020704@gmail.com>
-References: <CADW=+3nWaMdFCpoKQSErTQPu7YHm=4UJEZfZFnn8wOKX9tKrKg@mail.gmail.com> <CADW=+3ms6zaqzpkRBEgApi=gkMNPLCzzex8ShK4CkCFD-WNk8Q@mail.gmail.com> <5457629C.8040906@gmail.com> <CADW=+3=XfcVJsYTitCHdAsehw61Vyk0vHqM7wLr0dQNLiP94Fw@mail.gmail.com> <54576A09.6010901@gmail.com> <CADW=+3k0rgockXeT_mnPFSoRr0Xm4ttRG5ZVpPjd3DqWCNL6gw@mail.gmail.com> <CADW=+3nzgJaYqAav475to7W4G4q6CoRMq83y-oNOOFLdU6xdSg@mail.gmail.com> <CADW=+3n1042QZJO=Eyd1ePc1xZyS+bsYPup5s2vSk81_6JCO3g@mail.gmail.com>
+From: Ivan Shapovalov <intelfx100@gmail.com>
+Subject: Re: Reiser4 for 3.16.2 problem: mount: mount /dev/md125 on /mnt/backup failed: Cannot allocate memory
+Date: Mon, 03 Nov 2014 18:50:38 +0300
+Message-ID: <3573664.k2atxmXvKX@intelfx-laptop>
+References: <CADW=+3nWaMdFCpoKQSErTQPu7YHm=4UJEZfZFnn8wOKX9tKrKg@mail.gmail.com> <1897499.AEq9pxZicq@intelfx-laptop> <54579E67.5070907@gmail.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: multipart/signed; boundary="nextPart2734301.TIiV8KPksV"; micalg="pgp-sha256"; protocol="application/pgp-signature"
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20120113;
-        h=message-id:date:from:user-agent:mime-version:to:cc:subject
-         :references:in-reply-to:content-type:content-transfer-encoding;
-        bh=jHsZOg8fp0rWSJZdEHBIQ0h/L5dF8gyiZpJ+S2l88Rk=;
-        b=MyYKdMpRSESn85GA1M0l3EAMp5x8caZ1CTP5rSUmTEVeTqA1yDwPBwlZpn2qWBpvK9
-         GrTy7SDugPb2X/aoihEHjL/YA6l/CGV/HUe4+zq/xiHmcZhNs/AC3ME5Zw3Dt9ngSGtM
-         YftZAgt9rrmqYzAZ53TcZRFStjqx3V6EgI88n07Ypl6/lHaYong/odJCfP9rd5fhWrjR
-         HzD65ESuzDTkNbYwfdr7CxQ/+ISAfvkoj6r0Eswjk0FSX/1wIHykrhK+2/tswD9MGUVD
-         X+HyMjyHKu2cxkkI7ZbG4Ph0rqdLP0awNpBFW6cs9qs0jAkp2R1uiJS3HffYUhCTSO36
-         wzHg==
-In-Reply-To: <CADW=+3n1042QZJO=Eyd1ePc1xZyS+bsYPup5s2vSk81_6JCO3g@mail.gmail.com>
+        h=from:to:cc:subject:date:message-id:user-agent:in-reply-to
+         :references:mime-version:content-type;
+        bh=xsq+ECzMBpxvtxcqrrl/pfh16nMnv5SczCQ5w0PozZU=;
+        b=JP7IpW7oI51ZiYyzICsD6loCMVxltfxQJPKF+ODY9GBXdt+bvXCzQn6ZaYhansqLt1
+         VO+D1Jtlx4B6r10+9W75FBOhLgLlzOiCpact0m5i1rQTMYO6UBNq+uGokN8Sx1NE3ScC
+         ZIqr+ikxG7sl/zwmCWw9ibV7BuYjaMgfHRcTRVLOVPmXJ4PI76G4D3X++EHjv+CWzIdf
+         sOOPfnCrqePuNxQF3O6Z/IIHtyr/BqZ8zdmACfrH+OQrw328vvpVcOx4w0MF1w47XiQ1
+         ytDkvJr9tJ2WqpUp7YhawhUrlev6mdIR+85ZpdbTcmQEA7eBp/i1F4pnmpqDpOZrKvbC
+         EcCA==
+In-Reply-To: <54579E67.5070907@gmail.com>
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="utf-8"; format="flowed"
-To: =?UTF-8?B?RHXFoWFuIMSMb2xpxIc=?= <dusanc@gmail.com>
-Cc: reiserfs-devel <reiserfs-devel@vger.kernel.org>, Ivan Shapovalov <intelfx100@gmail.com>
-
-On 11/03/2014 02:33 PM, Du=C5=A1an =C4=8Coli=C4=87 wrote:
-> I forgot:
-> It was working for some time (deleting old directories etc.) and then=
- crashed.
-> Btw. why didn't that partition (/dev/md125) remounted read-only on
-> error when I have that in /etc/fstab?
+To: Edward Shishkin <edward.shishkin@gmail.com>
+Cc: =?utf-8?B?RHXFoWFuIMSMb2xpxIc=?= <dusanc@gmail.com>, reiserfs-devel <reiserfs-devel@vger.kernel.org>
 
 
-What do you suggest to do when encountering IO error?
-There is another option: to oops. You like this better?
+--nextPart2734301.TIiV8KPksV
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="us-ascii"
 
-Edward.
+On Monday 03 November 2014 at 16:25:27, Edward Shishkin wrote:=09
+> On 11/03/2014 04:12 PM, Ivan Shapovalov wrote:
+> > On Monday 03 November 2014 at 15:01:38, Edward Shishkin wrote:=09
+> >> [...]
+> >>
+> >> Somebody steals pages of compressed file's address space.
+> >> It can be e.g. because of races. I don't have any ideas except
+> >> code inspection...
+> > Do you remember the migration issue? Can't it be related?
+>=20
+> I don't think so: page migration is disabled in reiser4..
 
+I know. What I'm trying to say: aren't there any other similar mechanis=
+ms
+in the kernel?
 
->
-> On Mon, Nov 3, 2014 at 2:28 PM, Du=C5=A1an =C4=8Coli=C4=87 <dusanc@gm=
-ail.com> wrote:
->> After an hour or more still nothing, one rsync went to zombie other
->> still in D state
->> I killed the main process and rebooted.
->>
->> krshina3 goran # ps -aux | grep rsync
->> root      6655  0.0  0.1 101568  9328 pts/4    D    13:08   0:01
->> /usr/bin/rsync -ax --delete --numeric-ids --relative --delete-exclud=
-ed
->> --exclude=3D/home/windows.qcow2
->> --link-dest=3D/mnt/backup/daily.1/localhost/ /home
->> /mnt/backup/daily.0/localhost/
->> root      6656  0.0  0.0      0     0 pts/4    Z    13:08   0:00
->> [rsync] <defunct>
->>
->>
->> Now I tried same command (rsnapshot -c /etc/rsnapshot.d/daily.conf
->> daily) and kernel BUGed with:
->>
->> krshina3 goran # rsnapshot -c /etc/rsnapshot.d/daily.conf daily
->> rsync: writefd_unbuffered failed to write 5 bytes to socket
->> [generator]: Broken pipe (32)
->> --------------------------------------------------------------------=
---------
->> rsnapshot encountered an error! The program was invoked with these o=
-ptions:
->> /usr/bin/rsnapshot -c /etc/rsnapshot.d/daily.conf daily
->> --------------------------------------------------------------------=
---------
->> ERROR: /usr/bin/rsync returned 0.04296875 while processing /home/
->> WARNING: Rolling back "localhost/"
->> rsync error: error in rsync protocol data stream (code 12) at
->> io.c(1532) [generator=3D3.0.9]
->>
+> > (btw, reiser4's pages are still non-migratable...)
+>=20
+> You still sit on the patch, which enables migration?
 
---
-To unsubscribe from this list: send the line "unsubscribe reiserfs-deve=
-l" in
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Yeah.
+
+=2D-=20
+Ivan Shapovalov / intelfx /
+--nextPart2734301.TIiV8KPksV
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: This is a digitally signed message part.
+Content-Transfer-Encoding: 7Bit
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
+
+iF4EABEIAAYFAlRXpFIACgkQxUKljSIMAnDktQD/RAazgyrTV6VJE4RFGoLKSsMT
+PI+qWucE2cA1NxaSrNEA/ik5Qmlj+z9q+efTJ8RTXB6rUldWcZHvMcupxMKso+/r
+=7ssl
+-----END PGP SIGNATURE-----
+
+--nextPart2734301.TIiV8KPksV--
+
