@@ -1,20 +1,14 @@
-From: Theodore Ts'o <tytso@mit.edu>
-Subject: Re: [PATCH 08/12] ext4: Convert to private i_dquot field
-Date: Tue, 4 Nov 2014 09:24:57 -0500
-Message-ID: <20141104142457.GA31295@thunk.org>
+From: Christoph Hellwig <hch@lst.de>
+Subject: Re: [PATCH 0/12 v4] Moving i_dquot out of struct inode
+Date: Sat, 8 Nov 2014 14:21:36 +0100
+Message-ID: <20141108132136.GA22574@lst.de>
 References: <1415099993-18034-1-git-send-email-jack@suse.cz>
-	<1415099993-18034-9-git-send-email-jack@suse.cz>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <xfs-bounces@oss.sgi.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=thunk.org;
-	s=ef5046eb; 
-	h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date;
-	bh=AQGKrSHs+iHCfxCd8C0azGgG0o+6ANdsDQggeKJ2Z0g=; 
-	b=GIB9AEFQWzGvxcm4OqKFf3Ld7BJQ/Cn8v+5bKlMQ+EmTc3Clco5OIjV64YgcgwPHHX9tHf2/kdOSsqgz7RqLTklLPhmt+DzSRdw7LvLXOT5DgiT30F9qrLb9ORu2CkUtcd+RL3t+kAYwQKGCAo4dmkPsQjMWbjoLopV9/w9cTBU=;
 Content-Disposition: inline
-In-Reply-To: <1415099993-18034-9-git-send-email-jack@suse.cz>
+In-Reply-To: <1415099993-18034-1-git-send-email-jack@suse.cz>
 List-Id: <reiserfs-devel.vger.kernel.org>
 List-Unsubscribe: <http://oss.sgi.com/mailman/options/xfs>,
 	<mailto:xfs-request@oss.sgi.com?subject=unsubscribe>
@@ -26,16 +20,11 @@ List-Subscribe: <http://oss.sgi.com/mailman/listinfo/xfs>,
 Errors-To: xfs-bounces@oss.sgi.com
 Sender: xfs-bounces@oss.sgi.com
 To: Jan Kara <jack@suse.cz>
-Cc: Dave Kleikamp <shaggy@kernel.org>, jfs-discussion@lists.sourceforge.net, Jeff Mahoney <jeffm@suse.de>, Mark Fasheh <mfasheh@suse.com>, reiserfs-devel@vger.kernel.org, xfs@oss.sgi.com, cluster-devel@redhat.com, Joel Becker <jlbec@evilplan.org>, linux-fsdevel@vger.kernel.org, linux-ext4@vger.kernel.org, hch@lst.de, Steven Whitehouse <swhiteho@redhat.com>, ocfs2-devel@oss.oracle.com, viro@zeniv.linux.org.uk
+Cc: Dave Kleikamp <shaggy@kernel.org>, jfs-discussion@lists.sourceforge.net, tytso@mit.edu, Jeff Mahoney <jeffm@suse.de>, Mark Fasheh <mfasheh@suse.com>, reiserfs-devel@vger.kernel.org, xfs@oss.sgi.com, cluster-devel@redhat.com, Joel Becker <jlbec@evilplan.org>, linux-fsdevel@vger.kernel.org, linux-ext4@vger.kernel.org, hch@lst.de, Steven Whitehouse <swhiteho@redhat.com>, ocfs2-devel@oss.oracle.com, viro@zeniv.linux.org.uk
 
-On Tue, Nov 04, 2014 at 12:19:49PM +0100, Jan Kara wrote:
-> CC: linux-ext4@vger.kernel.org
-> CC: "Theodore Ts'o" <tytso@mit.edu>
-> Signed-off-by: Jan Kara <jack@suse.cz>
+Looks good,
 
-Acked-by: Theodore Ts'o <tytso@mit.edu>
-
-						- Ted
+Acked-by: Christoph Hellwig <hch@lst.de>
 
 _______________________________________________
 xfs mailing list
