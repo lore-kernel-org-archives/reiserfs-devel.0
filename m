@@ -1,138 +1,211 @@
-From: Ivan Shapovalov <intelfx100@gmail.com>
-Subject: Re: [PATCH 2/3] reiser4: block_alloc: sanitize grab_enabled modifications.
-Date: Sun, 16 Nov 2014 08:39:51 +0300
-Message-ID: <8104890.sZBY8gmzym@intelfx-laptop>
-References: <1408371283-1319-1-git-send-email-intelfx100@gmail.com> <5442A7B1.2030407@gmail.com> <32143848.hSvPupG6vO@intelfx-laptop>
+From: =?UTF-8?B?RHXFoWFuIMSMb2xpxIc=?= <dusanc@gmail.com>
+Subject: Re: Cleanup patches
+Date: Sun, 16 Nov 2014 09:29:16 +0100
+Message-ID: <CADW=+3mRJ0sK+LL6xDb=XXjQ_o6_v1cqK9YrkV=-MPibCYtfwg@mail.gmail.com>
+References: <a08621850711140030x7a5c93bex73af16578bb64ca2@mail.gmail.com>
+	<5c7c368b0711140634y569c8ce8ke4b2e813a2244ce2@mail.gmail.com>
+	<a08621850711141050q58fd6830g2d2f195b1db987f3@mail.gmail.com>
+	<a08621850711141310t166dd07cm6e07f8c81a39b95b@mail.gmail.com>
+	<5c7c368b0711141439u1cb89d82g8ee0928eabbae2a5@mail.gmail.com>
+	<CADW=+3kVJUw3cXH79u0WxiiCFU2E1a2jVT4R+kD_mi7dMc9qRg@mail.gmail.com>
+	<CADW=+3=ruEe_pfMaY6eM6_jQYwiWzTzGL3dtA3OPpa68i0Madw@mail.gmail.com>
+	<5467E20F.8010903@gmail.com>
+	<CADW=+3m7-ibPx=ibky1Kd1HqEoxUautrUk46esASu0V0wTNCuA@mail.gmail.com>
+	<CADW=+3=NJKSd_yLLjQ5agMQE7r29szAgREy0itEr5PE7dvy7+Q@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; boundary="nextPart1618371.MB47nQR5nc"; micalg="pgp-sha256"; protocol="application/pgp-signature"
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20120113;
-        h=from:to:cc:subject:date:message-id:user-agent:in-reply-to
-         :references:mime-version:content-type;
-        bh=Vkc+yQ+xKLPfHCZmcBjtBQvsmDhckDhJ5TEcj8NPnp8=;
-        b=ym0S+0G2CJTOTtiKJNTFHMsgUyuTHJdvCDsfBUL1MmAsEdUG1+pGYDa887kHCxde5s
-         g4Uo07ZqLsXY+JwkGzBu0luGNtEIMBFSfw8SOchfLth5O3Ujv745cWhrAwmqxAlSl82Q
-         sZGxBvja8HSBAUXmA9yvE+ZBQH/hfYF+FBgQEMaG3MXDDBz4YYSULoDo8yydVT2NL+zc
-         RsQu0Gld0uya1YATHxMvXla4a2JOsBqzLO2cvUo+4MVl9JEq1mUVqk/vVuylwAB2XWEc
-         0bWm8bz8ppBcRSkWkdisz0M4LDPXd1bW49kTUcdC4DtTk9pZl+jRSiIneJlsHNe+6m5p
-         /FIw==
-In-Reply-To: <32143848.hSvPupG6vO@intelfx-laptop>
+        h=mime-version:in-reply-to:references:date:message-id:subject:from:to
+         :cc:content-type:content-transfer-encoding;
+        bh=MdCRlaM74l8VBMSjppMwmEfurQ1LmTprJDsp9ushMeg=;
+        b=vOAb+JN2BC/z1T+CmB4gaU4gXSQJd9dcAWgQvKwjh2cPi0Msse9SUCoR0Ow9G7Phxy
+         /1twrE4BECjHCQXqQBM9CTI5TOKpkqxIYfzsowvj7uOY3nmBBOCsewWEft3ihYrEXjPy
+         2btgXs4LCuMu4KWiAAGkcVC2J21zR4PHhbm753NVpwbgVd9qV+SN0VVE3w6i45/CG1t9
+         8Q44tkDafn6499YALNyOgxHVZfn/y0eqnfX4BZULgdfZAv3rwjBexMzfjjkTNBMjea63
+         uqJrxNog59VVWo4mfXBP+FV9QTnrhgKU161cSUynRnE9LDRoy3fwK21mF7eVdHC1VL7P
+         XgUg==
+In-Reply-To: <CADW=+3=NJKSd_yLLjQ5agMQE7r29szAgREy0itEr5PE7dvy7+Q@mail.gmail.com>
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
-To: reiserfs-devel@vger.kernel.org
-Cc: Edward Shishkin <edward.shishkin@gmail.com>
+Content-Type: text/plain; charset="utf-8"
+To: Edward Shishkin <edward.shishkin@gmail.com>
+Cc: Ivan Shapovalov <intelfx100@gmail.com>, reiserfs-devel <reiserfs-devel@vger.kernel.org>
+
+On Sun, Nov 16, 2014 at 2:28 AM, Du=C5=A1an =C4=8Coli=C4=87 <dusanc@gma=
+il.com> wrote:
+> On Sun, Nov 16, 2014 at 12:30 AM, Du=C5=A1an =C4=8Coli=C4=87 <dusanc@=
+gmail.com> wrote:
+>> On Sun, Nov 16, 2014 at 12:30 AM, Edward Shishkin
+>> <edward.shishkin@gmail.com> wrote:
+>>>
+>>> On 11/16/2014 12:06 AM, Du=C5=A1an =C4=8Coli=C4=87 wrote:
+>>>>
+>>>> These are results from bisecting of R4 slowdown with ccreg40 plugi=
+n
+>>>
+>>
+>> Brainfart after hours of bisecting. I meant reg40 plugin.
+>>>
+>>>
+>>> Hmm.. Are you sure?
+>>> 2.6.10 doesn't know about ccreg...
+>>>
+>>>
+>>>
+>>>> with config and scripts I used, first double run is to see dispers=
+ion
+>>>> of consecutive tests:
+>>>>
+>>>> Reiser4 patch        Real        User        System
+>>>> 2.6.10-2        2m46.785s    0m3.214s    1m45.286s
+>>>> 2.6.10-2        2m52.700s    0m3.198s    1m43.361s
+>>>> 2.6.16-5        3m32.694s    0m2.900s    1m34.698s
+>>>> 2.6.19-4        3m19.672s    0m3.120s    1m33.234s
+>>>> 2.6.20            3m9.582s    0m3.164s    1m28.830s
+>>>> 2.6.21            7m52.960s    0m2.992s    1m28.326s
+>>>> 2.6.22-2        6m57.991s    0m2.852s    1m28.258s
+>>>>
+>
+> Here are the more bisected results:
+>
+> Reiser4 patch        Real        User        System
+> 2.6.10-2        2m46.785s    0m3.214s    1m45.286s
+> 2.6.10-2        2m52.700s    0m3.198s    1m43.361s
+> 2.6.16-5        3m32.694s    0m2.900s    1m34.698s
+> 2.6.19-4        3m19.672s    0m3.120s    1m33.234s
+> 2.6.20            3m9.582s    0m3.164s    1m28.830s
+> 2.6.21-rc1        3m13.643s    0m2.884s    1m30.482s
+> 2.6.21-rc2        3m10.054s    0m2.904s    1m30.106s
+> 2.6.21-rc3        7m39.374s    0m2.848s    1m29.570s
+> 2.6.21-rc4        7m37.928s    0m2.904s    1m30.778s
+> 2.6.21            7m52.960s    0m2.992s    1m28.326s
+> 2.6.21            7m35.929s    0m3.044s    1m34.738s
+> 2.6.22-2        6m57.991s    0m2.852s    1m28.258s
+>
+
+And some new relevant ones:
+
+2.6.29            2m57.027s    0m3.096s    1m33.266s
+3.17.2            2m34.                            1m20.
+
+3.17 is cropped because I copied it by hand as network didn't work
+with old userspace.
+
+Is this issue closed now?
 
 
---nextPart1618371.MB47nQR5nc
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset="us-ascii"
+Have a nice day
+Dushan
 
-On Monday 20 October 2014 at 13:43:50, Ivan Shapovalov wrote:=09
-> On Saturday 18 October 2014 at 19:47:29, Edward Shishkin wrote:=09
-> > On 08/18/2014 04:14 PM, Ivan Shapovalov wrote:
-> > > - move all grab_enabled checks and modifications into reiser4_gra=
-b_space();
-> > > - only disable grab if not BA_FORCE;
-> > > - do not re-enable grab before doing second attempt in BA_CAN_COM=
-MIT sequence
-> > >    (feels hackish and is unneeded after the first change).
-> > >
-> > > Signed-off-by: Ivan Shapovalov <intelfx100@gmail.com>
-> > > ---
-> > >   fs/reiser4/block_alloc.c | 22 ++++++++++++----------
-> > >   1 file changed, 12 insertions(+), 10 deletions(-)
-> > >
-> > > diff --git a/fs/reiser4/block_alloc.c b/fs/reiser4/block_alloc.c
-> > > index 7f9f910..a30f7b9 100644
-> > > --- a/fs/reiser4/block_alloc.c
-> > > +++ b/fs/reiser4/block_alloc.c
-> > > @@ -270,12 +270,6 @@ reiser4_grab(reiser4_context * ctx, __u64 co=
-unt, reiser4_ba_flags_t flags)
-> > >  =20
-> > >   =09assert("vs-1276", ctx =3D=3D get_current_context());
-> > >  =20
-> > > -=09/* Do not grab anything on ro-mounted fs. */
-> > > -=09if (rofs_super(ctx->super)) {
-> > > -=09=09ctx->grab_enabled =3D 0;
-> > > -=09=09return 0;
-> > > -=09}
-> > > -
-> > >   =09sbinfo =3D get_super_private(ctx->super);
-> > >  =20
-> > >   =09spin_lock_reiser4_super(sbinfo);
-> > > @@ -300,9 +294,6 @@ reiser4_grab(reiser4_context * ctx, __u64 cou=
-nt, reiser4_ba_flags_t flags)
-> > >  =20
-> > >   =09assert("nikita-2986", reiser4_check_block_counters(ctx->supe=
-r));
-> > >  =20
-> > > -=09/* disable grab space in current context */
-> > > -=09ctx->grab_enabled =3D 0;
-> > > -
-> > >   unlock_and_ret:
-> > >   =09spin_unlock_reiser4_super(sbinfo);
-> > >  =20
-> > > @@ -321,6 +312,12 @@ int reiser4_grab_space(__u64 count, reiser4_=
-ba_flags_t flags)
-> > >   =09if (!(flags & BA_FORCE) && !is_grab_enabled(ctx))
-> > >   =09=09return 0;
-> > >  =20
-> > > +=09/* Do not grab anything on ro-mounted fs. */
-> > > +=09if (rofs_super(ctx->super)) {
-> > > +=09=09ctx->grab_enabled =3D 0;
-> > > +=09=09return 0;
-> > > +=09}
-> > > +
-> > >   =09ret =3D reiser4_grab(ctx, count, flags);
-> > >   =09if (ret =3D=3D -ENOSPC) {
-> > >  =20
-> > > @@ -328,10 +325,15 @@ int reiser4_grab_space(__u64 count, reiser4=
-_ba_flags_t flags)
-> > >   =09=09   present */
-> > >   =09=09if (flags & BA_CAN_COMMIT) {
-> > >   =09=09=09txnmgr_force_commit_all(ctx->super, 0);
-> > > -=09=09=09ctx->grab_enabled =3D 1;
-> > >   =09=09=09ret =3D reiser4_grab(ctx, count, flags);
-> > >   =09=09}
-> > >   =09}
-> > > +
-> > > +=09if (!(flags & BA_FORCE) && (ret =3D=3D 0)) {
-> >=20
-> >=20
-> > Hmm, but we disabled it unconditionally in reiser4_grab().
-> > Not sure, if this is equivalent...
->=20
-> Yes, you are right. I can't recall any particular justification for t=
-his
-> change...
 
-I've apparently "rediscovered" the justification. See my response to
-PATCHv2 2/3...
-
-=2D-=20
-Ivan Shapovalov / intelfx /
-
-> so it should probably say
->=20
->     if (ret =3D=3D 0) {
->=20
-> > > +=09=09/* disable grab space in current context */
-> > > +=09=09ctx->grab_enabled =3D 0;
-> > > +=09}
-> > 
---nextPart1618371.MB47nQR5nc
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: This is a digitally signed message part.
-Content-Transfer-Encoding: 7Bit
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
-
-iF4EABEIAAYFAlRoOKcACgkQxUKljSIMAnAe+wD/WTZk0D7vYkoeHKv7iUuqrTFm
-3RywUd1An5a614OrlcIBAO3bWvMklzodXVi8AGWWq4x2ULlGF9gX6yHDzId4jN82
-=M3vt
------END PGP SIGNATURE-----
-
---nextPart1618371.MB47nQR5nc--
-
+> Obviously something happened between rc2 and rc3
+>
+>>>>
+>>>> Have a nice day
+>>>>
+>>>> Dushan
+>>>>
+>>>> On Fri, Oct 24, 2014 at 11:17 PM, Du=C5=A1an =C4=8Coli=C4=87 <dusa=
+nc@gmail.com> wrote:
+>>>>>
+>>>>> OK after 7 years, can't believe how long ago it was, I decided to=
+ dig up
+>>>>> some ancient hw and to try again to do this bisect.
+>>>>> Questions:
+>>>>> 1. Would it still be useful?
+>>>>> 2. Any other tests that I can do on those old kernels that can be=
+ of
+>>>>> value?
+>>>>> 3. What would be best bisect range? Oldest and newest kernel?
+>>>>>
+>>>>> On Nov 14, 2007 11:39 PM, "Edward Shishkin" <edward.shishkin@gmai=
+l.com>
+>>>>> wrote:
+>>>>>>
+>>>>>> On 11/15/07, Dushan Tcholich <dusanc@gmail.com> wrote:
+>>>>>>>
+>>>>>>> ...
+>>>>>>>>>
+>>>>>>>>> Well. There is a problem: starting from some point, performan=
+ce of
+>>>>>>>>> reiser4 is substantially dropped for unknown reasons. As I re=
+member,
+>>>>>>>>> there were a lot of complaints about it. Also I have made a b=
+rief
+>>>>>>>>> test not so long ago (copy of linux source tree located in ra=
+mfs to
+>>>>>>>>> reiser4 partition): yeah, it is 3 times worse then it ought t=
+o be,
+>>>>>>>>> "vmstat 2" reports low bo-activity (something like 10000 bloc=
+ks/s,
+>>>>>>>>> instead of usual ~30000).
+>>>>>>>>>
+>>>>>>>>> It would be nice to find a changeset which kills performance.
+>>>>>>>>>
+>>>>>>>>> Would you please look at this? It is non-trivial task, so eve=
+ry
+>>>>>>>>> result would be ok (say, to know the first kernel in -mm seri=
+es
+>>>>>>>>> with slow reiser4).
+>>>>>>>>>
+>>>>>>>>> Hints:
+>>>>>>>>>
+>>>>>>>>> 1. The problem is in (default) unix-file plugin (nobody maint=
+ained
+>>>>>>>>>     this for a long of time), so compression should be disabl=
+ed.
+>>>>>>>>> 2. I guess it should be something like bisecting.
+>>>>>>>>> 3. I think that the problem appeared in ~2.6.17-mmXX kernel w=
+hen
+>>>>>>>>>      vs sent vfs patches with batch_write methods, and then A=
+ndrew
+>>>>>>>>>      Morton evicted them because of some problems. However,
+>>>>>>>>>      I might be wrong here!
+>>>>>>>>>
+>>>>>>>> If you could give me an easy way to benchmark (guide me by han=
+d), I
+>>>>>>>> could try to bisect it.
+>>>>>>>> It would be easier if -mm could be bisected using git.
+>>>>>>>> But my / is on r4+cc, so I don't know how could I do it? Maybe=
+ on
+>>>>>>>> other machine?
+>>>>>>
+>>>>>> Yes! Compression announced 15 March 2007, and it may happen
+>>>>>> that some kernel you will need to boot are not support your "/".
+>>>>>> So for bisecting you need the following:
+>>>>>> 1. a machine with >=3D 512M RAM and "/" formatted with some fs
+>>>>>>      supported by old kernels.
+>>>>>> 2. a spare partition.
+>>>>>> 3. enable ramfs (it seems it is enabled by default in most distr=
+os).
+>>>>>> 4. put a tarball-to-copy in some working directory (I had
+>>>>>>      linux-2.6.9.tar.gz)
+>>>>>>
+>>>>>> Note, that some old -mm kernels are not compilable/bootable
+>>>>>> (if so, pull the "hotfixes" patches from akpm's directory on ker=
+nel.org)
+>>>>>>
+>>>>>> 5. edit the attached patches in accordance with your configurati=
+ons
+>>>>>> 6. build and boot the testing kernel with reiser4 debug disabled
+>>>>>>      (I think no needs to boot in single mode, or discard kde, e=
+tc..)
+>>>>>> 7. run "vmstat 2"
+>>>>>> 8. run ./prepare_copy.sh && ./ncopy on another console
+>>>>>>
+>>>>>> I have the following:
+>>>>>> real    6m27.970s
+>>>>>> user    0m2.116s
+>>>>>> sys     1m4.972s
+>>>>>>
+>>>>>> God, it is fairly bad results: On my machine real time should be
+>>>>>> something like 2m20......
+>>>
+>>>
+--
+To unsubscribe from this list: send the line "unsubscribe reiserfs-deve=
+l" in
+the body of a message to majordomo@vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
