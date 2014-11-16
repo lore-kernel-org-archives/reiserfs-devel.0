@@ -1,7 +1,7 @@
 From: Edward Shishkin <edward.shishkin@gmail.com>
 Subject: Re: [PATCHv2 2/3] reiser4: block_alloc: sanitize grab_enabled modifications.
-Date: Sun, 16 Nov 2014 11:45:27 +0100
-Message-ID: <54688047.2020508@gmail.com>
+Date: Sun, 16 Nov 2014 11:45:47 +0100
+Message-ID: <5468805B.2070609@gmail.com>
 References: <1414048685-4224-1-git-send-email-intelfx100@gmail.com> <1414048685-4224-3-git-send-email-intelfx100@gmail.com> <2228941.DWoZ5v2hiQ@intelfx-laptop> <546873FF.6040804@gmail.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
@@ -11,12 +11,12 @@ DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         h=message-id:date:from:user-agent:mime-version:to:subject:references
          :in-reply-to:content-type:content-transfer-encoding;
         bh=D09DpZMup0YpNySQznJdMaQrPKHMbE+B8S/ACBWma9k=;
-        b=prvFGYlYLW+oDXHVtUkM4Qcl3nzrpnLiS6JQiGPk7KT3flyYMYDuw1eJ3mZu6jpwL2
-         tc7EmVyiTBhgtMrtEOGsqqwkmLyWQGjriuB2ZldCv8c63uKD5JsmPm9JwzZaC9PBQr+e
-         neHo1827rSX/gVqRfMA1wax9ql5U3GiFTmr5sXeUmYsym0Kcav2IXd7Cbd7qxBPIYqu1
-         1hyEvLYufMbJtSM4gpuiVVixAHMERrpdFK7LqVGwTW8V6phVF4BlMq24JmhFgDBywqIg
-         HfJDezlN1iVlF2F95lukj/pklDnLzj1CL0h18E3mIA4T7IdzhNPpJ+C/OV8TR5HKGcb5
-         cZ9A==
+        b=L3rcIYj5CzS5y8fkJrhdjwbyRSFTLjlcu6HJSJdJi26g5ZGAVQyd1fw4JWcsemkD2v
+         uZ1caGc8HASNAMWCY2i7AjuRBmpi0YcsM89jLZCkIQseyRIQRz6O+VwkVP8Cxu2Oq6TD
+         XdKBMZVKmx+ze64fc26Tfo6FNKteyQOqsSLNIX5G3GT/buodHD/NrvOfRoNJfQEOCusl
+         lF3WY1QQb+Vuyw3eXdRmz2QiwxExYdI7rMz7SpTk2uQ1Mr6A1JpAQhiGMXXjmihpDCpQ
+         F1oYbvzfzNzRRP6bjA3k9gXUQmxmIjLhDEb6jymj00cuLfUqjkbQxK758aoPMu8X0rhO
+         GXcg==
 In-Reply-To: <546873FF.6040804@gmail.com>
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
