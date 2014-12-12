@@ -1,19 +1,19 @@
 From: Ivan Shapovalov <intelfx100@gmail.com>
-Subject: [PATCHv4 03/10] reiser4: block_alloc: move block accounting by pre-commit hook into block_alloc.c and document BA_DEFER behavior.
-Date: Sat, 13 Dec 2014 00:00:39 +0300
-Message-ID: <1418418046-10933-4-git-send-email-intelfx100@gmail.com>
+Subject: [PATCHv4 01/10] reiser4: block_alloc: add BA_SOME_SPACE flag for grabbing a fixed amount of space.
+Date: Sat, 13 Dec 2014 00:00:37 +0300
+Message-ID: <1418418046-10933-2-git-send-email-intelfx100@gmail.com>
 References: <1418418046-10933-1-git-send-email-intelfx100@gmail.com>
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20120113;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=wovGUfwllq24pjaAWuwGmKAFlqZ69LugiMyEEG4te8o=;
-        b=A7QYEJDE2Y7H7mXNzWpViHfSbaLNoWxx5Cx79XATKNUxVLdQfDqg86Eng27RbehdOG
-         PA23Lepwsw848Tlv5ouaF0IVj+RSXlRKnaJRV5yFTWJ376sLjBxIeG5udQPWj3BJMshp
-         52o0hbwdQBlfED296X4Arie3hgGSwageo+vrOBoUFvBZzGe06MTga0mTc8RopvM/sLvZ
-         GH0vxlm7ZONIKn61Z/BGv2fPB+6PZ4OfI9cBZQcyiubq+nfk8uRcc2wSb9M5T5Y36o89
-         VYd86EcYNDvOUx1wJd5HGzEdztSwr9KApHxu9yW2yieEcnIknvsqEIrMa51GVsgJjeZj
-         JeDA==
+        bh=8d/awdCmZl7+u7Drxu2CMteR0EeJyQcDEj04gzFmyK0=;
+        b=zS9MEtA7pQbpvTlS+TX34dAsZ1kDAnpzfyD+Newiey+s/UYJ3sbvcBF9g/UOm73i9H
+         yJeh4mvjn/xWx/MR2sk3yGprpBjoFjb9gY2X+FXIeOnVDOQy/m2m6M6Eb6Rz5xPuF3F5
+         6S5ybiWX/QGCJuICJulBYxsCfD6B+BFSDZvNJWBOtP+LEG0JVdTjpGXg/Q/l94MHdC1x
+         J9xqdREmpuHJHSTMPTkxCyvWFM0OULCSP+oOcgPVrQ11y9GE/RFgjMFLNr9BFuSIOId5
+         bNgCfKAwaQ6+HQATLx1Sp0jfORqOcHaypZVUDKTUkA5hXVd8sJhICp/KlOwq/c6hMymr
+         gpBQ==
 In-Reply-To: <1418418046-10933-1-git-send-email-intelfx100@gmail.com>
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
@@ -23,148 +23,72 @@ Content-Transfer-Encoding: 7bit
 To: reiserfs-devel@vger.kernel.org
 Cc: Ivan Shapovalov <intelfx100@gmail.com>
 
-BA_DEFER deallocations ignore target_stage and other flags and use some implied
-values for these parameters. Document these values and where they do matter.
-
-Also move deallocated block accounting into block_alloc.c because
-1) it is allocator-independent;
-2) it allows discard code to rely on that accounting is done in pre-commit hook and
-   not later, so that discard code should not use BA_PERMANENT in its allocations.
+This is used for FITRIM ioctl which will iteratively grab, allocate and trim disk space
+bit by bit to avoid starving the rest of system.
 
 Signed-off-by: Ivan Shapovalov <intelfx100@gmail.com>
 ---
- fs/reiser4/block_alloc.c         | 44 +++++++++++++++++++++++++++++++++++++++-
- fs/reiser4/plugin/space/bitmap.c | 23 ++-------------------
- 2 files changed, 45 insertions(+), 22 deletions(-)
+ fs/reiser4/block_alloc.c | 22 ++++++++++++++++++----
+ fs/reiser4/block_alloc.h |  5 ++++-
+ 2 files changed, 22 insertions(+), 5 deletions(-)
 
 diff --git a/fs/reiser4/block_alloc.c b/fs/reiser4/block_alloc.c
-index 56795ca..549cc0a 100644
+index 324b11c..14dd378 100644
 --- a/fs/reiser4/block_alloc.c
 +++ b/fs/reiser4/block_alloc.c
-@@ -998,6 +998,19 @@ reiser4_check_blocks(const reiser4_block_nr * start,
- /* BA_FORMATTED bit is only used when BA_DEFER in not present: it is used to
-    distinguish blocks allocated for unformatted and formatted nodes */
- 
-+/* if BA_DEFER is enabled, @target_stage and other @flags are ignored.
-+ *
-+ * @target_stage is implied to be BLOCK_NOT_COUNTED.
-+ * (assumption is used in reiser4_post_write_back_hook() and apply_dset())
-+ *
-+ * @flags are implied to have BA_PERMANENT.
-+ * (assumption is used in reiser4_pre_commit_hook() which counts deallocated
-+ *  blocks)
-+ * 
-+ * That is, if a deferred deallocation is done after reiser4_pre_commit_hook(),
-+ * then BA_PERMANENT is implied to be disabled.
-+ */
-+
- int
- reiser4_dealloc_blocks(const reiser4_block_nr * start,
- 		       const reiser4_block_nr * len,
-@@ -1089,10 +1102,39 @@ reiser4_dealloc_blocks(const reiser4_block_nr * start,
- 	return 0;
- }
- 
-+/* an actor for counting blocks that are going to be deallocated */
-+static int
-+count_dset_blocks(txn_atom * atom, const reiser4_block_nr * start,
-+                  const reiser4_block_nr * len, void *data)
-+{
-+	reiser4_block_nr *blocks_freed_p = data;
-+
-+	if (len != NULL) {
-+		(*blocks_freed_p) += *len;
-+	} else {
-+		(*blocks_freed_p)++;
-+	}
-+	return 0;
-+}
-+
- /* wrappers for block allocator plugin methods */
- int reiser4_pre_commit_hook(void)
- {
--	assert("zam-502", get_current_super_private() != NULL);
-+	reiser4_block_nr blocks_freed = 0;
-+	reiser4_super_info_data *sbinfo = get_current_super_private();
-+	txn_atom *atom = get_current_atom_locked();
-+
-+	assert("zam-502", sbinfo != NULL);
-+
-+	assert("zam-876", atom->stage == ASTAGE_PRE_COMMIT);
-+	spin_unlock_atom(atom);
-+
-+	atom_dset_deferred_apply(atom, count_dset_blocks, &blocks_freed, 0);
-+
-+	spin_lock_reiser4_super(sbinfo);
-+	sbinfo->blocks_free_committed += blocks_freed - atom->nr_blocks_allocated;
-+	spin_unlock_reiser4_super(sbinfo);
-+
- 	sa_pre_commit_hook();
- 	return 0;
- }
-diff --git a/fs/reiser4/plugin/space/bitmap.c b/fs/reiser4/plugin/space/bitmap.c
-index e56c336..0ce07da 100644
---- a/fs/reiser4/plugin/space/bitmap.c
-+++ b/fs/reiser4/plugin/space/bitmap.c
-@@ -1322,15 +1322,13 @@ static void cond_add_to_overwrite_set(txn_atom * atom, jnode * node)
-    pages in a single-linked list */
+@@ -264,7 +264,7 @@ int reiser4_check_block_counters(const struct super_block *super)
  static int
- apply_dset_to_commit_bmap(txn_atom * atom, const reiser4_block_nr * start,
--			  const reiser4_block_nr * len, void *data)
-+			  const reiser4_block_nr * len, void *data UNUSED_ARG)
+ reiser4_grab(reiser4_context * ctx, __u64 count, reiser4_ba_flags_t flags)
  {
+-	__u64 free_blocks;
++	__s64 allowed_blocks;
+ 	int ret = 0, use_reserved = flags & BA_RESERVED;
+ 	reiser4_super_info_data *sbinfo;
  
- 	bmap_nr_t bmap;
- 	bmap_off_t offset;
- 	int ret;
+@@ -280,10 +280,24 @@ reiser4_grab(reiser4_context * ctx, __u64 count, reiser4_ba_flags_t flags)
  
--	long long *blocks_freed_p = data;
--
- 	struct bitmap_node *bnode;
+ 	spin_lock_reiser4_super(sbinfo);
  
- 	struct super_block *sb = reiser4_get_current_sb();
-@@ -1366,11 +1364,8 @@ apply_dset_to_commit_bmap(txn_atom * atom, const reiser4_block_nr * start,
- 		assert("zam-443",
- 		       offset + *len <= bmap_bit_count(sb->s_blocksize));
- 		reiser4_clear_bits(data, offset, (bmap_off_t) (offset + *len));
--
--		(*blocks_freed_p) += *len;
- 	} else {
- 		reiser4_clear_bit(offset, data);
--		(*blocks_freed_p)++;
+-	free_blocks = sbinfo->blocks_free;
++	allowed_blocks = use_reserved ? sbinfo->blocks_free
++	                              : sbinfo->blocks_free - sbinfo->blocks_reserved;
+ 
+-	if ((use_reserved && free_blocks < count) ||
+-	    (!use_reserved && free_blocks < count + sbinfo->blocks_reserved)) {
++	if (flags & BA_SOME_SPACE) {
++		/* Reserve 25% of all free space */
++		if (allowed_blocks <= 0) {
++			/* No space at all */
++			ret = RETERR(-ENOSPC);
++			goto unlock_and_ret;
++		}
++
++		count = allowed_blocks >> 2;
++		if (count == 0) {
++			/* Less than 4 free blocks */
++			count = allowed_blocks;
++		}
++	} else if (count > allowed_blocks) {
++		/* Not enough space */
+ 		ret = RETERR(-ENOSPC);
+ 		goto unlock_and_ret;
  	}
+diff --git a/fs/reiser4/block_alloc.h b/fs/reiser4/block_alloc.h
+index a4e98af..bfc6be9 100644
+--- a/fs/reiser4/block_alloc.h
++++ b/fs/reiser4/block_alloc.h
+@@ -79,7 +79,10 @@ enum reiser4_ba_flags {
+ 	BA_FORCE = (1 << 5),
  
- 	bnode_set_commit_crc(bnode, bnode_calc_crc(bnode, sb->s_blocksize));
-@@ -1393,8 +1388,6 @@ int reiser4_pre_commit_hook_bitmap(void)
- 	struct super_block *super = reiser4_get_current_sb();
- 	txn_atom *atom;
+ 	/* use default start value for free blocks search. */
+-	BA_USE_DEFAULT_SEARCH_START = (1 << 6)
++	BA_USE_DEFAULT_SEARCH_START = (1 << 6),
++
++	/* reserve some fixed amount of space */
++	BA_SOME_SPACE = (1 << 7),
+ };
  
--	long long blocks_freed = 0;
--
- 	atom = get_current_atom_locked();
- 	assert("zam-876", atom->stage == ASTAGE_PRE_COMMIT);
- 	spin_unlock_atom(atom);
-@@ -1460,19 +1453,7 @@ int reiser4_pre_commit_hook_bitmap(void)
- 		}
- 	}
- 
--	atom_dset_deferred_apply(atom, apply_dset_to_commit_bmap, &blocks_freed, 0);
--
--	blocks_freed -= atom->nr_blocks_allocated;
--
--	{
--		reiser4_super_info_data *sbinfo;
--
--		sbinfo = get_super_private(super);
--
--		spin_lock_reiser4_super(sbinfo);
--		sbinfo->blocks_free_committed += blocks_freed;
--		spin_unlock_reiser4_super(sbinfo);
--	}
-+	atom_dset_deferred_apply(atom, apply_dset_to_commit_bmap, NULL, 0);
- 
- 	return 0;
- }
+ typedef enum reiser4_ba_flags reiser4_ba_flags_t;
 -- 
 2.1.3
 
