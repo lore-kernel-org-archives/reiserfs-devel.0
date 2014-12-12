@@ -1,19 +1,19 @@
 From: Ivan Shapovalov <intelfx100@gmail.com>
-Subject: [PATCHv4 09/10] reiser4: block_alloc: add a "min_len" parameter to reiser4_blocknr_hint to limit allocated extent length from below.
-Date: Sat, 13 Dec 2014 00:00:45 +0300
-Message-ID: <1418418046-10933-10-git-send-email-intelfx100@gmail.com>
+Subject: [PATCHv4 07/10] reiser4: batch discard support: add a dummy FITRIM ioctl handler for directories.
+Date: Sat, 13 Dec 2014 00:00:43 +0300
+Message-ID: <1418418046-10933-8-git-send-email-intelfx100@gmail.com>
 References: <1418418046-10933-1-git-send-email-intelfx100@gmail.com>
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20120113;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=ngVhTAIDQalAvbQydpoKxY0geFTd1lKtfuZvhSFq/cI=;
-        b=i67cRSYE6G+NthOcnYRbDbog4+5IWo66MVv38175+113XODx0zpSoN4jgZvTNKmmlT
-         MDJbWuo01WmySZy+ltVkqBMk9EtlVYR1o3VhFlNkMqLgJfG8ThmJWu/ETC9z1qcx2dhh
-         1fDvsOLOVJrw1k0Zkq6IDDJMbcppCDOKRQmL4LZD5vXP7n3fePNL7220JRU+NsCRiI6n
-         PbtGy8Rlg4nvn9svownQCnF44/mfPEddSfH78RZJoiOicNbDFcitNz2DbBlZTdsPJ98h
-         RJOR34IWx2v6w5f+ywz/UMebp7r10c/DXmGKNLS9C3kQlVBHZunQISMhbkKCe9WHqz3q
-         wphQ==
+        bh=dEr4dEXsP3xrdbTDKfGJsrSl7pDibl5IC3RgDDYXTpg=;
+        b=E00hsJvAvSveCPg+LHFsvq+GOzzFxCSn/D06q/HnzpKoNRcsUy6LPe2QIyYcQp11B+
+         xceHp3nB+WM14AVqbBx9/ZuwHQhUPShq3PQ49K63cQ5ffmeo0fYIYqaZEI2f9f/QfZEU
+         reQWiKYsTUQ2UWocnTyfu6NMEQAmOIhr5uGu1vC6sA2MnFkKHkvjaj+Ry71rjePVfZlT
+         T9iVC5qV3ROm8ANRN07zDiTzRqREhS0UBvjRGQmUKg8hQAzNHdchjNQ9FtlREylT25fW
+         8A4YSZYDcD4hmoGKuLMgWlc8ZjkyX/Dljr2nZkaMBHS0Bb/9wK5abx63/A4sUAR08kOA
+         MO5w==
 In-Reply-To: <1418418046-10933-1-git-send-email-intelfx100@gmail.com>
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
@@ -23,95 +23,81 @@ Content-Transfer-Encoding: 7bit
 To: reiserfs-devel@vger.kernel.org
 Cc: Ivan Shapovalov <intelfx100@gmail.com>
 
-The default has been 1, that is, the first encountered free extent with any length
-from 1 to requested is allocated and returned.
-
-So, allow changing minimal extent length to allocate.
-
 Signed-off-by: Ivan Shapovalov <intelfx100@gmail.com>
 ---
- fs/reiser4/block_alloc.h         |  2 ++
- fs/reiser4/plugin/space/bitmap.c | 20 +++++++++++++++-----
- 2 files changed, 17 insertions(+), 5 deletions(-)
+ fs/reiser4/plugin/dir/dir.h  |  2 ++
+ fs/reiser4/plugin/file_ops.c | 27 +++++++++++++++++++++++++++
+ fs/reiser4/plugin/object.c   |  6 +++++-
+ 3 files changed, 34 insertions(+), 1 deletion(-)
 
-diff --git a/fs/reiser4/block_alloc.h b/fs/reiser4/block_alloc.h
-index 903bc8f..ac1a747 100644
---- a/fs/reiser4/block_alloc.h
-+++ b/fs/reiser4/block_alloc.h
-@@ -45,6 +45,8 @@ struct reiser4_blocknr_hint {
- 	reiser4_block_nr blk;
- 	/* if not zero, it is a region size we search for free blocks in */
- 	reiser4_block_nr max_dist;
-+	/* if not zero, minimal length of an extent to allocate */
-+	reiser4_block_nr min_len;
- 	/* level for allocation, may be useful have branch-level and higher
- 	   write-optimized. */
- 	tree_level level;
-diff --git a/fs/reiser4/plugin/space/bitmap.c b/fs/reiser4/plugin/space/bitmap.c
-index 0ce07da..7c0a1e4 100644
---- a/fs/reiser4/plugin/space/bitmap.c
-+++ b/fs/reiser4/plugin/space/bitmap.c
-@@ -1101,7 +1101,7 @@ static int alloc_blocks_forward(reiser4_blocknr_hint *hint, int needed,
- 				reiser4_block_nr *start, reiser4_block_nr *len)
- {
- 	struct super_block *super = get_current_context()->super;
--	int actual_len;
-+	int min_len, actual_len;
+diff --git a/fs/reiser4/plugin/dir/dir.h b/fs/reiser4/plugin/dir/dir.h
+index 4a91ebe..5eb7bda 100644
+--- a/fs/reiser4/plugin/dir/dir.h
++++ b/fs/reiser4/plugin/dir/dir.h
+@@ -10,6 +10,8 @@
  
- 	reiser4_block_nr search_start;
- 	reiser4_block_nr search_end;
-@@ -1117,12 +1117,17 @@ static int alloc_blocks_forward(reiser4_blocknr_hint *hint, int needed,
- 		    LIMIT(hint->blk + hint->max_dist,
- 			  reiser4_block_count(super));
+ #include <linux/fs.h>*/
  
-+	if (hint->min_len == 0)
-+		min_len = 1;
-+	else
-+		min_len = (int)hint->min_len;
++long reiser4_ioctl_dir_common(struct file *file, unsigned int cmd, unsigned long arg);
 +
- 	/* We use @hint -> blk as a search start and search from it to the end
- 	   of the disk or in given region if @hint -> max_dist is not zero */
- 	search_start = hint->blk;
+ /* declarations of functions implementing HASHED_DIR_PLUGIN_ID dir plugin */
  
- 	actual_len =
--	    bitmap_alloc_forward(&search_start, &search_end, 1, needed);
-+	    bitmap_alloc_forward(&search_start, &search_end, min_len, needed);
+ /* "hashed" directory methods of dir plugin */
+diff --git a/fs/reiser4/plugin/file_ops.c b/fs/reiser4/plugin/file_ops.c
+index 466da64..65e2b02 100644
+--- a/fs/reiser4/plugin/file_ops.c
++++ b/fs/reiser4/plugin/file_ops.c
+@@ -107,6 +107,33 @@ int reiser4_sync_file_common(struct file *file, loff_t start, loff_t end, int da
+ 	return 0;
+ }
  
- 	/* There is only one bitmap search if max_dist was specified, first
- 	   pass was from the beginning of the bitmap, or if the monotonic flag
-@@ -1134,7 +1139,7 @@ static int alloc_blocks_forward(reiser4_blocknr_hint *hint, int needed,
- 		search_end = search_start;
- 		search_start = 0;
- 		actual_len =
--		    bitmap_alloc_forward(&search_start, &search_end, 1, needed);
-+		    bitmap_alloc_forward(&search_start, &search_end, min_len, needed);
- 	}
- 	if (actual_len == 0)
- 		return RETERR(-ENOSPC);
-@@ -1151,7 +1156,7 @@ static int alloc_blocks_backward(reiser4_blocknr_hint * hint, int needed,
- {
- 	reiser4_block_nr search_start;
- 	reiser4_block_nr search_end;
--	int actual_len;
-+	int min_len, actual_len;
- 
- 	ON_DEBUG(struct super_block *super = reiser4_get_current_sb());
- 
-@@ -1165,8 +1170,13 @@ static int alloc_blocks_backward(reiser4_blocknr_hint * hint, int needed,
- 	else
- 		search_end = search_start - hint->max_dist;
- 
-+	if (hint->min_len == 0)
-+		min_len = 1;
-+	else
-+		min_len = (int)hint->min_len;
++/** reiser4_ioctl_dir_common - ioctl of struct file_operations for typical directory
++ */
++long reiser4_ioctl_dir_common(struct file *file, unsigned int cmd, unsigned long arg)
++{
++	struct inode *inode = file_inode(file);
++	struct super_block *super = inode->i_sb;
++	reiser4_context *ctx;
++	int ret;
 +
- 	actual_len =
--	    bitmap_alloc_backward(&search_start, &search_end, 1, needed);
-+	    bitmap_alloc_backward(&search_start, &search_end, min_len, needed);
- 	if (actual_len == 0)
- 		return RETERR(-ENOSPC);
- 	if (actual_len < 0)
++	ctx = reiser4_init_context(super);
++	if (IS_ERR(ctx))
++		return PTR_ERR(ctx);
++
++	switch (cmd) {
++	case FITRIM:
++		warning("intelfx-62", "FITRIM ioctl not implemented");
++		/* fall-through to -ENOSYS */
++
++	default:
++		ret = RETERR(-ENOSYS);
++		break;
++	}
++
++	reiser4_exit_context(ctx);
++	return ret;
++}
++
+ /*
+  * Local variables:
+  * c-indentation-style: "K&R"
+diff --git a/fs/reiser4/plugin/object.c b/fs/reiser4/plugin/object.c
+index 553f1e2..ce09a8a 100644
+--- a/fs/reiser4/plugin/object.c
++++ b/fs/reiser4/plugin/object.c
+@@ -251,7 +251,11 @@ static struct file_operations directory_f_ops = {
+ 	.read = generic_read_dir,
+ 	.iterate = reiser4_iterate_common,
+ 	.release = reiser4_release_dir_common,
+-	.fsync = reiser4_sync_common
++	.fsync = reiser4_sync_common,
++#ifdef CONFIG_COMPAT
++	.compat_ioctl = reiser4_ioctl_dir_common,
++#endif
++	.unlocked_ioctl = reiser4_ioctl_dir_common
+ };
+ static struct address_space_operations directory_a_ops = {
+ 	.writepage = writepage_bugop,
 -- 
 2.1.3
 
