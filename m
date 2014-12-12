@@ -1,19 +1,19 @@
 From: Ivan Shapovalov <intelfx100@gmail.com>
-Subject: [PATCH 4/6] reiser4: discard: don't be overly smart when gluing extents in discard_sorted_merged_extents().
-Date: Sat, 13 Dec 2014 00:10:30 +0300
-Message-ID: <1418418632-18396-5-git-send-email-intelfx100@gmail.com>
+Subject: [PATCH 2/6] reiser4: block_alloc, plugin/space/bitmap: add a method for "exact" block allocation.
+Date: Sat, 13 Dec 2014 00:10:28 +0300
+Message-ID: <1418418632-18396-3-git-send-email-intelfx100@gmail.com>
 References: <1418418632-18396-1-git-send-email-intelfx100@gmail.com>
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20120113;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=u6Vv3jscJpuYqte1EwsJUISjA9fEwxNq93rSCuNcMFI=;
-        b=I/3uqFvSvp8hHZbd+I/Ptf46L1r5pQEnffWBRUxaAZz57MNoeiONyA5+EOEdmpeIQQ
-         DbxkKWYA4oVi2GHBCnnWJICZAvAT5QRlCy8CDym5vmhHO+SEw5pY2DTZe6bnwHOdz4uv
-         NZwqYugCItpgW7477L7GXiEwbgSUq0tnQ3trB2UsEN9/U1AhHV210MHYKhtOqcvl2Y0+
-         RrxgRbm3YaKFXQbUaVFQXDhTC7yhvx1qMHcYV41LTDmjiSoVI8U9fhcaUsPHxP+ie35F
-         nAqyPaAKXyhkHUbwNPVYVifwMbd9tnuBL3V+EMv8nDaXK6rROHgnCO3fQntaGLwuzsJ0
-         d/JA==
+        bh=osAwcOOdxYUuGBIaoXkS5L6LiqbbvVpagGjDOJ86tT0=;
+        b=nBl7cVWgcDtu5zmIW+Q6xw7fzMEKP1W09+7/J76oonMr82qRRHx5dUq3nypcDNiLfh
+         4TZ2LR0n1MmsCGg67O2Q0IxwESj26hZiXJwmP/ANxi/BScUmFR4m8Ya32GzL72inh2wu
+         F9QDUKSibXJVIbz5nrwKCqniojegmCZWfLfXKxAU6XMkwXvRYjwopQmpeJRulFyElqBW
+         EghBUUbCmvaZi53NlvH383wLkWyvlmIbhFZ3GJGxAigNEng/Sj+72C5MD2gPiGsZ3mVV
+         NO49YYQj3CPmyuPnZDe7JS/r3SGnCTxY7mhv7OwpZxV6HBJn7dcE5HyNSYPvrvYtxVvE
+         Y0MA==
 In-Reply-To: <1418418632-18396-1-git-send-email-intelfx100@gmail.com>
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
@@ -23,39 +23,258 @@ Content-Transfer-Encoding: 7bit
 To: reiserfs-devel@vger.kernel.org
 Cc: Ivan Shapovalov <intelfx100@gmail.com>
 
-@tailp, @alen and @end must be updated simultaneously because there are expressions
-involving combinations of these variables.
+This allows to allocate exact count of blocks at exact position.
+In particular, 'precise discard' implementation will need this interface
+to perform padding of the discard extents.
 
 Signed-off-by: Ivan Shapovalov <intelfx100@gmail.com>
 ---
- fs/reiser4/discard.c | 12 ++----------
- 1 file changed, 2 insertions(+), 10 deletions(-)
+ fs/reiser4/block_alloc.c                  | 36 ++++++++++++
+ fs/reiser4/block_alloc.h                  |  3 +
+ fs/reiser4/plugin/space/bitmap.c          | 94 +++++++++++++++++++++++--------
+ fs/reiser4/plugin/space/bitmap.h          |  3 +
+ fs/reiser4/plugin/space/space_allocator.h | 10 +++-
+ 5 files changed, 120 insertions(+), 26 deletions(-)
 
-diff --git a/fs/reiser4/discard.c b/fs/reiser4/discard.c
-index a8c5336..86ff6e4 100644
---- a/fs/reiser4/discard.c
-+++ b/fs/reiser4/discard.c
-@@ -366,18 +366,10 @@ static int discard_sorted_merged_extents(struct list_head *head)
- 					/*
- 					 * jump to the glued extent
- 					 */
--					if (end + tailp < next_start + next_len) {
--						/*
--						 * the glued extent doesn't
--						 * fit into the tail padding,
--						 * so update the last one
--						 */
--						tailp = extent_get_tailp(next_start + next_len,
--									 d_off, d_uni);
--						alen += (next_start + next_len - end);
--					}
- 					pos = next;
-+					alen += (next_start + next_len - end);
- 					end = next_start + next_len;
-+					tailp = extent_get_tailp(end, d_off, d_uni);
- 					/*
- 					 * try to glue more extents
- 					 */
+diff --git a/fs/reiser4/block_alloc.c b/fs/reiser4/block_alloc.c
+index be1a795..fc4cf04 100644
+--- a/fs/reiser4/block_alloc.c
++++ b/fs/reiser4/block_alloc.c
+@@ -759,6 +759,42 @@ int reiser4_alloc_blocks(reiser4_blocknr_hint * hint, reiser4_block_nr * blk,
+ 	return ret;
+ }
+ 
++/* This is a version of reiser4_alloc_blocks() for use in special conditions,
++ * where an allocation must have exact length and position.
++ *
++ * It does not use reiser4_blocknr_hint; instead, all parameters are passed
++ * directly.
++ */
++int reiser4_alloc_blocks_exact(const reiser4_block_nr * blk,
++			       const reiser4_block_nr * len,
++			       block_stage_t stage, reiser4_ba_flags_t flags)
++{
++	int ret;
++	reiser4_context *ctx;
++
++	assert("intelfx-70", blk != NULL);
++	assert("intelfx-71", len != NULL);
++
++	ctx = get_current_context();
++
++	ret = reiser4_alloc_blocks_pre(*len, stage, flags);
++
++	if (ret != 0) {
++		return ret;
++	}
++
++	ret = sa_alloc_blocks_exact(reiser4_get_space_allocator(ctx->super),
++				    blk, len);
++
++	if (ret == 0) {
++		reiser4_alloc_blocks_post_success(*blk, *len, stage, flags);
++	} else {
++		reiser4_alloc_blocks_post_failure(*len, stage);
++	}
++
++	return ret;
++}
++
+ /**
+  * ask block allocator for some unformatted blocks
+  */
+diff --git a/fs/reiser4/block_alloc.h b/fs/reiser4/block_alloc.h
+index a4e98af..a09be1d 100644
+--- a/fs/reiser4/block_alloc.h
++++ b/fs/reiser4/block_alloc.h
+@@ -109,6 +109,9 @@ int reiser4_alloc_blocks(reiser4_blocknr_hint * hint,
+ int reiser4_dealloc_blocks(const reiser4_block_nr *,
+ 			   const reiser4_block_nr *,
+ 			   block_stage_t, reiser4_ba_flags_t flags);
++int reiser4_alloc_blocks_exact(const reiser4_block_nr * start,
++			       const reiser4_block_nr * len,
++			       block_stage_t stage, reiser4_ba_flags_t flags);
+ 
+ static inline int reiser4_alloc_block(reiser4_blocknr_hint * hint,
+ 				      reiser4_block_nr * start,
+diff --git a/fs/reiser4/plugin/space/bitmap.c b/fs/reiser4/plugin/space/bitmap.c
+index 3da3f6b..7d15619 100644
+--- a/fs/reiser4/plugin/space/bitmap.c
++++ b/fs/reiser4/plugin/space/bitmap.c
+@@ -1222,8 +1222,14 @@ void reiser4_dealloc_blocks_bitmap(reiser4_space_allocator * allocator,
+ 	release_and_unlock_bnode(bnode);
+ }
+ 
++typedef enum {
++	CHECK_FREE,
++	CHECK_FREE_AND_ALLOC,
++	CHECK_BUSY
++} check_blocks_mode;
++
+ static int check_blocks_one_bitmap(bmap_nr_t bmap, bmap_off_t start_offset,
+-                                    bmap_off_t end_offset, int desired)
++				   bmap_off_t end_offset, check_blocks_mode mode)
+ {
+ 	struct super_block *super = reiser4_get_current_sb();
+ 	struct bitmap_node *bnode = get_bnode(super, bmap);
+@@ -1236,14 +1242,29 @@ static int check_blocks_one_bitmap(bmap_nr_t bmap, bmap_off_t start_offset,
+ 
+ 	assert("nikita-2216", jnode_is_loaded(bnode->wjnode));
+ 
+-	if (desired) {
++	switch (mode) {
++	case CHECK_BUSY:
+ 		ret = reiser4_find_next_zero_bit(bnode_working_data(bnode),
+-						  end_offset, start_offset)
+-		      >= end_offset;
+-	} else {
+-		ret = reiser4_find_next_set_bit(bnode_working_data(bnode),
+ 						 end_offset, start_offset)
+ 		      >= end_offset;
++
++		break;
++
++	case CHECK_FREE:
++	case CHECK_FREE_AND_ALLOC:
++		ret = reiser4_find_next_set_bit(bnode_working_data(bnode),
++						end_offset, start_offset)
++		      >= end_offset;
++
++		if (mode == CHECK_FREE_AND_ALLOC && ret) {
++			reiser4_set_bits(bnode_working_data(bnode),
++					 start_offset, end_offset);
++		}
++
++		break;
++
++	default:
++		impossible("intelfx-67", "wrong block check/alloc mode: %d", mode);
+ 	}
+ 
+ 	release_and_unlock_bnode(bnode);
+@@ -1251,9 +1272,8 @@ static int check_blocks_one_bitmap(bmap_nr_t bmap, bmap_off_t start_offset,
+ 	return ret;
+ }
+ 
+-/* plugin->u.space_allocator.check_blocks(). */
+-int reiser4_check_blocks_bitmap(const reiser4_block_nr * start,
+-				 const reiser4_block_nr * len, int desired)
++static int check_blocks_bitmap(reiser4_block_nr start, reiser4_block_nr len,
++			       check_blocks_mode mode)
+ {
+ 	struct super_block *super = reiser4_get_current_sb();
+ 
+@@ -1262,21 +1282,13 @@ int reiser4_check_blocks_bitmap(const reiser4_block_nr * start,
+ 	bmap_off_t offset, end_offset;
+ 	const bmap_off_t max_offset = bmap_bit_count(super->s_blocksize);
+ 
+-	assert("intelfx-9", start != NULL);
+-	assert("intelfx-10", ergo(len != NULL, *len > 0));
++	assert("intelfx-10", len > 0);
+ 
+-	if (len != NULL) {
+-		check_block_range(start, len);
+-		end = *start + *len - 1;
+-	} else {
+-		/* on next line, end is used as temporary len for check_block_range() */
+-		end = 1; check_block_range(start, &end);
+-		end = *start;
+-	}
++	check_block_range(&start, &len);
++	parse_blocknr(&start, &bmap, &offset);
+ 
+-	parse_blocknr(start, &bmap, &offset);
+-
+-	if (end == *start) {
++	end = start + len - 1;
++	if (end == start) {
+ 		end_bmap = bmap;
+ 		end_offset = offset;
+ 	} else {
+@@ -1288,11 +1300,45 @@ int reiser4_check_blocks_bitmap(const reiser4_block_nr * start,
+ 	assert("intelfx-5", ergo(end_bmap == bmap, end_offset >= offset));
+ 
+ 	for (; bmap < end_bmap; bmap++, offset = 0) {
+-		if (!check_blocks_one_bitmap(bmap, offset, max_offset, desired)) {
++		if (!check_blocks_one_bitmap(bmap, offset, max_offset, mode)) {
+ 			return 0;
+ 		}
+ 	}
+-	return check_blocks_one_bitmap(bmap, offset, end_offset, desired);
++	return check_blocks_one_bitmap(bmap, offset, end_offset, mode);
++}
++
++/* plugin->u.space_allocator.alloc_blocks_exact() */
++int reiser4_alloc_blocks_exact_bitmap(reiser4_space_allocator * allocator,
++				      const reiser4_block_nr * start,
++				      const reiser4_block_nr * len)
++{
++	int ret;
++
++	assert("intelfx-66", start != NULL);
++
++	if (len != NULL)
++		ret = check_blocks_bitmap(*start, *len, CHECK_FREE_AND_ALLOC);
++	else
++		ret = check_blocks_bitmap(*start, 1, CHECK_FREE_AND_ALLOC);
++
++	if (ret == 0)
++		return RETERR(-ENOSPC);
++	else
++		return 0;
++}
++
++/* plugin->u.space_allocator.check_blocks(). */
++int reiser4_check_blocks_bitmap(const reiser4_block_nr * start,
++				const reiser4_block_nr * len, int desired)
++{
++	check_blocks_mode mode = desired ? CHECK_BUSY : CHECK_FREE;
++
++	assert("intelfx-9", start != NULL);
++
++	if (len != NULL)
++		return check_blocks_bitmap (*start, *len, mode);
++	else
++		return check_blocks_bitmap (*start, 1, mode);
+ }
+ 
+ /* conditional insertion of @node into atom's overwrite set  if it was not there */
+diff --git a/fs/reiser4/plugin/space/bitmap.h b/fs/reiser4/plugin/space/bitmap.h
+index 4590498..9679f3c 100644
+--- a/fs/reiser4/plugin/space/bitmap.h
++++ b/fs/reiser4/plugin/space/bitmap.h
+@@ -19,6 +19,9 @@ extern int reiser4_alloc_blocks_bitmap(reiser4_space_allocator *,
+ 				       reiser4_blocknr_hint *, int needed,
+ 				       reiser4_block_nr * start,
+ 				       reiser4_block_nr * len);
++extern int reiser4_alloc_blocks_exact_bitmap(reiser4_space_allocator *,
++					     const reiser4_block_nr * start,
++					     const reiser4_block_nr * len);
+ extern int reiser4_check_blocks_bitmap(const reiser4_block_nr *,
+ 					const reiser4_block_nr *, int);
+ extern void reiser4_dealloc_blocks_bitmap(reiser4_space_allocator *,
+diff --git a/fs/reiser4/plugin/space/space_allocator.h b/fs/reiser4/plugin/space/space_allocator.h
+index 71bfd11..7567bda 100644
+--- a/fs/reiser4/plugin/space/space_allocator.h
++++ b/fs/reiser4/plugin/space/space_allocator.h
+@@ -29,9 +29,15 @@ static inline void sa_dealloc_blocks (reiser4_space_allocator * al, reiser4_bloc
+ 	reiser4_dealloc_blocks_##allocator (al, start, len);								\
+ }															\
+ 															\
+-static inline int sa_check_blocks (const reiser4_block_nr * start, const reiser4_block_nr * end, int desired) 		\
++static inline int sa_check_blocks (const reiser4_block_nr * start, const reiser4_block_nr * end, int desired)		\
+ {															\
+-	return reiser4_check_blocks_##allocator (start, end, desired);							        \
++	return reiser4_check_blocks_##allocator (start, end, desired);							\
++}															\
++															\
++static inline int sa_alloc_blocks_exact (reiser4_space_allocator * al, const reiser4_block_nr * start,			\
++					 const reiser4_block_nr * len)							\
++{															\
++	return reiser4_alloc_blocks_exact_##allocator (al, start, len);							\
+ }															\
+ 															\
+ static inline void sa_pre_commit_hook (void)										\
 -- 
 2.1.3
 
