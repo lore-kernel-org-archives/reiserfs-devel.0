@@ -1,321 +1,86 @@
-From: Edward Shishkin <edward.shishkin@gmail.com>
-Subject: [PATCH] reiser4: roll back space grabbing fixes
-Date: Sun, 14 Dec 2014 01:17:56 +0100
-Message-ID: <548CD734.1080607@gmail.com>
+From: Ivan Shapovalov <intelfx100@gmail.com>
+Subject: Re: [PATCH 0/6] reiser4: discard support: "precise discard" aka padding of extents to erase unit boundaries.
+Date: Sun, 14 Dec 2014 11:03:10 +0300
+Message-ID: <1847370.hWhlfNze1m@intelfx-laptop>
+References: <1418418632-18396-1-git-send-email-intelfx100@gmail.com> <548CBFCA.60105@gmail.com>
 Mime-Version: 1.0
-Content-Type: multipart/mixed;
- boundary="------------030907030000080903060105"
+Content-Type: multipart/signed; boundary="nextPart2233619.ETcgBRvobT"; micalg="pgp-sha256"; protocol="application/pgp-signature"
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20120113;
-        h=message-id:date:from:user-agent:mime-version:to:cc:subject
-         :content-type;
-        bh=CsaWEt+rzZBEfON/t64mk1Ms2T657CpBQkc+vuSm2ro=;
-        b=eqqGLngOaUaE2BGygc0B4AvVoC9zwPd2WwaqMkO0iVfb6+ii07bi+V9yw5NjqmmjFb
-         IVu22deNLm0R2ViEctHQw6ZrRoAwwVxMq5cnzrGzJ1Pb4lozmiI2SrianFVRLxxMy0eL
-         i80q6kNukH1ZTEjg0IogEKUoI4YWntyuX9fPlXz3nhEKSjPLnRNu8HAA1XKWAvsEQpYb
-         OjkjtUsjfJymVetRvT0JKAk9HOgdm8XhNoknj4wvdBxuZ2V16iz/6FeSzy980PFldQMS
-         LMM4mbAAujX9mMybF/4zuFIrvdp0dJcL1XHmAaHCf+Jc9bh9EvEgfP1dDXkkhNQvBJQD
-         yzaA==
+        h=from:to:cc:subject:date:message-id:user-agent:in-reply-to
+         :references:mime-version:content-type;
+        bh=QZCNMQ4O7nYcVeKYXGk6EtG+/vmdmZzKy8U4NLW93aw=;
+        b=qokp9Vq+mrSHfImAnelkk7UY503ICi+a1/WnojoGqqDm2UkX0rcnK8a0v/QJbvwY+B
+         EafR52r5nkuR6fvZ/7e8WMrtr46wiJmsrxO4nlYDDhsp17WKDXI2a+rKv7oQ4NzYTbwR
+         2y8wEcaLApV468FYbMUhf16/mtDzEVCu3J5qdTzqTTlDY8XDIcVUYXRBFWO0ujmgQieW
+         7Uh18pw2ZmcVlOK0KcSJnOhtcO8MaQa8uaafIT5wOd/437B6ZM63zPy/nYcVzLr4K5pF
+         G//7k5BKgqkLMyxW3WBZnMUgEmvMYUlGw1JYL2U4D1yYf/W6E5nV4t46OTXasjnZ0/Pe
+         AaQA==
+In-Reply-To: <548CBFCA.60105@gmail.com>
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
-To: ReiserFS development mailing list <reiserfs-devel@vger.kernel.org>
-Cc: Ivan Shapovalov <intelfx100@gmail.com>
+To: Edward Shishkin <edward.shishkin@gmail.com>
+Cc: reiserfs-devel@vger.kernel.org
 
-This is a multi-part message in MIME format.
---------------030907030000080903060105
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
 
-Self-NACK-ed by Ivan Shapovalov
+--nextPart2233619.ETcgBRvobT
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="us-ascii"
 
---------------030907030000080903060105
-Content-Type: text/x-patch;
- name="reiser4-rollback-space-grabbing-fixes.patch"
-Content-Transfer-Encoding: 7bit
-Content-Disposition: attachment;
- filename="reiser4-rollback-space-grabbing-fixes.patch"
+On Saturday 13 December 2014 at 23:38:02, Edward Shishkin wrote:=09
+>=20
+> On 12/12/2014 10:10 PM, Ivan Shapovalov wrote:
+> > So, this patchset uses your algorithm of padding/gluing extents to =
+be discarded.
+> > I've added exact allocation primitives (is it what you've been talk=
+ing about?
+>=20
+>=20
+> So, we found out that the old bitmap primitives don't allow us to imp=
+lement
+> precise discard, and I asked for new ones. Also we wanted to implemen=
+t the
+> general case, when precise discard works for any pair (offset, unit).=
+=20
+> Currently
+> it works only for ones determined by the function convert_lattice_par=
+ams().
+> For some reasons (that I don't remember) I was sure, that the general=
+ case
+> should be obtained from this partial case by a small transformation o=
+f the
+> function discard_sorted_merged_extents().
+>=20
+> Well, I'll try to dive into details and generalize things on the holi=
+days.
+> If generalization is impossible, then we'll switch to non-precise=20
+> discard every
+> time when convert_lattice_params() fails.
 
----
- fs/reiser4/block_alloc.c                 |   64 ++++++++++++++-----------------
- fs/reiser4/plugin/file/file.c            |   12 +++--
- fs/reiser4/plugin/file/file_conversion.c |    3 -
- fs/reiser4/plugin/file/tail_conversion.c |   11 ++---
- fs/reiser4/plugin/item/extent_file_ops.c |    3 -
- fs/reiser4/plugin/item/tail.c            |    3 -
- fs/reiser4/safe_link.c                   |    4 +
- 7 files changed, 52 insertions(+), 48 deletions(-)
+I don't quite understand you here... Do you mean that some non-insane c=
+ombinations
+of discard unit, discard offset and blocksize are not handled (but wort=
+h
+handling)?
 
---- a/fs/reiser4/block_alloc.c
-+++ b/fs/reiser4/block_alloc.c
-@@ -270,6 +270,12 @@ reiser4_grab(reiser4_context * ctx, __u6
- 
- 	assert("vs-1276", ctx == get_current_context());
- 
-+	/* Do not grab anything on ro-mounted fs. */
-+	if (rofs_super(ctx->super)) {
-+		ctx->grab_enabled = 0;
-+		return 0;
-+	}
-+
- 	sbinfo = get_super_private(ctx->super);
- 
- 	spin_lock_reiser4_super(sbinfo);
-@@ -294,6 +300,9 @@ reiser4_grab(reiser4_context * ctx, __u6
- 
- 	assert("nikita-2986", reiser4_check_block_counters(ctx->super));
- 
-+	/* disable grab space in current context */
-+	ctx->grab_enabled = 0;
-+
- unlock_and_ret:
- 	spin_unlock_reiser4_super(sbinfo);
- 
-@@ -312,12 +321,6 @@ int reiser4_grab_space(__u64 count, reis
- 	if (!(flags & BA_FORCE) && !is_grab_enabled(ctx))
- 		return 0;
- 
--	/* Do not grab anything on ro-mounted fs. */
--	if (rofs_super(ctx->super)) {
--		ctx->grab_enabled = 0;
--		return 0;
--	}
--
- 	ret = reiser4_grab(ctx, count, flags);
- 	if (ret == -ENOSPC) {
- 
-@@ -325,15 +328,10 @@ int reiser4_grab_space(__u64 count, reis
- 		   present */
- 		if (flags & BA_CAN_COMMIT) {
- 			txnmgr_force_commit_all(ctx->super, 0);
-+			ctx->grab_enabled = 1;
- 			ret = reiser4_grab(ctx, count, flags);
- 		}
- 	}
--
--	if (ret == 0) {
--		/* disable grab space in current context */
--		ctx->grab_enabled = 0;
--	}
--
- 	/*
- 	 * allocation from reserved pool cannot fail. This is severe error.
- 	 */
-@@ -362,41 +360,37 @@ int reiser4_grab_reserved(struct super_b
- 			  __u64 count, reiser4_ba_flags_t flags)
- {
- 	reiser4_super_info_data *sbinfo = get_super_private(super);
--	int ret;
- 
- 	assert("nikita-3175", flags & BA_CAN_COMMIT);
- 
- 	/* Check the delete mutex already taken by us, we assume that
- 	 * reading of machine word is atomic. */
- 	if (sbinfo->delete_mutex_owner == current) {
--		ret = reiser4_grab_space(count,
--					(flags | BA_RESERVED) & ~BA_CAN_COMMIT);
--
--		if (ret != 0) {
-+		if (reiser4_grab_space
-+		    (count, (flags | BA_RESERVED) & ~BA_CAN_COMMIT)) {
- 			warning("zam-1003",
--			      "nested call of grab_reserved fails count=(%llu)",
--			      (unsigned long long)count);
-+				"nested call of grab_reserved fails count=(%llu)",
-+				(unsigned long long)count);
- 			reiser4_release_reserved(super);
-+			return RETERR(-ENOSPC);
- 		}
--	} else {
--		ret = reiser4_grab_space(count, flags);
-+		return 0;
-+	}
- 
--		if (ret != 0) {
--			mutex_lock(&sbinfo->delete_mutex);
--			assert("nikita-2929",
--			       sbinfo->delete_mutex_owner == NULL);
--			sbinfo->delete_mutex_owner = current;
--			ret = reiser4_grab_space(count, flags | BA_RESERVED);
--
--			if (ret != 0) {
--				warning("zam-833",
--					"reserved space is not enough (%llu)",
--					(unsigned long long)count);
--				reiser4_release_reserved(super);
--			}
-+	if (reiser4_grab_space(count, flags)) {
-+		mutex_lock(&sbinfo->delete_mutex);
-+		assert("nikita-2929", sbinfo->delete_mutex_owner == NULL);
-+		sbinfo->delete_mutex_owner = current;
-+
-+		if (reiser4_grab_space(count, flags | BA_RESERVED)) {
-+			warning("zam-833",
-+				"reserved space is not enough (%llu)",
-+				(unsigned long long)count);
-+			reiser4_release_reserved(super);
-+			return RETERR(-ENOSPC);
- 		}
- 	}
--	return ret;
-+	return 0;
- }
- 
- void reiser4_release_reserved(struct super_block *super)
---- a/fs/reiser4/plugin/file/file.c
-+++ b/fs/reiser4/plugin/file/file.c
-@@ -335,10 +335,11 @@ static int find_file_state(struct inode
-  */
- static int reserve_partial_page(reiser4_tree * tree)
- {
-+	grab_space_enable();
- 	return reiser4_grab_reserved(reiser4_get_current_sb(),
- 				     1 +
- 				     2 * estimate_one_insert_into_item(tree),
--				     BA_CAN_COMMIT | BA_FORCE);
-+				     BA_CAN_COMMIT);
- }
- 
- /* estimate and reserve space needed to cut one item and update one stat data */
-@@ -349,10 +350,11 @@ static int reserve_cut_iteration(reiser4
- 
- 	assert("nikita-3172", lock_stack_isclean(get_current_lock_stack()));
- 
-+	grab_space_enable();
- 	/* We need to double our estimate now that we can delete more than one
- 	   node. */
- 	return reiser4_grab_reserved(reiser4_get_current_sb(), estimate * 2,
--				     BA_CAN_COMMIT | BA_FORCE);
-+				     BA_CAN_COMMIT);
- }
- 
- int reiser4_update_file_size(struct inode *inode, loff_t new_size,
-@@ -873,9 +875,10 @@ static int capture_page_and_create_exten
- 	/* page capture may require extent creation (if it does not exist yet)
- 	   and stat data's update (number of blocks changes on extent
- 	   creation) */
-+	grab_space_enable();
- 	result = reiser4_grab_space(2 * estimate_one_insert_into_item
- 				    (reiser4_tree_by_inode(inode)),
--				    BA_CAN_COMMIT | BA_FORCE);
-+				    BA_CAN_COMMIT);
- 	if (likely(!result))
- 		result = find_or_create_extent(page);
- 
-@@ -2419,8 +2422,9 @@ static int unpack(struct file *filp, str
- 
- 		set_file_notail(inode);
- 
-+		grab_space_enable();
- 		tograb = inode_file_plugin(inode)->estimate.update(inode);
--		result = reiser4_grab_space(tograb, BA_CAN_COMMIT | BA_FORCE);
-+		result = reiser4_grab_space(tograb, BA_CAN_COMMIT);
- 		result = reiser4_update_sd(inode);
- 	}
- 
---- a/fs/reiser4/plugin/file/file_conversion.c
-+++ b/fs/reiser4/plugin/file/file_conversion.c
-@@ -388,13 +388,14 @@ static int reserve_cryptcompress2unixfil
- 	 *     5. possible update of stat-data
- 	 *
- 	 */
-+	grab_space_enable();
- 	return reiser4_grab_space
- 		(2 * tree->height +
- 		 unformatted_nodes  +
- 		 unformatted_nodes * estimate_one_insert_into_item(tree) +
- 		 1 + estimate_one_insert_item(tree) +
- 		 inode_file_plugin(inode)->estimate.update(inode),
--		 BA_CAN_COMMIT | BA_FORCE);
-+		 BA_CAN_COMMIT);
- }
- 
- /**
---- a/fs/reiser4/plugin/file/tail_conversion.c
-+++ b/fs/reiser4/plugin/file/tail_conversion.c
-@@ -221,13 +221,13 @@ static int reserve_tail2extent_iteration
- 	 *     5. possible update of stat-data
- 	 *
- 	 */
-+	grab_space_enable();
- 	return reiser4_grab_space
- 	    (2 * tree->height +
- 	     TAIL2EXTENT_PAGE_NUM +
- 	     TAIL2EXTENT_PAGE_NUM * estimate_one_insert_into_item(tree) +
- 	     1 + estimate_one_insert_item(tree) +
--	     inode_file_plugin(inode)->estimate.update(inode),
--	     BA_CAN_COMMIT | BA_FORCE);
-+	     inode_file_plugin(inode)->estimate.update(inode), BA_CAN_COMMIT);
- }
- 
- /* clear stat data's flag indicating that conversion is being converted */
-@@ -235,9 +235,10 @@ static int complete_conversion(struct in
- {
- 	int result;
- 
-+	grab_space_enable();
- 	result =
- 	    reiser4_grab_space(inode_file_plugin(inode)->estimate.update(inode),
--			       BA_CAN_COMMIT | BA_FORCE);
-+			       BA_CAN_COMMIT);
- 	if (result == 0) {
- 		reiser4_inode_clr_flag(inode, REISER4_PART_MIXED);
- 		result = reiser4_update_sd(inode);
-@@ -551,12 +552,12 @@ static int reserve_extent2tail_iteration
- 	 *
- 	 *     4. possible update of stat-data
- 	 */
-+	grab_space_enable();
- 	return reiser4_grab_space
- 	    (estimate_one_item_removal(tree) +
- 	     estimate_insert_flow(tree->height) +
- 	     1 + estimate_one_insert_item(tree) +
--	     inode_file_plugin(inode)->estimate.update(inode),
--	     BA_CAN_COMMIT | BA_FORCE);
-+	     inode_file_plugin(inode)->estimate.update(inode), BA_CAN_COMMIT);
- }
- 
- /* for every page of file: read page, cut part of extent pointing to this page,
---- a/fs/reiser4/plugin/item/extent_file_ops.c
-+++ b/fs/reiser4/plugin/item/extent_file_ops.c
-@@ -933,7 +933,8 @@ static int write_extent_reserve_space(st
- 	count = estimate_one_insert_item(tree) +
- 		WRITE_GRANULARITY * (1 + estimate_one_insert_into_item(tree)) +
- 		estimate_one_insert_item(tree);
--	return reiser4_grab_space(count, BA_FORCE);
-+	grab_space_enable();
-+	return reiser4_grab_space(count, 0 /* flags */);
- }
- 
- /*
---- a/fs/reiser4/plugin/item/tail.c
-+++ b/fs/reiser4/plugin/item/tail.c
-@@ -603,7 +603,8 @@ static int write_extent_reserve_space(st
- 	count = estimate_one_insert_item(tree) +
- 		estimate_insert_flow(tree->height) +
- 		estimate_one_insert_item(tree);
--	return reiser4_grab_space(count, BA_FORCE);
-+	grab_space_enable();
-+	return reiser4_grab_space(count, 0 /* flags */);
- }
- 
- #define PAGE_PER_FLOW 4
---- a/fs/reiser4/safe_link.c
-+++ b/fs/reiser4/safe_link.c
-@@ -130,11 +130,13 @@ int safe_link_grab(reiser4_tree * tree,
- {
- 	int result;
- 
-+	grab_space_enable();
- 	/* The sbinfo->delete_mutex can be taken here.
- 	 * safe_link_release() should be called before leaving reiser4
- 	 * context. */
- 	result =
--	    reiser4_grab_reserved(tree->super, safe_link_tograb(tree), flags | BA_FORCE);
-+	    reiser4_grab_reserved(tree->super, safe_link_tograb(tree), flags);
-+	grab_space_enable();
- 	return result;
- }
- 
+TBH, convert_lattice_params() looks magic-ish to me...
 
---------------030907030000080903060105--
+Thanks,
+=2D-=20
+Ivan Shapovalov / intelfx /
+--nextPart2233619.ETcgBRvobT
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: This is a digitally signed message part.
+Content-Transfer-Encoding: 7Bit
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
+
+iF4EABEIAAYFAlSNRD4ACgkQxUKljSIMAnCfPQEA3GkZ9jiakm1yKhmE6+NZ6d7Y
+ouhioJ9F01SgJxA/h9gBANBWHqWMhoLdQIpmG/UKXxltF5dcGqwCbS251VC591zi
+=CAXZ
+-----END PGP SIGNATURE-----
+
+--nextPart2233619.ETcgBRvobT--
+
