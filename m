@@ -1,9 +1,9 @@
 From: Edward Shishkin <edward.shishkin@gmail.com>
-Subject: Re: [PATCH 0/6] reiser4: discard support: "precise discard" aka padding
- of extents to erase unit boundaries.
-Date: Fri, 19 Dec 2014 16:46:16 +0100
-Message-ID: <54944848.5020802@gmail.com>
-References: <1418418632-18396-1-git-send-email-intelfx100@gmail.com> <548CBFCA.60105@gmail.com> <1847370.hWhlfNze1m@intelfx-laptop> <548F36D5.4000402@gmail.com>
+Subject: Re: [PATCH 4/6] reiser4: discard: don't be overly smart when gluing
+ extents in discard_sorted_merged_extents().
+Date: Fri, 19 Dec 2014 21:24:04 +0100
+Message-ID: <54948964.8040202@gmail.com>
+References: <1418418632-18396-1-git-send-email-intelfx100@gmail.com> <1418418632-18396-5-git-send-email-intelfx100@gmail.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
@@ -11,74 +11,59 @@ DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20120113;
         h=message-id:date:from:user-agent:mime-version:to:cc:subject
          :references:in-reply-to:content-type:content-transfer-encoding;
-        bh=/5GvNzG/RHhFMMse3a++QXl/zrdWKXz096WR16W0Zwk=;
-        b=OZXQFpEiFHjbVBD0LI99jBCRqUb06iSDSeaRsKjzx1RFkTeYNWWjtvUFuvgKIGL18z
-         2dTDk5sAO17o40kDdy+NPuNNn8IEx4Mz7BPSX8XO8pXoEOSsIfumH5wHLAFqOc2eDpxu
-         npMxiTR8VBauuEjX9gszyF0Lwanane46plV2xxMg2MZw0VDuaq5K7UYuLs19qYoD8EWb
-         wbS13oqhX5oHrCjVK9d4yP2CWqHFV79SrDCd67/krz9He8hgFY9EexzMz+/gWmQ+HER+
-         7/moH9Iok6xSt5445ntsdEgu90A6nk85eiOIrQrqQBawhkfl0DllxVSTo5UMhXPnXlYL
-         QLMA==
-In-Reply-To: <548F36D5.4000402@gmail.com>
+        bh=qXBBAUSPUFtdA3j5NgLUsCngQ8iBbCNNA/z2rQw1qN4=;
+        b=lozCtP2+ZFsES/FbkWljmHBviCFJbUzFMRzrHHydUpGm3EqpfSEXDqV6CTrPvwYXCg
+         yKzTHX7CrcNOlpU1jnwMTOtGvJPwU3EsdBt+oKmIesrp6ptDQ8kcpulgBXIZGcPg+PLD
+         dUpL/ur5hpbb1pCoSFVpro93QhbJv2PgvIiJ/BZ/yk3ct77Ga9TFFS7Yd6hajQ5uCA/z
+         j5FEIhc3R+wITVNXbqGtv14CntPNOyIUWMWmtCroUoFin4JKQ3pPunc+SaBFiJfBByoG
+         f77BarUmcghzcSlMUrtq/MweORzbZIPtrcmYA5QcWbQPFFzcCVZThDOdXfoO7m4a8s5D
+         wnHA==
+In-Reply-To: <1418418632-18396-5-git-send-email-intelfx100@gmail.com>
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"; format="flowed"
 To: Ivan Shapovalov <intelfx100@gmail.com>
 Cc: reiserfs-devel@vger.kernel.org
 
-On 12/15/2014 08:30 PM, Edward Shishkin wrote:
-> On 12/14/2014 09:03 AM, Ivan Shapovalov wrote:
->> On Saturday 13 December 2014 at 23:38:02, Edward Shishkin wrote:
->>> On 12/12/2014 10:10 PM, Ivan Shapovalov wrote:
->>>> So, this patchset uses your algorithm of padding/gluing extents to 
->>>> be discarded.
->>>> I've added exact allocation primitives (is it what you've been 
->>>> talking about?
->>>
->>> So, we found out that the old bitmap primitives don't allow us to 
->>> implement
->>> precise discard, and I asked for new ones. Also we wanted to 
->>> implement the
->>> general case, when precise discard works for any pair (offset, unit).
->>> Currently
->>> it works only for ones determined by the function 
->>> convert_lattice_params().
->>> For some reasons (that I don't remember) I was sure, that the 
->>> general case
->>> should be obtained from this partial case by a small transformation 
->>> of the
->>> function discard_sorted_merged_extents().
->>>
->>> Well, I'll try to dive into details and generalize things on the 
->>> holidays.
->>> If generalization is impossible, 
+Agreed.
+This is absolutely not needed "if".
 
-
-Hopefully this is possible,
-I'll try to send the patch in short.
-
+Thanks!
 Edward.
 
 
->>> then we'll switch to non-precise
->>> discard every
->>> time when convert_lattice_params() fails.
->> I don't quite understand you here... Do you mean that some non-insane 
->> combinations
->> of discard unit, discard offset and blocksize are not handled (but worth
->> handling)?
+On 12/12/2014 10:10 PM, Ivan Shapovalov wrote:
+> @tailp, @alen and @end must be updated simultaneously because there are expressions
+> involving combinations of these variables.
 >
+> Signed-off-by: Ivan Shapovalov <intelfx100@gmail.com>
+> ---
+>   fs/reiser4/discard.c | 12 ++----------
+>   1 file changed, 2 insertions(+), 10 deletions(-)
 >
-> Yes. As you can see, if (discard_offset % block_size != 0), then we
-> don't issue discard requests. Neither precise, nor non-precise.
-> It is hard to implement the precise discard support in the generic 
-> case straight away.
->
->
->>
->> TBH, convert_lattice_params() looks magic-ish to me...
->
->
-> OK, I'll try to provide some background (geometric minimum).
->
-> Edward.
+> diff --git a/fs/reiser4/discard.c b/fs/reiser4/discard.c
+> index a8c5336..86ff6e4 100644
+> --- a/fs/reiser4/discard.c
+> +++ b/fs/reiser4/discard.c
+> @@ -366,18 +366,10 @@ static int discard_sorted_merged_extents(struct list_head *head)
+>   					/*
+>   					 * jump to the glued extent
+>   					 */
+> -					if (end + tailp < next_start + next_len) {
+> -						/*
+> -						 * the glued extent doesn't
+> -						 * fit into the tail padding,
+> -						 * so update the last one
+> -						 */
+> -						tailp = extent_get_tailp(next_start + next_len,
+> -									 d_off, d_uni);
+> -						alen += (next_start + next_len - end);
+> -					}
+>   					pos = next;
+> +					alen += (next_start + next_len - end);
+>   					end = next_start + next_len;
+> +					tailp = extent_get_tailp(end, d_off, d_uni);
+>   					/*
+>   					 * try to glue more extents
+>   					 */
 
