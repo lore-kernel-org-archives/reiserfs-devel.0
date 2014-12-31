@@ -1,69 +1,45 @@
-From: Richard Weinberger <richard.weinberger@gmail.com>
-Subject: Re: [PATCH 1/1 linux-next] fs/reiserfs/inode.c: replace 0 by NULL for pointers
-Date: Thu, 25 Dec 2014 13:17:58 +0100
-Message-ID: <CAFLxGvyhuQcXpaKZpJQ4B-zNpDOV3L3mZ87iFgeGcZkXZO9Keg@mail.gmail.com>
-References: <1419500596-12760-1-git-send-email-fabf@skynet.be>
+From: Felipe Monteiro de Carvalho <felipemonteiro.carvalho@gmail.com>
+Subject: Reiser 3.6: Recover partition start position & Journal
+Date: Wed, 31 Dec 2014 09:50:39 +0100
+Message-ID: <CACyNnZP36ZsPJix48p9kAozdK0CFG+e_2z-xXH=mC2YwPnwBFw@mail.gmail.com>
 Mime-Version: 1.0
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20120113;
-        h=mime-version:in-reply-to:references:date:message-id:subject:from:to
-         :cc:content-type;
-        bh=XNRJldFFH/BU9d8RFZHsSMT68nlhSXhBRDXO46O3Y9c=;
-        b=UrokY2mNsRU6NnhLdPiKYlqmmo6bTCXeHOdHA+SrNBnUYEgHKQFz33zvBCmKSzT+Ny
-         glKbFhLZvEPAcItuM96nfekZsdnVxKMb//d0E4fdwosWDM4INjznNn6mldnOOFtlIxOf
-         wqQeNVoeTxjVUmqSReM6X3NGDFlfgnkPZYsg7nRCy/9LVEQuySIPBd2CGWjLqzmR1BBU
-         LxHnZV6rjD2OuqCojxyJ6azlkCKZv6Bk4c9WuMEJurlcvC/oA5dBUl9PFLm0N+4HMBZc
-         +uJx5QHiqnxp5/ZeUwkbfnYl+IJq1rzeu9cTXPriz75KH5PJGTalbvRK0KzbhEFfQqJJ
-         58yA==
-In-Reply-To: <1419500596-12760-1-git-send-email-fabf@skynet.be>
+        h=mime-version:date:message-id:subject:from:to:content-type;
+        bh=sqDpzsE+BBO1ovL+jrKFhjIWAoQm7hET1/Ig+VzPU64=;
+        b=MKA/j5wr3A/ZinsHoaul/bkPhNph3EiKeJRjhosQz24ExOQMknF76AVfQB+Z+TYEOG
+         nKb9Km2UPDNlwrJVepvJFj/MVyQFjLYcLhcGF1hFgwF6HB6Z6v1Tf6nlOEKotK9Wumdq
+         +nd4vgEUsy1P5sy54Z4giS08FnLlVSxXn4G5guO/ULmhXQCtK1IHETZaDmOUL35OTyOQ
+         tApdjXHUnuiZfTmldWH/4nn7GJkgR0jgK+cDANxtbShNhkl5QPbUaayT/m8LEv4Iiu6X
+         rmVRqk2z71U3rQRLAxcgmVv6E06vu4qCeLFBbV6F2gXXb6Bw+EWVJCQizDyjjVyqW1m5
+         bw/Q==
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Fabian Frederick <fabf@skynet.be>
-Cc: LKML <linux-kernel@vger.kernel.org>, reiserfs-devel@vger.kernel.org, Jeff Mahoney <jeffm@suse.com>, Andrew Morton <akpm@linux-foundation.org>
+To: reiserfs-devel@vger.kernel.org
 
-On Thu, Dec 25, 2014 at 10:43 AM, Fabian Frederick <fabf@skynet.be> wrote:
-> Fix sparse warning:
-> fs/reiserfs/inode.c:2769:19: warning: Using plain integer as NULL pointer
+Hello,
 
-I see such fixes often and I always wonder whether this is still an
-issue with modern compilers/computers.
-Can you point out a problem which will be fixed by your patch?
+I am writing a utility to recover ReiserFS partitions in case of
+damage in the MBR. My main problem is figuring out the start position
+of the partition. Does anyone know if there is any structure that
+contains its own offset or anything else that I can use to figure out
+the start of the partition? The superblock contains the partition
+size, but no info about the partition start =(
 
-> Cc: reiserfs-devel@vger.kernel.org
-> Cc: Jeff Mahoney <jeffm@suse.com>
-> Cc: Andrew Morton <akpm@linux-foundation.org>
-> Signed-off-by: Fabian Frederick <fabf@skynet.be>
-> ---
->  fs/reiserfs/inode.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/fs/reiserfs/inode.c b/fs/reiserfs/inode.c
-> index a7eec98..e72401e 100644
-> --- a/fs/reiserfs/inode.c
-> +++ b/fs/reiserfs/inode.c
-> @@ -2766,7 +2766,7 @@ static int reiserfs_write_begin(struct file *file,
->         int old_ref = 0;
->
->         inode = mapping->host;
-> -       *fsdata = 0;
-> +       *fsdata = NULL;
->         if (flags & AOP_FLAG_CONT_EXPAND &&
->             (pos & (inode->i_sb->s_blocksize - 1)) == 0) {
->                 pos ++;
-> --
-> 1.9.1
->
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-kernel" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
-> Please read the FAQ at  http://www.tux.org/lkml/
+Also, I created a Reiser 3.6 partition, added some files, removed some
+files, and looked  into the Journal (block indicated in
+jp_journal_1st_block) and it looked pretty empty, lots of zeroes =(
+Any idea what I am doing wrong? Do I need a special command in linux
+to force activation of journal?? The block indicated was $73 and at
+volume position $73000 there was: 0x17 0x00 0x00 0x00 0x05 and then
+zeroes. Maybe this is some kind of pointer to the real jounal?
 
+I know that this list has mostly people talking about Reiser 4, but I
+couldnt find any other list about reiser 3 =(
 
-
+thanks in advance for any help =)
 -- 
-Thanks,
-//richard
+Felipe Monteiro de Carvalho
