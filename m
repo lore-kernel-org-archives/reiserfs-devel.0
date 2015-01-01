@@ -1,42 +1,74 @@
-From: Felipe Monteiro de Carvalho <felipemonteiro.carvalho@gmail.com>
+From: Jeff Mahoney <jeffm@suse.com>
 Subject: Re: Reiser 3.6: Recover partition start position & Journal
-Date: Thu, 1 Jan 2015 11:15:25 +0100
-Message-ID: <CACyNnZNqaSiV_ejW93LW-RPS0NSHfq4Mdmooc+xVqZ4mpNt2tg@mail.gmail.com>
-References: <CACyNnZP36ZsPJix48p9kAozdK0CFG+e_2z-xXH=mC2YwPnwBFw@mail.gmail.com>
-	<54A42F22.90505@telegraphics.com.au>
+Date: Thu, 01 Jan 2015 12:50:59 -0500
+Message-ID: <54A58903.6070306@suse.com>
+References: <CACyNnZP36ZsPJix48p9kAozdK0CFG+e_2z-xXH=mC2YwPnwBFw@mail.gmail.com>	<54A42F22.90505@telegraphics.com.au> <CACyNnZNqaSiV_ejW93LW-RPS0NSHfq4Mdmooc+xVqZ4mpNt2tg@mail.gmail.com>
 Mime-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20120113;
-        h=mime-version:in-reply-to:references:date:message-id:subject:from:to
-         :cc:content-type;
-        bh=IvAcrLgBIP0VA6VA8bgh4QlGM+5U0VeNqGK/bOIdxlw=;
-        b=dzO4MVkmZRP5EpuRqIGs2DOyJCM390lXxBz40Vqxl4lIIbjXnrHvwMuk7JscLKoBgh
-         6hNe7yJUHbj+jqIkJQv8wJfMgIUdur4POmtPa9jBAZp6Y9erlEEjsil51ykizGjdJaNy
-         CKC+Q08YLISPfpX3QFEhbahKgnGQQgf9jWtF8/hjAt3ubAPPeAflXv6Is0yR4xpexfp2
-         8pI9l9Copz5sC41aJe7gfIg2S8tA9dQZw0KB/B/cyWZ4KyZF0XR25pGRdtINICUK7Oyd
-         oXYgugU2u7oJdJr+j239r64V3wF3Sqt4WABL16+5QXmredKFHpRt1dx4asznzvVjM5ei
-         nqVw==
-In-Reply-To: <54A42F22.90505@telegraphics.com.au>
+In-Reply-To: <CACyNnZNqaSiV_ejW93LW-RPS0NSHfq4Mdmooc+xVqZ4mpNt2tg@mail.gmail.com>
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Toby Thain <toby@telegraphics.com.au>
+To: Felipe Monteiro de Carvalho <felipemonteiro.carvalho@gmail.com>, Toby Thain <toby@telegraphics.com.au>
 Cc: reiserfs-devel@vger.kernel.org
 
-On Wed, Dec 31, 2014 at 6:15 PM, Toby Thain <toby@telegraphics.com.au> wrote:
-> I've done this for Reiser 3. I blogged about it here:
-> http://slashdot.org/journal/110587
+-----BEGIN PGP SIGNED MESSAGE-----
+Hash: SHA1
 
-Thanks,
+On 1/1/15 5:15 AM, Felipe Monteiro de Carvalho wrote:
+> On Wed, Dec 31, 2014 at 6:15 PM, Toby Thain
+> <toby@telegraphics.com.au> wrote:
+>> I've done this for Reiser 3. I blogged about it here: 
+>> http://slashdot.org/journal/110587
+> 
+> Thanks,
+> 
+> Indeed, supposing that the first found superblock is located at 
+> REISERFS_DISK_OFFSET_IN_BYTES (0x10000) is a possibility. I was
+> just wondering if there is anything more reliable, but it looks
+> like that there isnt. The problem with this approach for an
+> automated program is
 
-Indeed, supposing that the first found superblock is located at
-REISERFS_DISK_OFFSET_IN_BYTES (0x10000) is a possibility. I was just
-wondering if there is anything more reliable, but it looks like that
-there isnt. The problem with this approach for an automated program is
-that it will fail if the first superblock was overwritten somehow.
+Yeah, that's really your best bet. Any modern (read: any file system
+created since the ~ Linux 2.2 days) reiserfs file system will have the
+superblock at that offset.
 
-thanks,
--- 
-Felipe Monteiro de Carvalho
+> that it will fail if the first superblock was overwritten somehow.
+
+Yep. If that's the case, you should be able to find many superblocks
+in the journal. From there, you can go backwards until you find the
+journal header block which, if internal, usually has a defined
+location that starts immediately after the superblock. Then you'll
+want to try to figure out which one is the most recent and part of a
+complete transaction.
+
+One caveat to all of this, and why newer file systems like btrfs have
+self-identifying metadata, is if you encounter a file system image
+hosted on the reiserfs file system. Since there's no way to determine
+whether the blocks are part of the file or the file system hosting it,
+you could get false positives. This is a problem for reiserfsck -S as
+well.
+
+- -Jeff
+
+- -- 
+Jeff Mahoney
+SUSE Labs
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG/MacGPG2 v2.0.22 (Darwin)
+
+iQIcBAEBAgAGBQJUpYkDAAoJEB57S2MheeWyhagP/0L38Z1BUq6i3Ap2alqpAy3W
+zqTGRaHcvrzSLWmSxJhzQPa5oEcfptffnqWFjXQlI5ppowV5hMuH24OSpslxL8R1
+8zI1TxLH7YmtXkte7J6PH0IsQ4Wv9zs7Y8lT05OvAjiWwUmjcWkKm7oQ4h1nMpiq
+xBcpannENpJHNakldlgIbmsoGziOsrpB3qinep5YcVqmKtNsQm4/kVoxF5CnLj++
+sWwK0Jciysm6RF2KKYIzZjDkisk5JsxpGy8qXeysrEPS3NRYiXOqR7yKqiX0Z6eI
+5+ldrm7iVGiawW/ZdR1I+QJJQKpWt4SeKp7MdrKOcdAEwZ1qiFU0X3w80iLY+f7Q
+jHOJ4ZCIX7oOCWHQdd/nD7e/RnCj366Ki/7zBSxBRauZo1Q6UqDXa6pftZROkdhZ
+Pe1tez/igZbLWn2N2z886V2qRh9FrckC43pY880evXw1drEXMrQeZbSlG9gIa90H
+Gj3Q0FqxfCVG7qYZPFwklkCszep9NVbcMq9lbUdOv0LWFdHmfb5T3DXqUk36aVKq
+OYtYX7T1anwLZ9MgFnggcyxiMEiq4wCoZoBx5oh1vknM2oqcj0I/u+6usBwCld1P
+K35opHXvC6p76sSXwtO/UpqSNY92gJCGDWylcfrDi/oAHhoZc3bj3DwxLD9kMoFq
+R23nG+NXNqyyuUEOdkWa
+=ChCT
+-----END PGP SIGNATURE-----
