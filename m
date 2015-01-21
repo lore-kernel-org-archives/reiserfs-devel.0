@@ -1,40 +1,42 @@
-From: Edward Shishkin <edward.shishkin@gmail.com>
-Subject: Re: Why patch reiser4-for-3.17.3.patch does not apply ?
-Date: Mon, 19 Jan 2015 19:12:08 +0100
-Message-ID: <54BD48F8.3060501@gmail.com>
-References: <9cc275035b16b88c3bd4ada2aa9786f0@mail.velocitynet.com.au> <20150119174931.68bac05a@Ulf.tvoe.tv>
+From: <doiggl@velocitynet.com.au>
+Subject: patchset query re 01-29
+Date: Wed, 21 Jan 2015 19:34:58 +1100
+Message-ID: <b29977898271586de152261a8905ef39@mail.velocitynet.com.au>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20120113;
-        h=message-id:date:from:user-agent:mime-version:to:subject:references
-         :in-reply-to:content-type:content-transfer-encoding;
-        bh=cdUKYXtRZ2vOQgpD324PGPmQjsdCuxcwZ79QCzRqckU=;
-        b=d7SnffWSqcgJWWdWD0Vcbnf0LO0kix9y7OZ6/PDBjvxupX0xo+A1fT4kNocuzdm491
-         wTNyDSmygyxHts3v1lLDdDWnrJl6sNhKiHMc5fWQKh338It+tziNb+Jm++fDcao00WKg
-         45NoEe5xxqe/g6Sw6LDcYlk7CywgetnnMkGn7g/fBWau6YKMveT9SZGqX5DeNj3FVV55
-         x0X/iuFSa9jRrOdhaWA96TCVTU/d5IWbH+aPn3uWdXbinXQhdgVO9guefp8GiDkSfoof
-         TnJ/D3qod4pevaEUZdz3OufmI7gSb4g0ZImxmlht0byNSiJuL0dU+PuloLmzd6YXQ3c5
-         x9FA==
-In-Reply-To: <20150119174931.68bac05a@Ulf.tvoe.tv>
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: reiserfs-devel <reiserfs-devel@vger.kernel.org>, dimas000@ya.ru
+Content-Type: text/plain; charset="us-ascii"
+To: jeffm@suse.com
+Cc: reiserfs-devel@vger.kernel.org
 
-It applies just fine to 3.17
+Hello,
+Is this patch available to use [1]
+Does the patch apply to
+https://build.opensuse.org/package/show/openSUSE:13.2/reiserfs
+Just Asking.
+Cheers Glenn
 
 
-On 01/19/2015 03:49 PM, dimas wrote:
-> why are you trying to apply 3.17.3 patch to the older kernel?
->
->
-> 2015-019 17:52 doiggl@velocitynet.com.au <doiggl@velocitynet.com.au> wrote:
->> Hello,
->> The reiser4-for-3.17.3.patch fails against linux-3.17.tar
-> --
-> To unsubscribe from this list: send the line "unsubscribe reiserfs-devel" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+[1]details
+http://www.spinics.net/lists/reiserfs-devel/msg03814.html
 
+This set consists of 29 patches in a few areas.
+
+1 - Convert the commit workqueue to a per-fs workqueue
+2 - Clean up ugly accessor macros to use more readable names
+3 - Clean up comments to use the normal kernel style
+4 - Remove the unused nblocks argument from journal_end
+5 - Remove superblock argument from journal_end (it's in the trans handle)
+6 - Remove superblock argument from journal_mark_dirty (see #5)
+7 - Remove blocks argument from journal_join (it's always 1)
+8 - Remove leading whitespace from labels
+9 - Remove unnecessary parents
+10 - Clean up dirent creation
+11 - Clean up hash detection
+12-29 - Clean up balance_leaf - This 2500-line function goes through
+        6 easily distinguishable stages, each with several sub-parts. The
+	patch set splits up the stages and then reformats them to keep
+	the split as obvious as possible. The final result is a whole
+	lot easier to follow and easier on the eyes.
