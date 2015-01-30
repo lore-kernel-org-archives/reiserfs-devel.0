@@ -1,56 +1,135 @@
-From: Edward Shishkin <edward.shishkin@gmail.com>
-Subject: Re: In the future, will a r4 patch be created for linux 3.18.x series
- and patches
-Date: Thu, 29 Jan 2015 20:31:53 +0100
-Message-ID: <54CA8AA9.607@gmail.com>
-References: <d72614d46b84a7c4a1f1728e4742232b@mail.velocitynet.com.au> <1422487314.8468.4.camel@gmail.com>
+From: <doiggl@velocitynet.com.au>
+Subject: Re: reiser4progs revision.
+Date: Fri, 30 Jan 2015 19:03:58 +1100
+Message-ID: <a537b11102c920b87a1d62f66f36bf13@mail.velocitynet.com.au>
+References: <114fff4391af47417e806586fb761345@mail.velocitynet.com.au> <24322648.R9GnluWRk3@intelfx-laptop> <458361e3164a300c930420b3dd9e5b43@mail.velocitynet.com.au> <53FDD565.6030500@gmail.com> <4a7ae00218566234cc327500710d1a61@mail.velocitynet.com.au> <53FF26A2.2060300@gmail.com> <30cfa4f297251197e8b5fa1c669d13c9@mail.velocitynet.com.au> <54007FCF.6050500@gmail.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20120113;
-        h=message-id:date:from:user-agent:mime-version:to:cc:subject
-         :references:in-reply-to:content-type:content-transfer-encoding;
-        bh=9TkQNTflwcvW5hfMOnN/LRzNFcm6UAs+v+mM7ckPVmk=;
-        b=Y8/j6PzPY7tn4N6fxpixoWZdklbUPT2k2aU90QrXDMj2h35c+IMI9pr04LfPpBdKAZ
-         xyKPCJ43pzeG8QB9LSjKa/szJ3EYv7RK0lYSPzHKQUhZychAnPfd7nnmjTAaBlBeWeyi
-         Q354rrOMffTXlnIGLgyddGOi75Ze9b4GDi8Asvh6n+HxDuRlfhdRzRw6A+vt8nSHBIsm
-         xdO74HvOEkO/8d+O/6ImGIbIVBBHBeh8nanqZFJ6YR5eSE8KknogR+qTke59ROkYkNfI
-         0J+3B2LCKTWmEDRttsNATv2eGEijn/qBjcNAj68FbmBe/O+AbS5Krfhb5yFyCnnj+Nfw
-         i/7w==
-In-Reply-To: <1422487314.8468.4.camel@gmail.com>
+In-Reply-To: <54007FCF.6050500@gmail.com>
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: Ivan Shapovalov <intelfx100@gmail.com>
-Cc: reiserfs-devel@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+To: Edward Shishkin <edward.shishkin@gmail.com>
+Cc: Ivan Shapovalov <intelfx100@gmail.com>, reiserfs-devel@vger.kernel.org
+
+On Fri, 29 Aug 2014 15:27:43 +0200, Edward Shishkin
+<edward.shishkin@gmail.com> wrote:
+> On 08/29/2014 04:16 AM, doiggl@velocitynet.com.au wrote:
+>>>>> This is a bug in fsck: it jumps to wrong branch for some reasons.
+>>>>> Not yet fixed.
+>>>>>
+>>>>> Edward.
+
+Hello,
+Is there any news on the fix to correct [1]
+--Glenn
+
+see:
+http://www.spinics.net/lists/reiserfs-devel/msg04206.html
+
+[1]
+message:
+
+        Looks like the filesystem is damaged. Make sure that reiser4progs
+are
+        installed
+        and run
+
+        # fsck.reiser4 --build-fs /dev/sdb
+
+        (You may need to use --force because apparently you have R4 on a
+whole
+        disk,
+        not on a partition.)
+
+        Hope that helps,
+
+    #
+
+    Hello,
+    Thanks for the details.
+
+    I did the fpllowing steps:
+    # fsck.reiser4 --build-fs --force  /dev/sdb
+    *******************************************************************
+    This is an EXPERIMENTAL version of fsck.reiser4. Read README first.
+    *******************************************************************
+
+    Fscking the /dev/sdb block device.
+
+    Will check the consistency of the Reiser4 SuperBlock. Will build the
+Reiser4 FileSystem. ***** fsck.reiser4 started at Tue Aug 26 17:22:24 2014
+
+    Reiser4 fs was detected on /dev/sdb.
+
+    Master super block (16):
+
+    magic:          ReIsEr4
+    blksize:        4096
+    format:         0x0 (format40)
+    uuid:           3006ced1-7490-4ea8-a9b8-d82143c6bede
+    label:          <none>
+
+    Format super block (17):
+
+    plugin:         format40
+    description:    Disk-format plugin.
+    version:        0
+    magic:          ReIsEr40FoRmAt
+    mkfs id:        0x1ddaf754
+    flushes:        0
+    blocks:         488378640
+    free blocks:    217146980
+    root block:     37017218
+    tail policy:    0x2 (smart)
+    next oid:       0xedade
+    file count:     188313
+    tree height:    6
+    key policy:     LARGE
+
+    CHECKING THE STORAGE TREE Read nodes 197008413 Nodes left in the tree
+197008413 Leaves of them 194764277, Twigs of them 2217790 Time interval:
+Tue Aug 26 17:24:21 2014 - Wed Aug 27 01:25:31 2014 CHECKING EXTENT
+REGIONS. Read twigs 2217790 Time interval: Wed Aug 27 01:25:31 2014 - Wed
+Aug 27 03:35:39 2014 LOOKING FOR UNCONNECTED NODES FSCK: node.c: 108:
+repair_node_items_check: Node (43828275), items (0) and
+
+    (1): Wrong order of keys.
+    FSCK: node.c: 108: repair_node_items_check: Node (52697435), items
+(79)
+    and (80): Wrong order of keys.
+    FSCK: node.c: 108: repair_node_items_check: Node (63227569), items
+(24)
+    and (25): Wrong order of keys.
+    FSCK: node.c: 108: repair_node_items_check: Node (63227571), items
+(73)
+    and (74): Wrong order of keys.
+    FSCK: node.c: 108: repair_node_items_check: Node (116595727), items
+(20)
+    and (21): Wrong order of keys.
+    FSCK: node.c: 108: repair_node_items_check: Node (227923161), items
+(22)
+    and (23): Wrong order of keys.
+    FSCK: node.c: 108: repair_node_items_check: Node (284305753), items
+(61)
+    and (62): Wrong order of keys.
+             Read nodes 1481038
+
+    Good nodes 471512
+
+                     Leaves of them 466164, Twigs of them 5348
+             Time interval: Wed Aug 27 03:35:57 2014 - Wed Aug 27 03:39:46
+2014
+
+    ***** fsck.reiser4 finished at Wed Aug 27 03:39:46 2014
+    Closing fs...done
+
+    FS is consistent.
 
 
-On 01/29/2015 12:21 AM, Ivan Shapovalov wrote:
-> On 2015-01-14 at 20:18 +1100, doiggl@velocitynet.com.au wrote:
->> Hello,
->> In the future, will a r4 patch be created for linux 3.18.x series and
->> patches
->>
->> Just asking.
->> Cheers Glenn
-> Actually, reiser4 does not need porting for 3.17 -> 3.18, there's just
-> a single merge conflict. I've been running 3.18 with reiser4 this way
-> all time since its release...
->
-> to Edward: maybe you could release reiser4-for-3.18 just with that merge
-> conflict fixed?
 
-Ok.
-
-> P. S.: I haven't yet tested your precise discard implementation. I've
-> been pretty busy with the exam session (which has just ended, so I'll
-> get to testing it in short time).
->
-
-
-Congrats!
-The first session in MIPT is really a survival test.
-At least it was so in 198X..
+This is a bug in fsck: it jumps to wrong branch for some reasons.
+Not yet fixed.
 
 Edward.
