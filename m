@@ -1,43 +1,74 @@
-From: Edward Shishkin <edward.shishkin@gmail.com>
-Subject: Re: Reiser4: Precise real-time discard support for SSD devices
-Date: Wed, 04 Feb 2015 00:08:37 +0100
-Message-ID: <54D154F5.1010404@gmail.com>
-References: <54CFFB1D.6090906@gmail.com> <54D093C1.7000103@niksula.hut.fi>
+From: <doiggl@velocitynet.com.au>
+Subject: Here is a plain kernel based on 3.17.3 with the reiser4 patch enabled.
+Date: Thu, 05 Feb 2015 15:21:03 +1100
+Message-ID: <88a5d6f2e24cba7990522bf6fd444e9b@mail.velocitynet.com.au>
 Mime-Version: 1.0
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Transfer-Encoding: 8bit
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20120113;
-        h=message-id:date:from:user-agent:mime-version:to:subject:references
-         :in-reply-to:content-type:content-transfer-encoding;
-        bh=h1NxFSJ+kqq8d/2mWJk+RetPp9mJ5Ds7wackDEBd5u0=;
-        b=ipZlVBoEIFNN/1VSaiDelsbHoHNpKjIRKCwGOBeCwf/8AAvPOkkJrs0EBvy1ZcuzdU
-         ljea8Xp0a0ZnNZfNFriJPGB7Jfz1WpEtTCp7CEZj+talHa4rWNhhepRMUTTNEhILvygV
-         bM/ZtDXI9Gp8betUXube5o60pWLrn0uvXrII24sC5HQjXAAw2N0fmuIahpR39rLaYDWz
-         dl5HP/kEs0jkjh+3hCA6MqrjVFhrUd2qi3vu+v7SPV3Ru6z0y54nctMTsUdHHznO7Acs
-         f9+Cajvkif6KBuo/1L1wBAJj9fomwQHCVAQanHvN2IAnfwce3b+WTtXkMKmA6LFx1Nu1
-         9tjQ==
-In-Reply-To: <54D093C1.7000103@niksula.hut.fi>
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="windows-1252"; format="flowed"
-To: =?UTF-8?B?4oCg?= <god12@niksula.hut.fi>, ReiserFS development mailing list <reiserfs-devel@vger.kernel.org>
+Content-Type: text/plain; charset="us-ascii"
+To: reiserfs-devel@vger.kernel.org
 
+Hello,
+Here is a plain kernel based on 3.17.3 with the reiser4 patch built with
+the Opensuse build service [obs] system.
 
-On 02/03/2015 10:24 AM, =E2=80=A0 wrote:
-> That's the best write-up on the topic I've ever seen. Thanks a lot!
-> Could you please put it on a wiki or some website to make sure it's n=
-ot buried in the
-> ML archive?
+The built rpms are here
 
+https://build.opensuse.org/package/binaries/home:doiggl/kernel-reiser4?repository=openSUSE_13.1
 
-Done:
-http://reiser4.wiki.kernel.org/index.php/PreciseDiscard
+Architecture: i586
 
-Thanks,
-Edward.
---
-To unsubscribe from this list: send the line "unsubscribe reiserfs-deve=
-l" in
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+kernel-reiser4-3.17.3-1.1.gd2bbe7f.i686.rpm
+kernel-reiser4-3.17.3-1.1.gd2bbe7f.nosrc.rpm
+kernel-reiser4-debuginfo-3.17.3-1.1.gd2bbe7f.i686.rpm
+kernel-reiser4-debugsource-3.17.3-1.1.gd2bbe7f.i686.rpm
+kernel-reiser4-devel-3.17.3-1.1.gd2bbe7f.i686.rpm
+
+Architecture: x86_64
+
+kernel-reiser4-3.17.3-1.1.gd2bbe7f.nosrc.rpm
+kernel-reiser4-3.17.3-1.1.gd2bbe7f.x86_64.rpm
+kernel-reiser4-debuginfo-3.17.3-1.1.gd2bbe7f.x86_64.rpm
+kernel-reiser4-debugsource-3.17.3-1.1.gd2bbe7f.x86_64.rpm
+kernel-reiser4-devel-3.17.3-1.1.gd2bbe7f.x86_64.rpm
+
+The project is here
+https://build.opensuse.org/package/show?package=kernel-reiser4&project=home%3Adoiggl
+
+The log of the build is here {x86_64} as an example. [Its a long buildlog]
+https://build.opensuse.org/package/live_build_log/home:doiggl/kernel-reiser4/openSUSE_13.1/x86_64
+
+The .spec used file is here
+https://build.opensuse.org/package/view_file/home:doiggl/kernel-reiser4?expand=1&file=kernel-reiser4.spec
+
+Thanks to the opensuse-kernel list members for compilation advice.
+
+Patches applied:
+
+/home/abuild/rpmbuild/SOURCES/apply-patches --vanilla
+/home/abuild/rpmbuild/SOURCES/series.conf ..
+patch -s -F0 -E -p1 --no-backup-if-mismatch -i
+../patches.kernel.org/patch-3.17.3
+patch -s -F0 -E -p1 --no-backup-if-mismatch -i
+../patches.rpmify/reiser4-for-3.17.3.patch
+patch -s -F0 -E -p1 --no-backup-if-mismatch -i
+../patches.rpmify/3.17.3-reiser4-precise-discard-support.patch
+patch -s -F0 -E -p1 --no-backup-if-mismatch -i
+../patches.rpmify/chipidea-clean-up-dependencies
+patch -s -F0 -E -p1 --no-backup-if-mismatch -i
+../patches.rpmify/lustre-lloop-dont-change-logical-size
+patch -s -F0 -E -p1 --no-backup-if-mismatch -i
+../patches.rpmify/firmware-path
+patch -s -F0 -E -p1 --no-backup-if-mismatch -i
+../patches.rpmify/rpm-kernel-config
+patch -s -F0 -E -p1 --no-backup-if-mismatch -i
+../patches.rpmify/split-package
+patch -s -F0 -E -p1 --no-backup-if-mismatch -i
+../patches.rpmify/cloneconfig.diff
+
+It looks like obs built the rpms.
+Post the results to the list.
+
+Cheers Glenn
