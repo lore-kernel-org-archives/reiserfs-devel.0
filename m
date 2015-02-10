@@ -1,55 +1,67 @@
-From: <doiggl@velocitynet.com.au>
-Subject: Here is a plain kernel based on 3.18.6 with the reiser4 patch enabled.
-Date: Tue, 10 Feb 2015 18:53:14 +1100
-Message-ID: <8951fb93d996be8bf758c8d925a0e7c6@mail.velocitynet.com.au>
+From: Edward Shishkin <edward.shishkin@gmail.com>
+Subject: [PATCH 0/2] reiser4: node41 layout support
+Date: Tue, 10 Feb 2015 18:58:22 +0100
+Message-ID: <54DA46BE.80302@gmail.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20120113;
+        h=message-id:date:from:user-agent:mime-version:to:subject
+         :content-type:content-transfer-encoding;
+        bh=qKc169rdIktaIVAy3DvPJ0dKje31BcsubReAzUYaW5A=;
+        b=EME08/jiUeqeU3qDK009GSGZKomtwBR2DZukgLwUYkpy+zFBd0ZMeiJRJC7DJFy8PD
+         5ROfGzkz12HKRY0ZeIw1zg8VM8Ne+PTY9EyuMcmRZxTYaa+x6gKQYaRM7iXI4iBpNHgl
+         807KbvjqjPWjvWw2mY1lPTCEsMaAC55Amu7GARJeS5lKK+wawmFVOASh6TZDtqj5vuEZ
+         ktjZ1CHQ5X6xU50KWcwRz5pFMbIP7E7UokHf87cn4AqDCgZVPiENcrzP48ZgrnAfpG6F
+         3WpKPb8Jo7b4v8q/SzzboEUzCNNUwnwBdzOB2zgKZevN/wdR+ncDcfYqGphe+GMpDNT9
+         uKnQ==
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-To: reiserfs-devel@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"; format="flowed"
+To: Reiserfs development mailing list <reiserfs-devel@vger.kernel.org>
 
-Hello,
-Here is a plain kernel based on 3.18.6 with the reiser4 patch built with
-the Opensuse build service [obs] system.
+Hi all,
 
-The built rpms are here
+The following patches introduce a new node format(plugin): node41.
+The new node layout (node41) contains a 32-bit field. This is the
+single difference from the old node format (node40).
 
-https://build.opensuse.org/package/binaries/home:doiggl/kernel-reiser4?repository=openSUSE_13.1
+The new field will be for meta-data checksums. Currently it is
+filled with zeros.
 
-Architecture: i586
+This is an important example of how to add a plugin to reiser4.
+Earlier file system developers used to design disk layouts "once
+and forever". Any change in disk layouts of such poorly designed
+file systems led to compatibility issues and ugly workarounds.
+With reiser4 we don't have such problems.
 
-kernel-reiser4-3.18.6-2.1.gd2bbe7f.i686.rpm
-kernel-reiser4-3.18.6-2.1.gd2bbe7f.nosrc.rpm
-kernel-reiser4-debuginfo-3.18.6-2.1.gd2bbe7f.i686.rpm
-kernel-reiser4-debugsource-3.18.6-2.1.gd2bbe7f.i686.rpm
-kernel-reiser4-devel-3.18.6-2.1.gd2bbe7f.i686.rpm
+Low-level interface to access the new field
 
-Architecture: x86_64
+1) in reiser4:
 
-kernel-reiser4-3.18.6-2.1.gd2bbe7f.nosrc.rpm
-kernel-reiser4-3.18.6-2.1.gd2bbe7f.x86_64.rpm
-kernel-reiser4-debuginfo-3.18.6-2.1.gd2bbe7f.x86_64.rpm
-kernel-reiser4-debugsource-3.18.6-2.1.gd2bbe7f.x86_64.rpm
-kernel-reiser4-devel-3.18.6-2.1.gd2bbe7f.x86_64.rpm
+nh41_get_csum(node41_header *head);
+nh41_set_csum(node41_header *head, __u32 val);
 
-The project is here
-https://build.opensuse.org/package/show?package=kernel-reiser4&project=home%3Adoiggl
+2) in reiser4progs:
 
-The log of the build is here {x86_64} as an example. [Its a long buildlog]
-https://build.opensuse.org/package/live_build_log/home:doiggl/kernel-reiser4/openSUSE_13.1/x86_64
+nh41_get_csum(reiser4_node_t *node);
+nh41_set_csum(reiser4_node_t *node, uint32_t val);
 
-The .spec used file is here
-https://build.opensuse.org/package/view_file/home:doiggl/kernel-reiser4?expand=1&file=kernel-reiser4.spec
+How to test the new feature:
+WARNING: don't use it for important data for now!!!
 
-Thanks to the opensuse-kernel list members for compilation advice.
+. format a reiser4 partition with mkfs option "-o node=node41";
+. mount as usual;
+. use as usual: all previously implemented functionality has to
+   work with the new node41 plugin;
+. umount;
+. debugfs.reiser4 -t /dev/xxx prints a new field CSUM for nodes
+   of the new format (0 for now);
+. fsck has to check/repair file systems with node41 layouts
+   properly.
 
-Patches applied:
-reiser4-for-3.18.6.patch
+Please, report if any problems,
 
-It looks like obs built the rpms.
-Post the results to the list.
-
-Cheers Glenn
-
+Thanks,
+Edward.
