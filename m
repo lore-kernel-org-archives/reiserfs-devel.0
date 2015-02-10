@@ -1,7 +1,7 @@
 From: <doiggl@velocitynet.com.au>
-Subject: Do these patches work together ? [reiser4-for-3.18.6.patch and 3.17.3-reiser4-precise-discard-support.patch]
-Date: Tue, 10 Feb 2015 16:44:18 +1100
-Message-ID: <96168b4a7b8181fc492ec5bc2059b18c@mail.velocitynet.com.au>
+Subject: Here is a plain kernel based on 3.18.6 with the reiser4 patch enabled.
+Date: Tue, 10 Feb 2015 18:53:14 +1100
+Message-ID: <8951fb93d996be8bf758c8d925a0e7c6@mail.velocitynet.com.au>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
@@ -10,9 +10,46 @@ List-ID: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
 To: reiserfs-devel@vger.kernel.org
 
-Hello.
-Do these patches work together ?
---Glenn
+Hello,
+Here is a plain kernel based on 3.18.6 with the reiser4 patch built with
+the Opensuse build service [obs] system.
 
+The built rpms are here
+
+https://build.opensuse.org/package/binaries/home:doiggl/kernel-reiser4?repository=openSUSE_13.1
+
+Architecture: i586
+
+kernel-reiser4-3.18.6-2.1.gd2bbe7f.i686.rpm
+kernel-reiser4-3.18.6-2.1.gd2bbe7f.nosrc.rpm
+kernel-reiser4-debuginfo-3.18.6-2.1.gd2bbe7f.i686.rpm
+kernel-reiser4-debugsource-3.18.6-2.1.gd2bbe7f.i686.rpm
+kernel-reiser4-devel-3.18.6-2.1.gd2bbe7f.i686.rpm
+
+Architecture: x86_64
+
+kernel-reiser4-3.18.6-2.1.gd2bbe7f.nosrc.rpm
+kernel-reiser4-3.18.6-2.1.gd2bbe7f.x86_64.rpm
+kernel-reiser4-debuginfo-3.18.6-2.1.gd2bbe7f.x86_64.rpm
+kernel-reiser4-debugsource-3.18.6-2.1.gd2bbe7f.x86_64.rpm
+kernel-reiser4-devel-3.18.6-2.1.gd2bbe7f.x86_64.rpm
+
+The project is here
+https://build.opensuse.org/package/show?package=kernel-reiser4&project=home%3Adoiggl
+
+The log of the build is here {x86_64} as an example. [Its a long buildlog]
+https://build.opensuse.org/package/live_build_log/home:doiggl/kernel-reiser4/openSUSE_13.1/x86_64
+
+The .spec used file is here
+https://build.opensuse.org/package/view_file/home:doiggl/kernel-reiser4?expand=1&file=kernel-reiser4.spec
+
+Thanks to the opensuse-kernel list members for compilation advice.
+
+Patches applied:
 reiser4-for-3.18.6.patch
-3.17.3-reiser4-precise-discard-support.patch
+
+It looks like obs built the rpms.
+Post the results to the list.
+
+Cheers Glenn
+
