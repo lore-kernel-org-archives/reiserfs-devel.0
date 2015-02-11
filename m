@@ -1,186 +1,163 @@
-From: <doiggl@velocitynet.com.au>
-Subject: Re: What can I do next to use R4 partition  sdb
-Date: Wed, 11 Feb 2015 19:26:16 +1100
-Message-ID: <f4947332422891a4e7ce539588ee07f7@mail.velocitynet.com.au>
-References: <114fff4391af47417e806586fb761345@mail.velocitynet.com.au> <24322648.R9GnluWRk3@intelfx-laptop> <458361e3164a300c930420b3dd9e5b43@mail.velocitynet.com.au> <53FDD565.6030500@gmail.com>
+From: Ivan Shapovalov <intelfx100@gmail.com>
+Subject: Re: [PATCH] reiser4: precise discard - general case
+Date: Wed, 11 Feb 2015 13:09:14 +0300
+Message-ID: <1423649354.10127.16.camel@gmail.com>
+References: <5495DB0D.1080005@gmail.com>
+	 <1423600944.24885.9.camel@gmail.com> <54DB1186.60505@gmail.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg="pgp-sha256";
+	protocol="application/pgp-signature"; boundary="=-3p9Ty43tZLaALjLHPj+f"
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
-In-Reply-To: <53FDD565.6030500@gmail.com>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20120113;
+        h=message-id:subject:from:to:cc:date:in-reply-to:references
+         :content-type:mime-version;
+        bh=jMWP8ISgoytgPUuttRPwEiggUoGlkRoTU3PGzhzld2I=;
+        b=rRrNqoBTB5IQ3kbmfleCCJybYlZn1gL5wdzAuMnSDooTXwXwdxrgQtw0de4Vo56s4l
+         QejGX+EUilL7Ptq1Zt2fDEZuUzDOzW/HD9tQg4HkYn2dBiiavVN7s9BQhGNfoG8JjULP
+         XyGN7lIRlWv/5k3XYA/W5MV09SFt7lFgZBumWJNfybijflunQgVlc960Q8PJTgPsXaeb
+         O8LpLD+AtGFnuZkuMsiOwGtASw5mCawnkVubCrLAcY+42Svg7WZUNZ7eukOWjvAeasNH
+         +IR0OsaUPjLl6UDtXr59zwMAntfMrgbl8AaEu0wgJlWB4BeOE6pyCn7CDEnox7xosUS2
+         aJCw==
+In-Reply-To: <54DB1186.60505@gmail.com>
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
 To: Edward Shishkin <edward.shishkin@gmail.com>
-Cc: Ivan Shapovalov <intelfx100@gmail.com>, reiserfs-devel@vger.kernel.org
-
-Regarding:
-
-it jumps to wrong branch for some reasons.
-Not yet fixed.
-
-Edward.
-
-Hello,
-------
-Question: Is there a .patch file to fix this condition ?
-can it be supplied ?
---Thanks Glenn
+Cc: ReiserFS development mailing list <reiserfs-devel@vger.kernel.org>
 
 
-reiser4progs-1.0.9 # find . |sort |grep -i fsck
-./doc/fsck.reiser4.8
-./progs/fsck
-./progs/fsck/Makefile.am
-./progs/fsck/Makefile.in
-./progs/fsck/backup.c
-./progs/fsck/backup.h
-./progs/fsck/fsck.c
-./progs/fsck/fsck.h
+--=-3p9Ty43tZLaALjLHPj+f
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-[1]
-# which fsck.reiser4 
-/usr/sbin/fsck.reiser4
+On 2015-02-11 at 09:23 +0100, Edward Shishkin wrote:
+> On 02/10/2015 09:42 PM, Ivan Shapovalov wrote:
+> > On 2014-12-20 at 21:24 +0100, Edward Shishkin wrote:
+> >> This is the promised generalization, which is supposed to work for all
+> >> discard
+> >> offsets and all discard unit sizes without any restrictions.
+> >>
+> >> Complications in comparison with the previous implementation:
+> >>
+> >> In this general case we need "precise" coordinates, where every
+> >> individual byte
+> >> can be addressed. All local variables, which represent precise
+> >> coordinates are
+> >> denoted with "prefixes" (a_len, d_off, p_tailp, etc). Local variables,
+> >> which represent
+> >> "non-precise" coordinates (they are usually of type reiser4_block_nr)
+> >> are denoted
+> >> without prefixes (start, len, end, tailp, etc).
+> >>
+> >> Blocks, which contain head and tail paddings are now calculated using =
+the
+> >> function size_in_blocks(), which actually is an expression for the
+> >> minimal number
+> >> of blocks containing the precise extent.
+> >>
+> >> The next trouble is "peculiarity in 0", encountered when calculating t=
+he
+> >> blocks of
+> >> head padding. if discard offset is different from 0, then the first
+> >> discard unit of the
+> >> partition is partial (its other part doesn't belong to our partition, =
+so
+> >> we can not
+> >> discard it). We handle this peculiarity by an additional check.
+> >>
+> >> In other bits everything is the same.
+> >>
+> >> Possible optimization: If discard unit sizes are always powers of 2,
+> >> then it makes
+> >> sense to replace "do_div(offset, unit_size)" with "offset & (unit_size=
+ -
+> >> 1)".
+> >>
+> >> Mount options discard.offset=3Dxxx,discard.unit=3Dyyy are to emulate v=
+arious
+> >> discard unit sizes and offsets on devices _without_ trim support (e.g.
+> >> HDDs).
+> >> This is only for debugging purposes, don't use it for real SSD devices=
+:
+> >> the kernel
+> >> retrieves the discard parameters on its own.
+> >>
+> >> This patch is against the patch series of Ivan Shapovalov:
+> >> http://marc.info/?l=3Dreiserfs-devel&m=3D141841865432082&w=3D2
+> >>
+> >> Current status: not well-tested.
+> >>
+> >> Edward.
+> > Hi,
+> >
+> > I've found a bug in our implementation (don't know when it appeared,
+> > maybe it was quite some time ago). I've intended to fix it and send
+> > a patch along with description, but I still can't think of a viable fix=
+.
+> >
+> > So: the problem is that check_free_blocks() isn't idempotent, because i=
+t
+> > allocates blocks if the whole extent is clean. Therefore, it must not b=
+e
+> > called for overlapping ranges. However, in some conditions tail padding
+> > of some extent and head padding of next extent may overlap in terms of
+> > disk blocks (gluing code only catches overlapping erase units).
+> >
+> > This will yield a false negative when checking the head padding, so it
+> > does not lead to any data losses (just to inefficiency).
+>=20
+>=20
+> You mean that sometimes we perform unneeded checks?
+> I see nothing criminal, as we don't exceed announced (2N_e)
+> number of checks, where N_e is number of extents in the
+> discard set.
 
-# rpm -qlp reiser4progs-1.0.9-1.2.x86_64.rpm
-/usr/sbin/debugfs.reiser4
-/usr/sbin/fsck.reiser4
-/usr/sbin/make_reiser4
-/usr/sbin/measurefs.reiser4
-/usr/sbin/mkfs.reiser4
-/usr/share/doc/packages/reiser4progs
-/usr/share/doc/packages/reiser4progs/BUGS
-/usr/share/doc/packages/reiser4progs/COPYING
-/usr/share/doc/packages/reiser4progs/ChangeLog
-/usr/share/doc/packages/reiser4progs/NEWS
-/usr/share/doc/packages/reiser4progs/README
-/usr/share/doc/packages/reiser4progs/TODO
-/usr/share/man/man8/debugfs.reiser4.8.gz
-/usr/share/man/man8/fsck.reiser4.8.gz
-/usr/share/man/man8/measurefs.reiser4.8.gz
-/usr/share/man/man8/mkfs.reiser4.8.gz
+No, I didn't talk about that.
 
--- installation
-# rpm -ivhU reiser4progs-1.0.9-1.2.x86_64.rpm
+>=20
+> As to fixup: I think that we need to set up the local variable
+> head_is_known_dirty properly..
 
-################################################
-On Wed, 27 Aug 2014 14:56:05 +0200, Edward Shishkin
-<edward.shishkin@gmail.com> wrote:
-> On 08/27/2014 09:33 AM, doiggl@velocitynet.com.au wrote:
->>> Looks like the filesystem is damaged. Make sure that reiser4progs are
->>> installed
->>> and run
->>>
->>> # fsck.reiser4 --build-fs /dev/sdb
->>>
->>> (You may need to use --force because apparently you have R4 on a whole
->>> disk,
->>> not on a partition.)
->>>
->>> Hope that helps,
->> #
->>
->> Hello,
->> Thanks for the details.
->>
->> I did the fpllowing steps:
->> # fsck.reiser4 --build-fs --force  /dev/sdb
->> *******************************************************************
->> This is an EXPERIMENTAL version of fsck.reiser4. Read README first.
->> *******************************************************************
->>
->> Fscking the /dev/sdb block device.
->>
->>
->>             
->> Will check the consistency of the Reiser4 SuperBlock.
->>                                               
->> Will build the Reiser4 FileSystem.
->>                                               
->> ***** fsck.reiser4 started at Tue Aug 26 17:22:24 2014
->> Reiser4 fs was detected on /dev/sdb.
->>                                               
->> Master super block (16):
->> magic:          ReIsEr4
->> blksize:        4096
->> format:         0x0 (format40)
->> uuid:           3006ced1-7490-4ea8-a9b8-d82143c6bede
->> label:          <none>
->>   
->> Format super block (17):
->> plugin:         format40
->> description:    Disk-format plugin.
->> version:        0
->> magic:          ReIsEr40FoRmAt
->> mkfs id:        0x1ddaf754
->> flushes:        0
->> blocks:         488378640
->> free blocks:    217146980
->> root block:     37017218
->> tail policy:    0x2 (smart)
->> next oid:       0xedade
->> file count:     188313
->> tree height:    6
->> key policy:     LARGE
->>   
->>   
->> CHECKING THE STORAGE TREE
->>                                               
->>          Read nodes 197008413
->>                                               
->>          Nodes left in the tree 197008413
->>                                               
->>                  Leaves of them 194764277, Twigs of them 2217790
->>                                               
->>          Time interval: Tue Aug 26 17:24:21 2014 - Wed Aug 27 01:25:31
->>          2014
->>                                               
->> CHECKING EXTENT REGIONS.
->>                                               
->>          Read twigs 2217790
->>                                               
->>          Time interval: Wed Aug 27 01:25:31 2014 - Wed Aug 27 03:35:39
->>          2014
->>                                               
->> LOOKING FOR UNCONNECTED NODES
->>                                               
->> FSCK: node.c: 108: repair_node_items_check: Node (43828275), items (0)
->> and
->> (1): Wrong order of keys.
->> FSCK: node.c: 108: repair_node_items_check: Node (52697435), items (79)
->> and (80): Wrong order of keys.
->> FSCK: node.c: 108: repair_node_items_check: Node (63227569), items (24)
->> and (25): Wrong order of keys.
->> FSCK: node.c: 108: repair_node_items_check: Node (63227571), items (73)
->> and (74): Wrong order of keys.
->> FSCK: node.c: 108: repair_node_items_check: Node (116595727), items
-(20)
->> and (21): Wrong order of keys.
->> FSCK: node.c: 108: repair_node_items_check: Node (227923161), items
-(22)
->> and (23): Wrong order of keys.
->> FSCK: node.c: 108: repair_node_items_check: Node (284305753), items
-(61)
->> and (62): Wrong order of keys.
->>          Read nodes 1481038
->>                                             
->>          Good nodes 471512
->>                  Leaves of them 466164, Twigs of them 5348
->>          Time interval: Wed Aug 27 03:35:57 2014 - Wed Aug 27 03:39:46
->>          2014
->>
->> ***** fsck.reiser4 finished at Wed Aug 27 03:39:46 2014
->> Closing fs...done
->>
->> FS is consistent.
-> 
-> 
-> This is a bug in fsck: it jumps to wrong branch for some reasons.
-> Not yet fixed.
-> 
-> Edward.
-> --
-> To unsubscribe from this list: send the line "unsubscribe
-reiserfs-devel"
-> in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Hmm, head_is_known_dirty is an optimization: either known dirty
+(in which case we skip checking and cut the head), or unknown
+(in which case we do the check).
+
+I'm talking about a different scenario:
+- tail padding of an extent is clean
+- head padding of the next extent is clean
+- these two paddings overlap in terms of disk blocks
+
+In this case, the head padding check will yield false ("dirty") because
+part of it has been already allocated for the tail padding, but in fact
+it is clean. Thus a false negative: the head will be cut while it can be
+padded.
+
+More generally, our check_free_blocks() is not idempotent. After a
+positive result has been returned for a given range [A;B),
+check_free_blocks() must not be called for any range [A';B') such that
+[A;B) =E2=88=A9 [A';B') =E2=89=A0 =E2=88=85. Otherwise a false negative can=
+ be returned.
+
+Actually, during the last night I've *apparently* came up with a
+solution for this :) I'll send a patch once I figure out how to explain
+it properly in the comments...
+
+Thanks,
+--=20
+Ivan Shapovalov / intelfx /
+
+--=-3p9Ty43tZLaALjLHPj+f
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: This is a digitally signed message part
+Content-Transfer-Encoding: 7bit
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
+
+iF4EABEIAAYFAlTbKkoACgkQxUKljSIMAnB7gwEA4g8Q9P+2OLNG4V4A+47yNIe5
+gBtLNudk18bYiuWc6G4A/0HX7OyyOHnG+YYNEK1Pq2zv+mkopFuNSulJEXAgAiKa
+=GffI
+-----END PGP SIGNATURE-----
+
+--=-3p9Ty43tZLaALjLHPj+f--
+
