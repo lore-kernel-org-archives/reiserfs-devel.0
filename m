@@ -1,280 +1,128 @@
-From: Ivan Shapovalov <intelfx100@gmail.com>
-Subject: [PATCH 2/3] reiser4: discard: avoid checking same blocks multiple times.
-Date: Fri, 13 Feb 2015 08:02:57 +0300
-Message-ID: <1423803778-19698-3-git-send-email-intelfx100@gmail.com>
-References: <1423803778-19698-1-git-send-email-intelfx100@gmail.com>
+From: <doiggl@velocitynet.com.au>
+Subject: help with testing
+Date: Fri, 13 Feb 2015 16:08:46 +1100
+Message-ID: <927eb13cbcde61cf5883293488f76fda@mail.velocitynet.com.au>
+References: <1423788499-30430-1-git-send-email-intelfx100@gmail.com> <b045f6704fdbb4417ce3428f4a423257@mail.velocitynet.com.au> <1423796471.3303.5.camel@gmail.com>
+Mime-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20120113;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=TCQ9Arx8oGZ2J+w6ps6VsI8jrqA/OR5xn0Afq2jURfU=;
-        b=mLeOiuwSBiXXl70/gQow7yog24yySaQYLOQmd5J/SjUkQByTtcfGx9qp0TZlhHVSrZ
-         We/AWJPy2RvpWEvV49OMpYn3Tp+i/7/ByKEz7xWXUj5SlUoKSq4ozry37hTiQe97P3Oz
-         7j4226RlGGon07YXsoCWpl/scKVDi6P2YdQTONnmhV8HMTv3nN3X4No9+0dHr1w97V8m
-         uR85mp9NKSMMrvDjRoA2cHCtmDFl4Gz6M/IfbXHImMKYPxvoJnDHu5mkh7tcnvAutpZz
-         dY4MngT8q4IE1FOnuiHkj29aljb4A+RSB+PizuBokjaamGxn4wrjgNzbUkdgdnF4h/n3
-         74vQ==
-In-Reply-To: <1423803778-19698-1-git-send-email-intelfx100@gmail.com>
+In-Reply-To: <1423796471.3303.5.camel@gmail.com>
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
-MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
 To: reiserfs-devel@vger.kernel.org
-Cc: Ivan Shapovalov <intelfx100@gmail.com>
+Cc: Ivan Shapovalov <intelfx100@gmail.com>, edward.shishkin@gmail.com
 
-It was previously possible for an extent's tail padding and next extent's head
-padding to overlap in terms of occupied disk blocks.
+Hello,
+Regards "if you want to help with testing."
 
-In this case the head padding check would yield a false negative because blocks
-would appear already allocated, while in fact they would have been previously
-allocated by us.
+I could help with tests after a r4 partition/disk is recovered, using
+#fsck.reiser4 --build-fs /dev/sdb
 
-Solve this by saving last checked tail padding and a bit of case analysis.
+-But I need a patch to fix this problem first [see below]
 
-Signed-off-by: Ivan Shapovalov <intelfx100@gmail.com>
----
- fs/reiser4/discard.c | 182 +++++++++++++++++++++++++++++++++++++++++++--------
- 1 file changed, 156 insertions(+), 26 deletions(-)
+--Cheers Glenn
+--------------
 
-diff --git a/fs/reiser4/discard.c b/fs/reiser4/discard.c
-index a615b7d..10c1707 100644
---- a/fs/reiser4/discard.c
-+++ b/fs/reiser4/discard.c
-@@ -272,9 +272,57 @@ static int discard_precise_extents(struct list_head *head)
- 	int d_off;
- 	struct list_head *pos;
- 	struct super_block *sb = reiser4_get_current_sb();
--	int headp_is_known_dirty = 0;
- 	int blkbits = sb->s_blocksize_bits;
- 
-+	/* This is a "cache" which holds the last block range checked during
-+	 * processing of an extent. This information is used to avoid allocating
-+	 * the same blocks multiple times, if two successive extents become
-+	 * overlapped (in terms of disk blocks) after padding.
-+	 *
-+	 * The problem with allocating the same blocks multiple times:
-+	 * our function try_allocate_blocks() is not idempotent. More precisely,
-+	 * after a positive result has been returned for a given range [A;B), we
-+	 * must not call try_allocate_blocks() on any range which overlaps [A;B),
-+	 * or we will get a false negative result.
-+	 * (Also, we must not call try_allocate_blocks() on any range which
-+	 * overlaps extents in the discard set.)
-+	 *
-+	 * Let's show that we can avoid false-negatives with this cache.
-+	 *
-+	 * 1. All blocks between the stored tail padding and the beginning of
-+	 *    the current extent are safe to allocate.
-+	 *
-+	 * 2. Let's analyze all combinations of the previous tail padding's check
-+	 *    result and the current head padding's disposition relative to the
-+	 *    previous tail padding. Note that we are speaking in terms of
-+	 *    occupied disk blocks.
-+	 *
-+	 * 2.0. The head padding does not overlap the tail padding.
-+	 *      In this case head padding is safe to allocate.
-+	 *
-+	 * 2.1. The tail padding is dirty. The head padding partially overlaps it.
-+	 *      In this case both parts of the head padding are safe to allocate.
-+	 *
-+	 * 2.2. The tail padding is dirty. The head padding completely covers it
-+	 *      (maybe extending back beyond).
-+	 *      In this case the head padding is transitively dirty.
-+	 *
-+	 * 2.3. The tail padding is clean. The head padding overlaps or covers it
-+	 *      (not extending back beyond).
-+	 *      In this case:
-+	 *      - the overlapping part of the head padding can be skipped
-+	 *      - the rest is safe to allocate
-+	 *
-+	 * 2.4. The tail padding is clean. The head padding extends beyond it.
-+	 *      This is not possible. It would mean that our head padding
-+	 *      shares an erase unit with the previous tail padding.
-+	 *      Such extent combinations are handled by the gluing code.
-+	 */
-+
-+	reiser4_block_nr last_padding_start = 0;
-+	reiser4_block_nr last_padding_end = 0;
-+	int last_padding_clean = 0;
-+
- 	d_off = get_super_private(sb)->discard.offset;
- 	d_uni = get_super_private(sb)->discard.unit;
- 
-@@ -316,34 +364,89 @@ static int discard_precise_extents(struct list_head *head)
- 		p_headp = precise_extent_headp(p_start, d_off, d_uni);
- 		headp = size_in_blocks(p_headp, blkbits);
- 
-+		/*
-+		 * Our head padding can't extend back beyond the saved tail
-+		 * padding, if the latter is clean.
-+		 * (cf. situation 2.4 from the above description)
-+		 */
-+		assert("intelfx-80", ergo(last_padding_clean,
-+					  last_padding_start <= start - headp));
-+
- 		if (headp == 0) {
- 			/*
- 			 * empty head padding
- 			 */
--			assert("edward-1635", headp_is_known_dirty == 0);
- 			a_start = p_start;
- 			a_len = p_len;
--		}
--		else if (p_start >= p_headp /* discard unit is complete */ &&
--			 !headp_is_known_dirty &&
--			 try_allocate_blocks(start - headp, headp)) {
--			/*
--			 * pad the head
--			 */
--			a_start = p_start - p_headp;
--			a_len = p_len + p_headp;
--			estart -= headp;
- 		} else {
-+			int headp_is_clean;
-+
- 			/*
--			 * head padding is dirty,
--			 * or discard unit is incomplete (can not
--			 * check blocks outside of the partition),
--			 * cut the head
-+			 * If our discard unit is incomplete, don't pad.
- 			 */
--			headp_is_known_dirty = 0;
--			a_start = p_start + (d_uni - p_headp);
--			a_len = p_len - (d_uni - p_headp);
-+			if (p_start < p_headp)
-+				headp_is_clean = 0;
-+
-+			/*
-+			 * Maybe last checked extent is dirty and completely
-+			 * embedded in ours? Then our one is dirty too.
-+			 * (cf. situation 2.2 from the above description)
-+			 */
-+			else if (!last_padding_clean &&
-+				 last_padding_start >= start - headp &&
-+				 last_padding_end <= start)
-+				headp_is_clean = 0;
-+
-+			/*
-+			 * Maybe last checked extent is clean and completely
-+			 * covers ours? Then our one is clean too.
-+			 * (cf. situation 2.3 from the above description)
-+			 */
-+			else if (last_padding_clean &&
-+				 last_padding_end >= start)
-+				headp_is_clean = 1;
-+
-+			/*
-+			 * Maybe last checked extent is clean and partially
-+			 * overlaps ours? Then we must check the remaining part.
-+			 * (cf. situation 2.3 from the above description)
-+			 */
-+			else if (last_padding_clean &&
-+				 last_padding_end > start - headp) {
-+				headp_is_clean = try_allocate_blocks(last_padding_end, start - last_padding_end);
-+				if (headp_is_clean)
-+					estart = last_padding_end;
-+			}
-+
-+			/*
-+			 * Otherwise check the whole padding.
-+			 * (cf. situations 2.0, 2.1 from the above description)
-+			 */
-+			else {
-+				headp_is_clean = try_allocate_blocks(start - headp, headp);
-+				if (headp_is_clean)
-+					estart -= headp;
-+			}
-+
-+			if (headp_is_clean) {
-+				/*
-+				 * head padding is clean,
-+				 * pad the head
-+				 */
-+				a_start = p_start - p_headp;
-+				a_len = p_len + p_headp;
-+			} else {
-+				/*
-+				 * head padding is dirty,
-+				 * or discard unit is incomplete (can not
-+				 * check blocks outside of the partition),
-+				 * cut the head
-+				 */
-+				a_start = p_start + (d_uni - p_headp);
-+				a_len = p_len - (d_uni - p_headp);
-+			}
- 		}
-+
- 		/*
- 		 * Step II. Try to glue all nearby extents to the tail
- 		 *          Cut or pad the tail of the last extent.
-@@ -410,10 +513,14 @@ static int discard_precise_extents(struct list_head *head)
- 					/*
- 					 * gluing failed, cut the tail
- 					 */
--					if (p_end + p_tailp > p_next_start)
--						headp_is_known_dirty = 1;
--
- 					a_len -= (d_uni - p_tailp);
-+
-+					/*
-+					 * save the tail padding
-+					 */
-+					last_padding_start = end;
-+					last_padding_end = next_start;
-+					last_padding_clean = 0;
- 					break;
- 				}
- 
-@@ -425,21 +532,44 @@ static int discard_precise_extents(struct list_head *head)
- 				 * rest of tail padding and finish with
- 				 * the extent
- 				 */
--				if (tailp == 0)
--					break;
--				else if (try_allocate_blocks(end, tailp)) {
-+				if (tailp == 0) {
-+					/*
-+					 * empty tail padding.
-+					 *
-+					 * save a fake tail padding to aid debugging
-+					 */
-+					last_padding_start = end;
-+					last_padding_end = end;
-+					last_padding_clean = 1;
-+
-+				} else if (try_allocate_blocks(end, tailp)) {
- 					/*
- 					 * tail padding is clean,
- 					 * pad the tail
- 					 */
- 					a_len += p_tailp;
- 					eend += tailp;
--				} else
-+
-+					/*
-+					 * save the tail padding
-+					 */
-+					last_padding_start = end;
-+					last_padding_end = end + tailp;
-+					last_padding_clean = 1;
-+				} else {
- 					/*
- 					 * tail padding is dirty,
- 					 * cut the tail
- 					 */
- 					a_len -= (d_uni - p_tailp);
-+
-+					/*
-+					 * save the tail padding
-+					 */
-+					last_padding_start = end;
-+					last_padding_end = end + tailp;
-+					last_padding_clean = 0;
-+				}
- 				break;
- 			}
- 		}
--- 
-2.3.0
+Details:
+--------
+
+# fsck.reiser4 --build-fs --force  /dev/sdb
+.
+.
+>> LOOKING FOR UNCONNECTED NODES
+>>                                               
+>> FSCK: node.c: 108: repair_node_items_check: Node (43828275), items (0)
+>> and
+>> (1): Wrong order of keys.
+>> FSCK: node.c: 108: repair_node_items_check: Node (52697435), items (79)
+>> and (80): Wrong order of keys.
+>> FSCK: node.c: 108: repair_node_items_check: Node (63227569), items (24)
+>> and (25): Wrong order of keys.
+>> FSCK: node.c: 108: repair_node_items_check: Node (63227571), items (73)
+>> and (74): Wrong order of keys.
+>> FSCK: node.c: 108: repair_node_items_check: Node (116595727), items
+(20)
+>> and (21): Wrong order of keys.
+>> FSCK: node.c: 108: repair_node_items_check: Node (227923161), items
+(22)
+>> and (23): Wrong order of keys.
+>> FSCK: node.c: 108: repair_node_items_check: Node (284305753), items
+(61)
+>> and (62): Wrong order of keys.
+>>          Read nodes 1481038
+>>                                             
+>>          Good nodes 471512
+>>                  Leaves of them 466164, Twigs of them 5348
+>>          Time interval: Wed Aug 27 03:35:57 2014 - Wed Aug 27 03:39:46
+>>          2014
+>>
+>> ***** fsck.reiser4 finished at Wed Aug 27 03:39:46 2014
+>> Closing fs...done
+>>
+>> FS is consistent.
+> 
+> 
+> This is a bug in fsck: it jumps to wrong branch for some reasons.
+> Not yet fixed.
+> 
+> Edward.
+> --
+
+other info:
+-----------
+
+# fsck.reiser4 --print-profile /dev/sdb
+Default profile:
+create:          "ccreg40"         (id:0x4 type:0x0)    [Regular file
+plugin for creat(2)]
+key:             "key_large"       (id:0x1 type:0xb)    [Key plugin]
+compress:        "lzo1"            (id:0x0 type:0xc)    [Compression
+plugin]
+compressMode:    "conv"            (id:0x4 type:0xd)    [Compression Mode
+plugin]
+cluster:         "64K"             (id:0x0 type:0x10)   [Cluster plugin]
+hash:            "r5_hash"         (id:0x1 type:0x3)    [Directory entry
+hash plugin]
+fibration:       "ext_1_fibre"     (id:0x2 type:0x4)    [Key fibration
+plugin]
+formatting:      "smart"           (id:0x2 type:0x5)    [File body
+formatting plugin]
+
+reiser4progs-1.0.9 # find . |sort |grep -i fsck
+./doc/fsck.reiser4.8
+./progs/fsck
+./progs/fsck/Makefile.am
+./progs/fsck/Makefile.in
+./progs/fsck/backup.c
+./progs/fsck/backup.h
+./progs/fsck/fsck.c
+./progs/fsck/fsck.h
+
+# which fsck.reiser4 
+/usr/sbin/fsck.reiser4
+
+# rpm -qlp reiser4progs-1.0.9-1.2.x86_64.rpm
+/usr/sbin/debugfs.reiser4
+/usr/sbin/fsck.reiser4
+/usr/sbin/make_reiser4
+/usr/sbin/measurefs.reiser4
+/usr/sbin/mkfs.reiser4
+/usr/share/doc/packages/reiser4progs
+/usr/share/doc/packages/reiser4progs/BUGS
+/usr/share/doc/packages/reiser4progs/COPYING
+/usr/share/doc/packages/reiser4progs/ChangeLog
+/usr/share/doc/packages/reiser4progs/NEWS
+/usr/share/doc/packages/reiser4progs/README
+/usr/share/doc/packages/reiser4progs/TODO
+/usr/share/man/man8/debugfs.reiser4.8.gz
+/usr/share/man/man8/fsck.reiser4.8.gz
+/usr/share/man/man8/measurefs.reiser4.8.gz
+/usr/share/man/man8/mkfs.reiser4.8.gz
+
+--installation
+# rpm -ivhU reiser4progs-1.0.9-1.2.x86_64.rpm
+
+# r4 partition recovery /dev/sdb
+http://www.spinics.net/lists/reiserfs-devel/msg04596.html
 
