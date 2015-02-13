@@ -1,19 +1,19 @@
 From: Ivan Shapovalov <intelfx100@gmail.com>
-Subject: [PATCHv5 09/10] reiser4: block_alloc: add a "min_len" parameter to reiser4_blocknr_hint to limit allocated extent length from below.
-Date: Fri, 13 Feb 2015 03:48:18 +0300
-Message-ID: <1423788499-30430-10-git-send-email-intelfx100@gmail.com>
+Subject: [PATCHv5 05/10] reiser4: txnmgr: add reiser4_create_atom() which creates an empty atom without capturing any nodes.
+Date: Fri, 13 Feb 2015 03:48:14 +0300
+Message-ID: <1423788499-30430-6-git-send-email-intelfx100@gmail.com>
 References: <1423788499-30430-1-git-send-email-intelfx100@gmail.com>
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20120113;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=wUsGBhPt1uLLRzR1moz+oPn1sItFxO+C8nxvgpVr6v4=;
-        b=FubMxo6N3j+YNxNFGqJFvxl8HVr6meSoSQZBLNX/roI4hCZzXfMe5EqmluBTF/NwJi
-         3nxNEbJ8M0PVzKGo+mfbhuYqsUe5nP5xnGjypkUleDcDw29jWo4fyHBLvkOGlJugjFmX
-         HbC296oMGPJT5zyrGQfyFeNCrWw2MYhSfuff3JuQjwo1/M5Bqgk/ohaJaLOopXcqiVDj
-         CnhyJPHEuu5XazWIdvIq73CI2UbV7sFzxL/Fx398i/cQUddd3Y+JEQmmYAzSNFow4Vym
-         nZd27wd3fzA/WEoDaOw8kkYVx4l/eRWuSMqCUlNmTYsZJSxHnu3POjXHm96rSPhAEX7Z
-         fQ6Q==
+        bh=99vArlr2Jzt984Z+rZzyMGWXqamHQ4VjY5YR4s4aqxQ=;
+        b=mRfJZia5QKE0cvs3UjyUejVHUhIntd2viP4TYY6ECaBFYspTlnPPSN0cq6/76Ts/aF
+         XQ+7/HPu0IzoXcoC08etHGbxoNcXS2k4wUr82CICmVVztsnIeNMQ/EKUKQQvMgsed9Qb
+         m5Q3iyg4vbcdenpxt3MRSYSyLGebQhzn/PmuHIVgZ/spy+5U0QP6QfzfNhBjCazURWhc
+         PEnQTCb0tatlIu5aDOMKLaleUP0xRfXienK56R02BCe/PWRVbJCIZxUQFzk8VteSC072
+         4KW8E5GOmI3Ry/6q8lNhsDOKLxuvZkOR5NQzjLExY0UHwZ/HDWuPNsVD3P2aeOqLSYUn
+         FZBg==
 In-Reply-To: <1423788499-30430-1-git-send-email-intelfx100@gmail.com>
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
@@ -23,95 +23,60 @@ Content-Transfer-Encoding: 7bit
 To: reiserfs-devel@vger.kernel.org
 Cc: Ivan Shapovalov <intelfx100@gmail.com>
 
-The default has been 1, that is, the first encountered free extent with any length
-from 1 to requested is allocated and returned.
-
-So, allow changing minimal extent length to allocate.
-
 Signed-off-by: Ivan Shapovalov <intelfx100@gmail.com>
 ---
- fs/reiser4/block_alloc.h         |  2 ++
- fs/reiser4/plugin/space/bitmap.c | 20 +++++++++++++++-----
- 2 files changed, 17 insertions(+), 5 deletions(-)
+ fs/reiser4/txnmgr.c | 24 ++++++++++++++++++++++++
+ fs/reiser4/txnmgr.h |  2 ++
+ 2 files changed, 26 insertions(+)
 
-diff --git a/fs/reiser4/block_alloc.h b/fs/reiser4/block_alloc.h
-index 903bc8f..ac1a747 100644
---- a/fs/reiser4/block_alloc.h
-+++ b/fs/reiser4/block_alloc.h
-@@ -45,6 +45,8 @@ struct reiser4_blocknr_hint {
- 	reiser4_block_nr blk;
- 	/* if not zero, it is a region size we search for free blocks in */
- 	reiser4_block_nr max_dist;
-+	/* if not zero, minimal length of an extent to allocate */
-+	reiser4_block_nr min_len;
- 	/* level for allocation, may be useful have branch-level and higher
- 	   write-optimized. */
- 	tree_level level;
-diff --git a/fs/reiser4/plugin/space/bitmap.c b/fs/reiser4/plugin/space/bitmap.c
-index 0ce07da..7c0a1e4 100644
---- a/fs/reiser4/plugin/space/bitmap.c
-+++ b/fs/reiser4/plugin/space/bitmap.c
-@@ -1101,7 +1101,7 @@ static int alloc_blocks_forward(reiser4_blocknr_hint *hint, int needed,
- 				reiser4_block_nr *start, reiser4_block_nr *len)
- {
- 	struct super_block *super = get_current_context()->super;
--	int actual_len;
-+	int min_len, actual_len;
+diff --git a/fs/reiser4/txnmgr.c b/fs/reiser4/txnmgr.c
+index 68070a9..2862940 100644
+--- a/fs/reiser4/txnmgr.c
++++ b/fs/reiser4/txnmgr.c
+@@ -2050,6 +2050,30 @@ int reiser4_try_capture(jnode *node, znode_lock_mode lock_mode,
+ 	return ret;
+ }
  
- 	reiser4_block_nr search_start;
- 	reiser4_block_nr search_end;
-@@ -1117,12 +1117,17 @@ static int alloc_blocks_forward(reiser4_blocknr_hint *hint, int needed,
- 		    LIMIT(hint->blk + hint->max_dist,
- 			  reiser4_block_count(super));
- 
-+	if (hint->min_len == 0)
-+		min_len = 1;
-+	else
-+		min_len = (int)hint->min_len;
++/* This function ensures that the current transcrash has an atom without
++ * capturing anything. If needed, an empty atom is created and assigned.
++ */
++int reiser4_create_atom(void)
++{
++	txn_atom *atom_alloc = NULL;
++	txn_handle *txnh = get_current_context()->trans;
++	int ret;
 +
- 	/* We use @hint -> blk as a search start and search from it to the end
- 	   of the disk or in given region if @hint -> max_dist is not zero */
- 	search_start = hint->blk;
- 
- 	actual_len =
--	    bitmap_alloc_forward(&search_start, &search_end, 1, needed);
-+	    bitmap_alloc_forward(&search_start, &search_end, min_len, needed);
- 
- 	/* There is only one bitmap search if max_dist was specified, first
- 	   pass was from the beginning of the bitmap, or if the monotonic flag
-@@ -1134,7 +1139,7 @@ static int alloc_blocks_forward(reiser4_blocknr_hint *hint, int needed,
- 		search_end = search_start;
- 		search_start = 0;
- 		actual_len =
--		    bitmap_alloc_forward(&search_start, &search_end, 1, needed);
-+		    bitmap_alloc_forward(&search_start, &search_end, min_len, needed);
- 	}
- 	if (actual_len == 0)
- 		return RETERR(-ENOSPC);
-@@ -1151,7 +1156,7 @@ static int alloc_blocks_backward(reiser4_blocknr_hint * hint, int needed,
- {
- 	reiser4_block_nr search_start;
- 	reiser4_block_nr search_end;
--	int actual_len;
-+	int min_len, actual_len;
- 
- 	ON_DEBUG(struct super_block *super = reiser4_get_current_sb());
- 
-@@ -1165,8 +1170,13 @@ static int alloc_blocks_backward(reiser4_blocknr_hint * hint, int needed,
- 	else
- 		search_end = search_start - hint->max_dist;
- 
-+	if (hint->min_len == 0)
-+		min_len = 1;
-+	else
-+		min_len = (int)hint->min_len;
++	do {
++		spin_lock_txnh(txnh);
++		if (txnh->atom == NULL) {
++			spin_unlock_txnh(txnh);
++			/* assign empty atom to the txnh and repeat */
++			ret = atom_begin_and_assign_to_txnh(&atom_alloc, txnh);
++		} else {
++			spin_unlock_txnh(txnh);
++			ret = 0;
++		}
++	} while (ret == -E_REPEAT);
 +
- 	actual_len =
--	    bitmap_alloc_backward(&search_start, &search_end, 1, needed);
-+	    bitmap_alloc_backward(&search_start, &search_end, min_len, needed);
- 	if (actual_len == 0)
- 		return RETERR(-ENOSPC);
- 	if (actual_len < 0)
++	return ret;
++}
++
+ static void release_two_atoms(txn_atom *one, txn_atom *two)
+ {
+ 	spin_unlock_atom(one);
+diff --git a/fs/reiser4/txnmgr.h b/fs/reiser4/txnmgr.h
+index 72b84a2..50a1f54 100644
+--- a/fs/reiser4/txnmgr.h
++++ b/fs/reiser4/txnmgr.h
+@@ -437,6 +437,8 @@ extern void reiser4_uncapture_jnode(jnode *);
+ extern int reiser4_capture_inode(struct inode *);
+ extern int reiser4_uncapture_inode(struct inode *);
+ 
++extern int reiser4_create_atom(void);
++
+ extern txn_atom *get_current_atom_locked_nocheck(void);
+ 
+ #if REISER4_DEBUG
 -- 
 2.3.0
 
