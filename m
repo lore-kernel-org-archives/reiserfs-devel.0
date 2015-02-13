@@ -1,57 +1,57 @@
-From: Edward Shishkin <edward.shishkin@gmail.com>
-Subject: Re: [PATCH] Adjust reiser4 for 3.15: replace truncate_inode_pages(...,
- 0) with truncate_inode_pages_final(...).
-Date: Fri, 13 Feb 2015 15:59:47 +0100
-Message-ID: <54DE1163.70106@gmail.com>
-References: <1423831759-14470-1-git-send-email-intelfx100@gmail.com>
+From: Ivan Shapovalov <intelfx100@gmail.com>
+Subject: reiser4 and quotas
+Date: Sat, 14 Feb 2015 00:34:16 +0300
+Message-ID: <1423863256.8650.2.camel@gmail.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg="pgp-sha256";
+	protocol="application/pgp-signature"; boundary="=-edTd4MRoJW6oBMgRH2e+"
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20120113;
-        h=message-id:date:from:user-agent:mime-version:to:subject:references
-         :in-reply-to:content-type:content-transfer-encoding;
-        bh=+bgtm6wD4X1v04zvHfLyzG/0ri4Gb3CEcPnAbm2PBTE=;
-        b=beAjB36uniN5yZrmlAYaeu84Hd9sJovu22E/wrmjV9S4p+anbr68E4tZwGt0aTD5Zn
-         HmCZbFJLD7HCQfYOJ3QIrcsnOBcyALp1e5lV4Ob9/ZMhcXNSEqKJ6B5pu5GGTiAtJ+bi
-         Sntbwa40QKm6oSncSNpTMfM0nTV8tRplAuc3FKePNz06pv1pU8rUipORchDZ9dxSZd6e
-         OI+5ADgIVxaNfkPuHGf9KpnnUeHgD6egJLPFZGpJz8A3/OgDbG+/jsgRaKC8TUURdl2J
-         syOHdOdTsVl7vjG6FzePCfrEcy+hVT60JM2mv516x5RS8eVgsEFJTaG+e825NSlE8r/p
-         ff5g==
-In-Reply-To: <1423831759-14470-1-git-send-email-intelfx100@gmail.com>
+        h=message-id:subject:from:to:cc:date:content-type:mime-version;
+        bh=njHWDBlX5t5nmbvalTeQ5/TffebWT0ffpPtP+OFweHA=;
+        b=LJa1w6xPBkVuJ9hwaK3HKrYFXgvniYWIzKniqfGE2J9QC40I3W1r5HKN39VPcq1NYd
+         2xSyRBAq3/vDfShezrrjM4XyhcL7JBp41UeM3U+H3i9gxP1+UlgESVjsPQeT5FFTC0e6
+         Vu5UXH+rMS/6wH9YqxCyXlqF4kLCDKhecl9eN/M35WSV5nLPAKG1vxK8vMpJ5kzgKLhj
+         WGb6dn3fHFWZR5Jgls9DeRRffUjz3ENfXz9tJaGpDVD4vKFJkY3U1OGLJMXAgyUHXo1H
+         S0hm6bnkhhLOhly5Zbf0kjmKx0E8kOELpnulT13JOkd5l8H0+MME692LU2CTsCzTByrI
+         8rhw==
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: Ivan Shapovalov <intelfx100@gmail.com>, reiserfs-devel@vger.kernel.org
+To: reiserfs-devel@vger.kernel.org
+Cc: Edward Shishkin <edward.shishkin@gmail.com>
 
-Thanks!
-I'll backward port it...
 
-Edward.
+--=-edTd4MRoJW6oBMgRH2e+
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 02/13/2015 01:49 PM, Ivan Shapovalov wrote:
-> Upstream commit 91b0abe36a7b2b3b02d7500925a5f8455334f0e5
-> "mm + fs: store shadow entries in page cache".
->
-> Signed-off-by: Ivan Shapovalov <intelfx100@gmail.com>
-> ---
->
-> We have missed this one long ago...
->
->   fs/reiser4/super_ops.c | 2 +-
->   1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/fs/reiser4/super_ops.c b/fs/reiser4/super_ops.c
-> index acff93a..7e319bb 100644
-> --- a/fs/reiser4/super_ops.c
-> +++ b/fs/reiser4/super_ops.c
-> @@ -214,7 +214,7 @@ static void reiser4_evict_inode(struct inode *inode)
->   			fplug->delete_object(inode);
->   	}
->   
-> -	truncate_inode_pages(&inode->i_data, 0);
-> +	truncate_inode_pages_final(&inode->i_data);
->   	inode->i_blocks = 0;
->   	clear_inode(inode);
->   	reiser4_exit_context(ctx);
+Hello,
+
+the question is simple: do we support quotas?
+
+There is some code calling into that subsystem, but no
+->quota_{read,write} in super_operations...
+
+/*
+Also, super_block's ->dq_op and ->s_qcop are not set.
+*/
+
+--=20
+Ivan Shapovalov / intelfx /
+
+--=-edTd4MRoJW6oBMgRH2e+
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: This is a digitally signed message part
+Content-Transfer-Encoding: 7bit
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
+
+iF4EABEIAAYFAlTebdgACgkQxUKljSIMAnBMowEAgr9MURZIhwRuCWZXkUoWxjFz
+i5c79pfsJJvFz5GzfY8BANks/a43N0GN7XetoSyFpZJeLmOnsWuZZXbSGrJtV9m3
+=mgg5
+-----END PGP SIGNATURE-----
+
+--=-edTd4MRoJW6oBMgRH2e+--
 
