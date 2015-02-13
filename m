@@ -1,92 +1,50 @@
 From: Ivan Shapovalov <intelfx100@gmail.com>
-Subject: Re: [PATCHv5 00/10] reiser4: batch discard support (FITRIM ioctl):
- initial implementation.
-Date: Fri, 13 Feb 2015 12:39:47 +0300
-Message-ID: <1423820387.14444.1.camel@gmail.com>
-References: <1423788499-30430-1-git-send-email-intelfx100@gmail.com>
-Mime-Version: 1.0
-Content-Type: multipart/signed; micalg="pgp-sha256";
-	protocol="application/pgp-signature"; boundary="=-yVJUvfMiFcLWED4XIu3/"
+Subject: [PATCH] Adjust reiser4 for 3.15: replace truncate_inode_pages(..., 0) with truncate_inode_pages_final(...).
+Date: Fri, 13 Feb 2015 15:49:19 +0300
+Message-ID: <1423831759-14470-1-git-send-email-intelfx100@gmail.com>
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20120113;
-        h=message-id:subject:from:to:date:in-reply-to:references:content-type
-         :mime-version;
-        bh=U5xcf5wdY50vQjqz7zgIzWPvoVQYNVnoH4u3THQUtes=;
-        b=XWzQtGkOyrc3RqYFk/BOEefB3teTXf08kU7DLGnhwneWqlb8C+6I+vwG4SLf/TheXu
-         S99lRa3ZKAm+S278XaHIX6lI4uYVSN+kNpnc+UcBme1LNQKTTh7lDnmLknGcuwGNN6uE
-         zvQW4NOa3weU89chcGyGq17cYctyHsJA3X9+Uwqhbn57qX3jlFPW+MIAVdxuCJz3MZ29
-         k+w/JpA/3rgwunYkadSWhN+H34s3my/uf+I2dOMAM9+QWi46m6KC7K9QphTbuQNPPDoG
-         gUUR+qv7c7F5CxJ0ePb91e7RL1yAUvBAnNBVRpGBP2nOYGaIqXa7yLUc2WvzEJNJf2NY
-         9qaA==
-In-Reply-To: <1423788499-30430-1-git-send-email-intelfx100@gmail.com>
+        h=from:to:cc:subject:date:message-id;
+        bh=adwwb0GQ5kdZzcfq9MeY+A3BbhpxRoylpJFh1bFXpKI=;
+        b=Oe+go6wjFUbkADDhn8e838JZkbBajKssCHTBZObZovWS97x6gayJjKuF5hKgZzNyaN
+         Hrae3B2je9S2tzzwPbxdnSLQVP5aJCWrIolw6wssALTXdjpJfdUfigwK7NIZe305SjNS
+         9B+kuPX6Hv1lUq4JgvuSJKapZVLw31+gXwbE8htZQZZER9qD2vSUsX/Z5DI6TpFYwBgF
+         PpVsz4MS6jQQQbmNIHCTJkbLoRzcxjFefjw9E8vMRNrS644u4PLOrdJgNnmBaJReK4BX
+         ZpchkdiWsGxfS7+2nNMQmgIvmnOePTIP24u2CMdjTzq/9CN6rCWyPqZoepYxqEPQXGI9
+         obVA==
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
-To: reiserfs-devel@vger.kernel.org
-
-
---=-yVJUvfMiFcLWED4XIu3/
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-
-On 2015-02-13 at 03:48 +0300, Ivan Shapovalov wrote:
-> [...]
->=20
-> Ivan Shapovalov (10):
->   reiser4: block_alloc: add BA_SOME_SPACE flag for grabbing a fixed amoun=
-t of space.
->   reiser4: block_alloc: add a "monotonic_forward" parameter to reiser4_bl=
-ocknr_hint to allocate blocks only in forward direction.
->   reiser4: block_alloc: move block accounting by pre-commit hook into blo=
-ck_alloc.c and document BA_DEFER behavior.
->   reiser4: txnmgr: free allocated but unneeded atom in atom_begin_and_ass=
-ign_to_txnh().
->   reiser4: txnmgr: add reiser4_create_atom() which creates an empty atom =
-without capturing any nodes.
->   reiser4: txnmgr: move "empty atom" shortcut slightly below.
->   reiser4: batch discard support: add a dummy FITRIM ioctl handler for di=
-rectories.
->   reiser4: batch discard support: actually implement the FITRIM ioctl han=
-dler.
->   reiser4: block_alloc: add a "min_len" parameter to reiser4_blocknr_hint=
- to limit allocated extent length from below.
->   reiser4: batch discard support: honor minimal extent length passed from=
- the userspace.
->=20
->  [...]
-
-This is a diff between v4 and v5, for ease of reviewing.
-
-diff --git a/fs/reiser4/plugin/file_ops.c b/fs/reiser4/plugin/file_ops.c
-index 7686406..5f0d374 100644
---- a/fs/reiser4/plugin/file_ops.c
-+++ b/fs/reiser4/plugin/file_ops.c
-@@ -161,7 +161,7 @@ long reiser4_ioctl_dir_common(struct file *file, unsign=
-ed int cmd, unsigned long
- 	}
-=20
- 	default:
--		ret =3D RETERR(-ENOSYS);
-+		ret =3D RETERR(-ENOTTY);
- 		break;
- 	}
-
---=20
-Ivan Shapovalov / intelfx /
-
-
---=-yVJUvfMiFcLWED4XIu3/
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: This is a digitally signed message part
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
+To: reiserfs-devel@vger.kernel.org
+Cc: Ivan Shapovalov <intelfx100@gmail.com>
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
+Upstream commit 91b0abe36a7b2b3b02d7500925a5f8455334f0e5
+"mm + fs: store shadow entries in page cache".
 
-iF4EABEIAAYFAlTdxmMACgkQxUKljSIMAnDwNwEAga1B7kB7nwQ83JNn/0GEX9Bi
-pEa7Hs2nTymgfqhIxUgBAKweedz0wVndjHIioavMocYzqMeOsmLQ1DFg0wovea2M
-=INd0
------END PGP SIGNATURE-----
+Signed-off-by: Ivan Shapovalov <intelfx100@gmail.com>
+---
 
---=-yVJUvfMiFcLWED4XIu3/--
+We have missed this one long ago...
+
+ fs/reiser4/super_ops.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/fs/reiser4/super_ops.c b/fs/reiser4/super_ops.c
+index acff93a..7e319bb 100644
+--- a/fs/reiser4/super_ops.c
++++ b/fs/reiser4/super_ops.c
+@@ -214,7 +214,7 @@ static void reiser4_evict_inode(struct inode *inode)
+ 			fplug->delete_object(inode);
+ 	}
+ 
+-	truncate_inode_pages(&inode->i_data, 0);
++	truncate_inode_pages_final(&inode->i_data);
+ 	inode->i_blocks = 0;
+ 	clear_inode(inode);
+ 	reiser4_exit_context(ctx);
+-- 
+2.3.0
 
