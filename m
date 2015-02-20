@@ -1,25 +1,19 @@
 From: <doiggl@velocitynet.com.au>
-Subject: Re: help wanted add-node41.patch fails to apply to reiser4progs version 1.0.9
-Date: Fri, 20 Feb 2015 14:33:54 +1100
-Message-ID: <f644dc2cb97898b4a46e27c0b33c7dbe@mail.velocitynet.com.au>
-References: <a6ad8c02cd6dcddc95b2d7e25d42f35c@mail.velocitynet.com.au> <CAM12Q5R3HCPNjL+wnX6wqXfbCM9F1n_cLLD2rGQcGLgM8Soxew@mail.gmail.com> <cb14e1389131b5cb6ed38b89ed0bf005@mail.velocitynet.com.au> <c889d4bb783dfeb04663b277628e126f@mail.velocitynet.com.au> <1424403076.4261.1.camel@home.ted.local>
+Subject: rpms built for reiser4progs with node41 enabled.
+Date: Fri, 20 Feb 2015 15:17:39 +1100
+Message-ID: <db098c5c256064c2b4cfcd9c67efea66@mail.velocitynet.com.au>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
-In-Reply-To: <1424403076.4261.1.camel@home.ted.local>
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
 To: reiserfs-devel@vger.kernel.org
 
 Hello,
-Good News - Build succeeded. Report back to list if you find problems with
-built rpms.
+Good News - Built rpms for reiser4progs with node41 enabled.
+Report back to list if you find problems with them.
 -- Cheers Glenn
-
-# added 2 lines to spec file  reiser4progs.spec
-BuildRequires:  automake
-BuildRequires:  libtool
 
 -Built rpms 
 https://build.opensuse.org/package/binaries/home:doiggl/reiser4progs?repository=openSUSE_13.1
@@ -57,3 +51,9 @@ https://build.opensuse.org/build/home:doiggl/openSUSE_13.2/x86_64/reiser4progs/_
 
 Package:
 https://build.opensuse.org/package/show/home:doiggl/reiser4progs
+
+
+# added 2 lines to spec file  reiser4progs.spec
+BuildRequires:  automake
+BuildRequires:  libtool
+
