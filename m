@@ -1,7 +1,7 @@
 From: <doiggl@velocitynet.com.au>
-Subject: rpms built for reiser4progs with node41 enabled.
-Date: Fri, 20 Feb 2015 15:17:39 +1100
-Message-ID: <db098c5c256064c2b4cfcd9c67efea66@mail.velocitynet.com.au>
+Subject: Reiser4 and large capacity disk query
+Date: Fri, 20 Feb 2015 17:37:44 +1100
+Message-ID: <e31df208cbbb056d7fe15b892c60f7f0@mail.velocitynet.com.au>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
@@ -10,50 +10,22 @@ List-ID: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
 To: reiserfs-devel@vger.kernel.org
 
-Hello,
-Good News - Built rpms for reiser4progs with node41 enabled.
-Report back to list if you find problems with them.
--- Cheers Glenn
+Hello
+With Internal 3.5" inch Desktop hard drives reaching 4TB or greater these
+days.
 
--Built rpms 
-https://build.opensuse.org/package/binaries/home:doiggl/reiser4progs?repository=openSUSE_13.1
+Questions:
+1. What strategy would you use to format this disk volume  with Reiser4 ?
+2. Would you use a few partitions - if so -what capacity would you use ?
+3. Would you use one big partition ?
+4. What formatting command would you use if you use a few partitions ?
 
-Architecture: i586
+Serial numbers of various disk makes:
 
-    libreiser4-1_0-9-1.0.9-56.1.i586.rpm
-    libreiser4-1_0-9-debuginfo-1.0.9-56.1.i586.rpm
-    libreiser4-minimal-1_0-9-1.0.9-56.1.i586.rpm
-    libreiser4-minimal-1_0-9-debuginfo-1.0.9-56.1.i586.rpm
-    librepair-1_0-9-1.0.9-56.1.i586.rpm
-    librepair-1_0-9-debuginfo-1.0.9-56.1.i586.rpm
-    reiser4progs-1.0.9-56.1.i586.rpm
-    reiser4progs-1.0.9-56.1.src.rpm
-    reiser4progs-debuginfo-1.0.9-56.1.i586.rpm
-    reiser4progs-debugsource-1.0.9-56.1.i586.rpm
-    reiser4progs-devel-1.0.9-56.1.i586.rpm
+4tb disk - STCL4000400
+6tb disk - STBD6000100
+8tb disk - 0F23668
 
-Repository has been published Architecture: x86_64
+Google Serial numbers to show makes/brands.
 
-    libreiser4-1_0-9-1.0.9-56.1.x86_64.rpm
-    libreiser4-1_0-9-debuginfo-1.0.9-56.1.x86_64.rpm
-    libreiser4-minimal-1_0-9-1.0.9-56.1.x86_64.rpm
-    libreiser4-minimal-1_0-9-debuginfo-1.0.9-56.1.x86_64.rpm
-    librepair-1_0-9-1.0.9-56.1.x86_64.rpm
-    librepair-1_0-9-debuginfo-1.0.9-56.1.x86_64.rpm
-    reiser4progs-1.0.9-56.1.src.rpm
-    reiser4progs-1.0.9-56.1.x86_64.rpm
-    reiser4progs-debuginfo-1.0.9-56.1.x86_64.rpm
-    reiser4progs-debugsource-1.0.9-56.1.x86_64.rpm
-    reiser4progs-devel-1.0.9-56.1.x86_64.rpm
-
-Full Build Log:
-https://build.opensuse.org/build/home:doiggl/openSUSE_13.2/x86_64/reiser4progs/_log
-
-Package:
-https://build.opensuse.org/package/show/home:doiggl/reiser4progs
-
-
-# added 2 lines to spec file  reiser4progs.spec
-BuildRequires:  automake
-BuildRequires:  libtool
-
+Thanks Glenn
