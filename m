@@ -1,111 +1,118 @@
-From: Vladimir Shebordaev <vladimir.shebordaev@gmail.com>
+From: <doiggl@velocitynet.com.au>
 Subject: Re: using debugfs.reiser4 options to access R4 on /dev/sdb
-Date: Tue, 24 Feb 2015 23:22:12 +0300
-Message-ID: <1424809332.12259.67.camel@home.ted.local>
-References: <2a39c4776614cb7a675f299083a3627a@mail.velocitynet.com.au>
+Date: Wed, 25 Feb 2015 13:04:41 +1100
+Message-ID: <4e67fef614d6e56cca9bdb540d592c78@mail.velocitynet.com.au>
+References: <2a39c4776614cb7a675f299083a3627a@mail.velocitynet.com.au> <1424809332.12259.67.camel@home.ted.local>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20120113;
-        h=message-id:subject:from:to:cc:date:in-reply-to:references
-         :content-type:mime-version:content-transfer-encoding;
-        bh=xJ3N5aY6wYUewF7dpQNesTzDfpE51PjhsWZNnRcGDEw=;
-        b=KJd7D4HZ23oqy7tfpGMaxdjr2M13Ck3h3FtiZOJGL2Aa6XgwWOOMzRjkljf+/ao4tM
-         LGHOeNluxaBjy3wfheR42bhNsGa2JdHL/cXnQ/lNenJATZ/uWlm2IZ1aMkk8wbG1qxg2
-         L2rEb1I24G0Yjwf+NzmUn2PVRSj0ntSGVNyrPgwTmSBcazD+2p7fqsP5LjskYXlVZaH0
-         7cAamxecGw+1dCUeso+3W4OcASGqxPbAmMrWwjaI6mDfd1+F4xTMtmV00FBh6cCAYtQQ
-         Rp4UO9LoZH/yCaecCUsriXpCZPkXUXtxO/Iz2cavdnrPMTt8YBpwKsTZ3U832munn7tB
-         dEEw==
-In-Reply-To: <2a39c4776614cb7a675f299083a3627a@mail.velocitynet.com.au>
+In-Reply-To: <1424809332.12259.67.camel@home.ted.local>
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: doiggl@velocitynet.com.au
+To: Vladimir Shebordaev <vladimir.shebordaev@gmail.com>
 Cc: reiserfs-devel@vger.kernel.org
 
-On Wed, 2015-02-25 at 01:24 +1100, doiggl@velocitynet.com.au wrote:
-> Hello,
-> Are there any switches with using 'debugfs.reiser4' to help using mount or
-> print details on R4 disk/partition. Im trying get to access /dev/sdb
+Hello
+I want to access the content on volume.
+--Glenn
 
-Well, most of the switches enable some very specific data dumps. You can
-use for sure 
-
+# debugfs.reiser4
 -l to dump all plugins known to libreiser4
 -p to show default profile
 -t to dump the tree
--n <file> to dump all nodes where <file> resides
 
-I guess, the tree dump is the most curious data you can get out of that
-disk. 
+# debugfs.reiser4 -l /dev/sdb
+debugfs.reiser4 1.0.9
+Copyright (C) 2001-2005 by Hans Reiser, licensing governed by
+reiser4progs/COPYING. 
 
-But did you use some released reiser4/progs version when you created
-filesystem that time? It seems, you've got reiser4 and progs in some
-inconsistent state. I guess, it is the reason for unexpected fsck
-behavior that Edward was talking about.  
+Known plugins:
+"reg40"             (id:0x0 type:0x0) [Unix-file regular file plugin.]
+"dir40"             (id:0x1 type:0x0) [Directory file plugin.]
+"sym40"             (id:0x2 type:0x0) [Symlink file plugin.]
+"spl40"             (id:0x3 type:0x0) [Special file plugin.]
+"ccreg40"           (id:0x4 type:0x0) [Cryptcompress regular file plugin.]
+"stat40"            (id:0x0 type:0x1) [StatData item plugin.]
+"cde40"             (id:0x2 type:0x1) [Compound directory entry item
+plugin.]
+"nodeptr40"         (id:0x3 type:0x1) [Node pointer item plugin.]
+"extent40"          (id:0x5 type:0x1) [Extent file body item plugin.]
+"plain40"           (id:0x6 type:0x1) [Plain file body item plugin.]
+"ctail40"           (id:0x7 type:0x1) [Compressed file body item plugin.]
+"bbox40"            (id:0x8 type:0x1) [Safe link item plugin.]
+"node40"            (id:0x0 type:0x2) [Node plugin.]
+"rupasov_hash"      (id:0x0 type:0x3) [Rupasov hash plugin.]
+"r5_hash"           (id:0x1 type:0x3) [R5 hash plugin.]
+"tea_hash"          (id:0x2 type:0x3) [Tea hash plugin.]
+"fnv1_hash"         (id:0x3 type:0x3) [Fnv1 hash plugin.]
+"deg_hash"          (id:0x4 type:0x3) [Degenerate hash plugin.]
+"lexic_fibre"       (id:0x0 type:0x4) [Lexicographic fibration plugin.]
+"dot_o_fibre"       (id:0x1 type:0x4) ['.o' fibration plugin.]
+"ext_1_fibre"       (id:0x2 type:0x4) [1-symbol extention fibration
+plugin.]
+"ext_3_fibre"       (id:0x3 type:0x4) [3-symbol extention fibration
+plugin.]
+"extents"           (id:0x0 type:0x5) ['Extents only' tail policy plugin.]
+"tails"             (id:0x1 type:0x5) ['Tails only' tail policy plugin.]
+"smart"             (id:0x2 type:0x5) [Smart tail policy plugin.]
+"sdext_lw"          (id:0x0 type:0x6) [Light stat data extension plugin.]
+"sdext_unix"        (id:0x1 type:0x6) [Unix stat data extension plugin.]
+"sdext_lt"          (id:0x2 type:0x6) [Large times stat data extension
+plugin.]
+"sdext_symlink"     (id:0x3 type:0x6) [Symlink stat data extension
+plugin.]
+"sdext_plugin_set"  (id:0x4 type:0x6) [Plugin Set StatData extension
+plugin.]
+"sdext_flags"       (id:0x5 type:0x6) [Inode flags stat data extension
+plugin.]
+"sdext_crypto"      (id:0x7 type:0x6) [Crypto stat data extension plugin.]
+"sdext_heir_set"    (id:0x8 type:0x6) [Heir Set StatData extension
+plugin.]
+"format40"          (id:0x0 type:0x7) [Disk-format plugin.]
+"oid40"             (id:0x0 type:0x8) [Inode number allocator plugin.]
+"alloc40"           (id:0x0 type:0x9) [Space allocator plugin.]
+"journal40"         (id:0x0 type:0xa) [Journal plugin.]
+"key_short"         (id:0x0 type:0xb) [Short key plugin.]
+"key_large"         (id:0x1 type:0xb) [Large key plugin.]
+"lzo1"              (id:0x0 type:0xc) [lzo1 compression transform plugin.]
+"gzip1"             (id:0x1 type:0xc) [gzip1 compression transform
+plugin.]
+"none"              (id:0x0 type:0xd) ['Don't compress' compression mode
+plugin.]
+"latt"              (id:0x1 type:0xd) ['Check on dynamic lattice'
+compression mode plugin.]
+"ultim"             (id:0x2 type:0xd) ['Check ultimately' compression mode
+plugin.]
+"force"             (id:0x3 type:0xd) ['Compress evrything' compression
+mode plugin.]
+"conv"              (id:0x4 type:0xd) ['Convert to extent' compression
+mode plugin.]
+"64K"               (id:0x0 type:0x10) [64K size cluster plugin.]
+"32K"               (id:0x1 type:0x10) [32K size cluster plugin.]
+"16K"               (id:0x2 type:0x10) [16K size cluster plugin.]
+"8K"                (id:0x3 type:0x10) [8K size cluster plugin.]
+"4K"                (id:0x4 type:0x10) [4K size cluster plugin.]
 
-By the way, do you have something valuable on that disk? Latest release
-from sf.net is expected to work out of the box, you could use it to
-format the disk anew.
+# debugfs.reiser4 -p /dev/sdb
+debugfs.reiser4 1.0.9
+Copyright (C) 2001-2005 by Hans Reiser, licensing governed by
+reiser4progs/COPYING. 
 
+Default profile:
+create:          "ccreg40"         (id:0x4 type:0x0)    [Regular file
+plugin for creat(2)]
+key:             "key_large"       (id:0x1 type:0xb)    [Key plugin]
+compress:        "lzo1"            (id:0x0 type:0xc)    [Compression
+plugin]
+compressMode:    "conv"            (id:0x4 type:0xd)    [Compression Mode
+plugin]
+cluster:         "64K"             (id:0x0 type:0x10)   [Cluster plugin]
+hash:            "r5_hash"         (id:0x1 type:0x3)    [Directory entry
+hash plugin]
+fibration:       "ext_1_fibre"     (id:0x2 type:0x4)    [Key fibration
+plugin]
+formatting:      "smart"           (id:0x2 type:0x5)    [File body
+formatting plugin]
 
-> Thanks Glenn
-> 
-> /dev/sdb problem encountered:
-> ============================
-> http://www.spinics.net/lists/reiserfs-devel/msg04665.html
-> 
-> # which debugfs.reiser4                                                   
->                                                                          
-> /usr/sbin/debugfs.reiser4
-> 
-> # debugfs.reiser4 -V
-> debugfs.reiser4 1.0.9
-> 
-> #  debugfs.reiser4
-> Usage: debugfs.reiser4 [ options ] FILE
-> Browsing options:
->   -k, --cat FILE                browses passed file like standard
->                                 cat and ls programs.
-> Print options:
->   -s, --print-super             prints the both super blocks.
->   -t, --print-tree              prints the whole tree.
->   -j, --print-journal           prints journal.
->   -d, --print-oid               prints oid allocator data.
->   -a, --print-alloc             prints block allocator data.
->   -b, --print-block N           prints block by its number.
->   -n, --print-nodes FILE        prints all nodes file lies in.
->   -i, --print-file FILE         prints all items specified file
->                                 consists of.
-> Metadata options:
->   -P, --pack-metadata           fetches filesystem metadata and writes it
->                                 to standard output.
->   -U, --unpack-metadata         uses metadata stream from stdandard input
->                                 to construct filesystem by it.
-> Space options:
->   -O, --occupied-blocks         works with occupied blocks only(default).
->   -F, --free-blocks             works with free blocks only.
->   -W, --whole-partition         works with the whole partition.
->   -B, --bitmap                  works with blocks marked in the bitmap
-> only.
-> Plugins options:
->   -p, --print-profile           prints the plugin profile.
->   -l, --print-plugins           prints known plugins.
->   -o, --override TYPE=PLUGIN    overrides the default plugin of the type
->                                 "TYPE" by the plugin "PLUGIN" in the
->                                 profile.
-> Common options:
->   -?, -h, --help                prints program usage.
->   -V, --version                 prints current version.
->   -f, --force                   makes debugfs to use whole disk, not
->   -y, --yes                     assumes an answer 'yes' to all questions.
->                                 block device or mounted partition.        
->                            
->   -c, --cache N                 number of nodes in tree buffer cache
-> --
-> To unsubscribe from this list: send the line "unsubscribe reiserfs-devel" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
-
-
+--Glenn
