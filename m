@@ -1,12 +1,12 @@
 From: <doiggl@velocitynet.com.au>
-Subject: Re: using debugfs.reiser4 options to access R4 on /dev/sdb
-Date: Fri, 27 Feb 2015 13:22:26 +1100
-Message-ID: <c71d17f29802979ee8ea1b8dfc3fa72d@mail.velocitynet.com.au>
-References: <2a39c4776614cb7a675f299083a3627a@mail.velocitynet.com.au> <1424809332.12259.67.camel@home.ted.local> <4e67fef614d6e56cca9bdb540d592c78@mail.velocitynet.com.au>
+Subject: Re: This is the sequence of --checks and --build-fs times of Reiser4 volume on disk /dev/sdb
+Date: Fri, 27 Feb 2015 14:11:31 +1100
+Message-ID: <c7efa28422624a790132333f4cb24a4f@mail.velocitynet.com.au>
+References: <1f5fbbb35f95abcfdef3d985be537e9b@mail.velocitynet.com.au>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
-In-Reply-To: <4e67fef614d6e56cca9bdb540d592c78@mail.velocitynet.com.au>
+In-Reply-To: <1f5fbbb35f95abcfdef3d985be537e9b@mail.velocitynet.com.au>
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
@@ -193,5 +193,5 @@ Closing fs...done
 
 2 fatal corruptions were detected in FileSystem. Run with --build-fs
 option to fix them.
-#
 
+#
