@@ -1,79 +1,87 @@
-From: Ivan Shapovalov <intelfx100@gmail.com>
-Subject: Re: [PATCH] reiser4: implement ->rename2() of struct
- inode_operations.
-Date: Fri, 27 Feb 2015 20:42:35 +0300
-Message-ID: <1425058955.17105.2.camel@gmail.com>
-References: <1424992884-29692-1-git-send-email-intelfx100@gmail.com>
-	 <54F05BB5.5030104@gmail.com>
+From: <doiggl@velocitynet.com.au>
+Subject: reiser4progs and Wrong order of keys. query [on sdb]
+Date: Thu, 05 Mar 2015 14:00:40 +1100
+Message-ID: <3ceb7fd89df3e379f7d8b195bd814b11@mail.velocitynet.com.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg="pgp-sha256";
-	protocol="application/pgp-signature"; boundary="=-20NXfxosjWiqguG1uKtP"
+Content-Transfer-Encoding: 8bit
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20120113;
-        h=message-id:subject:from:to:cc:date:in-reply-to:references
-         :content-type:mime-version;
-        bh=XN0BvYmBs8Ts6SBCx1gXd5WUk6ZDL0kZQgrQ+igyYvQ=;
-        b=rFI+SyhdJahkPDbQDzCaMseyrrca7DEHD3wNHjpjRZ/It3n8hYuz4hkBCSgtrXw5EG
-         /YRXNxv8TS+GpYQucC8bGTK5vIIMZtR11USjVmA6Ytp9/ef/iBMNaEJ/SRfbgXDNyipO
-         uFS4Q8t/iNWNHZvkKVny0wP32+eVsikPxwK/vs7JPXkyFo3wB2bqKv+DfJ2XyTUg10/C
-         jI8+dRryF7cPXK/UQcWlfrTlmLiE98eJ0gMnSQUG22SpdsdEOu8z6xKQjXytZf8aAEcA
-         rX/AqvTX3ybrhxYrzLXN4PixQvwwU6N/L1g65jXjfeN9PtOQpP6CeY/lVg8CsEgUe6wE
-         24Eg==
-In-Reply-To: <54F05BB5.5030104@gmail.com>
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
-To: Edward Shishkin <edward.shishkin@gmail.com>
-Cc: reiserfs-devel@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+To: reiserfs-devel@vger.kernel.org
+Cc: Edward Shishkin <edward.shishkin@gmail.com>
+
+Hello,
+Is there a patch available to fix the problem of [1]
+I'm using reiser4progs: version-1.0.9
+--Thanks Glenn
+
+I can apply patch and build at:
+https://build.opensuse.org/package/view_file/home:doiggl/reiser4progs/reiser4progs.spec?expand=1
+
+- I can make a image copy of disk[using linux dd] to another disk and use
+that to see if repair works. 
+- run # fsck.reiser4 --build-fs --force  /dev/sdb
+- run # fsck.reiser4 --check /dev/sdb
+
+- see if volume can be accessed:
+    mount command used.
+    mount /dev/sdb  /media/disk
+
+- I can report results back to list.
 
 
---=-20NXfxosjWiqguG1uKtP
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+ Background history
+ ==================
+ http://www.spinics.net/lists/reiserfs-devel/msg04206.html
+ http://www.spinics.net/lists/reiserfs-devel/msg04682.html
 
-On 2015-02-27 at 12:57 +0100, Edward Shishkin wrote:
-> On 02/27/2015 12:21 AM, Ivan Shapovalov wrote:
-> > For now, only support the basic case of flags =3D=3D 0.
-> > Also support the case of flags =3D=3D RENAME_NOREPLACE, because it is a=
- no-op for
-> > local filesystems (destination existence is already checked by VFS).
->=20
-> Great,
-> Thanks!
->=20
-> > Thus no functional changes to the existing code.
-> >
-> > Signed-off-by: Ivan Shapovalov <intelfx100@gmail.com>
-> > ---
-> >
-> > Could you please estimate whether it would be hard to also implement th=
-e
-> > RENAME_EXCHANGE flag?
->=20
-> Why do we need this?
+[1]
+ fsck.reiser4 --build-fs --force  /dev/sdb
+.
+.
 
-For no particular reason.
-Supporting an interface is better than not supporting it (if it comes at
-no expense to existing workloads), isn't it? ;)
+        LOOKING FOR UNCONNECTED NODES FSCK: node.c: 108:
+repair_node_items_check: Node (43828275), items (0)
 
-That said, if you have better ideas for junior jobs, then I'm all ears.
+        and
+        (1): Wrong order of keys.
+        FSCK: node.c: 108: repair_node_items_check: Node (52697435), items
+(79)
+        and (80): Wrong order of keys.
+        FSCK: node.c: 108: repair_node_items_check: Node (63227569), items
+(24)
+        and (25): Wrong order of keys.
+        FSCK: node.c: 108: repair_node_items_check: Node (63227571), items
+(73)
+        and (74): Wrong order of keys.
+        FSCK: node.c: 108: repair_node_items_check: Node (116595727),
+items
 
-Thanks,
---=20
-Ivan Shapovalov / intelfx /
+(20)
 
---=-20NXfxosjWiqguG1uKtP
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: This is a digitally signed message part
-Content-Transfer-Encoding: 7bit
+        and (21): Wrong order of keys.
+        FSCK: node.c: 108: repair_node_items_check: Node (227923161),
+items
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
+(22)
 
-iF4EABEIAAYFAlTwrI4ACgkQxUKljSIMAnAHBgD/e6RUL/4mbX0N7shX+zRzClx7
-Tqc5K9yRnbgULc85IRcBAIVK1Ddv5n+yugnx4wmL4vGf+KsFz4efzlAeL/D3N99F
-=HObx
------END PGP SIGNATURE-----
+        and (23): Wrong order of keys.
+        FSCK: node.c: 108: repair_node_items_check: Node (284305753),
+items
 
---=-20NXfxosjWiqguG1uKtP--
+(61)
+
+        and (62): Wrong order of keys.
+                  Read nodes 1481038
+
+        Good nodes 471512
+
+                          Leaves of them 466164, Twigs of them 5348
+                  Time interval: Wed Aug 27 03:35:57 2014 - Wed Aug 27
+03:39:46
+                  2014
+
+        ***** fsck.reiser4 finished at Wed Aug 27 03:39:46 2014
+        Closing fs...done
 
