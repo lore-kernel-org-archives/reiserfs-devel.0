@@ -1,95 +1,90 @@
-From: Edward Shishkin <edward.shishkin@gmail.com>
-Subject: Re: [PATCH] reiser4: precise discard - general case
-Date: Sun, 08 Mar 2015 23:43:28 +0100
-Message-ID: <54FCD090.3000005@gmail.com>
-References: <5495DB0D.1080005@gmail.com> <1423600944.24885.9.camel@gmail.com> <54DB1186.60505@gmail.com> <1423649354.10127.16.camel@gmail.com> <54DBE880.4070902@gmail.com> <3C7880EC-12E3-4621-A3BE-353EFA032293@gmail.com>
+From: Jeff Mahoney <jeffm@suse.com>
+Subject: Re: [PATCH] reiserfs: fix several reiserfs_warning calls
+Date: Sun, 08 Mar 2015 19:32:15 -0400
+Message-ID: <54FCDBFF.1000207@suse.com>
+References: <1425638473-31398-1-git-send-email-nicolas.iooss_linux@m4x.org>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20120113;
-        h=message-id:date:from:user-agent:mime-version:to:cc:subject
-         :references:in-reply-to:content-type:content-transfer-encoding;
-        bh=GZri4DET+Bx3f/y9FUDF3i+YPWykt7QuTAGGDZy6qeQ=;
-        b=PE92WpvHa3M4LgsgXoe4T1pO5yRuhujMzIa/2U68vrwJAo036mKawR0/gvdi9bNqTO
-         MTcDySeV82eCeItjKpLUWyXreG2BLTmkYyX9jfxq1EgNIOEH3egRMf9VN4c+7xa2YkAb
-         gGNMxbTmNIz6MIuKsLlAA0R128VgykOKgjjlyVls7bAyjqSC1WP233mqtTGtYeCWhrSP
-         CiXv2Y2ZtZEWkQ9Guy1HfROHEWF2uOhdisWhUNgJbiF84dLcov2pfRuuALXE07Z99AJQ
-         UJqOX5/DdT+oq4IpOThG9/oQcGOsHHwPqiR7F8T2x5IqTQ0RSrWNdIYZMsX6lqdAqnlL
-         g/YQ==
-In-Reply-To: <3C7880EC-12E3-4621-A3BE-353EFA032293@gmail.com>
+In-Reply-To: <1425638473-31398-1-git-send-email-nicolas.iooss_linux@m4x.org>
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: Ivan Shapovalov <intelfx100@gmail.com>
-Cc: ReiserFS development mailing list <reiserfs-devel@vger.kernel.org>
+Content-Type: text/plain; charset="us-ascii"
+To: Nicolas Iooss <nicolas.iooss_linux@m4x.org>, reiserfs-devel@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org
 
-On 02/12/2015 07:14 AM, Ivan Shapovalov wrote:
->> You mean that sometimes we perform unneeded checks?
->> I see nothing criminal, as we don't exceed announced (2N_e)
->> number of checks, where N_e is number of extents in the
->> discard set.
->>> No, I didn't talk about that.
->>>
->>>> As to fixup: I think that we need to set up the local variable
->>>> head_is_known_dirty properly..
->>> Hmm, head_is_known_dirty is an optimization: either known dirty
->>> (in which case we skip checking and cut the head), or unknown
->>> (in which case we do the check).
->>>
->>> I'm talking about a different scenario:
->>> - tail padding of an extent is clean
->>> - head padding of the next extent is clean
->>> - these two paddings overlap in terms of disk blocks
->>>
->>> In this case, the head padding check will yield false ("dirty") because
->>> part of it has been already allocated for the tail padding, but in fact
->>> it is clean. Thus a false negative: the head will be cut while it can be
->>> padded.
->>
->> Ah, you suspect non-preciseness (leak of "garbage")?
->>
->> If tail padding of the current extent overlaps with the head padding of
->> the next extent, then the end of the current extent and the beginning
->> of the next extent are in the same erase unit. Otherwise we'll end with
->> contradiction. Correct?
-> Correct, but I'm talking about a different situation where the end of the current extent and the beginning of the next extent are in distinct erase units but in the same disk block. Then we'll end up checking that disk block twice.
+-----BEGIN PGP SIGNED MESSAGE-----
+Hash: SHA1
+
+On 3/6/15 5:41 AM, Nicolas Iooss wrote:
+> Since commit 45b03d5e8e67 ("reiserfs: rework reiserfs_warning"), 
+> reiserfs_warning takes an id and a format as arguments, not a
+> single format argument.  However 4 calls still follow the old
+> interface. Update them.
+> 
+> This bug was initially found by adding __printf(4, 5) attribute to 
+> __reiserfs_warning and using "gcc -Wformat=2" when building the 
+> kernel.
+> 
+> Fixes: 45b03d5e8e67 ("reiserfs: rework reiserfs_warning") 
+> Signed-off-by: Nicolas Iooss <nicolas.iooss_linux@m4x.org>
+Acked-by: Jeff Mahoney <jeffm@suse.com>
+
+> --- fs/reiserfs/bitmap.c  | 4 ++-- fs/reiserfs/journal.c | 4 ++-- 
+> fs/reiserfs/procfs.c  | 4 ++-- 3 files changed, 6 insertions(+), 6
+> deletions(-)
+> 
+> diff --git a/fs/reiserfs/bitmap.c b/fs/reiserfs/bitmap.c index
+> dc198bc64c61..1d02f184863d 100644 --- a/fs/reiserfs/bitmap.c +++
+> b/fs/reiserfs/bitmap.c @@ -1423,8 +1423,8 @@ struct buffer_head
+> *reiserfs_read_bitmap_block(struct super_block *sb,
+> 
+> bh = sb_bread(sb, block); if (bh == NULL) -		reiserfs_warning(sb,
+> "sh-2029: %s: bitmap block (#%u) " -		                 "reading
+> failed", __func__, block); +		reiserfs_warning(sb, "sh-2029", +
+> "bitmap block (#%u) reading failed", block); else { if
+> (buffer_locked(bh)) { int depth; diff --git a/fs/reiserfs/journal.c
+> b/fs/reiserfs/journal.c index 9d6486d416a3..bb08e81ef9ec 100644 ---
+> a/fs/reiserfs/journal.c +++ b/fs/reiserfs/journal.c @@ -2643,8
+> +2643,8 @@ static int journal_init_dev(struct super_block *super, 
+> if (IS_ERR(journal->j_dev_bd)) { result =
+> PTR_ERR(journal->j_dev_bd); journal->j_dev_bd = NULL; -
+> reiserfs_warning(super, -				 "journal_init_dev: Cannot open '%s':
+> %i", +		reiserfs_warning(super, NULL, +				 "Cannot open '%s':
+> %i", jdev_name, result); return result; } diff --git
+> a/fs/reiserfs/procfs.c b/fs/reiserfs/procfs.c index
+> 621b9f381fe1..e6a1b2c34ef6 100644 --- a/fs/reiserfs/procfs.c +++
+> b/fs/reiserfs/procfs.c @@ -436,7 +436,7 @@ int
+> reiserfs_proc_info_init(struct super_block *sb) add_file(sb,
+> "journal", show_journal); return 0; } -	reiserfs_warning(sb,
+> "cannot create /proc/%s/%s", +	reiserfs_warning(sb, NULL, "cannot
+> create /proc/%s/%s", proc_info_root_name, b); return 1; } @@ -465,7
+> +465,7 @@ int reiserfs_proc_info_global_init(void) if
+> (proc_info_root == NULL) { proc_info_root =
+> proc_mkdir(proc_info_root_name, NULL); if (!proc_info_root) { -
+> reiserfs_warning(NULL, "cannot create /proc/%s", +
+> reiserfs_warning(NULL, NULL, "cannot create /proc/%s", 
+> proc_info_root_name); return 1; }
+> 
 
 
-You correctly pointed out the possibility of garbage leak
-in the case of block_size > erase_unit_size. However, the
-current gluing policy prevents such leak.
+- -- 
+Jeff Mahoney
+SUSE Labs
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG/MacGPG2 v2.0.22 (Darwin)
 
-Indeed, let AB be a current extent, and CD - next extent
-
-
-----*-----*-----*-----*-----*-----*-----*---> units
---|-----------|-----------|-----------|-----> blocks
-   A           B           C           D
-
-
-Note that since extents are sorted and merged, distance
-between any 2 extents are not smaller than block_size.
-In particular, |BC| >= block_size.                           (1)
-
-Suppose that tail padding of the current extent and head
-padding of the next extent are in the same disk block.
-However, in this case, in accordance with the definitions
-of tail and head paddings, we have that |BC| <= block_size.   (2)
-
- From (1) and (2) we have that |BC| == block_size, and
-p_end + p_tailp == C == start-of-next-extent. Note, that
-this satisfies the "gluing condition" (discard.c, line 362).
-That is, we'll try to glue the current and the next extent.
-It means that we'll check BC only once:
-
-If BC is dirty, than gluing failed, and we don't allocate BC.
-
-If BC is clean, than we allocate BC, jump to the next
-extent and don't check its head padding (because it was
-"glued" with the previous one).
-
-Did I miss something?
-
-Thanks,
-Edward.
+iQIcBAEBAgAGBQJU/Nv+AAoJEB57S2MheeWyFX0QAIxVQtvUQ2IC7kdaEqtTSmz+
+0isl/6OqZa+JA4jSG1GmVbhhY/yS9qCImdEozAyuNF1gJIsUzcrN/lyPzFWnnJDm
+LD7DOKvcLp1PnZ7UsqBEjwy8vZ3YXNL9CbVxczij5Dx3z1PXnPGaLi6okf6vT2M1
+vqp2ZwKfEvDZzN0cvt2fmkO9k1GQaUhOUkzjnZy1I6MCmPd3dF9hcr93g0/BlTWD
+DeVS7Y+gjFP8eA3l2KJWrBbDHK59M3RCOpVdVhIyCu73dcJs94ZZBn8jCXN3kfpv
+33xb/MWZE+vnNCo4PkmJCngKZN8gu/OW2nna1c0yzUlKkRMcipHKDB7RDxPAeeXL
+2nz3LMv2MP94DCDdpxVjZi2I+2REHWAaxi62IMxEiOl9X7aVuZrn+UH5R/6E5/vp
+H39yFVHFaKBLI8pLGdcnObcDNKPr7nFEzwvS4ngiYntcH4F8K9SBun+EgwB6gYLq
+xQQXxDdNxfWGZCELz8Q8ZJQkM2seeOu2ImUkaxI+MUycrUKvkwz7ECtOdUQMlbUN
+8EqSfiHrP62JZ5XrNdlm/uIvKaFyq8PwUZNXQtl28Op6PrP6CAIpe5/5q+95L18f
+TDTMyiVOO52B6C3wLheQnfswN3b2/xwebd84BIUmYPPdwWRbVH6t5GvBFkExMIH9
+kqefbLXOQDaBLzhaxIvt
+=/bVH
+-----END PGP SIGNATURE-----
