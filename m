@@ -1,29 +1,101 @@
-From: <doiggl@velocitynet.com.au>
-Subject: patch construction - The diff is malformed. Some lines could not be parsed.
-Date: Wed, 11 Mar 2015 23:58:32 +1100
-Message-ID: <752004ab4ddf81bac168fd3b0b149f62@mail.velocitynet.com.au>
-Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Return-path: <reiserfs-devel-owner@vger.kernel.org>
-Sender: reiserfs-devel-owner@vger.kernel.org
+From: Omar Sandoval <osandov-nWWhXC5lh1RBDgjK7y7TUQ@public.gmane.org>
+Subject: [RFC PATCH 0/5] Remove rw parameter from direct_IO()
+Date: Mon, 16 Mar 2015 04:33:48 -0700
+Message-ID: <cover.1426502566.git.osandov@osandov.com>
+Return-path: <linux-nfs-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Sender: linux-nfs-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-ID: <reiserfs-devel.vger.kernel.org>
+MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
-To: reiserfs-devel@vger.kernel.org
+Content-Transfer-Encoding: 7bit
+To: Alexander Viro <viro-RmSDqhL/yNMiFSDQTTA3OLVCufUGDwFn@public.gmane.org>, linux-fsdevel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-btrfs-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, ceph-devel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-cifs-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, osd-dev-yNzVSZO3znNg9hUCZPvPmw@public.gmane.org, linux-ext4-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-f2fs-devel-5NWGOfrQmneRv+LV9MX5uipxlwaOVQ5f@public.gmane.org, fuse-devel-5NWGOfrQmneRv+LV9MX5uipxlwaOVQ5f@public.gmane.org, cluster-devel-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org, jfs-discussion-5NWGOfrQmneRv+LV9MX5uipxlwaOVQ5f@public.gmane.org, HPDD-discuss-hn68Rpc1hR1g9hUCZPvPmw@public.gmane.org, linux-nfs-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-nilfs-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, ocfs2-devel-N0ozoZBvEnrZJqsBc5GL+g@public.gmane.org, reiserfs-devel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, v9fs-developer-5NWGOfrQmneRv+LV9MX5uipxlwaOVQ5f@public.gmane.org, xfs-VZNHf3L845pBDgjK7y7TUQ@public.gmane.org
+Cc: linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Chris Mason <clm-b10kYP2dOMg@public.gmane.org>, Josef Bacik <jbacik-b10kYP2dOMg@public.gmane.org>, David Sterba <dsterba-AlSwsSmVLrQ@public.gmane.org>, Yan Zheng <zyan-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>, Sage Weil <sage-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>, Steve French <sfrench-eUNUBHrolfbYtjvyW6yDsg@public.gmane.org>, Boaz Harrosh <ooo-rh7Tgz9RNieUD9Wbbkgo/g@public.gmane.org>, Benny Halevy <bhalevy-7I+n7zu2hftEKMMhf/gKZA@public.gmane.org>, Jan Kara <jack-AlSwsSmVLrQ@public.gmane.org>, Theodore Ts'o <tytso-3s7WtUTddSA@public.gmane.org>, Andreas Dilger <adilger.kernel-m1MBpc4rdrD3fQ9qLvQP4Q@public.gmane.org>, Jaegeuk Kim <jaegeuk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Changman Lee <cm224.lee-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Miklos Szeredi <miklos-sUDqSbJrdHQHWmgEVkV9KA@public.gmane.org>, Steven Whitehouse <swhiteho-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>, Dave Kleikamp <shaggy-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Oleg Drokin <oleg.drokin-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Trond Myklebust <trond.myklebust-7I+n7zu2hftEKMMhf/gKZA@public.gmane.org>, Anna Schumaker <anna.schumaker-HgOvQuBEEgTQT0dZR+AlfA@public.gmane.org>, Ryusuke Konishi <konishi.ryusuke-Zyj7fXuS5i5L9jVzuh4AOg@public.gmane.org>, Mark Fasheh <mfasheh-IBi9RG/b67k@public.gmane.org>, Joel Becker <jlbec-aKy9MeLSZ9dg9hUCZPvPmw@public.gmane.org>, Eric Van Hensbergen <ericvh-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Ron Minnich <rmin>
 
-Hello,
-I tried to view this in Linux using kompare but got this error:
+Hi,
 
-# /usr/bin/kompare reiser4-precise-discard.patch
+Al, here's some cleanup that you mentioned back in December that I got
+around to (https://lkml.org/lkml/2014/12/15/28).
 
-The diff is malformed. Some lines could not be parsed and will not be
-displayed in the diff view.
+In summary, the rw parameter to a_ops->direct_IO() is redundant with
+.type in struct iov_iter. Additionally, rw is inconsistently checked for
+being a WRITE; some filesystems do rw == WRITE, others do rw & WRITE,
+and others do both within the same function :) The distinction is that
+swapout may OR in the ITER_BVEC flag in the rw passed to ->direct_IO(),
+so the two are not equivalent (although this really only happens for
+swap-over-NFS, but it's scary nonetheless). After looking through all of
+these, it definitely looks like every check means for ANY write, not
+just non-kernel writes.
 
-Trying to see the lines added/changed.
+So, the solution presented here is:
 
-What lines are malformed/copied incorrectly ?
---Thanks Glenn
+- Add a helper, iov_iter_rw(), which always returns either READ or
+  WRITE, no ITER_.* or REQ_.* nonsense mixed in. For consistency, the
+  return value is always checked for equality
+- Get rid of all uses of rw in any implementations of direct_IO,
+  starting with the generic code
+- Nuke the actual parameter and update the documentation
 
-Copied/pasted patch from
-http://www.spinics.net/lists/reiserfs-devel/msg04616.html
+I decided to squish all of the filesystems together in patch 4 to avoid
+inundating the mailing lists with 20+ mostly two-line patches, but I can
+split those out if that's any better. Additionally, patch 1 pulls fs.h
+into uio.h, which seems undesirable.
 
+These were mostly just compile tested, with a couple of direct I/O
+xfstests run on btrfs as quick sanity check, so getting some more eyes
+on is probably a good thing. They should apply on top of v4.0-rc4.
+Please comment away.
 
+Thank you,
+
+Omar Sandoval (5):
+  new helper: iov_iter_rw()
+  Remove rw from {,__,do_}blockdev_direct_IO()
+  Remove rw from dax_{do_,}io()
+  direct_IO: use iov_iter_rw() instead of rw everywhere
+  direct_IO: remove rw from a_ops->direct_IO()
+
+ Documentation/filesystems/Locking          |  2 +-
+ Documentation/filesystems/vfs.txt          |  2 +-
+ drivers/staging/lustre/lustre/llite/rw26.c | 22 ++++++++---------
+ fs/9p/vfs_addr.c                           |  2 +-
+ fs/affs/file.c                             |  9 +++----
+ fs/block_dev.c                             |  8 +++---
+ fs/btrfs/inode.c                           | 24 +++++++++---------
+ fs/ceph/addr.c                             |  3 +--
+ fs/cifs/file.c                             |  3 +--
+ fs/dax.c                                   | 27 ++++++++++-----------
+ fs/direct-io.c                             | 39 ++++++++++++++----------------
+ fs/exofs/inode.c                           |  4 +--
+ fs/ext2/inode.c                            | 11 ++++-----
+ fs/ext3/inode.c                            | 14 +++++------
+ fs/ext4/ext4.h                             |  4 +--
+ fs/ext4/indirect.c                         | 25 ++++++++++---------
+ fs/ext4/inode.c                            | 28 ++++++++++-----------
+ fs/f2fs/data.c                             | 22 ++++++++---------
+ fs/fat/inode.c                             |  9 +++----
+ fs/fuse/file.c                             | 16 ++++++------
+ fs/gfs2/aops.c                             | 16 ++++++------
+ fs/hfs/inode.c                             |  8 +++---
+ fs/hfsplus/inode.c                         |  9 +++----
+ fs/jfs/inode.c                             |  8 +++---
+ fs/nfs/direct.c                            |  4 +--
+ fs/nilfs2/inode.c                          | 10 +++-----
+ fs/ocfs2/aops.c                            | 22 +++++++----------
+ fs/reiserfs/inode.c                        |  8 +++---
+ fs/udf/file.c                              |  3 +--
+ fs/udf/inode.c                             |  7 +++---
+ fs/xfs/xfs_aops.c                          | 12 ++++-----
+ include/linux/fs.h                         | 24 +++++++++---------
+ include/linux/nfs_fs.h                     |  2 +-
+ include/linux/uio.h                        | 10 ++++++++
+ mm/filemap.c                               |  4 +--
+ mm/page_io.c                               |  4 +--
+ 36 files changed, 206 insertions(+), 219 deletions(-)
+
+-- 
+2.3.3
+
+--
+To unsubscribe from this list: send the line "unsubscribe linux-nfs" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
