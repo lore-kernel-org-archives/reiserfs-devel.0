@@ -1,51 +1,45 @@
 From: Nicolas Iooss <nicolas.iooss_linux@m4x.org>
-Subject: Re: reiserfs: inconsistent format in __RASSERT
-Date: Mon, 16 Mar 2015 21:18:20 +0800
-Message-ID: <5506D81C.50805@m4x.org>
-References: <5506D2DB.6040907@m4x.org> <5506D504.7040800@suse.com>
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+Subject: [PATCH] reiserfs: fix __RASSERT format string
+Date: Mon, 16 Mar 2015 21:45:06 +0800
+Message-ID: <1426513506-30171-1-git-send-email-nicolas.iooss_linux@m4x.org>
+References: <5506D81C.50805@m4x.org>
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
-In-Reply-To: <5506D504.7040800@suse.com>
+In-Reply-To: <5506D81C.50805@m4x.org>
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
+MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
-To: Jeff Mahoney <jeffm@suse.com>, reiserfs-devel@vger.kernel.org
-Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Content-Transfer-Encoding: 7bit
+To: jeffm@suse.com
+Cc: reiserfs-devel@vger.kernel.org, linux-kernel@vger.kernel.org, Nicolas Iooss <nicolas.iooss_linux@m4x.org>
 
-On 03/16/2015 09:05 PM, Jeff Mahoney wrote:
-> On 3/16/15 8:55 AM, Nicolas Iooss wrote:
->> * I missed something in my analysis and in fact the PID argument
->> is processed by reiserfs_panic (don't know where), or * the PID
->> argument is not used and should be removed, or
-> 
-> This, please. reiserfs_panic calls BUG(), which will contain the PID.
+__RASSERT format string does not use the PID argument.  reiserfs_panic
+arguments are therefore formatted with the wrong format specifier (for
+example __LINE__ with %s).  This bug was introduced when commit
+c3a9c2109f84 ("reiserfs: rework reiserfs_panic") removed a
+"reiserfs[%i]" prefix.
 
-Whoo, thanks for the quick answer.  I will send a patch as soon as possible.
+This bug is only triggered when using CONFIG_REISERFS_CHECK, otherwise
+__RASSERT is never used.
 
->> * the PID is useful and "[%i]" should be added somewhere in the
->> format string.
-> 
->> Which one would you prefer?
-> 
->> Also, I found this when building the kernel with "allmodconfig" on 
->> x86_64.  With "defconfig" gcc does not report this error, but I
->> guess it is because without CONFIG_REISERFS_CHECK, __RASSERT is
->> never used.
-> 
-> Yeah. If reiserfs was more actively maintained, what is currently
-> protected by CONFIG_REISERFS_CHECK would be handled a bit better.
-> There are ton of fsfuzzer bugs that would be caught by it and should
-> be handled using reiserfs_error. Unfortunately, it also enables some
-> heavy checks that make the file system very slow.
-> 
-> Thanks for looking into this. It looks like it's been broken for a
-> while. I suppose the only saving grace is that it would crash in a
-> path that crashes on purpose a few lines later.
+Signed-off-by: Nicolas Iooss <nicolas.iooss_linux@m4x.org>
+Fixes: c3a9c2109f84 ("reiserfs: rework reiserfs_panic")
+---
+ fs/reiserfs/reiserfs.h | 1 -
+ 1 file changed, 1 deletion(-)
 
-Yes, and this is also why I believe this bug is not a security issue nor
-something which needs an urgent fix.
+diff --git a/fs/reiserfs/reiserfs.h b/fs/reiserfs/reiserfs.h
+index bb79cddf0a1f..2adcde137c3f 100644
+--- a/fs/reiserfs/reiserfs.h
++++ b/fs/reiserfs/reiserfs.h
+@@ -910,7 +910,6 @@ do {									\
+ 	if (!(cond))							\
+ 		reiserfs_panic(NULL, "assertion failure", "(" #cond ") at " \
+ 			       __FILE__ ":%i:%s: " format "\n",		\
+-			       in_interrupt() ? -1 : task_pid_nr(current), \
+ 			       __LINE__, __func__ , ##args);		\
+ } while (0)
+ 
+-- 
+2.3.3
 
-Thanks,
-
-Nicolas
