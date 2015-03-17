@@ -1,57 +1,48 @@
-From: Jan Kara <jack@suse.cz>
-Subject: Re: [PATCH] reiserfs: fix __RASSERT format string
-Date: Tue, 17 Mar 2015 16:22:44 +0100
-Message-ID: <20150317152244.GA6670@quack.suse.cz>
-References: <5506D81C.50805@m4x.org>
- <1426513506-30171-1-git-send-email-nicolas.iooss_linux@m4x.org>
- <550839A4.9070608@suse.com>
+From: Al Viro <viro-3bDd1+5oDREiFSDQTTA3OLVCufUGDwFn@public.gmane.org>
+Subject: Re: [RFC PATCH 1/5] new helper: iov_iter_rw()
+Date: Tue, 17 Mar 2015 18:19:15 +0000
+Message-ID: <20150317181910.GK29656@ZenIV.linux.org.uk>
+References: <cover.1426502566.git.osandov@osandov.com>
+ <34dc78b262546e9343e0ed872232a97f5eaa5f15.1426502566.git.osandov@osandov.com>
+ <20150316173605.GX29656@ZenIV.linux.org.uk>
+ <20150317093151.GS20767@twin.jikos.cz>
 Mime-Version: 1.0
-Return-path: <reiserfs-devel-owner@vger.kernel.org>
+Return-path: <linux-nilfs-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 Content-Disposition: inline
-In-Reply-To: <550839A4.9070608@suse.com>
-Sender: reiserfs-devel-owner@vger.kernel.org
+In-Reply-To: <20150317093151.GS20767-1ReQVI26iDCaZKY3DrU6dA@public.gmane.org>
+Sender: linux-nilfs-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-ID: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Jeff Mahoney <jeffm@suse.com>
-Cc: Nicolas Iooss <nicolas.iooss_linux@m4x.org>, reiserfs-devel@vger.kernel.org, linux-kernel@vger.kernel.org, Jan Kara <jack@suse.cz>
+To: dsterba-AlSwsSmVLrQ@public.gmane.org, Omar Sandoval <osandov-nWWhXC5lh1RBDgjK7y7TUQ@public.gmane.org>, linux-fsdevel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-btrfs-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, ceph-devel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-cifs-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, osd-dev-yNzVSZO3znNg9hUCZPvPmw@public.gmane.org, linux-ext4-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-f2fs-devel-5NWGOfrQmneRv+LV9MX5uipxlwaOVQ5f@public.gmane.org, fuse-devel-5NWGOfrQmneRv+LV9MX5uipxlwaOVQ5f@public.gmane.org, cluster-devel-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org, jfs-discussion-5NWGOfrQmneRv+LV9MX5uipxlwaOVQ5f@public.gmane.org, HPDD-discuss-y27Ovi1pjclAfugRpC6u6w@public.gmane.org, linux-nfs-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-nilfs-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, ocfs2-devel-N0ozoZBvEnrZJqsBc5GL+g@public.gmane.org, reiserfs-devel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, v9fs-developer-5NWGOfrQmneRv+LV9MX5uipxlwaOVQ5f@public.gmane.org, xfs-VZNHf3L845pBDgjK7y7TUQ@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Chris Mason <clm-b10kYP2dOMg@public.gmane.org>, Josef Bacik <jbacik-b10kYP2dOMg@public.gmane.org>, Yan Zheng <zyan-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>, Sage Weil <sage-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>, Steve French <sfrench-eUNUBHrolfbYtjvyW6yDsg@public.gmane.org>, Boaz Harrosh <ooo-rh7Tgz9RNieUD9Wbbkgo/g@public.gmane.org>, Benny Halevy <bhalevy-7I+n7zu2hftEKMMhf/gKZA@public.gmane.org>, Jan Kara <jack-AlSwsSmVLrQ@public.gmane.org>, Theodore Ts'o <tytso-3s7WtUTddSA@public.gmane.org>, Andreas Dilger <>
 
-On Tue 17-03-15 10:26:44, Jeff Mahoney wrote:
-> On 3/16/15 9:45 AM, Nicolas Iooss wrote:
-> > __RASSERT format string does not use the PID argument.
-> > reiserfs_panic arguments are therefore formatted with the wrong
-> > format specifier (for example __LINE__ with %s).  This bug was
-> > introduced when commit c3a9c2109f84 ("reiserfs: rework
-> > reiserfs_panic") removed a "reiserfs[%i]" prefix.
-> > 
-> > This bug is only triggered when using CONFIG_REISERFS_CHECK,
-> > otherwise __RASSERT is never used.
-> > 
-> > Signed-off-by: Nicolas Iooss <nicolas.iooss_linux@m4x.org>
-> Acked-by: Jeff Mahoney <jeffm@suse.com>
-  Thanks. I've added the patch to my tree.
+On Tue, Mar 17, 2015 at 10:31:51AM +0100, David Sterba wrote:
 
-							Honza
+> Agreed, but the proposed define is rather cryptic and I was not able to
+> understand the meaning on the first glance.
+> 
+> > #define iov_iter_rw(i) ((0 ? (struct iov_iter *)0 : (i))->type & RW_MASK)
+> 
+> This worked for me, does not compile with anything else than
+> 'struct iov_iter*' as i:
+> 
+> #define iov_iter_rw(i)	({			\
+> 	struct iov_iter __iter = *(i);		\
+> 	(i)->type & RW_MASK;			\
+> 	})
+> 
+> The assignment is optimized out.
 
-> 
-> > Fixes: c3a9c2109f84 ("reiserfs: rework reiserfs_panic") --- 
-> > fs/reiserfs/reiserfs.h | 1 - 1 file changed, 1 deletion(-)
-> > 
-> > diff --git a/fs/reiserfs/reiserfs.h b/fs/reiserfs/reiserfs.h index
-> > bb79cddf0a1f..2adcde137c3f 100644 --- a/fs/reiserfs/reiserfs.h +++
-> > b/fs/reiserfs/reiserfs.h @@ -910,7 +910,6 @@ do {									\ if
-> > (!(cond))							\ reiserfs_panic(NULL, "assertion failure", "("
-> > #cond ") at " \ __FILE__ ":%i:%s: " format "\n",		\ -
-> > in_interrupt() ? -1 : task_pid_nr(current), \ __LINE__, __func__ ,
-> > ##args);		\ } while (0)
-> > 
-> > 
-> 
-> 
-> -- 
-> Jeff Mahoney
-> SUSE Labs
-> 
--- 
-Jan Kara <jack@suse.cz>
-SUSE Labs, CR
+... and you are getting
+	a) use of rather lousy gccism when plain C would do
+	b) double evaluation since you've got it wrong (should've been
+__iter.type & RW_MASK, if you do it that way).  As it is, if argument has
+any side effects, your variant will trigger those twice - even if the
+destination of the assignment is never used, the side effects remain.
+
+I agree that it could use /* use ?: for typechecking */, but let's not go into
+({...}) land unless we absolutely have to.
+--
+To unsubscribe from this list: send the line "unsubscribe linux-nilfs" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
