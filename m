@@ -1,37 +1,57 @@
-From: Jose R R <Jose.r.r@metztli-it.com>
-Subject: bootcd-based Aufs3 & Reiser4 -patched Debian 8 Jessie recovery ISO
-Date: Wed, 18 Mar 2015 22:57:55 -0700
-Message-ID: <CAM12Q5ST3BaJCuY=FmS_RiCRcv3w+0VxdVSY9+SkvtsqRC8hSg@mail.gmail.com>
-Mime-Version: 1.0
-Return-path: <reiserfs-devel-owner@vger.kernel.org>
-Sender: reiserfs-devel-owner@vger.kernel.org
+From: Sanidhya Kashyap <sanidhya.gatech@gmail.com>
+Subject: [PATCH] reiserfs: kstrdup() memory handling
+Date: Sat, 21 Mar 2015 13:00:13 -0400
+Message-ID: <1426957213-5508-1-git-send-email-sanidhya.gatech@gmail.com>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20120113;
+        h=from:to:cc:subject:date:message-id;
+        bh=DL3un8grc6oZihJPAD9OQcpwVoPea8uz2N/kaZQ6tBg=;
+        b=xSBbIXfKUSRLR7yJM7UYfaLwtPWS4Vt4JDFXyXgSE0K0BGEjkouUi8L0pLoO2XEL3X
+         XcphV7RLryH1NEzUQMe0LIkCz0zSks75iRDQoNY9ECxuov+F37eEPQmxjIOBeVCArhu6
+         zf0s/78Bcechh2+Ydf9Prjx525Vb5dkXV3wFIxKkBO6zQghVG+JPPJ5y01vfkSTKc+zB
+         jg48GkEmPmwSGACKncVtlepMVoETtoGagWuTQA/+QLi+6mOpGFcO3RdVYLhauaq9zRkt
+         9qw0rtap35nuVNc8WiuahXPADDxiwz/2QFh/cvKuKbrBR4RKzxlsivz0XUGCnyCLHZ25
+         A7Ew==
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
+MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: ReiserFS Development List <reiserfs-devel@vger.kernel.org>, Debian Live <debian-live@lists.debian.org>
+To: jack@suse.cz, jeffm@suse.com, akpm@linux-foundation.org, fabf@skynet.be, josh@joshtriplett.org, rashika.kheria@gmail.com, reiserfs-devel@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: taesoo@gatech.edu, changwoo@gatech.edu, sanidhya@gatech.edu, blee@gatech.edu, Sanidhya Kashyap <sanidhya.gatech@gmail.com>
 
-Niltze, all!
+Checking for ENOMEM even for new_opts in reiserfs_remount function as
+there is a possibility of nothing being allocated.
 
-Available at Source Forge:
+Signed-off-by: Sanidhya Kashyap <sanidhya.gatech@gmail.com>
+---
+ fs/reiserfs/super.c | 6 ++++++
+ 1 file changed, 6 insertions(+)
 
-Xonecuiltzin: bootcd-based Debian 8 Jessie with Linux kernel 3.18.7
- < https://sourceforge.net/projects/xonecuiltzin/ >.
-Might be used for recovery operations on reiser4, reiserfs, btrfs,
-xfs, and jfs file systems. Has gpart, gparted, partimage, and testdisk
-utilities.
-
-Might also be used for local installation with: bootcdtodisk
-
-< https://pbs.twimg.com/media/CAJRrXbUUAAfnvX.png:large >
-
-
-Best Professional Regards.
-
+diff --git a/fs/reiserfs/super.c b/fs/reiserfs/super.c
+index 71fbbe3..bf9bc66 100644
+--- a/fs/reiserfs/super.c
++++ b/fs/reiserfs/super.c
+@@ -1397,6 +1397,11 @@ static int reiserfs_remount(struct super_block *s, int *mount_flags, char *arg)
+ 	int i;
+ #endif
+ 
++	if (!new_opts) {
++		err = -ENOMEM;
++		goto out_err_no_kfree;
++	}
++
+ 	sync_filesystem(s);
+ 	reiserfs_write_lock(s);
+ 
+@@ -1549,6 +1554,7 @@ out_err_unlock:
+ 	reiserfs_write_unlock(s);
+ out_err:
+ 	kfree(new_opts);
++out_err_no_kfree:
+ 	return err;
+ }
+ 
 -- 
-Jose R R
-http://www.metztli-it.com
----------------------------------------------------------------------------------------------
-Try at no charge http://b2evolution.net for http://OpenShift.com PaaS
----------------------------------------------------------------------------------------------
-from our GitHub http://Nepohualtzintzin.com repository. Cloud the easy way!
----------------------------------------------------------------------------------------------
+2.1.0
