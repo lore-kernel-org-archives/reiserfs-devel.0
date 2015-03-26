@@ -1,33 +1,28 @@
-From: Josh Triplett <josh@joshtriplett.org>
-Subject: Re: [PATCH] reiserfs: kstrdup() memory handling
-Date: Sun, 22 Mar 2015 19:55:43 -0700
-Message-ID: <20150323025543.GA2120@thin>
-References: <1426957213-5508-1-git-send-email-sanidhya.gatech@gmail.com>
- <20150321171547.GA5663@thin>
- <CADa969h6MLbM3vporSjkctBxQwsqphghbXQxAhtyBUeUuqrWQA@mail.gmail.com>
+From: <doiggl@velocitynet.com.au>
+Subject: Are these sets of patches included the next reiser4 patchset [ after reiser4-for-3.18.6.patch.gz ]
+Date: Thu, 26 Mar 2015 13:18:18 +1100
+Message-ID: <1d50b19ce1e95a2efc842a7a86c1514e@mail.velocitynet.com.au>
 Mime-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <CADa969h6MLbM3vporSjkctBxQwsqphghbXQxAhtyBUeUuqrWQA@mail.gmail.com>
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Sanidhya Kashyap <sanidhya.gatech@gmail.com>
-Cc: reiserfs-devel@vger.kernel.org, linux-kernel@vger.kernel.org, "Kashyap, Sanidhya" <sanidhya@gatech.edu>
+To: reiserfs-devel@vger.kernel.org
 
-On Sun, Mar 22, 2015 at 08:12:46PM -0400, Sanidhya Kashyap wrote:
-> On Sat, Mar 21, 2015 at 1:15 PM, Josh Triplett <josh@joshtriplett.org> wrote:
-> > On Sat, Mar 21, 2015 at 01:00:13PM -0400, Sanidhya Kashyap wrote:
-> >> Checking for ENOMEM even for new_opts in reiserfs_remount function as
-> >> there is a possibility of nothing being allocated.
-> >
-> > You don't need to add a new label; kfree(NULL) is a no-op.
-> >
-> 
-> Shall I resubmit the patch?
+Hello,
 
-I would suggest doing so, yes, after you see if anyone else has feedback
-on it.
+Are these patch sets included the next reiser4 patch set [ after
+reiser4-for-3.18.6.patch.gz ]
 
-- Josh Triplett
+[PATCH 0/3] reiser4: precise discard: fixes on top of everything
+[PATCH 0/2] reiser4: node41 layout support
+[PATCH 0/6] reiser4: discard support: &quot;precise discard&quot; aka
+padding of extents to erase unit boundaries.
+[PATCH 0/3] reiser4: space grabbing fixes.
+[PATCH 0/2] reiser4: block deallocation fixes.
+[patch 0/1] reiser4: iterate over extents in discard_atom
+
+Just asking.
+Thank you.
+--Glenn
