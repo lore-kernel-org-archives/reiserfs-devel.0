@@ -1,23 +1,41 @@
-From: <doiggl@velocitynet.com.au>
-Subject: Can the fix for the "fsck: it jumps to wrong branch for some reason" be included in next reiser4progs [after v-1.0.9]
-Date: Fri, 15 May 2015 19:26:12 +1000
-Message-ID: <dc417c95a0592f24add406046d0139fe@mail.velocitynet.com.au>
-References: <3027f6f8d3130349a722455db19754fb@mail.velocitynet.com.au>
+From: Jose R R <Jose.r.r@metztli-it.com>
+Subject: Debian cloud reiser4-patched kernel 3.19.8 [EOL] instance
+Date: Mon, 18 May 2015 10:38:02 -0700
+Message-ID: <CAM12Q5Qa6okHrZmeT=u6fqfHqgQeRLSZk8Eth9j0aiYHsQr41Q@mail.gmail.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
-In-Reply-To: <3027f6f8d3130349a722455db19754fb@mail.velocitynet.com.au>
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: reiserfs-devel@vger.kernel.org
+Content-Transfer-Encoding: 7bit
+To: ReiserFS Development List <reiserfs-devel@vger.kernel.org>, debian-cloud <debian-cloud@lists.debian.org>, Debian Release <debian-release@lists.debian.org>
 
-Hello,
-Can the fix for the "fsck: it jumps to wrong branch for some reason" be
-included in next reiser4progs [after v-1.0.9]
+Niltze, all-
 
-Thank you
---Glenn
+Based on .config from Debian Jessie:
+linux-image-3.16.0-4-amd64   3.16.7-ckt9-3~deb8u1 amd64 Linux 3.16 for
+64-bit PCs
+I have applied reiser4 for kernel 3.19.5 patch to pristine kernel
+3.19.8 End Of Life.
 
-History:
-http://www.spinics.net/lists/reiserfs-devel/msg04206.html
+I have uploaded the image to Google Compute Cloud GCE <
+https://cloud.google.com/ > for testing purposes.
+
+Thus far, reiser4 on root fs with an ext2 /boot seems to be cool on a
+micro-instance (~600MB RAM small ;-) to save on charges
+
+https://pbs.twimg.com/media/CFTgMwrUkAAbwav.png:large
+
+If the image continues fine and there is interest I will make the
+image public in case other people may find it useful.
+
+Best Professional Regards.
+
+-- 
+Jose R R
+http://www.metztli-it.com
+---------------------------------------------------------------------------------------------
+Try at no charge http://b2evolution.net for http://OpenShift.com PaaS
+---------------------------------------------------------------------------------------------
+from our GitHub http://Nepohualtzintzin.com repository. Cloud the easy way!
+---------------------------------------------------------------------------------------------
