@@ -1,136 +1,90 @@
-From: Edward Shishkin <edward.shishkin@gmail.com>
-Subject: Re: [FEATURE][PATCH 0/2] reiser4: Auto-punching holes on commit
-Date: Mon, 20 Jul 2015 01:47:05 +0800
-Message-ID: <55ABE299.5090505@gmail.com>
-References: <55ABC569.3040009@gmail.com>
+From: Jose R R <Jose.r.r@metztli-it.com>
+Subject: Building kernel the Debian way fails
+Date: Fri, 24 Jul 2015 22:23:28 -0700
+Message-ID: <CAM12Q5Q0B_kgJ9e8ti2SWaGQwsccGu6zd2-EULz-jvuxXL4Fng@mail.gmail.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20120113;
-        h=message-id:date:from:user-agent:mime-version:to:subject:references
-         :in-reply-to:content-type:content-transfer-encoding;
-        bh=Zdlgw4nvboKMcf6AXjzH6CSsaxLdfBmcKIC8lkRlV2g=;
-        b=LtS8sJNZbgCjDnZKhVptmMyf01mSPm/BrqTdVB0RaXUUc4SpBxPs3auuJZSpmcQTT5
-         X0Xew5osYWf/L5QdXDNoawYtaOA5RgcKIrCguJW7KEctU/0cArkW3f5L3yzcC9H81xfd
-         LRVpyKFi6HRTMNZEnnO7PiHREdD7qoml1l9zofRB9sTwWsw0uqq9h5oGWH1w+h1wP6z9
-         ku3a5S/r4TTcnDQcC63lp53tfXuURd8hil38bridJyvUlAWKFMVz061WDXhtnuhdr1/t
-         5/AjZgyJO2UKPMqTdrpNfv/lyYcqMt+SX6hpcYv6GDV1/W4nNvTo28VH/9Q0qHjCzTmw
-         mK4w==
-In-Reply-To: <55ABC569.3040009@gmail.com>
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: ReiserFS development mailing list <reiserfs-devel@vger.kernel.org>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: debian-kernel@lists.debian.org, debian-boot@lists.debian.org, ReiserFS Development List <reiserfs-devel@vger.kernel.org>
+
+Niltze, all!
+
+Trying to build a Linux kernel the Debian way -- since I need to have
+udebs for my project. I am building on Stretch/Sid and have followed
+instructions at:
+
+https://wiki.debian.org/DebianInstaller/Modify/CustomKernel
+http://kernel-handbook.alioth.debian.org/ch-common-tasks.html#s-common-official
+
+I get the source and decompress it:
+apt-get source linux
+(tried with linux-4.0.8-1 AND linux-4.0.8-2)
+
+Apply existing patches:
+fakeroot debian/rules source
+
+Use quilt to apply Reiser4 patch:
+gzip -dc ../reiser4-for-4.0.4.patch.gz | quilt fold
+(finishes without errors)
+
+I then change the configuration before build:
+fakeroot make -f debian/rules.gen setup_amd64
+make -C debian/build/build_amd64_none_amd64 menuconfig
+(enable Reiser4 in the kernel and OS/2 HPFS as module)
+
+And build for the amd64 flavour:
+fakeroot make -f debian/rules.gen binary-arch_amd64_none_amd64
+
+Procedure executes for a while but then:
+
+[...]
+xt_unregister_targets                            module:
+net/netfilter/x_tables, version: 0x1ab6dab6 -> 0x967580ea, export:
+EXPORT_SYMBOL
+yield_to                                         module: vmlinux,
+version: 0x64772de8 -> 0x7e986552, export: EXPORT_SYMBOL_GPL
+zap_vma_ptes                                     module: vmlinux,
+version: 0x51123f12 -> 0xe4761abe, export: EXPORT_SYMBOL_GPL
+zero_fill_bio                                    module: vmlinux,
+version: 0x999a9bec -> 0x2f0438ba, export: EXPORT_SYMBOL
+zerocopy_sg_from_iter                            module: vmlinux,
+version: 0x156cb754 -> 0x3396ed70, export: EXPORT_SYMBOL
+zl10036_attach                                   module:
+drivers/media/dvb-frontends/zl10036, version: 0x01c15872 ->
+0x5ad87e01, export: EXPORT_SYMBOL
+zl10039_attach                                   module:
+drivers/media/dvb-frontends/zl10039, version: 0x4d52eac4 ->
+0x99661045, export: EXPORT_SYMBOL
+zl10353_attach                                   module:
+drivers/media/dvb-frontends/zl10353, version: 0xd7c34f95 ->
+0x6f771756, export: EXPORT_SYMBOL
+
+Removed symbols:
+bdi_unregister                                   ignored, module:
+vmlinux, version: 0xa88ae9e6, export: EXPORT_SYMBOL
+debian/rules.real:160: recipe for target
+'debian/stamps/build_amd64_none_amd64_plain' failed
+make[1]: *** [debian/stamps/build_amd64_none_amd64_plain] Error 1
+make[1]: Leaving directory '/mnt/sda8-tekitl/usr/src/linux-4.0.8'
+debian/rules.gen:25: recipe for target
+'binary-arch_amd64_none_amd64_real' failed
+make: *** [binary-arch_amd64_none_amd64_real] Error 2
 
 
-
-On 07/19/2015 11:42 PM, Edward Shishkin wrote:
->
->                    Auto-punching holes on commit
->
->
-> Storing zeros on disk is a rather stupid business. Indeed, right before
-> writing data to disk we can convert zeros to holes (this is abstract
-> objects described in POSIX), and, hence, save a lot of disk space.
->
-> Compressing zeros before storing them on disk is even more stupid
-> business: checking for zeros is less expensive procedure than
-> compression transform, so in addition we can save a lot of CPU
-> resources.
->
-> I'll remind how reiser4 implements holes.
-> The unix file plugin represents them via extent pointers marked by
-> some special way. The situation with cryptcompress file plugin is more
-> simple: it represents holes as literal holes (that is, absence of any
-> items of specific keys). It means that we can simply check and remove
-> all items, which represent a logical chunk filled with zeros. This is
-> exactly what we do now at flush time right before commit.
->
-> The best time for such check is atom's flush, which is to complete all
-> delayed actions. Specifically, it calls a static machine ->convert_node()
-> for all dirty formatted nodes. This machine scans all items of a node
-> and calls ->convert() method of every such item.
->
-> We used this framework for transparent compression on commit
-> (specifically to replace old fragments that compose compressed file's
-> body with the new ones). Now we use it also to punch holes at logical
-> chunks filled with zeros. That is, instead of replacing old items, we
-> just remove them from tree. Think of hole punching like of one more
-> delayed action.
->
-> I have implemented hole punching only for cryptcompress plugin. It also
-> can be implemented for "classic" unix-file plugin, which doesn't compress
-> data. However, it will be more complicated because of more complicated
-> format of holes. Finally, I think that having such feature only for one
-> file plugin is enough.
->
->
->                           Solved Problems:
->
->
-> When flushing modified dirty pages, the process should be able to find
-> in the tree a respective item group to be replaced with new data. So we
-> should handle possible races when one process checks/creates the items
-> and the flushing process deletes those items during hole punching
-> procedure. To avoid this situation we maintain a special "economical"
-> counter of checked-in modifications for every logical cluster in struct
-> jnode. If the counter is greater than 1, then we simply don't punch a
-> hole.
->
->
->                    Mount option "dont_punch_holes"
->
->
-> Since hole punching is useful feature for both HDD and SSD, I enabled it
-> by default. To turn it off use the mount option "dont_punch_holes". The
-> changes are backward and forward compatible, so no new format is needed.
->
->
->                      How it looks on practice:
->
->
-> # mkfs.reiser4 -f -y /dev/sdaX
-> # mount /dev/sdaX /mnt
-> # dd if=/dev/zero of=/mnt/foo bs=65536 count=1000
-> # umount /mnt
->
-> Now dump the tree:
->
-> # debugfs.reiser4 -t /dev/sdaX | less
->
-> As we can see (attachment 1) the file foo doesn't have body, only 
-> stat-data
-> (on-disk inode): we removed its body at flush time, because it is 
-> composed
-> of zeros (see my remark above about holes). Let's now append non-zero
-> data to our file "foo":
->
-> # mount /dev/sdaX /mnt
-> # echo "This is not zeros" >> /mnt/foo
-> # umount /mnt
-> # debugfs.reiser4 -t /dev/sdaX | less
->
-> As we can see (attachment 2) the body of the file "foo" now consists 
-> of only
-> one item of length 59, which has offset 0x3e80000 (=65536000). This is 
-> exactly
-> the string "This is not zeros" supplemented with zeros up to page size 
-> (4096)
-> and compressed by LZO1 algorithm.
+Thank you in advance for any insight. Appreciated.
 
 
-Sorry, I have attached a wrong file in the attachment 2. Should be the 
-following:
+Best Professional Regards
 
-#3  CTAIL (ctail40): [2a:4(FB):666f6f00000000:10001:3e80000] OFF=340, 
-LEN=19, flags=0x0 shift=16
 
-That is, body of file "foo" consists of only one item of length 19 (= 
-length of the
-string "This is not zeros" plus one byte, where the size of logical 
-cluster is stored).
-Zeros at the end of in-memory file are not stored on disk !
-
-Thanks,
-Edward.
+-- 
+Jose R R
+http://www.metztli-it.com
+---------------------------------------------------------------------------------------------
+Try at no charge http://b2evolution.net for http://OpenShift.com PaaS
+---------------------------------------------------------------------------------------------
+from our GitHub http://Nepohualtzintzin.com repository. Cloud the easy way!
+---------------------------------------------------------------------------------------------
