@@ -1,438 +1,295 @@
 From: Edward Shishkin <edward.shishkin@gmail.com>
-Subject: [PATCH 2/3] reiser4progs: make gcc happy
-Date: Sun, 16 Aug 2015 15:23:45 +0200
-Message-ID: <55D08EE1.4080209@gmail.com>
+Subject: [PATCH 3/3] reiser4progs: release format 4.0.1
+Date: Sun, 16 Aug 2015 15:24:01 +0200
+Message-ID: <55D08EF1.3090900@gmail.com>
 Mime-Version: 1.0
 Content-Type: multipart/mixed;
- boundary="------------080204060206010003060701"
+ boundary="------------080005070904050404060605"
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20120113;
         h=message-id:date:from:user-agent:mime-version:to:subject
          :content-type;
-        bh=Fy9KLz3oFI8XPXqTW5HBk09L+EBn2tcPOr3A/ePTwG0=;
-        b=FOFHgUkFP7RXXowrS7eUBbmPBdxNdSaTWeuMu3tbgYpXLryXV/niIZ2i6uf6mPimmT
-         T/HC8VzYoEO1cES8+IMlA5kfEPpaffrzACi7RgQibM5fy4QV4K+Fn82PSw4jNs4vfDll
-         /kPY9kCalRh84QcG3fqOvIfnOkUjYEwjskZM0GX+VcPQDLEj+s7SHF3fbtA2XnPLEG2o
-         5k2umPoailMsmLt4fADZOhiTSXrhH65Iqhn+Eu4Uu0aGK4aBB8GQCHjnMhSG1XQpXfAX
-         LO2z45Qz5S/ZAkTcgaY9Oea39bBFOvkl+Yn06Vs6PLggdgM0lywwRLyHcFRpkyI4lHOm
-         /A3Q==
+        bh=Bb+rU4pH4TXJYCKHOhBgXEXOqT83YRFUqLFo54asLro=;
+        b=XVzuExgbCYFIJ/rGP7kby+y2x47OcuZdn1WZyAhJQk/vPrZqADgDQKgspJESTh77FQ
+         z2YAouVSMBkFHuuVuMHnXKHY+KmStcvIIM5j4Bmuwug9ePuI6ODZlMOPUmFHgTC3tV2/
+         15gQ1pdKvjRuiW4k+Z93ARXgw/BRaG2tf2fjfhyHyMFyTuINW3Rt66WJ2fNwHvrJJ/59
+         l9vhf+gbSAN16aUvGxiL2aNpuYgF9uEGIUZ4inncJw/Nwe+GGYnpx1daut3oxcCFwHZV
+         itWFXx2vOr8j8Yz9GZOFjwY7jDY01RPqNgphExkL9MZTizEFw4RHrItMBxpMjMk59qFu
+         xTUw==
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
 To: ReiserFS development mailing list <reiserfs-devel@vger.kernel.org>
 
 This is a multi-part message in MIME format.
---------------080204060206010003060701
+--------------080005070904050404060605
 Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
 
 
---------------080204060206010003060701
+--------------080005070904050404060605
 Content-Type: text/x-patch;
- name="reiser4progs-make-gcc-happy.patch"
+ name="reiser4progs-release-4.0.1.patch"
 Content-Transfer-Encoding: 7bit
 Content-Disposition: attachment;
- filename="reiser4progs-make-gcc-happy.patch"
+ filename="reiser4progs-release-4.0.1.patch"
 
+. Remove unneeded macro FORMAT40_VERSION
+. Print format release number when specifying option -V;
+. Cleanups;
+. Issue format release 4.0.1 (for node41/checksum support).
+
+Signed-off-by: Edward Shishkin <edward.shishkin@gmail.com>
 ---
- demos/trunc.c                            |    2 +-
- include/reiser4/plugin.h                 |    2 +-
- libreiser4/pset.c                        |    7 ++++---
- libreiser4/tree.c                        |    8 ++++----
- librepair/master.c                       |   11 +++++++----
- librepair/pset.c                         |    4 ++--
- librepair/repair.c                       |    7 ++-----
- librepair/tree.c                         |    3 ---
- plugin/item/bbox40/bbox40.c              |    8 +++-----
- plugin/item/cde40/cde40.c                |    4 ----
- plugin/item/extent40/extent40.c          |   10 +++-------
- plugin/node/node40/node40_repair.c       |    4 +---
- plugin/object/ccreg40/ccreg40_repair.c   |   10 ++++++----
- plugin/object/obj40/obj40_repair.c       |    3 ---
- plugin/object/reg40/reg40_repair.c       |    4 ----
- plugin/sdext/sdext_crypto/sdext_crypto.c |    1 -
- plugin/sdext/sdext_crypto/sdext_crypto.h |    2 +-
- plugin/sdext/sdext_plug/sdext_plug.c     |    4 ++--
- 18 files changed, 37 insertions(+), 57 deletions(-)
+ ChangeLog                                |    6 ++++++
+ configure.in                             |    4 ++--
+ include/aux/Makefile.am                  |    2 +-
+ include/misc/version.h                   |   10 ++++++++++
+ include/reiser4/plugin.h                 |   12 +++++++-----
+ libmisc/ui.c                             |    3 +++
+ plugin/format/format40/format40.c        |    6 +++---
+ plugin/format/format40/format40.h        |    3 ---
+ plugin/format/format40/format40_repair.c |   18 +++++++++---------
+ plugin/node/node40/node40.c              |    2 +-
+ plugin/node/node41/node41.c              |    2 +-
+ progs/mkfs/mkfs.c                        |   13 -------------
+ 12 files changed, 43 insertions(+), 38 deletions(-)
 
+--- a/include/misc/version.h
++++ b/include/misc/version.h
+@@ -3,6 +3,16 @@
+    
+    version.h -- version information for reiser4progs. */
+ 
++static inline int get_release_number_major(void)
++{
++        return FORMAT_LAST_ID - 1;
++}
++
++static inline int get_release_number_minor(void)
++{
++        return PLUGIN_LIBRARY_VERSION;
++}
++
+ #define BANNER						     \
+     "Copyright (C) 2001-2005 by Hans Reiser, "  \
+     "licensing governed by reiser4progs/COPYING."
 --- a/include/reiser4/plugin.h
 +++ b/include/reiser4/plugin.h
-@@ -372,7 +372,7 @@ enum reiser4_pset_id {
- 	((reiser4_item_plug_t *)(obj)->info.pset.plug[PSET_DIRITEM])
- 
- #define reiser4_pscrypto(obj) \
--	((rid_t)(obj)->info.pset.plug[PSET_CRYPTO])
-+	((unsigned long)(obj)->info.pset.plug[PSET_CRYPTO])
- 
- #define reiser4_pscompress(obj) \
- 	((reiser4_plug_t *)(obj)->info.pset.plug[PSET_COMPRESS])
---- a/libreiser4/pset.c
-+++ b/libreiser4/pset.c
-@@ -149,8 +149,8 @@ void reiser4_pset_root(object_info_t *in
- 		} else if (defprof.pid[pset_prof[i]].id.type == 
- 			   PARAM_PLUG_TYPE) 
- 		{
--			info->pset.plug[i] = 
--				(void *)defprof.pid[pset_prof[i]].id.id;
-+			info->pset.plug[i] = (void *)
-+			  (unsigned long)defprof.pid[pset_prof[i]].id.id;
- 			
- 		} else {
- 			info->pset.plug[i] = 
-@@ -340,7 +340,8 @@ errno_t reiser4_pset_backup(reiser4_tree
- 	
- 	for (i = 0; i < PSET_STORE_LAST; i++) {
- 		if (tree->ent.param_mask & (1 << i))
--			aal_set_le32(pset, id[i], (rid_t)tree->ent.pset[i]);
-+			aal_set_le32(pset, id[i],
-+				     (unsigned long)tree->ent.pset[i]);
- 		else
- 			aal_set_le32(pset, id[i], tree->ent.pset[i]->id.id);
- 	}
---- a/libreiser4/tree.c
-+++ b/libreiser4/tree.c
-@@ -1136,6 +1136,7 @@ void reiser4_tree_close(reiser4_tree_t *
- 	aal_free(tree);
- }
- #ifndef ENABLE_MINIMAL
-+#if 0
- static errno_t cb_flags_dup(reiser4_place_t *place, void *data) {
- 	reiser4_item_dup_flags(place, *(uint16_t *)data);
- 	return 0;
-@@ -1272,6 +1273,7 @@ static errno_t reiser4_tree_alloc_extent
- 
- 	return 0;
- }
-+#endif /* 0 */
- 
- static errno_t cb_node_adjust(reiser4_tree_t *tree, reiser4_node_t *node) {
- 	errno_t res;
-@@ -1303,6 +1305,7 @@ static errno_t cb_node_adjust(reiser4_tr
- 	return 0;
- }
- 
-+#if 0
- /* Runs through the node in @place and calls tree_adjust_node() for all
-    children. */
- static errno_t cb_nodeptr_adjust(reiser4_tree_t *tree, reiser4_place_t *place) {
-@@ -1316,6 +1319,7 @@ static errno_t cb_nodeptr_adjust(reiser4
- 	/* Allocating unallocated extent item at @place. */
- 	return reiser4_tree_alloc_extent(tree, place);
- }
-+#endif /* 0 */
+@@ -87,11 +87,13 @@ struct reiser4_plug {
  #endif
- 
- static errno_t cb_node_unload(reiser4_tree_t *tree, reiser4_node_t *node) {
-@@ -2876,7 +2880,6 @@ int64_t reiser4_tree_modify(reiser4_tree
- 			    estimate_func_t estimate_func,
- 			    modify_func_t modify_func)
- {
--	bool_t mode;
- 	errno_t res;
- 	int32_t space;
- 	int32_t write;
-@@ -2899,9 +2902,6 @@ int64_t reiser4_tree_modify(reiser4_tree
- 	if ((res = estimate_func(place, hint)))
- 		return res;
- 	
--	/* Needed space to be prepared in tree. */
--	mode = (place->pos.unit == MAX_UINT32);
--		
- 	/* Preparing space in tree. */
- 	space = reiser4_tree_expand(tree, place, &parent, hint->len, 
- 				    hint->overhead, hint->shift_flags);
---- a/plugin/item/bbox40/bbox40.c
-+++ b/plugin/item/bbox40/bbox40.c
-@@ -62,12 +62,10 @@ static errno_t bbox40_insert_units(reise
- static errno_t bbox40_remove_units(reiser4_place_t *place,
- 				   trans_hint_t *hint)
- {
--	slink_hint_t *link;
--	
-+#if ENABLE_DEBUG
-+	slink_hint_t *link = (slink_hint_t *)hint->specific;
-+#endif
- 	aal_assert("vpf-1574", hint != NULL);
--
--	link = (slink_hint_t *)hint->specific;
--	
- 	aal_assert("vpf-1575", link->key.plug != NULL);
- 	
- 	hint->overhead = 0;
---- a/plugin/item/cde40/cde40.c
-+++ b/plugin/item/cde40/cde40.c
-@@ -798,12 +798,8 @@ static int64_t cde40_insert_units(reiser
- errno_t cde40_delete(reiser4_place_t *place, uint32_t pos,
- 		     trans_hint_t *hint)
- {
--	uint32_t pol;
--
- 	aal_assert("umka-3024", pos < cde40_units(place));
- 
--	pol = cde40_key_pol(place);
--	
- 	/* Shrinking cde item */
- 	hint->bytes = hint->len = cde40_shrink(place, pos, hint->count);
- 	
---- a/plugin/item/extent40/extent40.c
-+++ b/plugin/item/extent40/extent40.c
-@@ -104,14 +104,14 @@ uint32_t extent40_unit(reiser4_place_t *
- static errno_t extent40_remove_units(reiser4_place_t *place, trans_hint_t *hint) {
- 	uint32_t len;
- 	uint32_t pos;
--	uint32_t units;
- 	void *src, *dst;
--
-+#ifdef ENABLE_DEBUG
-+	uint32_t units = extent40_units(place);
-+#endif
- 	aal_assert("vpf-941", place != NULL);
- 	aal_assert("umka-2402", hint != NULL);
- 
- 	pos = place->pos.unit;
--	units = extent40_units(place);
- 	
- 	/* Check for unit pos. */
- 	if (pos == MAX_UINT32)
-@@ -923,14 +923,12 @@ static errno_t extent40_prep_write(reise
- 		objcall(&hint->maxkey, set_offset, max_off);
- 
- 		if (place->pos.unit != MAX_UINT32) {
--			uint64_t width;
- 
- 			/* If new data could be attached to the end of existent,
- 			   no new unit is needed. It is possible if we write data 
- 			   over not allocated unit or hole over the hole. */
- 			extent = extent40_body(place) + units - 1;
- 			start = et40_get_start(extent);
--			width = et40_get_width(extent);
- 			
- 			if ((start == EXTENT_UNALLOC_UNIT && hint->specific) ||
- 			    (start == EXTENT_HOLE_UNIT && !hint->specific))
-@@ -1015,7 +1013,6 @@ static errno_t extent40_prep_write(reise
- 
- /* Writes data to extent. */
- static int64_t extent40_write_units(reiser4_place_t *place, trans_hint_t *hint) {
--	aal_device_t *device;
- 	aal_block_t *block;
- 	extent40_t *extent;
- 	reiser4_key_t key;
-@@ -1053,7 +1050,6 @@ static int64_t extent40_write_units(reis
- 	buff = hint->specific;
- 	unit_pos = place->pos.unit;
- 	units = extent40_units(place);
--	device = extent40_device(place);
- 	blksize = place_blksize(place);
- 
- 	/* Get the offset range being handled: ins_off, max_off. */
---- a/plugin/node/node40/node40_repair.c
-+++ b/plugin/node/node40/node40_repair.c
-@@ -80,9 +80,7 @@ uint32_t node40_estimate_count_common(re
- 				      uint32_t node_header_size)
- {
- 	uint32_t offset, left, right;
--	uint32_t count, last, i;
--
--	count = nh_get_num_items(node);
-+	uint32_t last, i;
- 
- 	left = node_header_size;
- 	right = node->block->size - ih_size(node->keypol) - MIN_ITEM_LEN;
---- a/plugin/object/ccreg40/ccreg40_repair.c
-+++ b/plugin/object/ccreg40/ccreg40_repair.c
-@@ -122,16 +122,18 @@ static int64_t ccreg40_read_item(reiser4
- }
- 
- static errno_t ccreg40_check_crc(ccreg40_hint_t *hint) {
--	uint32_t adler, disk, offset;
-+	uint32_t calc, found, offset;
-+	uint32_t *disk;
- 
- 	aal_assert("edward-2", hint->bytes > sizeof(uint32_t));
- 
- 	offset = hint->bytes - sizeof(uint32_t);
- 
--	adler = aux_adler32(0, (char *)hint->data, offset);
--	disk = LE32_TO_CPU(*(uint32_t *)(hint->data + offset));
-+	calc = aux_adler32(0, (char *)hint->data, offset);
-+	disk = (uint32_t *)(hint->data + offset);
-+	found = LE32_TO_CPU(*disk);
- 
--	return adler == disk ? 0 : RE_FATAL;
-+	return calc == found ? 0 : RE_FATAL;
- }
- 
- /*
---- a/plugin/object/obj40/obj40_repair.c
-+++ b/plugin/object/obj40/obj40_repair.c
-@@ -617,12 +617,9 @@ lookup_t obj40_check_item(reiser4_object
- 			  obj_func_t update_func,
- 			  void *data)
- {
--	object_info_t *info;
- 	trans_hint_t trans;
- 	errno_t res;
- 		
--	info = &obj->info;
--	
- 	while (1) {
- 		res = obj40_update_body(obj, update_func);
- 
---- a/plugin/object/reg40/reg40_repair.c
-+++ b/plugin/object/reg40/reg40_repair.c
-@@ -55,8 +55,6 @@ static int reg40_conv_prepare(reiser4_ob
- 			      uint64_t maxreal, 
- 			      uint8_t mode)
- {
--	object_info_t *info;
--	
- 	aal_assert("vpf-1348", reg != NULL);
- 	aal_assert("vpf-1349", hint != NULL);
- 	aal_assert("vpf-1353", reg->body.plug != NULL);
-@@ -64,8 +62,6 @@ static int reg40_conv_prepare(reiser4_ob
- 	if (plug_equal(reg->body.plug, reg->body_plug))
- 		return 0;
- 
--	info = &reg->info;
--
- 	if (plug_equal(reg->body.plug, reiser4_psextent(reg))) {
- 		/* Extent found, all previous items were tails, convert all 
- 		   previous ones to extents. */
---- a/plugin/sdext/sdext_crypto/sdext_crypto.c
-+++ b/plugin/sdext/sdext_crypto/sdext_crypto.c
-@@ -90,7 +90,6 @@ reiser4_sdext_plug_t sdext_crypto_plug =
- 	.info		= NULL,
- 	.print     	= sdext_crypto_print,
- 	.check_struct	= NULL,
--	.open	   	= NULL,
- 	.length	   	= sdext_crypto_length
- 
  };
---- a/plugin/sdext/sdext_crypto/sdext_crypto.h
-+++ b/plugin/sdext/sdext_crypto/sdext_crypto.h
-@@ -9,7 +9,7 @@
- #include <aal/libaal.h>
- #include <reiser4/plugin.h>
  
--#define reiser4_keysign_size(digestid) (4 << ((uint32_t)digestid))
-+#define reiser4_keysign_size(digestid) (4 << ((unsigned long)digestid))
+-/* This should be incremented with each new contributed
+-   pair (plugin type, plugin id).
+-   NOTE: Make sure there is a reiser4 kernel release
+-   with the corresponding version number */
+-#define PLUGIN_LIBRARY_VERSION 0
++/*
++ * This should be incremented in every release which adds one
++ * or more new plugins.
++ * NOTE: Make sure that respective marco is also incremented in
++ * the new release of reiser4 kernel module.
++ */
++#define PLUGIN_LIBRARY_VERSION 1
  
- typedef struct sdext_crypto {
- 	/* secret key size. */ 
---- a/plugin/sdext/sdext_plug/sdext_plug.c
-+++ b/plugin/sdext/sdext_plug/sdext_plug.c
-@@ -113,7 +113,7 @@ static errno_t sdext_plug_open(stat_enti
- 		/* For those where no plugin is found but the id is correct, 
- 		   keep the id in plug set, remember it is a parameter. */
- 		if (plugh->plug[mem] == NULL)
--			plugh->plug[mem] = (void *)id;
-+		  plugh->plug[mem] = (void *)((unsigned long)id);
- 		
- 		plugh->plug_mask |= (1 << mem);
- 	}
-@@ -145,7 +145,7 @@ static errno_t sdext_plug_init(stat_enti
- 		sdext_plug_set_member(ext, count, mem);
+ /* Known by library plugin types. */
+ typedef enum reiser4_plug_type {
+--- a/libmisc/ui.c
++++ b/libmisc/ui.c
+@@ -240,6 +240,9 @@ void misc_print_banner(char *name) {
+ 	char *banner;
+    
+ 	fprintf(stderr, "%s %s\n", name, VERSION);
++	fprintf(stderr, "Format release: 4.%d.%d\n",
++		get_release_number_major(),
++		get_release_number_minor());
+     
+ 	if (!(banner = aal_calloc(255, 0)))
+ 		return;
+--- a/plugin/format/format40/format40.c
++++ b/plugin/format/format40/format40.c
+@@ -256,7 +256,7 @@ static reiser4_format_ent_t *format40_cr
+ 	set_sb_mkfs_id(super, random());
  
- 		id = (tree->param_mask & (1 << mem)) ? 
--			((uint32_t)plugh->plug[mem]) : 
-+			((unsigned long)plugh->plug[mem]) :
- 			plugh->plug[mem]->id.id;
- 		
- 		sdext_plug_set_pid(ext, count, id);
---- a/demos/trunc.c
-+++ b/demos/trunc.c
-@@ -37,7 +37,7 @@ errno_t trunc_cmd(busy_ctx_t *ctx) {
- 	/* Truncate the object. */
- 	if (reiser4_object_truncate(object, ctx->count)) {
- 		aal_error("Can't truncate object %s to %lld bytes.", 
--			  ctx->in.path, ctx->count);
-+			  ctx->in.path, (long long)ctx->count);
- 		goto error_close_object;
- 	}
+ 	/* Set version values. */
+-	set_sb_version(super, FORMAT40_VERSION);
++	set_sb_version(super, PLUGIN_LIBRARY_VERSION);
  	
---- a/librepair/master.c
-+++ b/librepair/master.c
-@@ -142,12 +142,15 @@ errno_t repair_master_check_struct(reise
- 		
- 		s = reiser4_master_get_uuid(fs->master);
- 		if (aal_strncmp(s, ms->ms_uuid, sizeof(ms->ms_uuid))) {
-+			uint64_t *x = (uint64_t *)s;
-+			uint64_t *y = (uint64_t *)ms->ms_uuid;
- 			fsck_mess("UUID (0x%llx%llx) found in the master super "
- 				  "block does not match the one found in the "
--				  "backup (0x%llx%llx).%s", ((uint64_t *)s)[0],
--				  ((uint64_t *)s)[1], 
--				  ((uint64_t *)ms->ms_uuid)[0],
--				  ((uint64_t *)ms->ms_uuid)[1],
-+				  "backup (0x%llx%llx).%s",
-+				  x[0],
-+				  x[1],
-+				  y[0],
-+				  y[1],
- 				  mode != RM_CHECK ? " Fixed." : "");
+ 	/* Clobbering format skipped area in order to let mount to detect
+ 	   reiser4 correctly without specifying exact filesystem type. 
+@@ -362,12 +362,12 @@ static errno_t format40_valid(reiser4_fo
+ 		return -EINVAL;
+ 	}
  
- 			if (mode == RM_CHECK)
---- a/librepair/pset.c
-+++ b/librepair/pset.c
-@@ -65,7 +65,7 @@ errno_t repair_pset_root_check(reiser4_f
- 		id = aal_get_le32(pset, id[i]);
- 		
- 		root_id = fs->tree->ent.param_mask & (1 << i) ? 
--			(rid_t)root->info.pset.plug[i] : 
-+			(unsigned long )root->info.pset.plug[i] :
- 			root->info.pset.plug[i]->id.id;
- 		
- 		if (root_id == id)
-@@ -79,7 +79,7 @@ errno_t repair_pset_root_check(reiser4_f
- 			return RE_FATAL;
- 		
- 		if (fs->tree->ent.param_mask & (1 << i)) {
--			root->info.pset.plug[i] = (void *)id;
-+			root->info.pset.plug[i] = (void *)(unsigned long)id;
- 		} else {
- 			root->info.pset.plug[i] = reiser4_factory_ifind(
- 				defprof.pid[pset_prof[i]].id.type, id);
---- a/librepair/repair.c
-+++ b/librepair/repair.c
-@@ -532,9 +532,8 @@ static errno_t repair_sem_prepare(repair
- }
+-	if (get_sb_version(SUPER(format)) > FORMAT40_VERSION) {
++	if (get_sb_version(SUPER(format)) > PLUGIN_LIBRARY_VERSION) {
+ 		aal_error("The on-disk format version (%u) is greater than "
+ 			  "the known version (%u). Please update reiser4progs "
+ 			  "or run fsck.reiser4 --build-sb to fix the fs "
+ 			  "consistency.", get_sb_version(SUPER(format)),
+-			  FORMAT40_VERSION);
++			  PLUGIN_LIBRARY_VERSION);
  
- static errno_t repair_sem_fini(repair_control_t *control, 
--			       repair_semantic_t *sem) {
--	uint64_t fs_len;
+ 		return -EINVAL;
+ 	}
+--- a/plugin/format/format40/format40.h
++++ b/plugin/format/format40/format40.h
+@@ -18,9 +18,6 @@
+ 
+ #define MAGIC_SIZE 16
+ 
+-/* The greatest supported format40 version number */
+-#define FORMAT40_VERSION PLUGIN_LIBRARY_VERSION
 -
-+			       repair_semantic_t *sem)
-+{
- 	control->oid = sem->stat.oid + 1;
- 	control->files = sem->stat.reached_files;
+ /* This flag indicates that backup should be updated
+    (the update is performed by fsck) */
+ #define FORMAT40_UPDATE_BACKUP  (1 << 31)
+--- a/plugin/format/format40/format40_repair.c
++++ b/plugin/format/format40/format40_repair.c
+@@ -91,19 +91,19 @@ errno_t format40_check_struct(reiser4_fo
  	
-@@ -542,8 +541,6 @@ static errno_t repair_sem_fini(repair_co
- 	if (control->repair->mode == RM_BUILD)
- 		return 0;
- 	
--	fs_len = reiser4_format_get_len(control->repair->fs->format);
--	
- 	if (repair_bitmap_compare(control->bm_alloc, control->bm_used, 0)) {
- 		fsck_mess("On-disk used block bitmap and really used block "
- 			  "bitmap differ.%s", control->repair->mode == RM_BUILD 
---- a/librepair/tree.c
-+++ b/librepair/tree.c
-@@ -66,15 +66,12 @@ static errno_t repair_tree_maxreal_key(r
- 	
- 	if (reiser4_item_branch(place.plug)) {
- 		blk_t blk;
--		uint32_t blksize;
- 		
- 		place.pos.unit = reiser4_item_units(&place) - 1;
- 
- 		if ((blk = reiser4_item_down_link(&place)) == INVAL_BLK)
- 			return -EINVAL;
+ 	if (backup) {
+ 		/* Check the version if the version was backed up. */
+-	        if ((get_sb_version(backup) > FORMAT40_VERSION) ||
+-		    ((get_sb_version(super) > FORMAT40_VERSION) &&
++	        if ((get_sb_version(backup) > PLUGIN_LIBRARY_VERSION) ||
++		    ((get_sb_version(super) > PLUGIN_LIBRARY_VERSION) &&
+ 		     sb_update_backup(super))) {
+ 			aal_fatal("The on-disk format version (%u) is "
+ 				  "greater than the known version (%u). "
+ 				  "Please update reiser4progs and try again.",
+-				  get_sb_version(super),FORMAT40_VERSION);
++				  get_sb_version(super), PLUGIN_LIBRARY_VERSION);
  			
--		blksize = reiser4_master_get_blksize(tree->fs->master);
--		
- 		if (!(child = reiser4_node_open(tree, blk)))
- 			return -EINVAL;
+ 			return RE_FATAL;
+ 		}
  		
+ 		if ((get_sb_version(super) > get_sb_version(backup)) &&
+-		    (get_sb_version(super) <= FORMAT40_VERSION) && 
++		    (get_sb_version(super) <= PLUGIN_LIBRARY_VERSION) &&
+ 		    (sb_update_backup(super)))
+ 		{
+ 			/* Backup update is needed. */
+@@ -136,7 +136,7 @@ errno_t format40_check_struct(reiser4_fo
+ 			
+ 		}
+ 	} else {
+-		if (get_sb_version(super) > FORMAT40_VERSION) {
++		if (get_sb_version(super) > PLUGIN_LIBRARY_VERSION) {
+ 			int opt;
+ 
+ 			aal_mess("The on-disk format40 version (%u) is greater "
+@@ -144,7 +144,7 @@ errno_t format40_check_struct(reiser4_fo
+ 				 "means that reiser4progs is out of date. Fix "
+ 				 "the format40 version, only if you are sure "
+ 				 "this is a corruption.", get_sb_version(super),
+-				 FORMAT40_VERSION);
++				 PLUGIN_LIBRARY_VERSION);
+ 
+ 			if (mode != RM_BUILD)
+ 				return RE_FATAL;
+@@ -154,7 +154,7 @@ errno_t format40_check_struct(reiser4_fo
+ 			if (opt != EXCEPTION_OPT_YES)
+ 				return -EINVAL;
+ 
+-			set_sb_version(super, FORMAT40_VERSION);
++			set_sb_version(super, PLUGIN_LIBRARY_VERSION);
+ 			format40_mkdirty(format);
+ 		}
+ 	}
+@@ -490,12 +490,12 @@ reiser4_format_ent_t *format40_regenerat
+ 	backup = (format40_backup_t *)
+ 		(hint->block.data + hint->off[BK_FORMAT]);
+ 	
+-	if (get_sb_version(backup) > FORMAT40_VERSION) {
++	if (get_sb_version(backup) > PLUGIN_LIBRARY_VERSION) {
+ 		fsck_mess("The reiser4 fs being repaired is formatted with "
+ 			  "format40 plugin version %u, whereas the used "
+ 			  "format40 plugin is of version %u. Please update "
+ 			  "reiser4progs and try again.", 
+-			  get_sb_version(backup), FORMAT40_VERSION);
++			  get_sb_version(backup), PLUGIN_LIBRARY_VERSION);
+ 		return NULL;
+ 	}
+ 	
+--- a/ChangeLog
++++ b/ChangeLog
+@@ -6,6 +6,12 @@ reiser4progs/COPYING.
+ This file may be modified and/or distributed without restriction. This is
+ not an invitation to misrepresent the history of reiser4progs.
+ 
++2015-08-14
++	1.1.0 version
++2015-08-14
++	Format release 4.0.1;
++	Support checksum for formatted nodes;
++	NODE41 format with 32-bit field for checksums;
+ 2014-06-28
+ 	1.0.9 version
+ 2014-06-28
+--- a/configure.in
++++ b/configure.in
+@@ -14,8 +14,8 @@ AH_TEMPLATE([LIBREISER4_MAX_INTERFACE_VE
+ AH_TEMPLATE([LIBREISER4_MIN_INTERFACE_VERSION], [Define to the min interface version.])
+ 
+ LIBREISER4_MAJOR_VERSION=1
+-LIBREISER4_MINOR_VERSION=0
+-LIBREISER4_MICRO_VERSION=9
++LIBREISER4_MINOR_VERSION=1
++LIBREISER4_MICRO_VERSION=0
+ 
+ LIBREISER4_INTERFACE_AGE=0
+ LIBREISER4_BINARY_AGE=0
+--- a/progs/mkfs/mkfs.c
++++ b/progs/mkfs/mkfs.c
+@@ -305,19 +305,6 @@ int main(int argc, char *argv[]) {
+ 		goto error_free_libreiser4;
+ 	}
+ 
+-	if (!(flags & BF_FORCE)) {
+-		if (aal_strncmp(sysinfo.release, "2.5", 3) &&
+-		    aal_strncmp(sysinfo.release, "2.6", 3) &&
+-		    (aal_strncmp(sysinfo.release, "3.", 2) ||
+-		     (sysinfo.release[2] < '0' && (sysinfo.release[2] > '9')))){
+-			aal_warn("%s %s is detected. Reiser4 does not "
+-				 "support such a platform. Use -f to "
+-				 "force over.", sysinfo.sysname,
+-				 sysinfo.release);
+-			goto error_free_libreiser4;
+-		}
+-	}
+-
+ 	if (!(flags & BF_YES)) {
+ 		aal_mess("%s %s is detected.", sysinfo.sysname,
+ 			 sysinfo.release);
+--- a/include/aux/Makefile.am
++++ b/include/aux/Makefile.am
+@@ -1 +1 @@
+-noinst_HEADERS		= aux.h gauge.h
++noinst_HEADERS		= aux.h gauge.h crc32c.h
+--- a/plugin/node/node40/node40.c
++++ b/plugin/node/node40/node40.c
+@@ -1659,7 +1659,7 @@ reiser4_node_plug_t node40_plug = {
+ 		.id    = {NODE_REISER40_ID, 0, NODE_PLUG_TYPE},
+ #ifndef ENABLE_MINIMAL
+ 		.label = "node40",
+-		.desc  = "Node40 layout plugin.",
++		.desc  = "Node layout plugin.",
+ #endif
+ 	},
+ 	
+--- a/plugin/node/node41/node41.c
++++ b/plugin/node/node41/node41.c
+@@ -113,7 +113,7 @@ reiser4_node_plug_t node41_plug = {
+ 		.id    = {NODE_REISER41_ID, 0, NODE_PLUG_TYPE},
+ #ifndef ENABLE_MINIMAL
+ 		.label = "node41",
+-		.desc  = "Node41 layout plugin.",
++		.desc  = "Protected node layout plugin.",
+ #endif
+ 	},
+ 
 
---------------080204060206010003060701--
+--------------080005070904050404060605--
