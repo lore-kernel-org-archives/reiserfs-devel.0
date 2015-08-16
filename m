@@ -1,295 +1,121 @@
 From: Edward Shishkin <edward.shishkin@gmail.com>
-Subject: [PATCH 3/3] reiser4progs: release format 4.0.1
-Date: Sun, 16 Aug 2015 15:24:01 +0200
-Message-ID: <55D08EF1.3090900@gmail.com>
+Subject: Reiser4 development model and compatibility
+Date: Sun, 16 Aug 2015 15:53:03 +0200
+Message-ID: <55D095BF.8040403@gmail.com>
 Mime-Version: 1.0
-Content-Type: multipart/mixed;
- boundary="------------080005070904050404060605"
+Content-Transfer-Encoding: 7bit
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20120113;
         h=message-id:date:from:user-agent:mime-version:to:subject
-         :content-type;
-        bh=Bb+rU4pH4TXJYCKHOhBgXEXOqT83YRFUqLFo54asLro=;
-        b=XVzuExgbCYFIJ/rGP7kby+y2x47OcuZdn1WZyAhJQk/vPrZqADgDQKgspJESTh77FQ
-         z2YAouVSMBkFHuuVuMHnXKHY+KmStcvIIM5j4Bmuwug9ePuI6ODZlMOPUmFHgTC3tV2/
-         15gQ1pdKvjRuiW4k+Z93ARXgw/BRaG2tf2fjfhyHyMFyTuINW3Rt66WJ2fNwHvrJJ/59
-         l9vhf+gbSAN16aUvGxiL2aNpuYgF9uEGIUZ4inncJw/Nwe+GGYnpx1daut3oxcCFwHZV
-         itWFXx2vOr8j8Yz9GZOFjwY7jDY01RPqNgphExkL9MZTizEFw4RHrItMBxpMjMk59qFu
-         xTUw==
+         :content-type:content-transfer-encoding;
+        bh=JjWw2jrQJA8gZHoh1+BP8/X2aLyglXiaGxSpFNHjUAg=;
+        b=J1aygM38i2f8QH3ftJCg9AMQ0fJf1TGmTesNWyrDKcTBdI3G624fEpfE9u0WzQJzkh
+         M3r7DWDNNgcMhMgMXLtZwFn63hJKcGgzsKxluyr7ZxlRdfAMqSJN+KspeHuguA7eku2V
+         SpnHLCp/XOALPIXCD1ySsh0pxhDpjXPk2n3Z2PO8AborVPP4uXetpZ+FtrjY4vwvESd3
+         gSC4Uphi/w+m+s5nzMerH8pJkN8TOcXiHBbTcMoaG8rjicTpTx56dL2qcZWBriCxCP8J
+         Z0vfWitR4dcLEUgKAvUSRN1JqXDC1z5SWxU/0p2ji0l7dE/IQg44TMkm4+dkeAWHQqC1
+         X2FA==
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
+Content-Type: text/plain; charset="us-ascii"; format="flowed"
 To: ReiserFS development mailing list <reiserfs-devel@vger.kernel.org>
 
-This is a multi-part message in MIME format.
---------------080005070904050404060605
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
+
+                 1. Reiser4 development model
 
 
+Here we discuss things needed to keep a track of compatibility,
+so we don't consider upgrades, which are fully backward and forward
+compatible (like adding discard/TRIM support).
 
---------------080005070904050404060605
-Content-Type: text/x-patch;
- name="reiser4progs-release-4.0.1.patch"
-Content-Transfer-Encoding: 7bit
-Content-Disposition: attachment;
- filename="reiser4progs-release-4.0.1.patch"
+Other upgrades of reiser4 kernel module (reiser4progs) always look
+like adding a plugin or a set of plugins of existing, or new
+interfaces. Such upgrades are always backward compatible (by
+definition).
 
-. Remove unneeded macro FORMAT40_VERSION
-. Print format release number when specifying option -V;
-. Cleanups;
-. Issue format release 4.0.1 (for node41/checksum support).
+With every such upgrade developer has to increment plugin library
+version number of both, reiser4 kernel module and reiser4progs.
+See definition of the macro PLUGIN_LIBRARY_VERSION in reiser4
+kernel module and reiser4progs.
 
-Signed-off-by: Edward Shishkin <edward.shishkin@gmail.com>
----
- ChangeLog                                |    6 ++++++
- configure.in                             |    4 ++--
- include/aux/Makefile.am                  |    2 +-
- include/misc/version.h                   |   10 ++++++++++
- include/reiser4/plugin.h                 |   12 +++++++-----
- libmisc/ui.c                             |    3 +++
- plugin/format/format40/format40.c        |    6 +++---
- plugin/format/format40/format40.h        |    3 ---
- plugin/format/format40/format40_repair.c |   18 +++++++++---------
- plugin/node/node40/node40.c              |    2 +-
- plugin/node/node41/node41.c              |    2 +-
- progs/mkfs/mkfs.c                        |   13 -------------
- 12 files changed, 43 insertions(+), 38 deletions(-)
 
---- a/include/misc/version.h
-+++ b/include/misc/version.h
-@@ -3,6 +3,16 @@
-    
-    version.h -- version information for reiser4progs. */
- 
-+static inline int get_release_number_major(void)
-+{
-+        return FORMAT_LAST_ID - 1;
-+}
-+
-+static inline int get_release_number_minor(void)
-+{
-+        return PLUGIN_LIBRARY_VERSION;
-+}
-+
- #define BANNER						     \
-     "Copyright (C) 2001-2005 by Hans Reiser, "  \
-     "licensing governed by reiser4progs/COPYING."
---- a/include/reiser4/plugin.h
-+++ b/include/reiser4/plugin.h
-@@ -87,11 +87,13 @@ struct reiser4_plug {
- #endif
- };
- 
--/* This should be incremented with each new contributed
--   pair (plugin type, plugin id).
--   NOTE: Make sure there is a reiser4 kernel release
--   with the corresponding version number */
--#define PLUGIN_LIBRARY_VERSION 0
-+/*
-+ * This should be incremented in every release which adds one
-+ * or more new plugins.
-+ * NOTE: Make sure that respective marco is also incremented in
-+ * the new release of reiser4 kernel module.
-+ */
-+#define PLUGIN_LIBRARY_VERSION 1
- 
- /* Known by library plugin types. */
- typedef enum reiser4_plug_type {
---- a/libmisc/ui.c
-+++ b/libmisc/ui.c
-@@ -240,6 +240,9 @@ void misc_print_banner(char *name) {
- 	char *banner;
-    
- 	fprintf(stderr, "%s %s\n", name, VERSION);
-+	fprintf(stderr, "Format release: 4.%d.%d\n",
-+		get_release_number_major(),
-+		get_release_number_minor());
-     
- 	if (!(banner = aal_calloc(255, 0)))
- 		return;
---- a/plugin/format/format40/format40.c
-+++ b/plugin/format/format40/format40.c
-@@ -256,7 +256,7 @@ static reiser4_format_ent_t *format40_cr
- 	set_sb_mkfs_id(super, random());
- 
- 	/* Set version values. */
--	set_sb_version(super, FORMAT40_VERSION);
-+	set_sb_version(super, PLUGIN_LIBRARY_VERSION);
- 	
- 	/* Clobbering format skipped area in order to let mount to detect
- 	   reiser4 correctly without specifying exact filesystem type. 
-@@ -362,12 +362,12 @@ static errno_t format40_valid(reiser4_fo
- 		return -EINVAL;
- 	}
- 
--	if (get_sb_version(SUPER(format)) > FORMAT40_VERSION) {
-+	if (get_sb_version(SUPER(format)) > PLUGIN_LIBRARY_VERSION) {
- 		aal_error("The on-disk format version (%u) is greater than "
- 			  "the known version (%u). Please update reiser4progs "
- 			  "or run fsck.reiser4 --build-sb to fix the fs "
- 			  "consistency.", get_sb_version(SUPER(format)),
--			  FORMAT40_VERSION);
-+			  PLUGIN_LIBRARY_VERSION);
- 
- 		return -EINVAL;
- 	}
---- a/plugin/format/format40/format40.h
-+++ b/plugin/format/format40/format40.h
-@@ -18,9 +18,6 @@
- 
- #define MAGIC_SIZE 16
- 
--/* The greatest supported format40 version number */
--#define FORMAT40_VERSION PLUGIN_LIBRARY_VERSION
--
- /* This flag indicates that backup should be updated
-    (the update is performed by fsck) */
- #define FORMAT40_UPDATE_BACKUP  (1 << 31)
---- a/plugin/format/format40/format40_repair.c
-+++ b/plugin/format/format40/format40_repair.c
-@@ -91,19 +91,19 @@ errno_t format40_check_struct(reiser4_fo
- 	
- 	if (backup) {
- 		/* Check the version if the version was backed up. */
--	        if ((get_sb_version(backup) > FORMAT40_VERSION) ||
--		    ((get_sb_version(super) > FORMAT40_VERSION) &&
-+	        if ((get_sb_version(backup) > PLUGIN_LIBRARY_VERSION) ||
-+		    ((get_sb_version(super) > PLUGIN_LIBRARY_VERSION) &&
- 		     sb_update_backup(super))) {
- 			aal_fatal("The on-disk format version (%u) is "
- 				  "greater than the known version (%u). "
- 				  "Please update reiser4progs and try again.",
--				  get_sb_version(super),FORMAT40_VERSION);
-+				  get_sb_version(super), PLUGIN_LIBRARY_VERSION);
- 			
- 			return RE_FATAL;
- 		}
- 		
- 		if ((get_sb_version(super) > get_sb_version(backup)) &&
--		    (get_sb_version(super) <= FORMAT40_VERSION) && 
-+		    (get_sb_version(super) <= PLUGIN_LIBRARY_VERSION) &&
- 		    (sb_update_backup(super)))
- 		{
- 			/* Backup update is needed. */
-@@ -136,7 +136,7 @@ errno_t format40_check_struct(reiser4_fo
- 			
- 		}
- 	} else {
--		if (get_sb_version(super) > FORMAT40_VERSION) {
-+		if (get_sb_version(super) > PLUGIN_LIBRARY_VERSION) {
- 			int opt;
- 
- 			aal_mess("The on-disk format40 version (%u) is greater "
-@@ -144,7 +144,7 @@ errno_t format40_check_struct(reiser4_fo
- 				 "means that reiser4progs is out of date. Fix "
- 				 "the format40 version, only if you are sure "
- 				 "this is a corruption.", get_sb_version(super),
--				 FORMAT40_VERSION);
-+				 PLUGIN_LIBRARY_VERSION);
- 
- 			if (mode != RM_BUILD)
- 				return RE_FATAL;
-@@ -154,7 +154,7 @@ errno_t format40_check_struct(reiser4_fo
- 			if (opt != EXCEPTION_OPT_YES)
- 				return -EINVAL;
- 
--			set_sb_version(super, FORMAT40_VERSION);
-+			set_sb_version(super, PLUGIN_LIBRARY_VERSION);
- 			format40_mkdirty(format);
- 		}
- 	}
-@@ -490,12 +490,12 @@ reiser4_format_ent_t *format40_regenerat
- 	backup = (format40_backup_t *)
- 		(hint->block.data + hint->off[BK_FORMAT]);
- 	
--	if (get_sb_version(backup) > FORMAT40_VERSION) {
-+	if (get_sb_version(backup) > PLUGIN_LIBRARY_VERSION) {
- 		fsck_mess("The reiser4 fs being repaired is formatted with "
- 			  "format40 plugin version %u, whereas the used "
- 			  "format40 plugin is of version %u. Please update "
- 			  "reiser4progs and try again.", 
--			  get_sb_version(backup), FORMAT40_VERSION);
-+			  get_sb_version(backup), PLUGIN_LIBRARY_VERSION);
- 		return NULL;
- 	}
- 	
---- a/ChangeLog
-+++ b/ChangeLog
-@@ -6,6 +6,12 @@ reiser4progs/COPYING.
- This file may be modified and/or distributed without restriction. This is
- not an invitation to misrepresent the history of reiser4progs.
- 
-+2015-08-14
-+	1.1.0 version
-+2015-08-14
-+	Format release 4.0.1;
-+	Support checksum for formatted nodes;
-+	NODE41 format with 32-bit field for checksums;
- 2014-06-28
- 	1.0.9 version
- 2014-06-28
---- a/configure.in
-+++ b/configure.in
-@@ -14,8 +14,8 @@ AH_TEMPLATE([LIBREISER4_MAX_INTERFACE_VE
- AH_TEMPLATE([LIBREISER4_MIN_INTERFACE_VERSION], [Define to the min interface version.])
- 
- LIBREISER4_MAJOR_VERSION=1
--LIBREISER4_MINOR_VERSION=0
--LIBREISER4_MICRO_VERSION=9
-+LIBREISER4_MINOR_VERSION=1
-+LIBREISER4_MICRO_VERSION=0
- 
- LIBREISER4_INTERFACE_AGE=0
- LIBREISER4_BINARY_AGE=0
---- a/progs/mkfs/mkfs.c
-+++ b/progs/mkfs/mkfs.c
-@@ -305,19 +305,6 @@ int main(int argc, char *argv[]) {
- 		goto error_free_libreiser4;
- 	}
- 
--	if (!(flags & BF_FORCE)) {
--		if (aal_strncmp(sysinfo.release, "2.5", 3) &&
--		    aal_strncmp(sysinfo.release, "2.6", 3) &&
--		    (aal_strncmp(sysinfo.release, "3.", 2) ||
--		     (sysinfo.release[2] < '0' && (sysinfo.release[2] > '9')))){
--			aal_warn("%s %s is detected. Reiser4 does not "
--				 "support such a platform. Use -f to "
--				 "force over.", sysinfo.sysname,
--				 sysinfo.release);
--			goto error_free_libreiser4;
--		}
--	}
--
- 	if (!(flags & BF_YES)) {
- 		aal_mess("%s %s is detected.", sysinfo.sysname,
- 			 sysinfo.release);
---- a/include/aux/Makefile.am
-+++ b/include/aux/Makefile.am
-@@ -1 +1 @@
--noinst_HEADERS		= aux.h gauge.h
-+noinst_HEADERS		= aux.h gauge.h crc32c.h
---- a/plugin/node/node40/node40.c
-+++ b/plugin/node/node40/node40.c
-@@ -1659,7 +1659,7 @@ reiser4_node_plug_t node40_plug = {
- 		.id    = {NODE_REISER40_ID, 0, NODE_PLUG_TYPE},
- #ifndef ENABLE_MINIMAL
- 		.label = "node40",
--		.desc  = "Node40 layout plugin.",
-+		.desc  = "Node layout plugin.",
- #endif
- 	},
- 	
---- a/plugin/node/node41/node41.c
-+++ b/plugin/node/node41/node41.c
-@@ -113,7 +113,7 @@ reiser4_node_plug_t node41_plug = {
- 		.id    = {NODE_REISER41_ID, 0, NODE_PLUG_TYPE},
- #ifndef ENABLE_MINIMAL
- 		.label = "node41",
--		.desc  = "Node41 layout plugin.",
-+		.desc  = "Protected node layout plugin.",
- #endif
- 	},
- 
+                2. Software Format Release Numbers
 
---------------080005070904050404060605--
+
+Any reiser4 kernel module (reiser4progs package) has a software format
+release number (SFRN) 4.X.Y, where X and Y are major and minor SFRN
+respectively.
+
+Major SFRN of reiser4 module (reiser4progs) is defined as the maximal
+serial number of supported disk format plugin (see definition of the
+struct disk_format_plugin).
+
+Minor SFRN of reiser4 module (reiser4progs) is defined as version
+number of the plugin library.
+
+SFRN of reiser4 kernel module is reported by kernel (look for the
+string "Loading Reiser4 (format release: 4.X.Y)" in kernel messages.
+
+SFRN of reiser4progs is reported by every utility provided by this
+package when specifying option -V (Look for the string "Format release
+4.X.Y").
+
+Don't confuse SFRN and the version number of reiser4progs package!
+The last one takes into account all software changes (including fully
+compatible ones).
+
+
+                 3. Compatibility of software upgrades
+
+
+Every upgrade of reiser4 kernel module (reiser4progs) performed in
+accordance with the development model (section 1) is automatically
+backward compatible.
+"Major" upgrades (4.X.Y) -> (4.X+1.Y) are fully forward incompatible.
+"Minor" upgrades (4.X.Y) -> (4.X.Y+1) are partially forward compatible.
+
+
+                   4. Disk format version numbers
+
+
+Any reiser4 partition has a disk format versions number (DFVN) 4.A.B,
+where A and B are respectively major and minor DFVN.
+
+Major DFVN is defined as the serial number of disk format plugin
+specified when formatting the partition. Major DFVN never changes.
+
+Minor DFVN is defined as the minimal version of the plugin library
+fully compatible with this partition. Initially every partition gets
+minor DFVN equal to minor SFRN of the mkfs.reiser4 utility when
+formatting the partition. Further minor DFVN can be upgraded.
+
+Any partition 4.A.B can be correctly handled only by reiser4progs 4.U.V,
+where A <= U and B <= V. Otherwise, reiser4progs will refuse to work
+with such partition (user will be suggested to upgrade reiser4progs).
+
+Any partition 4.A.B can be fully mounted only by kernel module 4.U.B,
+where A <= U.
+
+If A > U, then mount will fail with a kernel warning about forward
+incompatibility and a suggestion to upgrade the kernel.
+
+When mounting a partition 4.A.B by kernel module 4.U.V, where  A <= U,
+B != V, then 2 scenarios are possible:
+
+If B > V, then mount will succeed, but kernel will warn about partial
+forward compatibility (it means that not all disk objects will be
+accessible in that mount session).
+
+If B < V, then mount will succeed. Kernel will upgrade DFVN in the
+primary superblock with the suggestion to upgrade DFVN in the
+superblock replicas (backup blocks) by running fsck.reiser4  --fix.
+
+DFVN can be fully upgraded by any reiser4.fsck utility of proper SFRN.
+Reiser4 kernel module upgrades DFVN only in the primary superblock.
+Downgrades of DFVN are not supported/planned.
+
+DFVN is reported by kernel at mount time (look for the string:
+"reiser4: found disk format 4.A.B"). DFVN is also reported by
+debugfs.reiser4 utility in default mode.
+
