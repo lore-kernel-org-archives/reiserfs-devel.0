@@ -1,195 +1,80 @@
-From: Edward Shishkin <edward.shishkin@gmail.com>
-Subject: [PATCH 3/3] reiser4: release format 4.0.1
-Date: Sun, 16 Aug 2015 20:15:55 +0200
-Message-ID: <55D0D35B.8010609@gmail.com>
+From: Jose R R <Jose.r.r@metztli-it.com>
+Subject: Re: "No kernel modules were found" netboot d-i with custom reiser4 kernel.
+Date: Mon, 24 Aug 2015 01:15:21 -0700
+Message-ID: <CAM12Q5QPPQ6CaS=fsbadLfo+xhH5180QLVB7t32unK2C8d0fYw@mail.gmail.com>
+References: <CAM12Q5Sh659WuFmOccHdsnFRhdNiKfk9iri9mO1AkJQmHnY2eQ@mail.gmail.com>
+	<20150729150045.GC23647@mraw.org>
+	<CAM12Q5RUYpU+hKgf5MBGv_puOuWtiUTStVjpSw9GvnTKNyhkCQ@mail.gmail.com>
+	<CAM12Q5Rbje6nReoTpSDw2Xf6_AxJxH5dhGh7fNTCi=89ogZ+Lg@mail.gmail.com>
+	<1439461210.10857.88.camel@decadent.org.uk>
 Mime-Version: 1.0
-Content-Type: multipart/mixed;
- boundary="------------040902060703040802000106"
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20120113;
-        h=message-id:date:from:user-agent:mime-version:to:subject
-         :content-type;
-        bh=+/0ejvMmDqmY1QLUIy2MExdRbbxmwf9fhenP0lEGZe8=;
-        b=HFxnQTOCvmhKNhm5fkJOrw9w6g1mj2Fj2IPrOl5UbpyLtH8DjbrofIoOdhgTsGuPcZ
-         73uTRibyO9XlZAl4pTlJPQpB5ZJyDhbJbs5jEHoW8xDHolCVRqProHY95cfqCwPxlCBd
-         oPtYW9Vk2UPuOt/eLrtqwHnyV6YJYWlcj5ydw/DXCTSfoGuSEWZqEKSwT1dxd281dp+1
-         pQo1DCPLtftuWsW6meffd6fKQGLFiv4qmffv1Qj5beGzb5SL2gumPuaIJn+ZoS48t8HI
-         jsZcu6PNCoavsNCZXVKR/m3iRgde33AzncAGR5aGYbEEdmfDjzfaAkN6ADhTPNMRD0aH
-         AHCg==
+In-Reply-To: <1439461210.10857.88.camel@decadent.org.uk>
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
-To: ReiserFS development mailing list <reiserfs-devel@vger.kernel.org>
-
-This is a multi-part message in MIME format.
---------------040902060703040802000106
-Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
+To: Ben Hutchings <ben@decadent.org.uk>
+Cc: Cyril Brulebois <kibi@debian.org>, debian-boot@lists.debian.org, ReiserFS Development List <reiserfs-devel@vger.kernel.org>
+
+Niltze, all!
 
 
+On Thu, Aug 13, 2015 at 3:20 AM, Ben Hutchings <ben@decadent.org.uk> wrote:
+> On Thu, 2015-08-13 at 02:45 -0700, Jose R R wrote:
+> [...]
+>> QUESTION:
+>> How do I specify -- prior to building a reiser4-patched kernel the
+>> 'debian way' -- a directive to build the *extra* reiser4 module  UDEB?
+>>
+>> Before/After specifying reiser4 as a module in .config (i.e., make -C
+>> debian/build/build_amd64_none_amd64 menuconfig ), I have tried adding
+>> the reiser4 directive to the debian/rules.gen inside the kernel tree
+>> source -- still it does not generate a reiser4 module UDEB.
+> [...]
+>
+> Look under debian/installer in the linux source package and read the
+> kernel-wedge documentation.
+>
 
---------------040902060703040802000106
-Content-Type: text/x-patch;
- name="reiser4-release-4.0.1.patch"
-Content-Transfer-Encoding: 7bit
-Content-Disposition: attachment;
- filename="reiser4-release-4.0.1.patch"
+After some effort, I was successful in creating the *extra*
+reiser4-modules UDEB:
+reiser4-modules-4.1.0-2-amd64-di_4.1.5-2_amd64.udeb
+for
+kernel-image-4.1.0-2-amd64-di_4.1.5-2_amd64.udeb
 
-. Remove unneeded macro FORMAT40_VERSION;
-. Print a format release when initializing reiser4 kernel module;  
-. Cleanups;
-. Release version 4.0.1 of reiser4 kernel module (node41
-  with checksum support);
+I included relevant directives in the build/pkg-lists/netboot/amd64.cfg, thus:
+[...]
+fat-modules-${kernel:Version}
+ext4-modules-${kernel:Version}   # Without this, d-i won't know about Ext2/3/4
+jfs-modules-${kernel:Version}      # Without this, d-i won't know about JFS
+reiser4-modules-${kernel:Version} # Thus I thought this would allow
+d-i to *know* about reiser4
+mkreiser4-udeb                           # This provides mkfs.reiser4 to d-i
+reiser4progs-udeb                        # This provides fsck.reiser4 to d-i
+[...]
 
-Signed-off-by: Edward Shishkin <edward.shishkin@gmail.com>
----
- fs/reiser4/plugin/disk_format/disk_format40.c |   25 +++++++++++--------------
- fs/reiser4/plugin/node/node.h                 |    2 +-
- fs/reiser4/plugin/plugin.h                    |   22 +++++++++++++++++-----
- fs/reiser4/super_ops.c                        |    6 ++++--
- 4 files changed, 33 insertions(+), 22 deletions(-)
+After "make build_netboot" finished and tested the installation mini.iso:
 
---- a/fs/reiser4/plugin/disk_format/disk_format40.c
-+++ b/fs/reiser4/plugin/disk_format/disk_format40.c
-@@ -27,9 +27,6 @@
-    & tx record. */
- #define RELEASE_RESERVED 4
- 
--/* The greatest supported format40 version number */
--#define FORMAT40_VERSION PLUGIN_LIBRARY_VERSION
--
- /* This flag indicates that backup should be updated
-    (the update is performed by fsck) */
- #define FORMAT40_UPDATE_BACKUP (1 << 31)
-@@ -92,14 +89,14 @@ static int update_backup_version(const f
- 		FORMAT40_UPDATE_BACKUP);
- }
- 
--static int update_disk_version(const format40_disk_super_block * sb)
-+static int update_disk_version_minor(const format40_disk_super_block * sb)
- {
--	return (get_format40_version(sb) < FORMAT40_VERSION);
-+	return (get_format40_version(sb) < PLUGIN_LIBRARY_VERSION);
- }
- 
- static int incomplete_compatibility(const format40_disk_super_block * sb)
- {
--	return (get_format40_version(sb) > FORMAT40_VERSION);
-+	return (get_format40_version(sb) > PLUGIN_LIBRARY_VERSION);
- }
- 
- static format40_super_info *get_sb_info(struct super_block *super)
-@@ -327,7 +324,7 @@ static int try_init_format40(struct supe
- 		printk("reiser4: Warning: The last completely supported "
- 		       "version of disk format40 is %u. Some objects of "
- 		       "the semantic tree can be unaccessible.\n",
--		       FORMAT40_VERSION);
-+		       PLUGIN_LIBRARY_VERSION);
- 	/* make sure that key format of kernel and filesystem match */
- 	result = check_key_format(sb_copy);
- 	if (result) {
-@@ -491,8 +488,8 @@ static void pack_format40_super(const st
- 	put_unaligned(cpu_to_le16(sbinfo->tree.height),
- 		      &super_data->tree_height);
- 
--	if (update_disk_version(super_data)) {
--		__u32 version = FORMAT40_VERSION | FORMAT40_UPDATE_BACKUP;
-+	if (update_disk_version_minor(super_data)) {
-+		__u32 version = PLUGIN_LIBRARY_VERSION | FORMAT40_UPDATE_BACKUP;
- 
- 		put_unaligned(cpu_to_le32(version), &super_data->version);
- 	}
-@@ -606,9 +603,9 @@ int check_open_format40(const struct ino
- 	return 0;
- }
- 
--/* plugin->u.format.version_update.
--   Perform all version update operations from the on-disk
--   format40_disk_super_block.version on disk to FORMAT40_VERSION.
-+/*
-+ * plugin->u.format.version_update
-+ * Upgrade minor disk format version number
-  */
- int version_update_format40(struct super_block *super) {
- 	txn_handle * trans;
-@@ -620,12 +617,12 @@ int version_update_format40(struct super
- 	if (super->s_flags & MS_RDONLY)
-  		return 0;
- 
--	if (get_super_private(super)->version >= FORMAT40_VERSION)
-+	if (get_super_private(super)->version >= PLUGIN_LIBRARY_VERSION)
- 		return 0;
- 
- 	printk("reiser4: Updating disk format to 4.0.%u. The reiser4 metadata "
- 	       "backup is left unchanged. Please run 'fsck.reiser4 --fix' "
--	       "on %s to update it too.\n", FORMAT40_VERSION, super->s_id);
-+	       "on %s to update it too.\n", PLUGIN_LIBRARY_VERSION, super->s_id);
- 
- 	/* Mark the uber znode dirty to call log_super on write_logs. */
- 	init_lh(&lh);
---- a/fs/reiser4/plugin/node/node.h
-+++ b/fs/reiser4/plugin/node/node.h
-@@ -241,7 +241,7 @@ typedef struct node_plugin {
- typedef enum {
- 	NODE40_ID, /* standard unified node layout used for both,
- 		      leaf and internal nodes */
--	NODE41_ID, /* unified node layout with a reference counter */
-+	NODE41_ID, /* node layout with a checksum */
- 	LAST_NODE_ID
- } reiser4_node_id;
- 
---- a/fs/reiser4/plugin/plugin.h
-+++ b/fs/reiser4/plugin/plugin.h
-@@ -151,11 +151,13 @@ typedef struct reiser4_object_on_wire re
-  * them, and which are only invoked by other plugins.
-  */
- 
--/* This should be incremented with each new contributed
--   pair (plugin type, plugin id).
--   NOTE: Make sure there is a release of reiser4progs
--   with the corresponding version number */
--#define PLUGIN_LIBRARY_VERSION 0
-+/*
-+ * This should be incremented in every release which adds one
-+ * or more new plugins.
-+ * NOTE: Make sure that respective marco is also incremented in
-+ * the new release of reiser4progs.
-+ */
-+#define PLUGIN_LIBRARY_VERSION 1
- 
-  /* enumeration of fields within plugin_set */
- typedef enum {
-@@ -904,6 +906,16 @@ static inline reiser4_plugin_id TYPE ##
- }									\
- typedef struct { int foo; } TYPE ## _plugin_dummy
- 
-+static inline int get_release_number_major(void)
-+{
-+	return LAST_FORMAT_ID - 1;
-+}
-+
-+static inline int get_release_number_minor(void)
-+{
-+	return PLUGIN_LIBRARY_VERSION;
-+}
-+
- PLUGIN_BY_ID(item_plugin, REISER4_ITEM_PLUGIN_TYPE, item);
- PLUGIN_BY_ID(file_plugin, REISER4_FILE_PLUGIN_TYPE, file);
- PLUGIN_BY_ID(dir_plugin, REISER4_DIR_PLUGIN_TYPE, dir);
---- a/fs/reiser4/super_ops.c
-+++ b/fs/reiser4/super_ops.c
-@@ -646,8 +646,10 @@ static int __init init_reiser4(void)
- 	int result;
- 
- 	printk(KERN_INFO
--	       "Loading Reiser4. "
--	       "See www.namesys.com for a description of Reiser4.\n");
-+	       "Loading Reiser4 (format release: 4.%d.%d) "
-+	       "See www.namesys.com for a description of Reiser4.\n",
-+	       get_release_number_major(),
-+	       get_release_number_minor());
- 
- 	/* initialize slab cache of inodes */
- 	if ((result = init_inodes()) != 0)
+lsmod: shows reiser4 module (which I loaded manually from the d-i shell utility)
+https://pbs.twimg.com/media/CNKHCDyUkAA0lic.png:large
 
---------------040902060703040802000106--
+However d-i partman still does not recognize the reiser4-formatted partition:
+https://pbs.twimg.com/media/CNKHCDmUcAAc6pT.png:large
+
+Which means, I now should attempt to create a partman-reiser4 udeb for d-i?
+
+Thank you for all your help and I appreciate your hints and suggestions.
+
+
+Best professional Regards.
+
+
+-- 
+Jose R R
+http://metztli.it
+---------------------------------------------------------------------------------------------
+Try at no charge http://b2evolution.net for http://OpenShift.com PaaS
+---------------------------------------------------------------------------------------------
+from our GitHub http://Nepohualtzintzin.com repository. Cloud the easy way!
+---------------------------------------------------------------------------------------------
