@@ -1,126 +1,86 @@
-From: Edward Shishkin <edward.shishkin@gmail.com>
-Subject: [PATCH] reiser4: Change default behavior on IO errors
-Date: Wed, 26 Aug 2015 10:59:35 +0200
-Message-ID: <55DD7FF7.8010401@gmail.com>
+From: Jose R R <Jose.r.r@metztli-it.com>
+Subject: Integrate fully partman-reiser4 into d-i
+Date: Fri, 28 Aug 2015 03:56:55 -0700
+Message-ID: <CAM12Q5QKdpHgMG_qGyhE-abO6R-uY6cKtv-5Qg36N-FTx_Z8Lw@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: multipart/mixed;
- boundary="------------010406040601060501000006"
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20120113;
-        h=to:from:subject:message-id:date:user-agent:mime-version
-         :content-type;
-        bh=wlVNkjSMz5x5Xyqm/FMANnh4JCbJS90v2WnAx+pOxpU=;
-        b=x6BTu/4IebKnH8Gd+2cdnBmZHYKAedR1QwnGTmFouXpkjFLNeDCBPuws+RFREwj95v
-         wG7wQ4M2t1EBmymr3WJ8Fmra1kf4sYfThcNjMGJbFXAmua4NXU/mlcv8KRgi00eUf3mC
-         6Ti/Bl06YjSQeYUgU/CzcgTes5Gmn7djkucL6xnNWDvCyuhvLKxzjbqximClUcqqpy8x
-         QhG7VMa2130dsq4WSJ8TU8RMfjy0kA7xrvu2Cg/T9PwwlK734TFdAbz2Jyy4EgvpIC1y
-         2MLfpvuK9YMe7djIAX9a1y2Jq5RwM9jk5FjfD7fZjFVPPTdCLXDEyL8RSk3XcvOnmv6q
-         nPnQ==
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
-To: Reiserfs development mailing list <reiserfs-devel@vger.kernel.org>
-
-This is a multi-part message in MIME format.
---------------010406040601060501000006
-Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
+To: debian-boot@lists.debian.org, ReiserFS Development List <reiserfs-devel@vger.kernel.org>
+Cc: Cyril Brulebois <kibi@debian.org>, Ben Hutchings <ben@decadent.org.uk>
+
+Niltze, all!>
+(picking up where I left off in previous thread: <
+http://marc.info/?l=reiserfs-devel&m=144040412406067&w=2 >
+
+Initiating a new thread since Debian-Installer's partman-reiser4 seems
+to be partially functioning. All the previous Reiser4 issues have been
+mostly resolved.
+
+So I cloned partman-jfs udeb source into partman-reiser4 udeb (seems
+reiserfs udeb has gotten old) and I modified relevant scripts.
+
+However, I need to fine tune those modified scripts specifically for
+reiser4 in d-i *and* there is where I need your insight.
+
+Basically, option to format device media into Reiser4 is now available
+during relevant d-i phase:
+< https://pbs.twimg.com/media/CNfOQw1VEAEYBUk.png:large >
+
+Nevertheless, I get this gibberish dialog when selecting and
+proceeding (by pressing enter):
+< https://pbs.twimg.com/media/CNfOQ4kUcAAK0Tx.png:large >
+
+If I select continue at the "??? ???" gibberish dialog, d-i is
+apparently able to go to the Partition Settings phase:
+< https://pbs.twimg.com/media/CNfOQpWUYAA8tqY.png:large >
+
+Selecting "Done setting up the partition", notwithstanding, d-i
+returns to initial phase where raw virtual device has not even been
+initiated (with MBR)
+
+Cool thing is partman-reiser4 now makes the Reiser4-patched kernel
+automatically modprobe reiser4-modules:
+< https://pbs.twimg.com/media/CNfOQwxUwAEHh68.png:large >
+
+I have at d-i build/localudebs:
+[...]
+localudebs/mkreiser4-udeb_1.0.9-2_amd64.udeb
+localudebs/reiser4-modules-4.1.0-2-amd64-di_4.1.6-1_amd64.udeb
+localudebs/reiser4progs-udeb_1.0.9-2_amd64.udeb
+localudebs/partman-reiser4_1_all.udeb
+[...]
+
+and added at d-i build/pkg-lists/netboot/amd64.cfg:
+[...]
+fat-modules-${kernel:Version}
+ext4-modules-${kernel:Version}
+jfs-modules-${kernel:Version}
+reiser4-modules-${kernel:Version}
+mkreiser4-udeb
+reiser4progs-udeb
+partman-reiser4
+[...]
+
+Note: without partman-reiser4 specified above, d-i will not show
+option to format in Reiser4 -- even if reiser4 UDEB is included under
+build/localudebs/
+
+Advice welcomed in advance to make the gibberish dialog go away and to
+effectively allow d-i routine to integrate reiser4 fully so as to
+complete the front-end formatting proceduere.
 
 
+Best Professional Regards.
 
---------------010406040601060501000006
-Content-Type: text/x-patch;
- name="reiser4-change-default-behavior-on-error.patch"
-Content-Transfer-Encoding: 7bit
-Content-Disposition: attachment;
- filename="reiser4-change-default-behavior-on-error.patch"
 
-Change default behavior on IO errors to "remount readonly";
-Improve compatibility warnings.
-
-Signed-off-by: Edward Shishkin <edward.shishkin@gmail.com>
----
- fs/reiser4/init_super.c                       |    2 -
- fs/reiser4/plugin/disk_format/disk_format40.c |   31 +++++++++++++++-----------
- 2 files changed, 19 insertions(+), 14 deletions(-)
-
---- a/fs/reiser4/init_super.c
-+++ b/fs/reiser4/init_super.c
-@@ -533,7 +533,7 @@ int reiser4_init_super_data(struct super
- 			.oneof = {
- 				.result = &sbinfo->onerror,
- 				.list = {
--					"panic", "remount-ro", NULL
-+					"remount-ro", "panic", NULL
- 				},
- 			}
- 		}
---- a/fs/reiser4/plugin/disk_format/disk_format40.c
-+++ b/fs/reiser4/plugin/disk_format/disk_format40.c
-@@ -91,12 +91,12 @@ static int update_backup_version(const f
- 
- static int update_disk_version_minor(const format40_disk_super_block * sb)
- {
--	return (get_format40_version(sb) < PLUGIN_LIBRARY_VERSION);
-+	return (get_format40_version(sb) < get_release_number_minor());
- }
- 
- static int incomplete_compatibility(const format40_disk_super_block * sb)
- {
--	return (get_format40_version(sb) > PLUGIN_LIBRARY_VERSION);
-+	return (get_format40_version(sb) > get_release_number_minor());
- }
- 
- static format40_super_info *get_sb_info(struct super_block *super)
-@@ -321,10 +321,14 @@ static int try_init_format40(struct supe
- 	       super->s_id,
- 	       get_format40_version(sb_copy));
- 	if (incomplete_compatibility(sb_copy))
--		printk("reiser4: Warning: The last completely supported "
--		       "version of disk format40 is %u. Some objects of "
--		       "the semantic tree can be unaccessible.\n",
--		       PLUGIN_LIBRARY_VERSION);
-+		printk("reiser4 (%s): format version number (4.0.%u) is "
-+		       "greater than release number (4.%u.%u) of reiser4 "
-+		       "kernel module. Some objects of the volume can be "
-+		       "inaccessible.\n",
-+		       super->s_id,
-+		       get_format40_version(sb_copy),
-+		       get_release_number_major(),
-+		       get_release_number_minor());
- 	/* make sure that key format of kernel and filesystem match */
- 	result = check_key_format(sb_copy);
- 	if (result) {
-@@ -371,9 +375,8 @@ static int try_init_format40(struct supe
- 	kfree(sb_copy);
- 
- 	if (update_backup_version(sb_copy))
--		printk("reiser4: Warning: metadata backup is not updated. "
--		       "Please run 'fsck.reiser4 --fix' on %s.\n",
--		       super->s_id);
-+		printk("reiser4 (%s): use 'fsck.reiser4 --fix' "
-+		       "to complete disk format upgrade.\n", super->s_id);
- 
- 	sbinfo->fsuid = 0;
- 	sbinfo->fs_flags |= (1 << REISER4_ADG);	/* hard links for directories
-@@ -617,12 +620,14 @@ int version_update_format40(struct super
- 	if (super->s_flags & MS_RDONLY)
-  		return 0;
- 
--	if (get_super_private(super)->version >= PLUGIN_LIBRARY_VERSION)
-+	if (get_super_private(super)->version >= get_release_number_minor())
- 		return 0;
- 
--	printk("reiser4: Updating disk format to 4.0.%u. The reiser4 metadata "
--	       "backup is left unchanged. Please run 'fsck.reiser4 --fix' "
--	       "on %s to update it too.\n", PLUGIN_LIBRARY_VERSION, super->s_id);
-+	printk("reiser4 (%s): upgrading disk format to 4.0.%u.\n",
-+	       super->s_id,
-+	       get_release_number_minor());
-+	printk("reiser4 (%s): use 'fsck.reiser4 --fix' "
-+	       "to complete disk format upgrade.\n", super->s_id);
- 
- 	/* Mark the uber znode dirty to call log_super on write_logs. */
- 	init_lh(&lh);
-
---------------010406040601060501000006--
+-- 
+Jose R R
+http://metztli.it
+---------------------------------------------------------------------------------------------
+Try at no charge http://b2evolution.net for http://OpenShift.com PaaS
+---------------------------------------------------------------------------------------------
+from our GitHub http://Nepohualtzintzin.com repository. Cloud the easy way!
+---------------------------------------------------------------------------------------------
