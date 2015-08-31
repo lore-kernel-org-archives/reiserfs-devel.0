@@ -1,86 +1,62 @@
-From: Jose R R <Jose.r.r@metztli-it.com>
-Subject: Integrate fully partman-reiser4 into d-i
-Date: Fri, 28 Aug 2015 03:56:55 -0700
-Message-ID: <CAM12Q5QKdpHgMG_qGyhE-abO6R-uY6cKtv-5Qg36N-FTx_Z8Lw@mail.gmail.com>
+From: Edward Shishkin <edward.shishkin@gmail.com>
+Subject: Reiser4: Format 4.0.1: Meta(data) checksums
+Date: Mon, 31 Aug 2015 17:21:04 +0200
+Message-ID: <55E470E0.2070304@gmail.com>
 Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20120113;
+        h=from:subject:to:message-id:date:user-agent:mime-version
+         :content-type:content-transfer-encoding;
+        bh=gw1/cSvFT0Lq3ODy0gQ1qOgnO4yN8hABzElHFDdjHRs=;
+        b=GQIMDO2WlvVqDMyYvFIEhrtyGgCa3L7VW4mrIY46vis0jyDQ/cjGWjRR4Hx/Bjkf/B
+         BOyk+Fcm3yMVOjCtJt0z/e1vKgMpyTn4UKttO8GadlZOxTFZDz+tF2wAdIRJg6GqI5xz
+         jOy5ofke0Yb8g2CIZmJ3nRzU9ZQ2lIEkyhqX4ch2QxVEgBapk8JXI23dGQczZRemlqRL
+         WlIWurxUNy5m6oG/iozGLGuA+Q9lz7yVZtH+AyQxJQOYGt5I1H/mJ83ZGdvmCWgCpOlj
+         oJbcsi14r2oJ6bzVINd2G9Vv/8Osv2zq0ZG3rIeVAcYx5EMEa1tiRWfWxJpa3Hb8oT+T
+         x+Nw==
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: debian-boot@lists.debian.org, ReiserFS Development List <reiserfs-devel@vger.kernel.org>
-Cc: Cyril Brulebois <kibi@debian.org>, Ben Hutchings <ben@decadent.org.uk>
+Content-Type: text/plain; charset="us-ascii"; format="flowed"
+To: Reiserfs development mailing list <reiserfs-devel@vger.kernel.org>
 
-Niltze, all!>
-(picking up where I left off in previous thread: <
-http://marc.info/?l=reiserfs-devel&m=144040412406067&w=2 >
+Hi all,
 
-Initiating a new thread since Debian-Installer's partman-reiser4 seems
-to be partially functioning. All the previous Reiser4 issues have been
-mostly resolved.
+This is the first release of new software versions of reiser4 kernel
+module and reiser4prods, which invoke the builtin mechanism of
+tracking compatibility basing on versions of reiser4 plugin library.
+More about this can be found here:
+https://reiser4.wiki.kernel.org/index.php/Reiser4_development_model
 
-So I cloned partman-jfs udeb source into partman-reiser4 udeb (seems
-reiserfs udeb has gotten old) and I modified relevant scripts.
+Reiser4progs of the new software release version number 4.0.1
+are provided by the package reiser4progs-1.1.0. Please find here:
+https://sourceforge.net/projects/reiser4/files/reiser4-utils/reiser4progs
 
-However, I need to fine tune those modified scripts specifically for
-reiser4 in d-i *and* there is where I need your insight.
+Reiser4 kernel module of the new software release version number
+4.0.1 is provided by the patch reiser4-for-4.1.5. Please find here:
+https://sourceforge.net/projects/reiser4/files/reiser4-for-linux-4.x/
 
-Basically, option to format device media into Reiser4 is now available
-during relevant d-i phase:
-< https://pbs.twimg.com/media/CNfOQw1VEAEYBUk.png:large >
+At mount time disk format version of your partition's superblock will
+be upgraded by the kernel, and you will be suggested to complete the
+upgrade offline by fsck:
 
-Nevertheless, I get this gibberish dialog when selecting and
-proceeding (by pressing enter):
-< https://pbs.twimg.com/media/CNfOQ4kUcAAK0Tx.png:large >
+# dmesg | grep [rR]eiser4
+Loading Reiser4 (format release: 4.0.1).
+reiser4: sda5: found disk format 4.0.0.
+reiser4: sda5: upgrading disk format to 4.0.1.
+reiser4: sda5: use 'fsck.reiser4 --fix' to complete disk format upgrade.
 
-If I select continue at the "??? ???" gibberish dialog, d-i is
-apparently able to go to the Partition Settings phase:
-< https://pbs.twimg.com/media/CNfOQpWUYAA8tqY.png:large >
+You may ignore this suggestion and continue to work as usual.
+However, I would suggest to find a time and complete the upgrade.
 
-Selecting "Done setting up the partition", notwithstanding, d-i
-returns to initial phase where raw virtual device has not even been
-initiated (with MBR)
+NOTE: after mount in the new kernel you won' t be able to
+check your partition by reiser4progs-1.0.9 and older versions, so
+please upgrade your reiser4progs BEFORE. Everyone who relies on
+liveCDs with reiser4progs-1.0.9, or older versions: be careful!
 
-Cool thing is partman-reiser4 now makes the Reiser4-patched kernel
-automatically modprobe reiser4-modules:
-< https://pbs.twimg.com/media/CNfOQwxUwAEHh68.png:large >
+More about reiser4 (meta)data checksums can be found here:
+https://reiser4.wiki.kernel.org/index.php/Reiser4_checksums
 
-I have at d-i build/localudebs:
-[...]
-localudebs/mkreiser4-udeb_1.0.9-2_amd64.udeb
-localudebs/reiser4-modules-4.1.0-2-amd64-di_4.1.6-1_amd64.udeb
-localudebs/reiser4progs-udeb_1.0.9-2_amd64.udeb
-localudebs/partman-reiser4_1_all.udeb
-[...]
-
-and added at d-i build/pkg-lists/netboot/amd64.cfg:
-[...]
-fat-modules-${kernel:Version}
-ext4-modules-${kernel:Version}
-jfs-modules-${kernel:Version}
-reiser4-modules-${kernel:Version}
-mkreiser4-udeb
-reiser4progs-udeb
-partman-reiser4
-[...]
-
-Note: without partman-reiser4 specified above, d-i will not show
-option to format in Reiser4 -- even if reiser4 UDEB is included under
-build/localudebs/
-
-Advice welcomed in advance to make the gibberish dialog go away and to
-effectively allow d-i routine to integrate reiser4 fully so as to
-complete the front-end formatting proceduere.
-
-
-Best Professional Regards.
-
-
--- 
-Jose R R
-http://metztli.it
----------------------------------------------------------------------------------------------
-Try at no charge http://b2evolution.net for http://OpenShift.com PaaS
----------------------------------------------------------------------------------------------
-from our GitHub http://Nepohualtzintzin.com repository. Cloud the easy way!
----------------------------------------------------------------------------------------------
+Thanks,
+Edward.
