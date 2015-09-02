@@ -1,23 +1,23 @@
 From: <doiggl@velocitynet.com.au>
-Subject: reiser4progs version 1.1.0 and result [on sdb]
-Date: Wed, 02 Sep 2015 20:56:58 +1000
-Message-ID: <87fce38a0d513ab6ac157ce543bd1392@mail.velocitynet.com.au>
+Subject: reiser4progs fsck.reiser4 1.1.0 and Wrong order of keys query [on sdb]
+Date: Thu, 03 Sep 2015 09:51:33 +1000
+Message-ID: <a183fec1149b76d5775189db36688175@mail.velocitynet.com.au>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: reiserfs-devel@vger.kernel.org
+To: Reiserfs development mailing list <reiserfs-devel@vger.kernel.org>
+Cc: Edward Shishkin <edward.shishkin@gmail.com>
 
-Hello,
+Question:
+#########
+Is there a patch available to fix this problem ?
+Thanks
+--Glenn
 
-Question: 
-Is it ok to use the command:
-
-#  fsck.reiser4  --build-fs --force  /dev/sdb
-
-I did the following steps:
+reiser4progs version 1.1.0 and result [on sdb]
 
 # fsck.reiser4  -V
 fsck.reiser4 1.1.0
@@ -66,24 +66,24 @@ TB/1.81 TiB)
 [ 2612.781738] sd 4:0:0:0: [sdb] Attached SCSI disk
 
 
-#  fsck.reiser4  --fix --force  /dev/sdb
+  fsck.reiser4  --build-fs --force  /dev/sdb
 *******************************************************************
 This is an EXPERIMENTAL version of fsck.reiser4. Read README first.
 *******************************************************************
 
 Fscking the /dev/sdb block device.                                        
                                                                           
-       
-Will fix minor corruptions of the Reiser4 SuperBlock.                     
+     
+Will check the consistency of the Reiser4 SuperBlock.                     
                                                                           
-       
-Will fix minor corruptions of the Reiser4 FileSystem.                     
+     
+Will build the Reiser4 FileSystem.                                        
                                                                           
-       
-***** fsck.reiser4 started at Wed Sep  2 09:21:00 2015
+     
+***** fsck.reiser4 started at Wed Sep  2 21:13:02 2015
 Reiser4 fs was detected on /dev/sdb.                                      
                                                                           
-       
+     
 Master super block (16): 
 magic:          ReIsEr4 
 blksize:        4096 
@@ -106,15 +106,17 @@ next oid:       0xedade
 file count:     188313 
 tree height:    6 
 key policy:     LARGE 
+ 
+ 
 CHECKING THE STORAGE TREE                                                 
                                                                           
-       
+     
         Read nodes 197008413                                              
                                                                           
-       
+     
         Nodes left in the tree 197008413 
                 Leaves of them 194764277, Twigs of them 2217790 
-        Time interval: Wed Sep  2 09:22:58 2015 - Wed Sep  2 17:07:06 2015
+        Time interval: Wed Sep  2 21:14:59 2015 - Thu Sep  3 05:00:48 2015
 
 CHECKING EXTENT REGIONS.                                                  
                                                                           
@@ -122,30 +124,57 @@ CHECKING EXTENT REGIONS.
         Read twigs 2217790                                                
                                                                           
      
-        Time interval: Wed Sep  2 17:07:06 2015 - Wed Sep  2 19:17:21 2015
+        Time interval: Thu Sep  3 05:00:48 2015 - Thu Sep  3 07:11:06 2015
 
-CHECKING THE SEMANTIC TREE                                                
+LOOKING FOR UNCONNECTED NODES                                             
                                                                           
      
-FSCK: semantic.c: 573: repair_semantic_dir_open: Failed to recognize the
-plugin for the directory [29:0:2a].                                        
+FSCK: node.c: 108: repair_node_items_check: Node (43828275), items (0) and
+(1): Wrong order of keys.                                                  
+     
+FSCK: node.c: 108: repair_node_items_check: Node (52697435), items (79)
+and (80): Wrong order of keys.                                             
+        
+FSCK: node.c: 108: repair_node_items_check: Node (63227569), items (24)
+and (25): Wrong order of keys.                                             
+        
+FSCK: node.c: 108: repair_node_items_check: Node (63227571), items (73)
+and (74): Wrong order of keys.                                             
+        
+FSCK: node.c: 108: repair_node_items_check: Node (116595727), items (20)
+and (21): Wrong order of keys.                                             
        
-FSCK: semantic.c: 651: repair_semantic_root_prepare: No root directory
-opened. 
-        Time interval: Wed Sep  2 19:17:21 2015 - Wed Sep  2 19:17:21 2015
+FSCK: node.c: 108: repair_node_items_check: Node (227923161), items (22)
+and (23): Wrong order of keys.                                             
+       
+FSCK: node.c: 108: repair_node_items_check: Node (284305753), items (61)
+and (62): Wrong order of keys.                                             
+       
+        Read nodes 1481038                                                
                                                                           
      
-FSCK: repair.c: 547: repair_sem_fini: On-disk used block bitmap and really
-used block bitmap differ.                                                  
-     
-***** fsck.reiser4 finished at Wed Sep  2 19:17:22 2015
+        Good nodes 471512 
+                Leaves of them 466164, Twigs of them 5348 
+        Time interval: Thu Sep  3 07:11:22 2015 - Thu Sep  3 07:14:56 2015
+
+***** fsck.reiser4 finished at Thu Sep  3 07:14:56 2015
 Closing fs...done
 
-2 fatal corruptions were detected in FileSystem. Run with --build-fs
-option to fix them.
+FS is consistent.
 
 #
-Thanks Glenn
 
 
 
+Background history
+==================
+ http://www.spinics.net/lists/reiserfs-devel/msg04206.html
+ http://www.spinics.net/lists/reiserfs-devel/msg04682.html
+
+[from url]
+
+This is a bug in fsck: it jumps to wrong branch for some reasons.
+Not yet fixed.
+
+Edward.
+ 
