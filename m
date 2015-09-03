@@ -1,180 +1,84 @@
 From: <doiggl@velocitynet.com.au>
-Subject: reiser4progs fsck.reiser4 1.1.0 and Wrong order of keys query [on sdb]
-Date: Thu, 03 Sep 2015 09:51:33 +1000
-Message-ID: <a183fec1149b76d5775189db36688175@mail.velocitynet.com.au>
+Subject: Why is mount command not working  on /dev/sdb
+Date: Thu, 03 Sep 2015 16:53:44 +1000
+Message-ID: <d830895823b381bf2890cbabbedda2e5@mail.velocitynet.com.au>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: Reiserfs development mailing list <reiserfs-devel@vger.kernel.org>
+To: ReiserFS development mailing list <reiserfs-devel@vger.kernel.org>
 Cc: Edward Shishkin <edward.shishkin@gmail.com>
 
-Question:
-#########
-Is there a patch available to fix this problem ?
-Thanks
+Hello,
+
+Why is mount command not working  on /dev/sdb ?
+Can it be repaired ?
+If so how ?
 --Glenn
 
-reiser4progs version 1.1.0 and result [on sdb]
+# md /media/disk
 
-# fsck.reiser4  -V
-fsck.reiser4 1.1.0
-Format release: 4.0.1
-Copyright (C) 2001-2005 by Hans Reiser, licensing governed by
-reiser4progs/COPYING. 
+# fdisk -l
 
-# rpm -qa |grep -i reiser |sort
-libreiser4-1_1-0-1.1.0-13.1.x86_64
-libreiser4-minimal-1_1-0-1.1.0-13.1.x86_64
-libreiserfs-0_3-0-0.3.0.5-163.3.x86_64
-reiser4progs-1.1.0-13.1.x86_64
-reiser4progs-debuginfo-1.0.9-69.1.x86_64
-reiser4progs-debugsource-1.0.9-69.1.x86_64
-reiser4progs-devel-1.1.0-13.1.x86_64
-reiserfs-3.6.23-1.3.x86_64
 
+Disk /dev/sdb: 2000.4 GB, 2000398934016 bytes, 3907029168 sectors
+Units = sectors of 1 * 512 = 512 bytes
+Sector size (logical/physical): 512 bytes / 512 bytes
+I/O size (minimum/optimal): 512 bytes / 512 bytes
+
+#dmesg
+[ 3390.448870] usb 1-2: new high-speed USB device number 3 using ehci-pci
+[ 3390.585319] usb 1-2: New USB device found, idVendor=04fc,
+idProduct=0c25
+[ 3390.585331] usb 1-2: New USB device strings: Mfr=2, Product=3,
+SerialNumber=1
+[ 3390.585338] usb 1-2: Product: USB to Serial-ATA bridge
+[ 3390.585344] usb 1-2: Manufacturer: Sunplus Technology Inc.
+[ 3390.585350] usb 1-2: SerialNumber: ST32000542            5XW1ZMG4
+[ 3390.626290] usb-storage 1-2:1.0: USB Mass Storage device detected
+[ 3390.626588] scsi host4: usb-storage 1-2:1.0
+[ 3390.626797] usbcore: registered new interface driver usb-storage
+[ 3391.631132] scsi 4:0:0:0: Direct-Access     ST320005 42AS              
+  PQ: 0 ANSI: 2
+[ 3391.631836] sd 4:0:0:0: Attached scsi generic sg2 type 0
+[ 3391.634198] sd 4:0:0:0: [sdb] 3907029168 512-byte logical blocks: (2.00
+TB/1.81 TiB)
+[ 3391.636823] sd 4:0:0:0: [sdb] Write Protect is off
+[ 3391.636834] sd 4:0:0:0: [sdb] Mode Sense: 38 00 00 00
+[ 3391.639517] sd 4:0:0:0: [sdb] No Caching mode page found
+[ 3391.639531] sd 4:0:0:0: [sdb] Assuming drive cache: write through
+[ 3401.600724] sd 4:0:0:0: [sdb] Attached SCSI disk
+
+
+
+# mount /dev/sdb /media/disk
+mount: mount(2) failed: No such file or directory
 
 # dmesg
-
-[ 2611.535910] usb 1-2: new high-speed USB device number 3 using ehci-pci
-[ 2611.654916] usb 1-2: New USB device found, idVendor=04fc,
-idProduct=0c25
-[ 2611.654930] usb 1-2: New USB device strings: Mfr=2, Product=3,
-SerialNumber=1
-[ 2611.654937] usb 1-2: Product: USB to Serial-ATA bridge
-[ 2611.654943] usb 1-2: Manufacturer: Sunplus Technology Inc.
-[ 2611.654948] usb 1-2: SerialNumber: ST32000542            5XW1ZMG4
-[ 2611.681303] usb-storage 1-2:1.0: USB Mass Storage device detected
-[ 2611.681651] scsi4 : usb-storage 1-2:1.0
-[ 2611.681958] usbcore: registered new interface driver usb-storage
-[ 2612.689193] scsi 4:0:0:0: Direct-Access     ST320005 42AS              
-  PQ: 0 ANSI: 2
-[ 2612.690210] sd 4:0:0:0: Attached scsi generic sg2 type 0
-[ 2612.691311] sd 4:0:0:0: [sdb] 3907029168 512-byte logical blocks: (2.00
-TB/1.81 TiB)
-[ 2612.695719] sd 4:0:0:0: [sdb] Write Protect is off
-[ 2612.695735] sd 4:0:0:0: [sdb] Mode Sense: 38 00 00 00
-[ 2612.699070] sd 4:0:0:0: [sdb] No Caching mode page present
-[ 2612.699083] sd 4:0:0:0: [sdb] Assuming drive cache: write through
-[ 2612.706449] sd 4:0:0:0: [sdb] No Caching mode page present
-[ 2612.706461] sd 4:0:0:0: [sdb] Assuming drive cache: write through
-[ 2612.769517]  sdb: unknown partition table
-[ 2612.781717] sd 4:0:0:0: [sdb] No Caching mode page present
-[ 2612.781730] sd 4:0:0:0: [sdb] Assuming drive cache: write through
-[ 2612.781738] sd 4:0:0:0: [sdb] Attached SCSI disk
+[ 7269.030082] Loading Reiser4 (format release: 4.0.1) See www.namesys.com
+for a description of Reiser4.
+[ 7269.036161] reiser4: sdb: found disk format 4.0.0.
+[ 7379.481446] reiser4[mount(4352)]: traverse_tree
+(../fs/reiser4/search.c:725)[nikita-373]:
+WARNING: not found on internal node: level: 6, lock_level: 1, stop_level:
+1 lock_mode: read, bias: exact
+[ 7379.481464] reiser4[mount(4352)]: key_warning
+(../fs/reiser4/plugin/file_plugin_common.c:510)[nikita-717]:
+WARNING: Error for inode 42 (-2)
 
 
-  fsck.reiser4  --build-fs --force  /dev/sdb
-*******************************************************************
-This is an EXPERIMENTAL version of fsck.reiser4. Read README first.
-*******************************************************************
+# cat /proc/modules |grep -i reiser4                                      
+                                                                          
+     
+reiser4 442368 0 - Live 0xffffffffa0a37000
 
-Fscking the /dev/sdb block device.                                        
-                                                                          
-     
-Will check the consistency of the Reiser4 SuperBlock.                     
-                                                                          
-     
-Will build the Reiser4 FileSystem.                                        
-                                                                          
-     
-***** fsck.reiser4 started at Wed Sep  2 21:13:02 2015
-Reiser4 fs was detected on /dev/sdb.                                      
-                                                                          
-     
-Master super block (16): 
-magic:          ReIsEr4 
-blksize:        4096 
-format:         0x0 (format40) 
-uuid:           3006ced1-7490-4ea8-a9b8-d82143c6bede 
-label:          <none> 
- 
-Format super block (17): 
-plugin:         format40 
-description:    Disk-format plugin. 
-version:        0 
-magic:          ReIsEr40FoRmAt 
-mkfs id:        0x1ddaf754 
-flushes:        0 
-blocks:         488378640 
-free blocks:    217146980 
-root block:     37017218 
-tail policy:    0x2 (smart) 
-next oid:       0xedade 
-file count:     188313 
-tree height:    6 
-key policy:     LARGE 
- 
- 
-CHECKING THE STORAGE TREE                                                 
-                                                                          
-     
-        Read nodes 197008413                                              
-                                                                          
-     
-        Nodes left in the tree 197008413 
-                Leaves of them 194764277, Twigs of them 2217790 
-        Time interval: Wed Sep  2 21:14:59 2015 - Thu Sep  3 05:00:48 2015
+/lib/modules/4.1.6-14-vanilla/kernel/fs/reiser4 # ll
+total 729
+-rw-r--r-- 1 root root 744837 Sep  3 01:24 reiser4.ko
 
-CHECKING EXTENT REGIONS.                                                  
-                                                                          
-     
-        Read twigs 2217790                                                
-                                                                          
-     
-        Time interval: Thu Sep  3 05:00:48 2015 - Thu Sep  3 07:11:06 2015
-
-LOOKING FOR UNCONNECTED NODES                                             
-                                                                          
-     
-FSCK: node.c: 108: repair_node_items_check: Node (43828275), items (0) and
-(1): Wrong order of keys.                                                  
-     
-FSCK: node.c: 108: repair_node_items_check: Node (52697435), items (79)
-and (80): Wrong order of keys.                                             
-        
-FSCK: node.c: 108: repair_node_items_check: Node (63227569), items (24)
-and (25): Wrong order of keys.                                             
-        
-FSCK: node.c: 108: repair_node_items_check: Node (63227571), items (73)
-and (74): Wrong order of keys.                                             
-        
-FSCK: node.c: 108: repair_node_items_check: Node (116595727), items (20)
-and (21): Wrong order of keys.                                             
-       
-FSCK: node.c: 108: repair_node_items_check: Node (227923161), items (22)
-and (23): Wrong order of keys.                                             
-       
-FSCK: node.c: 108: repair_node_items_check: Node (284305753), items (61)
-and (62): Wrong order of keys.                                             
-       
-        Read nodes 1481038                                                
-                                                                          
-     
-        Good nodes 471512 
-                Leaves of them 466164, Twigs of them 5348 
-        Time interval: Thu Sep  3 07:11:22 2015 - Thu Sep  3 07:14:56 2015
-
-***** fsck.reiser4 finished at Thu Sep  3 07:14:56 2015
-Closing fs...done
-
-FS is consistent.
-
+related earlier repair attempt
 #
+http://www.spinics.net/lists/reiserfs-devel/msg04809.html
 
-
-
-Background history
-==================
- http://www.spinics.net/lists/reiserfs-devel/msg04206.html
- http://www.spinics.net/lists/reiserfs-devel/msg04682.html
-
-[from url]
-
-This is a bug in fsck: it jumps to wrong branch for some reasons.
-Not yet fixed.
-
-Edward.
- 
