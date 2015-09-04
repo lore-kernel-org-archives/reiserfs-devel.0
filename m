@@ -1,163 +1,179 @@
-From: Edward Shishkin <edward.shishkin@gmail.com>
-Subject: Re: Reiser4 for Linux-4.1
-Date: Fri, 04 Sep 2015 09:23:00 +0200
-Message-ID: <55E946D4.8040902@gmail.com>
-References: <55C49E4A.5000803@gmail.com> <1441325851.12422.5.camel@gmail.com> <55E945B6.9050709@gmail.com>
+From: <doiggl@velocitynet.com.au>
+Subject: How can the  reiser4 filesystem be repaired accessed as read-only mode ? [/dev/sdb]
+Date: Fri, 04 Sep 2015 23:02:30 +1000
+Message-ID: <5b5dc4a149d58ac54e97db81054e2f1b@mail.velocitynet.com.au>
 Mime-Version: 1.0
-Content-Type: multipart/mixed;
- boundary="------------030901090301040803080605"
+Content-Transfer-Encoding: 8bit
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20120113;
-        h=message-id:date:from:user-agent:mime-version:to:subject:references
-         :in-reply-to:content-type;
-        bh=QXMOg1zopmqZ2XzXrGj05zI2az9AebFlrHjqotXYERI=;
-        b=jDb4SlaBN2dWAOWHuincSe7tTE7a3c34FBDOvCg0dl4v1CCH4sM3C1Q8NHEABd1Wed
-         EIxMKSSUuqRobDo7KewygcWezjtiqHBgXZCdhVR9Xj+5+emnB+J8XXMgYWcED7YG1cpK
-         eO70eiPWZ8gNFelup1pup7TGPB9zWZRLLUbpaFp/XNjIK7XAFJ0Bq+GW8ez75b6OUbBK
-         yAlKtgJmmaEG8DZDM9g8FjVcn3kPQK5R+tI+UUxGtcg5jXc31hF45RGJM1fJ5HSBXPOg
-         DyvjOJzDCfbS7pX7VuEx5IWYi6Pgf/lLpGo/x/lXRscorLjg7cUiV/uR3OBs4E1E+xUA
-         ZkPw==
-In-Reply-To: <55E945B6.9050709@gmail.com>
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
-To: Ivan Shapovalov <intelfx100@gmail.com>, Reiserfs development mailing list <reiserfs-devel@vger.kernel.org>
+Content-Type: text/plain; charset="us-ascii"
+To: Reiserfs development mailing list <reiserfs-devel@vger.kernel.org>
 
-This is a multi-part message in MIME format.
---------------030901090301040803080605
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Hello 
+How can the  reiser4 filesystem be repaired ? /dev/sdb 
+I tried these steps so far.
+Thanks Glenn
+#
+# fsck.reiser4  --build-fs --force  /dev/sdb
+*******************************************************************
+This is an EXPERIMENTAL version of fsck.reiser4. Read README first.
+*******************************************************************
 
-
-
-On 09/04/2015 09:18 AM, Edward Shishkin wrote:
->
->
-> On 09/04/2015 02:17 AM, Ivan Shapovalov wrote:
->> On 2015-08-07 at 14:02 +0200, Edward Shishkin wrote:
->>> Changes since Reiser4 for Linux-4.0.4:
->>>
->>> Fixed a problem appearing when running under "no space left on
->>> device". It also could be the reason of sporadic silent non
->>> -reproducible
->>> data corruptions, that were reported periodically.
->>>
->>> The fixup was backported to Linux-4.0 (see reiser4-for-4.0.9).
->>> If you need a backport for older kernel, then let me know.
->>>
->>> Please, find at
->>> http://sourceforge.net/projects/reiser4/files/reiser4-for-linux-4.x/
->> Hi Edward,
->>
->> could you please send the fixup in a separate patch/mail (git-format)?
->>
->> /* btw, I did not forget about finishing discard support etc. I've
->> found myself to be slightly overwhelmed with various things since a
->> month ago, so it's just no time currently. */
->>
->> Thanks,
->
-> Hello Ivan,
->
-> Attached.
-
-Oops,
-forgot the last one..
-
-
---------------030901090301040803080605
-Content-Type: text/x-patch;
- name="reiser4-change-default-behavior-on-error.patch"
-Content-Transfer-Encoding: 7bit
-Content-Disposition: attachment;
- filename="reiser4-change-default-behavior-on-error.patch"
-
-Change default behavior on IO errors to "remount readonly";
-Improve compatibility warnings.
-
-Signed-off-by: Edward Shishkin <edward.shishkin@gmail.com>
----
- fs/reiser4/init_super.c                       |    2 -
- fs/reiser4/plugin/disk_format/disk_format40.c |   31 +++++++++++++++-----------
- 2 files changed, 19 insertions(+), 14 deletions(-)
-
---- a/fs/reiser4/init_super.c
-+++ b/fs/reiser4/init_super.c
-@@ -533,7 +533,7 @@ int reiser4_init_super_data(struct super
- 			.oneof = {
- 				.result = &sbinfo->onerror,
- 				.list = {
--					"panic", "remount-ro", NULL
-+					"remount-ro", "panic", NULL
- 				},
- 			}
- 		}
---- a/fs/reiser4/plugin/disk_format/disk_format40.c
-+++ b/fs/reiser4/plugin/disk_format/disk_format40.c
-@@ -91,12 +91,12 @@ static int update_backup_version(const f
+Fscking the /dev/sdb block device.                                        
+                                                                          
+                   
+Will check the consistency of the Reiser4 SuperBlock.                     
+                                                                          
+                   
+Will build the Reiser4 FileSystem.                                        
+                                                                          
+                   
+***** fsck.reiser4 started at Fri Sep  4 11:18:23 2015
+FSCK: backup.c: 505: repair_backup_open: Found backup does not match to
+the on-disk filesystem metadata.                                           
+                      
+Backup update is needed.                                                  
+                                                                          
+                   
+Reiser4 fs was detected on /dev/sdb.                                      
+                                                                          
+                   
+Master super block (16): 
+magic:          ReIsEr4 
+blksize:        4096 
+format:         0x0 (format40) 
+uuid:           3006ced1-7490-4ea8-a9b8-d82143c6bede 
+label:          <none> 
  
- static int update_disk_version_minor(const format40_disk_super_block * sb)
- {
--	return (get_format40_version(sb) < PLUGIN_LIBRARY_VERSION);
-+	return (get_format40_version(sb) < get_release_number_minor());
- }
- 
- static int incomplete_compatibility(const format40_disk_super_block * sb)
- {
--	return (get_format40_version(sb) > PLUGIN_LIBRARY_VERSION);
-+	return (get_format40_version(sb) > get_release_number_minor());
- }
- 
- static format40_super_info *get_sb_info(struct super_block *super)
-@@ -321,10 +321,14 @@ static int try_init_format40(struct supe
- 	       super->s_id,
- 	       get_format40_version(sb_copy));
- 	if (incomplete_compatibility(sb_copy))
--		printk("reiser4: Warning: The last completely supported "
--		       "version of disk format40 is %u. Some objects of "
--		       "the semantic tree can be unaccessible.\n",
--		       PLUGIN_LIBRARY_VERSION);
-+		printk("reiser4: %s: format version number (4.0.%u) is "
-+		       "greater than release number (4.%u.%u) of reiser4 "
-+		       "kernel module. Some objects of the volume can be "
-+		       "inaccessible.\n",
-+		       super->s_id,
-+		       get_format40_version(sb_copy),
-+		       get_release_number_major(),
-+		       get_release_number_minor());
- 	/* make sure that key format of kernel and filesystem match */
- 	result = check_key_format(sb_copy);
- 	if (result) {
-@@ -371,9 +375,8 @@ static int try_init_format40(struct supe
- 	kfree(sb_copy);
- 
- 	if (update_backup_version(sb_copy))
--		printk("reiser4: Warning: metadata backup is not updated. "
--		       "Please run 'fsck.reiser4 --fix' on %s.\n",
--		       super->s_id);
-+		printk("reiser4: %s: use 'fsck.reiser4 --fix' "
-+		       "to complete disk format upgrade.\n", super->s_id);
- 
- 	sbinfo->fsuid = 0;
- 	sbinfo->fs_flags |= (1 << REISER4_ADG);	/* hard links for directories
-@@ -617,12 +620,14 @@ int version_update_format40(struct super
- 	if (super->s_flags & MS_RDONLY)
-  		return 0;
- 
--	if (get_super_private(super)->version >= PLUGIN_LIBRARY_VERSION)
-+	if (get_super_private(super)->version >= get_release_number_minor())
- 		return 0;
- 
--	printk("reiser4: Updating disk format to 4.0.%u. The reiser4 metadata "
--	       "backup is left unchanged. Please run 'fsck.reiser4 --fix' "
--	       "on %s to update it too.\n", PLUGIN_LIBRARY_VERSION, super->s_id);
-+	printk("reiser4: %s: upgrading disk format to 4.0.%u.\n",
-+	       super->s_id,
-+	       get_release_number_minor());
-+	printk("reiser4: %s: use 'fsck.reiser4 --fix' "
-+	       "to complete disk format upgrade.\n", super->s_id);
- 
- 	/* Mark the uber znode dirty to call log_super on write_logs. */
- 	init_lh(&lh);
+Format super block (17): 
+plugin:         format40 
+description:    Disk-format plugin. 
+version:        1 
+magic:          ReIsEr40FoRmAt 
+mkfs id:        0x1ddaf754 
+flushes:        0 
+blocks:         488378640 
+free blocks:    217146980 
+root block:     37017218 
+tail policy:    0x2 (smart) 
+next oid:       0xedade 
+file count:     188313 
+tree height:    6 
+key policy:     LARGE 
 
---------------030901090301040803080605--
+CHECKING THE STORAGE TREE                                                 
+                                            
+        Read nodes 197008413                                              
+                                            
+        Nodes left in the tree 197008413 
+                Leaves of them 194764277, Twigs of them 2217790 
+        Time interval: Fri Sep  4 11:20:20 2015 - Fri Sep  4 19:06:41 2015
+
+CHECKING THE STORAGE TREE                                                 
+                                                                          
+                   
+        Read nodes 197008413                                              
+                                                                          
+                   
+        Nodes left in the tree 197008413 
+                Leaves of them 194764277, Twigs of them 2217790 
+        Time interval: Fri Sep  4 11:20:20 2015 - Fri Sep  4 19:06:41 2015
+
+CHECKING EXTENT REGIONS.                                                  
+                                          
+        Read twigs 2217790                                                
+                                          
+        Time interval: Fri Sep  4 19:06:41 2015 - Fri Sep  4 21:17:03 2015
+
+LOOKING FOR UNCONNECTED NODES                                             
+                          
+FSCK: node.c: 108: repair_node_items_check: Node (43828275), items (0) and
+(1): Wrong order of keys.  
+FSCK: node.c: 108: repair_node_items_check: Node (52697435), items (79)
+and (80): Wrong order of keys. 
+FSCK: node.c: 108: repair_node_items_check: Node (63227569), items (24)
+and (25): Wrong order of keys. 
+FSCK: node.c: 108: repair_node_items_check: Node (63227571), items (73)
+and (74): Wrong order of keys. 
+FSCK: node.c: 108: repair_node_items_check: Node (116595727), items (20)
+and (21): Wrong order of keys.
+FSCK: node.c: 108: repair_node_items_check: Node (227923161), items (22)
+and (23): Wrong order of keys.
+FSCK: node.c: 108: repair_node_items_check: Node (284305753), items (61)
+and (62): Wrong order of keys.
+        Read nodes 1481038                                                
+                          
+        Good nodes 471512 
+                Leaves of them 466164, Twigs of them 5348 
+        Time interval: Fri Sep  4 21:17:17 2015 - Fri Sep  4 21:20:53 2015
+
+***** fsck.reiser4 finished at Fri Sep  4 21:20:53 2015
+Closing fs...done
+
+1 fixable corruptions were detected in the SuperBlock. Run with --fix
+option to fix them.
+
+# 
+
+
+#dmesg shows:
+ 3595.948312] scsi 4:0:0:0: Direct-Access     ST320005 42AS               
+ PQ: 0 ANSI: 2
+[ 3595.948948] sd 4:0:0:0: Attached scsi generic sg2 type 0
+[ 3595.950400] sd 4:0:0:0: [sdb] 3907029168 512-byte logical blocks: (2.00
+TB/1.81 TiB)
+[ 3595.953903] sd 4:0:0:0: [sdb] Write Protect is off
+[ 3595.953915] sd 4:0:0:0: [sdb] Mode Sense: 38 00 00 00
+[ 3595.956559] sd 4:0:0:0: [sdb] No Caching mode page found
+[ 3595.956574] sd 4:0:0:0: [sdb] Assuming drive cache: write through
+[ 3595.994852] sd 4:0:0:0: [sdb] Attached SCSI disk
+[ 4148.266685] SFW2-INext-DROP-DEFLT IN=enp3s0f5 OUT= MAC=
+SRC=fe80:0000:0000:0000:22cf:30ff:fe28:fda2
+DST=ff02:0000:0000:0000:0000:0000:0000:00fb LEN=84 TC=0 HOPLIMIT=255
+FLOWLBL=0 PROTO=UDP SPT=5353 DPT=5353 LEN=44 
+[ 5011.804493] Loading Reiser4 (format release: 4.0.1) See www.namesys.com
+for a description of Reiser4.
+[ 5011.863214] reiser4: sdb: found disk format 4.0.1.
+[ 5011.863386] reiser4: sdb: use 'fsck.reiser4 --fix' to complete disk
+format upgrade.
+[ 5121.839656] reiser4[mount(3888)]: traverse_tree
+(../fs/reiser4/search.c:725)[nikita-373]:
+WARNING: not found on internal node: level: 6, lock_level: 1, stop_level:
+1 lock_mode: read, bias: exact
+[ 5121.839674] reiser4[mount(3888)]: key_warning
+(../fs/reiser4/plugin/file_plugin_common.c:510)[nikita-717]:
+WARNING: Error for inode 42 (-2)
+[ 5277.264415] reiser4: sdb: found disk format 4.0.1.
+[ 5277.264574] reiser4: sdb: use 'fsck.reiser4 --fix' to complete disk
+format upgrade.
+[ 5387.169509] reiser4[mount(4041)]: traverse_tree
+(../fs/reiser4/search.c:725)[nikita-373]:
+WARNING: not found on internal node: level: 6, lock_level: 1, stop_level:
+1 lock_mode: read, bias: exact
+[ 5387.169527] reiser4[mount(4041)]: key_warning
+(../fs/reiser4/plugin/file_plugin_common.c:510)[nikita-717]:
+WARNING: Error for inode 42 (-2)
+#
+Next I tried to access filesystem in read-only mode.
+# mount -r  /dev/sdb /media/disk 
+mount: mount(2) failed: No such file or directory
+
+#dmesg shows
+[51611.964313] reiser4: sdb: found disk format 4.0.1.
+[51611.964468] reiser4: sdb: use 'fsck.reiser4 --fix' to complete disk
+format upgrade.
+[51721.972633] reiser4[mount(21726)]: traverse_tree
+(../fs/reiser4/search.c:725)[nikita-373]:
+WARNING: not found on internal node: level: 6, lock_level: 1, stop_level:
+1 lock_mode: read, bias: exact
+[51721.972651] reiser4[mount(21726)]: key_warning
+(../fs/reiser4/plugin/file_plugin_common.c:510)[nikita-717]:
+WARNING: Error for inode 42 (-2)
+
+Questions:
+
+- What other things can I use to access the files on this disk ?
+- Would 'dont_load_bitmap' assist in the mount 'mount -r  /dev/sdb
+/media/disk' command ? 
+Thanks Glenn
