@@ -1,126 +1,163 @@
-From: Edward Shishkin <edward.shishkin@gmail.com>
+From: Jose R R <jose.r.r@metztli.com>
 Subject: Re: Reiser4: Format 4.0.1: Meta(data) checksums
-Date: Tue, 08 Sep 2015 23:21:25 +0200
-Message-ID: <55EF5155.2040701@gmail.com>
-References: <55E470E0.2070304@gmail.com> <CAM12Q5Qkx-3ShOJjXd02_4Af0it3wv+39hXDW4sFhBosg=i3SQ@mail.gmail.com>
+Date: Wed, 9 Sep 2015 00:54:54 -0700
+Message-ID: <CAM12Q5T43V0-j5fGDrY4euTJE7jA5Tv2L+L678oRMvV6vJgyqA@mail.gmail.com>
+References: <55E470E0.2070304@gmail.com>
+	<CAM12Q5Qkx-3ShOJjXd02_4Af0it3wv+39hXDW4sFhBosg=i3SQ@mail.gmail.com>
+	<CAFCWPPL+qqq0UgqV0F2T54EfmvVYmN6iWeuoVNvExR+dYqZWmg@mail.gmail.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20120113;
-        h=message-id:date:from:user-agent:mime-version:to:cc:subject
-         :references:in-reply-to:content-type:content-transfer-encoding;
-        bh=b2taOEyohjM0uF23eOdixX+oGC3vmrPrPGZElD+8adM=;
-        b=Xb/UJNcTr0AZrTGkF3dJpoTq5Pf/rNmd3y7pZh5DbboXHN95uTKLEbvYt9GzaaluHZ
-         Wim9jKJu6flKwVhz3QkpjCIm6UnYRmFR3q9oGrVDeFefxJGobWNkxStsNbZJCEkfxnZF
-         jxz6kaqGc8UaWkil0aCdsw9V3J1nZQ/aWx8qmJUqRVz6MOGOj7GpX5tOZX0lfTokgN57
-         ZAiwVEyc64bex37FZO35GbmOaxob4BIRUMsJq+VUj3aSzxrI0PaBru5VDmOlFKEzXaMi
-         YGIi/sbl+eckFJU3VDwoNJru61pmP5S/o4tTdGVWo/qSEmD3EiV4N1/CrHg9uAwt7X0M
-         cllg==
-In-Reply-To: <CAM12Q5Qkx-3ShOJjXd02_4Af0it3wv+39hXDW4sFhBosg=i3SQ@mail.gmail.com>
+In-Reply-To: <CAFCWPPL+qqq0UgqV0F2T54EfmvVYmN6iWeuoVNvExR+dYqZWmg@mail.gmail.com>
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: Jose R R <jose.r.r@metztli.com>
-Cc: Reiserfs development mailing list <reiserfs-devel@vger.kernel.org>
+Content-Type: text/plain; charset="macroman"
+To: Edward Shishkin <edward.shishkin@gmail.com>
+Cc: milan.buska@gmail.com, ReiserFS Development List <reiserfs-devel@vger.kernel.org>
 
+Scratch my previous issue, Ed. It is *not* related to your new Reiser4
+software release 4.0.1 module nor reiser4progs.
 
+My usual development environment is a modified non-systemd Debian Sid
+(unstable) on a Reiser4 root partition. The kernels built won't boot
+in *that* particular instance due to a least one other additional
+issue:
+target filesystem does not have requested /sbin/init
 
-On 09/08/2015 10:46 PM, Jose R R wrote:
-> Niltze, Ed-
+However, I tried one of my recently built reiser4-patched kernels into
+a systemd Debian Sid -- also running on reiser4 root partition -- and
+the system booted and behaved as you predicted.
 
-Hello
+< https://pbs.twimg.com/media/COccj66UAAA7mfp.png:large >
 
+Sorry about that, Ed. It's my fault for only testing in the build
+environment (although I had not had an issue with reiser4 builds until
+this kernel 4.x and new 4.0.1 software combination change).
+
+On Tue, Sep 8, 2015 at 4:20 PM, Milan Bu=C5=A1ka <milan.buska@gmail.com=
+> wrote:
+> Hi all.
+>
+> I'm not an expert but I think that the error happened during kernel
+> compilation.
+> I have compiled into the kernel filesystem reiser4 directly into the =
+kernel,
+> not as modules and yet I have no problems. This is a record of my boo=
+t.
+>
+> Loading Linux 4.1.6-reiser4 ...
+> early console in decompress_kernel
+>
+> Decompressing Linux... Parsing ELF... done.
+> Booting the kernel.
+> INIT: version 2.88 booting
+> The system is coming up.  Please wait.
+> *******************************************************************
+> This is an EXPERIMENTAL version of fsck.reiser4. Read README first.
+> *******************************************************************
+>
+> Fscking the /dev/sda2 block device.
+> Will check the consistency of the Reiser4 SuperBlock.
+> Will check the consistency of the Reiser4 FileSystem.
+> ***** fsck.reiser4 started at Wed Sep  9 00:31:06 2015
+> Reiser4 fs was detected on /dev/sda2.
+> Master super block (16):
+> magic:          ReIsEr4
+> blksize:        4096
+> format:         0x0 (format40)
+> uuid:           631c2925-dca7-41be-b40c-46e7b2052e28
+> label:          SYSTEM-ROOT
+>
+> Format super block (17):
+> plugin:         format40
+> description:    Disk-format plugin.
+> version:        1
+> magic:          ReIsEr40FoRmAt
+> mkfs id:        0x6129d214
+> flushes:        0
+> blocks:         27000832
+> free blocks:    26270124
+> root block:     118355
+> tail policy:    0x2 (smart)
+> next oid:       0x86a7b6
+> file count:     170068
+> tree height:    5
+> key policy:     LARGE
 >
 >
+> CHECKING THE STORAGE TREE
+>         Read nodes 269426
+>         Nodes left in the tree 269426
+>                 Leaves of them 265060, Twigs of them 4257
+>         Time interval: Wed Sep  9 00:31:06 2015 - Wed Sep  9 00:31:22=
+ 2015
+> CHECKING EXTENT REGIONS.
+>         Read twigs 4257
+>         Time interval: Wed Sep  9 00:31:22 2015 - Wed Sep  9 00:31:22=
+ 2015
+> CHECKING THE SEMANTIC TREE
+>         Found 171872 objects (some could be encountered more then onc=
+e).
+>         Time interval: Wed Sep  9 00:31:22 2015 - Wed Sep  9 00:31:25=
+ 2015
+> ***** fsck.reiser4 finished at Wed Sep  9 00:31:25 2015
+> Closing fs...done
 >
-> On Mon, Aug 31, 2015 at 8:21 AM, Edward Shishkin
-> <edward.shishkin@gmail.com> wrote:
->> Hi all,
->>
->> This is the first release of new software versions of reiser4 kernel
->> module and reiser4prods, which invoke the builtin mechanism of
->> tracking compatibility basing on versions of reiser4 plugin library.
->> More about this can be found here:
->> https://reiser4.wiki.kernel.org/index.php/Reiser4_development_model
->>
->> Reiser4progs of the new software release version number 4.0.1
->> are provided by the package reiser4progs-1.1.0. Please find here:
->> https://sourceforge.net/projects/reiser4/files/reiser4-utils/reiser4progs
->>
->> Reiser4 kernel module of the new software release version number
->> 4.0.1 is provided by the patch reiser4-for-4.1.5. Please find here:
->> https://sourceforge.net/projects/reiser4/files/reiser4-for-linux-4.x/
->>
->> At mount time disk format version of your partition's superblock will
->> be upgraded by the kernel, and you will be suggested to complete the
->> upgrade offline by fsck:
->>
->> # dmesg | grep [rR]eiser4
->> Loading Reiser4 (format release: 4.0.1).
->> reiser4: sda5: found disk format 4.0.0.
->> reiser4: sda5: upgrading disk format to 4.0.1.
->> reiser4: sda5: use 'fsck.reiser4 --fix' to complete disk format upgrade.
->>
->> You may ignore this suggestion and continue to work as usual.
->> However, I would suggest to find a time and complete the upgrade.
->>
->> NOTE: after mount in the new kernel you won' t be able to
->> check your partition by reiser4progs-1.0.9 and older versions, so
->> please upgrade your reiser4progs BEFORE. Everyone who relies on
->> liveCDs with reiser4progs-1.0.9, or older versions: be careful!
->>
->> More about reiser4 (meta)data checksums can be found here:
->> https://reiser4.wiki.kernel.org/index.php/Reiser4_checksums
->>
->> Thanks,
->> Edward.
->> --
->> To unsubscribe from this list: send the line "unsubscribe reiserfs-devel" in
->> the body of a message to majordomo@vger.kernel.org
->> More majordomo info at  http://vger.kernel.org/majordomo-info.html
-> I have applied reiser4-for-4.1.5.patch.gz to both pristine
-> linux-4.1.5.tar.xz from kernel.org and to 4.1.6 from upstream Debian
-> and both kernels fail to (re)boot into the Reiser4 root partition in
-> which they were built.
+> FS is consistent.
 >
-> I am using Debian Sid reiser4progs_1.1.0-1_amd64.deb from
-> https://packages.debian.org/sid/reiser4progs
+> hostname: ishi
+> font: ter-v16n
+> keyboard: us
+> INIT: Entering runlevel: 2
+> starting services: sysklogd lo net firewall crond gpm dbus
 >
-> In both instances, after GRUB boots from the boot partition into the
-> root Reiser4 partition and message after
-> fsck.reiser4 /dev/sdaX
-> [ 3.979349 ] BUG: unable to handle kernel NULL pointer dereference at
-> 0000000000000069
-
-
-Could you catch the full stack dump at serial console,
-or take a pic of this by using camera?
-
-Thanks,
-Edward.
-
-
-> [...]
-> (initramfs prompt) will not boot into its Reiser4 partition
->
->  From another partition I have even tried (using
-> reiser4progs_1.1.0-1_amd64.deb, too)
-> fsck.reiser4 --version
-> fsck.reiser4 1.1.0
+> Version reiser4progs:
+> $ /sbin/fsck.reiser4 --version
+> /sbin/fsck.reiser4 1.1.0
 > Format release: 4.0.1
 > Copyright (C) 2001-2005 by Hans Reiser, licensing governed by
 > reiser4progs/COPYING.
 >
-> fsck.reiser4 --fix /dev/sdaX
-> and
-> fsck.reiser4  --build-fs /dev/sdaX
+> $ uname -a
+> Linux ishi 4.1.6-reiser4 #1 SMP Tue Sep 1 17:44:08 CEST 2015 x86_64 I=
+ntel(R)
+> Core(TM) i5-3570K CPU @ 3.40GHz GenuineIntel GNU/Linux
 >
-> which finished fine. Nevertheless upon rebooting into fsck'ed
-> partition with the Reiser4 4.0.1 kernel module nothing changes, i.e.,
-> I get BUG and kernel boot stops at initramfs prompt.
+> I also recommend checking with such parameters and patches reiser4pro=
+gs is
+> compiled on Debian. See the debian / rules.
 >
+> Greeting
 >
-> Best Professional Regards.
+> Milan
 >
 
+I appreciate your input Milan, thank you.
+
+I usually build a reiser4 module in Debian and make sure that
+initramfs-tools are aware of it during kernel installation by editing
+/etc/initramfs-tools/modules, adding directive: reiser4
+Otherwise, reiser4 module will not be included in the initrd and the
+system will not boot.
+
+Thank you all.
+
+
+Best Professional Regards.
+
+
+--=20
+Jose R R
+http://metztli.it
+-----------------------------------------------------------------------=
+----------------------
+Try at no charge http://b2evolution.net for http://OpenShift.com PaaS
+-----------------------------------------------------------------------=
+----------------------
+from our GitHub http://Nepohualtzintzin.com repository. Cloud the easy =
+way!
+--
+To unsubscribe from this list: send the line "unsubscribe reiserfs-deve=
+l" in
+the body of a message to majordomo@vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
