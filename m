@@ -1,117 +1,94 @@
-From: Ivan Shapovalov <intelfx100@gmail.com>
-Subject: Re: Reiser4: Format 4.0.1: Meta(data) checksums
-Date: Thu, 10 Sep 2015 15:10:04 +0300
-Message-ID: <1441887004.4227.2.camel@gmail.com>
-References: <55E470E0.2070304@gmail.com>
-	 <CAM12Q5Qkx-3ShOJjXd02_4Af0it3wv+39hXDW4sFhBosg=i3SQ@mail.gmail.com>
-	 <CAFCWPPL+qqq0UgqV0F2T54EfmvVYmN6iWeuoVNvExR+dYqZWmg@mail.gmail.com>
-	 <CAM12Q5T43V0-j5fGDrY4euTJE7jA5Tv2L+L678oRMvV6vJgyqA@mail.gmail.com>
-	 <1441804577.3968.2.camel@gmail.com>
-	 <CAM12Q5Q4Si+hAh92gw3pUHL4x9--bqTNbDyNugkKiy3shdBS2Q@mail.gmail.com>
+From: bugzilla-daemon@bugzilla.kernel.org
+Subject: [Bug 104391] New: Use-after-free errors in reiserfsprogs (mkreiserfs
+ / reiserfsck)
+Date: Thu, 10 Sep 2015 13:20:59 +0000
+Message-ID: <bug-104391-695@https.bugzilla.kernel.org/>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg="pgp-sha256";
-	protocol="application/pgp-signature"; boundary="=-ZPTJIXN/KoPVGY93g8VY"
+Content-Transfer-Encoding: 7bit
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20120113;
-        h=message-id:subject:from:to:cc:date:in-reply-to:references
-         :content-type:mime-version;
-        bh=J/8farrwfM4IrMDfl2pxlTlBxowdPQVWScK6hTfv2UE=;
-        b=OFIGkO6tiL15RZQoGc6diLf3oPkHBTYTCkVc1pzbLiFGATbQ4MjAKJK+zrb+LVELjI
-         umQMLD/cSDsrsD+LshbP2nX6/peAr7ofgA/R7rbyhafuZMQZpdlB9QLcPhRYKACIL3Ug
-         eAwZ+fZ7pLiXsRT5c3QiMXy0ANuWdlfZJHnYE8JOjC5qUdIuYwTU6VrRslw/y+LiIK/h
-         7K0TQK3yLZWFAhQpRCm6DZdrVZ8tJk7bhIVBtoYlujPpUqp6IWQ+OMN30q5pv8CA+I6K
-         K7UQQV0WuaNoDKMWAIHqq41j9pg39jnkaKXNnHtYOrkseBPl0tv1QSVaLPTvbyjUSetI
-         mbeA==
-In-Reply-To: <CAM12Q5Q4Si+hAh92gw3pUHL4x9--bqTNbDyNugkKiy3shdBS2Q@mail.gmail.com>
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
-To: Jose R R <jose.r.r@metztli.com>
-Cc: Edward Shishkin <edward.shishkin@gmail.com>, Milan =?UTF-8?Q?Bu=C5=A1ka?= <milan.buska@gmail.com>, ReiserFS Development List <reiserfs-devel@vger.kernel.org>
+Content-Type: text/plain; charset="us-ascii"
+To: reiserfs-devel@vger.kernel.org
+
+https://bugzilla.kernel.org/show_bug.cgi?id=104391
+
+            Bug ID: 104391
+           Summary: Use-after-free errors in reiserfsprogs (mkreiserfs /
+                    reiserfsck)
+           Product: File System
+           Version: 2.5
+    Kernel Version: 4.2.0
+          Hardware: All
+                OS: Linux
+              Tree: Mainline
+            Status: NEW
+          Severity: normal
+          Priority: P1
+         Component: ReiserFS
+          Assignee: reiserfs-devel@vger.kernel.org
+          Reporter: hanno@hboeck.de
+        Regression: No
+
+The reiserfsprogs have use-after-free errors (even on normal operation).
+
+When I compile reiserfsprogs with address sanitizer (adding
+"-fsanitize=address" to CFLAGS/LDFLAGS) and run mkreiserfs I get this:
+
+==31481==ERROR: AddressSanitizer: heap-use-after-free on address 0x60d00000cf98
+at pc 0x48e705 bp 0x7ffdd4eeeda0 sp 0x7ffdd4eeed90
+READ of size 4 at 0x60d00000cf98 thread T0
+    #0 0x48e704 in reiserfs_close
+/f/reiser/reiserfsprogs-3.6.24/reiserfscore/reiserfslib.c:419
+    #1 0x4070a6 in main
+/f/reiser/reiserfsprogs-3.6.24/mkreiserfs/mkreiserfs.c:785
+    #2 0x7f4a4c899f9f in __libc_start_main (/lib64/libc.so.6+0x1ff9f)
+    #3 0x40b0b1 (/f/reiser/reiserfsprogs-3.6.24/mkreiserfs/mkreiserfs+0x40b0b1)
+
+0x60d00000cf98 is located 40 bytes inside of 144-byte region
+[0x60d00000cf70,0x60d00000d000)
+freed by thread T0 here:
+    #0 0x7f4a4ce7347f in __interceptor_free
+(/usr/lib/gcc/x86_64-pc-linux-gnu/4.9.2/libasan.so.1+0x5747f)
+    #1 0x48e50b in reiserfs_free
+/f/reiser/reiserfsprogs-3.6.24/reiserfscore/reiserfslib.c:407
+    #2 0x48e50b in reiserfs_close
+/f/reiser/reiserfsprogs-3.6.24/reiserfscore/reiserfslib.c:418
+
+previously allocated by thread T0 here:
+    #0 0x7f4a4ce736f7 in malloc
+(/usr/lib/gcc/x86_64-pc-linux-gnu/4.9.2/libasan.so.1+0x576f7)
+    #1 0x4c6f7c in mem_alloc /f/reiser/reiserfsprogs-3.6.24/lib/misc.c:110
+    #2 0x4c6f7c in getmem /f/reiser/reiserfsprogs-3.6.24/lib/misc.c:97
 
 
---=-ZPTJIXN/KoPVGY93g8VY
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Same with reiserfsck (on a previously newly created reiserfs image):
+==4684==ERROR: AddressSanitizer: heap-use-after-free on address 0x60d00000cf98
+at pc 0x541855 bp 0x7ffc99c55540 sp 0x7ffc99c55530
+READ of size 4 at 0x60d00000cf98 thread T0
+    #0 0x541854 in reiserfs_close
+/f/reiser/reiserfsprogs-3.6.24/reiserfscore/reiserfslib.c:419
+    #1 0x4077c4 in check_fs /f/reiser/reiserfsprogs-3.6.24/fsck/main.c:1156
+    #2 0x4077c4 in main /f/reiser/reiserfsprogs-3.6.24/fsck/main.c:1356
+    #3 0x7f46ec29df9f in __libc_start_main (/lib64/libc.so.6+0x1ff9f)
+    #4 0x411251 (/f/reiser/reiserfsprogs-3.6.24/fsck/reiserfsck+0x411251)
 
-On 2015-09-10 at 04:57 -0700, Jose R R wrote:
-> On Wed, Sep 9, 2015 at 6:16 AM, Ivan Shapovalov <intelfx100@gmail.com
-> > wrote:
-> > On 2015-09-09 at 00:54 -0700, Jose R R wrote:
-> > > Scratch my previous issue, Ed. It is *not* related to your new
-> > > Reiser4
-> > > software release 4.0.1 module nor reiser4progs.
-> > >=20
-> > > My usual development environment is a modified non-systemd Debian
-> > > Sid
-> > > (unstable) on a Reiser4 root partition. The kernels built won't
-> > > boot
-> > > in *that* particular instance due to a least one other additional
-> > > issue:
-> > > target filesystem does not have requested /sbin/init
-> >=20
-> > Could you please elaborate?
->=20
-> I can only describe what's going on; still searching for a solution
-> myself.
->=20
-> < http://without-systemd.org/wiki/index.php/Main_Page >
->=20
-> initrd.imgs created within a debian Sid environment -- with systemd
-> replaced by init -- will fail to mount new reiser4 root file system
-> during boot; whereas,
-> initrd.imgs created within a debian Sid environment -- with systemd -
-> -
-> will mount *any* (systemd and non-systemd) new reiser4 root fs and
-> boots system -- as it should.
->=20
-> Issue closely resembles recent ZFS issue <
-> https://github.com/zfsonlinux/zfs/issues/3605 > except that, in this
-> non-systemd particular case, neither mkinitramfs-tools nor
-> dracut-created initrd.imgs are successful.
->=20
-> As I am running a couple of more or less similar AMD64 Debian Sid on
-> Reiser4 root fs, I built the initrd.img for a non-systemd Debian Sid
-> inside the environment of a systemd Debian Sid.
->=20
-> I already disassembled an older 3.xy.z initrd and compared its
-> contents with a initrd.img 4.1.6 built into this non-systemd Debian
-> Sid but file trees appears similar.
->=20
-> < http://linux.koolsolutions.com/2009/11/12/initramfs-ramfs-tmpfs-com
-> pressed-image/
-> >=20
->=20
-> Thus, a kernel I built in this non-systemd environment (Sept. 07,
-> 2015) can be installed in a systemd environment and it will boot;
-> moreover, I can take the initrd.img produced in the systemd
-> enviroment
-> (during kernel installation) and use it to boot this non-systemd
-> system -- and will proceed smoothly into its new Reiser4 4.0.1 root
-> fs.
->=20
-> < https://pbs.twimg.com/media/COiiyUtUkAAw95X.png:large >
->=20
+0x60d00000cf98 is located 40 bytes inside of 144-byte region
+[0x60d00000cf70,0x60d00000d000)
+freed by thread T0 here:
+    #0 0x7f46ec87747f in __interceptor_free
+(/usr/lib/gcc/x86_64-pc-linux-gnu/4.9.2/libasan.so.1+0x5747f)
+    #1 0x54165b in reiserfs_free
+/f/reiser/reiserfsprogs-3.6.24/reiserfscore/reiserfslib.c:407
+    #2 0x54165b in reiserfs_close
+/f/reiser/reiserfsprogs-3.6.24/reiserfscore/reiserfslib.c:418
 
-Very interesting, thanks for the observations. I'm surprised with the
-fact that systemd makes a difference here...
+previously allocated by thread T0 here:
+    #0 0x7f46ec8776f7 in malloc
+(/usr/lib/gcc/x86_64-pc-linux-gnu/4.9.2/libasan.so.1+0x576f7)
+    #1 0x57a0cc in mem_alloc /f/reiser/reiserfsprogs-3.6.24/lib/misc.c:110
+    #2 0x57a0cc in getmem /f/reiser/reiserfsprogs-3.6.24/lib/misc.c:97
 
---
-Ivan Shapovalov / intelfx /
-
-
---=-ZPTJIXN/KoPVGY93g8VY
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: This is a digitally signed message part
-Content-Transfer-Encoding: 7bit
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
-
-iF4EABEIAAYFAlXxcxwACgkQxUKljSIMAnDsjwD/U7IH/l77ApiohJuUtdkqOlNL
-Wf5GlzXinjJ//2erxlgBAIR+sBy9go70Yj0BqwUcAlnf/9XmnGNyPdKSnz28oEVp
-=RhDf
------END PGP SIGNATURE-----
-
---=-ZPTJIXN/KoPVGY93g8VY--
-
+-- 
+You are receiving this mail because:
+You are the assignee for the bug.
