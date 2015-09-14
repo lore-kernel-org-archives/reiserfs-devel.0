@@ -1,10 +1,10 @@
 From: Edward Shishkin <edward.shishkin@gmail.com>
-Subject: Re: [PATCH 2/3] reiser4: fix reiser4_init_csum_tfm() error path;
- return real (negative) error code.
-Date: Mon, 14 Sep 2015 09:52:14 +0200
-Message-ID: <55F67CAE.8030504@gmail.com>
+Subject: Re: [PATCH 3/3] reiser4: report an error on checksum engine load
+ failure.
+Date: Mon, 14 Sep 2015 09:53:41 +0200
+Message-ID: <55F67D05.1040500@gmail.com>
 References: <1442185720-25185-1-git-send-email-intelfx100@gmail.com>
- <1442185720-25185-2-git-send-email-intelfx100@gmail.com>
+ <1442185720-25185-3-git-send-email-intelfx100@gmail.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
@@ -12,54 +12,47 @@ DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20120113;
         h=subject:to:references:from:message-id:date:user-agent:mime-version
          :in-reply-to:content-type:content-transfer-encoding;
-        bh=rbHlP1ofvKMh/Ct8ocaXYX3/hGaKqeki55py/biIufs=;
-        b=IhP3A7UJAto6KfMPJkueIwrp9xj2bwVse9m0EMytVk1y1FfKS3fCAV0LGMPN0uaOQZ
-         K8Qr4JhTia+8YHhqjgez1w14DNEhvZJ0ZHiCgO2fsJRRUPn0TsMcadokkw4VMkT/g8Ig
-         mp5oDktmDk+lWta1PgdDMRfd9t8IgtUXliqaYg7nqMDAoq04gxgrZDzhCdGHPwDdatd8
-         OBjhWAhyiLHGSjCV4/zEdJUznPW1YGHlMOQETTE6xWUqXTuSkuCVGVk+x6AXynHXYOT4
-         IS2MiS3Lk2Y2TSuBepdeUZCChSNxmbsOGuQXUygieL1rrX5vdG5400Bm3fq74rBHG9gg
-         xk7Q==
-In-Reply-To: <1442185720-25185-2-git-send-email-intelfx100@gmail.com>
+        bh=K3zASpJFiMoY2n+Iw5NYvVNhh/V94+6oKAXszW2zHjM=;
+        b=FhRnZopChV6L662CcgcWXwibqOAIDCnrHIwKfi6HOfq2WEejJI4rIbUpsCsxmpuirw
+         nMdQr4POOr2nsSDkCvwtWgLL8E9yhh6ilE8FWuwEm/yiOvNOU62h5RyP1ktoNz05w9RC
+         ihE3sUCiGr+mp9fonULSNxmuqwdJEU2tl2YbUCmSjjU2c1ApxwaWc37m1cK5U0NZRnFd
+         oW1ML4H5IEk5zbAHjgzq+3TxqmcnPoNILjA7p0rnOKOS16Tv8nSoJ2tWm7AkjX4mdSUC
+         IVXrEM4BJtUghSf9XQloMiv2mT/d2teoOwlAw8Iwd/IXPuorNlDKruLnrZ09sbiNiYvQ
+         i8Zg==
+In-Reply-To: <1442185720-25185-3-git-send-email-intelfx100@gmail.com>
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"; format="flowed"
 To: Ivan Shapovalov <intelfx100@gmail.com>, reiserfs-devel@vger.kernel.org
 
-OK.
-Thanks!
+OK
 
 On 09/14/2015 01:08 AM, Ivan Shapovalov wrote:
+> It is apparently not possible to specify explicit module dependencies.
+> For well-formed setups this is not a problem because
+> crypto_alloc_shash() uses request_module() internally, but if one needs
+> reiser4, say, in initramfs, then the checksum module must be added
+> manually.
+>
 > Signed-off-by: Ivan Shapovalov <intelfx100@gmail.com>
 > ---
->
-> This is responsible for the oops on mount reported by Jose (also experienced
-> by me). The problem is that IS_ERR() works only for negative error codes,
-> so somewhere in the VFS an error path is incorrectly not taken.
->
->   fs/reiser4/checksum.c | 12 +++++++-----
->   1 file changed, 7 insertions(+), 5 deletions(-)
+>   fs/reiser4/checksum.c | 4 +++-
+>   1 file changed, 3 insertions(+), 1 deletion(-)
 >
 > diff --git a/fs/reiser4/checksum.c b/fs/reiser4/checksum.c
-> index a5052b0..73d40f0 100644
+> index 73d40f0..2a35f42 100644
 > --- a/fs/reiser4/checksum.c
 > +++ b/fs/reiser4/checksum.c
-> @@ -4,11 +4,13 @@
+> @@ -7,8 +7,10 @@ int reiser4_init_csum_tfm(struct crypto_shash **tfm)
+>   	struct crypto_shash *new_tfm;
 >   
->   int reiser4_init_csum_tfm(struct crypto_shash **tfm)
->   {
-> -	*tfm = crypto_alloc_shash("crc32c", 0, 0);
-> -	if (IS_ERR(*tfm)) {
-> -		*tfm = NULL;
-> -		return 1;
-> -	}
-> +	struct crypto_shash *new_tfm;
-> +
-> +	new_tfm = crypto_alloc_shash("crc32c", 0, 0);
-> +	if (IS_ERR(new_tfm))
-> +		return PTR_ERR(new_tfm);
-> +
-> +	*tfm = new_tfm;
+>   	new_tfm = crypto_alloc_shash("crc32c", 0, 0);
+> -	if (IS_ERR(new_tfm))
+> +	if (IS_ERR(new_tfm)) {
+> +		warning("intelfx-81", "Could not load crc32c driver");
+>   		return PTR_ERR(new_tfm);
+> +	}
+>   
+>   	*tfm = new_tfm;
 >   	return 0;
->   }
->   
 
