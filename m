@@ -1,50 +1,54 @@
-From: Edward Shishkin <edward.shishkin@gmail.com>
-Subject: Re: [PATCH] reiser4: fix supported flags check in
- reiser4_rename2_common().
-Date: Mon, 14 Sep 2015 09:55:00 +0200
-Message-ID: <55F67D54.3070009@gmail.com>
-References: <1442197280-31580-1-git-send-email-intelfx100@gmail.com>
+From: <doiggl@velocitynet.com.au>
+Subject: Are the following patches included in the next R4 patch set after reiser4-for-4.1.5.patch.gz
+Date: Tue, 15 Sep 2015 13:34:50 +1000
+Message-ID: <210d9fcaa07ed6e571adff51b28054dd@mail.velocitynet.com.au>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20120113;
-        h=subject:to:references:from:message-id:date:user-agent:mime-version
-         :in-reply-to:content-type:content-transfer-encoding;
-        bh=Qy6iY8o/sXuNIwlKw5FdgJ5umejcM3Oz9mixOerJHRA=;
-        b=bgudLp2c5K+Y9CaBytMjmir6XbRsVqqB73wnwZBpo1mMS74x/ePcVnWjykFaEyM53e
-         cPpGZvhKQt/KbUFMUarQcZJIi/2X4ll0UMDc6pAcWMXT0nLyRWN2t4hf6I/clVn1gAHt
-         n3noJBdUs72EB0C1HVXkj7RcH9hIFntBMPL/ueoCe1mbfXeo1tWZPa6J6pBStB61venj
-         ZdWYx84OG5BJnHCxrkikrf9be30R1FbQcWwwexcZJu/PQuqctKq3TlDNoHgTU6jH8oMj
-         /eFJi/Tupvvqeo4Of2gTgPNdicOgxvTR018RS2CWJa7jteD83IoS0gJ+mFvzYY5tzYO9
-         nwxw==
-In-Reply-To: <1442197280-31580-1-git-send-email-intelfx100@gmail.com>
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: Ivan Shapovalov <intelfx100@gmail.com>, reiserfs-devel@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+To: reiserfs-devel@vger.kernel.org
 
-OK
+Hello,
 
-On 09/14/2015 04:21 AM, Ivan Shapovalov wrote:
-> ---
->
-> This was left behind some time ago. I've just spotted a relevant warning.
->
->   fs/reiser4/plugin/inode_ops_rename.c | 2 +-
->   1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/fs/reiser4/plugin/inode_ops_rename.c b/fs/reiser4/plugin/inode_ops_rename.c
-> index 6744e14..ddb7bf5 100644
-> --- a/fs/reiser4/plugin/inode_ops_rename.c
-> +++ b/fs/reiser4/plugin/inode_ops_rename.c
-> @@ -435,7 +435,7 @@ int reiser4_rename2_common(struct inode *old_dir /* directory where @old
->   	 * We support:
->   	 * - RENAME_NOREPLACE (no-op)
->   	 */
-> -	if (flags & supported_flags != flags)
-> +	if ((flags & supported_flags) != flags)
->   		return RETERR(-EINVAL);
->   
->   	old_entry = kzalloc(3 * sizeof(*old_entry) + 2 * sizeof(*new_lh) +
+Question:
+Are the following patches included in the next R4 patch set after
+reiser4-for-4.1.5.patch.gz
+Cheers
+--Glenn
 
+Re: [PATCH] reiser4: fix supported flags check in
+reiser4_rename2_common().
+
+    From: Edward Shishkin <edward.shishkin@xxxxxxxxx>
+
+Re: [PATCH 3/3] reiser4: report an error on checksum engine load failure.
+
+    From: Edward Shishkin <edward.shishkin@xxxxxxxxx>
+
+Re: [PATCH 2/3] reiser4: fix reiser4_init_csum_tfm() error path; return
+real (negative) error code.
+
+    From: Edward Shishkin <edward.shishkin@xxxxxxxxx>
+
+Re: [PATCH 1/3] reiser4: fix filesystem init error path.
+
+    From: Edward Shishkin <edward.shishkin@xxxxxxxxx>
+
+[PATCH] reiser4: fix supported flags check in reiser4_rename2_common().
+
+    From: Ivan Shapovalov <intelfx100@xxxxxxxxx>
+
+[PATCH 3/3] reiser4: report an error on checksum engine load failure.
+
+    From: Ivan Shapovalov <intelfx100@xxxxxxxxx>
+
+[PATCH 2/3] reiser4: fix reiser4_init_csum_tfm() error path; return real
+(negative) error code.
+
+    From: Ivan Shapovalov <intelfx100@xxxxxxxxx>
+
+[PATCH 1/3] reiser4: fix filesystem init error path.
+
+    From: Ivan Shapovalov <intelfx100@xxxxxxxxx>
