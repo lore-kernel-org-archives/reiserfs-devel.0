@@ -1,54 +1,108 @@
-From: <doiggl@velocitynet.com.au>
-Subject: Are the following patches included in the next R4 patch set after reiser4-for-4.1.5.patch.gz
-Date: Tue, 15 Sep 2015 13:34:50 +1000
-Message-ID: <210d9fcaa07ed6e571adff51b28054dd@mail.velocitynet.com.au>
+From: Jose R R <jose.r.r@metztli.com>
+Subject: Re: Reiser4: Format 4.0.1: Meta(data) checksums
+Date: Thu, 17 Sep 2015 05:10:17 -0700
+Message-ID: <CAM12Q5QySio0eJMYe91YQEB19Z+xwmJ6sjVEKDD9Be8TCf5Bvg@mail.gmail.com>
+References: <55E470E0.2070304@gmail.com>
+	<CAM12Q5Qkx-3ShOJjXd02_4Af0it3wv+39hXDW4sFhBosg=i3SQ@mail.gmail.com>
+	<CAFCWPPL+qqq0UgqV0F2T54EfmvVYmN6iWeuoVNvExR+dYqZWmg@mail.gmail.com>
+	<CAM12Q5T43V0-j5fGDrY4euTJE7jA5Tv2L+L678oRMvV6vJgyqA@mail.gmail.com>
+	<1441804577.3968.2.camel@gmail.com>
+	<CAM12Q5Q4Si+hAh92gw3pUHL4x9--bqTNbDyNugkKiy3shdBS2Q@mail.gmail.com>
+	<1441887004.4227.2.camel@gmail.com>
+	<CAM12Q5TCFxqrUpPC37MUWq7bSbu-fq2Ny0-E9iAhVDfECY7U9w@mail.gmail.com>
+	<1442149593.3827.1.camel@gmail.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
+In-Reply-To: <1442149593.3827.1.camel@gmail.com>
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: reiserfs-devel@vger.kernel.org
+Content-Transfer-Encoding: 7bit
+To: Ivan Shapovalov <intelfx100@gmail.com>
+Cc: Edward Shishkin <edward.shishkin@gmail.com>, =?UTF-8?B?TWlsYW4gQnXFoWth?= <milan.buska@gmail.com>, ReiserFS Development List <reiserfs-devel@vger.kernel.org>, debian-boot@lists.debian.org, debian-kernel@lists.debian.org
 
-Hello,
+On Sun, Sep 13, 2015 at 6:06 AM, Ivan Shapovalov <intelfx100@gmail.com> wrote:
+> On 2015-09-13 at 05:57 -0700, Jose R R wrote:
+>> Here is some additional info:
+>>
+>> A while back, I installed Debian Jessie AMD64 into a KVM virtual
+>> machine and also included the initial non-systemd boot argument:
+>> preseed/late_command="in-target apt-get install -y sysvinit-core"
+>> < https://wiki.debian.org/systemd#Installing_without_systemd >
+>>
+>> Afterwards a previous reiser4-patched Linux kernel 4.0.x was
+>> installed
+>> into the virtual machine and its root fs was subsequently formatted
+>> to
+>> reiser4.. The virtual machine was working fine:
+>> < https://pbs.twimg.com/media/CKIKgoZUAAIFx12.png:large >
+>>
+>> Yesterday, I installed into the vm a newer 4.1.6 kernel built "the
+>> debian way" except that it was customized with the newer 4.0.1
+>> Reiser4
+>> patch. Upon rebooting the VM, I captured a sequence of 4 snapshots
+>> (by
+>> paging down) that basically recreate the fail that I experienced
+>> priorly in the physical machine:
+>>
+>> < https://metztli.it/blog/index.php/ixiptli/non-systemd-debian-sid-re
+>> iser4 >
+>>
+>> Accordingly, seems the *lack of systemd* is enough for a Debian Sid
+>> instance to create a bad initrd.img. I have no idea if issue only
+>> appears with Reiser4 root fs or if it includes other file systems as
+>> root. Work in progress...
+>
+> It's presence/absence of crc32c module that matters. Reiser4 does not
+> specify that it needs one.
+>
+Applied your 3 patches
+1/3 < http://marc.info/?l=reiserfs-devel&m=144218573602435&w=2 >
+2/3 < http://marc.info/?l=reiserfs-devel&m=144218573602436&w=2 >
+3/3 < http://marc.info/?l=reiserfs-devel&m=144218573702437&w=2 >
 
-Question:
-Are the following patches included in the next R4 patch set after
-reiser4-for-4.1.5.patch.gz
-Cheers
---Glenn
+into kernel.org Linux Kernel 4.1.7, but Non-systemd Debian still boots
+into an emergency shell
+[...]
+mount: mounting /dev/sdaX on /root failed: no such file or directory
+Target fileystem doesn't have requested /sbin/init
+mount: mounting /dev on /root/dev failed: no such file or directory
+No init found. Try passing init= bootarg.
+[...]
 
-Re: [PATCH] reiser4: fix supported flags check in
-reiser4_rename2_common().
+Typing dmesg:
+[...]
+reiser4[exe(801)]: reiser4_init_csum_tfm
+(fs/reiser4/checksum.c:11)[intelfx-81]:WARNING: Could not load crc32c
+driver
 
-    From: Edward Shishkin <edward.shishkin@xxxxxxxxx>
+In a couple of days I will build the kernel "the Debian way"; I will
+specify -- in relevant module section, at file [kernel source
+tree]debian/installer/package-list:
+[...]
 
-Re: [PATCH 3/3] reiser4: report an error on checksum engine load failure.
+Package: reiser4-modules
+Depends: kernel-image crc-modules # <--- will add that
+Priority: extra
+Description: Reiser4 filesystem support
+ This package contains the Reiser4 filesystem module for the kernel.
+[...]
 
-    From: Edward Shishkin <edward.shishkin@xxxxxxxxx>
+As well as at /usr/share/kernel-wedge/package-list
 
-Re: [PATCH 2/3] reiser4: fix reiser4_init_csum_tfm() error path; return
-real (negative) error code.
+We will see what happens.
 
-    From: Edward Shishkin <edward.shishkin@xxxxxxxxx>
 
-Re: [PATCH 1/3] reiser4: fix filesystem init error path.
+> --
+> Ivan Shapovalov / intelfx /
+>
 
-    From: Edward Shishkin <edward.shishkin@xxxxxxxxx>
 
-[PATCH] reiser4: fix supported flags check in reiser4_rename2_common().
 
-    From: Ivan Shapovalov <intelfx100@xxxxxxxxx>
-
-[PATCH 3/3] reiser4: report an error on checksum engine load failure.
-
-    From: Ivan Shapovalov <intelfx100@xxxxxxxxx>
-
-[PATCH 2/3] reiser4: fix reiser4_init_csum_tfm() error path; return real
-(negative) error code.
-
-    From: Ivan Shapovalov <intelfx100@xxxxxxxxx>
-
-[PATCH 1/3] reiser4: fix filesystem init error path.
-
-    From: Ivan Shapovalov <intelfx100@xxxxxxxxx>
+-- 
+Jose R R
+http://metztli.it
+---------------------------------------------------------------------------------------------
+Try at no charge http://b2evolution.net for http://OpenShift.com PaaS
+---------------------------------------------------------------------------------------------
+from our GitHub http://Nepohualtzintzin.com repository. Cloud the easy way!
