@@ -1,73 +1,117 @@
-From: Edward Shishkin <edward.shishkin@gmail.com>
-Subject: Re: reiser4 WARNING: discard atom failed (-95)
-Date: Fri, 18 Sep 2015 17:15:46 +0200
-Message-ID: <55FC2AA2.5040707@gmail.com>
-References: <55FC21EF.6000804@gmail.com>
+From: <doiggl@velocitynet.com.au>
+Subject: Is their a patch available for reiser4progs to fix  'Wrong order of keys'  [reiser4progs-1.1.0-14.1] [on /dev/sdb]
+Date: Sat, 19 Sep 2015 12:39:01 +1000
+Message-ID: <c85242a1b60e40b540ce7b0254b02bf9@mail.velocitynet.com.au>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20120113;
-        h=subject:to:references:cc:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-type:content-transfer-encoding;
-        bh=UNxfI8/6CaZOjgb1pwWEGpE1R+tLwoA8QNviBLdf7Es=;
-        b=z3eZip5JJg64WL0D+/ggBucstGMnun0Hn5IMcYSjuhQIRIVknxRpmaLofcOTF93HwV
-         Dd6WpK+aApAX6nYu2lAcCZq67BwAQozH2JA5fxKAG5bYHBLqb2fOUK5Sod530Jse7eQY
-         0UO3Xhx0/wEEcUntBx2zlH9McyoXQzYgcsjoWY8qphVTQw2b+lJgaUgpNS//mXzB7qO2
-         p+aGb49XRIZWRX2pZWAdtSTWvLqF6KbMl42KfH9e53OLOquRMmSoI1O6RIr1LIJBy/cT
-         h+g+LZm45fIA+5m2IMEJW6XUiB/EhdfJEpU20wvDcpYFrSyiuZYA/IydlwZs5M42LlQv
-         ImdA==
-In-Reply-To: <55FC21EF.6000804@gmail.com>
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: Gleb Baryshev <gleb.baryshev@gmail.com>
-Cc: reiserfs-devel@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+To: reiserfs-devel@vger.kernel.org
 
-Hi Gleb,
+Hello,
+A patch question:
 
-It means that your sdb1 doesn't support TRIM command.
-sdb1 is virtual device, correct?
+Is their a patch available for reiser4progs to fix 'Wrong order of keys'
+using [reiser4progs-1.1.0-14.1.x86_64]
+[/dev/sdb]
 
+Thanks
+--Glenn
+
+
+# fsck.reiser4  -V
+fsck.reiser4 1.1.0
+Format release: 4.0.1
+
+# rpm -qa |grep -i reiser4 |sort
+kernel-reiser4-4.1.6-7.1.gd2bbe7f.x86_64
+libreiser4-1_1-0-1.1.0-14.1.x86_64
+reiser4progs-1.1.0-14.1.x86_64
+
+# patch can be applied in spec file -an example follows:
+Patch1: fix-xxxxx.patch
+
+%prep
+%setup -q
+%patch1 -p1
+
+# full spec file:
+https://build.opensuse.org/package/view_file/home:doiggl/reiser4progs/reiser4progs.spec?expand=1
+
+ # rpm -qlp reiser4progs-1.1.0-13.1.x86_64.rpm
+warning: reiser4progs-1.1.0-13.1.x86_64.rpm: Header V3 RSA/SHA1 Signature,
+key ID 324e6311: NOKEY
+/usr/sbin/debugfs.reiser4
+/usr/sbin/fsck.reiser4
+/usr/sbin/make_reiser4
+/usr/sbin/measurefs.reiser4
+/usr/sbin/mkfs.reiser4
+/usr/share/doc/packages/reiser4progs
+/usr/share/doc/packages/reiser4progs/BUGS
+/usr/share/doc/packages/reiser4progs/COPYING
+/usr/share/doc/packages/reiser4progs/ChangeLog
+/usr/share/doc/packages/reiser4progs/NEWS
+/usr/share/doc/packages/reiser4progs/README
+/usr/share/doc/packages/reiser4progs/TODO
+/usr/share/man/man8/debugfs.reiser4.8.gz
+/usr/share/man/man8/fsck.reiser4.8.gz
+/usr/share/man/man8/measurefs.reiser4.8.gz
+/usr/share/man/man8/mkfs.reiser4.8.gz
+
+Background history
+==================
+ http://www.spinics.net/lists/reiserfs-devel/msg04206.html
+ http://www.spinics.net/lists/reiserfs-devel/msg04682.html
+
+[from url] previous run
+
+#fsck.reiser4  --build-fs --force  /dev/sdb
+.
+.
+LOOKING FOR UNCONNECTED NODES                                             
+                                                                          
+     
+FSCK: node.c: 108: repair_node_items_check: Node (43828275), items (0) and
+(1): Wrong order of keys.                                                 
+
+     
+FSCK: node.c: 108: repair_node_items_check: Node (52697435), items (79)
+and (80): Wrong order of keys.                                            
+
+        
+FSCK: node.c: 108: repair_node_items_check: Node (63227569), items (24)
+and (25): Wrong order of keys.                                            
+
+        
+FSCK: node.c: 108: repair_node_items_check: Node (63227571), items (73)
+and (74): Wrong order of keys.                                            
+
+        
+FSCK: node.c: 108: repair_node_items_check: Node (116595727), items (20)
+and (21): Wrong order of keys.                                            
+
+       
+FSCK: node.c: 108: repair_node_items_check: Node (227923161), items (22)
+and (23): Wrong order of keys.                                            
+
+       
+FSCK: node.c: 108: repair_node_items_check: Node (284305753), items (61)
+and (62): Wrong order of keys.                                            
+
+       
+        Read nodes 1481038                                                
+                                                                          
+     
+        Good nodes 471512 
+                Leaves of them 466164, Twigs of them 5348 
+        Time interval: Thu Sep  3 07:11:22 2015 - Thu Sep  3 07:14:56 2015
+
+.
+.
+This is a bug in fsck: it jumps to wrong branch for some reasons.
 Edward.
 
 
-On 09/18/2015 04:38 PM, Gleb Baryshev wrote:
-> Hi,
->
-> I'm trying out reiser4 discard feature (openSUSE with doiggl's package 
-> under VirtualBox) and getting this repeated warning. So I'd like to 
-> know if it is a known issue and how serious it is.
->
->
-> [  667.619577] Loading Reiser4 (format release: 4.0.1) See 
-> www.namesys.com for a description of Reiser4.
-> [  667.621406] reiser4: sdb1: found disk format 4.0.1.
-> [  667.658860] reiser4: sdb1: using Hybrid Transaction Model.
-> ...
-> [  687.278657] reiser4[kcminit_startup(1503)]: 
-> reiser4_post_write_back_hook 
-> (../fs/reiser4/block_alloc.c:1153)[intelfx-8]:
->                WARNING: discard atom failed (-95)
-> [  687.284161] reiser4[kcminit_startup(1503)]: 
-> reiser4_post_write_back_hook 
-> (../fs/reiser4/block_alloc.c:1153)[intelfx-8]:
->                WARNING: discard atom failed (-95)
-> [  687.329700] reiser4[kcminit_startup(1503)]: 
-> reiser4_post_write_back_hook 
-> (../fs/reiser4/block_alloc.c:1153)[intelfx-8]:
->                WARNING: discard atom failed (-95)
-> [  687.338194] reiser4[kcminit_startup(1503)]: 
-> reiser4_post_write_back_hook 
-> (../fs/reiser4/block_alloc.c:1153)[intelfx-8]:
->                WARNING: discard atom failed (-95)
->
->
-> Linux version: 4.1.6
-> Format options: create=ccreg40,compress=gzip1
-> Mount options: noatime,onerror=remount-ro,discard
->
->
-> Best regards,
-> Gleb
 
