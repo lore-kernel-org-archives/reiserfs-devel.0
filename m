@@ -1,117 +1,147 @@
-From: <doiggl@velocitynet.com.au>
-Subject: Is their a patch available for reiser4progs to fix  'Wrong order of keys'  [reiser4progs-1.1.0-14.1] [on /dev/sdb]
-Date: Sat, 19 Sep 2015 12:39:01 +1000
-Message-ID: <c85242a1b60e40b540ce7b0254b02bf9@mail.velocitynet.com.au>
+From: Jose R R <jose.r.r@metztli.com>
+Subject: Re: Reiser4: Format 4.0.1: Meta(data) checksums
+Date: Sun, 20 Sep 2015 06:48:18 -0700
+Message-ID: <CAM12Q5SvTNm4XCycPgpP6cxiYWgtQx846JkSnYWvVQN=aNPNbA@mail.gmail.com>
+References: <55E470E0.2070304@gmail.com>
+	<CAM12Q5Qkx-3ShOJjXd02_4Af0it3wv+39hXDW4sFhBosg=i3SQ@mail.gmail.com>
+	<CAFCWPPL+qqq0UgqV0F2T54EfmvVYmN6iWeuoVNvExR+dYqZWmg@mail.gmail.com>
+	<CAM12Q5T43V0-j5fGDrY4euTJE7jA5Tv2L+L678oRMvV6vJgyqA@mail.gmail.com>
+	<1441804577.3968.2.camel@gmail.com>
+	<CAM12Q5Q4Si+hAh92gw3pUHL4x9--bqTNbDyNugkKiy3shdBS2Q@mail.gmail.com>
+	<1441887004.4227.2.camel@gmail.com>
+	<CAM12Q5TCFxqrUpPC37MUWq7bSbu-fq2Ny0-E9iAhVDfECY7U9w@mail.gmail.com>
+	<1442149593.3827.1.camel@gmail.com>
+	<CAM12Q5QySio0eJMYe91YQEB19Z+xwmJ6sjVEKDD9Be8TCf5Bvg@mail.gmail.com>
+	<1442505391.4102.6.camel@gmail.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
+In-Reply-To: <1442505391.4102.6.camel@gmail.com>
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: reiserfs-devel@vger.kernel.org
+Content-Transfer-Encoding: 7bit
+To: Ivan Shapovalov <intelfx100@gmail.com>
+Cc: Edward Shishkin <edward.shishkin@gmail.com>, =?UTF-8?B?TWlsYW4gQnXFoWth?= <milan.buska@gmail.com>, ReiserFS Development List <reiserfs-devel@vger.kernel.org>, debian-boot@lists.debian.org, debian-kernel@lists.debian.org
 
-Hello,
-A patch question:
+On Thu, Sep 17, 2015 at 8:56 AM, Ivan Shapovalov <intelfx100@gmail.com> wrote:
+> On 2015-09-17 at 05:10 -0700, Jose R R wrote:
+>> On Sun, Sep 13, 2015 at 6:06 AM, Ivan Shapovalov <
+>> intelfx100@gmail.com> wrote:
+>> > On 2015-09-13 at 05:57 -0700, Jose R R wrote:
+>> > > Here is some additional info:
+>> > >
+>> > > A while back, I installed Debian Jessie AMD64 into a KVM virtual
+>> > > machine and also included the initial non-systemd boot argument:
+>> > > preseed/late_command="in-target apt-get install -y sysvinit-core"
+>> > > < https://wiki.debian.org/systemd#Installing_without_systemd >
+>> > >
+>> > > Afterwards a previous reiser4-patched Linux kernel 4.0.x was
+>> > > installed
+>> > > into the virtual machine and its root fs was subsequently
+>> > > formatted
+>> > > to
+>> > > reiser4.. The virtual machine was working fine:
+>> > > < https://pbs.twimg.com/media/CKIKgoZUAAIFx12.png:large >
+>> > >
+>> > > Yesterday, I installed into the vm a newer 4.1.6 kernel built
+>> > > "the
+>> > > debian way" except that it was customized with the newer 4.0.1
+>> > > Reiser4
+>> > > patch. Upon rebooting the VM, I captured a sequence of 4
+>> > > snapshots
+>> > > (by
+>> > > paging down) that basically recreate the fail that I experienced
+>> > > priorly in the physical machine:
+>> > >
+>> > > < https://metztli.it/blog/index.php/ixiptli/non-systemd-debian-si
+>> > > d-re
+>> > > iser4 >
+>> > >
+>> > > Accordingly, seems the *lack of systemd* is enough for a Debian
+>> > > Sid
+>> > > instance to create a bad initrd.img. I have no idea if issue only
+>> > > appears with Reiser4 root fs or if it includes other file systems
+>> > > as
+>> > > root. Work in progress...
+>> >
+>> > It's presence/absence of crc32c module that matters. Reiser4 does
+>> > not
+>> > specify that it needs one.
+>> >
+>> Applied your 3 patches
+>> 1/3 < http://marc.info/?l=reiserfs-devel&m=144218573602435&w=2 >
+>> 2/3 < http://marc.info/?l=reiserfs-devel&m=144218573602436&w=2 >
+>> 3/3 < http://marc.info/?l=reiserfs-devel&m=144218573702437&w=2 >
+>>
+>> into kernel.org Linux Kernel 4.1.7, but Non-systemd Debian still
+>> boots
+>> into an emergency shell
+>> [...]
+>> mount: mounting /dev/sdaX on /root failed: no such file or directory
+>> Target fileystem doesn't have requested /sbin/init
+>> mount: mounting /dev on /root/dev failed: no such file or directory
+>> No init found. Try passing init= bootarg.
+>> [...]
+>
+> Correct; it's now a "cleanly" reported error instead of an oops.
+> You will have to manually add crc32c or crc32c_intel module to the
+> initramfs, though. I could not find a way to express an explicit
+> intermodule dependency in the code (to make module reiser4 depend on
+> module crc32c).
+>
+> Edward's patch selects module crc32c when reiser4 is selected in the
+> build config, but it does not make sure that crc32c will end up in the
+> initramfs if reiser4 is there (that is, modules.dep will not be
+> altered). I'm still wondering how to do that properly.
+>
+I applied Ed's patch, as well
+< http://marc.info/?l=reiserfs-devel&m=144250028326153&w=2 >
+but the non-systemd Debian instance continued to generate a bad initrd.img-.
 
-Is their a patch available for reiser4progs to fix 'Wrong order of keys'
-using [reiser4progs-1.1.0-14.1.x86_64]
-[/dev/sdb]
+Notwithstanding, based on your suggestions, Ivan, the solution that
+works for non-systemd system is to include module directive
+crc32c_intel right *before* module reiser4 directive in debian's
+/etc/initramfs-tools/modules file, thus:
+[...]
+crc32c_intel
+reiser4
+[...]
 
-Thanks
---Glenn
+and those modules will be included during initramfs-tools creation of
+initrd.img-<version> file.
 
+Thus, for a new Reiser4(4.0.1)-patched kernel image created "the
+debian way", having an initrd image like: initrd.img-4.1.0-2-amd64,
 
-# fsck.reiser4  -V
-fsck.reiser4 1.1.0
-Format release: 4.0.1
+update-initramfs -dk 4.1.0-2-amd64  # Removes (-d) an existing version
+(-k) initramfs
+update-initramfs -ck 4.1.0-2-amd64   # Creates (-c) a new version (-k) initramfs
 
-# rpm -qa |grep -i reiser4 |sort
-kernel-reiser4-4.1.6-7.1.gd2bbe7f.x86_64
-libreiser4-1_1-0-1.1.0-14.1.x86_64
-reiser4progs-1.1.0-14.1.x86_64
+Thus, the non-systemd Debian will generate a proper
+initrd.img-<version> which will contain *both* sequenced modules *and*
+will be able to successfully boot the sysvinit-based system.
 
-# patch can be applied in spec file -an example follows:
-Patch1: fix-xxxxx.patch
+I have been running a small PoC non-systemd Debian Jessie, with
+Reiser4-patched Linux kernel, on Google Compute Engine (GCE)
+infrastructure for over two months now[1].
 
-%prep
-%setup -q
-%patch1 -p1
+< https://pbs.twimg.com/media/CPWcGMQVEAElVdi.png:large >
 
-# full spec file:
-https://build.opensuse.org/package/view_file/home:doiggl/reiser4progs/reiser4progs.spec?expand=1
+And I was concerned about its survival if this issue persisted.
 
- # rpm -qlp reiser4progs-1.1.0-13.1.x86_64.rpm
-warning: reiser4progs-1.1.0-13.1.x86_64.rpm: Header V3 RSA/SHA1 Signature,
-key ID 324e6311: NOKEY
-/usr/sbin/debugfs.reiser4
-/usr/sbin/fsck.reiser4
-/usr/sbin/make_reiser4
-/usr/sbin/measurefs.reiser4
-/usr/sbin/mkfs.reiser4
-/usr/share/doc/packages/reiser4progs
-/usr/share/doc/packages/reiser4progs/BUGS
-/usr/share/doc/packages/reiser4progs/COPYING
-/usr/share/doc/packages/reiser4progs/ChangeLog
-/usr/share/doc/packages/reiser4progs/NEWS
-/usr/share/doc/packages/reiser4progs/README
-/usr/share/doc/packages/reiser4progs/TODO
-/usr/share/man/man8/debugfs.reiser4.8.gz
-/usr/share/man/man8/fsck.reiser4.8.gz
-/usr/share/man/man8/measurefs.reiser4.8.gz
-/usr/share/man/man8/mkfs.reiser4.8.gz
-
-Background history
-==================
- http://www.spinics.net/lists/reiserfs-devel/msg04206.html
- http://www.spinics.net/lists/reiserfs-devel/msg04682.html
-
-[from url] previous run
-
-#fsck.reiser4  --build-fs --force  /dev/sdb
-.
-.
-LOOKING FOR UNCONNECTED NODES                                             
-                                                                          
-     
-FSCK: node.c: 108: repair_node_items_check: Node (43828275), items (0) and
-(1): Wrong order of keys.                                                 
-
-     
-FSCK: node.c: 108: repair_node_items_check: Node (52697435), items (79)
-and (80): Wrong order of keys.                                            
-
-        
-FSCK: node.c: 108: repair_node_items_check: Node (63227569), items (24)
-and (25): Wrong order of keys.                                            
-
-        
-FSCK: node.c: 108: repair_node_items_check: Node (63227571), items (73)
-and (74): Wrong order of keys.                                            
-
-        
-FSCK: node.c: 108: repair_node_items_check: Node (116595727), items (20)
-and (21): Wrong order of keys.                                            
-
-       
-FSCK: node.c: 108: repair_node_items_check: Node (227923161), items (22)
-and (23): Wrong order of keys.                                            
-
-       
-FSCK: node.c: 108: repair_node_items_check: Node (284305753), items (61)
-and (62): Wrong order of keys.                                            
-
-       
-        Read nodes 1481038                                                
-                                                                          
-     
-        Good nodes 471512 
-                Leaves of them 466164, Twigs of them 5348 
-        Time interval: Thu Sep  3 07:11:22 2015 - Thu Sep  3 07:14:56 2015
-
-.
-.
-This is a bug in fsck: it jumps to wrong branch for some reasons.
-Edward.
+Thank you all.
 
 
+Best Professional Regards.
 
+
+[1]< http://marc.info/?l=reiserfs-devel&m=143237396102328&w=2 >
+
+
+-- 
+Jose R R
+http://metztli.it
+---------------------------------------------------------------------------------------------
+Try at no charge http://b2evolution.net for http://OpenShift.com PaaS
+---------------------------------------------------------------------------------------------
+from our GitHub http://Nepohualtzintzin.com repository. Cloud the easy way!
