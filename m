@@ -1,47 +1,79 @@
-From: Yaowei Bai <bywxiaobai@163.com>
-Subject: [PATCH 15/17] fs/reiserfs: remove unnecessary new_valid_dev check
-Date: Mon, 28 Sep 2015 22:47:07 +0800
-Message-ID: <1443451627-5740-1-git-send-email-bywxiaobai@163.com>
-References: <1443446807-4838-1-git-send-email-bywxiaobai@163.com>
+From: <doiggl@velocitynet.com.au>
+Subject: How can I repair Reiser4 filesystem when last run of fsck.reiser4 produced the following. [on sdb]
+Date: Wed, 30 Sep 2015 18:11:06 +1000
+Message-ID: <dd1767ad680518dbe23072bbdb6068b0@mail.velocitynet.com.au>
+Mime-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-	s=s110527; h=From:Subject:Date:Message-Id; bh=05N3uMLEltwbWCkcPB
-	pxLmFPv1szVjhxhl7dGfVafsA=; b=fsy9wfYLtQduIgW8M5kwPdB4g8Pc8cc2nT
-	JREFO2BcGh1CYoMrAdY2Ku2Y9PTKPcULjNmz53SqfMFDtqKMf5STd9/zFTaRbvZM
-	+dXm1QlYkIzUfBNAjOxim7jOT2HgW2P0sZE5sXQeUD7OSW2l4UgDrLE+U9+I7OBz
-	b3uh3vGeo=
-In-Reply-To: <1443446807-4838-1-git-send-email-bywxiaobai@163.com>
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
-MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: viro@zeniv.linux.org.uk, jack@suse.cz, akpm@linux-foundation.org, osandov@osandov.com, keescook@chromium.org, fabf@skynet.be, dhowells@redhat.com
-Cc: reiserfs-devel@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Reiserfs development mailing list <reiserfs-devel@vger.kernel.org>
 
-As new_valid_dev always returns 1, so !new_valid_dev check is not
-needed, remove it.
+Hello,
+Question,
+How can I repair Reiser4 filesystem when last run of fsck.reiser4 produced
+the following. [1]
+Thanks Glenn
 
-Signed-off-by: Yaowei Bai <bywxiaobai@163.com>
----
- fs/reiserfs/namei.c | 3 ---
- 1 file changed, 3 deletions(-)
+# fsck.reiser4  --build-fs --force  /dev/sdb
 
-diff --git a/fs/reiserfs/namei.c b/fs/reiserfs/namei.c
-index 5f1c9c2..47f9698 100644
---- a/fs/reiserfs/namei.c
-+++ b/fs/reiserfs/namei.c
-@@ -712,9 +712,6 @@ static int reiserfs_mknod(struct inode *dir, struct dentry *dentry, umode_t mode
- 	    2 * (REISERFS_QUOTA_INIT_BLOCKS(dir->i_sb) +
- 		 REISERFS_QUOTA_TRANS_BLOCKS(dir->i_sb));
- 
--	if (!new_valid_dev(rdev))
--		return -EINVAL;
--
- 	retval = dquot_initialize(dir);
- 	if (retval)
- 		return retval;
--- 
-1.9.1
 
+[1]
+Background history
+==================
+http://www.spinics.net/lists/reiserfs-devel/msg04853.html
+
+[from url] last run
+
+#fsck.reiser4  --build-fs --force  /dev/sdb
+.
+.
+[from url] previous run
+
+#fsck.reiser4  --build-fs --force  /dev/sdb
+.
+.
+LOOKING FOR UNCONNECTED NODES                                             
+                                                                          
+     
+FSCK: node.c: 108: repair_node_items_check: Node (43828275), items (0) and
+(1): Wrong order of keys.                                                 
+
+     
+FSCK: node.c: 108: repair_node_items_check: Node (52697435), items (79)
+and (80): Wrong order of keys.                                            
+
+        
+FSCK: node.c: 108: repair_node_items_check: Node (63227569), items (24)
+and (25): Wrong order of keys.                                            
+
+        
+FSCK: node.c: 108: repair_node_items_check: Node (63227571), items (73)
+and (74): Wrong order of keys.                                            
+
+        
+FSCK: node.c: 108: repair_node_items_check: Node (116595727), items (20)
+and (21): Wrong order of keys.                                            
+
+       
+FSCK: node.c: 108: repair_node_items_check: Node (227923161), items (22)
+and (23): Wrong order of keys.                                            
+
+       
+FSCK: node.c: 108: repair_node_items_check: Node (284305753), items (61)
+and (62): Wrong order of keys.                                            
+
+       
+        Read nodes 1481038                                                
+                                                                          
+     
+        Good nodes 471512 
+                Leaves of them 466164, Twigs of them 5348 
+        Time interval: Thu Sep  3 07:11:22 2015 - Thu Sep  3 07:14:56 2015
+
+.
+.
+This is a bug in fsck: it jumps to wrong branch for some reasons.
+Edward.
 
