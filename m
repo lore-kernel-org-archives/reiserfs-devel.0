@@ -1,57 +1,79 @@
-From: Edward Shishkin <edward.shishkin@gmail.com>
-Subject: Re: [PATCH 3/3] reiser4: in our own sync writes, mark pages dirty
- before marking them writeback.
-Date: Mon, 12 Oct 2015 11:10:08 +0200
-Message-ID: <561B78F0.30006@gmail.com>
-References: <1444389417-14929-1-git-send-email-intelfx100@gmail.com>
- <1444389417-14929-4-git-send-email-intelfx100@gmail.com>
- <5617C0C1.6060806@gmail.com> <1444398642.6030.3.camel@gmail.com>
- <5617D55D.2040908@gmail.com> <1444410842.2213.5.camel@gmail.com>
- <56182257.7060304@gmail.com> <1444473863.4257.10.camel@gmail.com>
- <561928CF.9030903@gmail.com>
- <A0E9999A-A36E-43C2-A2D9-D68B39BD032B@linuxhacker.ru>
+From: <doiggl@velocitynet.com.au>
+Subject: A request for fix for 'FSCK: node.c:  Wrong order of keys.'
+Date: Wed, 14 Oct 2015 10:49:15 +1100
+Message-ID: <fa254638aecdadfc37c99129b79e46e5@mail.velocitynet.com.au>
+References: <02dbaf91d2fcee90ee2f08ec0c937a63@mail.velocitynet.com.au>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20120113;
-        h=from:subject:to:references:cc:message-id:date:user-agent
-         :mime-version:in-reply-to:content-type:content-transfer-encoding;
-        bh=BasrhCLXunjnisjhiCwCSGaTL5B/mHT9F6jOllUX+ds=;
-        b=x6zHYJdwt4wAEmFO4Qtlvf0sYF4U3j3uWYE2TbPgLzGf0YEpXfkMna7L5GE+8ccKgq
-         MqxTbY+S/beCMuBAmuyRPm7DJGjTfiRmztd83ejP1rkTNKNH4ybuPcnFB/o4UCHGlqcK
-         P2NvxQFydNAJ3J3+NALIzYhEH3coXfPQiotxC0eKfSlTbi3t0M0HoMT1ibXctW1/QsIv
-         wKPMiSxJZKsi2YnTl3pL6Sxki/dLokgeyPA3SJEGDD3UCkKVSRvFRzJrut/eVgTJZdrW
-         wALmyIM7tNkXBHw+F5I6twAW8qLLg5y/Km5gRKYr8OwCiOfDV0WrNFVSYeoOunM2grIa
-         fM3A==
-In-Reply-To: <A0E9999A-A36E-43C2-A2D9-D68B39BD032B@linuxhacker.ru>
+In-Reply-To: <02dbaf91d2fcee90ee2f08ec0c937a63@mail.velocitynet.com.au>
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: Oleg Drokin <green@linuxhacker.ru>
-Cc: Ivan Shapovalov <intelfx100@gmail.com>, reiserfs-devel@vger.kernel.org, =?UTF-8?B?RHXFoWFuIMSMb2xpxIc=?= <dusanc@gmail.com>
+Content-Type: text/plain; charset="us-ascii"
+To: reiserfs-devel@vger.kernel.org
 
-On 10/10/2015 06:51 PM, Oleg Drokin wrote:
-> On Oct 10, 2015, at 11:03 AM, Edward Shishkin wrote:
->>>> For formatted nodes we can continue to narrow down the problem
->>>> (see the attached patch).
->>> Having applied the patch, I saw loads and loads of warnings (in ~10
->>> distinct stacktraces), but no panics or oopses in the initial location.
->>> The false positives are possible, right?
->> Yes, a lot of ones and nothing interesting.
->> The same for Dushan's logs. Sorry for bad idea..
-> Actually the idea might not be as bad as you think.
->
-> This is because not every page that you forgot to call page_dirty on
-> will cause a crash.
-> Only the pages that had never ever had been set dirty.
-> So in a lot of cases the crash does not happen because the page got
-> dirtied by a normal path somewhere else and then cleared by normal
-> means, but i_wb remains with that page forever until it's fully torn down
-> from the pagecache.
+Hello,
 
-I wanted something more efficient than simply code review..
-However, in all paths found by Ivan I see that pages are not
-obliged to become dirty in write-locking sessions..
+A request for fix for 'FSCK: node.c:  Wrong order of keys.'
 
-Edward.
+Can problem be fixed ?
+Thanks
+--Glenn
+
+# fsck.reiser4  -V
+fsck.reiser4 1.1.0
+Format release: 4.0.1
+
+# rpm -qa |grep -i reiser4 |sort
+kernel-reiser4-4.1.6-7.1.gd2bbe7f.x86_64
+libreiser4-1_1-0-1.1.0-14.1.x86_64
+reiser4progs-1.1.0-14.1.x86_64
+
+
+# full spec file:
+https://build.opensuse.org/package/view_file/home:doiggl/reiser4progs/reiser4progs.spec?expand=1
+
+Background history
+==================
+http://www.spinics.net/lists/reiserfs-devel/msg04727.html
+
+[from url]
+
+#fsck.reiser4  --build-fs --force  /dev/sdb
+.
+.
+LOOKING FOR UNCONNECTED NODES                                             
+                                                                          
+     
+#http://www.spinics.net/lists/reiserfs-devel/msg04206.html
+
+# fsck.reiser4 --build-fs --force  /dev/sdb
+.
+.
+ (1): Wrong order of keys.
+ FSCK: node.c: 108: repair_node_items_check: Node (52697435), items (79)
+ and (80): Wrong order of keys.
+ FSCK: node.c: 108: repair_node_items_check: Node (63227569), items (24)
+ and (25): Wrong order of keys.
+ FSCK: node.c: 108: repair_node_items_check: Node (63227571), items (73)
+ and (74): Wrong order of keys.
+ FSCK: node.c: 108: repair_node_items_check: Node (116595727), items
+(20)
+ and (21): Wrong order of keys.
+ FSCK: node.c: 108: repair_node_items_check: Node (227923161), items
+(22)
+ and (23): Wrong order of keys.
+ FSCK: node.c: 108: repair_node_items_check: Node (284305753), items
+(61)
+ and (62): Wrong order of keys.
+          Read nodes 1481038
+                                             
+          Good nodes 471512
+                  Leaves of them 466164, Twigs of them 5348
+          Time interval: Wed Aug 27 03:35:57 2014 - Wed Aug 27 03:39:46
+          2014
+
+ ***** fsck.reiser4 finished at Wed Aug 27 03:39:46 2014
+ Closing fs...done
+
+ FS is consistent.
