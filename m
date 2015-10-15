@@ -1,120 +1,145 @@
-From: Ivan Shapovalov <intelfx100@gmail.com>
-Subject: Re: [PATCH 3/3] reiser4: in our own sync writes, mark pages dirty
- before marking them writeback.
-Date: Wed, 14 Oct 2015 22:06:30 +0300
-Message-ID: <1444849590.13210.3.camel@gmail.com>
-References: <1444389417-14929-1-git-send-email-intelfx100@gmail.com>
-	 <1444389417-14929-4-git-send-email-intelfx100@gmail.com>
-	 <5617C0C1.6060806@gmail.com> <1444398642.6030.3.camel@gmail.com>
-	 <5617D55D.2040908@gmail.com> <1444410842.2213.5.camel@gmail.com>
-	 <56182257.7060304@gmail.com> <1444473863.4257.10.camel@gmail.com>
-	 <561B7857.1030000@gmail.com> <1444817147.5346.10.camel@gmail.com>
-	 <1444820148.4077.1.camel@gmail.com>
+From: <doiggl@velocitynet.com.au>
+Subject: segfault at 0 ip 00007efe91c79e09 sp 00007ffd4a43f430 error 4 in libreiser4-1.1.so from  '# fsck.reiser4 --fix /dev/sdb'
+Date: Thu, 15 Oct 2015 19:43:06 +1100
+Message-ID: <9ebf7916da11fc84af7b109184e19598@mail.velocitynet.com.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg="pgp-sha256";
-	protocol="application/pgp-signature"; boundary="=-6nL4MjQgAw6qsPQjA408"
+Content-Transfer-Encoding: 8bit
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20120113;
-        h=message-id:subject:from:to:cc:date:in-reply-to:references
-         :content-type:mime-version;
-        bh=z1RofdzNDG/hniD0KUtRT2rMim1xxSkpMRTedcDZ+zg=;
-        b=RrAdak/+HTp7ILHzhUsKKjkcnk7JFMdX0QfdReZ8pCVLtU1VYZsq5KfLWn8oRDU9Z2
-         q1vmtwb79t0oNziIaJ5B66GJw+P/0zqiesVJ6OX4COiywwpsg13SqJBRHq+IYnRLSmm2
-         KXw62QftuNB0gJ/EghcM2cQ8DrnH11HiGSEbe6aMQfXfvfKuXTAhK3D8+pzCuBYigakQ
-         2DyVu2wWTUmge8K0NvaFzLyJAI4068vEgYGp/KZkGGJtmfQOG1LClujFnE6GV/TcJZRz
-         K3oo6y7c8k0AnG6XZpsZwhlGgpxUmOnHENFXTsmNYK9Q5jBoFpQM7YlPt0dS/b3AiY1t
-         Y6uQ==
-In-Reply-To: <1444820148.4077.1.camel@gmail.com>
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
-To: Edward Shishkin <edward.shishkin@gmail.com>
-Cc: Oleg Drokin <green@linuxhacker.ru>, reiserfs-devel@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+To: reiserfs-devel@vger.kernel.org
 
+Hello,
 
---=-6nL4MjQgAw6qsPQjA408
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+How is segfault fixed ?
+using opensuse 64 bit x86_64
+Thanks
+--Glenn
 
-On 2015-10-14 at 13:55 +0300, Ivan Shapovalov wrote:
-> On 2015-10-14 at 13:05 +0300, Ivan Shapovalov wrote:
-> > On 2015-10-12 at 11:07 +0200, Edward Shishkin wrote:
-> > > [...]
-> >=20
-> > So, I've added three non-fatal checks right before
-> > set_page_writeback():
-> > - PageDirty(pg)
-> > - JF_ISSET(cur, JNODE_DIRTY)
-> > - pg->mapping->host->i_wb !=3D NULL
-> >=20
-> > In almost all times when either of the checks is triggered,
-> > the first two checks are triggered at once (i. e. neither page nor
-> > jnode is dirty, but i_wb is not NULL). This happens with both
-> > formatted
-> > nodes (jnode_is_znode), unformatted nodes (jnode_is_unformatted)
-> > and
-> > other nodes.
-> >=20
-> > And, finally, there are very few warnings where jnode _is_ dirty,
-> > but
-> > the page _isn't_. On the first such warning i_wb is also NULL. And,
-> > just as you've suspected, this happens with an unformatted node.
-> >=20
-> > I'll try to add a backtrace buffer into struct jnode and generate a
-> > backtrace there on each jnode dirtying attempt... and then print it
-> > for
-> > the problematic jnode.
-> >=20
->=20
-> So, here it is. On all occurrences the backtrace is the same.
->
-> [...]
+# dmesg
+[36217.056514] fsck.reiser4[1994]: segfault at 0 ip 00007efe91c79e09 sp
+00007ffd4a43f430 error 4 in libreiser4-1.1.so.0.0.0[7efe91c5c000+4c000]
 
+# rpm -qf /usr/lib64/libreiser4-1.1.so.0.0.0
+libreiser4-1_1-0-1.1.0-14.1.x86_64
 
-Hmm. This obvious fix "works",  but causes an assertion on rootfs unmount:
+# rpm -qf /usr/lib64/libreiser4-1.1.so.0
+libreiser4-1_1-0-1.1.0-14.1.x86_64
 
-"list_empty(&get_super_private(super)->all_jnodes)" in init_super.c:55 (no =
-maintainer-id).
+# fsck.reiser4 --fix /dev/sdb
+*******************************************************************
+This is an EXPERIMENTAL version of fsck.reiser4. Read README first.
+*******************************************************************
 
-Why?
+Fscking the /dev/sdb block device.                                        
+                                                   
+Will fix minor corruptions of the Reiser4 SuperBlock.                     
+                                                   
+Will fix minor corruptions of the Reiser4 FileSystem.                     
+                                                   
+Continue?                                                                 
+                                                   
+(Yes/No): yes
+***** fsck.reiser4 started at Thu Oct 15 08:39:00 2015
+FSCK: backup.c: 505: repair_backup_open: Found backup does not match to
+the on-disk filesystem metadata.                       
+Backup update is needed. Done.                                            
+                                                   
+Reiser4 fs was detected on /dev/sdb.                                      
+                                                   
+Master super block (16): 
+magic:          ReIsEr4 
+blksize:        4096 
+format:         0x0 (format40) 
+uuid:           3006ced1-7490-4ea8-a9b8-d82143c6bede 
+label:          <none> 
+ 
+Format super block (17): 
+plugin:         format40 
+description:    Disk-format plugin. 
+version:        1 
+magic:          ReIsEr40FoRmAt 
+mkfs id:        0x1ddaf754 
+flushes:        0 
+blocks:         488378640 
+free blocks:    217146980 
+root block:     37017218 
+tail policy:    0x2 (smart) 
+next oid:       0xedade 
+file count:     188313 
+tree height:    6 
+key policy:     LARGE 
+ 
+ 
+CHECKING THE STORAGE TREE                                                 
+                                                     
+        Read nodes 197008413                                              
+                                                              
+        Nodes left in the tree 197008413 
+                Leaves of them 194764277, Twigs of them 2217790 
+        Time interval: Thu Oct 15 08:40:55 2015 - Thu Oct 15 16:24:00 2015
 
----
-=C2=A0fs/reiser4/plugin/file/tail_conversion.c | 1 +
-=C2=A01 file changed, 1 insertion(+)
+CHECKING EXTENT REGIONS.                                                  
+                                                              
+        Read twigs 2217790                                                
+                                                              
+        Time interval: Thu Oct 15 16:24:00 2015 - Thu Oct 15 18:33:46 2015
 
-diff --git a/fs/reiser4/plugin/file/tail_conversion.c b/fs/reiser4/plugin/f=
-ile/tail_conversion.c
-index 6ffa900..3b4e77d 100644
---- a/fs/reiser4/plugin/file/tail_conversion.c
-+++ b/fs/reiser4/plugin/file/tail_conversion.c
-@@ -175,6 +175,7 @@ static int replace(struct inode *inode, struct page **p=
-ages, unsigned nr_pages,
-=C2=A0								i_mapping));
-=C2=A0		if (result)
-=C2=A0			break;
-+		set_page_dirty_notag(pages[i]);
-=C2=A0		unlock_page(pages[i]);
-=C2=A0		result =3D find_or_create_extent(pages[i]);
-=C2=A0		if (result) {
---=20
-2.6.1
+CHECKING THE SEMANTIC TREE                                                
+                                                              
+FSCK: semantic.c: 573: repair_semantic_dir_open: Failed to recognize the
+plugin for the directory [29:0:2a].                              
+FSCK: semantic.c: 651: repair_semantic_root_prepare: No root directory
+opened. 
+        Time interval: Thu Oct 15 18:33:47 2015 - Thu Oct 15 18:33:47 2015
+                                                              
+FSCK: repair.c: 547: repair_sem_fini: On-disk used block bitmap and really
+used block bitmap differ.                                      
+Segmentation fault
 
---=20
-Ivan Shapovalov / intelfx /
+# dmesg
+[36217.056514] fsck.reiser4[1994]: segfault at 0 ip 00007efe91c79e09 sp
+00007ffd4a43f430 error 4 in libreiser4-1.1.so.0.0.0[7efe91c5c000+4c000]
 
+# dmesg
+[38198.804395] usb 1-2: USB disconnect, device number 3
+[38236.083430] usb 1-2: new high-speed USB device number 4 using ehci-pci
+[38236.219675] usb 1-2: New USB device found, idVendor=04fc,
+idProduct=0c25
+[38236.219687] usb 1-2: New USB device strings: Mfr=2, Product=3,
+SerialNumber=1
+[38236.219694] usb 1-2: Product: USB to Serial-ATA bridge
+[38236.219700] usb 1-2: Manufacturer: Sunplus Technology Inc.
+[38236.219705] usb 1-2: SerialNumber: ST32000542            5XW1ZMG4
+[38236.222656] usb-storage 1-2:1.0: USB Mass Storage device detected
+[38236.223163] scsi host5: usb-storage 1-2:1.0
+[38237.229192] scsi 5:0:0:0: Direct-Access     ST320005 42AS              
+  PQ: 0 ANSI: 2
+[38237.229780] sd 5:0:0:0: Attached scsi generic sg2 type 0
+[38237.231338] sd 5:0:0:0: [sdb] 3907029168 512-byte logical blocks: (2.00
+TB/1.81 TiB)
+[38237.234898] sd 5:0:0:0: [sdb] Write Protect is off
+[38237.234909] sd 5:0:0:0: [sdb] Mode Sense: 38 00 00 00
+[38237.237568] sd 5:0:0:0: [sdb] No Caching mode page found
+[38237.237578] sd 5:0:0:0: [sdb] Assuming drive cache: write through
+[38237.278121] sd 5:0:0:0: [sdb] Attached SCSI disk
+[38281.822957] Loading Reiser4 (format release: 4.0.1) See www.namesys.com
+for a description of Reiser4.
+[38281.828160] reiser4[mount(17356)]: try_init_format40
+(../fs/reiser4/plugin/disk_format/disk_format40.c:300)[vpf-1363]:
+NOTICE: Warning: mounting sdb with errors.
+[38281.828173] reiser4: sdb: found disk format 4.0.1.
+[38281.828284] reiser4: sdb: use 'fsck.reiser4 --fix' to complete disk
+format upgrade.
+[38391.735448] reiser4[mount(17356)]: traverse_tree
+(../fs/reiser4/search.c:725)[nikita-373]:
+WARNING: not found on internal node: level: 6, lock_level: 1, stop_level:
+1 lock_mode: read, bias: exact
+[38391.735466] reiser4[mount(17356)]: key_warning
+(../fs/reiser4/plugin/file_plugin_common.c:510)[nikita-717]:
+WARNING: Error for inode 42 (-2)
 
---=-6nL4MjQgAw6qsPQjA408
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: This is a digitally signed message part
-Content-Transfer-Encoding: 7bit
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
-
-iF4EABEIAAYFAlYep7YACgkQxUKljSIMAnCBhAEAqIHMEbySKg0BSjBqp+gucQIQ
-xsOO0uq6DFPkoGmmUTMBAIDvldSD8CnVBkn/kvlWWsi3yN1iYDEs4UmxHGGLUa0r
-=nxwU
------END PGP SIGNATURE-----
-
---=-6nL4MjQgAw6qsPQjA408--
-
+# cat /proc/partitions
+major minor  #blocks  name
+   8       16   1,953,514,584 sdb
