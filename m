@@ -1,96 +1,370 @@
-From: Edward Shishkin <edward.shishkin@gmail.com>
-Subject: Re: [PATCH 3/3] reiser4: in our own sync writes, mark pages dirty
- before marking them writeback.
-Date: Thu, 15 Oct 2015 19:20:17 +0200
-Message-ID: <561FE051.3000104@gmail.com>
-References: <1444389417-14929-1-git-send-email-intelfx100@gmail.com>	 <1444389417-14929-4-git-send-email-intelfx100@gmail.com>	 <5617C0C1.6060806@gmail.com> <1444398642.6030.3.camel@gmail.com>	 <5617D55D.2040908@gmail.com> <1444410842.2213.5.camel@gmail.com>	 <56182257.7060304@gmail.com> <1444473863.4257.10.camel@gmail.com>	 <561B7857.1030000@gmail.com> <1444817147.5346.10.camel@gmail.com>	 <1444820148.4077.1.camel@gmail.com> <1444849590.13210.3.camel@gmail.com>
+From: <doiggl@velocitynet.com.au>
+Subject: I need help to repair and mount command be done to use a reiser4 volume ? [located /dev/sdb]
+Date: Sat, 17 Oct 2015 11:03:24 +1100
+Message-ID: <b493fcd92638c7e48c70f67f29ab57fa@mail.velocitynet.com.au>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20120113;
-        h=message-id:date:from:user-agent:mime-version:to:cc:subject
-         :references:in-reply-to:content-type:content-transfer-encoding;
-        bh=N6xd1Yb12eZyeWLGJDnWwXyqGU4PlMEkGZJPIJCmCqg=;
-        b=scxeogeIt3ylLQsENoApoP3BUF6r2gBPRChzsLZmzc1DTMIsmqt0TnWzbw4K9A/DaN
-         lr327xyKIN6rOmXGYu3LnGiI9Cp/Lqi57F7xQbW6cKs1oB0xbILOMYFTiMmn81r0IlJs
-         0h2AhuldQvbMDnBjZFERCf0tBSX4G4uFY/vljhgeJcxpONr/bB7FnciCU260fsgH2+tp
-         fm0kvOmjCO369yFmRZ61MWYONSQaFr4nBf0CbKX59xEJuE49ttap2lHfmS9MHfV2BRqS
-         rMSu7vmXY0nlmJeWElVmL+WL7ANVuMS+6TDtyzxLuAo43R9td6BnDgG+FXYTXGXUfXQc
-         hEDw==
-In-Reply-To: <1444849590.13210.3.camel@gmail.com>
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: Ivan Shapovalov <intelfx100@gmail.com>
-Cc: Oleg Drokin <green@linuxhacker.ru>, reiserfs-devel@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+To: reiserfs-devel@vger.kernel.org
 
 Hello,
+Need help to repair and mount command be done to use a reiser4 volume ?
+[located /dev/sdb]
+# mount /dev/sdb /media/disk
 
-So the tail conversion is the culprit?
-It's quite realistic...
-I am currently on vacations,
-I'll take a look at this at the end of October
-more carefully.
+- mount command [for sdb]
+  see http://www.spinics.net/lists/reiserfs-devel/msg04810.html
+  
+- These commands were run using opensuse 64 bit x86_64
+- Steps run so far in this order:
+# fsck.reiser4 --build-sb --force  /dev/sdb
+# fsck.reiser4 --build-fs --force  /dev/sdb
+# fsck.reiser4  --check /dev/sdb
 
-Thanks!
-Edward.
+Entire output see [1]
 
 
+message sequence from commands:
+-------------------------------
 
-On 10/14/2015 09:06 PM, Ivan Shapovalov wrote:
-> On 2015-10-14 at 13:55 +0300, Ivan Shapovalov wrote:
->> On 2015-10-14 at 13:05 +0300, Ivan Shapovalov wrote:
->>> On 2015-10-12 at 11:07 +0200, Edward Shishkin wrote:
->>>> [...]
->>> So, I've added three non-fatal checks right before
->>> set_page_writeback():
->>> - PageDirty(pg)
->>> - JF_ISSET(cur, JNODE_DIRTY)
->>> - pg->mapping->host->i_wb != NULL
->>>
->>> In almost all times when either of the checks is triggered,
->>> the first two checks are triggered at once (i. e. neither page nor
->>> jnode is dirty, but i_wb is not NULL). This happens with both
->>> formatted
->>> nodes (jnode_is_znode), unformatted nodes (jnode_is_unformatted)
->>> and
->>> other nodes.
->>>
->>> And, finally, there are very few warnings where jnode _is_ dirty,
->>> but
->>> the page _isn't_. On the first such warning i_wb is also NULL. And,
->>> just as you've suspected, this happens with an unformatted node.
->>>
->>> I'll try to add a backtrace buffer into struct jnode and generate a
->>> backtrace there on each jnode dirtying attempt... and then print it
->>> for
->>> the problematic jnode.
->>>
->> So, here it is. On all occurrences the backtrace is the same.
->>
->> [...]
->
-> Hmm. This obvious fix "works",  but causes an assertion on rootfs unmount:
->
-> "list_empty(&get_super_private(super)->all_jnodes)" in init_super.c:55 (no maintainer-id).
->
-> Why?
->
-> ---
->   fs/reiser4/plugin/file/tail_conversion.c | 1 +
->   1 file changed, 1 insertion(+)
->
-> diff --git a/fs/reiser4/plugin/file/tail_conversion.c b/fs/reiser4/plugin/file/tail_conversion.c
-> index 6ffa900..3b4e77d 100644
-> --- a/fs/reiser4/plugin/file/tail_conversion.c
-> +++ b/fs/reiser4/plugin/file/tail_conversion.c
-> @@ -175,6 +175,7 @@ static int replace(struct inode *inode, struct page **pages, unsigned nr_pages,
->   								i_mapping));
->   		if (result)
->   			break;
-> +		set_page_dirty_notag(pages[i]);
->   		unlock_page(pages[i]);
->   		result = find_or_create_extent(pages[i]);
->   		if (result) {
+# fsck.reiser4 --build-sb --force  /dev/sdb
+2 fatal corruptions were detected in FileSystem. Run with --build-fs
+option to fix them.
+
+# fsck.reiser4 --build-fs --force  /dev/sdb
+LOOKING FOR UNCONNECTED NODES                                             
+                                                                         
+FSCK: node.c: 108: repair_node_items_check: Node (43828275), items (0) and
+(1): Wrong order of keys.                                                 
+FSCK: node.c: 108: repair_node_items_check: Node (52697435), items (79)
+and (80): Wrong order of keys.                                             
+
+FSCK: node.c: 108: repair_node_items_check: Node (63227569), items (24)
+and (25): Wrong order of keys.                                             
+
+FSCK: node.c: 108: repair_node_items_check: Node (63227571), items (73)
+and (74): Wrong order of keys.                                             
+
+FSCK: node.c: 108: repair_node_items_check: Node (116595727), items (20)
+and (21): Wrong order of keys.                                             
+
+FSCK: node.c: 108: repair_node_items_check: Node (227923161), items (22)
+and (23): Wrong order of keys.                                             
+
+FSCK: node.c: 108: repair_node_items_check: Node (284305753), items (61)
+and (62): Wrong order of keys.
+
+# fsck.reiser4  --check /dev/sdb
+2 fatal corruptions were detected in FileSystem. Run with --build-fs
+option to fix them
+
+my observations:
+It seems to go loop around these commands.
+No way to complete repair sequence to allow mount on volume.
+So stuck in a loop of commands.
+I know files and data are on disk but just cannot get to it.
+
+Questions:
+- Is this because of a bug in fsck: 'it jumps to wrong branch' ?
+  see http://www.spinics.net/lists/reiserfs-devel/msg04206.html
+- How can repair be done to allow ?
+
+Thanks
+--Glenn
+
+
+[1]
+# fsck.reiser4 --build-sb --force  /dev/sdb
+*******************************************************************
+This is an EXPERIMENTAL version of fsck.reiser4. Read README first.
+*******************************************************************
+
+Fscking the /dev/sdb block device.                                        
+                                                                          
+                          
+Will build the Reiser4 SuperBlock.                                        
+                                                                          
+                          
+Will check the consistency of the Reiser4 FileSystem.                     
+                                                                          
+                          
+***** fsck.reiser4 started at Thu Oct 15 20:54:23 2015
+FSCK: backup.c: 505: repair_backup_open: Found backup does not match to
+the on-disk filesystem metadata.                                           
+                             
+FSCK: format40_repair.c: 129: format40_check_struct: Minor format version
+number (1) in superblock doesn't match the one in backup (0). Fixed.       
+                           
+Reiser4 fs was detected on /dev/sdb.                                      
+                                                                          
+                          
+Master super block (16): 
+magic:          ReIsEr4 
+blksize:        4096 
+format:         0x0 (format40) 
+uuid:           3006ced1-7490-4ea8-a9b8-d82143c6bede 
+label:          <none> 
+ 
+Format super block (17): 
+plugin:         format40 
+description:    Disk-format plugin. 
+version:        0 
+magic:          ReIsEr40FoRmAt 
+mkfs id:        0x1ddaf754 
+flushes:        0 
+blocks:         488378640 
+free blocks:    217146980 
+root block:     37017218 
+tail policy:    0x2 (smart) 
+next oid:       0xedade 
+file count:     188313 
+tree height:    6 
+key policy:     LARGE 
+ 
+ 
+CHECKING THE STORAGE TREE                                                 
+                                                                          
+                          
+        Read nodes 197008413                                              
+                                                                          
+                          
+        Nodes left in the tree 197008413                                  
+                                                                          
+                    
+                Leaves of them 194764277, Twigs of them 2217790           
+                                                                          
+                    
+        Time interval: Thu Oct 15 20:56:20 2015 - Fri Oct 16 04:40:12 2015
+                                                                          
+                    
+CHECKING EXTENT REGIONS.                                                  
+                                                                          
+                    
+        Read twigs 2217790                                                
+                                                                          
+                    
+        Time interval: Fri Oct 16 04:40:12 2015 - Fri Oct 16 06:49:48 2015
+                                                                          
+                    
+CHECKING THE SEMANTIC TREE                                                
+                                                                          
+                    
+FSCK: semantic.c: 573: repair_semantic_dir_open: Failed to recognize the
+plugin for the directory [29:0:2a].                                        
+                      
+FSCK: semantic.c: 651: repair_semantic_root_prepare: No root directory
+opened.                                                                    
+                        
+        Time interval: Fri Oct 16 06:49:48 2015 - Fri Oct 16 06:49:48 2015
+                                                                          
+                    
+FSCK: repair.c: 547: repair_sem_fini: On-disk used block bitmap and really
+used block bitmap differ.                                                  
+                    
+***** fsck.reiser4 finished at Fri Oct 16 06:49:49 2015                   
+                                                                          
+                    
+Closing fs...done                                                         
+                                                                          
+
+                                                                          
+                                                                          
+
+2 fatal corruptions were detected in FileSystem. Run with --build-fs
+option to fix them.                                                        
+     
+                                                                          
+                                                                          
+
+You have new mail in /var/spool/mail/root                                 
+                                                                          
+
+
+# fsck.reiser4 --build-fs --force  /dev/sdb                               
+                                                                    
+*******************************************************************       
+                                                                          
+
+This is an EXPERIMENTAL version of fsck.reiser4. Read README first.       
+                                                                          
+
+*******************************************************************       
+                                                                          
+
+                                                                          
+                                                                          
+
+Fscking the /dev/sdb block device.                                        
+                                                                          
+
+Will check the consistency of the Reiser4 SuperBlock.                     
+                                                                          
+
+Will build the Reiser4 FileSystem.                                        
+                                                                          
+
+***** fsck.reiser4 started at Fri Oct 16 10:43:34 2015                    
+                                                                          
+
+Reiser4 fs was detected on /dev/sdb.                                      
+                                                                          
+
+Master super block (16):                                                  
+                                                                          
+
+magic:          ReIsEr4                                                   
+                                                                          
+
+blksize:        4096                                                      
+                                                                          
+
+format:         0x0 (format40)                                            
+                                                                          
+
+uuid:           3006ced1-7490-4ea8-a9b8-d82143c6bede 
+label:          <none> 
+ 
+Format super block (17): 
+plugin:         format40 
+description:    Disk-format plugin. 
+version:        0 
+magic:          ReIsEr40FoRmAt 
+mkfs id:        0x1ddaf754 
+flushes:        0 
+blocks:         488378640 
+free blocks:    217146980 
+root block:     37017218 
+tail policy:    0x2 (smart) 
+next oid:       0xedade 
+file count:     188313 
+tree height:    6 
+key policy:     LARGE 
+ 
+CHECKING THE STORAGE TREE                                                 
+                                                                          
+
+        Read nodes 197008413                                              
+                                                                          
+
+        Nodes left in the tree 197008413 
+                Leaves of them 194764277, Twigs of them 2217790 
+        Time interval: Fri Oct 16 10:45:30 2015 - Fri Oct 16 18:31:21 2015
+
+CHECKING EXTENT REGIONS.                                                  
+                                                                         
+        Read twigs 2217790                                                
+                                                                         
+        Time interval: Fri Oct 16 18:31:21 2015 - Fri Oct 16 20:41:09 2015
+
+LOOKING FOR UNCONNECTED NODES                                             
+                                                                         
+FSCK: node.c: 108: repair_node_items_check: Node (43828275), items (0) and
+(1): Wrong order of keys.                                                 
+FSCK: node.c: 108: repair_node_items_check: Node (52697435), items (79)
+and (80): Wrong order of keys.                                             
+
+FSCK: node.c: 108: repair_node_items_check: Node (63227569), items (24)
+and (25): Wrong order of keys.                                             
+
+FSCK: node.c: 108: repair_node_items_check: Node (63227571), items (73)
+and (74): Wrong order of keys.                                             
+
+FSCK: node.c: 108: repair_node_items_check: Node (116595727), items (20)
+and (21): Wrong order of keys.                                             
+
+FSCK: node.c: 108: repair_node_items_check: Node (227923161), items (22)
+and (23): Wrong order of keys.                                             
+
+FSCK: node.c: 108: repair_node_items_check: Node (284305753), items (61)
+and (62): Wrong order of keys.                                             
+
+        Read nodes 1481038                                                
+                                                                         
+        Good nodes 471512 
+                Leaves of them 466164, Twigs of them 5348 
+        Time interval: Fri Oct 16 20:41:24 2015 - Fri Oct 16 20:45:01 2015
+
+***** fsck.reiser4 finished at Fri Oct 16 20:45:01 2015
+Closing fs...done
+
+FS is consistent.
+
+# 
+# fsck.reiser4 --check /dev/sdb
+*******************************************************************
+This is an EXPERIMENTAL version of fsck.reiser4. Read README first.
+*******************************************************************
+
+Fscking the /dev/sdb block device.                                        
+                                                                         
+Will check the consistency of the Reiser4 SuperBlock.                     
+                                                                         
+Will check the consistency of the Reiser4 FileSystem.                     
+                                                                         
+Continue?                                                                 
+                                                                         
+(Yes/No): yes
+***** fsck.reiser4 started at Fri Oct 16 22:14:19 2015
+Reiser4 fs was detected on /dev/sdb.                                      
+                                                                         
+Master super block (16): 
+magic:          ReIsEr4 
+blksize:        4096 
+format:         0x0 (format40) 
+uuid:           3006ced1-7490-4ea8-a9b8-d82143c6bede 
+label:          <none> 
+ 
+Format super block (17): 
+plugin:         format40 
+description:    Disk-format plugin. 
+version:        0 
+magic:          ReIsEr40FoRmAt 
+mkfs id:        0x1ddaf754 
+flushes:        0 
+blocks:         488378640 
+free blocks:    217146980 
+root block:     37017218 
+tail policy:    0x2 (smart) 
+next oid:       0xedade 
+file count:     188313 
+tree height:    6 
+key policy:     LARGE 
+ 
+ 
+CHECKING THE STORAGE TREE                                                 
+                                                                         
+        Read nodes 197008413                                              
+                                                                         
+        Nodes left in the tree 197008413                                  
+                                                                          
+
+                Leaves of them 194764277, Twigs of them 2217790 
+        Time interval: Fri Oct 16 22:16:51 2015 - Sat Oct 17 07:11:51 2015
+
+CHECKING EXTENT REGIONS.                                                  
+                                                                         
+        Read twigs 2217790                                                
+                                                                         
+        Time interval: Sat Oct 17 07:11:51 2015 - Sat Oct 17 09:37:22 2015
+
+CHECKING THE SEMANTIC TREE                                                
+                                                                         
+FSCK: semantic.c: 573: repair_semantic_dir_open: Failed to recognize the
+plugin for the directory [29:0:2a].                                        
+
+FSCK: semantic.c: 651: repair_semantic_root_prepare: No root directory
+opened. 
+        Time interval: Sat Oct 17 09:37:22 2015 - Sat Oct 17 09:37:22 2015
+                                                                         
+FSCK: repair.c: 550: repair_sem_fini: On-disk used block bitmap and really
+used block bitmap differ.                                                 
+***** fsck.reiser4 finished at Sat Oct 17 09:37:23 2015
+Closing fs...done
+
+2 fatal corruptions were detected in FileSystem. Run with --build-fs
+option to fix them.
+
 
