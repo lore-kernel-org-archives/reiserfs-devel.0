@@ -1,89 +1,52 @@
-From: Jose R R <jose.r.r@metztli.com>
-Subject: Re: help wanted to repair and so mount command be done to use a
- reiser4 volume ? [located on /dev/sdb]
-Date: Fri, 23 Oct 2015 00:27:05 -0700
-Message-ID: <CAM12Q5SAUA_Lj_uL5N56abo_ATaF+0LfqeC9mWkYq334W4WcTw@mail.gmail.com>
-References: <a513052ee63b7f1e42c9d2fc9e6627c3@mail.velocitynet.com.au>
+From: Georgios Tsalikis <georgios.tsalikis@hol.gr>
+Subject: Re: 2 minutes for a reiser4 filesystem to mount.
+Date: Fri, 23 Oct 2015 16:24:37 +0300
+Message-ID: <BLU436-SMTP91B2FD2E48BAC63569BFCE9B260@phx.gbl>
+References: <n0b6ql$6t4$1@ger.gmane.org>
+ <CAM12Q5Rwja+qYO1AfcYmBsCWOfk+8_Y_VgtLn4zBJ17GiP5row@mail.gmail.com>
 Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
-In-Reply-To: <a513052ee63b7f1e42c9d2fc9e6627c3@mail.velocitynet.com.au>
+In-Reply-To: <CAM12Q5Rwja+qYO1AfcYmBsCWOfk+8_Y_VgtLn4zBJ17GiP5row@mail.gmail.com>
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: doiggl@velocitynet.com.au
+Content-Type: text/plain; charset="us-ascii"; format="flowed"
+To: Jose R R <jose.r.r@metztli.com>
 Cc: ReiserFS Development List <reiserfs-devel@vger.kernel.org>
 
-Niltze!
+Hello :)
 
+> Niltze!
+>
+> On Thu, Oct 22, 2015 at 10:38 AM, Georgios Tsalikis
+> <georgios@tsalikis.net> wrote:
+>> The filesystem is 1.7GB large, lies in a GPT patition and is formated with
+>> -o node=node41
+> In this test machine(s) my partitions are not GPT
+>
+>> without any other override. The kernel is 4.2.3 with the
+>> 4.2.2 patch.
+> I am running similar combination; mount time of ~60GB & ~50GB
+> partitions (at least one previously formatted: -o create=reg40) with
+> *existing data*  is under 8 seconds.
+>
+>> I tried the same on a 250MB partition and it mounts instantly. dmesg shows
+>> nothing special
+>> Any ideas?
+> Tried formatting a ~24GB non-GPT partition with options as you
+> specified; the mount time was under 3 seconds for the newly formatted
+> partition:
+> https://pbs.twimg.com/media/CR-zkQtVAAA5D_G.png:large
 
+> I noticed that yours uses 4096K block size. My partition uses 64K. Is this
+> due to the much larger size of my partition? Maybe it is the problem behind the delay?
+> I have no idea if GPT makes a difference.
+>> Thanks in advance. :)
+>>
+>> --
+>> To unsubscribe from this list: send the line "unsubscribe reiserfs-devel" in
+>> the body of a message to majordomo@vger.kernel.org
+>> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+>
+>
 
-On Sun, Oct 18, 2015 at 5:41 AM,  <doiggl@velocitynet.com.au> wrote:
-> Hello,
->
-> Some reiser4 metdadata problems which I need help with [located /dev/sdb].
-> see: http://www.spinics.net/lists/reiserfs-devel/msg04899.html
->
-> Some questions I have are these:
->
-> - help wanted to repair and so mount command be done to use a reiser4
-> volume ? [located on /dev/sdb]
->
-> Its a large amount of metadata.
->
-> I have a seperate 4TB hdd with its space unused.
-> I can format that and unpack metadata on that hdd if needed.
-> I can use that, to run commands against the  metadata.
->
-> Question:
-> --------
-> - What commands would get the information that would be useful to resolve
-> problem listed as follows ?
-> See http://www.spinics.net/lists/reiserfs-devel/msg04899.html
->
-> I have packed reiser4 metadata via command
-> # debugfs.reiser4 -P /dev/sdb  | gzip -9 > r4meta-sdb.gz
->
-> # split up to smaller chunks
-> # split --bytes=1800m r4meta-sdb.gz r4meta-sdb.gz-part-
->
-> Files:
-> 1,887,436,800 r4meta-sdb.gz-part-aa
-> 1,196,849,440 r4meta-sdb.gz-part-ab
->
-> -To join it up for use:
-> #cat r4meta-sdb.gz-part-aa r4meta-sdb.gz-part-ab > r4meta-sdb.gz
->
-> History
-> -------
-> http://www.spinics.net/lists/reiserfs-devel/msg03094.html
->
-> I know files and data are on disk but just cannot get to it.
-> Thank you for any help on accessing this volume.
-> Cheers Glenn
-
-Have you tried using disk recovery tools to salvage your data?
-
-testdisk - to make sure your partition table is sound.
-
-GParted - might check/copy contents in possibly damaged fs/hardware
-into another storage media.
-
-scalpel - filesystem-independent and will carve files from FAT16, FAT32,
-exFAT, NTFS, Ext2, Ext3, Ext4, JFS, XFS, ReiserFS, raw partitions, etc.
-
-safecopy (compare to below utility)
-
-gddrescue - The gddrescue tool copies data from one file or block device
-(hard disc, cdrom, etc) to another, trying hard to rescue data
-in case of read errors.
-
-Good luck!
-
--- 
-Jose R R
-http://metztli.it
----------------------------------------------------------------------------------------------
-Try at no charge http://b2evolution.net for http://OpenShift.com PaaS
----------------------------------------------------------------------------------------------
-from our GitHub http://Nepohualtzintzin.com repository. Cloud the easy way!
