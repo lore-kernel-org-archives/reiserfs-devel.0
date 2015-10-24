@@ -1,19 +1,19 @@
 From: Ivan Shapovalov <intelfx100@gmail.com>
-Subject: [PATCHv2 3/3] reiser4: mark pages created during tail2extent conversion as dirty.
-Date: Sun, 25 Oct 2015 02:02:20 +0300
-Message-ID: <1445727740-12361-4-git-send-email-intelfx100@gmail.com>
+Subject: [PATCHv2 1/3] reiser4: remove last traces of JNODE_NEW in the debugging code.
+Date: Sun, 25 Oct 2015 02:02:18 +0300
+Message-ID: <1445727740-12361-2-git-send-email-intelfx100@gmail.com>
 References: <1445727740-12361-1-git-send-email-intelfx100@gmail.com>
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20120113;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=zEELBmcY3Lrw7ZH8BGh3+w13jbpYr113lRRRthm2CMw=;
-        b=IhGSi0TTr123FwCbvewyTP+q7KOsV+ez7MtKXL7vF1PV3Ac6FqhDFVvbgxJMZHBqhr
-         9IArefacDyV5j+8IIqlF5osyngxYFqeODc6+xMtIqqYe2oUL6fh1fnL5UTbXX+/l42F7
-         ywDCirPyRkZmS//AVnFJqxQo/HMs4rQkA1vLuL/0DV0JHc/iiErldq+J0/C9kC3qw2FI
-         hjufYxHj3BY+gMzFaLE+epilckySAMURl8yHYGP8L2L5FSWXVhAfL5LyP12ghyW1eEqx
-         DBPoqcVHR+hikFrTA8RadHxfVCFw2MTgd6dJLjQZv8aXP+HvCG+ze5T8Y7Qq2qnadApX
-         mz8Q==
+        bh=QUC1LChT0jJr5aeLmUOmR/mU7H6bOhU1fP8IXmyIPR8=;
+        b=nx6Uftp7P+wkSXfuZZu6s+k6odPfYwZCu7IzwN/GQ7j8ZoW4pfNoNmM2uN26SeDp74
+         NCCnWuy/cP1HHh3rDAqCwIH5jDufZbm0UGLtXKcn01lM9fIiA3j5jtqKPpxD8q2xkKID
+         k+BbN7lMGJOJJAEOt6viybNF7mp0i7hWoJqXmk3zxaJOQXF9dQj4af4MwDpeGKIF/lyn
+         w38FFUhKDoNikPmUw8R1igKwttn2Uwssig9WTzWCZ5RFA+VkJrf7qyLu6QHZ2kAhF5Yx
+         fy/e0CzYdfL4a5nt7iiCHe16K6XuPNDLfR6Stz9P+MdzXqZWo9DthZO5xzoip0JXHj1y
+         0nOg==
 In-Reply-To: <1445727740-12361-1-git-send-email-intelfx100@gmail.com>
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
@@ -23,35 +23,32 @@ Content-Transfer-Encoding: 7bit
 To: reiserfs-devel@vger.kernel.org
 Cc: Edward Shishkin <edward.shishkin@gmail.com>, Ivan Shapovalov <intelfx100@gmail.com>
 
-This is responsible for an oops in v4.2 in
-write_jnodes_to_disk_extent() -> set_page_writeback().
-
-The pages needs to be marked dirty before marked writeback.
-
-From a similar problem in f2fs:
-"The cgroup attaches inode->i_wb via mark_inode_dirty and when
-set_page_writeback is called, __inc_wb_stat() updates i_wb's stat.
-
-So, we need to explicitly call set_page_dirty->__mark_inode_dirty in
-prior to any writebacking pages."
-
 Signed-off-by: Ivan Shapovalov <intelfx100@gmail.com>
 ---
- fs/reiser4/plugin/file/tail_conversion.c | 1 +
- 1 file changed, 1 insertion(+)
+ fs/reiser4/jnode.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-diff --git a/fs/reiser4/plugin/file/tail_conversion.c b/fs/reiser4/plugin/file/tail_conversion.c
-index 7542c03..c856b73 100644
---- a/fs/reiser4/plugin/file/tail_conversion.c
-+++ b/fs/reiser4/plugin/file/tail_conversion.c
-@@ -175,6 +175,7 @@ static int replace(struct inode *inode, struct page **pages, unsigned nr_pages,
- 								i_mapping));
- 		if (result)
- 			break;
-+		set_page_dirty_notag(pages[i]);
- 		unlock_page(pages[i]);
- 		result = find_or_create_extent(pages[i]);
- 		if (result) {
+diff --git a/fs/reiser4/jnode.c b/fs/reiser4/jnode.c
+index e0c9e0c..43af7e9 100644
+--- a/fs/reiser4/jnode.c
++++ b/fs/reiser4/jnode.c
+@@ -1846,7 +1846,7 @@ static void info_jnode(const char *prefix /* prefix to print */ ,
+ 	}
+ 
+ 	printk
+-	    ("%s: %p: state: %lx: [%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s], level: %i,"
++	    ("%s: %p: state: %lx: [%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s], level: %i,"
+ 	     " block: %s, d_count: %d, x_count: %d, "
+ 	     "pg: %p, atom: %p, lock: %i:%i, type: %s, ", prefix, node,
+ 	     node->state,
+@@ -1863,7 +1863,6 @@ static void info_jnode(const char *prefix /* prefix to print */ ,
+ 	     jnode_state_name(node, JNODE_RIP),
+ 	     jnode_state_name(node, JNODE_MISSED_IN_CAPTURE),
+ 	     jnode_state_name(node, JNODE_WRITEBACK),
+-	     jnode_state_name(node, JNODE_NEW),
+ 	     jnode_state_name(node, JNODE_DKSET),
+ 	     jnode_state_name(node, JNODE_REPACK),
+ 	     jnode_state_name(node, JNODE_CLUSTER_PAGE),
 -- 
 2.6.2
 
