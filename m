@@ -1,7 +1,7 @@
 From: <doiggl@velocitynet.com.au>
-Subject: Segmentation fault' in # fsck.reiser4  --fix --force  /dev/sdb
-Date: Mon, 26 Oct 2015 11:07:23 +1100
-Message-ID: <8b9ac5c40043c6fafa61a8ffdcdaac5a@mail.velocitynet.com.au>
+Subject: Any thoughts as to why command fails and how fix warnings ? [on /dev/sdb]
+Date: Tue, 27 Oct 2015 01:34:36 +1100
+Message-ID: <484fdec880ee1129ceafbd7d2d130126@mail.velocitynet.com.au>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
@@ -11,113 +11,79 @@ Content-Type: text/plain; charset="us-ascii"
 To: reiserfs-devel@vger.kernel.org
 
 Hello,
-I get a 'Segmentation fault' in # fsck.reiser4  --fix --force  /dev/sdb
-How do you find the cause of it ?
+Any thoughts as to why command fails and how fix warnings ?
 
-It got to 
-CHECKING THE STORAGE TREE
-about 12%
+volume [located on /dev/sdb] uses entire disk.
 
-Using opensuse 64 bit [x86_64].
-
+Thanks for assistance
 --Glenn
 
-# fsck.reiser4  --fix --force  /dev/sdb
-*******************************************************************
-This is an EXPERIMENTAL version of fsck.reiser4. Read README first.
-*******************************************************************
+-tried
+# mount -o dont_load_bitmap /dev/sdb /media/disk
+mount: mount(2) failed: No such file or directory
 
-Fscking the /dev/sdb block device.                                        
-                                                                          
-                                     
-Will fix minor corruptions of the Reiser4 SuperBlock.                     
-                                                                          
-                                     
-Will fix minor corruptions of the Reiser4 FileSystem.                     
-                                                                          
-                                     
-***** fsck.reiser4 started at Sun Oct 25 22:34:14 2015
-FSCK: backup.c: 505: repair_backup_open: Found backup does not match to
-the on-disk filesystem metadata.                                           
-                                        
-Backup update is needed. Done.                                            
-                                                                          
-                                     
-Reiser4 fs was detected on /dev/sdb.                                      
-                                                                          
-                                     
-Master super block (16): 
-magic:          ReIsEr4 
-blksize:        4096 
-format:         0x0 (format40) 
-uuid:           3006ced1-7490-4ea8-a9b8-d82143c6bede 
-label:          <none> 
- 
-Format super block (17): 
-plugin:         format40 
-description:    Disk-format plugin. 
-version:        1 
-magic:          ReIsEr40FoRmAt 
-mkfs id:        0x1ddaf754 
-flushes:        0 
-blocks:         488378640 
-free blocks:    217146980 
-root block:     37017218 
-tail policy:    0x2 (smart) 
-next oid:       0xedade 
-file count:     188313 
-tree height:    6 
-key policy:     LARGE 
- 
- 
-CHECKING THE STORAGE TREE                                                 
-                                                                   
-        Read nodes 197008413                                              
-                                                                   
-        Nodes left in the tree 197008413 
-                Leaves of them 194764277, Twigs of them 2217790 
-        Time interval: Sun Oct 25 22:36:09 2015 - Mon Oct 26 06:12:32 2015
+- mountpoint exists
+# ll /media/disk
+total 0
 
-CHECKING EXTENT REGIONS.                                                  
-                                              
-        Read twigs 2217790                                                
-                                              
-        Time interval: Mon Oct 26 06:12:32 2015 - Mon Oct 26 08:22:47 2015
+# fdisk -l
+Disk /dev/sdb: 2000.4 GB, 2000398934016 bytes, 3907029168 sectors
+Units = sectors of 1 * 512 = 512 bytes
+Sector size (logical/physical): 512 bytes / 512 bytes
+I/O size (minimum/optimal): 512 bytes / 512 bytes
 
-CHECKING THE SEMANTIC TREE                                                
-                                              
-FSCK: semantic.c: 573: repair_semantic_dir_open: Failed to recognize the
-plugin for the directory [29:0:2a].              
-FSCK: semantic.c: 651: repair_semantic_root_prepare: No root directory
-opened. 
-        Time interval: Mon Oct 26 08:22:48 2015 - Mon Oct 26 08:22:48 2015
-                                              
-FSCK: repair.c: 547: repair_sem_fini: On-disk used block bitmap and really
-used block bitmap differ.                      
-Segmentation fault
+#dmesg shows: [disk plugged in and mount attempt]
 
-# which fsck.reiser4  
-/usr/sbin/fsck.reiser4
+[   28.904861] usb usb1-port3: disabled by hub (EMI?), re-enabling...
+[   28.904880] usb 1-3: USB disconnect, device number 2
+[   29.187872] usb 1-3: new low-speed USB device number 3 using ohci-pci
+[   29.356171] usb 1-3: New USB device found, idVendor=1c4f,
+idProduct=0034
+[   29.356183] usb 1-3: New USB device strings: Mfr=1, Product=2,
+SerialNumber=0
+[   29.356190] usb 1-3: Product: Usb Mouse
+[   29.356196] usb 1-3: Manufacturer: SIGMACHIP
+[   29.364090] input: SIGMACHIP Usb Mouse as
+/devices/pci0000:00/0000:00:12.0/usb1/1-3/1-3:1.0/0003:1C4F:0034.0002/input/input21
+[   29.364627] hid-generic 0003:1C4F:0034.0002: input,hidraw0: USB HID
+v1.10 Mouse [SIGMACHIP Usb Mouse] on usb-0000:00:12.0-3/input0
+[   29.568181] usb 4-1: new high-speed USB device number 3 using ehci-pci
+[   29.704239] usb 4-1: New USB device found, idVendor=04fc,
+idProduct=0c25
+[   29.704251] usb 4-1: New USB device strings: Mfr=2, Product=3,
+SerialNumber=1
+[   29.704257] usb 4-1: Product: USB to Serial-ATA bridge
+[   29.704263] usb 4-1: Manufacturer: Sunplus Technology Inc.
+[   29.704268] usb 4-1: SerialNumber: ST32000542            5XW1ZMG4
+[   29.723217] usb-storage 4-1:1.0: USB Mass Storage device detected
+[   29.723584] scsi host4: usb-storage 4-1:1.0
+[   29.723801] usbcore: registered new interface driver usb-storage
+[   30.726464] scsi 4:0:0:0: Direct-Access     ST320005 42AS              
+  PQ: 0 ANSI: 2
+[   30.727079] sd 4:0:0:0: Attached scsi generic sg2 type 0
+[   30.729576] sd 4:0:0:0: [sdb] 3907029168 512-byte logical blocks: (2.00
+TB/1.81 TiB)
+[   30.733952] sd 4:0:0:0: [sdb] Write Protect is off
+[   30.733960] sd 4:0:0:0: [sdb] Mode Sense: 38 00 00 00
+[   30.736912] sd 4:0:0:0: [sdb] No Caching mode page found
+[   30.736920] sd 4:0:0:0: [sdb] Assuming drive cache: write through
+[   40.300617] sd 4:0:0:0: [sdb] Attached SCSI disk
+.
+.
+[  415.988119] Loading Reiser4 (format release: 4.0.1) See www.namesys.com
+for a description of Reiser4.
+[  415.993678] reiser4[mount(1499)]: try_init_format40
+(../fs/reiser4/plugin/disk_format/disk_format40.c:303)[vpf-1364]:
+NOTICE: Warning: mounting sdb with fatal errors, forcing read-only mount.
+[  415.993703] reiser4: sdb: found disk format 4.0.1.
+[  416.062105] reiser4[mount(1499)]: traverse_tree
+(../fs/reiser4/search.c:725)[nikita-373]:
+WARNING: not found on internal node: level: 6, lock_level: 1, stop_level:
+1 lock_mode: read, bias: exact
+[  416.062118] reiser4[mount(1499)]: key_warning
+(../fs/reiser4/plugin/file_plugin_common.c:510)[nikita-717]:
+WARNING: Error for inode 42 (-2)
 
-# rpm -qf /usr/sbin/fsck.reiser4
-reiser4progs-1.1.0-13.1.x86_64
+Got this previously:
+http://www.spinics.net/lists/reiserfs-devel/msg04596.html
 
--rpms installed
-# rpm -qa| grep -i reiser4 |sort
-                                                                          
-                      
-# rpm -qa| grep -i reiser4 |sort
-kernel-reiser4-4.2.1-34.1.gd2bbe7f.x86_64
-libreiser4-1_0-8-1.0.8-3.1.2.x86_64
-libreiser4-1_1-0-1.1.0-13.1.x86_64
-libreiser4-minimal-1_1-0-1.1.0-13.1.x86_64
-reiser4progs-1.1.0-13.1.x86_64
-reiser4progs-debuginfo-1.1.0-14.1.x86_64
-reiser4progs-debugsource-1.1.0-14.1.x86_64
-reiser4progs-devel-1.1.0-13.1.x86_64
-
-Using patches in kernel:
-reiser4-for-4.2.2.patch
-
-[PATCHv2 0/3] reiser4: another batch of fixes for 4.2.
-http://www.spinics.net/lists/reiserfs-devel/msg04912.html
