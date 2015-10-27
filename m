@@ -1,7 +1,7 @@
 From: <doiggl@velocitynet.com.au>
-Subject: Any thoughts as to why command fails and how fix warnings ? [on /dev/sdb]
-Date: Tue, 27 Oct 2015 01:34:36 +1100
-Message-ID: <484fdec880ee1129ceafbd7d2d130126@mail.velocitynet.com.au>
+Subject: Some reiser4 meta-data questions: [/dev/sdb]
+Date: Tue, 27 Oct 2015 16:05:24 +1100
+Message-ID: <02b714410cdba6d50bc46d86b0d8e80a@mail.velocitynet.com.au>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
@@ -11,18 +11,33 @@ Content-Type: text/plain; charset="us-ascii"
 To: reiserfs-devel@vger.kernel.org
 
 Hello,
-Any thoughts as to why command fails and how fix warnings ?
+Some reiser4 meta-data questions: [/dev/sdb]
 
-volume [located on /dev/sdb] uses entire disk.
+- I packed r4 meta-data with command
 
+# debugfs.reiser4 -P /dev/sdb  | gzip -9 > r4meta-sdb.gz
+
+- I Unpacked r4 metadata with command as follows, metadata unpacked ok.
+# gunzip r4meta-sdb.gz
+
+ 3,084,286,240 r4meta-sdb.gz
+24,742,135,567 r4meta-sdb
+
+
+What commands would you run against unpacked meta-data to help diagnosis
+of problems and fixing meta-data ?
+So mount command completes.
 Thanks for assistance
 --Glenn
+
+
+Some history:
 
 -tried
 # mount -o dont_load_bitmap /dev/sdb /media/disk
 mount: mount(2) failed: No such file or directory
 
-- mountpoint exists
+- mount point exists
 # ll /media/disk
 total 0
 
@@ -84,6 +99,7 @@ WARNING: not found on internal node: level: 6, lock_level: 1, stop_level:
 (../fs/reiser4/plugin/file_plugin_common.c:510)[nikita-717]:
 WARNING: Error for inode 42 (-2)
 
-Got this previously:
+previously:
 http://www.spinics.net/lists/reiserfs-devel/msg04596.html
-
+http://www.spinics.net/lists/reiserfs-devel/msg04206.html
+http://www.spinics.net/lists/reiserfs-devel/msg03094.html
