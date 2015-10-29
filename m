@@ -1,105 +1,79 @@
-From: <doiggl@velocitynet.com.au>
-Subject: Some reiser4 meta-data questions: [/dev/sdb]
-Date: Tue, 27 Oct 2015 16:05:24 +1100
-Message-ID: <02b714410cdba6d50bc46d86b0d8e80a@mail.velocitynet.com.au>
+From: Georgios Tsalikis <georgios@tsalikis.net>
+Subject: Re: 2 minutes for a reiser4 filesystem to mount.
+Date: Thu, 29 Oct 2015 14:21:56 +0200
+Message-ID: <n0t2tc$hm1$1@ger.gmane.org>
+References: <n0b6ql$6t4$1@ger.gmane.org> <1445636264.2412.0.camel@gmail.com>
+ <BLU436-SMTP17E43BAB1F0262E99F242F9B260@phx.gbl>
+ <B4C46971-499C-4275-A153-D0FE220401D3@gmail.com>
+ <BLU436-SMTP14768256E7F72AB73706D159B250@phx.gbl>
+ <1445726364.7642.6.camel@gmail.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
+In-Reply-To: <1445726364.7642.6.camel@gmail.com>
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset="utf-8"; format="flowed"
 To: reiserfs-devel@vger.kernel.org
 
-Hello,
-Some reiser4 meta-data questions: [/dev/sdb]
+On 25/10/2015 01:39 =CF=80=CE=BC, Ivan Shapovalov wrote:
+> On 2015-10-24 at 22:41 +0300, Georgios Tsalikis wrote:
+>> On 24/10/2015 01:58 =CF=80=CE=BC, Ivan Shapovalov wrote:
+>>>> 24 =D0=BE=D0=BA=D1=82. 2015 =D0=B3., =D0=B2 1:06, Georgios Tsaliki=
+s <georgios.tsalikis@hol
+>>>> .gr> =D0=BD=D0=B0=D0=BF=D0=B8=D1=81=D0=B0=D0=BB(=D0=B0):
+>>>>
+>>>>> On 24/10/2015 12:37 =CF=80=CE=BC, Ivan Shapovalov wrote:
+>>>>>> On 2015-10-22 at 20:38 +0300, Georgios Tsalikis wrote:
+>>>>>> The filesystem is 1.7GB large, lies in a GPT patition and is
+>>>>>> formated
+>>>>>> with -o node=3Dnode41 without any other override. The kernel is
+>>>>>> 4.2.3
+>>>>>> with
+>>>>>> the 4.2.2 patch.
+>>>>>> I tried the same on a 250MB partition and it mounts
+>>>>>> instantly. dmesg
+>>>>>> shows nothing special
+>>>>>> Any ideas? Thanks in advance. :)
+>>>>> Hello,
+>>>>>
+>>>>> try "dont_load_bitmap" in mount options. However, this is
+>>>>> anyway very
+>>>>> strange for a ~2GB partition...
+>>>> I am sorry, did i write 1.7GB? I meant 1.7TB... i am old and such
+>>>> figures dont fit my mind easily!
+>>> Ah, so it's 1.7 TB? Then it's not unusual at all. Indeed, try
+>>> mounting with `-o dont_load_bitmap`.
+>>>
+>> I did so and it worked. Thank you. But what does that option do?
+> This option tells reiser4 to load bitmap blocks on demand, and not al=
+l
+> at once at filesystem mount time.
+Does this mean using this option means a penalty? Maybe in some cases=20
+(servers etc) it is worth waiting the fs to mount?
+>
+> The bitmap is how reiser4 stores information about which on-disk bloc=
+ks
+> are allocated and which are free (one bit corresponds to one block,
+> hence the name).
+>
+> The 2TiB filesystem has 2*1024^4 / 4096 =3D 536870912 blocks, which t=
+ake
+> 536870912 / (8*4096) =3D 16384 bitmap blocks, so it takes 120/16384 ~=
+ 7ms
+> to load one block, which is not that unusual (given that the bitmap
+> loading doesn't seem to be optimized too well: each block is read in =
+a
+> separate request).
+>
+>> And which are the other options and their function?
+> I'm afraid that the full list of reiser4 options can only be found in
+> code (file init_super.c, functions push_sb_field_opts() and
+> reiser4_init_super_data().
+>
 
-- I packed r4 meta-data with command
-
-# debugfs.reiser4 -P /dev/sdb  | gzip -9 > r4meta-sdb.gz
-
-- I Unpacked r4 metadata with command as follows, metadata unpacked ok.
-# gunzip r4meta-sdb.gz
-
- 3,084,286,240 r4meta-sdb.gz
-24,742,135,567 r4meta-sdb
-
-
-What commands would you run against unpacked meta-data to help diagnosis
-of problems and fixing meta-data ?
-So mount command completes.
-Thanks for assistance
---Glenn
-
-
-Some history:
-
--tried
-# mount -o dont_load_bitmap /dev/sdb /media/disk
-mount: mount(2) failed: No such file or directory
-
-- mount point exists
-# ll /media/disk
-total 0
-
-# fdisk -l
-Disk /dev/sdb: 2000.4 GB, 2000398934016 bytes, 3907029168 sectors
-Units = sectors of 1 * 512 = 512 bytes
-Sector size (logical/physical): 512 bytes / 512 bytes
-I/O size (minimum/optimal): 512 bytes / 512 bytes
-
-#dmesg shows: [disk plugged in and mount attempt]
-
-[   28.904861] usb usb1-port3: disabled by hub (EMI?), re-enabling...
-[   28.904880] usb 1-3: USB disconnect, device number 2
-[   29.187872] usb 1-3: new low-speed USB device number 3 using ohci-pci
-[   29.356171] usb 1-3: New USB device found, idVendor=1c4f,
-idProduct=0034
-[   29.356183] usb 1-3: New USB device strings: Mfr=1, Product=2,
-SerialNumber=0
-[   29.356190] usb 1-3: Product: Usb Mouse
-[   29.356196] usb 1-3: Manufacturer: SIGMACHIP
-[   29.364090] input: SIGMACHIP Usb Mouse as
-/devices/pci0000:00/0000:00:12.0/usb1/1-3/1-3:1.0/0003:1C4F:0034.0002/input/input21
-[   29.364627] hid-generic 0003:1C4F:0034.0002: input,hidraw0: USB HID
-v1.10 Mouse [SIGMACHIP Usb Mouse] on usb-0000:00:12.0-3/input0
-[   29.568181] usb 4-1: new high-speed USB device number 3 using ehci-pci
-[   29.704239] usb 4-1: New USB device found, idVendor=04fc,
-idProduct=0c25
-[   29.704251] usb 4-1: New USB device strings: Mfr=2, Product=3,
-SerialNumber=1
-[   29.704257] usb 4-1: Product: USB to Serial-ATA bridge
-[   29.704263] usb 4-1: Manufacturer: Sunplus Technology Inc.
-[   29.704268] usb 4-1: SerialNumber: ST32000542            5XW1ZMG4
-[   29.723217] usb-storage 4-1:1.0: USB Mass Storage device detected
-[   29.723584] scsi host4: usb-storage 4-1:1.0
-[   29.723801] usbcore: registered new interface driver usb-storage
-[   30.726464] scsi 4:0:0:0: Direct-Access     ST320005 42AS              
-  PQ: 0 ANSI: 2
-[   30.727079] sd 4:0:0:0: Attached scsi generic sg2 type 0
-[   30.729576] sd 4:0:0:0: [sdb] 3907029168 512-byte logical blocks: (2.00
-TB/1.81 TiB)
-[   30.733952] sd 4:0:0:0: [sdb] Write Protect is off
-[   30.733960] sd 4:0:0:0: [sdb] Mode Sense: 38 00 00 00
-[   30.736912] sd 4:0:0:0: [sdb] No Caching mode page found
-[   30.736920] sd 4:0:0:0: [sdb] Assuming drive cache: write through
-[   40.300617] sd 4:0:0:0: [sdb] Attached SCSI disk
-.
-.
-[  415.988119] Loading Reiser4 (format release: 4.0.1) See www.namesys.com
-for a description of Reiser4.
-[  415.993678] reiser4[mount(1499)]: try_init_format40
-(../fs/reiser4/plugin/disk_format/disk_format40.c:303)[vpf-1364]:
-NOTICE: Warning: mounting sdb with fatal errors, forcing read-only mount.
-[  415.993703] reiser4: sdb: found disk format 4.0.1.
-[  416.062105] reiser4[mount(1499)]: traverse_tree
-(../fs/reiser4/search.c:725)[nikita-373]:
-WARNING: not found on internal node: level: 6, lock_level: 1, stop_level:
-1 lock_mode: read, bias: exact
-[  416.062118] reiser4[mount(1499)]: key_warning
-(../fs/reiser4/plugin/file_plugin_common.c:510)[nikita-717]:
-WARNING: Error for inode 42 (-2)
-
-previously:
-http://www.spinics.net/lists/reiserfs-devel/msg04596.html
-http://www.spinics.net/lists/reiserfs-devel/msg04206.html
-http://www.spinics.net/lists/reiserfs-devel/msg03094.html
+--
+To unsubscribe from this list: send the line "unsubscribe reiserfs-deve=
+l" in
+the body of a message to majordomo@vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
