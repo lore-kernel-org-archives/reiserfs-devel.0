@@ -1,76 +1,133 @@
-From: Jose R R <Jose.r.r@metztli-it.com>
-Subject: Re: Integrate fully partman-reiser4 into d-i
-Date: Thu, 12 Nov 2015 03:28:29 -0800
-Message-ID: <CAM12Q5TDHYYGsVyo8URe58iF99nRQoxzjs1-JkuAsiP1rvd0Vw@mail.gmail.com>
-References: <CAM12Q5QKdpHgMG_qGyhE-abO6R-uY6cKtv-5Qg36N-FTx_Z8Lw@mail.gmail.com>
-	<CAM12Q5Q2GQSqE2ehj2dAmkq4ffP=x3__F76dH7KOey=vVAkQOA@mail.gmail.com>
-	<20150921111209.GA30565@riva.ucam.org>
-	<560018DE.9010205@gmail.com>
+From: Ivan Shapovalov <intelfx100@gmail.com>
+Subject: Re: [PATCHv2 3/3] reiser4: mark pages created during tail2extent
+ conversion as dirty.
+Date: Thu, 12 Nov 2015 14:31:30 +0300
+Message-ID: <1447327890.926.5.camel@gmail.com>
+References: <1445727740-12361-1-git-send-email-intelfx100@gmail.com>
+	 <1445727740-12361-4-git-send-email-intelfx100@gmail.com>
+	 <56408F30.3060404@gmail.com> <564318AD.4080503@gmail.com>
+	 <56446331.2090106@gmail.com>
 Mime-Version: 1.0
+Content-Type: multipart/signed; micalg="pgp-sha256";
+	protocol="application/pgp-signature"; boundary="=-s2eYIT3VrbxAidlM6krX"
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=metztli_com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:sender:in-reply-to:references:date:message-id:subject
-         :from:to:cc:content-type;
-        bh=E6bQ00SK0JtgvsHUu1w5gWTKwX+JAEunp+1TWtbHI4k=;
-        b=hBXCH1zlyCT7jix5cf6jpcSWKF5Wn0onxnJYEnFPxu8DErkaHy3PJWQqTCELQJF3hz
-         f+1Juvi5yfIR/bNWA5FdkvrxoeMOCalIAhrS5o7oiGb1gWI+6yYDN1CZkvZdW3VaRV8i
-         9dAtpYgg5i9wCqshT/ITIvXlIphQA0ZWL5cQ4z6/VJAoSr0TajLy42TzHehA5gVr2bCo
-         Jukf9naArjxsH1EDr4jShXIzM6xA84sTAaX7ybLP8SfK3rbviAkyPZDMGucnd5wpzdrJ
-         qwtxywMyjT3hsXLlJ8FLFy0zsGdEMObHbHKlvPJHITajzAI/DFVmnb9p7l1RM54NB37P
-         WopA==
-In-Reply-To: <560018DE.9010205@gmail.com>
+        d=gmail.com; s=20120113;
+        h=message-id:subject:from:to:date:in-reply-to:references:content-type
+         :mime-version;
+        bh=6GPtc1pEZbIeYuaIhSqHAYSt7znJhNygS8YjSMZ3tTo=;
+        b=B6xbPzpsTsgwuR4pl7SMERafnC6Pxp2od4rw7m3svFS1mSWLzRQm+g0/l8IeiO9hTD
+         qkGv/lDdvivnQbCicX3AB5HGoB7LraZeOmKq1wRdKSXRF6sTVeH41UfSmOZXnlecWDsZ
+         5Y6uz6KoL+dE+YYJ/DraMtpzPBY4qS5Sm0RirxyeiXbNqYHvt8FINO//2VeJYBJ68hta
+         ncP4Z7kacc/lBWuF7DmAsxlJmmYgmgaRSePs9qENO03z584lMVuO/z8RVpUnhgsNCkkf
+         sxgoAQYXquHHPXxS1jk7m8WCycP0gKhJOCszpqjwlWGIadiQJdKtHkoR+1ebFSoLTWd3
+         VmUw==
+In-Reply-To: <56446331.2090106@gmail.com>
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
+To: Edward Shishkin <edward.shishkin@gmail.com>, reiserfs-devel@vger.kernel.org
+
+
+--=-s2eYIT3VrbxAidlM6krX
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+
+On 2015-11-12 at 11:00 +0100, Edward Shishkin wrote:
+> On 11/11/2015 11:30 AM, Edward Shishkin wrote:
+> >=20
+> >=20
+> > On 11/09/2015 01:18 PM, Edward Shishkin wrote:
+> > > On 10/25/2015 01:02 AM, Ivan Shapovalov wrote:
+> > > > This is responsible for an oops in v4.2 in
+> > > > write_jnodes_to_disk_extent() -> set_page_writeback().
+> >=20
+> >=20
+> > As to me, this patch doesn't prevent the oops,
+> > so someone else forgets to set pages dirty...
+>=20
+>=20
+> False alarm: I applied to the old stuff..
+> Everything woks without the hack in
+> write_jnodes_to_disk_extent().
+> Good work! Merged to reiser4-for-4.2.3.
+
+Hi Edward,
+
+Glad to hear that. I was already halfway recovering my debug patches
+for collecting stacktraces and related information and was going to ask
+you to reproduce :)
+
+> > > > The pages needs to be marked dirty before marked writeback.
+> > > >=20
+> > > > =C2=A0From a similar problem in f2fs:
+> > > > "The cgroup attaches inode->i_wb via mark_inode_dirty and when
+> > > > set_page_writeback is called, __inc_wb_stat() updates i_wb's
+> > > > stat.
+> > > >=20
+> > > > So, we need to explicitly call set_page_dirty-
+> > > > >__mark_inode_dirty in
+> > > > prior to any writebacking pages."
+> > > >=20
+> > > > Signed-off-by: Ivan Shapovalov <intelfx100@gmail.com>
+> > > > ---
+> > > > =C2=A0 fs/reiser4/plugin/file/tail_conversion.c | 1 +
+> > > > =C2=A0 1 file changed, 1 insertion(+)
+> > > >=20
+> > > > diff --git a/fs/reiser4/plugin/file/tail_conversion.c=20
+> > > > b/fs/reiser4/plugin/file/tail_conversion.c
+> > > > index 7542c03..c856b73 100644
+> > > > --- a/fs/reiser4/plugin/file/tail_conversion.c
+> > > > +++ b/fs/reiser4/plugin/file/tail_conversion.c
+> > > > @@ -175,6 +175,7 @@ static int replace(struct inode *inode,
+> > > > struct=20
+> > > > page **pages, unsigned nr_pages,
+> > > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0i_mapping));
+> > > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0if (res=
+ult)
+> > > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0break;
+> > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0set_page_dirty_not=
+ag(pages[i]);
+> > >=20
+> > >=20
+> > > So, at this point the page is dirty but not uptodate.
+> > > I am confused with this. Why not to set the page
+> > > uptodate right before setting it dirty? At this point
+> > > everything has been copied already, so the page is
+> > > in fact uptodate. Could you please try this?
+
+Have you made this correction in the merged patch?
+Anyway, could you
+please explain why it should be done one way and not another? What will
+happen if the ordering is left as is?
+
+Is it about marking page uptodate _before unlocking_, so that no one will s=
+ee it dirty && !uptodate?
+
+Thanks,
+--=20
+Ivan Shapovalov / intelfx /
+
+> > > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0unlock_=
+page(pages[i]);
+> > > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0result =
+=3D find_or_create_extent(pages[i]);
+> > > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0if (res=
+ult) {
+--=-s2eYIT3VrbxAidlM6krX
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: This is a digitally signed message part
 Content-Transfer-Encoding: 7bit
-To: Edward Shishkin <edward.shishkin@gmail.com>
-Cc: debian-boot@lists.debian.org, ReiserFS Development List <reiserfs-devel@vger.kernel.org>, Cyril Brulebois <kibi@debian.org>, Ben Hutchings <ben@decadent.org.uk>, cjwatson@debian.org
 
-On Mon, Sep 21, 2015 at 7:49 AM, Edward Shishkin
-<edward.shishkin@gmail.com> wrote:
-> On 09/21/2015 01:12 PM, Colin Watson wrote:
->>
->> On Sun, Sep 20, 2015 at 07:40:37AM -0700, Jose R R wrote:
->>>
->>> I have realized that although partman-reiser4 udeb enables Reiser4 to
->>> be listed as an option during the Debian-Installer routine of a
->>> netboot ISO image, the lack of support for reiser4 in GNU Parted
->>> (Debian's libparted) prevents installation from the GUI interface.
->>
->> It should be pretty easy to add that to parted, since nowadays the only
->> filesystem support it has is probing support.  I suggest preparing a
->> patch against git://git.sv.gnu.org/parted.git master that adds the
->> ability to detect existing reiser4 partitions and sending it upstream;
->> it should only be on the order of a hundred lines.
->
->
->
-> Does anybody care to prepare the patch?
-I am working on it Ed. I have been ironing out some wrinkles from the
-last Reiser4 patch proposed several years ago in the GNU Parted
-mailing lists. It's components and structure were basically cloned by
-the initial btrfs patch submitted to Debian. autoreconf has been my
-friend ;-)
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
 
-> I think we just need to a read a sector at REISER4_MAGIC_OFFSET
-> and check the magic string ("ReIsEr4"), see definition of the struct
-> reiser4_master_sb.
-Please enlighten me with reference to its documentation -- online or
-in the Reiser4 source code?
+iF4EABEIAAYFAlZEeJIACgkQxUKljSIMAnAtVwD5ARIVyu6SP2aHbmb1k57Uj+8d
+mtwEWWd4fwSsGOFzGOgBAKhTlrNALO4rK6WDW4yM4xhlfNQ/hGOoJcTyhaiH2wXB
+=4Apb
+-----END PGP SIGNATURE-----
 
->> I'd be happy to cherry-pick such a patch into the Debian packaging once
->> it has been committed upstream.
->>
->
-Best Professional Regards.
+--=-s2eYIT3VrbxAidlM6krX--
 
-
--- 
-Jose R R
-http://metztli.it
----------------------------------------------------------------------------------------------
-Try at no charge http://b2evolution.net for http://OpenShift.com PaaS
----------------------------------------------------------------------------------------------
-from our GitHub http://Nepohualtzintzin.com repository. Cloud the easy way!
----------------------------------------------------------------------------------------------
