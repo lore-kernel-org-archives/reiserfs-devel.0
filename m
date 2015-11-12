@@ -1,102 +1,70 @@
 From: Edward Shishkin <edward.shishkin@gmail.com>
-Subject: Re: [PATCHv2 3/3] reiser4: mark pages created during tail2extent
- conversion as dirty.
-Date: Thu, 12 Nov 2015 16:50:09 +0100
-Message-ID: <5644B531.8030003@gmail.com>
-References: <1445727740-12361-1-git-send-email-intelfx100@gmail.com>
- <1445727740-12361-4-git-send-email-intelfx100@gmail.com>
- <56408F30.3060404@gmail.com> <564318AD.4080503@gmail.com>
- <56446331.2090106@gmail.com> <1447327890.926.5.camel@gmail.com>
+Subject: Re: Integrate fully partman-reiser4 into d-i
+Date: Thu, 12 Nov 2015 17:23:16 +0100
+Message-ID: <5644BCF4.3040908@gmail.com>
+References: <CAM12Q5QKdpHgMG_qGyhE-abO6R-uY6cKtv-5Qg36N-FTx_Z8Lw@mail.gmail.com>
+ <CAM12Q5Q2GQSqE2ehj2dAmkq4ffP=x3__F76dH7KOey=vVAkQOA@mail.gmail.com>
+ <20150921111209.GA30565@riva.ucam.org> <560018DE.9010205@gmail.com>
+ <CAM12Q5TDHYYGsVyo8URe58iF99nRQoxzjs1-JkuAsiP1rvd0Vw@mail.gmail.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20120113;
-        h=subject:to:references:from:message-id:date:user-agent:mime-version
-         :in-reply-to:content-type:content-transfer-encoding;
-        bh=D1s7QoszHZaq0l1SD5vX6BDeKGYLX0eRdmie0v5pTMs=;
-        b=kjQyDOi6FMeUSkmySROSgxWvjWYs6CP7xnE5ZgAw/ltGIiRgo+ZSdYHRd5PDzxTj5e
-         GFKLft5AkkbB8GOFZs9qlPF8wKFsIBUbZy7sVFhlhFhZPnjbq8697OEyVXgbrsXreiDx
-         3kMdf+c5w3ioaVZtbsLuqfwW+tlBBv6RXZlZzY28uSui4BQZ/sSPbc7WlsMcCc1D9F+x
-         yJU9BOM4WQWJh/+R4m70ksW+pOMsrLi8pW8SSlZVpQwsXCePgeYPbmys0/BnwwZobIdL
-         I2PLNmgaowx1+fr8knjZqN8XUj5w2LHgue0mFACndHPgdEVf2hZpP8yePRXPAywfUA9k
-         OTQg==
-In-Reply-To: <1447327890.926.5.camel@gmail.com>
+        h=subject:to:references:cc:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-type:content-transfer-encoding;
+        bh=MCcke010r/Lf5G0n0pxSgR2CA2JK/8Lj1ymKiUOqlWo=;
+        b=TCE05JJ+ty2MLeGsKYyRjRQXuh+Z3vet3aijjEzOtG3Hugqd4/8HZHiIeKy/BunIPk
+         EA93pVDN9JqZcqyutV1RgynF9HBBMNGVX2KtxfrB5V3JM0t57zy86F3LaxX6LgbC9n31
+         chZ3Giy39WKl1IOrcpYus+X9vX6E1IwHU6oO8w4DYz42aIFEn8/wlxuyNzcoCDvo8gh9
+         D5XrUlEybqnP/ZhOK32i6MzCiueayY7NBN3FvMUm9KrpmXgR6U2j/KBu0lFI6byQaObn
+         Yhm6Oym2PcqCOpOUUkM1b/EBbu43cg3xBTMCS8v6x98XnMRMhxXbLDJhQhIPvjS1Iu23
+         2HZw==
+In-Reply-To: <CAM12Q5TDHYYGsVyo8URe58iF99nRQoxzjs1-JkuAsiP1rvd0Vw@mail.gmail.com>
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: Ivan Shapovalov <intelfx100@gmail.com>, reiserfs-devel@vger.kernel.org
+To: Jose R R <Jose.r.r@metztli-it.com>
+Cc: debian-boot@lists.debian.org, ReiserFS Development List <reiserfs-devel@vger.kernel.org>, Cyril Brulebois <kibi@debian.org>, Ben Hutchings <ben@decadent.org.uk>, cjwatson@debian.org
 
 
 
-On 11/12/2015 12:31 PM, Ivan Shapovalov wrote:
-> On 2015-11-12 at 11:00 +0100, Edward Shishkin wrote:
->> On 11/11/2015 11:30 AM, Edward Shishkin wrote:
->>>
->>> On 11/09/2015 01:18 PM, Edward Shishkin wrote:
->>>> On 10/25/2015 01:02 AM, Ivan Shapovalov wrote:
->>>>> This is responsible for an oops in v4.2 in
->>>>> write_jnodes_to_disk_extent() -> set_page_writeback().
->>>
->>> As to me, this patch doesn't prevent the oops,
->>> so someone else forgets to set pages dirty...
+On 11/12/2015 12:28 PM, Jose R R wrote:
+> On Mon, Sep 21, 2015 at 7:49 AM, Edward Shishkin
+> <edward.shishkin@gmail.com> wrote:
+>> On 09/21/2015 01:12 PM, Colin Watson wrote:
+>>> On Sun, Sep 20, 2015 at 07:40:37AM -0700, Jose R R wrote:
+>>>> I have realized that although partman-reiser4 udeb enables Reiser4 to
+>>>> be listed as an option during the Debian-Installer routine of a
+>>>> netboot ISO image, the lack of support for reiser4 in GNU Parted
+>>>> (Debian's libparted) prevents installation from the GUI interface.
+>>> It should be pretty easy to add that to parted, since nowadays the only
+>>> filesystem support it has is probing support.  I suggest preparing a
+>>> patch against git://git.sv.gnu.org/parted.git master that adds the
+>>> ability to detect existing reiser4 partitions and sending it upstream;
+>>> it should only be on the order of a hundred lines.
 >>
->> False alarm: I applied to the old stuff..
->> Everything woks without the hack in
->> write_jnodes_to_disk_extent().
->> Good work! Merged to reiser4-for-4.2.3.
-> Hi Edward,
+>>
+>> Does anybody care to prepare the patch?
+> I am working on it Ed. I have been ironing out some wrinkles from the
+> last Reiser4 patch proposed several years ago in the GNU Parted
+> mailing lists. It's components and structure were basically cloned by
+> the initial btrfs patch submitted to Debian. autoreconf has been my
+> friend ;-)
 >
-> Glad to hear that. I was already halfway recovering my debug patches
-> for collecting stacktraces and related information and was going to ask
-> you to reproduce :)
->
->>>>> The pages needs to be marked dirty before marked writeback.
->>>>>
->>>>>   From a similar problem in f2fs:
->>>>> "The cgroup attaches inode->i_wb via mark_inode_dirty and when
->>>>> set_page_writeback is called, __inc_wb_stat() updates i_wb's
->>>>> stat.
->>>>>
->>>>> So, we need to explicitly call set_page_dirty-
->>>>>> __mark_inode_dirty in
->>>>> prior to any writebacking pages."
->>>>>
->>>>> Signed-off-by: Ivan Shapovalov <intelfx100@gmail.com>
->>>>> ---
->>>>>    fs/reiser4/plugin/file/tail_conversion.c | 1 +
->>>>>    1 file changed, 1 insertion(+)
->>>>>
->>>>> diff --git a/fs/reiser4/plugin/file/tail_conversion.c
->>>>> b/fs/reiser4/plugin/file/tail_conversion.c
->>>>> index 7542c03..c856b73 100644
->>>>> --- a/fs/reiser4/plugin/file/tail_conversion.c
->>>>> +++ b/fs/reiser4/plugin/file/tail_conversion.c
->>>>> @@ -175,6 +175,7 @@ static int replace(struct inode *inode,
->>>>> struct
->>>>> page **pages, unsigned nr_pages,
->>>>>                                    i_mapping));
->>>>>            if (result)
->>>>>                break;
->>>>> +        set_page_dirty_notag(pages[i]);
->>>>
->>>> So, at this point the page is dirty but not uptodate.
->>>> I am confused with this. Why not to set the page
->>>> uptodate right before setting it dirty? At this point
->>>> everything has been copied already, so the page is
->>>> in fact uptodate. Could you please try this?
-> Have you made this correction in the merged patch?
+>> I think we just need to a read a sector at REISER4_MAGIC_OFFSET
+>> and check the magic string ("ReIsEr4"), see definition of the struct
+>> reiser4_master_sb.
+> Please enlighten me with reference to its documentation -- online or
+> in the Reiser4 source code?
 
-Yes I have.
+Alas, only source code..
 
-> Anyway, could you
-> please explain why it should be done one way and not another? What will
-> happen if the ordering is left as is?
->
-> Is it about marking page uptodate _before unlocking_, so that no one will see it dirty && !uptodate?
+In reiser4 kernel sources look for REISER4_MAGIC_OFFSET
+and REISER4_SUPER_MAGIC_STRING.
 
-Just let's set all the flags in timely fashion.
-Otherwise it would mean a bad style.
+In reiser4progs it is called REISER4_MASTER_OFFSET and
+REISER4_MASTER_MAGIC respectively.
 
 Thanks,
 Edward.
