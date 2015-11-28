@@ -1,7 +1,7 @@
 From: <doiggl@velocitynet.com.au>
-Subject: Here is a plain kernel based on 4.3.0 with the reiser4-for-4.3.0.patch
-Date: Fri, 27 Nov 2015 17:34:05 +1100
-Message-ID: <162e21fa5cd0ba5f1dfbd8a68da0c043@mail.velocitynet.com.au>
+Subject: Has anyone ever fixed/repaired 'Wrong order of keys' problem ?
+Date: Sat, 28 Nov 2015 16:22:12 +1100
+Message-ID: <5c28f294e02fcbb7838423fb49673bbe@mail.velocitynet.com.au>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
@@ -11,46 +11,59 @@ Content-Type: text/plain; charset="us-ascii"
 To: reiserfs-devel@vger.kernel.org
 
 Hello,
-Here is a plain kernel based on 4.3.0 with the reiser4-for-4.3.0.patch
-built with
-the Opensuse build service [obs] system.
 
-The built rpms are here
+A Question:
 
-https://build.opensuse.org/package/binaries/home:doiggl/kernel-reiser4?repository=openSUSE_13.2
+Has anyone ever fixed/repaired 'Wrong order of keys' problem ?
 
-Architecture: i586
+If so, how was repair done ?
 
-kernel-reiser4-4.3.0-18.1.i686.rpm
-kernel-reiser4-4.3.0-18.1.nosrc.rpm
-kernel-reiser4-debuginfo-4.3.0-18.1.i686.rpm
-kernel-reiser4-debugsource-4.3.0-18.1.i686.rpm
-kernel-reiser4-devel-4.3.0-18.1.i686.rpm
+--
+Thanks Glenn
 
-Architecture: x86_64
+An example of 'Wrong order of keys' problem
+===========================================
 
-kernel-reiser4-4.3.0-18.1.nosrc.rpm
-kernel-reiser4-4.3.0-18.1.x86_64.rpm
-kernel-reiser4-debuginfo-4.3.0-18.1.x86_64.rpm
-kernel-reiser4-debugsource-4.3.0-18.1.x86_64.rpm
-kernel-reiser4-devel-4.3.0-18.1.x86_64.rpm
+http://www.spinics.net/lists/reiserfs-devel/msg04871.html
 
-The project is here
-https://build.opensuse.org/package/show?package=kernel-reiser4&project=home%3Adoiggl
+#fsck.reiser4  --build-fs --force  /dev/sdb
+.
+.
+LOOKING FOR UNCONNECTED NODES                                             
+                                                                          
+     
+FSCK: node.c: 108: repair_node_items_check: Node (43828275), items (0) and
+(1): Wrong order of keys.                                                 
 
-The log of the build is here {x86_64} as an example. [Its a long buildlog]
-https://build.opensuse.org/package/live_build_log/home:doiggl/kernel-reiser4/openSUSE_13.2/x86_64
+     
+FSCK: node.c: 108: repair_node_items_check: Node (52697435), items (79)
+and (80): Wrong order of keys.                                            
 
-The .spec used file is here
-https://build.opensuse.org/package/view_file/home:doiggl/kernel-reiser4?expand=1&file=kernel-reiser4.spec
+        
+FSCK: node.c: 108: repair_node_items_check: Node (63227569), items (24)
+and (25): Wrong order of keys.                                            
 
-Thanks to the opensuse-kernel list members for compilation advice.
+        
+FSCK: node.c: 108: repair_node_items_check: Node (63227571), items (73)
+and (74): Wrong order of keys.                                            
 
-Patches applied:
-reiser4-for-4.3.0.patch
+        
+FSCK: node.c: 108: repair_node_items_check: Node (116595727), items (20)
+and (21): Wrong order of keys.                                            
 
-It looks like obs built the rpms.
-Post the results to the list.
+       
+FSCK: node.c: 108: repair_node_items_check: Node (227923161), items (22)
+and (23): Wrong order of keys.                                            
 
-Cheers Glenn
+       
+FSCK: node.c: 108: repair_node_items_check: Node (284305753), items (61)
+and (62): Wrong order of keys.                                            
+
+       
+        Read nodes 1481038                                                
+                                                                          
+     
+        Good nodes 471512 
+                Leaves of them 466164, Twigs of them 5348 
+        Time interval: Thu Sep  3 07:11:22 2015 - Thu Sep  3 07:14:56 2015
 
