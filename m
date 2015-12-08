@@ -1,38 +1,40 @@
-From: Jose R R <Jose.r.r@metztli-it.com>
-Subject: Fwd: Initial Reiser4 patch for Parted
-Date: Tue, 8 Dec 2015 00:03:39 -0800
-Message-ID: <CAM12Q5Q0mf=uNF1Uw9cOiZRRTRc14Gnzn6wNUDq7dCn8cEHQzg@mail.gmail.com>
-References: <CAM12Q5QDp__EAjLUEUbmyFFm1ap=uQrF2Od_S5ZBg6NnOL2ZAg@mail.gmail.com>
-Mime-Version: 1.0
-Content-Type: multipart/mixed; boundary=001a1142296856154005265e6973
-Return-path: <reiserfs-devel-owner@vger.kernel.org>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=metztli-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:sender:in-reply-to:references:date:message-id:subject
-         :from:to:content-type;
-        bh=JtnUNI7ryF5W6azUAjS/Ujv4HXmC0QrFt/0e6snLV+0=;
-        b=e02h588lQAfRE+HBGXyp1udOz431TEVSsJUsVrv+QTQ57/kQwyYGaIVLiNC9zeD5eN
-         rsN4fRvFfRmrWAnsyxqQ5ZeKWHaR5tNpHoPxZuKGO5sHJYN2HdMrNZ3D0KAKLSrFTB+H
-         yF2r8WCaIQEja0ToFNzt5z5fi8s6Lb9wklKePQ8ItAswG4vvBF21WdQrE0mjTkbm+lVC
-         y6lTIW3yTNCrxZA2Lsf6Ubw12MHchYA85nKlwUCGqZI1u+stpQ3PwLXF6CtX2Os3s8Gk
-         FbKEofD2NeTLc1f1+Envbtl9nTbe0gucOldTc/yTYx1vxaSP+ms/FXgX+Nqtbkg8jqNf
-         9s3g==
-In-Reply-To: <CAM12Q5QDp__EAjLUEUbmyFFm1ap=uQrF2Od_S5ZBg6NnOL2ZAg@mail.gmail.com>
-Sender: reiserfs-devel-owner@vger.kernel.org
-List-ID: <reiserfs-devel.vger.kernel.org>
-To: ReiserFS Development List <reiserfs-devel@vger.kernel.org>
-
---001a1142296856154005265e6973
-Content-Type: text/plain; charset=UTF-8
-
----------- Forwarded message ----------
 From: Jose R R <jose.r.r@metztli.com>
-Date: Tue, Dec 8, 2015 at 12:00 AM
-Subject: Initial Reiser4 patch for Parted
-To: bug-parted@gnu.org
-Cc: ReiserFS Development List <reiserfs-devel@vger.kernel.org>,
-cjwatson@debian.org
+Subject: bug#22113: Initial Reiser4 patch for Parted
+Date: Tue, 8 Dec 2015 00:00:24 -0800
+Message-ID: <CAM12Q5QDp__EAjLUEUbmyFFm1ap=uQrF2Od_S5ZBg6NnOL2ZAg@mail.gmail.com>
+Mime-Version: 1.0
+Content-Type: multipart/mixed; boundary=001a11422968b781bc05265e5de9
+Return-path: <bug-parted-bounces+gnu-bug-parted-2=m.gmane.org@gnu.org>
+Sender: "Debbugs-submit" <debbugs-submit-bounces@debbugs.gnu.org>
+Resent-Message-ID: <handler.22113.B.144956174932148@debbugs.gnu.org>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=metztli-com.20150623.gappssmtp.com; s=20150623;
+	h=mime-version:date:message-id:subject:from:to:cc:content-type;
+	bh=osBFszDXtX08N2ar0AOtQ9dAszknXIAO+uXxnIi2Mgk=;
+	b=2S1ud6Dv0pTsal72v735PgD1C3aW3X+Tj5oxudjt9bg+IGYpJuC/MhM2Ja+jOKaQoF
+	oVxYbMzvVku7mV3NkS58/l395juFb7EvruiQGyz4ReYi8R4+5BvCLAbI0Ym1ofECBmAB
+	CoEGPeB+9ueHC28STVkeS8dFn2j1esozK6KEhxP+/kFy1YfSkhdRFx2EpH6gXupm6LqU
+	lQZnb1yNrz3TNmmPLDnQVMl1IqEk6paHQeqREqpONAQAZrZosjyg1lP08ZvsAL9+qXeP
+	8sO3TRJ8cWFOFnalGVA/DA+nlMR5j6x7uJU3JkYz7JegeJeR79sqdEvZ3lJv7nAAlpg7
+	1uPA==
+List-Id: <reiserfs-devel.vger.kernel.org>
+List-Unsubscribe: <https://lists.gnu.org/mailman/options/bug-parted>,
+	<mailto:bug-parted-request@gnu.org?subject=unsubscribe>
+List-Archive: <http://lists.gnu.org/archive/html/bug-parted>
+List-Post: <mailto:bug-parted@gnu.org>
+List-Help: <mailto:bug-parted-request@gnu.org?subject=help>
+List-Subscribe: <https://lists.gnu.org/mailman/listinfo/bug-parted>,
+	<mailto:bug-parted-request@gnu.org?subject=subscribe>
+Errors-To: bug-parted-bounces+gnu-bug-parted-2=m.gmane.org@gnu.org
+Sender: bug-parted-bounces+gnu-bug-parted-2=m.gmane.org@gnu.org
+To: 22113@debbugs.gnu.org
+Cc: ReiserFS Development List <reiserfs-devel@vger.kernel.org>, cjwatson@debian.org
 
+--001a11422968b781bc05265e5de9
+Content-Type: multipart/alternative; boundary=001a11422968b781b505265e5de7
+
+--001a11422968b781b505265e5de7
+Content-Type: text/plain; charset=UTF-8
 
 'patch against git://git.sv.gnu.org/parted.git master that adds the
 ability to detect existing reiser4 partitions'
@@ -45,18 +47,28 @@ Try at no charge http://b2evolution.net for http://OpenShift.com PaaS
 ---------------------------------------------------------------------------------------------
 from our GitHub http://Nepohualtzintzin.com repository. Cloud the easy way!
 
+--001a11422968b781b505265e5de7
+Content-Type: text/html; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 
+<div dir=3D"ltr"><span style=3D"font-size:13px">&#39;patch against git://</=
+span><a href=3D"http://git.sv.gnu.org/parted.git" rel=3D"noreferrer" target=
+=3D"_blank" style=3D"font-size:13px">git.sv.gnu.org/parted.git</a><span sty=
+le=3D"font-size:13px">=C2=A0master that adds the</span><br style=3D"font-si=
+ze:13px"><span style=3D"font-size:13px">ability to detect existing=C2=A0</s=
+pan><span class=3D"" style=3D"font-size:13px">reiser4</span><span style=3D"=
+font-size:13px">=C2=A0partitions&#39;</span><br><br>-- <br>Jose R R<br><a h=
+ref=3D"http://metztli.it">http://metztli.it</a><br>------------------------=
+---------------------------------------------------------------------<br>Tr=
+y at no charge <a href=3D"http://b2evolution.net">http://b2evolution.net</a=
+> for <a href=3D"http://OpenShift.com">http://OpenShift.com</a> PaaS<br>---=
+---------------------------------------------------------------------------=
+---------------<br>from our GitHub <a href=3D"http://Nepohualtzintzin.com">=
+http://Nepohualtzintzin.com</a> repository. Cloud the easy way!<br></div>
 
--- 
-Jose R R
-http://metztli.it
----------------------------------------------------------------------------------------------
-Try at no charge http://b2evolution.net for http://OpenShift.com PaaS
----------------------------------------------------------------------------------------------
-from our GitHub http://Nepohualtzintzin.com repository. Cloud the easy way!
----------------------------------------------------------------------------------------------
+--001a11422968b781b505265e5de7--
 
---001a1142296856154005265e6973
+--001a11422968b781bc05265e5de9
 Content-Type: application/octet-stream; 
 	name="0001-Initial-Reiser4-support-based-on-Bart-Hakvoort-2004-.patch"
 Content-Disposition: attachment; 
@@ -148,4 +160,7 @@ X2ZpbGVfc3lzdGVtX3Vmc19kb25lICgpOwogCXBlZF9maWxlX3N5c3RlbV94ZnNfZG9uZSAoKTsK
 KwlwZWRfZmlsZV9zeXN0ZW1fcmVpc2VyNF9kb25lICgpOwogCXBlZF9maWxlX3N5c3RlbV9hbWln
 YV9kb25lICgpOwogCXBlZF9maWxlX3N5c3RlbV9idHJmc19kb25lICgpOwogfQotLSAKMi42LjIK
 Cg==
---001a1142296856154005265e6973--
+--001a11422968b781bc05265e5de9--
+
+
+
