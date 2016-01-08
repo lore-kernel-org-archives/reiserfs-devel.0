@@ -1,93 +1,161 @@
-From: Jose R R <Jose.r.r@metztli-it.com>
-Subject: Re: Reiser4-enabled Debian Unstable (Sid) netboot iso
-Date: Fri, 8 Jan 2016 01:38:20 -0800
-Message-ID: <CAM12Q5RPFfOynEsfLX5Wi7EmaLKX3Q7AdVBON2bk666jX3hthg@mail.gmail.com>
-References: <CAM12Q5QLgEgzb6uh_JPDMv69ZK18N5uceZOTaqx_dh1n1qXXag@mail.gmail.com>
-	<20160106152102.21774e48@Ulf.tvoe.tv>
-	<CAM12Q5Q_pdr27TEr4ZRY+2ZVG_VYfhZ6AeEHQyPatOL7UVXUXQ@mail.gmail.com>
-	<20160106182029.722301b7@Ulf.tvoe.tv>
+From: Edward Shishkin <edward.shishkin@gmail.com>
+Subject: Re: Overriding with node41 doesn't work.
+Date: Fri, 8 Jan 2016 10:46:22 +0100
+Message-ID: <568F856E.3000801@gmail.com>
+References: <n6gg6h$7u6$1@ger.gmane.org> <568C3977.5010606@gmail.com>
 Mime-Version: 1.0
+Content-Type: multipart/mixed;
+ boundary="------------000505070506090000030404"
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=metztli-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:sender:in-reply-to:references:date:message-id:subject
-         :from:to:content-type;
-        bh=qJhUDWmkN2OBhRAyW2ddWWzeJ+dnweLWRm9zIaKCXIo=;
-        b=UPGaGi+jfEZsadl9ySQZK3mzU4VkHU3tfGmDt4bqvhGOLeV9yyJuOc9/oT4QE2LtRz
-         Yto55PqWG7SVLT9NsTQK9B/ysnQmdMAnWOEJJ/xux2HJS8hB8DEc+5eRDmvHq8poPz6c
-         VRFYFNo01Lvr+I4VH1bjypSV0l32RlBEgOmQSPIfXp0yXbbw1Iwqcy9XmFjhTwJKqyma
-         /274jDA93DnfVPPai5roF4PXw+6SIi6tqxk1lUMSs6U8g6aER03XWwZyvhS6oKaF4hAs
-         EZKH7zK3ot7Jh9QrMSqF02svWIdw1szxYaP257/Xv+/BrBAgHWQFrH2TiCHzHHvih3Fh
-         S6ng==
-In-Reply-To: <20160106182029.722301b7@Ulf.tvoe.tv>
+        d=gmail.com; s=20120113;
+        h=subject:to:references:from:message-id:date:user-agent:mime-version
+         :in-reply-to:content-type;
+        bh=Twm/s2S62EYuDfNV4LYPs6MfHtr7ocpG5jsTesCZCMQ=;
+        b=pieUo3TYy7rhB+FCkfvTMeHLfzKJsg79sFzGYrxzBlaiKlsB8AosgAXYS2jovLWqHS
+         9C53f0dmwjsPIQiMyH5D9dpjIXo2uytzDDI9mAwJnfKcPRmVwpl+8w4YnvYbCi1c9U26
+         ypgFy3JHiTEPAOYQ4ZbL6DrrhhOH6gcEnz9l5O4cop2//Nlmi7TKppp6+eIBn7P0wLdS
+         XTqD0+vO5j7SvXBhGA12X090GWRIEOBy0Z5l3FCcNShiXeh96E5QbP++paSiZdkPIEQ6
+         bHPebqRMHT/rG5MgbZBYKISQXlg/82Ra/h3Ycd+AGrF7Ms4HuKzGYJ0CjMho8jRjOVti
+         CojA==
+In-Reply-To: <568C3977.5010606@gmail.com>
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
+To: Georgios Tsalikis <georgios@tsalikis.net>, reiserfs-devel@vger.kernel.org
+
+This is a multi-part message in MIME format.
+--------------000505070506090000030404
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Transfer-Encoding: 7bit
-To: reiserfs-devel <reiserfs-devel@vger.kernel.org>, debian-boot@lists.debian.org
 
-On Wed, Jan 6, 2016 at 7:20 AM, dimas <dimas000@ya.ru> wrote:
-> 2016-006 05:42 Jose R R <Jose.r.r@metztli-it.com> wrote:
->> I have built a modified version of initramfs-tools package that has as
->> default those Reiser4 -specific settings
->> but wanted to allow d-i to select most of its packages from regular
->> Debian repositories.
-> well, i see. right way, probably. but you can the needed hook in any installion
-> scripts that you modify anyhow. i think, you messed with any of those, yes?
+Hello.
 
-This issue may be resolved subsequently -- although probably using a
-procedure that occurs *earlier* than 'the hooks' :)
+The attached patch against reiser4progs-1.1.0 allows to print
+node plugin without any tricky manipulations:
+
+# debugfs.reiser4 -f /dev/xxx
+
+[...]
+Format super block (17):
+format:        format40
+version:    1
+magic:        ReIsEr40FoRmAt
+mkfs id:    0x10eca54c
+flushes:    0
+blocks:        128000
+free blocks:    127970
+root block:    23
+node plugin:    0x1 (node41)
+tail policy:    0x2 (smart)
+next oid:    0x10000
+file count:    1
+tree height:    2
+key policy:    LARGE
+[...]
+
+Thanks,
+Edward.
+
+On 01/05/2016 10:45 PM, Edward Shishkin wrote:
 >
->> That suggestion is probably fine for the reiser4-parted DEBs but the
->> kernel included in d-i is 'picky' and I have not had luck changing its
->> name to something other than *official* Debian because d-i then
->> refuses to install from the Debian repositories.
-> ouch, didn't know that it has such a strict restrictions
-
-Using the same Debian Sid Linux kernel source, I generated another
-Reiser4-enabled kernel 'the Debian Way' -- but with a custom changelog
-that clearly shows has Reiser4 super power :D
-https://metztli.it/readOnlyEphemeral/linux-image-4.3.0-1+reiser4.0.1-amd64_4.3.3-5+reiser4.0.2_amd64.tar
-
-Once installed into a Debian distro, a uname -a yields:
-
-Linux [host] 4.3.0-1+reiser4.0.1-amd64 #1 SMP Debian
-4.3.3-5+reiser4.0.1 (2016-01-07) x86_64 GNU/Linux
-
-Hence *hold* is not necessary for said kernel.
-
 >
->> And for Debian Parted:
->> echo "parted hold" | dpkg --set-selections
->> echo "libparted2 hold" | dpkg --set-selections
->> And we can check for those packages effectively being on *hold* and
->> not replaced by Debian package manager, thus:
-> that's the option, yeah, but placing packages on hold can lead to some expected
-> dependecies conflicts in the future, and is generally rather "dirty" way. using
-> special package names like "parted-reiser4" is much clear anyhow, what is more,
-> you can easily run your local repo with r4-patched kernels/tools/libs, and it
-> will be the most clear of obvious way for the enduser to keep all this stuff
-> upgraded without worrying whether it's r4-patched stuff or not. this would be a
-> perfect variant, i think. user just install "linux-....-reiser4",
-> "parted-...-reiser4" and "whatever-....-reiser4", and you just build new
-> packages from time to time, and everyone have their stuff updated usual way.
+> On 01/05/2016 02:18 PM, Georgios Tsalikis wrote:
+>> Or at least so it seems. Once i used node=node41 for checksums but 
+>> the system showed node40.
+>
+>
+> Who exactly reports "node40"?
+>
+>
+>> Now i did an fsck with override node=node41 trying to add the feature 
+>> in a partition with node40. It reports node40 afterwards. Any clues?
+>
+>
+> You can specify node=node41 only when formatting a partition.
+> Different node formats in the same reiser4 volume are not supported.
+> Conversion of node formats are not implemented. To check the actual
+> node format, dump the tree with "debugfs.reiser4 -f -t /dev/xxx" and
+> grep for "NODE". If your nodes are managed by node41 plugin, then
+> you'll see the field "CSUM=xxxxx".
+>
+> Thanks,
+> Edward.
 
-Well renaming Debian GNU Parted can wait -- as it is optional for the
-user *even* after Debian is installed; i.e., I have embedded the
-Reiser4-enabled lib/parted[2] UDEB into previoulsy referenced
-Debian-Installer (d-i) netboot ISO:
-http://metztli.it/readOnlyEphemeral/metztli_it-reiser4_d-i.iso
 
-Thanks for your suggestions, Dimas.
+--------------000505070506090000030404
+Content-Type: text/x-patch;
+ name="reiser4progs-format40-print-node-plugin-id.patch"
+Content-Transfer-Encoding: 7bit
+Content-Disposition: attachment;
+ filename="reiser4progs-format40-print-node-plugin-id.patch"
 
+Print node layout plugin id of the format40 super-block.
 
-Best Professional Regards.
+Signed-off-by: Edward Shishkin <edward.shishkin@gmail.com>
+---
+ plugin/format/format40/format40_repair.c |   31 ++++++++++++++++++-------------
+ 1 file changed, 18 insertions(+), 13 deletions(-)
 
--- 
-Jose R R
-http://metztli.it
----------------------------------------------------------------------------------------------
-Try at no charge http://b2evolution.net for http://OpenShift.com PaaS
----------------------------------------------------------------------------------------------
-from our GitHub http://Nepohualtzintzin.com repository. Cloud the easy way!
----------------------------------------------------------------------------------------------
+--- a/plugin/format/format40/format40_repair.c
++++ b/plugin/format/format40/format40_repair.c
+@@ -374,31 +374,33 @@ void format40_print(reiser4_format_ent_t
+ 		    uint16_t options) 
+ {
+ 	format40_super_t *super;
+-	reiser4_plug_t *plug;
++	reiser4_plug_t *tplug;
++	reiser4_plug_t *nplug;
+ 	format40_t *format;
+-	rid_t pid;
+-    
++	rid_t tpid;
++	rid_t npid;
++
+ 	aal_assert("vpf-246", entity != NULL);
+ 	aal_assert("umka-1290", stream != NULL);
+ 
+ 	format = (format40_t *)entity;
+ 	super = &format->super;
+     
+-	pid = get_sb_policy(super);
++	tpid = get_sb_policy(super);
++	npid = get_sb_node_pid(super);
++
++	if (!(tplug = format40_core->factory_ops.ifind(POLICY_PLUG_TYPE, tpid)))
++		aal_error("Can't find tail policy plugin by its id 0x%x.", tpid);
++
++	if (!(nplug = format40_core->factory_ops.ifind(NODE_PLUG_TYPE, npid)))
++		aal_error("Can't find node plugin by its id 0x%x.", npid);
+ 
+-	if (!(plug = format40_core->factory_ops.ifind(POLICY_PLUG_TYPE, pid))) {
+-		aal_error("Can't find tail policy plugin by its id 0x%x.", pid);
+-	}
+-		
+ 	aal_stream_format(stream, "Format super block (%lu):\n",
+ 			  FORMAT40_BLOCKNR(format->blksize));
+ 	
+-	aal_stream_format(stream, "plugin:\t\t%s\n", 
++	aal_stream_format(stream, "format:\t\t%s\n",
+ 			  entity->plug->p.label);
+ 	
+-	aal_stream_format(stream, "description:\t%s\n", 
+-			  entity->plug->p.desc);
+-
+ 	aal_stream_format(stream, "version:\t%u\n", 
+ 			  get_sb_version(super));
+ 	
+@@ -420,8 +422,11 @@ void format40_print(reiser4_format_ent_t
+ 	aal_stream_format(stream, "root block:\t%llu\n", 
+ 			  get_sb_root_block(super));
+ 
++	aal_stream_format(stream, "node plugin:\t0x%x (%s)\n",
++			  npid, nplug ? nplug->label: "absent");
++
+ 	aal_stream_format(stream, "tail policy:\t0x%x (%s)\n",
+-			  pid, plug ? plug->label: "absent");
++			  tpid, tplug ? tplug->label: "absent");
+ 	
+ 	aal_stream_format(stream, "next oid:\t0x%llx\n",
+ 			  get_sb_oid(super));
+
+--------------000505070506090000030404--
