@@ -1,32 +1,42 @@
 From: Jose R R <Jose.r.r@metztli-it.com>
 Subject: Re: Reiser4-enabled Debian Unstable (Sid) netboot iso
-Date: Mon, 11 Jan 2016 02:52:16 -0800
-Message-ID: <CAM12Q5RuC-DTFLK+XO=voddM6GRXzCw4ci9OOShDFSfJVGx+aw@mail.gmail.com>
+Date: Mon, 11 Jan 2016 03:42:22 -0800
+Message-ID: <CAM12Q5S9ugte1NLTKY68qa=rXD13Kktric+Osfw-rOeXF2uw0Q@mail.gmail.com>
 References: <CAM12Q5QLgEgzb6uh_JPDMv69ZK18N5uceZOTaqx_dh1n1qXXag@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: multipart/mixed; boundary=047d7b3a8680f583d905290cbab0
-Return-path: <reiserfs-devel-owner@vger.kernel.org>
+Content-Type: multipart/mixed; boundary=001a11c2a5f626bede05290d6e0a
+Return-path: <bounce-debian-boot=debian-boot=m.gmane.org@lists.debian.org>
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=metztli-com.20150623.gappssmtp.com; s=20150623;
         h=mime-version:sender:in-reply-to:references:date:message-id:subject
          :from:to:content-type;
-        bh=R9GMtC7R8McubEqrNNnWV+UGXHB9ilmgfHpLvF4Iu3E=;
-        b=kB7evDNqhtaPLw2Z1sxiTOXvbTOtlWVQZtWlckBVsCIjUxTXCrQwr2aXVtyEhFfWhC
-         18nO5Q0D6AZe2YQBiSJYk1aH0ZZqYtHZUu7iQANnPcDa3CHFlBa8N3zr6Ok+3yftddQ1
-         1MEKhkr8DCogcCeDo4BgeZv+7pa+/NGsvTUsx3LQ3xFktsnp7oAvDFJWTU55x6gqIgaN
-         GGp8svrfTnitYlPj6AkOg6plq/y7ry3IsY521JiCaZTvUAYTCpTTBWm75DWf4GUbtaGF
-         EDJhFVx76SimX87Zhjt/P82LL78/vGCJjq9DWn/JKQrjYN83oSN4L9pprWNRajz9CMXW
-         l15w==
+        bh=7HFfXXr69OY4r7y4KaUe7ZipmuUHnC3kEONnELcwsb0=;
+        b=QPTWq4yWMEajCxFu84NlC1LNFisdI1AZgcZrhwg2kxed/TMDK0jfr1GpblNuB0r75g
+         +gjsSLUA2GoHUGXspeNL9HodhOmfCMYXTOKnG6M9ujBn9gclXGxAwH328RGDdknSOZEo
+         vcueu1R05Ejbq0xeZaPFkYQyAbSdPQp0YbwqjAoKQFzWTFKhxZfXwCqueB16cm5pTM4j
+         rT+H3gp8+GLKL67be+94dMxKFsgZZFTMix+C3L+06ZO/C08tFDKNj/Ntys8sCau2p0f9
+         Gn+fDMoQowNZV2PBSSgujIniQDMjCX09a1TkHCOigl1ZIiMI2dSTMfUYoXy993BPBQo3
+         2nAg==
+Sender: jose.r.r@metztli.com
 In-Reply-To: <CAM12Q5QLgEgzb6uh_JPDMv69ZK18N5uceZOTaqx_dh1n1qXXag@mail.gmail.com>
-Sender: reiserfs-devel-owner@vger.kernel.org
-List-ID: <reiserfs-devel.vger.kernel.org>
+Resent-Message-ID: <ThPf2d68VhK.A.SOH.-U5kWB@bendel>
+List-Id: <reiserfs-devel.vger.kernel.org>
+List-URL: <https://lists.debian.org/debian-boot/>
+List-Post: <mailto:debian-boot@lists.debian.org>
+List-Help: <mailto:debian-boot-request@lists.debian.org?subject=help>
+List-Subscribe: <mailto:debian-boot-request@lists.debian.org?subject=subscribe>
+List-Unsubscribe: <mailto:debian-boot-request@lists.debian.org?subject=unsubscribe>
+List-Archive: https://lists.debian.org/msgid-search/CAM12Q5S9ugte1NLTKY68qa=rXD13Kktric+Osfw-rOeXF2uw0Q@mail.gmail.com
 To: ReiserFS Development List <reiserfs-devel@vger.kernel.org>, debian-boot@lists.debian.org, debian-cloud <debian-cloud@lists.debian.org>
 
---047d7b3a8680f583d905290cbab0
+--001a11c2a5f626bede05290d6e0a
+Content-Type: multipart/alternative; boundary=001a11c2a5f626bed905290d6e08
+
+--001a11c2a5f626bed905290d6e08
 Content-Type: text/plain; charset=UTF-8
 
-(3/3) Reiser4 version 4.0.1 -enabled patches for Debian Installer
-components and/or userland utilities:
+(Bonus) Reiser4 version 4.0.1 -enabled patch for Debian Linux kernel
+packaging:
 
 On Wed, Jan 6, 2016 at 2:19 AM, Jose R R <Jose.r.r@metztli-it.com> wrote:
 > Niltze, all-
@@ -92,7 +102,8 @@ On Wed, Jan 6, 2016 at 2:19 AM, Jose R R <Jose.r.r@metztli-it.com> wrote:
 > http://metztli.it/readOnlyEphemeral//metztli_it-reiser4_d-i.iso
 >
 > Reiser4 -enabled kernel & modules.README_1st:
-> http://metztli.it/readOnlyEphemeral/linux-image-4.3.0-1-amd64_4.3.3-5_amd64.tar
+>
+http://metztli.it/readOnlyEphemeral/linux-image-4.3.0-1-amd64_4.3.3-5_amd64.tar
 >
 > Reiser4 -enabled Debian GNU Parted packages (install at the end of
 > installation procedure); please note that those packages under
@@ -117,6 +128,7 @@ On Wed, Jan 6, 2016 at 2:19 AM, Jose R R <Jose.r.r@metztli-it.com> wrote:
 > Feedback and/or suggestions welcome.
 >
 >
+> Best Professional Regards
 >
 >
 > P.S I am already preparing some images for Google Compute Engine (GCE)
@@ -124,18 +136,15 @@ On Wed, Jan 6, 2016 at 2:19 AM, Jose R R <Jose.r.r@metztli-it.com> wrote:
 > Reiser4 images created last year.
 > --
 
-Reiser4 4.0.1 -enabled Reiser4progs utilities to manage Reiser4 4.0.1
-derived creation, formatting, and partitioning. In addition to
-generating the desired userland utilities for Debian (which are
-already in Stretch & Sid debian repos), it creates UDEBs suitable for
-inclusion in a Reiser4 4.0.1 -enabled Debian-Installer (d-i)
+Based on building a Reiser4 4.0.1 -patched Linux kernel the 'debian way'
+(hack, literally -- but it works ;-) prior post:
+https://metztli.it/blog/index.php/aH0?blog=4
 
-Patch inclueded in repo:
-https://github.com/Metztli/debian-installer-reiser4progs
+Creates Reiser4 4.0.1 kernel module UDEB suitable for inclusion into
+Debian-Installer (d-i); please, note that, as explained in the referenced
+blog above, /usr/share/kernel-wedge/package-list
+must also be modified in addition to this patch below attached:
 
-and attached patch below:
-
-Best Professional Regards
 
 -- 
 Jose R R
@@ -146,112 +155,152 @@ Try at no charge http://b2evolution.net for http://OpenShift.com PaaS
 from our GitHub http://Nepohualtzintzin.com repository. Cloud the easy way!
 ---------------------------------------------------------------------------------------------
 
---047d7b3a8680f583d905290cbab0
-Content-Type: application/octet-stream; 
-	name="0001-Added-reiser4progs-support-to-generate-UDEBs-for-Deb.patch"
-Content-Disposition: attachment; 
-	filename="0001-Added-reiser4progs-support-to-generate-UDEBs-for-Deb.patch"
-Content-Transfer-Encoding: base64
-X-Attachment-Id: f_ij9umnic0
+--001a11c2a5f626bed905290d6e08
+Content-Type: text/html; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 
-RnJvbSAzNDc4YzI1NDUyNzdmNWY1NGQ2MDJhMDUxMzkwMjA2YzgyNjQzNmVkIE1vbiBTZXAgMTcg
+<div dir=3D"ltr">(Bonus) Reiser4 version 4.0.1 -enabled patch for Debian Li=
+nux kernel packaging:<br><br>On Wed, Jan 6, 2016 at 2:19 AM, Jose R R &lt;<=
+a href=3D"mailto:Jose.r.r@metztli-it.com">Jose.r.r@metztli-it.com</a>&gt; w=
+rote:<br>&gt; Niltze, all-<br>&gt;<br>&gt; I have been building iterations =
+of Debian-Installer (d-i) enhanced<br>&gt; with Reiser4 4.0.1 kernel, disk =
+and filesystem utilities. Thus far I<br>&gt; have used a local build on Deb=
+ian Sid of VirtualBox 5.0.10 environment<br>&gt; to test multiple Reiser4 i=
+nstallations.<br>&gt;<br>&gt; For flexibility, especially if you are testin=
+g in a VM, the following<br>&gt; d-i options may help:<br>&gt;<br>&gt; -Net=
+work-console: continue installation remotely using SSH<br>&gt; -Openssh-cli=
+ent-udeb: secure shell client for the Debian installer<br>&gt;<br>&gt; Now:=
+<br>&gt;<br>&gt; d-i offers three(3) choices:<br>&gt;<br>&gt; Jessie (stabl=
+e)<br>&gt; Stretch (testing)<br>&gt; Sid (unstable)<br>&gt;<br>&gt; I have =
+verified that *all* can be installed from my custom Reiser4<br>&gt; d-i; Ne=
+vertheless Jessie (stable) needs access to testing and/or<br>&gt; unstable =
+repositories added at /etc/apt/sources.list in order to<br>&gt; fulfill dep=
+endencies of the unstable kernel in my d-i. Jessie (stable)<br>&gt; also ne=
+eds to have newer Reiser4 4.0.1 packages because d-i downloads<br>&gt; the =
+older (stable) version. I have covered *all* of Jessie conditions<br>&gt; b=
+y building newer unstable versions of its requirements. The downside<br>&gt=
+; of it is that a user needs to manually intervene at the shell,<br>&gt; po=
+ssibly at the expert level.<br>&gt;<br>&gt; As for Stretch and Sid, manual =
+intervention is required only to modify<br>&gt; /etc/initramfs-tools/module=
+s file by adding at the end:<br>&gt;<br>&gt; crc32c_intel<br>&gt; reiser4<b=
+r>&gt;<br>&gt; *before* installing the custom Reiser4 kernel, thus:<br>&gt;=
+ dpkg -i linux-image-4.3.0-1-amd64_4.3.3-5_amd64.deb<br>&gt;<br>&gt; so tha=
+t initramfs can be appropriately updated *before* rebooting the<br>&gt; new=
+ Reiser4 installation.<br>&gt;<br>&gt; Note that GRUBX does not support boo=
+ting from /boot Reiser4<br>&gt; filesystem; accordingly, a small partition =
+must be provisioned for<br>&gt; booting into a Reiser4 -formatted root (/) =
+partition. The d-i<br>&gt; partman-reiser4 will format Reiser4 partitions t=
+hus:<br>&gt;<br>&gt; mkfs.reiser4 -yo &quot;create=3Dreg40&quot; &lt;your s=
+elected partition&gt;<br>&gt;<br>&gt; Additionally, user may want to provis=
+ion a /tmp in a non-Reiser4<br>&gt; partition if the intention is to run Ma=
+riaDB (MySQL) because -- at the<br>&gt; very least -- the DB will complain =
+about /tmp issues if it is<br>&gt; formatted in Reiser4 --personal experien=
+ce ;-)<br>&gt;<br>&gt; With the above said and warning that this is an alph=
+a effort *without*<br>&gt; any explicit and/or implied guarantee that will =
+be risk-free, here is<br>&gt; the current yield of of Reiser4 effort:<br>&g=
+t;<br>&gt; Reiser4 -enabled Debian-Installer (d-i) netboot mini.iso renamed=
+ as:<br>&gt; <a href=3D"http://metztli.it/readOnlyEphemeral//metztli_it-rei=
+ser4_d-i.iso">http://metztli.it/readOnlyEphemeral//metztli_it-reiser4_d-i.i=
+so</a><br>&gt;<br>&gt; Reiser4 -enabled kernel &amp; modules.README_1st:<br=
+>&gt; <a href=3D"http://metztli.it/readOnlyEphemeral/linux-image-4.3.0-1-am=
+d64_4.3.3-5_amd64.tar">http://metztli.it/readOnlyEphemeral/linux-image-4.3.=
+0-1-amd64_4.3.3-5_amd64.tar</a><br>&gt;<br>&gt; Reiser4 -enabled Debian GNU=
+ Parted packages (install at the end of<br>&gt; installation procedure); pl=
+ease note that those packages under<br>&gt; reiser4-parted_3.2-12/misc are =
+optional):<br>&gt; <a href=3D"http://metztli.it/readOnlyEphemeral/reiser4-p=
+arted_3.2-12.tar">http://metztli.it/readOnlyEphemeral/reiser4-parted_3.2-12=
+.tar</a><br>&gt; (after untarring above referenced, install as)<br>&gt; cd =
+reiser4-parted_3.2-12<br>&gt; dpkg -i parted_3.2-12_amd64.deb libparted2_3.=
+2-12_amd64.deb<br>&gt;<br>&gt; Next resource is only needed if Jessie was i=
+nstalled. Package below<br>&gt; will replace the older Reiser4 file utiliti=
+es:<br>&gt; <a href=3D"http://metztli.it/readOnlyEphemeral/reiser4progs-4.0=
+.1.tar">http://metztli.it/readOnlyEphemeral/reiser4progs-4.0.1.tar</a><br>&=
+gt;<br>&gt; Although I have created patches for most (or all ;-) of the abo=
+ve at<br>&gt; GitHub, I realize Debian Unstable (Sid) is a fast moving deve=
+lopment<br>&gt; effort and within a couple of weeks the kernel referenced a=
+bove will<br>&gt; be outdated and d-i will refuse to install.<br>&gt;<br>&g=
+t; With the previous statement said, and if anyone is willing, try the<br>&=
+gt; above Debian-Installer (d-i) resources while the kernel is fresh...<br>=
+&gt;<br>&gt; Feedback and/or suggestions welcome.<br>&gt;<br>&gt;<br>&gt; B=
+est Professional Regards<br>&gt;<br>&gt;<br>&gt; P.S I am already preparing=
+ some images for Google Compute Engine (GCE)<br>&gt; &lt; <a href=3D"https:=
+//cloud.google.com/compute/">https://cloud.google.com/compute/</a> &gt; to =
+add to currently testing<br>&gt; Reiser4 images created last year.<br>&gt; =
+--<br><br>Based on building a Reiser4 4.0.1 -patched Linux kernel the &#39;=
+debian way&#39; (hack, literally -- but it works ;-) prior post: <a href=3D=
+"https://metztli.it/blog/index.php/aH0?blog=3D4">https://metztli.it/blog/in=
+dex.php/aH0?blog=3D4</a><br><br>Creates Reiser4 4.0.1 kernel module UDEB su=
+itable for inclusion into Debian-Installer (d-i); please, note that, as exp=
+lained in the referenced blog above,=C2=A0<span style=3D"color:rgb(51,51,51=
+);font-family:&#39;Helvetica Neue&#39;,Helvetica,Arial,sans-serif;font-size=
+:14px;line-height:20px">/usr/share/kernel-wedge/package-list</span><div><sp=
+an style=3D"color:rgb(51,51,51);font-family:&#39;Helvetica Neue&#39;,Helvet=
+ica,Arial,sans-serif;font-size:14px;line-height:20px">must also be modified=
+ in addition to this patch below attached:</span><br><br><br>-- <br>Jose R =
+R<br><a href=3D"http://metztli.it">http://metztli.it</a><br>---------------=
+---------------------------------------------------------------------------=
+---<br>Try at no charge <a href=3D"http://b2evolution.net">http://b2evoluti=
+on.net</a> for <a href=3D"http://OpenShift.com">http://OpenShift.com</a> Pa=
+aS<br>---------------------------------------------------------------------=
+------------------------<br>from our GitHub <a href=3D"http://Nepohualtzint=
+zin.com">http://Nepohualtzintzin.com</a> repository. Cloud the easy way!<br=
+>--------------------------------------------------------------------------=
+-------------------</div></div>
+
+--001a11c2a5f626bed905290d6e08--
+
+--001a11c2a5f626bede05290d6e0a
+Content-Type: application/octet-stream; 
+	name="0001-Reiser4-support-for-Debian-AMD64-packaging-to-genera.patch"
+Content-Disposition: attachment; 
+	filename="0001-Reiser4-support-for-Debian-AMD64-packaging-to-genera.patch"
+Content-Transfer-Encoding: base64
+X-Attachment-Id: f_ij9wectb0
+
+RnJvbSBjZWFlOTc4ZjM1NzBhNGMzZmRlMzBjYjQzMTdlMmFkNjdmNjdjMWJmIE1vbiBTZXAgMTcg
 MDA6MDA6MDAgMjAwMQpGcm9tOiBNZXR6dGxpIDxqb3NlLnJvZHJpZ3VlekBtZXR6dGxpLWl0LmNv
-bT4KRGF0ZTogU3VuLCAyNyBEZWMgMjAxNSAyMDoxODoxNSAtMDgwMApTdWJqZWN0OiBbUEFUQ0hd
-IEFkZGVkIHJlaXNlcjRwcm9ncyBzdXBwb3J0IHRvIGdlbmVyYXRlIFVERUJzIGZvcgogRGViaWFu
-LUluc3RhbGxlcgoKLS0tCiBSRUFETUUubWQgICAgICAgICAgICAgICAgICAgICAgIHwgIDUgKysr
-KysKIGJ1aWxkL3JlaXNlcjRwcm9ncy9ydW4tbGRjb25maWcgfCAgMSArCiBidWlsZC91ZGVicy9y
-dW4tbGRjb25maWcgICAgICAgIHwgIDEgKwogZGViaWFuL2NvbnRyb2wgICAgICAgICAgICAgICAg
-ICB8IDE3ICsrKysrKysrKysrKysrKwogZGViaWFuL3J1bGVzICAgICAgICAgICAgICAgICAgICB8
-IDQ4ICsrKysrKysrKysrKysrKysrKysrLS0tLS0tLS0tLS0tLS0tLS0tLS0tCiA1IGZpbGVzIGNo
-YW5nZWQsIDQ4IGluc2VydGlvbnMoKyksIDI0IGRlbGV0aW9ucygtKQogY3JlYXRlIG1vZGUgMTAw
-NjQ0IFJFQURNRS5tZAogY3JlYXRlIG1vZGUgMTIwMDAwIGJ1aWxkL3JlaXNlcjRwcm9ncy9ydW4t
-bGRjb25maWcKIGNyZWF0ZSBtb2RlIDEyMDAwMCBidWlsZC91ZGVicy9ydW4tbGRjb25maWcKCmRp
-ZmYgLS1naXQgYS9SRUFETUUubWQgYi9SRUFETUUubWQKbmV3IGZpbGUgbW9kZSAxMDA2NDQKaW5k
-ZXggMDAwMDAwMC4uMmU4YTJjZAotLS0gL2Rldi9udWxsCisrKyBiL1JFQURNRS5tZApAQCAtMCww
-ICsxLDUgQEAKKyMgZGViaWFuLWluc3RhbGxlci1yZWlzZXI0cHJvZ3MKKworQ29tcG9uZW50IHNl
-dCB3aWxsIGNyZWF0ZSBVREVCcyBzdWl0YWJsZSBmb3IgaW5jbHVzaW9uIGludG8gdGhlIERlYmlh
-bi1JbnN0YWxsZXIgKGQtaSkKK2ZvciBhIHN1Y2Nlc3NmdWwgRGViaWFuIHBhcnRpdGlvbmluZywg
-Zm9ybWF0dGluZywgYW5kIGluc3RhbGxhdGlvbiBvbnRvIFJlaXNlcjQgZmlsZXN5c3RlbS4KK0Fk
-ZGl0aW9uYWxseSwgb2YgY291cnNlLCB3aWxsIGFsc28gZ2VuZXJhdGUgdXBzdHJlYW0gbWFpbnRh
-aW5lcidzIHVzZXJsYW5kIERFQiBwYWNrYWdlcy4KZGlmZiAtLWdpdCBhL2J1aWxkL3JlaXNlcjRw
-cm9ncy9ydW4tbGRjb25maWcgYi9idWlsZC9yZWlzZXI0cHJvZ3MvcnVuLWxkY29uZmlnCm5ldyBm
-aWxlIG1vZGUgMTIwMDAwCmluZGV4IDAwMDAwMDAuLjI2NTc0NzUKLS0tIC9kZXYvbnVsbAorKysg
-Yi9idWlsZC9yZWlzZXI0cHJvZ3MvcnVuLWxkY29uZmlnCkBAIC0wLDAgKzEgQEAKKy4uLy4uL3J1
-bi1sZGNvbmZpZwpcIE5vIG5ld2xpbmUgYXQgZW5kIG9mIGZpbGUKZGlmZiAtLWdpdCBhL2J1aWxk
-L3VkZWJzL3J1bi1sZGNvbmZpZyBiL2J1aWxkL3VkZWJzL3J1bi1sZGNvbmZpZwpuZXcgZmlsZSBt
-b2RlIDEyMDAwMAppbmRleCAwMDAwMDAwLi4yNjU3NDc1Ci0tLSAvZGV2L251bGwKKysrIGIvYnVp
-bGQvdWRlYnMvcnVuLWxkY29uZmlnCkBAIC0wLDAgKzEgQEAKKy4uLy4uL3J1bi1sZGNvbmZpZwpc
-IE5vIG5ld2xpbmUgYXQgZW5kIG9mIGZpbGUKZGlmZiAtLWdpdCBhL2RlYmlhbi9jb250cm9sIGIv
-ZGViaWFuL2NvbnRyb2wKaW5kZXggMTUxYTNkYS4uNWFiZTNiNiAxMDA2NDQKLS0tIGEvZGViaWFu
-L2NvbnRyb2wKKysrIGIvZGViaWFuL2NvbnRyb2wKQEAgLTE3LDYgKzE3LDIzIEBAIERlc2NyaXB0
-aW9uOiBhZG1pbmlzdHJhdGlvbiB1dGlsaXRpZXMgZm9yIHRoZSBSZWlzZXI0IGZpbGVzeXN0ZW0K
-ICAgIC0gbWVhc3VyZWZzLnJlaXNlcjQKICAgIC0gbWtmcy5yZWlzZXI0CiAKK1BhY2thZ2U6IHJl
-aXNlcjRwcm9ncy11ZGViCitYQy1QYWNrYWdlLVR5cGU6IHVkZWIKK1NlY3Rpb246IGRlYmlhbi1p
-bnN0YWxsZXIKK0FyY2hpdGVjdHVyZTogYW55CitEZXBlbmRzOiAke3NobGliczpEZXBlbmRzfQor
-RGVzY3JpcHRpb246IHVzZXItbGV2ZWwgdG9vbHMgdG8gbWFuYWdlIFJlaXNlcjQgZmlsZXN5c3Rl
-bXMKKyBUaGlzIGluc3RhbGxlciBtb2R1bGUgY29udGFpbnMgdXRpbGl0aWVzIHRvIGNoZWNrLCBy
-ZXNpemUsIGFuZCBkZWJ1ZyAKKyBSZWlzZXI0IGZpbGVzeXN0ZW1zLiAKKworUGFja2FnZTogbWty
-ZWlzZXI0LXVkZWIKK1hDLVBhY2thZ2UtVHlwZTogdWRlYgorU2VjdGlvbjogZGViaWFuLWluc3Rh
-bGxlcgorQXJjaGl0ZWN0dXJlOiBhbnkKK0RlcGVuZHM6ICR7c2hsaWJzOkRlcGVuZHN9CitEZXNj
-cmlwdGlvbjogdXNlci1sZXZlbCB0b29sIHRvIG1ha2UgUmVpc2VyNCBmaWxlc3lzdGVtcworIFRo
-aXMgaW5zdGFsbGVyIG1vZHVsZSBjb250YWlucyB0aGUgdXRpbGl0eSB0byBjcmVhdGUgUmVpc2Vy
-NCBmaWxlc3lzdGVtcy4KKwogUGFja2FnZTogbGlicmVpc2VyNC1kZXYKIFNlY3Rpb246IGxpYmRl
-dmVsCiBQcmlvcml0eTogZXh0cmEKZGlmZiAtLWdpdCBhL2RlYmlhbi9ydWxlcyBiL2RlYmlhbi9y
-dWxlcwppbmRleCA2N2ZmMWIwLi41NTFiMTcyIDEwMDc1NQotLS0gYS9kZWJpYW4vcnVsZXMKKysr
-IGIvZGViaWFuL3J1bGVzCkBAIC00NSwyMSArNDUsMjEgQEAgY29uZmlndXJlLXJlaXNlcjRwcm9n
-cy1zdGFtcDoKIAljZCAkKENVUkRJUikvYnVpbGQvcmVpc2VyNHByb2dzICYmICQoQ09ORklHVVJF
-KSAtLXdpdGgtcmVhZGxpbmUKIAl0b3VjaCAkQAogCi0jY29uZmlndXJlL21rcmVpc2VyNC11ZGVi
-IGNvbmZpZ3VyZS9yZWlzZXI0cHJvZ3MtdWRlYjo6IGNvbmZpZ3VyZS11ZGVicy1zdGFtcAotI2Nv
-bmZpZ3VyZS11ZGVicy1zdGFtcDo6Ci0jCW1rZGlyIC1wICQoQ1VSRElSKS9idWlsZC91ZGVicwot
-IwljZCAkKENVUkRJUikvYnVpbGQvdWRlYnMgJiYgJChDT05GSUdVUkUpIC0td2l0aC1yZWFkbGlu
-ZT1ubyAKLSMJdG91Y2ggJEAKK2NvbmZpZ3VyZS9ta3JlaXNlcjQtdWRlYiBjb25maWd1cmUvcmVp
-c2VyNHByb2dzLXVkZWI6OiBjb25maWd1cmUtdWRlYnMtc3RhbXAKK2NvbmZpZ3VyZS11ZGVicy1z
-dGFtcDo6CisJbWtkaXIgLXAgJChDVVJESVIpL2J1aWxkL3VkZWJzCisJY2QgJChDVVJESVIpL2J1
-aWxkL3VkZWJzICYmICQoQ09ORklHVVJFKSAtLXdpdGgtcmVhZGxpbmU9bm8gCisJdG91Y2ggJEAK
-IAogYnVpbGQvbGlicmVpc2VyNC1kZXYgYnVpbGQvcmVpc2VyNHByb2dzOjogYnVpbGQtcmVpc2Vy
-NHByb2dzLXN0YW1wCiBidWlsZC1yZWlzZXI0cHJvZ3Mtc3RhbXA6CiAJJChNQUtFKSAtQyAkKENV
-UkRJUikvYnVpbGQvcmVpc2VyNHByb2dzCiAJdG91Y2ggJEAKIAotI2J1aWxkL21rcmVpc2VyNC11
-ZGViIGJ1aWxkL3JlaXNlcjRwcm9ncy11ZGViOjogYnVpbGQtdWRlYnMtc3RhbXAKLSNidWlsZC11
-ZGVicy1zdGFtcDo6Ci0jCSQoTUFLRSkgLUMgJChDVVJESVIpL2J1aWxkL3VkZWJzCi0jCXRvdWNo
-ICRACitidWlsZC9ta3JlaXNlcjQtdWRlYiBidWlsZC9yZWlzZXI0cHJvZ3MtdWRlYjo6IGJ1aWxk
-LXVkZWJzLXN0YW1wCitidWlsZC11ZGVicy1zdGFtcDo6CisJJChNQUtFKSAtQyAkKENVUkRJUikv
-YnVpbGQvdWRlYnMKKwl0b3VjaCAkQAogCiBpbnN0YWxsL3JlaXNlcjRwcm9nczo6IGluc3RhbGwt
-cmVpc2VyNHByb2dzLXN0YW1wCiBpbnN0YWxsLXJlaXNlcjRwcm9ncy1zdGFtcDoKQEAgLTgyLDIx
-ICs4MiwyMSBAQCBpbnN0YWxsLWxpYnJlaXNlcjQtZGV2LXN0YW1wOjoKIAlybSAtcmYgJChDVVJE
-SVIpL2RlYmlhbi9saWJyZWlzZXI0LWRldi91c3Ivc2hhcmUvZG9jL3tBVVRIT1JTLEJVR1MsUkVB
-RE1FLFRIQU5LU30KIAlybSAtZiAkKENVUkRJUikvZGViaWFuL2xpYnJlaXNlcjQtZGV2L3Vzci9s
-aWIvKi5sYQogCi0jaW5zdGFsbC9ta3JlaXNlcjQtdWRlYjo6IGluc3RhbGwtbWtyZWlzZXI0LXVk
-ZWItc3RhbXAKLSNpbnN0YWxsLW1rcmVpc2VyNC11ZGViLXN0YW1wOjoKLSMJJChNQUtFKSAtQyAk
-KENVUkRJUikvYnVpbGQvdWRlYnMgaW5zdGFsbCBERVNURElSPSQoQ1VSRElSKS9kZWJpYW4vbWty
-ZWlzZXI0LXVkZWIvCi0jCW12ICQoQ1VSRElSKS9kZWJpYW4vbWtyZWlzZXI0LXVkZWIvdXNyL3Ni
-aW4gJChDVVJESVIpL2RlYmlhbi9ta3JlaXNlcjQtdWRlYi8KLSMJcm0gLXJmICQoQ1VSRElSKS9k
-ZWJpYW4vbWtyZWlzZXI0LXVkZWIvc2Jpbi9tYWtlX3JlaXNlcjQKLSMJcm0gLXJmICQoQ1VSRElS
-KS9kZWJpYW4vbWtyZWlzZXI0LXVkZWIvdXNyCi0jCXJtIC1yZiAkKENVUkRJUikvZGViaWFuL21r
-cmVpc2VyNC11ZGViL3NiaW4ve2RlYnVnZnMucmVpc2VyNCxmc2NrLnJlaXNlcjQsbWVhc3VyZWZz
-LnJlaXNlcjR9Ci0KLSNpbnN0YWxsL3JlaXNlcjRwcm9ncy11ZGViOjogaW5zdGFsbC1yZWlzZXI0
-cHJvZ3MtdWRlYi1zdGFtcAotI2luc3RhbGwtcmVpc2VyNHByb2dzLXVkZWItc3RhbXA6OgotIwkk
-KE1BS0UpIC1DICQoQ1VSRElSKS9idWlsZC91ZGVicyBpbnN0YWxsIERFU1RESVI9JChDVVJESVIp
-L2RlYmlhbi9yZWlzZXI0cHJvZ3MtdWRlYi8KLSMJbXYgJChDVVJESVIpL2RlYmlhbi9yZWlzZXI0
-cHJvZ3MtdWRlYi91c3Ivc2JpbiAkKENVUkRJUikvZGViaWFuL3JlaXNlcjRwcm9ncy11ZGViLwot
-IwlybSAtcmYgJChDVVJESVIpL2RlYmlhbi9yZWlzZXI0cHJvZ3MtdWRlYi9zYmluL21ha2VfcmVp
-c2VyNAotIwlybSAtcmYgJChDVVJESVIpL2RlYmlhbi9yZWlzZXI0cHJvZ3MtdWRlYi91c3IKLSMJ
-cm0gLXJmICQoQ1VSRElSKS9kZWJpYW4vcmVpc2VyNHByb2dzLXVkZWIvc2Jpbi97bWtmcy5yZWlz
-ZXI0LG1lYXN1cmVmcy5yZWlzZXI0fQoraW5zdGFsbC9ta3JlaXNlcjQtdWRlYjo6IGluc3RhbGwt
-bWtyZWlzZXI0LXVkZWItc3RhbXAKK2luc3RhbGwtbWtyZWlzZXI0LXVkZWItc3RhbXA6OgorCSQo
-TUFLRSkgLUMgJChDVVJESVIpL2J1aWxkL3VkZWJzIGluc3RhbGwgREVTVERJUj0kKENVUkRJUikv
-ZGViaWFuL21rcmVpc2VyNC11ZGViLworCW12ICQoQ1VSRElSKS9kZWJpYW4vbWtyZWlzZXI0LXVk
-ZWIvdXNyL3NiaW4gJChDVVJESVIpL2RlYmlhbi9ta3JlaXNlcjQtdWRlYi8KKwlybSAtcmYgJChD
-VVJESVIpL2RlYmlhbi9ta3JlaXNlcjQtdWRlYi9zYmluL21ha2VfcmVpc2VyNAorCXJtIC1yZiAk
-KENVUkRJUikvZGViaWFuL21rcmVpc2VyNC11ZGViL3VzcgorCXJtIC1yZiAkKENVUkRJUikvZGVi
-aWFuL21rcmVpc2VyNC11ZGViL3NiaW4ve2RlYnVnZnMucmVpc2VyNCxmc2NrLnJlaXNlcjQsbWVh
-c3VyZWZzLnJlaXNlcjR9CisKK2luc3RhbGwvcmVpc2VyNHByb2dzLXVkZWI6OiBpbnN0YWxsLXJl
-aXNlcjRwcm9ncy11ZGViLXN0YW1wCitpbnN0YWxsLXJlaXNlcjRwcm9ncy11ZGViLXN0YW1wOjoK
-KwkkKE1BS0UpIC1DICQoQ1VSRElSKS9idWlsZC91ZGVicyBpbnN0YWxsIERFU1RESVI9JChDVVJE
-SVIpL2RlYmlhbi9yZWlzZXI0cHJvZ3MtdWRlYi8KKwltdiAkKENVUkRJUikvZGViaWFuL3JlaXNl
-cjRwcm9ncy11ZGViL3Vzci9zYmluICQoQ1VSRElSKS9kZWJpYW4vcmVpc2VyNHByb2dzLXVkZWIv
-CisJcm0gLXJmICQoQ1VSRElSKS9kZWJpYW4vcmVpc2VyNHByb2dzLXVkZWIvc2Jpbi9tYWtlX3Jl
-aXNlcjQKKwlybSAtcmYgJChDVVJESVIpL2RlYmlhbi9yZWlzZXI0cHJvZ3MtdWRlYi91c3IKKwly
-bSAtcmYgJChDVVJESVIpL2RlYmlhbi9yZWlzZXI0cHJvZ3MtdWRlYi9zYmluL3tta2ZzLnJlaXNl
-cjQsbWVhc3VyZWZzLnJlaXNlcjR9CiAKIGNsZWFuOjoKIAlkaF9hdXRvcmVjb25mX2NsZWFuCi0t
-IAoyLjYuNAoK
---047d7b3a8680f583d905290cbab0--
+bT4KRGF0ZTogU3VuLCAyMCBEZWMgMjAxNSAyMjoxNjozNiAtMDgwMApTdWJqZWN0OiBbUEFUQ0hd
+IFJlaXNlcjQgc3VwcG9ydCBmb3IgRGViaWFuIEFNRDY0IHBhY2thZ2luZyB0byBnZW5lcmF0ZSBr
+ZXJuZWwKIHJlaXNlcjQtbW9kdWxlCgotLS0KIGRlYmlhbi9jb25maWcvYW1kNjQvZGVmaW5lcyAg
+ICAgICAgICAgICAgICAgICAgICAgICAgfCAyICstCiBkZWJpYW4vaW5zdGFsbGVyL2FtZDY0L21v
+ZHVsZXMvYW1kNjQvcmVpc2VyNC1tb2R1bGVzIHwgMSArCiBkZWJpYW4vaW5zdGFsbGVyL2FtZDY0
+L3BhY2thZ2UtbGlzdCAgICAgICAgICAgICAgICAgIHwgMyArKysKIGRlYmlhbi9pbnN0YWxsZXIv
+bW9kdWxlcy9yZWlzZXI0LW1vZHVsZXMgICAgICAgICAgICAgfCAxICsKIGRlYmlhbi9pbnN0YWxs
+ZXIvcGFja2FnZS1saXN0ICAgICAgICAgICAgICAgICAgICAgICAgfCA2ICsrKysrKwogNSBmaWxl
+cyBjaGFuZ2VkLCAxMiBpbnNlcnRpb25zKCspLCAxIGRlbGV0aW9uKC0pCiBjcmVhdGUgbW9kZSAx
+MDA2NDQgZGViaWFuL2luc3RhbGxlci9hbWQ2NC9tb2R1bGVzL2FtZDY0L3JlaXNlcjQtbW9kdWxl
+cwogY3JlYXRlIG1vZGUgMTAwNjQ0IGRlYmlhbi9pbnN0YWxsZXIvbW9kdWxlcy9yZWlzZXI0LW1v
+ZHVsZXMKCmRpZmYgLS1naXQgYS9kZWJpYW4vY29uZmlnL2FtZDY0L2RlZmluZXMgYi9kZWJpYW4v
+Y29uZmlnL2FtZDY0L2RlZmluZXMKaW5kZXggMjI0ZGVmYy4uNTVkYzdkMCAxMDA2NDQKLS0tIGEv
+ZGViaWFuL2NvbmZpZy9hbWQ2NC9kZWZpbmVzCisrKyBiL2RlYmlhbi9jb25maWcvYW1kNjQvZGVm
+aW5lcwpAQCAtNiw3ICs2LDcgQEAgZmVhdHVyZXNldHM6CiBrZXJuZWwtYXJjaDogeDg2CiAKIFti
+dWlsZF0KLWRlYnVnLWluZm86IHRydWUKK2RlYnVnLWluZm86IGZhbHNlIAogaW1hZ2UtZmlsZTog
+YXJjaC94ODYvYm9vdC9iekltYWdlCiAKIFtpbWFnZV0KZGlmZiAtLWdpdCBhL2RlYmlhbi9pbnN0
+YWxsZXIvYW1kNjQvbW9kdWxlcy9hbWQ2NC9yZWlzZXI0LW1vZHVsZXMgYi9kZWJpYW4vaW5zdGFs
+bGVyL2FtZDY0L21vZHVsZXMvYW1kNjQvcmVpc2VyNC1tb2R1bGVzCm5ldyBmaWxlIG1vZGUgMTAw
+NjQ0CmluZGV4IDAwMDAwMDAuLjkzNzNlZjEKLS0tIC9kZXYvbnVsbAorKysgYi9kZWJpYW4vaW5z
+dGFsbGVyL2FtZDY0L21vZHVsZXMvYW1kNjQvcmVpc2VyNC1tb2R1bGVzCkBAIC0wLDAgKzEgQEAK
+KyNpbmNsdWRlIDxyZWlzZXI0LW1vZHVsZXM+CmRpZmYgLS1naXQgYS9kZWJpYW4vaW5zdGFsbGVy
+L2FtZDY0L3BhY2thZ2UtbGlzdCBiL2RlYmlhbi9pbnN0YWxsZXIvYW1kNjQvcGFja2FnZS1saXN0
+CmluZGV4IDMyMmY4MTYuLjNiZjc3N2QgMTAwNjQ0Ci0tLSBhL2RlYmlhbi9pbnN0YWxsZXIvYW1k
+NjQvcGFja2FnZS1saXN0CisrKyBiL2RlYmlhbi9pbnN0YWxsZXIvYW1kNjQvcGFja2FnZS1saXN0
+CkBAIC00LDYgKzQsOSBAQAogIyBJdCBvdmVyd3JpdGVzIHNwZWNpZmljYXRpb25zIGZyb20gL3Vz
+ci9zaGFyZS9rZXJuZWwtd2VkZ2UvcGFja2FnZS1saXN0LgogIwogCitQYWNrYWdlOiByZWlzZXI0
+LW1vZHVsZXMKK1ByaW9yaXR5OiBzdGFuZGFyZAorCiBQYWNrYWdlOiBmYXQtbW9kdWxlcwogUHJp
+b3JpdHk6IHN0YW5kYXJkCiAKZGlmZiAtLWdpdCBhL2RlYmlhbi9pbnN0YWxsZXIvbW9kdWxlcy9y
+ZWlzZXI0LW1vZHVsZXMgYi9kZWJpYW4vaW5zdGFsbGVyL21vZHVsZXMvcmVpc2VyNC1tb2R1bGVz
+Cm5ldyBmaWxlIG1vZGUgMTAwNjQ0CmluZGV4IDAwMDAwMDAuLjcwZGRhZTQKLS0tIC9kZXYvbnVs
+bAorKysgYi9kZWJpYW4vaW5zdGFsbGVyL21vZHVsZXMvcmVpc2VyNC1tb2R1bGVzCkBAIC0wLDAg
+KzEgQEAKK3JlaXNlcjQKZGlmZiAtLWdpdCBhL2RlYmlhbi9pbnN0YWxsZXIvcGFja2FnZS1saXN0
+IGIvZGViaWFuL2luc3RhbGxlci9wYWNrYWdlLWxpc3QKaW5kZXggZTc5ODkwYi4uOTcyMTA0MCAx
+MDA2NDQKLS0tIGEvZGViaWFuL2luc3RhbGxlci9wYWNrYWdlLWxpc3QKKysrIGIvZGViaWFuL2lu
+c3RhbGxlci9wYWNrYWdlLWxpc3QKQEAgLTEzNyw2ICsxMzcsMTIgQEAgUHJpb3JpdHk6IHN0YW5k
+YXJkCiBEZXNjcmlwdGlvbjogSkZTIGZpbGVzeXN0ZW0gc3VwcG9ydAogIFRoaXMgcGFja2FnZSBj
+b250YWlucyB0aGUgSkZTIGZpbGVzeXN0ZW0gbW9kdWxlIGZvciB0aGUga2VybmVsLgogCitQYWNr
+YWdlOiByZWlzZXI0LW1vZHVsZXMKK0RlcGVuZHM6IGtlcm5lbC1pbWFnZSwgY3JjLW1vZHVsZXMK
+K1ByaW9yaXR5OiBleHRyYQorRGVzY3JpcHRpb246IFJlaXNlcjQgZmlsZXN5c3RlbSBzdXBwb3J0
+CisgVGhpcyBwYWNrYWdlIGNvbnRhaW5zIHRoZSBSZWlzZXI0IGZpbGVzeXN0ZW0gbW9kdWxlIGZv
+ciB0aGUga2VybmVsLgorCiBQYWNrYWdlOiBudGZzLW1vZHVsZXMKIERlcGVuZHM6IGtlcm5lbC1p
+bWFnZSwgbmxzLWNvcmUtbW9kdWxlcwogUHJpb3JpdHk6IGV4dHJhCi0tIAoyLjYuNAoK
+--001a11c2a5f626bede05290d6e0a--
+
