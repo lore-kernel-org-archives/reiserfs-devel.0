@@ -1,31 +1,29 @@
 From: Jose R R <Jose.r.r@metztli-it.com>
 Subject: Re: Reiser4-enabled Debian Unstable (Sid) netboot iso
-Date: Mon, 11 Jan 2016 02:28:06 -0800
-Message-ID: <CAM12Q5Q8Au=8qFn-GqTq8_KeZCKn6RLGxE5W5Y9MJFdHGpixWw@mail.gmail.com>
+Date: Mon, 11 Jan 2016 02:39:14 -0800
+Message-ID: <CAM12Q5QD1eutt96jPcYAfuMc4+TyvwWQpUi0JBpB2ozG=HKwGA@mail.gmail.com>
 References: <CAM12Q5QLgEgzb6uh_JPDMv69ZK18N5uceZOTaqx_dh1n1qXXag@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: multipart/mixed; boundary=089e01537f50897fe105290c6456
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=metztli-com.20150623.gappssmtp.com; s=20150623;
         h=mime-version:sender:in-reply-to:references:date:message-id:subject
          :from:to:content-type;
-        bh=kFtaDvZ0nR7MDm6Z9Cdy4yYEZ4Kwqms+A2/TXEmn1F0=;
-        b=U2/DPdEmnYg1yVmDwuFV/Ul/lDFA+Z8f6Hr1KEWPBB2uNv+Cyk6DoEertLa/fq5255
-         tOi/8vyifsrpzq7bJbg2JQxaZck0e7QH10dfHNJe/Aic0l/4jj83xzwQBF2Eo4WMooHZ
-         qRKhlpgM4/zdoIN5Zip0gkEFeKzjBF6szkFj1OaHa1jivDOiDFMB/2s7aE0QuxDKX3Bo
-         YeMzYOMmN0rAihYCqNi58x697A8NcvISqN1i/uObwBh6tZJm7ynXLu7kbHuQQcprT3S6
-         ZsZbEKIpypUZj1vLxAUL/VwIzupGSp8ren1YS/6ihdf0a+E2TRJEPVLjWOm8boPlSGCw
-         cqgQ==
+        bh=CmKr10mLsgghvxHRVFcOj24cg/5whTyi5WKKXY1h+HA=;
+        b=tCS6eWsHBJ/NyA/iBM8QRXu20b43pCLm8yTYqOjJ8lK2iciUNhZ+BHSu2Vswoj1aOK
+         TE3Stwln/2Usq9wF5yW+S/IUi6GlTnDKP/rhBPVSIXXu8hJCIZJLkWgBx43lFXQTm+pJ
+         zpnLFYaELqAVMbslT4RMkbqZTVP0YvcPbnRyOgPWKBLUhYzGD2PwIwaU66Xk4HcEMmIn
+         fTQSOGXgZsalXRc3eT3ZkCXzWrSZ5BKJCvTSkmIBqzob4+eftbUXa28e1WbgSemtzAE2
+         0FgKdDM3r0KN0d0C1jXuMtFiujsyAI424E2lB4LDksink/odnpwdioDM5FXp8KujnPOq
+         EahA==
 In-Reply-To: <CAM12Q5QLgEgzb6uh_JPDMv69ZK18N5uceZOTaqx_dh1n1qXXag@mail.gmail.com>
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 To: ReiserFS Development List <reiserfs-devel@vger.kernel.org>, debian-boot@lists.debian.org, debian-cloud <debian-cloud@lists.debian.org>
 
---089e01537f50897fe105290c6456
-Content-Type: text/plain; charset=UTF-8
-
-(1/3) Reiser4 version 4.0.1 -enabled patches for Debian Installer
+(2/3) Reiser4 version 4.0.1 -enabled patches for Debian Installer
 components and/or userland utilities:
 
 On Wed, Jan 6, 2016 at 2:19 AM, Jose R R <Jose.r.r@metztli-it.com> wrote:
@@ -124,15 +122,18 @@ On Wed, Jan 6, 2016 at 2:19 AM, Jose R R <Jose.r.r@metztli-it.com> wrote:
 > < https://cloud.google.com/compute/ > to add to currently testing
 > Reiser4 images created last year.
 
-Reiser4 version 4.0.1 -support for Debian.ized GNU Parted -- will
-generate DEBs and UDEBs:
+Reiser4 4.0.1 -patched partman-reiser4 component integrates Reiser4
+support into menu-driven Debian-Installer (d-i) -- requires
+reiser4-debian-parted
 
-Already patched repo:
-https://github.com/Metztli/reiser4-debian-parted
+Included in repo:
+https://github.com/Metztli/debian-partman-reiser4
 
-OR git clone git://git.debian.org/git/parted/parted.git
-and apply patch attached
-
+This component source is hacked (literally) and does not exist
+currently in Debian. It generates a UDEB that adds the Reiser4 option
+to the Debian-Installer (d-i) menu. Please make sure to *also include*
+in your d-i UDEBs generated from Reiser4 4.0.1 -enabled Debian.ized
+GNU Parted; otherwise, d-i menu driven installation will fail.
 
 -- 
 Jose R R
@@ -142,109 +143,3 @@ Try at no charge http://b2evolution.net for http://OpenShift.com PaaS
 ---------------------------------------------------------------------------------------------
 from our GitHub http://Nepohualtzintzin.com repository. Cloud the easy way!
 ---------------------------------------------------------------------------------------------
-
---089e01537f50897fe105290c6456
-Content-Type: application/octet-stream; 
-	name="0001-Reiser4-support-for-debian-parted-based-on-Bart-Hakv.patch"
-Content-Disposition: attachment; 
-	filename="0001-Reiser4-support-for-debian-parted-based-on-Bart-Hakv.patch"
-Content-Transfer-Encoding: base64
-X-Attachment-Id: f_ij9trmjk0
-
-RnJvbSBlNTgxZDE5NWU3MTJhYmRjNWYxOGIxNDNhM2EyYzU2NjRkNTQxNDA3IE1vbiBTZXAgMTcg
-MDA6MDA6MDAgMjAwMQpGcm9tOiBNZXR6dGxpIDxqb3NlLnJvZHJpZ3VlekBtZXR6dGxpLWl0LmNv
-bT4KRGF0ZTogU2F0LCAyNiBEZWMgMjAxNSAxODozMTozMyAtMDgwMApTdWJqZWN0OiBbUEFUQ0hd
-IFJlaXNlcjQgc3VwcG9ydCBmb3IgZGViaWFuLXBhcnRlZCBiYXNlZCBvbiBCYXJ0IEhha3Zvb3J0
-IDIwMDQKIHdvcmsuCgotLS0KIGRlYmlhbi9saWJwYXJ0ZWQyLnN5bWJvbHMgICAgICB8ICAyICsr
-CiBsaWJwYXJ0ZWQvTWFrZWZpbGUuYW0gICAgICAgICAgfCAgMSArCiBsaWJwYXJ0ZWQvZnMvTWFr
-ZWZpbGUuYW0gICAgICAgfCAgMyArKwogbGlicGFydGVkL2ZzL3JlaXNlcjQvcmVpc2VyNC5jIHwg
-NzEgKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrCiBsaWJwYXJ0ZWQv
-bGlicGFydGVkLmMgICAgICAgICAgfCAgNCArKysKIDUgZmlsZXMgY2hhbmdlZCwgODEgaW5zZXJ0
-aW9ucygrKQogY3JlYXRlIG1vZGUgMTAwNjQ0IGxpYnBhcnRlZC9mcy9yZWlzZXI0L3JlaXNlcjQu
-YwoKZGlmZiAtLWdpdCBhL2RlYmlhbi9saWJwYXJ0ZWQyLnN5bWJvbHMgYi9kZWJpYW4vbGlicGFy
-dGVkMi5zeW1ib2xzCmluZGV4IGE1ZTc2NDMuLmY1YTUzY2IgMTAwNjQ0Ci0tLSBhL2RlYmlhbi9s
-aWJwYXJ0ZWQyLnN5bWJvbHMKKysrIGIvZGViaWFuL2xpYnBhcnRlZDIuc3ltYm9scwpAQCAtMTQ2
-LDYgKzE0Niw4IEBAIGxpYnBhcnRlZC5zby4yIGxpYnBhcnRlZDIgI01JTlZFUiMKICBwZWRfZmls
-ZV9zeXN0ZW1fbnRmc19pbml0QEJhc2UgMy4xCiAgcGVkX2ZpbGVfc3lzdGVtX3Byb2JlQEJhc2Ug
-My4xCiAgcGVkX2ZpbGVfc3lzdGVtX3Byb2JlX3NwZWNpZmljQEJhc2UgMy4xCisgcGVkX2ZpbGVf
-c3lzdGVtX3JlaXNlcjRfZG9uZUBCYXNlIDMuMi0xMgorIHBlZF9maWxlX3N5c3RlbV9yZWlzZXI0
-X2luaXRAQmFzZSAzLjItMTIKICBwZWRfZmlsZV9zeXN0ZW1fcmVpc2VyZnNfZG9uZUBCYXNlIDMu
-MQogIHBlZF9maWxlX3N5c3RlbV9yZWlzZXJmc19pbml0QEJhc2UgMy4xCiAgcGVkX2ZpbGVfc3lz
-dGVtX3R5cGVfZ2V0QEJhc2UgMy4xCmRpZmYgLS1naXQgYS9saWJwYXJ0ZWQvTWFrZWZpbGUuYW0g
-Yi9saWJwYXJ0ZWQvTWFrZWZpbGUuYW0KaW5kZXggYjQxMGU2NC4uMDczNTViZSAxMDA2NDQKLS0t
-IGEvbGlicGFydGVkL01ha2VmaWxlLmFtCisrKyBiL2xpYnBhcnRlZC9NYWtlZmlsZS5hbQpAQCAt
-Myw2ICszLDcgQEAKICMKICMgVGhpcyBmaWxlIG1heSBiZSBtb2RpZmllZCBhbmQvb3IgZGlzdHJp
-YnV0ZWQgd2l0aG91dCByZXN0cmljdGlvbi4KIAorQVVUT01BS0VfT1BUSU9OUyA9IHN1YmRpci1v
-YmplY3RzCiBTVUJESVJTX0NIRUNLID0KIGlmIEhBVkVfQ0hFQ0sKIFNVQkRJUlNfQ0hFQ0sgKz0g
-dGVzdHMKZGlmZiAtLWdpdCBhL2xpYnBhcnRlZC9mcy9NYWtlZmlsZS5hbSBiL2xpYnBhcnRlZC9m
-cy9NYWtlZmlsZS5hbQppbmRleCBkZTYwN2EyLi40Mzk0NmQyIDEwMDY0NAotLS0gYS9saWJwYXJ0
-ZWQvZnMvTWFrZWZpbGUuYW0KKysrIGIvbGlicGFydGVkL2ZzL01ha2VmaWxlLmFtCkBAIC0zLDYg
-KzMsOCBAQAogIwogIyBUaGlzIGZpbGUgbWF5IGJlIG1vZGlmaWVkIGFuZC9vciBkaXN0cmlidXRl
-ZCB3aXRob3V0IHJlc3RyaWN0aW9uLgogCitBVVRPTUFLRV9PUFRJT05TID0gc3ViZGlyLW9iamVj
-dHMKKwogcGFydGVkaW5jbHVkZWRpciA9IC1JJCh0b3BfYnVpbGRkaXIpL2luY2x1ZGUgLUkkKHRv
-cF9zcmNkaXIpL2luY2x1ZGUKIAogQU1fQ0ZMQUdTID0gJChXQVJOX0NGTEFHUykKQEAgLTQ0LDYg
-KzQ2LDcgQEAgbGliZnNfbGFfU09VUkNFUyA9CQlcCiAgIG50ZnMvbnRmcy5jCQkJXAogICByZWlz
-ZXJmcy9yZWlzZXJmcy5jCQlcCiAgIHJlaXNlcmZzL3JlaXNlcmZzLmgJCVwKKyAgcmVpc2VyNC9y
-ZWlzZXI0LmMJCVwKICAgdWZzL3Vmcy5jCQkJXAogICB4ZnMvcGxhdGZvcm1fZGVmcy5oCQlcCiAg
-IHhmcy94ZnMuYwkJCVwKZGlmZiAtLWdpdCBhL2xpYnBhcnRlZC9mcy9yZWlzZXI0L3JlaXNlcjQu
-YyBiL2xpYnBhcnRlZC9mcy9yZWlzZXI0L3JlaXNlcjQuYwpuZXcgZmlsZSBtb2RlIDEwMDY0NApp
-bmRleCAwMDAwMDAwLi4wYTg2ZTBjCi0tLSAvZGV2L251bGwKKysrIGIvbGlicGFydGVkL2ZzL3Jl
-aXNlcjQvcmVpc2VyNC5jCkBAIC0wLDAgKzEsNzEgQEAKKy8qCisgICAgbGlicGFydGVkIC0gYSBs
-aWJyYXJ5IGZvciBtYW5pcHVsYXRpbmcgZGlzayBwYXJ0aXRpb25zCisgICAgQ29weXJpZ2h0IChD
-KSAyMDAwIEZyZWUgU29mdHdhcmUgRm91bmRhdGlvbiwgSW5jLgorCisgICAgVGhpcyBwcm9ncmFt
-IGlzIGZyZWUgc29mdHdhcmU7IHlvdSBjYW4gcmVkaXN0cmlidXRlIGl0IGFuZC9vciBtb2RpZnkK
-KyAgICBpdCB1bmRlciB0aGUgdGVybXMgb2YgdGhlIEdOVSBHZW5lcmFsIFB1YmxpYyBMaWNlbnNl
-IGFzIHB1Ymxpc2hlZCBieQorICAgIHRoZSBGcmVlIFNvZnR3YXJlIEZvdW5kYXRpb247IGVpdGhl
-ciB2ZXJzaW9uIDIgb2YgdGhlIExpY2Vuc2UsIG9yCisgICAgKGF0IHlvdXIgb3B0aW9uKSBhbnkg
-bGF0ZXIgdmVyc2lvbi4KKworICAgIFRoaXMgcHJvZ3JhbSBpcyBkaXN0cmlidXRlZCBpbiB0aGUg
-aG9wZSB0aGF0IGl0IHdpbGwgYmUgdXNlZnVsLAorICAgIGJ1dCBXSVRIT1VUIEFOWSBXQVJSQU5U
-WTsgd2l0aG91dCBldmVuIHRoZSBpbXBsaWVkIHdhcnJhbnR5IG9mCisgICAgTUVSQ0hBTlRBQklM
-SVRZIG9yIEZJVE5FU1MgRk9SIEEgUEFSVElDVUxBUiBQVVJQT1NFLiAgU2VlIHRoZQorICAgIEdO
-VSBHZW5lcmFsIFB1YmxpYyBMaWNlbnNlIGZvciBtb3JlIGRldGFpbHMuCisKKyAgICBZb3Ugc2hv
-dWxkIGhhdmUgcmVjZWl2ZWQgYSBjb3B5IG9mIHRoZSBHTlUgR2VuZXJhbCBQdWJsaWMgTGljZW5z
-ZQorICAgIGFsb25nIHdpdGggdGhpcyBwcm9ncmFtOyBpZiBub3QsIHdyaXRlIHRvIHRoZSBGcmVl
-IFNvZnR3YXJlCisgICAgRm91bmRhdGlvbiwgSW5jLiwgNTkgVGVtcGxlIFBsYWNlLCBTdWl0ZSAz
-MzAsIEJvc3RvbiwgTUEgIDAyMTExLTEzMDcgIFVTQQorKi8KKworI2luY2x1ZGUgPGNvbmZpZy5o
-PgorCisjaW5jbHVkZSA8cGFydGVkL3BhcnRlZC5oPgorI2luY2x1ZGUgPHBhcnRlZC9lbmRpYW4u
-aD4KKworI2lmIEVOQUJMRV9OTFMKKyMgIGluY2x1ZGUgPGxpYmludGwuaD4KKyMgIGRlZmluZSBf
-KFN0cmluZykgZGdldHRleHQgKFBBQ0tBR0UsIFN0cmluZykKKyNlbHNlCisjICBkZWZpbmUgXyhT
-dHJpbmcpIChTdHJpbmcpCisjZW5kaWYgLyogRU5BQkxFX05MUyAqLworCisjaW5jbHVkZSA8dW5p
-c3RkLmg+CisjaW5jbHVkZSA8c3RyaW5nLmg+CisKK3N0YXRpYyBQZWRHZW9tZXRyeSoKK3JlaXNl
-cjRfcHJvYmUgKFBlZEdlb21ldHJ5KiBnZW9tKQoreworCWNoYXIJYnVmWzUxMl07CisKKwlpZiAo
-IXBlZF9nZW9tZXRyeV9yZWFkIChnZW9tLCBidWYsIDEyOCwgMSkpCisJCXJldHVybiAwOwkKKwkK
-KwlpZiAoIHN0cmNtcCggYnVmLCAiUmVJc0VyNCIgKSA9PSAwICkKKwkJcmV0dXJuIHBlZF9nZW9t
-ZXRyeV9kdXBsaWNhdGUoIGdlb20gKSA7CisKKwllbHNlCisJCXJldHVybiBOVUxMOworfQorCitz
-dGF0aWMgUGVkRmlsZVN5c3RlbU9wcyByZWlzZXI0X29wcyA9IHsKKwlwcm9iZToJCXJlaXNlcjRf
-cHJvYmUsCit9OworCitzdGF0aWMgUGVkRmlsZVN5c3RlbVR5cGUgcmVpc2VyNF90eXBlID0gewor
-CW5leHQ6CU5VTEwsCisJb3BzOgkmcmVpc2VyNF9vcHMsCisJbmFtZToJInJlaXNlcjQiCit9Owor
-Cit2b2lkCitwZWRfZmlsZV9zeXN0ZW1fcmVpc2VyNF9pbml0ICgpCit7CisJcGVkX2ZpbGVfc3lz
-dGVtX3R5cGVfcmVnaXN0ZXIgKCZyZWlzZXI0X3R5cGUpOworfQorCit2b2lkCitwZWRfZmlsZV9z
-eXN0ZW1fcmVpc2VyNF9kb25lICgpCit7CisJcGVkX2ZpbGVfc3lzdGVtX3R5cGVfdW5yZWdpc3Rl
-ciAoJnJlaXNlcjRfdHlwZSk7Cit9CisKZGlmZiAtLWdpdCBhL2xpYnBhcnRlZC9saWJwYXJ0ZWQu
-YyBiL2xpYnBhcnRlZC9saWJwYXJ0ZWQuYwppbmRleCBmZTBjN2ZlLi4zNTRmY2Y5IDEwMDY0NAot
-LS0gYS9saWJwYXJ0ZWQvbGlicGFydGVkLmMKKysrIGIvbGlicGFydGVkL2xpYnBhcnRlZC5jCkBA
-IC0xMDgsNiArMTA4LDcgQEAgZXh0ZXJuIHZvaWQgcGVkX2ZpbGVfc3lzdGVtX2pmc19pbml0ICh2
-b2lkKTsKIGV4dGVybiB2b2lkIHBlZF9maWxlX3N5c3RlbV9oZnNfaW5pdCAodm9pZCk7CiBleHRl
-cm4gdm9pZCBwZWRfZmlsZV9zeXN0ZW1fZmF0X2luaXQgKHZvaWQpOwogZXh0ZXJuIHZvaWQgcGVk
-X2ZpbGVfc3lzdGVtX2V4dDJfaW5pdCAodm9pZCk7CitleHRlcm4gdm9pZCBwZWRfZmlsZV9zeXN0
-ZW1fcmVpc2VyNF9pbml0ICh2b2lkKTsKIGV4dGVybiB2b2lkIHBlZF9maWxlX3N5c3RlbV9uaWxm
-czJfaW5pdCAodm9pZCk7CiBleHRlcm4gdm9pZCBwZWRfZmlsZV9zeXN0ZW1fYnRyZnNfaW5pdCAo
-dm9pZCk7CiBleHRlcm4gdm9pZCBwZWRfZmlsZV9zeXN0ZW1femZzX2luaXQgKHZvaWQpOwpAQCAt
-MTI1LDYgKzEyNiw3IEBAIGluaXRfZmlsZV9zeXN0ZW1fdHlwZXMgKCkKIAlwZWRfZmlsZV9zeXN0
-ZW1faGZzX2luaXQgKCk7CiAJcGVkX2ZpbGVfc3lzdGVtX2ZhdF9pbml0ICgpOwogCXBlZF9maWxl
-X3N5c3RlbV9leHQyX2luaXQgKCk7CisJcGVkX2ZpbGVfc3lzdGVtX3JlaXNlcjRfaW5pdCAoKTsK
-IAlwZWRfZmlsZV9zeXN0ZW1fbmlsZnMyX2luaXQgKCk7CiAJcGVkX2ZpbGVfc3lzdGVtX2J0cmZz
-X2luaXQgKCk7CiAJcGVkX2ZpbGVfc3lzdGVtX3pmc19pbml0ICgpOwpAQCAtMTg5LDYgKzE5MSw3
-IEBAIGV4dGVybiB2b2lkIHBlZF9maWxlX3N5c3RlbV9udGZzX2RvbmUgKHZvaWQpOwogZXh0ZXJu
-IHZvaWQgcGVkX2ZpbGVfc3lzdGVtX3JlaXNlcmZzX2RvbmUgKHZvaWQpOwogZXh0ZXJuIHZvaWQg
-cGVkX2ZpbGVfc3lzdGVtX3Vmc19kb25lICh2b2lkKTsKIGV4dGVybiB2b2lkIHBlZF9maWxlX3N5
-c3RlbV94ZnNfZG9uZSAodm9pZCk7CitleHRlcm4gdm9pZCBwZWRfZmlsZV9zeXN0ZW1fcmVpc2Vy
-NF9kb25lICh2b2lkKTsKIGV4dGVybiB2b2lkIHBlZF9maWxlX3N5c3RlbV9hbWlnYV9kb25lICh2
-b2lkKTsKIGV4dGVybiB2b2lkIHBlZF9maWxlX3N5c3RlbV9idHJmc19kb25lICh2b2lkKTsKIGV4
-dGVybiB2b2lkIHBlZF9maWxlX3N5c3RlbV96ZnNfZG9uZSAodm9pZCk7CkBAIC0yMDcsNiArMjEw
-LDcgQEAgZG9uZV9maWxlX3N5c3RlbV90eXBlcyAoKQogCXBlZF9maWxlX3N5c3RlbV9yZWlzZXJm
-c19kb25lICgpOwogCXBlZF9maWxlX3N5c3RlbV91ZnNfZG9uZSAoKTsKIAlwZWRfZmlsZV9zeXN0
-ZW1feGZzX2RvbmUgKCk7CisJcGVkX2ZpbGVfc3lzdGVtX3JlaXNlcjRfZG9uZSAoKTsKIAlwZWRf
-ZmlsZV9zeXN0ZW1fYW1pZ2FfZG9uZSAoKTsKIAlwZWRfZmlsZV9zeXN0ZW1fYnRyZnNfZG9uZSAo
-KTsKIH0KLS0gCjIuNi40Cgo=
---089e01537f50897fe105290c6456--
