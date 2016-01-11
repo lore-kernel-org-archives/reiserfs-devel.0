@@ -1,29 +1,31 @@
 From: Jose R R <Jose.r.r@metztli-it.com>
 Subject: Re: Reiser4-enabled Debian Unstable (Sid) netboot iso
-Date: Mon, 11 Jan 2016 02:39:14 -0800
-Message-ID: <CAM12Q5QD1eutt96jPcYAfuMc4+TyvwWQpUi0JBpB2ozG=HKwGA@mail.gmail.com>
+Date: Mon, 11 Jan 2016 02:52:16 -0800
+Message-ID: <CAM12Q5RuC-DTFLK+XO=voddM6GRXzCw4ci9OOShDFSfJVGx+aw@mail.gmail.com>
 References: <CAM12Q5QLgEgzb6uh_JPDMv69ZK18N5uceZOTaqx_dh1n1qXXag@mail.gmail.com>
 Mime-Version: 1.0
+Content-Type: multipart/mixed; boundary=047d7b3a8680f583d905290cbab0
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=metztli-com.20150623.gappssmtp.com; s=20150623;
         h=mime-version:sender:in-reply-to:references:date:message-id:subject
          :from:to:content-type;
-        bh=CmKr10mLsgghvxHRVFcOj24cg/5whTyi5WKKXY1h+HA=;
-        b=tCS6eWsHBJ/NyA/iBM8QRXu20b43pCLm8yTYqOjJ8lK2iciUNhZ+BHSu2Vswoj1aOK
-         TE3Stwln/2Usq9wF5yW+S/IUi6GlTnDKP/rhBPVSIXXu8hJCIZJLkWgBx43lFXQTm+pJ
-         zpnLFYaELqAVMbslT4RMkbqZTVP0YvcPbnRyOgPWKBLUhYzGD2PwIwaU66Xk4HcEMmIn
-         fTQSOGXgZsalXRc3eT3ZkCXzWrSZ5BKJCvTSkmIBqzob4+eftbUXa28e1WbgSemtzAE2
-         0FgKdDM3r0KN0d0C1jXuMtFiujsyAI424E2lB4LDksink/odnpwdioDM5FXp8KujnPOq
-         EahA==
+        bh=R9GMtC7R8McubEqrNNnWV+UGXHB9ilmgfHpLvF4Iu3E=;
+        b=kB7evDNqhtaPLw2Z1sxiTOXvbTOtlWVQZtWlckBVsCIjUxTXCrQwr2aXVtyEhFfWhC
+         18nO5Q0D6AZe2YQBiSJYk1aH0ZZqYtHZUu7iQANnPcDa3CHFlBa8N3zr6Ok+3yftddQ1
+         1MEKhkr8DCogcCeDo4BgeZv+7pa+/NGsvTUsx3LQ3xFktsnp7oAvDFJWTU55x6gqIgaN
+         GGp8svrfTnitYlPj6AkOg6plq/y7ry3IsY521JiCaZTvUAYTCpTTBWm75DWf4GUbtaGF
+         EDJhFVx76SimX87Zhjt/P82LL78/vGCJjq9DWn/JKQrjYN83oSN4L9pprWNRajz9CMXW
+         l15w==
 In-Reply-To: <CAM12Q5QLgEgzb6uh_JPDMv69ZK18N5uceZOTaqx_dh1n1qXXag@mail.gmail.com>
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
 To: ReiserFS Development List <reiserfs-devel@vger.kernel.org>, debian-boot@lists.debian.org, debian-cloud <debian-cloud@lists.debian.org>
 
-(2/3) Reiser4 version 4.0.1 -enabled patches for Debian Installer
+--047d7b3a8680f583d905290cbab0
+Content-Type: text/plain; charset=UTF-8
+
+(3/3) Reiser4 version 4.0.1 -enabled patches for Debian Installer
 components and/or userland utilities:
 
 On Wed, Jan 6, 2016 at 2:19 AM, Jose R R <Jose.r.r@metztli-it.com> wrote:
@@ -115,25 +117,25 @@ On Wed, Jan 6, 2016 at 2:19 AM, Jose R R <Jose.r.r@metztli-it.com> wrote:
 > Feedback and/or suggestions welcome.
 >
 >
-> Best Professional Regards
 >
 >
 > P.S I am already preparing some images for Google Compute Engine (GCE)
 > < https://cloud.google.com/compute/ > to add to currently testing
 > Reiser4 images created last year.
+> --
 
-Reiser4 4.0.1 -patched partman-reiser4 component integrates Reiser4
-support into menu-driven Debian-Installer (d-i) -- requires
-reiser4-debian-parted
+Reiser4 4.0.1 -enabled Reiser4progs utilities to manage Reiser4 4.0.1
+derived creation, formatting, and partitioning. In addition to
+generating the desired userland utilities for Debian (which are
+already in Stretch & Sid debian repos), it creates UDEBs suitable for
+inclusion in a Reiser4 4.0.1 -enabled Debian-Installer (d-i)
 
-Included in repo:
-https://github.com/Metztli/debian-partman-reiser4
+Patch inclueded in repo:
+https://github.com/Metztli/debian-installer-reiser4progs
 
-This component source is hacked (literally) and does not exist
-currently in Debian. It generates a UDEB that adds the Reiser4 option
-to the Debian-Installer (d-i) menu. Please make sure to *also include*
-in your d-i UDEBs generated from Reiser4 4.0.1 -enabled Debian.ized
-GNU Parted; otherwise, d-i menu driven installation will fail.
+and attached patch below:
+
+Best Professional Regards
 
 -- 
 Jose R R
@@ -143,3 +145,113 @@ Try at no charge http://b2evolution.net for http://OpenShift.com PaaS
 ---------------------------------------------------------------------------------------------
 from our GitHub http://Nepohualtzintzin.com repository. Cloud the easy way!
 ---------------------------------------------------------------------------------------------
+
+--047d7b3a8680f583d905290cbab0
+Content-Type: application/octet-stream; 
+	name="0001-Added-reiser4progs-support-to-generate-UDEBs-for-Deb.patch"
+Content-Disposition: attachment; 
+	filename="0001-Added-reiser4progs-support-to-generate-UDEBs-for-Deb.patch"
+Content-Transfer-Encoding: base64
+X-Attachment-Id: f_ij9umnic0
+
+RnJvbSAzNDc4YzI1NDUyNzdmNWY1NGQ2MDJhMDUxMzkwMjA2YzgyNjQzNmVkIE1vbiBTZXAgMTcg
+MDA6MDA6MDAgMjAwMQpGcm9tOiBNZXR6dGxpIDxqb3NlLnJvZHJpZ3VlekBtZXR6dGxpLWl0LmNv
+bT4KRGF0ZTogU3VuLCAyNyBEZWMgMjAxNSAyMDoxODoxNSAtMDgwMApTdWJqZWN0OiBbUEFUQ0hd
+IEFkZGVkIHJlaXNlcjRwcm9ncyBzdXBwb3J0IHRvIGdlbmVyYXRlIFVERUJzIGZvcgogRGViaWFu
+LUluc3RhbGxlcgoKLS0tCiBSRUFETUUubWQgICAgICAgICAgICAgICAgICAgICAgIHwgIDUgKysr
+KysKIGJ1aWxkL3JlaXNlcjRwcm9ncy9ydW4tbGRjb25maWcgfCAgMSArCiBidWlsZC91ZGVicy9y
+dW4tbGRjb25maWcgICAgICAgIHwgIDEgKwogZGViaWFuL2NvbnRyb2wgICAgICAgICAgICAgICAg
+ICB8IDE3ICsrKysrKysrKysrKysrKwogZGViaWFuL3J1bGVzICAgICAgICAgICAgICAgICAgICB8
+IDQ4ICsrKysrKysrKysrKysrKysrKysrLS0tLS0tLS0tLS0tLS0tLS0tLS0tCiA1IGZpbGVzIGNo
+YW5nZWQsIDQ4IGluc2VydGlvbnMoKyksIDI0IGRlbGV0aW9ucygtKQogY3JlYXRlIG1vZGUgMTAw
+NjQ0IFJFQURNRS5tZAogY3JlYXRlIG1vZGUgMTIwMDAwIGJ1aWxkL3JlaXNlcjRwcm9ncy9ydW4t
+bGRjb25maWcKIGNyZWF0ZSBtb2RlIDEyMDAwMCBidWlsZC91ZGVicy9ydW4tbGRjb25maWcKCmRp
+ZmYgLS1naXQgYS9SRUFETUUubWQgYi9SRUFETUUubWQKbmV3IGZpbGUgbW9kZSAxMDA2NDQKaW5k
+ZXggMDAwMDAwMC4uMmU4YTJjZAotLS0gL2Rldi9udWxsCisrKyBiL1JFQURNRS5tZApAQCAtMCww
+ICsxLDUgQEAKKyMgZGViaWFuLWluc3RhbGxlci1yZWlzZXI0cHJvZ3MKKworQ29tcG9uZW50IHNl
+dCB3aWxsIGNyZWF0ZSBVREVCcyBzdWl0YWJsZSBmb3IgaW5jbHVzaW9uIGludG8gdGhlIERlYmlh
+bi1JbnN0YWxsZXIgKGQtaSkKK2ZvciBhIHN1Y2Nlc3NmdWwgRGViaWFuIHBhcnRpdGlvbmluZywg
+Zm9ybWF0dGluZywgYW5kIGluc3RhbGxhdGlvbiBvbnRvIFJlaXNlcjQgZmlsZXN5c3RlbS4KK0Fk
+ZGl0aW9uYWxseSwgb2YgY291cnNlLCB3aWxsIGFsc28gZ2VuZXJhdGUgdXBzdHJlYW0gbWFpbnRh
+aW5lcidzIHVzZXJsYW5kIERFQiBwYWNrYWdlcy4KZGlmZiAtLWdpdCBhL2J1aWxkL3JlaXNlcjRw
+cm9ncy9ydW4tbGRjb25maWcgYi9idWlsZC9yZWlzZXI0cHJvZ3MvcnVuLWxkY29uZmlnCm5ldyBm
+aWxlIG1vZGUgMTIwMDAwCmluZGV4IDAwMDAwMDAuLjI2NTc0NzUKLS0tIC9kZXYvbnVsbAorKysg
+Yi9idWlsZC9yZWlzZXI0cHJvZ3MvcnVuLWxkY29uZmlnCkBAIC0wLDAgKzEgQEAKKy4uLy4uL3J1
+bi1sZGNvbmZpZwpcIE5vIG5ld2xpbmUgYXQgZW5kIG9mIGZpbGUKZGlmZiAtLWdpdCBhL2J1aWxk
+L3VkZWJzL3J1bi1sZGNvbmZpZyBiL2J1aWxkL3VkZWJzL3J1bi1sZGNvbmZpZwpuZXcgZmlsZSBt
+b2RlIDEyMDAwMAppbmRleCAwMDAwMDAwLi4yNjU3NDc1Ci0tLSAvZGV2L251bGwKKysrIGIvYnVp
+bGQvdWRlYnMvcnVuLWxkY29uZmlnCkBAIC0wLDAgKzEgQEAKKy4uLy4uL3J1bi1sZGNvbmZpZwpc
+IE5vIG5ld2xpbmUgYXQgZW5kIG9mIGZpbGUKZGlmZiAtLWdpdCBhL2RlYmlhbi9jb250cm9sIGIv
+ZGViaWFuL2NvbnRyb2wKaW5kZXggMTUxYTNkYS4uNWFiZTNiNiAxMDA2NDQKLS0tIGEvZGViaWFu
+L2NvbnRyb2wKKysrIGIvZGViaWFuL2NvbnRyb2wKQEAgLTE3LDYgKzE3LDIzIEBAIERlc2NyaXB0
+aW9uOiBhZG1pbmlzdHJhdGlvbiB1dGlsaXRpZXMgZm9yIHRoZSBSZWlzZXI0IGZpbGVzeXN0ZW0K
+ICAgIC0gbWVhc3VyZWZzLnJlaXNlcjQKICAgIC0gbWtmcy5yZWlzZXI0CiAKK1BhY2thZ2U6IHJl
+aXNlcjRwcm9ncy11ZGViCitYQy1QYWNrYWdlLVR5cGU6IHVkZWIKK1NlY3Rpb246IGRlYmlhbi1p
+bnN0YWxsZXIKK0FyY2hpdGVjdHVyZTogYW55CitEZXBlbmRzOiAke3NobGliczpEZXBlbmRzfQor
+RGVzY3JpcHRpb246IHVzZXItbGV2ZWwgdG9vbHMgdG8gbWFuYWdlIFJlaXNlcjQgZmlsZXN5c3Rl
+bXMKKyBUaGlzIGluc3RhbGxlciBtb2R1bGUgY29udGFpbnMgdXRpbGl0aWVzIHRvIGNoZWNrLCBy
+ZXNpemUsIGFuZCBkZWJ1ZyAKKyBSZWlzZXI0IGZpbGVzeXN0ZW1zLiAKKworUGFja2FnZTogbWty
+ZWlzZXI0LXVkZWIKK1hDLVBhY2thZ2UtVHlwZTogdWRlYgorU2VjdGlvbjogZGViaWFuLWluc3Rh
+bGxlcgorQXJjaGl0ZWN0dXJlOiBhbnkKK0RlcGVuZHM6ICR7c2hsaWJzOkRlcGVuZHN9CitEZXNj
+cmlwdGlvbjogdXNlci1sZXZlbCB0b29sIHRvIG1ha2UgUmVpc2VyNCBmaWxlc3lzdGVtcworIFRo
+aXMgaW5zdGFsbGVyIG1vZHVsZSBjb250YWlucyB0aGUgdXRpbGl0eSB0byBjcmVhdGUgUmVpc2Vy
+NCBmaWxlc3lzdGVtcy4KKwogUGFja2FnZTogbGlicmVpc2VyNC1kZXYKIFNlY3Rpb246IGxpYmRl
+dmVsCiBQcmlvcml0eTogZXh0cmEKZGlmZiAtLWdpdCBhL2RlYmlhbi9ydWxlcyBiL2RlYmlhbi9y
+dWxlcwppbmRleCA2N2ZmMWIwLi41NTFiMTcyIDEwMDc1NQotLS0gYS9kZWJpYW4vcnVsZXMKKysr
+IGIvZGViaWFuL3J1bGVzCkBAIC00NSwyMSArNDUsMjEgQEAgY29uZmlndXJlLXJlaXNlcjRwcm9n
+cy1zdGFtcDoKIAljZCAkKENVUkRJUikvYnVpbGQvcmVpc2VyNHByb2dzICYmICQoQ09ORklHVVJF
+KSAtLXdpdGgtcmVhZGxpbmUKIAl0b3VjaCAkQAogCi0jY29uZmlndXJlL21rcmVpc2VyNC11ZGVi
+IGNvbmZpZ3VyZS9yZWlzZXI0cHJvZ3MtdWRlYjo6IGNvbmZpZ3VyZS11ZGVicy1zdGFtcAotI2Nv
+bmZpZ3VyZS11ZGVicy1zdGFtcDo6Ci0jCW1rZGlyIC1wICQoQ1VSRElSKS9idWlsZC91ZGVicwot
+IwljZCAkKENVUkRJUikvYnVpbGQvdWRlYnMgJiYgJChDT05GSUdVUkUpIC0td2l0aC1yZWFkbGlu
+ZT1ubyAKLSMJdG91Y2ggJEAKK2NvbmZpZ3VyZS9ta3JlaXNlcjQtdWRlYiBjb25maWd1cmUvcmVp
+c2VyNHByb2dzLXVkZWI6OiBjb25maWd1cmUtdWRlYnMtc3RhbXAKK2NvbmZpZ3VyZS11ZGVicy1z
+dGFtcDo6CisJbWtkaXIgLXAgJChDVVJESVIpL2J1aWxkL3VkZWJzCisJY2QgJChDVVJESVIpL2J1
+aWxkL3VkZWJzICYmICQoQ09ORklHVVJFKSAtLXdpdGgtcmVhZGxpbmU9bm8gCisJdG91Y2ggJEAK
+IAogYnVpbGQvbGlicmVpc2VyNC1kZXYgYnVpbGQvcmVpc2VyNHByb2dzOjogYnVpbGQtcmVpc2Vy
+NHByb2dzLXN0YW1wCiBidWlsZC1yZWlzZXI0cHJvZ3Mtc3RhbXA6CiAJJChNQUtFKSAtQyAkKENV
+UkRJUikvYnVpbGQvcmVpc2VyNHByb2dzCiAJdG91Y2ggJEAKIAotI2J1aWxkL21rcmVpc2VyNC11
+ZGViIGJ1aWxkL3JlaXNlcjRwcm9ncy11ZGViOjogYnVpbGQtdWRlYnMtc3RhbXAKLSNidWlsZC11
+ZGVicy1zdGFtcDo6Ci0jCSQoTUFLRSkgLUMgJChDVVJESVIpL2J1aWxkL3VkZWJzCi0jCXRvdWNo
+ICRACitidWlsZC9ta3JlaXNlcjQtdWRlYiBidWlsZC9yZWlzZXI0cHJvZ3MtdWRlYjo6IGJ1aWxk
+LXVkZWJzLXN0YW1wCitidWlsZC11ZGVicy1zdGFtcDo6CisJJChNQUtFKSAtQyAkKENVUkRJUikv
+YnVpbGQvdWRlYnMKKwl0b3VjaCAkQAogCiBpbnN0YWxsL3JlaXNlcjRwcm9nczo6IGluc3RhbGwt
+cmVpc2VyNHByb2dzLXN0YW1wCiBpbnN0YWxsLXJlaXNlcjRwcm9ncy1zdGFtcDoKQEAgLTgyLDIx
+ICs4MiwyMSBAQCBpbnN0YWxsLWxpYnJlaXNlcjQtZGV2LXN0YW1wOjoKIAlybSAtcmYgJChDVVJE
+SVIpL2RlYmlhbi9saWJyZWlzZXI0LWRldi91c3Ivc2hhcmUvZG9jL3tBVVRIT1JTLEJVR1MsUkVB
+RE1FLFRIQU5LU30KIAlybSAtZiAkKENVUkRJUikvZGViaWFuL2xpYnJlaXNlcjQtZGV2L3Vzci9s
+aWIvKi5sYQogCi0jaW5zdGFsbC9ta3JlaXNlcjQtdWRlYjo6IGluc3RhbGwtbWtyZWlzZXI0LXVk
+ZWItc3RhbXAKLSNpbnN0YWxsLW1rcmVpc2VyNC11ZGViLXN0YW1wOjoKLSMJJChNQUtFKSAtQyAk
+KENVUkRJUikvYnVpbGQvdWRlYnMgaW5zdGFsbCBERVNURElSPSQoQ1VSRElSKS9kZWJpYW4vbWty
+ZWlzZXI0LXVkZWIvCi0jCW12ICQoQ1VSRElSKS9kZWJpYW4vbWtyZWlzZXI0LXVkZWIvdXNyL3Ni
+aW4gJChDVVJESVIpL2RlYmlhbi9ta3JlaXNlcjQtdWRlYi8KLSMJcm0gLXJmICQoQ1VSRElSKS9k
+ZWJpYW4vbWtyZWlzZXI0LXVkZWIvc2Jpbi9tYWtlX3JlaXNlcjQKLSMJcm0gLXJmICQoQ1VSRElS
+KS9kZWJpYW4vbWtyZWlzZXI0LXVkZWIvdXNyCi0jCXJtIC1yZiAkKENVUkRJUikvZGViaWFuL21r
+cmVpc2VyNC11ZGViL3NiaW4ve2RlYnVnZnMucmVpc2VyNCxmc2NrLnJlaXNlcjQsbWVhc3VyZWZz
+LnJlaXNlcjR9Ci0KLSNpbnN0YWxsL3JlaXNlcjRwcm9ncy11ZGViOjogaW5zdGFsbC1yZWlzZXI0
+cHJvZ3MtdWRlYi1zdGFtcAotI2luc3RhbGwtcmVpc2VyNHByb2dzLXVkZWItc3RhbXA6OgotIwkk
+KE1BS0UpIC1DICQoQ1VSRElSKS9idWlsZC91ZGVicyBpbnN0YWxsIERFU1RESVI9JChDVVJESVIp
+L2RlYmlhbi9yZWlzZXI0cHJvZ3MtdWRlYi8KLSMJbXYgJChDVVJESVIpL2RlYmlhbi9yZWlzZXI0
+cHJvZ3MtdWRlYi91c3Ivc2JpbiAkKENVUkRJUikvZGViaWFuL3JlaXNlcjRwcm9ncy11ZGViLwot
+IwlybSAtcmYgJChDVVJESVIpL2RlYmlhbi9yZWlzZXI0cHJvZ3MtdWRlYi9zYmluL21ha2VfcmVp
+c2VyNAotIwlybSAtcmYgJChDVVJESVIpL2RlYmlhbi9yZWlzZXI0cHJvZ3MtdWRlYi91c3IKLSMJ
+cm0gLXJmICQoQ1VSRElSKS9kZWJpYW4vcmVpc2VyNHByb2dzLXVkZWIvc2Jpbi97bWtmcy5yZWlz
+ZXI0LG1lYXN1cmVmcy5yZWlzZXI0fQoraW5zdGFsbC9ta3JlaXNlcjQtdWRlYjo6IGluc3RhbGwt
+bWtyZWlzZXI0LXVkZWItc3RhbXAKK2luc3RhbGwtbWtyZWlzZXI0LXVkZWItc3RhbXA6OgorCSQo
+TUFLRSkgLUMgJChDVVJESVIpL2J1aWxkL3VkZWJzIGluc3RhbGwgREVTVERJUj0kKENVUkRJUikv
+ZGViaWFuL21rcmVpc2VyNC11ZGViLworCW12ICQoQ1VSRElSKS9kZWJpYW4vbWtyZWlzZXI0LXVk
+ZWIvdXNyL3NiaW4gJChDVVJESVIpL2RlYmlhbi9ta3JlaXNlcjQtdWRlYi8KKwlybSAtcmYgJChD
+VVJESVIpL2RlYmlhbi9ta3JlaXNlcjQtdWRlYi9zYmluL21ha2VfcmVpc2VyNAorCXJtIC1yZiAk
+KENVUkRJUikvZGViaWFuL21rcmVpc2VyNC11ZGViL3VzcgorCXJtIC1yZiAkKENVUkRJUikvZGVi
+aWFuL21rcmVpc2VyNC11ZGViL3NiaW4ve2RlYnVnZnMucmVpc2VyNCxmc2NrLnJlaXNlcjQsbWVh
+c3VyZWZzLnJlaXNlcjR9CisKK2luc3RhbGwvcmVpc2VyNHByb2dzLXVkZWI6OiBpbnN0YWxsLXJl
+aXNlcjRwcm9ncy11ZGViLXN0YW1wCitpbnN0YWxsLXJlaXNlcjRwcm9ncy11ZGViLXN0YW1wOjoK
+KwkkKE1BS0UpIC1DICQoQ1VSRElSKS9idWlsZC91ZGVicyBpbnN0YWxsIERFU1RESVI9JChDVVJE
+SVIpL2RlYmlhbi9yZWlzZXI0cHJvZ3MtdWRlYi8KKwltdiAkKENVUkRJUikvZGViaWFuL3JlaXNl
+cjRwcm9ncy11ZGViL3Vzci9zYmluICQoQ1VSRElSKS9kZWJpYW4vcmVpc2VyNHByb2dzLXVkZWIv
+CisJcm0gLXJmICQoQ1VSRElSKS9kZWJpYW4vcmVpc2VyNHByb2dzLXVkZWIvc2Jpbi9tYWtlX3Jl
+aXNlcjQKKwlybSAtcmYgJChDVVJESVIpL2RlYmlhbi9yZWlzZXI0cHJvZ3MtdWRlYi91c3IKKwly
+bSAtcmYgJChDVVJESVIpL2RlYmlhbi9yZWlzZXI0cHJvZ3MtdWRlYi9zYmluL3tta2ZzLnJlaXNl
+cjQsbWVhc3VyZWZzLnJlaXNlcjR9CiAKIGNsZWFuOjoKIAlkaF9hdXRvcmVjb25mX2NsZWFuCi0t
+IAoyLjYuNAoK
+--047d7b3a8680f583d905290cbab0--
