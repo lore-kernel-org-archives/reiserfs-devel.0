@@ -1,7 +1,7 @@
 From: <doiggl@velocitynet.com.au>
-Subject: Here is a plain kernel based on 4.4.0 with the reiser4 patch enabled. [reiser4-for-4.4.0.patch]
-Date: Sat, 16 Jan 2016 19:35:42 +1100
-Message-ID: <fa4a37e0768443f81dc2e00cfab91a53@mail.velocitynet.com.au>
+Subject: Can a utility program be written to swap 2 nodes over, given the Node number and 2 'Wrong order of keys' ? [sdb]
+Date: Mon, 18 Jan 2016 10:56:55 +1100
+Message-ID: <079eaef736526339ee273fb091166b28@mail.velocitynet.com.au>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
@@ -11,39 +11,86 @@ Content-Type: text/plain; charset="us-ascii"
 To: reiserfs-devel@vger.kernel.org
 
 Hello,
-Here is a plain kernel based on 4.4.0 with the reiser4 patch built with
-the Opensuse build service [obs] system.
 
-The built rpms are here
+Question:
+Can a utility program be written to swap 2 nodes over given the  Node
+number and 2 'Wrong order of keys' ?
+Thank you
+--Glenn
 
-https://build.opensuse.org/package/binaries/home:doiggl/kernel-reiser4?repository=openSUSE_13.1
+Examples:
 
-Architecture: i586
+# repair_node_item 43828275 0 1
+# repair_node_item 52697435  79  80                                       
+          
+# repair_node_item 63227569  24  25                                       
+          
+# repair_node_item 63227571  73  74                                       
+          
+# repair_node_item 116595727  20  21                                      
+          
+# repair_node_item 227923161  22  23                                      
+          
+# repair_node_item 284305753  61  62
 
-kernel-reiser4-4.4.0-2.1.i686.rpm
-kernel-reiser4-4.4.0-2.1.nosrc.rpm
-kernel-reiser4-debuginfo-4.4.0-2.1.i686.rpm
-kernel-reiser4-debugsource-4.4.0-2.1.i686.rpm
-kernel-reiser4-devel-4.4.0-2.1.i686.rpm
 
-Architecture: x86_64
+Syntax:
+repair_node_items <Node number>  <item-key number>  <item-key number>
 
-kernel-reiser4-4.4.0-2.1.nosrc.rpm
-kernel-reiser4-4.4.0-2.1.x86_64.rpm
-kernel-reiser4-debuginfo-4.4.0-2.1.x86_64.rpm
-kernel-reiser4-debugsource-4.4.0-2.1.x86_64.rpm
-kernel-reiser4-devel-4.4.0-2.1.x86_64.rpm
 
-The project is here
-https://build.opensuse.org/package/show?package=kernel-reiser4&project=home%3Adoiggl
+Output taken from:
 
-The log of the build is here {x86_64} as an example. [Its a long buildlog]
-https://build.opensuse.org/package/live_build_log/home:doiggl/kernel-reiser4/openSUSE_13.1/x86_64
+# fsck.reiser4 --build-fs /dev/sdb
+# 
+CHECKING THE STORAGE TREE                                                 
+                                                                          
+ 
+        Read nodes 197008413                                              
+                                                                          
+ 
+        Nodes left in the tree 197008413 
+                Leaves of them 194764277, Twigs of them 2217790 
+        Time interval: Sun Jan 17 18:22:12 2016 - Mon Jan 18 02:10:12 2016
 
-The .spec used file is here
-https://build.opensuse.org/package/view_file/home:doiggl/kernel-reiser4?expand=1&file=kernel-reiser4.spec
+CHECKING EXTENT REGIONS.                                                  
+                                                                          
+ 
+        Read twigs 2217790                                                
+                                                                          
+ 
+        Time interval: Mon Jan 18 02:10:12 2016 - Mon Jan 18 04:19:49 2016
 
-Thanks to the opensuse-kernel list members for compilation advice.
+LOOKING FOR UNCONNECTED NODES                                             
+                                                                          
+ 
+FSCK: node.c: 108: repair_node_items_check: Node (43828275), items (0) and
+(1): Wrong order of keys.                                                  
+ 
+FSCK: node.c: 108: repair_node_items_check: Node (52697435), items (79)
+and (80): Wrong order of keys.                                             
+    
+FSCK: node.c: 108: repair_node_items_check: Node (63227569), items (24)
+and (25): Wrong order of keys.                                             
+    
+FSCK: node.c: 108: repair_node_items_check: Node (63227571), items (73)
+and (74): Wrong order of keys.                                             
+    
+FSCK: node.c: 108: repair_node_items_check: Node (116595727), items (20)
+and (21): Wrong order of keys.                                             
+   
+FSCK: node.c: 108: repair_node_items_check: Node (227923161), items (22)
+and (23): Wrong order of keys.                                             
+   
+FSCK: node.c: 108: repair_node_items_check: Node (284305753), items (61)
+and (62): Wrong order of keys.                                             
+   
+        Read nodes 1481038                                                
+                                                                          
+ 
+        Good nodes 471512 
+                Leaves of them 466164, Twigs of them 5348 
+        Time interval: Mon Jan 18 04:20:04 2016 - Mon Jan 18 04:23:48 2016
 
-Patches applied:
-reiser4-for-4.4.0.patch
+***** fsck.reiser4 finished at Mon Jan 18 04:23:48 2016
+
+
