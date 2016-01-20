@@ -1,185 +1,48 @@
-From: Jose R R <Jose.r.r@metztli-it.com>
-Subject: Reiser4 -enabled Sid d-i and Reiser4 Patch for Debian Parted 3.2-13
-Date: Sun, 17 Jan 2016 20:22:42 -0800
-Message-ID: <CAM12Q5RhePVT7EWV7+6cQWoxaJxh3NNZGrvgbZhEzjg-+62Wdw@mail.gmail.com>
-Mime-Version: 1.0
-Content-Type: multipart/mixed; boundary=001a1142dd60a6d11c0529941ac8
-Return-path: <reiserfs-devel-owner@vger.kernel.org>
+From: Sudip Mukherjee <sudipm.mukherjee@gmail.com>
+Subject: [PATCH] reiserfs: fix dereference of ERR_PTR
+Date: Wed, 20 Jan 2016 18:06:02 +0530
+Message-ID: <1453293362-22893-1-git-send-email-sudipm.mukherjee@gmail.com>
+Return-path: <linux-kernel-owner@vger.kernel.org>
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=metztli-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:sender:date:message-id:subject:from:to:cc:content-type;
-        bh=Y4YRV8tIHVae0MAe/xSEdMl4RxWqPu80G0zPLIduFcc=;
-        b=Je89Dh3upC/1G1QkaFSTEpt+S1/BZqIVdwrPBBaxTGKBwN1Uq0h8BvSMMxJr6xBnbk
-         zVpBHuewoMWHiuOUG3VhL08+3X9z+94qIoVoWvtRcZUyG9a8V8ZnBOnVnMd4mbtpI+IX
-         D8CWl/f4HRRZYSou20rvan/wqUmb2Ic8GO4kIlPGnRlQkuE1GuP72j/C6espl4rlDswQ
-         MGFXXziHb3l78SzXdUxfC7eQ2M8jus5ktcgQUmvbvXsrlvXZypo08qzxosB8so0d7YrB
-         JRwuxaE0qwWyVqxpryPbS9gPKONDA32cCvdEhOe7BQc6H/kDbeKRz+ya6+u7W7rJlIJs
-         Q2dw==
-Sender: reiserfs-devel-owner@vger.kernel.org
+        d=gmail.com; s=20120113;
+        h=from:to:cc:subject:date:message-id;
+        bh=tmIFnAiHfJ3+AeNXXSu08vUeLrYfGrQL3Dfnt5zkuXY=;
+        b=qi0j90yXlLxOZwfvOX8z8xD6c6CFt5i0UgYdu9K+g7CZZpuftOhNzKcJ3i8UwRBFQ2
+         2ZPn/w0STV6JsWpw6WQVe9zF4YMChnqpAsNmVtji7gUir9SPa3JEay8idXc0I9oJVi8H
+         aireKBMt5eYr3wWDChF+EnNbCteB+/jFFOr01/r1F9gVFxUJLbPXLtEUXdrZk2KmkXPO
+         1cPMquVVCMK4piValJxz5ty1Dyf2j/dtreSPzy+bp4WO+pEf9uDncN46fk5M2mGXZPSs
+         Qms7AREXBzRz5F0zSh+FgRv3Y+hg0ZJqqVp+eg2Cbz+4oIRoMjAa/RaI3dcSVMw+4gcF
+         p7zg==
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
-To: ReiserFS Development List <reiserfs-devel@vger.kernel.org>
-Cc: debian-boot@lists.debian.org
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: linux-kernel@vger.kernel.org, reiserfs-devel@vger.kernel.org, Sudip Mukherjee <sudipm.mukherjee@gmail.com>
 
---001a1142dd60a6d11c0529941ac8
-Content-Type: text/plain; charset=UTF-8
+reiserfs_iget() returns either NULL or error code in ERR_PTR. And we
+were only checking for NULL, so in case of some other error we will try
+to dereference the ERR_PTR(-errno) thinking it to be a valid pointer.
 
-Niltze, all-
+Signed-off-by: Sudip Mukherjee <sudip@vectorindia.org>
+---
+ fs/reiserfs/super.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Updated Debian version of GNU Parted DEBs:
-https://metztli.it/readOnlyEphemeral/debian-parted-3.2-13_reiser4.tar
-
-Reiser4 patch attached if you prefer to apply on your own from source
-(and generate corresponding UDEBs):
-
-git clone git://anonscm.debian.org/parted/debian/parted.git
-
-Or already patched source from my Github repo:
-
-https://github.com/Metztli/debian-parted-reiser4
-
-********
-
-Also, Reiser4 -enabled Debian-installer (d-i) needed to be updated, as
-Reiser4-enabled parted is an essential component:
-
-https://metztli.it/readOnlyEphemeral/metztli_it-reiser4_d-i_.01.iso
-
-Your mileage may vary (YMMV), however I suggest installing Stretch
-(testing) and/or Sid (unstable).
-
-*If* at the Debian-Installer screen:
-
-"Install the GRUB boot loader on a hard disk"
-https://pbs.twimg.com/media/CY-XOmVU0AAkgxM.png:large
-
-user opens another terminal and...
-chroot /target
-bash
-cd /root
-wget https://metztli.it/readOnlyEphemeral/linux-image-reiser4.tar
-
-downloads latest available Reiser4 -enabled kernel.
-
-can be untarred and dpkg -i linux-image*deb
-
-*then* no longer is necessary to modify /etc/initramfs-tools/modules
-
-as installation routine will take care of it at "Finish the installation"
-
-
-Best Professional Regards.
-
+diff --git a/fs/reiserfs/super.c b/fs/reiserfs/super.c
+index 05db747..c0306ec 100644
+--- a/fs/reiserfs/super.c
++++ b/fs/reiserfs/super.c
+@@ -288,7 +288,7 @@ static int finish_unfinished(struct super_block *s)
+ 		pathrelse(&path);
+ 
+ 		inode = reiserfs_iget(s, &obj_key);
+-		if (!inode) {
++		if (IS_ERR_OR_NULL(inode)) {
+ 			/*
+ 			 * the unlink almost completed, it just did not
+ 			 * manage to remove "save" link and release objectid
 -- 
-Jose R R
-http://metztli.it
----------------------------------------------------------------------------------------------
-Try at no charge http://b2evolution.net for http://OpenShift.com PaaS
----------------------------------------------------------------------------------------------
-from our GitHub http://Nepohualtzintzin.com repository. Cloud the easy way!
----------------------------------------------------------------------------------------------
+1.9.1
 
---001a1142dd60a6d11c0529941ac8
-Content-Type: application/octet-stream; 
-	name="0001-Reiser4-enabled-Debian-version-of-GNU-Parted-patch.patch"
-Content-Disposition: attachment; 
-	filename="0001-Reiser4-enabled-Debian-version-of-GNU-Parted-patch.patch"
-Content-Transfer-Encoding: base64
-X-Attachment-Id: f_ijjfqxme0
-
-RnJvbSA1ZmVkYjQ1ZTQ0YTA3ZmE5YWM0OTViMTlmOWIyZGFmZTFlNjgyYzE1IE1vbiBTZXAgMTcg
-MDA6MDA6MDAgMjAwMQpGcm9tOiBNZXR6dGxpIDxqb3NlLnJvZHJpZ3VlekBtZXR6dGxpLWl0LmNv
-bT4KRGF0ZTogU3VuLCAxNyBKYW4gMjAxNiAxMzo1NTowNSAtMDgwMApTdWJqZWN0OiBbUEFUQ0hd
-IFJlaXNlcjQgLWVuYWJsZWQgRGViaWFuIHZlcnNpb24gb2YgR05VIFBhcnRlZCBwYXRjaAoKLS0t
-CiBkZWJpYW4vbGlicGFydGVkMi5zeW1ib2xzICAgICAgfCAgMiArKwogbGlicGFydGVkL01ha2Vm
-aWxlLmFtICAgICAgICAgIHwgIDEgKwogbGlicGFydGVkL2ZzL01ha2VmaWxlLmFtICAgICAgIHwg
-IDMgKysKIGxpYnBhcnRlZC9mcy9yZWlzZXI0L3JlaXNlcjQuYyB8IDcxICsrKysrKysrKysrKysr
-KysrKysrKysrKysrKysrKysrKysrKysrKysrKwogbGlicGFydGVkL2xpYnBhcnRlZC5jICAgICAg
-ICAgIHwgIDQgKysrCiA1IGZpbGVzIGNoYW5nZWQsIDgxIGluc2VydGlvbnMoKykKIGNyZWF0ZSBt
-b2RlIDEwMDY0NCBsaWJwYXJ0ZWQvZnMvcmVpc2VyNC9yZWlzZXI0LmMKCmRpZmYgLS1naXQgYS9k
-ZWJpYW4vbGlicGFydGVkMi5zeW1ib2xzIGIvZGViaWFuL2xpYnBhcnRlZDIuc3ltYm9scwppbmRl
-eCBhNWU3NjQzLi4zMGQ0OTdiIDEwMDY0NAotLS0gYS9kZWJpYW4vbGlicGFydGVkMi5zeW1ib2xz
-CisrKyBiL2RlYmlhbi9saWJwYXJ0ZWQyLnN5bWJvbHMKQEAgLTE0Niw2ICsxNDYsOCBAQCBsaWJw
-YXJ0ZWQuc28uMiBsaWJwYXJ0ZWQyICNNSU5WRVIjCiAgcGVkX2ZpbGVfc3lzdGVtX250ZnNfaW5p
-dEBCYXNlIDMuMQogIHBlZF9maWxlX3N5c3RlbV9wcm9iZUBCYXNlIDMuMQogIHBlZF9maWxlX3N5
-c3RlbV9wcm9iZV9zcGVjaWZpY0BCYXNlIDMuMQorIHBlZF9maWxlX3N5c3RlbV9yZWlzZXI0X2Rv
-bmVAQmFzZSAzLjItMTMKKyBwZWRfZmlsZV9zeXN0ZW1fcmVpc2VyNF9pbml0QEJhc2UgMy4yLTEz
-CiAgcGVkX2ZpbGVfc3lzdGVtX3JlaXNlcmZzX2RvbmVAQmFzZSAzLjEKICBwZWRfZmlsZV9zeXN0
-ZW1fcmVpc2VyZnNfaW5pdEBCYXNlIDMuMQogIHBlZF9maWxlX3N5c3RlbV90eXBlX2dldEBCYXNl
-IDMuMQpkaWZmIC0tZ2l0IGEvbGlicGFydGVkL01ha2VmaWxlLmFtIGIvbGlicGFydGVkL01ha2Vm
-aWxlLmFtCmluZGV4IGI0MTBlNjQuLjA3MzU1YmUgMTAwNjQ0Ci0tLSBhL2xpYnBhcnRlZC9NYWtl
-ZmlsZS5hbQorKysgYi9saWJwYXJ0ZWQvTWFrZWZpbGUuYW0KQEAgLTMsNiArMyw3IEBACiAjCiAj
-IFRoaXMgZmlsZSBtYXkgYmUgbW9kaWZpZWQgYW5kL29yIGRpc3RyaWJ1dGVkIHdpdGhvdXQgcmVz
-dHJpY3Rpb24uCiAKK0FVVE9NQUtFX09QVElPTlMgPSBzdWJkaXItb2JqZWN0cwogU1VCRElSU19D
-SEVDSyA9CiBpZiBIQVZFX0NIRUNLCiBTVUJESVJTX0NIRUNLICs9IHRlc3RzCmRpZmYgLS1naXQg
-YS9saWJwYXJ0ZWQvZnMvTWFrZWZpbGUuYW0gYi9saWJwYXJ0ZWQvZnMvTWFrZWZpbGUuYW0KaW5k
-ZXggZGU2MDdhMi4uNDM5NDZkMiAxMDA2NDQKLS0tIGEvbGlicGFydGVkL2ZzL01ha2VmaWxlLmFt
-CisrKyBiL2xpYnBhcnRlZC9mcy9NYWtlZmlsZS5hbQpAQCAtMyw2ICszLDggQEAKICMKICMgVGhp
-cyBmaWxlIG1heSBiZSBtb2RpZmllZCBhbmQvb3IgZGlzdHJpYnV0ZWQgd2l0aG91dCByZXN0cmlj
-dGlvbi4KIAorQVVUT01BS0VfT1BUSU9OUyA9IHN1YmRpci1vYmplY3RzCisKIHBhcnRlZGluY2x1
-ZGVkaXIgPSAtSSQodG9wX2J1aWxkZGlyKS9pbmNsdWRlIC1JJCh0b3Bfc3JjZGlyKS9pbmNsdWRl
-CiAKIEFNX0NGTEFHUyA9ICQoV0FSTl9DRkxBR1MpCkBAIC00NCw2ICs0Niw3IEBAIGxpYmZzX2xh
-X1NPVVJDRVMgPQkJXAogICBudGZzL250ZnMuYwkJCVwKICAgcmVpc2VyZnMvcmVpc2VyZnMuYwkJ
-XAogICByZWlzZXJmcy9yZWlzZXJmcy5oCQlcCisgIHJlaXNlcjQvcmVpc2VyNC5jCQlcCiAgIHVm
-cy91ZnMuYwkJCVwKICAgeGZzL3BsYXRmb3JtX2RlZnMuaAkJXAogICB4ZnMveGZzLmMJCQlcCmRp
-ZmYgLS1naXQgYS9saWJwYXJ0ZWQvZnMvcmVpc2VyNC9yZWlzZXI0LmMgYi9saWJwYXJ0ZWQvZnMv
-cmVpc2VyNC9yZWlzZXI0LmMKbmV3IGZpbGUgbW9kZSAxMDA2NDQKaW5kZXggMDAwMDAwMC4uMGE4
-NmUwYwotLS0gL2Rldi9udWxsCisrKyBiL2xpYnBhcnRlZC9mcy9yZWlzZXI0L3JlaXNlcjQuYwpA
-QCAtMCwwICsxLDcxIEBACisvKgorICAgIGxpYnBhcnRlZCAtIGEgbGlicmFyeSBmb3IgbWFuaXB1
-bGF0aW5nIGRpc2sgcGFydGl0aW9ucworICAgIENvcHlyaWdodCAoQykgMjAwMCBGcmVlIFNvZnR3
-YXJlIEZvdW5kYXRpb24sIEluYy4KKworICAgIFRoaXMgcHJvZ3JhbSBpcyBmcmVlIHNvZnR3YXJl
-OyB5b3UgY2FuIHJlZGlzdHJpYnV0ZSBpdCBhbmQvb3IgbW9kaWZ5CisgICAgaXQgdW5kZXIgdGhl
-IHRlcm1zIG9mIHRoZSBHTlUgR2VuZXJhbCBQdWJsaWMgTGljZW5zZSBhcyBwdWJsaXNoZWQgYnkK
-KyAgICB0aGUgRnJlZSBTb2Z0d2FyZSBGb3VuZGF0aW9uOyBlaXRoZXIgdmVyc2lvbiAyIG9mIHRo
-ZSBMaWNlbnNlLCBvcgorICAgIChhdCB5b3VyIG9wdGlvbikgYW55IGxhdGVyIHZlcnNpb24uCisK
-KyAgICBUaGlzIHByb2dyYW0gaXMgZGlzdHJpYnV0ZWQgaW4gdGhlIGhvcGUgdGhhdCBpdCB3aWxs
-IGJlIHVzZWZ1bCwKKyAgICBidXQgV0lUSE9VVCBBTlkgV0FSUkFOVFk7IHdpdGhvdXQgZXZlbiB0
-aGUgaW1wbGllZCB3YXJyYW50eSBvZgorICAgIE1FUkNIQU5UQUJJTElUWSBvciBGSVRORVNTIEZP
-UiBBIFBBUlRJQ1VMQVIgUFVSUE9TRS4gIFNlZSB0aGUKKyAgICBHTlUgR2VuZXJhbCBQdWJsaWMg
-TGljZW5zZSBmb3IgbW9yZSBkZXRhaWxzLgorCisgICAgWW91IHNob3VsZCBoYXZlIHJlY2VpdmVk
-IGEgY29weSBvZiB0aGUgR05VIEdlbmVyYWwgUHVibGljIExpY2Vuc2UKKyAgICBhbG9uZyB3aXRo
-IHRoaXMgcHJvZ3JhbTsgaWYgbm90LCB3cml0ZSB0byB0aGUgRnJlZSBTb2Z0d2FyZQorICAgIEZv
-dW5kYXRpb24sIEluYy4sIDU5IFRlbXBsZSBQbGFjZSwgU3VpdGUgMzMwLCBCb3N0b24sIE1BICAw
-MjExMS0xMzA3ICBVU0EKKyovCisKKyNpbmNsdWRlIDxjb25maWcuaD4KKworI2luY2x1ZGUgPHBh
-cnRlZC9wYXJ0ZWQuaD4KKyNpbmNsdWRlIDxwYXJ0ZWQvZW5kaWFuLmg+CisKKyNpZiBFTkFCTEVf
-TkxTCisjICBpbmNsdWRlIDxsaWJpbnRsLmg+CisjICBkZWZpbmUgXyhTdHJpbmcpIGRnZXR0ZXh0
-IChQQUNLQUdFLCBTdHJpbmcpCisjZWxzZQorIyAgZGVmaW5lIF8oU3RyaW5nKSAoU3RyaW5nKQor
-I2VuZGlmIC8qIEVOQUJMRV9OTFMgKi8KKworI2luY2x1ZGUgPHVuaXN0ZC5oPgorI2luY2x1ZGUg
-PHN0cmluZy5oPgorCitzdGF0aWMgUGVkR2VvbWV0cnkqCityZWlzZXI0X3Byb2JlIChQZWRHZW9t
-ZXRyeSogZ2VvbSkKK3sKKwljaGFyCWJ1Zls1MTJdOworCisJaWYgKCFwZWRfZ2VvbWV0cnlfcmVh
-ZCAoZ2VvbSwgYnVmLCAxMjgsIDEpKQorCQlyZXR1cm4gMDsJCisJCisJaWYgKCBzdHJjbXAoIGJ1
-ZiwgIlJlSXNFcjQiICkgPT0gMCApCisJCXJldHVybiBwZWRfZ2VvbWV0cnlfZHVwbGljYXRlKCBn
-ZW9tICkgOworCisJZWxzZQorCQlyZXR1cm4gTlVMTDsKK30KKworc3RhdGljIFBlZEZpbGVTeXN0
-ZW1PcHMgcmVpc2VyNF9vcHMgPSB7CisJcHJvYmU6CQlyZWlzZXI0X3Byb2JlLAorfTsKKworc3Rh
-dGljIFBlZEZpbGVTeXN0ZW1UeXBlIHJlaXNlcjRfdHlwZSA9IHsKKwluZXh0OglOVUxMLAorCW9w
-czoJJnJlaXNlcjRfb3BzLAorCW5hbWU6CSJyZWlzZXI0IgorfTsKKwordm9pZAorcGVkX2ZpbGVf
-c3lzdGVtX3JlaXNlcjRfaW5pdCAoKQoreworCXBlZF9maWxlX3N5c3RlbV90eXBlX3JlZ2lzdGVy
-ICgmcmVpc2VyNF90eXBlKTsKK30KKwordm9pZAorcGVkX2ZpbGVfc3lzdGVtX3JlaXNlcjRfZG9u
-ZSAoKQoreworCXBlZF9maWxlX3N5c3RlbV90eXBlX3VucmVnaXN0ZXIgKCZyZWlzZXI0X3R5cGUp
-OworfQorCmRpZmYgLS1naXQgYS9saWJwYXJ0ZWQvbGlicGFydGVkLmMgYi9saWJwYXJ0ZWQvbGli
-cGFydGVkLmMKaW5kZXggZmUwYzdmZS4uMzU0ZmNmOSAxMDA2NDQKLS0tIGEvbGlicGFydGVkL2xp
-YnBhcnRlZC5jCisrKyBiL2xpYnBhcnRlZC9saWJwYXJ0ZWQuYwpAQCAtMTA4LDYgKzEwOCw3IEBA
-IGV4dGVybiB2b2lkIHBlZF9maWxlX3N5c3RlbV9qZnNfaW5pdCAodm9pZCk7CiBleHRlcm4gdm9p
-ZCBwZWRfZmlsZV9zeXN0ZW1faGZzX2luaXQgKHZvaWQpOwogZXh0ZXJuIHZvaWQgcGVkX2ZpbGVf
-c3lzdGVtX2ZhdF9pbml0ICh2b2lkKTsKIGV4dGVybiB2b2lkIHBlZF9maWxlX3N5c3RlbV9leHQy
-X2luaXQgKHZvaWQpOworZXh0ZXJuIHZvaWQgcGVkX2ZpbGVfc3lzdGVtX3JlaXNlcjRfaW5pdCAo
-dm9pZCk7CiBleHRlcm4gdm9pZCBwZWRfZmlsZV9zeXN0ZW1fbmlsZnMyX2luaXQgKHZvaWQpOwog
-ZXh0ZXJuIHZvaWQgcGVkX2ZpbGVfc3lzdGVtX2J0cmZzX2luaXQgKHZvaWQpOwogZXh0ZXJuIHZv
-aWQgcGVkX2ZpbGVfc3lzdGVtX3pmc19pbml0ICh2b2lkKTsKQEAgLTEyNSw2ICsxMjYsNyBAQCBp
-bml0X2ZpbGVfc3lzdGVtX3R5cGVzICgpCiAJcGVkX2ZpbGVfc3lzdGVtX2hmc19pbml0ICgpOwog
-CXBlZF9maWxlX3N5c3RlbV9mYXRfaW5pdCAoKTsKIAlwZWRfZmlsZV9zeXN0ZW1fZXh0Ml9pbml0
-ICgpOworCXBlZF9maWxlX3N5c3RlbV9yZWlzZXI0X2luaXQgKCk7CiAJcGVkX2ZpbGVfc3lzdGVt
-X25pbGZzMl9pbml0ICgpOwogCXBlZF9maWxlX3N5c3RlbV9idHJmc19pbml0ICgpOwogCXBlZF9m
-aWxlX3N5c3RlbV96ZnNfaW5pdCAoKTsKQEAgLTE4OSw2ICsxOTEsNyBAQCBleHRlcm4gdm9pZCBw
-ZWRfZmlsZV9zeXN0ZW1fbnRmc19kb25lICh2b2lkKTsKIGV4dGVybiB2b2lkIHBlZF9maWxlX3N5
-c3RlbV9yZWlzZXJmc19kb25lICh2b2lkKTsKIGV4dGVybiB2b2lkIHBlZF9maWxlX3N5c3RlbV91
-ZnNfZG9uZSAodm9pZCk7CiBleHRlcm4gdm9pZCBwZWRfZmlsZV9zeXN0ZW1feGZzX2RvbmUgKHZv
-aWQpOworZXh0ZXJuIHZvaWQgcGVkX2ZpbGVfc3lzdGVtX3JlaXNlcjRfZG9uZSAodm9pZCk7CiBl
-eHRlcm4gdm9pZCBwZWRfZmlsZV9zeXN0ZW1fYW1pZ2FfZG9uZSAodm9pZCk7CiBleHRlcm4gdm9p
-ZCBwZWRfZmlsZV9zeXN0ZW1fYnRyZnNfZG9uZSAodm9pZCk7CiBleHRlcm4gdm9pZCBwZWRfZmls
-ZV9zeXN0ZW1femZzX2RvbmUgKHZvaWQpOwpAQCAtMjA3LDYgKzIxMCw3IEBAIGRvbmVfZmlsZV9z
-eXN0ZW1fdHlwZXMgKCkKIAlwZWRfZmlsZV9zeXN0ZW1fcmVpc2VyZnNfZG9uZSAoKTsKIAlwZWRf
-ZmlsZV9zeXN0ZW1fdWZzX2RvbmUgKCk7CiAJcGVkX2ZpbGVfc3lzdGVtX3hmc19kb25lICgpOwor
-CXBlZF9maWxlX3N5c3RlbV9yZWlzZXI0X2RvbmUgKCk7CiAJcGVkX2ZpbGVfc3lzdGVtX2FtaWdh
-X2RvbmUgKCk7CiAJcGVkX2ZpbGVfc3lzdGVtX2J0cmZzX2RvbmUgKCk7CiB9Ci0tIAoyLjcuMC5y
-YzMKCg==
---001a1142dd60a6d11c0529941ac8--
