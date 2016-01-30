@@ -1,48 +1,45 @@
-From: Sudip Mukherjee <sudipm.mukherjee@gmail.com>
-Subject: [PATCH] reiserfs: fix dereference of ERR_PTR
-Date: Wed, 20 Jan 2016 18:06:02 +0530
-Message-ID: <1453293362-22893-1-git-send-email-sudipm.mukherjee@gmail.com>
-Return-path: <linux-kernel-owner@vger.kernel.org>
+From: Jose R R <Jose.r.r@metztli-it.com>
+Subject: Reiser4 -enabled Debian Parted 3.2-14
+Date: Sat, 30 Jan 2016 01:48:29 -0800
+Message-ID: <CAM12Q5SBwORjey3gsDQDukzDgtSnfWctXx+oa40Gf=oZ5rjdvA@mail.gmail.com>
+Mime-Version: 1.0
+Return-path: <reiserfs-devel-owner@vger.kernel.org>
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20120113;
-        h=from:to:cc:subject:date:message-id;
-        bh=tmIFnAiHfJ3+AeNXXSu08vUeLrYfGrQL3Dfnt5zkuXY=;
-        b=qi0j90yXlLxOZwfvOX8z8xD6c6CFt5i0UgYdu9K+g7CZZpuftOhNzKcJ3i8UwRBFQ2
-         2ZPn/w0STV6JsWpw6WQVe9zF4YMChnqpAsNmVtji7gUir9SPa3JEay8idXc0I9oJVi8H
-         aireKBMt5eYr3wWDChF+EnNbCteB+/jFFOr01/r1F9gVFxUJLbPXLtEUXdrZk2KmkXPO
-         1cPMquVVCMK4piValJxz5ty1Dyf2j/dtreSPzy+bp4WO+pEf9uDncN46fk5M2mGXZPSs
-         Qms7AREXBzRz5F0zSh+FgRv3Y+hg0ZJqqVp+eg2Cbz+4oIRoMjAa/RaI3dcSVMw+4gcF
-         p7zg==
-Sender: linux-kernel-owner@vger.kernel.org
+        d=metztli-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:sender:date:message-id:subject:from:to:cc:content-type;
+        bh=naU7WQAphxt+DH7bROQxa13INJRQannXYJfbN9Yj72M=;
+        b=HRMuKLbnQoHw0bOHZ5nepw2+mA+K/mNjDAIeECPZwhqUpU9rSR25EeYdmxfWoO5CXm
+         /Z9R05wdDQQ9hOCmjah7tVHTKw30MZqbwrsq2lHlnvJt0U1y4V1uxYtxex+K1Zjdudi5
+         DCzS6r8AW/Sdk/LPb4/taez0rU20LhpPDHheAKMczXnk31nNypTmjUQuC261ExOMbWw7
+         4+CNqO1372NwouFayBabi6q3QWanQvZ2VHE2bMKSjbKg5hn2ECX4lgHidJp8rKZDxkfZ
+         9CiGINCllGsXrlZnmfo/oVFOk859z99gHWzWAozJnduhyNlLSa4WVtpSdoTAdQ4NEtgI
+         XbLQ==
+Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
-MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: linux-kernel@vger.kernel.org, reiserfs-devel@vger.kernel.org, Sudip Mukherjee <sudipm.mukherjee@gmail.com>
+To: ReiserFS Development List <reiserfs-devel@vger.kernel.org>
+Cc: debian-boot@lists.debian.org
 
-reiserfs_iget() returns either NULL or error code in ERR_PTR. And we
-were only checking for NULL, so in case of some other error we will try
-to dereference the ERR_PTR(-errno) thinking it to be a valid pointer.
+Niltze-
 
-Signed-off-by: Sudip Mukherjee <sudip@vectorindia.org>
----
- fs/reiserfs/super.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Updated Debian Parted DEBs to reflect latest debian release of GNU utility:
 
-diff --git a/fs/reiserfs/super.c b/fs/reiserfs/super.c
-index 05db747..c0306ec 100644
---- a/fs/reiserfs/super.c
-+++ b/fs/reiserfs/super.c
-@@ -288,7 +288,7 @@ static int finish_unfinished(struct super_block *s)
- 		pathrelse(&path);
- 
- 		inode = reiserfs_iget(s, &obj_key);
--		if (!inode) {
-+		if (IS_ERR_OR_NULL(inode)) {
- 			/*
- 			 * the unlink almost completed, it just did not
- 			 * manage to remove "save" link and release objectid
+http://metztli.it/readOnlyEphemeral/debian-parted-3.2-14_reiser4.tar
+
+If in addition to DEBs in tar above, you need to build the UDEBs with
+Reiser4-support for Parted in d-i, here is Reiser4 -enabled source:
+
+https://github.com/Metztli/debian-parted-reiser4
+
+
+Best Professional Regards.
+
 -- 
-1.9.1
-
+Jose R R
+http://metztli.it
+---------------------------------------------------------------------------------------------
+Try at no charge http://b2evolution.net for http://OpenShift.com PaaS
+---------------------------------------------------------------------------------------------
+from our GitHub http://Nepohualtzintzin.com repository. Cloud the easy way!
+---------------------------------------------------------------------------------------------
