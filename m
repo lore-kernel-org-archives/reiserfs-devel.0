@@ -1,98 +1,91 @@
-From: Tiago Ilieve <tiago.myhro@gmail.com>
-Subject: Re: Booting uncompressed kernel images
-Date: Mon, 1 Feb 2016 23:31:48 -0200
-Message-ID: <CALdTKe_mKLEUiZH34xcRCwoM=XvP_vAy-DVUpqg6-rozWyv_dQ@mail.gmail.com>
-References: <CALdTKe-JA3LfHzqjSWKxjEYdfg=dGSC+juH-rm3ZvFN2FrXn7A@mail.gmail.com>
- <CAM12Q5T5ZJDCUDyExcBrCUK71NH=r00LwsEqZ5AgR9yF9U4M+Q@mail.gmail.com>
+From: Edward Shishkin <edward.shishkin@gmail.com>
+Subject: Re: [patch] reiser4: port for Linux-4.1
+Date: Tue, 9 Feb 2016 18:53:23 +0100
+Message-ID: <56BA2793.7090906@gmail.com>
+References: <558D5C72.2040203@gmail.com> <55918654.80703@gmail.com>
+ <1435648387.15634.3.camel@gmail.com> <559245B3.1020804@gmail.com>
+ <1435651611.15634.12.camel@gmail.com> <55925A3C.6000604@gmail.com>
+ <1435793708.3758.14.camel@gmail.com> <559790E1.2020009@gmail.com>
+ <1436032389.25552.6.camel@gmail.com> <559826F3.9010201@gmail.com>
+ <1436101712.6440.3.camel@gmail.com>
+ <CADW=+3=J7Rt1yxtTfW=ZCLC40-D1FPCFR7KGSyp_YLgcRcH3FQ@mail.gmail.com>
+ <1436109206.6440.12.camel@gmail.com>
 Mime-Version: 1.0
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20120113;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc:content-type;
-        bh=bcxb7zLQEy7HHJ8Rywyb4WQZ8oumKnAj5gWCNIsybE8=;
-        b=pm6vhE/EiBSflpIiMvjNzVolXdj1IQGf2pwUyxUFbGcHHNN/7A21G/NKXDED96NmtL
-         yA+lvrx3dBZqZLw+ItmG/gzz+dzApsgqgjicl29aGdlpozoji0UJlL/rnD2RvK/f2Pzf
-         yqmOR9mcVwslMdciwgsTbL+/5a2f4CTF7aabsSFTSuYv1aZ0KurB6xy5IclM2iHJZFyC
-         u9frtp+beoe8J1NKGJiaBCTUvh1ozVzVG2xM8MFsC/kiP54Z+umwzcu3ID9J9u64jYDA
-         uFae25SI2Y8WnkZS4s9FlFu3LrAqyTNoudwgWnIcGD8IIcxZI3BiW2fJax0t4ggQeY3y
-         KK2w==
-In-Reply-To: <CAM12Q5T5ZJDCUDyExcBrCUK71NH=r00LwsEqZ5AgR9yF9U4M+Q@mail.gmail.com>
+        h=from:subject:to:references:cc:message-id:date:user-agent
+         :mime-version:in-reply-to:content-type:content-transfer-encoding;
+        bh=Ivs6jukih01T0KEUXmW3C20+kXtZQOlrNNfDzDBRQSg=;
+        b=XYyqrLawgZBe0BSrVzwWe4inlt87b9n/1Zv2Om23OXWpoIbCCT3rJdOUCKf+oTPBkU
+         J8/RatPENa607c64lcatDYMn/Djc/cTefwK+vHVTcVCk00VBGW0rYusREoaGclSd4o9v
+         f5qlzUADor4BvwQ+4matwa8BtlH+sAXBjsXgiVvp7YEKRL2EStx12sl5XDC1uDdd4sf2
+         4zNEvgu4UHx7iHgzIgLmQrTTYj2ITjaAKfdfdzZxJNESvrCE15sjXXu4rdMdod4xZYJM
+         r+ENFmGlB9UUYEoP97UTgoej+LiGClfpqcfjC7eBfvxrcq0Nv6mCue0HYpdmEHKRRPax
+         vPBQ==
+In-Reply-To: <1436109206.6440.12.camel@gmail.com>
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: debian-kernel@lists.debian.org
-Cc: ReiserFS Development List <reiserfs-devel@vger.kernel.org>
+Content-Type: text/plain; charset="utf-8"; format="flowed"
+To: Ivan Shapovalov <intelfx100@gmail.com>, =?UTF-8?B?RHXFoWFuIMSMb2xpxIc=?= <dusanc@gmail.com>
+Cc: reiserfs-devel <reiserfs-devel@vger.kernel.org>
 
-Hi Jose,
+Hi all,
 
-I'm dropping off the cc of "debian-cloud at l.d.o", because this is
-really a kernel matter, so I see no reason for cross-posting. I can
-post the outcome in there when we reach a solution.
+There is a pending patch for precise discarsd, which I can not merge
+because it is incomplete. Just want to know, is there any progress on
+this?
 
-On 1 February 2016 at 08:37, Jose R R <Jose.r.r@metztli-it.com> wrote:
-> Does the kernel boot after after you rebuild it with GZIP=y?
+So we found that calculating discard params by mkfs and storing
+them in superblock is a dirty option, so I suggest to reserve a
+contiguous area (1 MiB?) on disk at "mkfs -d" time (just mark it busy
+in the bitmap). And calculate erase unit size and offset at mount time.
+If calculation failed for some reasons, then use non-precise discard.
 
-Yes it does. The only problem with this approach is the effort needed
-to rebuild the package and keep it updated.
+So, I think, we'll need one d32 field in disk superblock, which indicat=
+es
+number of reserved blocks (0 means no reservation) and a pair of
+definitions in disk_format40.h:
 
-> The script is not without its issues, apparently, but you can modify
-> xxx[1] in script if that is causing your hang.
+#define FORMAT40_FIRST_RESERVED_FOR_PROBING \
+       ((REISER4_MASTER_OFFSET / PAGE_CACHE_SIZE) + 6)
+#define FORMAT40_MAX_BLOCKS_RESERVED_FOR_PROBING
 
-From what I understood in the reference, one should do this only if
-the "mktemp" call fails. This doesn't looks to be related to the
-problem I encountered.
+If any questions, or technical stoppers, then let me know.
 
-> In Google Cloud Engine (GCE) I have not experienced those issues as I
-> have created several images in Jessie and Stretch -- manually at the
-> moment. They are Debian vanilla except for Reiser4 -patched kernel and
-> root (/) Reiser4 -formatted.
+Thanks,
+Edward.
 
-You are rebuilding/recompiling the kernel packaging like I did? Or are
-you talking about decompressing the kernel image? Because, as I said,
-I had no problem with the first one. What I'm reporting here is solely
-related to an uncompressed (or compressed with other method than XZ)
-kernel.
 
-> PS I have also found binwalk [2] useful when examining contents of
-> compressed kernel
-> apt-get install binwalk
+On 07/05/2015 05:13 PM, Ivan Shapovalov wrote:
+> On 2015-07-05 at 16:06 +0200, Du=C5=A1an =C4=8Coli=C4=87 wrote:
+>> On 5 Jul 2015 15:12, "Ivan Shapovalov"<intelfx100@gmail.com>  wrote:
+>>> On 2015-07-05 at 02:33 +0800, Edward Shishkin wrote:
+>>>> On 07/05/2015 01:53 AM, Ivan Shapovalov wrote:
+>>>>> On 2015-07-04 at 15:53 +0800, Edward Shishkin wrote:
+>>>>>> [...]
+>>>>>> And how to test directly at mount time?
+>>>>> Something along the lines of
+>>>>> - allocate 1 MiB of contiguous space
+>>>>> - fill it with non-zeros
+>>>>> - for N =3D 1, 2, 4, ...:
+>>>>>     - discard N sectors from the contiguous space
+>>>>>     - check if anything in the discarded space became zero
+>>>>> -filled
+>>>>>     - if it did, infer alignnment from the first zero-filled
+>>>>> block,
+>>>>>       infer granularity from the zero-filled region size.
+>>>> mkfs seems to be more suitable for this funny business
+>>> Yeah, sure. So... new superblock format with two extra fields?
+>>>
+>> But what happens when someone makes an image of whole partition and
+>> uses it
+>> on new different ssd?
+> Maybe we can make a tunefs.reiser4 (just) for that purpose.
 
-Thanks for the tip - although I got a little bit surprised with so
-many dependencies in what should be a simple command-line utility.
-
-Here's what I got from "binwalk /boot/vmlinuz-3.16.0-4-amd64":
-
-DECIMAL       HEXADECIMAL     DESCRIPTION
---------------------------------------------------------------------------------
-0             0x0             Microsoft portable executable
-18356         0x47B4          xz compressed data
-3108600       0x2F6EF8        xz compressed data
-
-Not sure about what bytes "0-18355" means. Maybe a false-positive?
-
-If I run it with "-e", it get two files ("47B4.tar" and "2F6EF8.tar")
-that can't be decompressed with "tar"/"unxz".
-
--
-
-Ben,
-
-On 1 February 2016 at 06:03, Tiago Ilieve <tiago.myhro@gmail.com> wrote:
-
-> Yesterday, Ben Hutchings itself (...)
-
-Sorry. It should be "himself". If it helps you to accept my apologies,
-I have written that message at 6 AM after tackling this issue
-overnight. :-(
-
-Regards,
-Tiago.
-
--- 
-Tiago "Myhro" Ilieve
-Blog: https://blog.myhro.info/
-GitHub: https://github.com/myhro
-LinkedIn: https://br.linkedin.com/in/myhro
-Montes Claros - MG, Brasil
+--
+To unsubscribe from this list: send the line "unsubscribe reiserfs-deve=
+l" in
+the body of a message to majordomo@vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
