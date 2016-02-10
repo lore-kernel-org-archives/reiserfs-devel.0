@@ -1,91 +1,105 @@
-From: Edward Shishkin <edward.shishkin@gmail.com>
+From: Ivan Shapovalov <intelfx@intelfx.name>
 Subject: Re: [patch] reiser4: port for Linux-4.1
-Date: Tue, 9 Feb 2016 18:53:23 +0100
-Message-ID: <56BA2793.7090906@gmail.com>
+Date: Wed, 10 Feb 2016 07:04:07 +0300
+Message-ID: <1455077047.22912.4.camel@intelfx.name>
 References: <558D5C72.2040203@gmail.com> <55918654.80703@gmail.com>
- <1435648387.15634.3.camel@gmail.com> <559245B3.1020804@gmail.com>
- <1435651611.15634.12.camel@gmail.com> <55925A3C.6000604@gmail.com>
- <1435793708.3758.14.camel@gmail.com> <559790E1.2020009@gmail.com>
- <1436032389.25552.6.camel@gmail.com> <559826F3.9010201@gmail.com>
- <1436101712.6440.3.camel@gmail.com>
- <CADW=+3=J7Rt1yxtTfW=ZCLC40-D1FPCFR7KGSyp_YLgcRcH3FQ@mail.gmail.com>
- <1436109206.6440.12.camel@gmail.com>
+	 <1435648387.15634.3.camel@gmail.com> <559245B3.1020804@gmail.com>
+	 <1435651611.15634.12.camel@gmail.com> <55925A3C.6000604@gmail.com>
+	 <1435793708.3758.14.camel@gmail.com> <559790E1.2020009@gmail.com>
+	 <1436032389.25552.6.camel@gmail.com> <559826F3.9010201@gmail.com>
+	 <1436101712.6440.3.camel@gmail.com>
+	 <CADW=+3=J7Rt1yxtTfW=ZCLC40-D1FPCFR7KGSyp_YLgcRcH3FQ@mail.gmail.com>
+	 <1436109206.6440.12.camel@gmail.com> <56BA2793.7090906@gmail.com>
+Reply-To: intelfx@intelfx.name
 Mime-Version: 1.0
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: multipart/signed; micalg="pgp-sha512";
+	protocol="application/pgp-signature"; boundary="=-fBDeaVMuSuXVLsv3wXJU"
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20120113;
-        h=from:subject:to:references:cc:message-id:date:user-agent
-         :mime-version:in-reply-to:content-type:content-transfer-encoding;
-        bh=Ivs6jukih01T0KEUXmW3C20+kXtZQOlrNNfDzDBRQSg=;
-        b=XYyqrLawgZBe0BSrVzwWe4inlt87b9n/1Zv2Om23OXWpoIbCCT3rJdOUCKf+oTPBkU
-         J8/RatPENa607c64lcatDYMn/Djc/cTefwK+vHVTcVCk00VBGW0rYusREoaGclSd4o9v
-         f5qlzUADor4BvwQ+4matwa8BtlH+sAXBjsXgiVvp7YEKRL2EStx12sl5XDC1uDdd4sf2
-         4zNEvgu4UHx7iHgzIgLmQrTTYj2ITjaAKfdfdzZxJNESvrCE15sjXXu4rdMdod4xZYJM
-         r+ENFmGlB9UUYEoP97UTgoej+LiGClfpqcfjC7eBfvxrcq0Nv6mCue0HYpdmEHKRRPax
-         vPBQ==
-In-Reply-To: <1436109206.6440.12.camel@gmail.com>
+        d=intelfx.name; s=google;
+        h=message-id:subject:from:reply-to:to:cc:date:in-reply-to:references
+         :content-type:mime-version;
+        bh=Pq/LLqtoHpKqWZNLZ/CSRhI6TfwE5fSMSKq6FuYwUrE=;
+        b=cXOveLfhQ3S5xfqKGYiuNrGhD6Ea5ZHke9nL+FzhjlKxmmYSdA8skxYkQdI224Rqdq
+         Ul87MzdRMrlIl3sehWlDc2f/eTQ8xZyeXzyk13dGKKi1SeZEQOSNT56ARfYtC/BZND7p
+         YAuElTu0rv8cj8/OfvECt9rs9S1+bQfVnAXnw=
+In-Reply-To: <56BA2793.7090906@gmail.com>
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="utf-8"; format="flowed"
-To: Ivan Shapovalov <intelfx100@gmail.com>, =?UTF-8?B?RHXFoWFuIMSMb2xpxIc=?= <dusanc@gmail.com>
+To: Edward Shishkin <edward.shishkin@gmail.com>, Ivan Shapovalov <intelfx100@gmail.com>, =?UTF-8?Q?Du=C5=A1an_=C4=8Coli=C4=87?= <dusanc@gmail.com>
 Cc: reiserfs-devel <reiserfs-devel@vger.kernel.org>
 
-Hi all,
 
-There is a pending patch for precise discarsd, which I can not merge
-because it is incomplete. Just want to know, is there any progress on
-this?
+--=-fBDeaVMuSuXVLsv3wXJU
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-So we found that calculating discard params by mkfs and storing
-them in superblock is a dirty option, so I suggest to reserve a
-contiguous area (1 MiB?) on disk at "mkfs -d" time (just mark it busy
-in the bitmap). And calculate erase unit size and offset at mount time.
-If calculation failed for some reasons, then use non-precise discard.
+On 2016-02-09 at 18:53 +0100, Edward Shishkin wrote:
+> Hi all,
+>=20
+> There is a pending patch for precise discarsd, which I can not merge
+> because it is incomplete. Just want to know, is there any progress on
+> this?
+>=20
+> So we found that calculating discard params by mkfs and storing
+> them in superblock is a dirty option, so I suggest to reserve a
+> contiguous area (1 MiB?) on disk at "mkfs -d" time (just mark it busy
+> in the bitmap). And calculate erase unit size and offset at mount
+> time.
+> If calculation failed for some reasons, then use non-precise discard.
+>=20
+> So, I think, we'll need one d32 field in disk superblock, which
+> indicates
+> number of reserved blocks (0 means no reservation) and a pair of
+> definitions in disk_format40.h:
+>=20
+> #define FORMAT40_FIRST_RESERVED_FOR_PROBING \
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0((REISER4_MASTER_OFFSET / PAGE_=
+CACHE_SIZE) + 6)
+> #define FORMAT40_MAX_BLOCKS_RESERVED_FOR_PROBING
+>=20
+> If any questions, or technical stoppers, then let me know.
+>=20
+> Thanks,
+> Edward.
+>=20
 
-So, I think, we'll need one d32 field in disk superblock, which indicat=
-es
-number of reserved blocks (0 means no reservation) and a pair of
-definitions in disk_format40.h:
+Hello Edward,
 
-#define FORMAT40_FIRST_RESERVED_FOR_PROBING \
-       ((REISER4_MASTER_OFFSET / PAGE_CACHE_SIZE) + 6)
-#define FORMAT40_MAX_BLOCKS_RESERVED_FOR_PROBING
+yes, finishing this is on top of my to-do list (but it is being
+dequeued at a very slow rate due to the university...).
 
-If any questions, or technical stoppers, then let me know.
+I was under assumption of that we still want to go by path of probing
+parameters at mkfs time + having a special utility for rewriting these
+fields. But if you are now ok with probing at mount time, then that's
+great. I'll try to do something in nearest week or two.
 
-Thanks,
-Edward.
+--=20
+Ivan Shapovalov / intelfx /
 
 
-On 07/05/2015 05:13 PM, Ivan Shapovalov wrote:
-> On 2015-07-05 at 16:06 +0200, Du=C5=A1an =C4=8Coli=C4=87 wrote:
->> On 5 Jul 2015 15:12, "Ivan Shapovalov"<intelfx100@gmail.com>  wrote:
->>> On 2015-07-05 at 02:33 +0800, Edward Shishkin wrote:
->>>> On 07/05/2015 01:53 AM, Ivan Shapovalov wrote:
->>>>> On 2015-07-04 at 15:53 +0800, Edward Shishkin wrote:
->>>>>> [...]
->>>>>> And how to test directly at mount time?
->>>>> Something along the lines of
->>>>> - allocate 1 MiB of contiguous space
->>>>> - fill it with non-zeros
->>>>> - for N =3D 1, 2, 4, ...:
->>>>>     - discard N sectors from the contiguous space
->>>>>     - check if anything in the discarded space became zero
->>>>> -filled
->>>>>     - if it did, infer alignnment from the first zero-filled
->>>>> block,
->>>>>       infer granularity from the zero-filled region size.
->>>> mkfs seems to be more suitable for this funny business
->>> Yeah, sure. So... new superblock format with two extra fields?
->>>
->> But what happens when someone makes an image of whole partition and
->> uses it
->> on new different ssd?
-> Maybe we can make a tunefs.reiser4 (just) for that purpose.
+--=-fBDeaVMuSuXVLsv3wXJU
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: This is a digitally signed message part
+Content-Transfer-Encoding: 7bit
 
---
-To unsubscribe from this list: send the line "unsubscribe reiserfs-deve=
-l" in
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
+
+iQIcBAABCgAGBQJWura3AAoJEHveF8jk4w6dh4kP/3lu69OGqtYZW4LkNm2Ekpxx
+bY0+WVjdg8++3M0NSIENALFZ/bXF/YWg84/yWVJXTUggKw9hWdiT5MFjnHzfscHD
+k2kAqCSFBPMUfnrme3N0b/+D+j+EGG/rnGo1PQXHx8vxBLlSeNCz/MKy53AS8MLe
+hS7geNRv6dmch75LVajNT9zk/voup6ZdPsZjKOkzILJ1Nbflk+N3Exfj42vJUaOj
+39P3gts5+iI2jbyB4JKee46cWir6k4ALg1J7SlT7T1WA9Gx24IdjDp/GJ83Ndql/
+hpd0aR+D90C6HLX5T0VYIaiEzFRXx5RWjQHYAooVoUEzpP0eGR6FUKCV4njwjDyy
+xNL+CkNQyUWwQnyC+1hr3fe4sAxRrIv8l79M3tnazgd4JYhcL2GrQ40lgh0VKn1o
+RRur7q/wBWCF4Jhqcpl302ajqFEsK/+SZ+F4fQ2/SErC3eVx+ZTP2v4WuKXNjosr
+RmjaMDuUJzJ+0WkHDVhFAPcYLK6zqghK2CQG+HyT8cC/GgDewclmxrGP0d2G8NWm
+MaJmzDI32ZPYTevZb/9YcOFFNAoB0p4eedPErFTUK3Ra+1yv8SKydy577dmBnM/7
+CZW4Oko4BfDXryley5RyoqaS2OiCMXpqvsAS2GVSQ+Xt84cNhnoZfvw9IDCw3mkY
+KGNczntxS2C4LCRRD2uV
+=rHP2
+-----END PGP SIGNATURE-----
+
+--=-fBDeaVMuSuXVLsv3wXJU--
+
