@@ -1,87 +1,81 @@
-From: Edward Shishkin <edward.shishkin@gmail.com>
-Subject: Re: [patch] reiser4: port for Linux-4.1
-Date: Wed, 10 Feb 2016 10:01:29 +0100
-Message-ID: <56BAFC69.8010605@gmail.com>
-References: <558D5C72.2040203@gmail.com> <55918654.80703@gmail.com>
- <1435648387.15634.3.camel@gmail.com> <559245B3.1020804@gmail.com>
- <1435651611.15634.12.camel@gmail.com> <55925A3C.6000604@gmail.com>
- <1435793708.3758.14.camel@gmail.com> <559790E1.2020009@gmail.com>
- <1436032389.25552.6.camel@gmail.com> <559826F3.9010201@gmail.com>
- <1436101712.6440.3.camel@gmail.com>
- <CADW=+3=J7Rt1yxtTfW=ZCLC40-D1FPCFR7KGSyp_YLgcRcH3FQ@mail.gmail.com>
- <1436109206.6440.12.camel@gmail.com> <56BA2793.7090906@gmail.com>
- <1455077047.22912.4.camel@intelfx.name>
+From: Jose R R <Jose.r.r@metztli-it.com>
+Subject: Reiser4 -enabled Debian Parted 3.2-15.1
+Date: Sat, 13 Feb 2016 07:59:36 -0800
+Message-ID: <CAM12Q5SN2_yh=CzsBurY4MgveUZ1xzNd0B8ad8q2rUAGfFPbwA@mail.gmail.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-devel-owner@vger.kernel.org>
+Content-Type: multipart/alternative; boundary=001a1142d8bad3b938052ba8de3d
+Return-path: <bounce-debian-boot=debian-boot=m.gmane.org@lists.debian.org>
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20120113;
-        h=subject:to:references:cc:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-type:content-transfer-encoding;
-        bh=pNefqrstKyCUji/2moVJ4/tARehHEckkLo3FNWEzg50=;
-        b=JIg7zCBsFFCaIZsSNFpbZohClKXuJnXWUXIsYiQ0tGqFrgkMfrTCns64a5MjpsmtI5
-         RLSkc37vT66UkHG8i4gL4z9v64M9RQteby+v1msZs8Sjr3UKJvH0owFqzo739DSOcnL5
-         xJU4ANtZGJt8bbrbvvdnOdM7Wt1Cqzx7blPc/pzVL10qfSe+NWDrkwmm8sbPcXkOh8gN
-         fxh6Y3cQo8XKRfyuChXbrZmrLRXPa02nEVVBLvyBv0pJ4W6Qg2f2WI40qxkUyBlWiYC6
-         LOJtiKQkyPn9DFjp5uomG1GsYVfB5WUD5IQCF1KzLi0YvXW72Yypm/feddY/LLfr8VL5
-         ZQdw==
-In-Reply-To: <1455077047.22912.4.camel@intelfx.name>
-Sender: reiserfs-devel-owner@vger.kernel.org
-List-ID: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: intelfx@intelfx.name, Ivan Shapovalov <intelfx100@gmail.com>, =?UTF-8?B?RHXFoWFuIMSMb2xpxIc=?= <dusanc@gmail.com>
-Cc: reiserfs-devel <reiserfs-devel@vger.kernel.org>
+        d=metztli-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:sender:date:message-id:subject:from:to:content-type;
+        bh=aCk7IQacOzyMmgGF24bebbIMqQ6Av1yc8O3eD42wuq4=;
+        b=j13A8dMAc1ztEbj1PTEhVeKxSWBJESQtZvmdBArxPtItHX+Kk8ZOrFxRQ8CBWgXBtK
+         xGp+qcjBydhmXEVXSxht0ewofR5YXX6xRsKmCPuJ56d+z8M7TrI96a71DlKvrpro61+3
+         z277b/AEF54WHYrbU0KPvBCFaI2/ibMFVLX/3TRPQZJkW76o1I8vD0qDzh4nuQi7ivKc
+         2agX0PM6302Ni7cegQBlJHMMl5C5iUn8RqcvQKJVWqJjqZj3Akl6CL4Sr674WgvuY3KX
+         7wFvI+FqQXp0PSBSf5a8hzdKX9e73E0VdRVltzHjjOzjjJ3oFxsqJK1CFCsDn451StJd
+         SF+A==
+Sender: jose.r.r@metztli.com
+Resent-Message-ID: <GbzbdOaQ6_G.A.n-.8L1vWB@bendel>
+List-Id: <reiserfs-devel.vger.kernel.org>
+List-URL: <https://lists.debian.org/debian-boot/>
+List-Post: <mailto:debian-boot@lists.debian.org>
+List-Help: <mailto:debian-boot-request@lists.debian.org?subject=help>
+List-Subscribe: <mailto:debian-boot-request@lists.debian.org?subject=subscribe>
+List-Unsubscribe: <mailto:debian-boot-request@lists.debian.org?subject=unsubscribe>
+List-Archive: https://lists.debian.org/msgid-search/CAM12Q5SN2_yh=CzsBurY4MgveUZ1xzNd0B8ad8q2rUAGfFPbwA@mail.gmail.com
+To: ReiserFS Development List <reiserfs-devel@vger.kernel.org>, debian-boot@lists.debian.org
 
-On 02/10/2016 05:04 AM, Ivan Shapovalov wrote:
-> On 2016-02-09 at 18:53 +0100, Edward Shishkin wrote:
->> Hi all,
->>
->> There is a pending patch for precise discarsd, which I can not merge
->> because it is incomplete. Just want to know, is there any progress on
->> this?
->>
->> So we found that calculating discard params by mkfs and storing
->> them in superblock is a dirty option, so I suggest to reserve a
->> contiguous area (1 MiB?) on disk at "mkfs -d" time (just mark it busy
->> in the bitmap). And calculate erase unit size and offset at mount
->> time.
->> If calculation failed for some reasons, then use non-precise discard.
->>
->> So, I think, we'll need one d32 field in disk superblock, which
->> indicates
->> number of reserved blocks (0 means no reservation) and a pair of
->> definitions in disk_format40.h:
->>
->> #define FORMAT40_FIRST_RESERVED_FOR_PROBING \
->>         ((REISER4_MASTER_OFFSET / PAGE_CACHE_SIZE) + 6)
->> #define FORMAT40_MAX_BLOCKS_RESERVED_FOR_PROBING
->>
->> If any questions, or technical stoppers, then let me know.
->>
->> Thanks,
->> Edward.
->>
-> Hello Edward,
->
-> yes, finishing this is on top of my to-do list (but it is being
-> dequeued at a very slow rate due to the university...).
+--001a1142d8bad3b938052ba8de3d
+Content-Type: text/plain; charset=UTF-8
+
+Niltze-
+
+Updated Reiser4 -enabled Debian Parted DEBs to reflect Sid 3.2-15 released
+a couple of days ago. They are bundled in tar:
+
+http://metztli.it/readOnlyEphemeral/debian-parted-3.2-15.1_reiser4.tar
+
+If you need to build the UDEBs for d-i, updated source is at usual:
+
+https://github.com/Metztli/debian-parted-reiser4
 
 
-Ah, this is of highest priority, ofc.
+Best Professional Regards.
 
+-- 
+Jose R R
+http://metztli.it
+---------------------------------------------------------------------------------------------
+Try at no charge http://b2evolution.net for http://OpenShift.com PaaS
+---------------------------------------------------------------------------------------------
+from our GitHub http://Nepohualtzintzin.com repository. Cloud the easy way!
+---------------------------------------------------------------------------------------------
 
->
-> I was under assumption of that we still want to go by path of probing
-> parameters at mkfs time + having a special utility for rewriting these
+--001a1142d8bad3b938052ba8de3d
+Content-Type: text/html; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 
+<div dir=3D"ltr">Niltze-<div><br></div><div>Updated Reiser4 -enabled Debian=
+ Parted DEBs to reflect Sid 3.2-15 released a couple of days ago. They are =
+bundled in tar:</div><div><br></div><div><a href=3D"http://metztli.it/readO=
+nlyEphemeral/debian-parted-3.2-15.1_reiser4.tar">http://metztli.it/readOnly=
+Ephemeral/debian-parted-3.2-15.1_reiser4.tar</a></div><div><br></div><div>I=
+f you need to build the UDEBs for d-i, updated source is at usual:</div><di=
+v><br></div><div><a href=3D"https://github.com/Metztli/debian-parted-reiser=
+4">https://github.com/Metztli/debian-parted-reiser4</a></div><div><br></div=
+><div><br></div><div>Best Professional Regards.<br clear=3D"all"><div><br><=
+/div>-- <br><div class=3D"gmail_signature">Jose R R<br><a href=3D"http://me=
+tztli.it" target=3D"_blank">http://metztli.it</a><br>----------------------=
+-----------------------------------------------------------------------<br>=
+Try at no charge <a href=3D"http://b2evolution.net" target=3D"_blank">http:=
+//b2evolution.net</a> for <a href=3D"http://OpenShift.com" target=3D"_blank=
+">http://OpenShift.com</a> PaaS<br>----------------------------------------=
+-----------------------------------------------------<br>from our GitHub <a=
+ href=3D"http://Nepohualtzintzin.com" target=3D"_blank">http://Nepohualtzin=
+tzin.com</a> repository. Cloud the easy way!<br>---------------------------=
+------------------------------------------------------------------</div>
+</div></div>
 
-I am afraid that 99% of users will be unaware of that utility..
-
-Thanks,
-Edward.
-
-
-> fields. But if you are now ok with probing at mount time, then that's
-> great. I'll try to do something in nearest week or two.
->
+--001a1142d8bad3b938052ba8de3d--
 
