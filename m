@@ -1,18 +1,18 @@
 From: bugzilla-daemon@bugzilla.kernel.org
-Subject: [Bug 34372] Error-valued pointer used in pointer arithmetic
-Date: Wed, 23 Mar 2016 18:12:59 +0000
-Message-ID: <bug-34372-695-qcXKBUhk3L@https.bugzilla.kernel.org/>
-References: <bug-34372-695@https.bugzilla.kernel.org/>
+Subject: [Bug 34362] Error-valued pointer dereferences
+Date: Wed, 23 Mar 2016 18:12:54 +0000
+Message-ID: <bug-34362-695-BX7ht4ModX@https.bugzilla.kernel.org/>
+References: <bug-34362-695@https.bugzilla.kernel.org/>
 Mime-Version: 1.0
 Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
-In-Reply-To: <bug-34372-695@https.bugzilla.kernel.org/>
+In-Reply-To: <bug-34362-695@https.bugzilla.kernel.org/>
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="utf-8"
 To: reiserfs-devel@vger.kernel.org
 
-https://bugzilla.kernel.org/show_bug.cgi?id=3D34372
+https://bugzilla.kernel.org/show_bug.cgi?id=3D34362
 
 Sz=C5=91gy=C3=A9nyi G=C3=A1bor <szg0000@freemail.hu> changed:
 
