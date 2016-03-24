@@ -1,30 +1,28 @@
 From: bugzilla-daemon@bugzilla.kernel.org
-Subject: [Bug 34362] Error-valued pointer dereferences
-Date: Wed, 23 Mar 2016 18:12:54 +0000
-Message-ID: <bug-34362-695-BX7ht4ModX@https.bugzilla.kernel.org/>
-References: <bug-34362-695@https.bugzilla.kernel.org/>
+Subject: [Bug 104851] kernel BUG at fs/reiserfs/prints.c:371
+Date: Thu, 24 Mar 2016 16:52:05 +0000
+Message-ID: <bug-104851-695-XZq1SLEDI5@https.bugzilla.kernel.org/>
+References: <bug-104851-695@https.bugzilla.kernel.org/>
 Mime-Version: 1.0
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Transfer-Encoding: 7bit
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
-In-Reply-To: <bug-34362-695@https.bugzilla.kernel.org/>
+In-Reply-To: <bug-104851-695@https.bugzilla.kernel.org/>
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="utf-8"
+Content-Type: text/plain; charset="us-ascii"
 To: reiserfs-devel@vger.kernel.org
 
-https://bugzilla.kernel.org/show_bug.cgi?id=3D34362
+https://bugzilla.kernel.org/show_bug.cgi?id=104851
 
-Sz=C5=91gy=C3=A9nyi G=C3=A1bor <szg0000@freemail.hu> changed:
+nickkrause@sympatico.ca changed:
 
            What    |Removed                     |Added
------------------------------------------------------------------------=
------
-                 CC|                            |szg0000@freemail.hu
+----------------------------------------------------------------------------
+                 CC|                            |nickkrause@sympatico.ca
 
---=20
+--- Comment #2 from nickkrause@sympatico.ca ---
+Same with Christian, can you try an newer kernel and report back.
+
+-- 
 You are receiving this mail because:
-You are the assignee for the bug.--
-To unsubscribe from this list: send the line "unsubscribe reiserfs-deve=
-l" in
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+You are the assignee for the bug.
