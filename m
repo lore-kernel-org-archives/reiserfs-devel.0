@@ -1,70 +1,35 @@
-From: Mathieu Belanger <admin@korinar.com>
-Subject: [PATCH] reiser4: port for linux-4.6
-Date: Thu, 31 Mar 2016 10:44:45 -0600
-Message-ID: <20160331104445.27365523be0b145177dd6863@korinar.com>
-References: <S1755885AbcCaQ3L/20160331162911Z+322@vger.kernel.org>
+From: Edward Shishkin <edward.shishkin@gmail.com>
+Subject: Re: [PATCH] reiser4: port for linux-4.6
+Date: Thu, 31 Mar 2016 22:18:23 +0200
+Message-ID: <56FD860F.3000004@gmail.com>
+References: <S1755885AbcCaQ3L/20160331162911Z+322@vger.kernel.org> <20160331104445.27365523be0b145177dd6863@korinar.com>
 Mime-Version: 1.0
-Content-Type: multipart/mixed;
- boundary="Multipart=_Thu__31_Mar_2016_10_44_45_-0600_liNqfVMcZCsvYjG9"
+Content-Transfer-Encoding: 7bit
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=korinar.com; h=
-	content-type:content-type:mime-version:x-mailer:references
-	:in-reply-to:message-id:subject:subject:from:from:date:date
-	:received:received; s=korinar; t=1459442698; bh=mth4F7pssBPsfbsx
-	r9WbJOdXZypfbAaezpRJDZRVHrI=; b=Zc6D3Ok/TXpLYQ0TpqeI2A4yKBn+KXRy
-	2IY6jYc6vqQlYUy6fryevHLEJaZW6zRM/2pzcjh+ZLviwiNXXQ1x8+Yw/oFZ1ikx
-	aadIbU/IWss9JG03ep4/WVADc9B5GGasy+FonKdSNEzb4pG/icFtXoIRYXqy50de
-	+onMlCGWMK8=
-In-Reply-To: <S1755885AbcCaQ3L/20160331162911Z+322@vger.kernel.org>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20120113;
+        h=message-id:date:from:user-agent:mime-version:to:subject:references
+         :in-reply-to:content-transfer-encoding;
+        bh=WELvx48RucLWOE59V0serl+B1Yw2qjf1eeVU7OvHq8U=;
+        b=U5x8lbTBlrlx50me1ZuUhG1hVs7aCLqAy2rZMzVZd7HqOv/hwkw3T8I5J+s1gYWssk
+         Iwu7pf4ObRYm7okrmERfeFX6E1cvb92yAa6q/KRLIt6FNQwsTRkmmMOUXV+P6ACZB/8I
+         r4mObft9RBfbAi6xmdxDbMm9nW6uuS8kPwfQQSyYODyE5s6L+Vpi7FagJTg+KZYxNFv3
+         jZkGPjvl/7InBeEBX8kfyXeDI6P5K7a10WyEVLx28uRUohLZGCxcpi7NDuOyAp2096tw
+         n2H2gsPu4i1Mm08irJ6aLawOC14jdE2hUEu8DGbyMmKxRg9lDiJujwKKkgW3QlC9NpMU
+         7eJA==
+In-Reply-To: <20160331104445.27365523be0b145177dd6863@korinar.com>
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
-To: reiserfs-devel@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"; format="flowed"
+To: Mathieu Belanger <admin@korinar.com>, reiserfs-devel@vger.kernel.org
 
-This is a multi-part message in MIME format.
+Thanks a lot!
 
---Multipart=_Thu__31_Mar_2016_10_44_45_-0600_liNqfVMcZCsvYjG9
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Edward.
 
-* New kernel use tmp_wb instead of wb for that part of generic_writeback_sb_inodes
+On 03/31/2016 06:44 PM, Mathieu Belanger wrote:
+> * New kernel use tmp_wb instead of wb for that part of generic_writeback_sb_inodes
+>
+> * Migration doesn't clear page->mem_cgroup of live pages
+> anymore and so account_page_dirtied do not take a mem_cgroup third argument anymore.
 
-* Migration doesn't clear page->mem_cgroup of live pages
-anymore and so account_page_dirtied do not take a mem_cgroup third argument anymore.
-
---Multipart=_Thu__31_Mar_2016_10_44_45_-0600_liNqfVMcZCsvYjG9
-Content-Type: application/octet-stream;
- name="reiser4-for-4.5.0-to-4.6.0.patch"
-Content-Disposition: attachment;
- filename="reiser4-for-4.5.0-to-4.6.0.patch"
-Content-Transfer-Encoding: base64
-
-LS0tIHJlaXNlcjQtZm9yLTQuNS4wLnBhdGNoCTIwMTYtMDMtMzEgMTA6MzY6MDIuMTk2NjkzNzg1
-IC0wNjAwCisrKyByZWlzZXI0LWZvci00LjYuMC5wYXRjaAkyMDE2LTAzLTMxIDEwOjM1OjI5LjY1
-MDEwMDY3NCAtMDYwMApAQCAtMjIwLDggKzIyMCw4IEBACiAgCQlzcGluX2xvY2soJmlub2RlLT5p
-X2xvY2spOwogIAkJaWYgKCEoaW5vZGUtPmlfc3RhdGUgJiBJX0RJUlRZX0FMTCkpCiAgCQkJd3Jv
-dGUrKzsKLS0JCXJlcXVldWVfaW5vZGUoaW5vZGUsIHdiLCAmd2JjKTsKLSsJCXJlcXVldWVfaW5v
-ZGUoaW5vZGUsIHdiLCB3YmMpOworLQkJcmVxdWV1ZV9pbm9kZShpbm9kZSwgdG1wX3diLCAmd2Jj
-KTsKKysJCXJlcXVldWVfaW5vZGUoaW5vZGUsIHRtcF93Yiwgd2JjKTsKICAJCWlub2RlX3N5bmNf
-Y29tcGxldGUoaW5vZGUpOwogIAkJc3Bpbl91bmxvY2soJmlub2RlLT5pX2xvY2spOwogIApAQCAt
-ODEwNDEsNyArODEwNDEsNyBAQAogZGlmZiAtdXJOIGxpbnV4LTQuNS5vcmlnL21tL3BhZ2Utd3Jp
-dGViYWNrLmMgbGludXgtNC41L21tL3BhZ2Utd3JpdGViYWNrLmMKIC0tLSBsaW51eC00LjUub3Jp
-Zy9tbS9wYWdlLXdyaXRlYmFjay5jCTIwMTYtMDMtMTQgMDU6Mjg6NTQuMDAwMDAwMDAwICswMTAw
-CiArKysgbGludXgtNC41L21tL3BhZ2Utd3JpdGViYWNrLmMJMjAxNi0wMy0yNCAxNjo1ODoxNi4z
-OTY4MzMzNzcgKzAxMDAKLUBAIC0yNTI2LDYgKzI1MjYsMzYgQEAKK0BAIC0yNTI2LDYgKzI1MjYs
-MzUgQEAKICBFWFBPUlRfU1lNQk9MKGFjY291bnRfcGFnZV9yZWRpcnR5KTsKICAKICAvKgpAQCAt
-ODEwNTUsMjEgKzgxMDU1LDIwIEBACiArICovCiAraW50IHNldF9wYWdlX2RpcnR5X25vdGFnKHN0
-cnVjdCBwYWdlICpwYWdlKQogK3sKLSsJc3RydWN0IG1lbV9jZ3JvdXAgKm1lbWNnOwogKwlzdHJ1
-Y3QgYWRkcmVzc19zcGFjZSAqbWFwcGluZyA9IHBhZ2UtPm1hcHBpbmc7CiArCi0rCW1lbWNnID0g
-bWVtX2Nncm91cF9iZWdpbl9wYWdlX3N0YXQocGFnZSk7CisrCWxvY2tfcGFnZV9tZW1jZyhwYWdl
-KTsKICsJaWYgKCFUZXN0U2V0UGFnZURpcnR5KHBhZ2UpKSB7CiArCQl1bnNpZ25lZCBsb25nIGZs
-YWdzOwogKwkJV0FSTl9PTl9PTkNFKCFQYWdlUHJpdmF0ZShwYWdlKSAmJiAhUGFnZVVwdG9kYXRl
-KHBhZ2UpKTsKICsJCWxvY2FsX2lycV9zYXZlKGZsYWdzKTsKLSsJCWFjY291bnRfcGFnZV9kaXJ0
-aWVkKHBhZ2UsIG1hcHBpbmcsIG1lbWNnKTsKKysJCWFjY291bnRfcGFnZV9kaXJ0aWVkKHBhZ2Us
-IG1hcHBpbmcpOwogKwkJbG9jYWxfaXJxX3Jlc3RvcmUoZmxhZ3MpOwotKwkJbWVtX2Nncm91cF9l
-bmRfcGFnZV9zdGF0KG1lbWNnKTsKKysJCXVubG9ja19wYWdlX21lbWNnKHBhZ2UpOwogKwkJX19t
-YXJrX2lub2RlX2RpcnR5KG1hcHBpbmctPmhvc3QsIElfRElSVFlfUEFHRVMpOwogKwkJcmV0dXJu
-IDE7CiArCX0KLSsJbWVtX2Nncm91cF9lbmRfcGFnZV9zdGF0KG1lbWNnKTsKKysJdW5sb2NrX3Bh
-Z2VfbWVtY2cocGFnZSk7CiArCXJldHVybiAwOwogK30KICtFWFBPUlRfU1lNQk9MKHNldF9wYWdl
-X2RpcnR5X25vdGFnKTsK
-
---Multipart=_Thu__31_Mar_2016_10_44_45_-0600_liNqfVMcZCsvYjG9--
