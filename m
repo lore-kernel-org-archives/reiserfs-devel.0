@@ -1,35 +1,39 @@
-From: Edward Shishkin <edward.shishkin@gmail.com>
-Subject: Re: [PATCH] reiser4: port for linux-4.6
-Date: Thu, 31 Mar 2016 22:18:23 +0200
-Message-ID: <56FD860F.3000004@gmail.com>
-References: <S1755885AbcCaQ3L/20160331162911Z+322@vger.kernel.org> <20160331104445.27365523be0b145177dd6863@korinar.com>
+From: Mathieu Belanger <admin@korinar.com>
+Subject: [BUG] Big fiability issue?
+Date: Sun, 3 Apr 2016 12:44:16 -0500
+Message-ID: <20160403124416.40b26c9ff1b1c4b58e23024d@korinar.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20120113;
-        h=message-id:date:from:user-agent:mime-version:to:subject:references
-         :in-reply-to:content-transfer-encoding;
-        bh=WELvx48RucLWOE59V0serl+B1Yw2qjf1eeVU7OvHq8U=;
-        b=U5x8lbTBlrlx50me1ZuUhG1hVs7aCLqAy2rZMzVZd7HqOv/hwkw3T8I5J+s1gYWssk
-         Iwu7pf4ObRYm7okrmERfeFX6E1cvb92yAa6q/KRLIt6FNQwsTRkmmMOUXV+P6ACZB/8I
-         r4mObft9RBfbAi6xmdxDbMm9nW6uuS8kPwfQQSyYODyE5s6L+Vpi7FagJTg+KZYxNFv3
-         jZkGPjvl/7InBeEBX8kfyXeDI6P5K7a10WyEVLx28uRUohLZGCxcpi7NDuOyAp2096tw
-         n2H2gsPu4i1Mm08irJ6aLawOC14jdE2hUEu8DGbyMmKxRg9lDiJujwKKkgW3QlC9NpMU
-         7eJA==
-In-Reply-To: <20160331104445.27365523be0b145177dd6863@korinar.com>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=korinar.com; h=
+	content-transfer-encoding:content-type:content-type:mime-version
+	:x-mailer:message-id:subject:subject:from:from:date:date
+	:received:received; s=korinar; t=1459705464; bh=yC45r39T0Kaoh4tn
+	r42XE5EeT8ShyTHNz9UyCCNS7Sc=; b=getwxL0OeJpj9nv8Vg6JuYq3rbBbwxl6
+	zx5UU59CccRiRWxX7wtIyklGrMVrflV33+Rv03Pdx1mQtEjF4yV/TndXK5uZWTBC
+	zlsvdy9W3PcnP4kOZBQYaJoHOMCJzAdrRSvE2wLDONZZo4pDyWbEnncxyulh+oM0
+	yLgggS5X0cg=
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: Mathieu Belanger <admin@korinar.com>, reiserfs-devel@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+To: reiserfs-devel@vger.kernel.org
 
-Thanks a lot!
+Hi. I got a recurring problem since I began to use Reiser4 again (so with the kernel 4.4 and 4.6-r1)
 
-Edward.
+This power here is not really good, sometime I get a power outrage... and I lose whole directory when that append, even if I was not using them/writing them...
 
-On 03/31/2016 06:44 PM, Mathieu Belanger wrote:
-> * New kernel use tmp_wb instead of wb for that part of generic_writeback_sb_inodes
->
-> * Migration doesn't clear page->mem_cgroup of live pages
-> anymore and so account_page_dirtied do not take a mem_cgroup third argument anymore.
+- On my laptop (kernel 4.4), three week ago, when that appened, I was not able to launch firefox after the reboot so I did a fsck... it lost some file according to fsck, everything in /sbin. After the fsck I cound not boot that installation anymore (normal, without /sbin/udev.....)
 
+- On my Desktop (kernel 4.6-rc1), I got two power outrage yesterday. to be preemptif, I did, right after the power problem, boot in single to do a fsck before anything (to be sure). I lost like 2 file and did put them in /lost+found... fine, no problem, it was a sqlite file and a mp3.. no problem... BUT today I needed to use CLion and guess what?
+
+destroyfx@Tanith /tmp/comlin64 $ ls /opt
+ls: reading directory '/opt': Input/output error
+
+I did try to rm -Rf /opt, no succes.. I did another fsck today, it put 3 more file in lost+found... and did not fix /opt.
+
+I did use Reiser4 about two years ago. on that time I did lot of overclocking testing and it crash so much time and did NOT lost anything. Plus, that machine was scrypt mining with 6 video cards (and cold join in PCI-e extender) that was making the machine crash a couple time a week, no problem there eater, no lost file.
+
+So was I lucky two years ago to not loss anything after hundreads of crashs? Because now it's really bad.. (I did not even write in /opt in that running session.. and on my laptop I did not write in /sbin for at lease two week before it failed).
+
+-- 
+Mathieu Belanger <admin@korinar.com>
