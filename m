@@ -1,28 +1,28 @@
 From: Ivan Shapovalov <intelfx@intelfx.name>
 Subject: Re: [PATCH] reiser4: port for Linux-4.5
-Date: Wed, 06 Apr 2016 03:42:45 +0300
-Message-ID: <1459903365.31752.2.camel@intelfx.name>
+Date: Wed, 06 Apr 2016 04:22:18 +0300
+Message-ID: <1459905738.31752.7.camel@intelfx.name>
 References: <56FB9A57.3040906@gmail.com>
 Reply-To: intelfx@intelfx.name
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg="pgp-sha512";
-	protocol="application/pgp-signature"; boundary="=-I0CK6eBaEnJzyS8N4s+S"
+	protocol="application/pgp-signature"; boundary="=-AHleX6UZ5fm32i07W7j6"
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=intelfx.name; s=google;
         h=message-id:subject:from:reply-to:to:date:in-reply-to:references
          :mime-version;
-        bh=an7/SmXZcNfhpT6W5OKDZxyArldUogfvkfuJUcvB/Rk=;
-        b=hvmrIoiHoMGoiJYZZeUahh0YvMS/+oM+isOUYrJ7wiJP5nkXXp2pBLw+SexQovELRQ
-         dK6dIYpwYsY7qDr2FGKHTGZXeNMSE5a0pyc1Nqu48v9RdrLhLuQorkCM/l2hBNK/OyAi
-         DhIWMETIqraNWo+W9g7fzLcgl8gCu0jna9nbg=
+        bh=+vrFSqOpWntwwimexNwmuzY11c9MRG6vxJlwcal3PyU=;
+        b=Yti53N/z384et97FJMhpX5cAm3QwvMdoIowz5TYIw6LH89PAXRkJm1T+fCVShglRMv
+         Vu8ZeYR8uqo0Pvcn7G0zaJiCmebP6aEKKhD+Qq3EOUv0fuJuvbJ8uI86KqvePVXkMkKG
+         R0iRukPkVtdcRqj2qr0OZuD0IoItoYlchh3Uo=
 In-Reply-To: <56FB9A57.3040906@gmail.com>
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
 To: Edward Shishkin <edward.shishkin@gmail.com>, Reiserfs development mailing list <reiserfs-devel@vger.kernel.org>
 
 
---=-I0CK6eBaEnJzyS8N4s+S
+--=-AHleX6UZ5fm32i07W7j6
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
@@ -34,14 +34,18 @@ On 2016-03-30 at 11:20 +0200, Edward Shishkin wrote:
 >=20
 > Signed-off-by: Edward Shishkin <edward.shishkin@gmail.com>
 
-Hi Edward,
+By the way: I've noticed many times that the resulting squashed patch
+which you put on sourceforge is _different_ from what can be composed
+using incremental patches you send on the ML.
 
-could you please send a separate patch with adjustments for 4.4?
+Maybe you could finally consider having a git repo somewhere (e. g. on
+github)? It would be much easier to work with the code (and, for me in
+particular, to learn how it works) this way.
 
-Thanks,
+Thanks.
 --=20
 Ivan Shapovalov / intelfx /
---=-I0CK6eBaEnJzyS8N4s+S
+--=-AHleX6UZ5fm32i07W7j6
 Content-Type: application/pgp-signature; name="signature.asc"
 Content-Description: This is a digitally signed message part
 Content-Transfer-Encoding: 7bit
@@ -49,20 +53,20 @@ Content-Transfer-Encoding: 7bit
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2
 
-iQIcBAABCgAGBQJXBFuFAAoJEHveF8jk4w6dtBYQAKO1ZZKJGCS4qbxWIMGABExr
-PAwwVBmPwFsuNraAbMC2rHZLmIP5fYDLJWjfu2uCeuhaZ1Npx2H0Mpi52YhEka2V
-17sk8+cPE8s81b7l3HrQFafcSfWqW0wmLagiHGtnwmJVyKs72yWhJONdOqD0JJx/
-788r6RrO7JJxyoJmjWXHxbUT9HIaMdBdZzruUNbWajkayg8g8b1Hube+1eT8aDIk
-pxwZC++dKzWzMVyPUUxVuTSsZW01Rskuf08pVJOrsWuy49GIosLmXJzC/7DE3jW6
-w5HDRP2dAD15cZwOLUk5dBmLJndBNaegOhXS7cV4Envp6aCn8JJUVvREiKqD681t
-JY2ZxGFDG4qzBdqKCyie0VD4Cgq0T4R0ftYC0znsFQYqJSBW1s+kqsaEcCFN1IlA
-+8JX1krn86isBjRkQxgEAQ9Evv6NVaCxAsiB1TshfbNPkFWGv3xPQkseRov2y/tf
-j0LavQQNeSgS+QkK/L9oBBl/ifB6A7Tgbx40D0MtHgPiHSQ4ONa8PhmbCxcbI84V
-g3d4ckb2jlIZ7cKHyGt1+7V9AgsUMHk14jdUTmoLATAt5sSzBKAZyx6Gx3s0RUKT
-5gFS+qPAzmJqjCuXbOg7WCMlYwXDkwKW+3i/DT0nCNSBjeFaYxI7pJlJHUQhxzQb
-6eLelkwV8OodlX8U0soH
-=7GMw
+iQIcBAABCgAGBQJXBGTKAAoJEHveF8jk4w6dOK4P/iu9atVUvya7gBn1d1NrO5OB
+us/Z+di8EmU6PQIZrCoxxZal65lksTGNiA95K8ZZwUc2cPepzn5t7uqAdCOGurYs
+I8uydMqtgNdca98XQXVF73V+lnfnH70e5nc3IRwiZBjV/nUStJNEsAVSNuhD86o1
+5lmzlPfuStwKew5nm0grHcsqTi9+9UIU/Fxsh9NpG2jOEuWlWXdvhE8XhyoJRA7B
+bpa6P908yav4WHiEExRnorCwJpWQJ7oFNwTZwwBU/f8g3YH3dQJHiO0ydpn2oGV9
+2TugpcxrL/oCV+ntBQGNktWjEwm/6+rhNlRr324tEJ66W0w6yu5FVxb6Gx2/1FXF
+qMcEOZXekUteY5oXxRNBXXMaHxlVRSKm5hPJmVqVlG1O04sAcOMkg9hi2wvpPi0p
+AzWuJjAkRoqlDbiM16O0fMH/EhuWwF+1+emi/TydFIa/mp39G9DUcK3N3h4C7doA
+NOH+XylODIPf1Sf8zn26i8LrrLV1s194y4s7Wb9hmes2iIix5D33IDQxpv1yHK6x
+tzsKFkpp9EuEyUtqp3WM8QmVw7ptaTjeeb8YZ04ErDaszBxfxea7oGCY5FIzaV45
+myNImizRwmHPFUzZPQgjNctRHmDzV93d2QnyvKw00uyEXWx1XVeFpUB76mhZ4DUj
+OOOf/nMe9PfMyG1BmvEA
+=OONN
 -----END PGP SIGNATURE-----
 
---=-I0CK6eBaEnJzyS8N4s+S--
+--=-AHleX6UZ5fm32i07W7j6--
 
