@@ -1,39 +1,53 @@
-From: Jose R R <Jose.r.r@metztli-it.com>
-Subject: Alpha Reiser4 (SFRN 4.0.1) --enabled Debian Jessie netboot image
-Date: Mon, 2 May 2016 05:29:34 -0700
-Message-ID: <CAM12Q5RW+VN=2fZ=Ps3XW2TCyhgG_eMma3mxm84veja7d8Oong@mail.gmail.com>
+From: <doiggl@velocitynet.com.au>
+Subject: Are these patches needed with a kernel patched with reiser4-for-4.5.0.patch [sdb]
+Date: Tue, 03 May 2016 01:51:33 +1000
+Message-ID: <2c909c545e04f1ddeefbd999b945c016@mail.velocitynet.com.au>
 Mime-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=metztli-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:sender:date:message-id:subject:from:to;
-        bh=xz+KDph8jv5blcHZVNT3SSYoPhEtbH+rnGA95AFIFbA=;
-        b=yrjMydQs4kmfLbc0po0SrWlaC9vZbajdIwK1CeBqTS+8RjfbbKbKdet6nnr7brlrsU
-         zEo+OBk71zfTKg0ePGAES9THpEir3OGuCBSUOMVQvmZQeN2GrOdc/nAJVSfih3644PyU
-         rye4N/uKdleWTt/YUvbjkLr1BTXuQEgP5k0KQpSMmyPV9MwlJGvEZAuptDpQ/Yk9gnOB
-         j3Tvc48ppqnzive2jtKbCiXcrvKZGA5IFoft5IXkOLGf4cSlyiHeBvjDL5hFjt2yS8IZ
-         nSrYDT5Q2GfgSccqquNbec1yN9tkTZ3F2Fc0R8OKqCMpnTVnOnPvoPOnhV1NnG+5Lkmt
-         O/Lw==
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
 To: ReiserFS Development List <reiserfs-devel@vger.kernel.org>
 
-Seems linked message below is being returned due to 'html', which!?
+Hello,
 
-https://lists.debian.org/debian-boot/2016/05/msg00010.html
+A Question,
+Are these patches[1] needed with a kernel patched with
+reiser4-for-4.5.0.patch
+I ask as the last mount point command failed ?
+--Glenn
 
-fixed wb to tmp_wb in fs-writeback.c prior to debian kernel build.
+# mount /dev/sdb  /media/disk
+mount: mount(2) failed: No such file or directory
+
+commands used
+-------------
+# fsck.reiser4 --check /dev/sdb
+# fsck.reiser4 --build-fs --force  /dev/sdb
+
+--check or --build-fs  sequences
+
+--check    Mon Feb 23 01:34:22 2015
+--build-fs Mon Feb 23 13:09:25 2015
+--check    Tue Feb 24 17:03:22 2015
+--build-fs Tue Aug 26 17:22:24 2014
+--build-fs Fri Sep 20 15:50:44 2013
+
+[1]
+[PATCH 1/3] reiser4: fix filesystem init error path.
+> 1/3 < http://marc.info/?l=reiserfs-devel&m=144218573602435&w=2 >
+
+[PATCH 2/3] reiser4: fix reiser4_init_csum_tfm() error path; return real
+(negative) error code.
+> 2/3 < http://marc.info/?l=reiserfs-devel&m=144218573602436&w=2 >
+
+[PATCH 3/3] reiser4: report an error on checksum engine load failure.
+> 3/3 < http://marc.info/?l=reiserfs-devel&m=144218573702437&w=2 >
 
 
-Best Professional Regards.
+references
+http://www.spinics.net/lists/reiserfs-devel/msg04667.html
+http://www.spinics.net/lists/reiserfs-devel/msg05017.html
+http://www.spinics.net/lists/reiserfs-devel/msg04847.html
 
--- 
-Jose R R
-http://metztli.it
----------------------------------------------------------------------------------------------
-Try at no charge http://b2evolution.net for http://OpenShift.com PaaS
----------------------------------------------------------------------------------------------
-from our GitHub http://Nepohualtzintzin.com repository. Cloud the easy way!
----------------------------------------------------------------------------------------------
