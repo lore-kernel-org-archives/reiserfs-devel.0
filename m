@@ -1,53 +1,67 @@
-From: <doiggl@velocitynet.com.au>
-Subject: Are these patches needed with a kernel patched with reiser4-for-4.5.0.patch [sdb]
-Date: Tue, 03 May 2016 01:51:33 +1000
-Message-ID: <2c909c545e04f1ddeefbd999b945c016@mail.velocitynet.com.au>
+From: Michal Hocko <mhocko@kernel.org>
+Subject: Re: [PATCH 0/2] scop GFP_NOFS api
+Date: Tue, 3 May 2016 17:13:12 +0200
+Message-ID: <20160503151312.GA4470@dhcp22.suse.cz>
+References: <1461671772-1269-1-git-send-email-mhocko@kernel.org>
+ <8737q5ugcx.fsf@notabene.neil.brown.name>
+ <20160429120418.GK21977@dhcp22.suse.cz>
+ <87twiiu5gs.fsf@notabene.neil.brown.name>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <87twiiu5gs.fsf@notabene.neil.brown.name>
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: ReiserFS Development List <reiserfs-devel@vger.kernel.org>
+Content-Transfer-Encoding: 7bit
+To: NeilBrown <mr@neil.brown.name>
+Cc: linux-mm@kvack.org, linux-fsdevel@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>, Dave Chinner <david@fromorbit.com>, Theodore Ts'o <tytso@mit.edu>, Chris Mason <clm@fb.com>, Jan Kara <jack@suse.cz>, ceph-devel@vger.kernel.org, cluster-devel@redhat.com, linux-nfs@vger.kernel.org, logfs@logfs.org, xfs@oss.sgi.com, linux-ext4@vger.kernel.org, linux-btrfs@vger.kernel.org, linux-mtd@lists.infradead.org, reiserfs-devel@vger.kernel.org, linux-ntfs-dev@lists.sourceforge.net, linux-f2fs-devel@lists.sourceforge.net, linux-afs@lists.infradead.org, LKML <linux-kernel@vger.kernel.org>
 
-Hello,
+Hi,
 
-A Question,
-Are these patches[1] needed with a kernel patched with
-reiser4-for-4.5.0.patch
-I ask as the last mount point command failed ?
---Glenn
+On Sun 01-05-16 07:55:31, NeilBrown wrote:
+[...]
+> One particular problem with your process-context idea is that it isn't
+> inherited across threads.
+> Steve Whitehouse's example in gfs shows how allocation dependencies can
+> even cross into user space.
 
-# mount /dev/sdb  /media/disk
-mount: mount(2) failed: No such file or directory
+Hmm, I am still not sure I understand that example completely but making
+a dependency between direct reclaim and userspace can hardly work.
+Especially when the direct reclaim might be sitting on top of hard to
+guess pile of locks. So unless I've missed anything what Steve has
+described is a clear NOFS context.
 
-commands used
--------------
-# fsck.reiser4 --check /dev/sdb
-# fsck.reiser4 --build-fs --force  /dev/sdb
+> A more localized one that I have seen is that NFSv4 sometimes needs to
+> start up a state-management thread (particularly if the server
+> restarted).
+> It uses kthread_run(), which doesn't actually create the thread but asks
+> kthreadd to do it.  If NFS writeout is waiting for state management it
+> would need to make sure that kthreadd runs in allocation context to
+> avoid deadlock.
+> I feel that I've forgotten some important detail here and this might
+> have been fixed somehow, but the point still stands that the allocation
+> context can cross from thread to thread and can effectively become
+> anything and everything.
 
---check or --build-fs  sequences
+Not sure I understand your point here but relying on kthread_run
+from GFP_NOFS context has always been deadlock prone with or without
+scope GFP_NOFS semantic so I am not really sure I see your point
+here. Similarly relying on a work item which doesn't have a dedicated
+WQ_MEM_RECLAIM WQ is deadlock prone.  You simply shouldn't do that.
 
---check    Mon Feb 23 01:34:22 2015
---build-fs Mon Feb 23 13:09:25 2015
---check    Tue Feb 24 17:03:22 2015
---build-fs Tue Aug 26 17:22:24 2014
---build-fs Fri Sep 20 15:50:44 2013
+> It is OK to wait for memory to be freed.  It is not OK to wait for any
+> particular piece of memory to be freed because you don't always know who
+> is waiting for you, or who you really are waiting on to free that
+> memory.
+> 
+> Whenever trying to free memory I think you need to do best-effort
+> without blocking.
 
-[1]
-[PATCH 1/3] reiser4: fix filesystem init error path.
-> 1/3 < http://marc.info/?l=reiserfs-devel&m=144218573602435&w=2 >
+I agree with that. Or at least you have to wait on something that is
+_guaranteed_ to make a forward progress. I am not really that sure this
+is easy to achieve with the current code base.
 
-[PATCH 2/3] reiser4: fix reiser4_init_csum_tfm() error path; return real
-(negative) error code.
-> 2/3 < http://marc.info/?l=reiserfs-devel&m=144218573602436&w=2 >
-
-[PATCH 3/3] reiser4: report an error on checksum engine load failure.
-> 3/3 < http://marc.info/?l=reiserfs-devel&m=144218573702437&w=2 >
-
-
-references
-http://www.spinics.net/lists/reiserfs-devel/msg04667.html
-http://www.spinics.net/lists/reiserfs-devel/msg05017.html
-http://www.spinics.net/lists/reiserfs-devel/msg04847.html
-
+-- 
+Michal Hocko
+SUSE Labs
