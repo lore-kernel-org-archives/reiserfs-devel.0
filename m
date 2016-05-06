@@ -1,63 +1,67 @@
-From: <doiggl@velocitynet.com.au>
-Subject: r4 meta data query - commands to run on [r4metadata-sdb.gz] packed from [/dev/sdb]
-Date: Fri, 06 May 2016 16:22:45 +1000
-Message-ID: <8846518a426816cf74254c991a6e2748@mail.velocitynet.com.au>
+From: Edward Shishkin <edward.shishkin@gmail.com>
+Subject: [PATCH] reiser4: fix up incorrect recalculation of maximal balance
+ overhead
+Date: Fri, 6 May 2016 13:04:16 +0200
+Message-ID: <6fcfefcb-7886-de2b-e19c-642f7de8587a@gmail.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/mixed;
+ boundary="------------2F86F4114ABDFF70850819FB"
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20120113;
+        h=to:from:subject:message-id:date:user-agent:mime-version;
+        bh=SkokJsa8vQp3avUwTR88fejKxWl0AQhacoXj0gALuu8=;
+        b=K+B5Oet9n57j2h5U2pEnzeQYxvxPw27oKFOkRRHV83VFFhjTNZDHETCKTC0eCR+xYW
+         veFRRMg/VBDvEDAM6MwxPCB+NMn4cvMH+9F51hoGrNXNUw/dPk+cQ+xfak7gzIpvALTc
+         WeV2QLwf7oUa+beD8jXYrm3irLfIhXsfeg6wK7Yr+HnULCgGosXiuyT4eRkUXLK+rFKC
+         dO6O5kQHqwpH3E9E4y3EgdoJuWuv0nQtBV9TAqeID8sq9mM/h1Vps9EKFCnBAd1rLQ7q
+         8p0n65ktbB4vHIOsVk5Vg9+6UY37VrjNYsCDq7X4NxUT8A0JU4VqowRW+ZiffuY/TKJV
+         kQhw==
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-To: Ivan Shapovalov <intelfx100@gmail.com>, Edward Shishkin <edward.shishkin@gmail.com>, ReiserFS Development List <reiserfs-devel@vger.kernel.org>
+To: Reiserfs development mailing list <reiserfs-devel@vger.kernel.org>
 
-Hello,
-Edward ,Ivan
-
-- on a copy of reiser4 unpacked metda-data [1]
-Q1. Are there there tools or commands to do a detailed analyzses of a copy
-of reiser4 unpacked metda-data and do a repairs on the copy of reiser4
-metda-data [r4metadata-sdb] ?
-
-Seems to have 'Wrong order of keys' problem
-
-I can try new things out on a copy of reiser4 metadata and report results
-back.
-Thanks
---Glenn
-
-[1]
-I packed and un-packed and metadata using the following:
-
-- packed reiser4 metadata via command:
-# debugfs.reiser4 -P /dev/sdb  | gzip -9 > r4metadata-sdb.bz2
-
-I unpacked metadata via command"
-# gunzip r4metadata-sdb.bz2
-
-# ll
--rw-r--r-- 1 root users 24733058856  Apr 14 04:24 [r4metadata-sdb]
+This is a multi-part message in MIME format.
+--------------2F86F4114ABDFF70850819FB
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
 
-Looks like binary data to me. [r4metadata-sdb]
 
--kernel 
-# rpm -qa |grep -i reiser4 |sort
-kernel-reiser4-4.1.6-7.1.gd2bbe7f.x86_64
+--------------2F86F4114ABDFF70850819FB
+Content-Type: text/x-patch;
+ name="reiser4-max-balance-overhead-update-fixup.patch"
+Content-Transfer-Encoding: 7bit
+Content-Disposition: attachment;
+ filename="reiser4-max-balance-overhead-update-fixup.patch"
 
-- What commands do you run against unpacked metadata ?
+Fix up incorrect recalculation of maximal balance overhead.
 
-I know files and data are on disk but just trying to access it.
-Thank you for any help the commands to run on meta.
+Signed-off-by: Edward Shishkin <edward.shishkin@gmail.com>
+---
+ fs/reiser4/tree_mod.c |    5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
--- How can code be altered so it jumps to correct branch 
+--- a/fs/reiser4/tree_mod.c
++++ b/fs/reiser4/tree_mod.c
+@@ -159,7 +159,7 @@ znode *reiser4_add_tree_root(znode * old
+ 
+ 				/* recalculate max balance overhead */
+ 				tree->estimate_one_insert =
+-				    estimate_one_insert_item(tree);
++					calc_estimate_one_insert(tree->height);
+ 
+ 				tree->root_block = *znode_get_block(new_root);
+ 				in_parent = &new_root->in_parent;
+@@ -303,7 +303,8 @@ static int reiser4_kill_root(reiser4_tre
+ 		--tree->height;
+ 
+ 		/* recalculate max balance overhead */
+-		tree->estimate_one_insert = estimate_one_insert_item(tree);
++		tree->estimate_one_insert =
++			calc_estimate_one_insert(tree->height);
+ 
+ 		assert("nikita-1202",
+ 		       tree->height == znode_get_level(new_root));
 
-[I can test on a copy of r4metadata and report results back results] 
-
--- Can it print out the branch name and identifiable details which is used
-
-Background history
-==================
-http://www.spinics.net/lists/reiserfs-devel/msg04853.html
-Thank you
--- Glenn
-
+--------------2F86F4114ABDFF70850819FB--
