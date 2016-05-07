@@ -1,67 +1,63 @@
 From: Edward Shishkin <edward.shishkin@gmail.com>
-Subject: [PATCH] reiser4: fix up incorrect recalculation of maximal balance
- overhead
-Date: Fri, 6 May 2016 13:04:16 +0200
-Message-ID: <6fcfefcb-7886-de2b-e19c-642f7de8587a@gmail.com>
+Subject: Re: Debian with Reiser4-patched Linux kernel on IBM Power8
+Date: Sat, 07 May 2016 16:42:27 +0200
+Message-ID: <572DFED3.5080006@gmail.com>
+References: <CAM12Q5Tu-Zg=wgUAbYh++0dwn-h8gNUNMraxFgVWCi-HzUpyJA@mail.gmail.com> <op.yf7tcmn9hogzsi@i17b>
 Mime-Version: 1.0
-Content-Type: multipart/mixed;
- boundary="------------2F86F4114ABDFF70850819FB"
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20120113;
-        h=to:from:subject:message-id:date:user-agent:mime-version;
-        bh=SkokJsa8vQp3avUwTR88fejKxWl0AQhacoXj0gALuu8=;
-        b=K+B5Oet9n57j2h5U2pEnzeQYxvxPw27oKFOkRRHV83VFFhjTNZDHETCKTC0eCR+xYW
-         veFRRMg/VBDvEDAM6MwxPCB+NMn4cvMH+9F51hoGrNXNUw/dPk+cQ+xfak7gzIpvALTc
-         WeV2QLwf7oUa+beD8jXYrm3irLfIhXsfeg6wK7Yr+HnULCgGosXiuyT4eRkUXLK+rFKC
-         dO6O5kQHqwpH3E9E4y3EgdoJuWuv0nQtBV9TAqeID8sq9mM/h1Vps9EKFCnBAd1rLQ7q
-         8p0n65ktbB4vHIOsVk5Vg9+6UY37VrjNYsCDq7X4NxUT8A0JU4VqowRW+ZiffuY/TKJV
-         kQhw==
+        h=message-id:date:from:user-agent:mime-version:to:cc:subject
+         :references:in-reply-to:content-transfer-encoding;
+        bh=mbQyMTfLIXPHx/VxN0TqpTNCZ5rz/ehgPkM6HYudVwE=;
+        b=rfmcyN+/2L1rREUIIS8/74h6m4ro8vTvD/yLE+/fY8uKsz0qh5Scmo0DoDR10mCVZW
+         6l7kH3uYhNDDFwdm3PFgC+XtlzXlQ/VZ1kcxd8yU0bZDt8ZlUabFRo9zSonYIo+jBMS3
+         SpnUyMTzw3p0WGfD8oFOFVlxBm4nzY/zBNj1+jpIQZVdtxeFq9pXA/VOUNe0fF4JSNGD
+         mcN0n4vsdqkX9/ylc+CGPuAi9qQkioQb/ND3Y9AvwHp9DBxxOgNiY8NeISSqEBMFM7K0
+         /houob2Lte0D8+hr5cGDuPuucUes6Nllo2i8PhU3KTMiNbqVq6nlFeJfKvebAQaRfHYC
+         Kj+A==
+In-Reply-To: <op.yf7tcmn9hogzsi@i17b>
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
-To: Reiserfs development mailing list <reiserfs-devel@vger.kernel.org>
-
-This is a multi-part message in MIME format.
---------------2F86F4114ABDFF70850819FB
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="utf-8"; format="flowed"
+To: =?UTF-8?B?Sm9uw6HFoSBWaWRyYQ==?= <vidra.jonas@seznam.cz>, ReiserFS Development List <reiserfs-devel@vger.kernel.org>
+Cc: Jose R R <Jose.r.r@metztli-it.com>, debian-kernel@lists.debian.org, debian-boot@lists.debian.org
 
 
 
---------------2F86F4114ABDFF70850819FB
-Content-Type: text/x-patch;
- name="reiser4-max-balance-overhead-update-fixup.patch"
-Content-Transfer-Encoding: 7bit
-Content-Disposition: attachment;
- filename="reiser4-max-balance-overhead-update-fixup.patch"
+On 04/20/2016 01:11 PM, Jon=C3=A1=C5=A1 Vidra wrote:
+> On Wed, 20 Apr 2016 12:53:48 +0200 Jose R R <Jose.r.r@metztli-it.com>=
+=20
+> wrote:
+>
+>> is there any reason why Reiser4 SFRN 4.0.1-enabled Debian should not
+>> run on Power8? I assume GPT should be selected whereas previously I
+>> have tested -- on AMD64 baremetal and cloud -- only MSDOS disk
+>> partitioning.
+>
+> There might be some problems with the endianness of the system.
 
-Fix up incorrect recalculation of maximal balance overhead.
 
-Signed-off-by: Edward Shishkin <edward.shishkin@gmail.com>
----
- fs/reiser4/tree_mod.c |    5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+Yup. Specifically, bitmap code sucks.
+I don't remember details though..
 
---- a/fs/reiser4/tree_mod.c
-+++ b/fs/reiser4/tree_mod.c
-@@ -159,7 +159,7 @@ znode *reiser4_add_tree_root(znode * old
- 
- 				/* recalculate max balance overhead */
- 				tree->estimate_one_insert =
--				    estimate_one_insert_item(tree);
-+					calc_estimate_one_insert(tree->height);
- 
- 				tree->root_block = *znode_get_block(new_root);
- 				in_parent = &new_root->in_parent;
-@@ -303,7 +303,8 @@ static int reiser4_kill_root(reiser4_tre
- 		--tree->height;
- 
- 		/* recalculate max balance overhead */
--		tree->estimate_one_insert = estimate_one_insert_item(tree);
-+		tree->estimate_one_insert =
-+			calc_estimate_one_insert(tree->height);
- 
- 		assert("nikita-1202",
- 		       tree->height == znode_get_level(new_root));
+Edward.
 
---------------2F86F4114ABDFF70850819FB--
+
+>
+> I have tested Reiser4 on 32bit PowerPC several years ago and as far a=
+s I
+> remember, mounting and using a preformatted partition (mkfs done on a=
+n=20
+> x86
+> machine) was possible, but a partition formatted on PowerPC was unusa=
+ble.
+> I can repeat the tests, if you are interested.
+>
+
+--
+To unsubscribe from this list: send the line "unsubscribe reiserfs-deve=
+l" in
+the body of a message to majordomo@vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
