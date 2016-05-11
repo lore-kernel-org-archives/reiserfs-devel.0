@@ -1,63 +1,81 @@
-From: Edward Shishkin <edward.shishkin@gmail.com>
-Subject: Re: Debian with Reiser4-patched Linux kernel on IBM Power8
-Date: Sat, 07 May 2016 16:42:27 +0200
-Message-ID: <572DFED3.5080006@gmail.com>
-References: <CAM12Q5Tu-Zg=wgUAbYh++0dwn-h8gNUNMraxFgVWCi-HzUpyJA@mail.gmail.com> <op.yf7tcmn9hogzsi@i17b>
+From: Jose R R <Jose.r.r@metztli-it.com>
+Subject: Re: Bug#823986: installation-reports: "hardware" errors on virtualbox
+Date: Tue, 10 May 2016 19:36:52 -0700
+Message-ID: <CAM12Q5QAV6LV__eahx16_rLxtT3zNuZnxKXVXbpExLkAzo5LNg@mail.gmail.com>
+References: <146293002411.13267.14445852398726516532.reportbug@umbar.angband.pl>
 Mime-Version: 1.0
-Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20120113;
-        h=message-id:date:from:user-agent:mime-version:to:cc:subject
-         :references:in-reply-to:content-transfer-encoding;
-        bh=mbQyMTfLIXPHx/VxN0TqpTNCZ5rz/ehgPkM6HYudVwE=;
-        b=rfmcyN+/2L1rREUIIS8/74h6m4ro8vTvD/yLE+/fY8uKsz0qh5Scmo0DoDR10mCVZW
-         6l7kH3uYhNDDFwdm3PFgC+XtlzXlQ/VZ1kcxd8yU0bZDt8ZlUabFRo9zSonYIo+jBMS3
-         SpnUyMTzw3p0WGfD8oFOFVlxBm4nzY/zBNj1+jpIQZVdtxeFq9pXA/VOUNe0fF4JSNGD
-         mcN0n4vsdqkX9/ylc+CGPuAi9qQkioQb/ND3Y9AvwHp9DBxxOgNiY8NeISSqEBMFM7K0
-         /houob2Lte0D8+hr5cGDuPuucUes6Nllo2i8PhU3KTMiNbqVq6nlFeJfKvebAQaRfHYC
-         Kj+A==
-In-Reply-To: <op.yf7tcmn9hogzsi@i17b>
+        d=metztli-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:sender:in-reply-to:references:date:message-id:subject
+         :from:to:cc;
+        bh=t10Wh7+fiQiM5EWBC9npu6Q8xy0Rcf2xhiussFX7md0=;
+        b=a6TXfFXl07ln0TpoR39UdJindMlwH0CfO8pzgbx2oCyzDIQZX91jrAACBktEvGz1As
+         hxuEDE6uVTno3e7oEmcB76TEbq52NZ/ri6yYRjCXnjzVNA/NbjDn+NtGPv+PH4SLGBCb
+         qgoKnNz7soymeRn60xT38iV+bXarPKr+oIn/JzmyXC0+XzFgSfH5jNL1Kz8X/6ztnKUl
+         n/4RPjOAgtSoDAk0GHzAbP+jUbub2TMV+x1f6ymUucqXNyvJi8HK11CgKdIdLnHrN868
+         owAjPtiNvstXcJBE2OYT2Se2OTTVoHV8QA9qCuJLAIyazyWsxkRaOp9ERZ1V6sWegB71
+         gS6w==
+In-Reply-To: <146293002411.13267.14445852398726516532.reportbug@umbar.angband.pl>
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="utf-8"; format="flowed"
-To: =?UTF-8?B?Sm9uw6HFoSBWaWRyYQ==?= <vidra.jonas@seznam.cz>, ReiserFS Development List <reiserfs-devel@vger.kernel.org>
-Cc: Jose R R <Jose.r.r@metztli-it.com>, debian-kernel@lists.debian.org, debian-boot@lists.debian.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Adam Borowski <kilobyte@angband.pl>, 823986@bugs.debian.org
+Cc: Debian Bug Tracking System <submit@bugs.debian.org>, ReiserFS Development List <reiserfs-devel@vger.kernel.org>
+
+"02:29 < kilobyte> reproduced in virtualbox: lots of I/O errors: ata1.00:
+                  failed command: WRITE FPDMA QUEUED"
+
+As I frequently test Reiser4-enabled unstable Debian-Installers on
+VirtuaBox 5.0.16 (my latest version), on a frequent basis I come
+across similar I/O errors: ata related as well as some other
+idiosyncrasies related to unstable nature of my d-i builds. Wait a few
+days for the debian-installer component UDEBs to stabilize and work
+better together --in harmony-- then try your installation again.
 
 
-
-On 04/20/2016 01:11 PM, Jon=C3=A1=C5=A1 Vidra wrote:
-> On Wed, 20 Apr 2016 12:53:48 +0200 Jose R R <Jose.r.r@metztli-it.com>=
-=20
-> wrote:
+On Tue, May 10, 2016 at 6:27 PM, Adam Borowski <kilobyte@angband.pl> wrote:
+> Package: installation-reports
+> Severity: normal
 >
->> is there any reason why Reiser4 SFRN 4.0.1-enabled Debian should not
->> run on Power8? I assume GPT should be selected whereas previously I
->> have tested -- on AMD64 baremetal and cloud -- only MSDOS disk
->> partitioning.
 >
-> There might be some problems with the endianness of the system.
-
-
-Yup. Specifically, bitmap code sucks.
-I don't remember details though..
-
-Edward.
-
-
+> 00:37 < calops> hi, is there any known issue about the testing installer
+>                 (netinst and CD) failing around the "selecting packages"
+>                 step?
+> 00:39 < calops> it happens to me both natively on my machine, and as a
+>                 virtualbox guest
+> 01:35 < Sledge> calops: anything in syslog?
+> 02:29 < kilobyte> reproduced in virtualbox: lots of I/O errors: ata1.00:
+>                   failed command: WRITE FPDMA QUEUED
 >
-> I have tested Reiser4 on 32bit PowerPC several years ago and as far a=
-s I
-> remember, mounting and using a preformatted partition (mkfs done on a=
-n=20
-> x86
-> machine) was possible, but a partition formatted on PowerPC was unusa=
-ble.
-> I can repeat the tests, if you are interested.
+> Syslog attached.  The failed step was "Select and install software", no
+> error message was given other than "installation step failed".
 >
+> No hardware or software errors on the host, other VMs work fine, so this is
+> not a fault of the new version of virtualbox (current unstable --
+> 5.0.20-dfsg-1).  And that calops guy reports it's failing on bare metal too.
+>
+>
+> -- System Information:
+> Debian Release: stretch/sid
+>   APT prefers unstable
+>   APT policy: (500, 'unstable'), (150, 'experimental')
+> Architecture: amd64 (x86_64)
+> Foreign Architectures: i386
+>
+> Kernel: Linux 4.6.0-rc6-debug2+ (SMP w/6 CPU cores)
+> Locale: LANG=C.UTF-8, LC_CTYPE=C.UTF-8 (charmap=UTF-8)
+> Shell: /bin/sh linked to /bin/dash
+> Init: sysvinit (via /sbin/init)
 
---
-To unsubscribe from this list: send the line "unsubscribe reiserfs-deve=
-l" in
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+
+
+-- 
+Jose R R
+http://metztli.it
+---------------------------------------------------------------------------------------------
+Try at no charge http://b2evolution.net for http://OpenShift.com PaaS
+---------------------------------------------------------------------------------------------
+from our GitHub http://Nepohualtzintzin.com repository. Cloud the easy way!
+---------------------------------------------------------------------------------------------
