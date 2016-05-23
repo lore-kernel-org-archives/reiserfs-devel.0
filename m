@@ -1,32 +1,50 @@
-From: Mathieu Belanger <admin@korinar.com>
-Subject: Reiser4 patch bumped to kernel 4.7-next20160513
-Date: Sat, 14 May 2016 20:17:15 -0500
-Message-ID: <20160514201715.309f7c2859cc5cd9a7d13f6e@korinar.com>
+From: <doiggl@velocitynet.com.au>
+Subject: Could a Bugzilla reporting system be used {set up} to report reiser4 or reiser4progs bugs ?
+Date: Mon, 23 May 2016 22:11:25 +1000
+Message-ID: <64eaf37caac44577b2a33e0604569d34@mail.velocitynet.com.au>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=korinar.com; h=
-	content-transfer-encoding:content-type:content-type:mime-version
-	:x-mailer:message-id:subject:subject:from:from:date:date
-	:received:received; s=korinar; t=1463275093; bh=HQkMR1Bis0/EMRhH
-	Z9MSJ6GdmEkdELUmzWHB5RAtTdQ=; b=NrKUPsPqku0usmo/PKNYDfbMkhSSG4bG
-	PgN5EhQ0w7Xf1PGrACRB1bpTM+SvmYM5ZFpnkQljj/dOuVhgcfskZzrN/ozGcgsr
-	f73g/x05U494hJwUsBZsK5Vz8xRFqZJShoME1ns08q2si7Mt5sizdCIcgrQzdzz4
-	JKl7HhEuQXI=
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
 To: reiserfs-devel@vger.kernel.org
 
-Hi, I just ported Reiser4 to the current next version.
+Hello,
 
-Change : 
-- A small change occured in vmscan.c that broke the patch
-- no more i_mutex in the inode struct. mutex_{lock,unlock}(&inode->i_mutex) replaced by inode_{lock,unlock}(inode).
+A Question:
+Could a Bugzilla reporting system be used {set up} to report reiser4 or
+reiser4progs bugs ?
 
-I'm testing it tonight and will provide patchs by this night.
+I ask because its easier to keep track of bugs rather than
+sending/finding/tracking them on a mailing list.
 
-Note : I got the first power outrage since the barrier patch, about 2 minutes after compiling that new kernel while writing this message and no problem / nothing lost.
+What are your thoughts on this ?
+Thanks
+--Glenn
 
--- 
-Mathieu Belanger <admin@korinar.com>
+ReiserFS example
+################
+
+https://bugzilla.kernel.org/buglist.cgi?bug_status=NEW&bug_status=ASSIGNED&bug_status=REOPENED&bugidtype=include&component=Reiser4&component=ReiserFS&order=Importance&product=File%20System&query_format=advanced&short_desc=&short_desc_type=allwordssubstr
+
+Content:
+
+ID 	Product 	Comp 	Assignee 	Status 	Resolution 	Kernel Version 	Summary
+	Changed
+29162 	File Sys 	ReiserFS 	reiserfs-devel 	NEW 	---
+	2.6.36,2.6.37,2.6.39,3.0 	Reiserfs hang with dataloss sometimes
+	2016-02-16
+34362 	File Sys 	ReiserFS 	reiserfs-devel 	NEW 	--- 	2.6.38.3
+	Error-valued pointer dereferences 	2016-03-23
+34372 	File Sys 	ReiserFS 	reiserfs-devel 	NEW 	--- 	2.6.38.3
+	Error-valued pointer used in pointer arithmetic 	2016-03-23
+104391 	File Sys 	ReiserFS 	reiserfs-devel 	NEW 	--- 	4.2.0
+	Use-after-free errors in reiserfsprogs (mkreiserfs / reiserfsck)
+	2016-03-20
+104851 	File Sys 	ReiserFS 	reiserfs-devel 	NEW 	--- 	3.18.21 	kernel BUG
+at fs/reiserfs/prints.c:371 	2016-03-24
+5 bugs found.
+
+
+
