@@ -1,66 +1,69 @@
-From: Mikulas Patocka <mikulas@twibright.com>
-Subject: [PATCH] reiserfs: check kstrdup failure
-Date: Tue, 24 May 2016 22:51:27 +0200 (CEST)
-Message-ID: <alpine.DEB.2.02.1605242249270.5924@leontynka>
+From: <doiggl@velocitynet.com.au>
+Subject: Re: [PATCH] reiser4: fix up incorrect recalculation of maximal balance overhead
+Date: Wed, 25 May 2016 20:03:23 +1000
+Message-ID: <eadef126d86ee5bd4035a65e7174c23b@mail.velocitynet.com.au>
+References: <6fcfefcb-7886-de2b-e19c-642f7de8587a@gmail.com>
 Mime-Version: 1.0
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+Return-path: <reiserfs-devel-owner@vger.kernel.org>
+In-Reply-To: <6fcfefcb-7886-de2b-e19c-642f7de8587a@gmail.com>
+Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
-Content-Type: TEXT/PLAIN; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: reiserfs-devel@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+To: Edward Shishkin <edward.shishkin@gmail.com>
+Cc: Reiserfs development mailing list <reiserfs-devel@vger.kernel.org>
 
-Check out-of-memory failure of the kstrdup option. Note that the argument
-"arg" may be NULL (in that case kstrup returns NULL), so out of memory
-condition happened if arg was non-NULL and kstrdup returned NULL.
+Hello,
 
-The patch also changes the call to replace_mount_options - if we didn't
-pass any filesystem-specific options, we don't call replace_mount_options
-(thus we don't erase existing reported options).
+reiser4-max-balance-overhead-update-fixup.patch failed to apply to
+linux-4.6.tar.xz
 
-Note that to properly report options after remount, the reiserfs 
-filesystem should implement the show_options method. Without the 
-show_options method, options changed with remount replace existing 
-options.
+Is it needed as build failed ?
+Thanks
+--Glenn
 
-Signed-off-by: Mikulas Patocka <mpatocka@redhat.com>
+From build log
 
----
- fs/reiserfs/super.c |    9 +++++++--
- 1 file changed, 7 insertions(+), 2 deletions(-)
+[   44s] + '[' -e /home/abuild/rpmbuild/SOURCES/linux-4.6.tar.xz ']'
+[   44s] + SYMBOLS=
+[   44s] + test -e /home/abuild/rpmbuild/SOURCES/extra-symbols
+[   44s] + cd /home/abuild/rpmbuild/BUILD
+[   44s] + rm -rf kernel-vanilla-4.6.0
+[   44s] + /usr/bin/mkdir -p kernel-vanilla-4.6.0
+[   44s] + cd kernel-vanilla-4.6.0
+[   44s] + /usr/bin/xz -dc /home/abuild/rpmbuild/SOURCES/linux-4.6.tar.xz
+[   44s] + /bin/tar -xf -
+[   58s] + STATUS=0
+[   58s] + '[' 0 -ne 0 ']'
+[   58s] + /bin/tar -xf -
+.
+.
+[   58s] + /home/abuild/rpmbuild/SOURCES/guards --default=0 base
+[   58s] + cd linux-4.6
+[   58s] + /home/abuild/rpmbuild/SOURCES/apply-patches --vanilla
+/home/abuild/rpmbuild/SOURCES/series.conf ..
+[   58s] + patch -s -F0 -E -p1 --no-backup-if-mismatch -i
+../patches.rpmify/lustre-lloop-dont-change-logical-size
+[   59s] + patch -s -F0 -E -p1 --no-backup-if-mismatch -i
+../patches.rpmify/lightnvm-warning-fixes.patch
+[   59s] + patch -s -F0 -E -p1 --no-backup-if-mismatch -i
+../patches.rpmify/firmware-path
+[   59s] + patch -s -F0 -E -p1 --no-backup-if-mismatch -i
+../patches.rpmify/cloneconfig.diff
+[   59s] + patch -s -F0 -E -p1 --no-backup-if-mismatch -i
+../patches.rpmify/reiser4-for-4.6.0.patch
+[   59s] + patch -s -F0 -E -p1 --no-backup-if-mismatch -i
+../patches.rpmify/reiser4-max-balance-overhead-update-fixup.patch
+[   59s] Reversed (or previously applied) patch detected!  Assume -R? [n] 
+[   59s] Apply anyway? [n] 
+[   59s] 2 out of 2 hunks ignored -- saving rejects to file
+fs/reiser4/tree_mod.c.rej
+[   59s] ++ echo '*** patch
+../patches.rpmify/reiser4-max-balance-overhead-update-fixup.patch failed
+***'
+[   59s] *** patch
+../patches.rpmify/reiser4-max-balance-overhead-update-fixup.patch failed
+***
+[   59s] error: Bad exit status from /var/tmp/rpm-tmp.ttJkpx (%prep)
 
-Index: linux-4.6/fs/reiserfs/super.c
-===================================================================
---- linux-4.6.orig/fs/reiserfs/super.c	2016-05-19 20:59:46.000000000 +0200
-+++ linux-4.6/fs/reiserfs/super.c	2016-05-19 21:00:00.000000000 +0200
-@@ -1393,7 +1393,7 @@ static int reiserfs_remount(struct super
- 	unsigned long safe_mask = 0;
- 	unsigned int commit_max_age = (unsigned int)-1;
- 	struct reiserfs_journal *journal = SB_JOURNAL(s);
--	char *new_opts = kstrdup(arg, GFP_KERNEL);
-+	char *new_opts;
- 	int err;
- 	char *qf_names[REISERFS_MAXQUOTAS];
- 	unsigned int qfmt = 0;
-@@ -1401,6 +1401,10 @@ static int reiserfs_remount(struct super
- 	int i;
- #endif
- 
-+	new_opts = kstrdup(arg, GFP_KERNEL);
-+	if (arg && !new_opts)
-+		return -ENOMEM;
-+
- 	sync_filesystem(s);
- 	reiserfs_write_lock(s);
- 
-@@ -1546,7 +1550,8 @@ static int reiserfs_remount(struct super
- 	}
- 
- out_ok_unlocked:
--	replace_mount_options(s, new_opts);
-+	if (new_opts)
-+		replace_mount_options(s, new_opts);
- 	return 0;
- 
- out_err_unlock:
+
