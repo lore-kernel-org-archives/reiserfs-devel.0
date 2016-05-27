@@ -1,31 +1,33 @@
-From: Christian Kujau <lists@nerdbynature.de>
-Subject: Reiser4 wiki spam
-Date: Thu, 26 May 2016 12:21:05 -0700 (PDT)
-Message-ID: <alpine.DEB.2.20.12.1605261221000.11734@trent.utfs.org>
+From: <doiggl@velocitynet.com.au>
+Subject: 'Installing your Linux Distribution on Reiser4.' -  [Found this as a guide]
+Date: Fri, 27 May 2016 18:05:26 +1000
+Message-ID: <7c3d8c92d8dd41e03953e96edb9adb37@mail.velocitynet.com.au>
+References: <ni15m1$hf6$1@ger.gmane.org> <3ba9c56a60bb5f4e6d9f6e3bb867ebe3@mail.velocitynet.com.au>
 Mime-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
+In-Reply-To: <3ba9c56a60bb5f4e6d9f6e3bb867ebe3@mail.velocitynet.com.au>
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: reiserfs-devel@vger.kernel.org
-Cc: John 'Warthog9' Hawley <warthog9@kernel.org>
+To: doiggl@velocitynet.com.au
+Cc: Georgios Tsalikis <georgios@tsalikis.net>, reiserfs-devel@vger.kernel.org
 
-FYI,
+On Wed, 25 May 2016 20:22:05 +1000, <doiggl@velocitynet.com.au> wrote:
+> On Tue, 24 May 2016 11:58:53 +0300, Georgios Tsalikis
+> <georgios@tsalikis.net> wrote:
+>> I happened to format a rootfs partition and another one for /home with 
+>> Reiser4. It proved to be a disaster. Apart from the slow boot times 
+>> (expected from this drive) even after reaching a functional GUI the 
+>> disk kept doing I/O  like crazy. When /home became Btrfs the issue 
+>> ceased. My other computer that uses an entire drive formatted with 
+>> Reiser4 is nice and silent as well.
+>> 
+> Hello,
+Found this as a guide
+--Glenn
 
-there appears to be an ongoing spam campaing against the Reiser4 
-Wiki[0]. Bots seem to be able to overcome the reCaptcha when registering an 
-account, but then luckily the ConfirmAccount extension steps in and I just 
-marked a buch of account requests as spam.
+'Installing your Linux Distribution on Reiser4.'
+http://linuxhelp.150m.com/installs/install-on-reiser4.htm
 
-If anyone was tryign to join the wiki and I mistook someone for a 
-spam bot, please try again :-)
 
-Thanks,
-Christian.
-
-[0] https://reiser4.wiki.kernel.org/
--- 
-BOFH excuse #450:
-
-Terrorists crashed an airplane into the server room, have to remove /bin/laden. (rm -rf /bin/laden)
