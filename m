@@ -1,92 +1,62 @@
-From: Arnd Bergmann <arnd@arndb.de>
-Subject: Re: + reiserfs-avoid-uninitialized-variable-use.patch added to -mm tree
-Date: Mon, 30 May 2016 10:11:38 +0200
-Message-ID: <5731468.VTTDqzParZ@wuerfel>
-References: <5748aeb6.fN9D/KJvuQPxmFHi%akpm@linux-foundation.org> <20160530071757.GA3690@quack2.suse.cz>
+From: <doiggl@velocitynet.com.au>
+Subject: Is it possible to obtain a list of file-names from the Reiser4 meta data ?
+Date: Mon, 30 May 2016 20:42:36 +1000
+Message-ID: <c686a1ebbc96ebd395fb8477b6f68044@mail.velocitynet.com.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7Bit
+Content-Transfer-Encoding: 8bit
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
-In-Reply-To: <20160530071757.GA3690@quack2.suse.cz>
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
-To: Jan Kara <jack@suse.cz>
-Cc: akpm@linux-foundation.org, viro@zeniv.linux.org.uk, jeffm@suse.com, reiserfs-devel@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+To: Ivan Shapovalov <intelfx100@gmail.com>
+Cc: reiserfs-devel@vger.kernel.org
 
-On Monday, May 30, 2016 9:17:57 AM CEST Jan Kara wrote:
-> On Fri 27-05-16 13:31:50, Andrew Morton wrote:
-> > From: Arnd Bergmann <arnd@arndb.de>
-> > Subject: reiserfs: avoid uninitialized variable use
-> > 
-> > I got this warning on an ARM64 allmodconfig build with gcc-5.3:
-> > 
-> > fs/reiserfs/ibalance.c: In function 'balance_internal':
-> > fs/reiserfs/ibalance.c:1158:3: error: 'new_insert_key' may be used uninitialized in this function [-Werror=maybe-uninitialized]
-> >    memcpy(new_insert_key_addr, &new_insert_key, KEY_SIZE);
-> > 
-> > The warning is correct, in fact both new_insert_key and new_insert_ptr are
-> > only updated inside of an if() block, but used at the end of the function.
-> > 
-> > Looking at how the balance_internal() function gets called, it is clear
-> > that this is harmless because the caller never uses the updated arrays,
-> > they are initialized from balance_leaf_new_nodes() and then passed into
-> > balance_internal().
-> > 
-> > This has not changed at all since the start of the git history, but
-> > apparently the warning has only recently appeared.
-> > 
-> > This modifies the function to only update the two argument variables when
-> > the new_insert_key and new_insert_ptr have been updated, to get rid of the
-> > warning.
-> > 
-> > Link: http://lkml.kernel.org/r/1464380569-3493380-1-git-send-email-arnd@arndb.de
-> > Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-> > Cc: Alexander Viro <viro@zeniv.linux.org.uk>
-> > Cc: Jan Kara <jack@suse.cz>
-> > Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
-> > ---
-> > 
-> >  fs/reiserfs/ibalance.c |    6 +++---
-> >  1 file changed, 3 insertions(+), 3 deletions(-)
-> > 
-> > diff -puN fs/reiserfs/ibalance.c~reiserfs-avoid-uninitialized-variable-use fs/reiserfs/ibalance.c
-> > --- a/fs/reiserfs/ibalance.c~reiserfs-avoid-uninitialized-variable-use
-> > +++ a/fs/reiserfs/ibalance.c
-> > @@ -1138,6 +1138,9 @@ int balance_internal(struct tree_balance
-> >                      S_new);
-> >  
-> >               /* S_new is released in unfix_nodes */
-> > +
-> > +             memcpy(new_insert_key_addr, &new_insert_key, KEY_SIZE);
-> > +             insert_ptr[0] = new_insert_ptr;
-> >       }
-> >  
-> >       n = B_NR_ITEMS(tbSh);   /*number of items in S[h] */
-> > @@ -1153,8 +1156,5 @@ int balance_internal(struct tree_balance
-> >                                      insert_ptr);
-> >       }
-> >  
-> > -     memcpy(new_insert_key_addr, &new_insert_key, KEY_SIZE);
-> > -     insert_ptr[0] = new_insert_ptr;
-> > -
-> >       return order;
-> >  }
-> 
-> Looking at the patch now, I think it is buggy. The insert_ptr is used as an
-> argument to internal_insert_childs() and this patch ends up overwriting the
-> original value before the last call to that function... Not that I would
-> really understand what the code is trying to do (CCed Jeff who may have
-> better idea), this is based purely on syntactical analysis ;).
-> 
+Hello
+Ivan Shapovalov.
 
-You are right, I missed that. I spent a significant amount of time following
-those variables around in the code to see how they are used (most functions
-that take them as arguments only pass them to the next function and eventually
-don't acces them at all), but I missed that final use.
+Question:
+Is it possible to obtain a list of file-names from the Reiser4 meta data ?
 
-Maybe we can just drop the two assignments instead of moving them?
+If so how is it done ?
 
-Thanks for taking a look and sorry for the screwup.
+I have a copy of unpacked Reiser 4 meta data
 
-	Arnd
+I'm using
+#  rpm -qa |grep -i reiser4 |sort
+kernel-reiser4-4.6.0-1.1.x86_64
+libreiser4-1_0-6-1.0.6-44.1.x86_64
+libreiser4-1_1-0-1.1.0-1.1.x86_64
+reiser4progs-1.1.0-35.1.x86_64
 
+
+# ll metadata-sdb.bz2
+-rw-r--r-- 1 root root 2098194393 May 28 17:17 metadata-sdb.bz2
+
+2,098,194,393
+
+# ll metadata-sdb.bz2
+
+unpacked:
+
+# bunzip2 metadata-sdb.bz2
+
+# ll metadata-sdb
+-rw------- 1 root root 13401743360 May 30 18:20 metadata-sdb
+13,401,743,360
+
+
+I cannot run command '# mount /dev/sdb  /media/disk' because of 'Wrong
+order of keys.'
+
+Use opensuse, linux kernel is  patched with reiser4-for-4.6.0.patch and
+boots
+
+# fsck.reiser4 -V
+fsck.reiser4 1.1.0
+Format release: 4.0.1
+Copyright (C) 2001-2005 by Hans Reiser, licensing governed by
+reiser4progs/COPYING.
+
+
+Thanks for the help
+--Glenn
