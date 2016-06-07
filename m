@@ -1,49 +1,39 @@
-From: Arnd Bergmann <arnd@arndb.de>
-Subject: Re: [PATCH] reiserfs: fix =?UTF-8?B?Im5ld19pbnNlcnRfa2V54oCZ?= may be used uninitialized ..."
-Date: Mon, 06 Jun 2016 20:43:27 +0200
-Message-ID: <4475567.3RDrhHqseX@wuerfel>
-References: <5748aeb6.fN9D/KJvuQPxmFHi%akpm@linux-foundation.org> <5731468.VTTDqzParZ@wuerfel> <5eca5ffb-2155-8df2-b4a2-f162f105efed@suse.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7Bit
+From: Wei Tang <tangwei@cmss.chinamobile.com>
+Subject: [PATCH] reiserfs: do not initialise statics to NULL
+Date: Tue,  7 Jun 2016 09:58:31 +0800
+Message-ID: <1465264711-14554-1-git-send-email-tangwei@cmss.chinamobile.com>
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
-In-Reply-To: <5eca5ffb-2155-8df2-b4a2-f162f105efed@suse.com>
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
-To: Jeff Mahoney <jeffm@suse.com>
-Cc: Jan Kara <jack@suse.cz>, akpm@linux-foundation.org, viro@zeniv.linux.org.uk, reiserfs-devel@vger.kernel.org
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: roland@hack.frob.com, oleg@redhat.com
+Cc: viro@zeniv.linux.org.uk, dmonakhov@openvz.org, reiserfs-devel@vger.kernel.org, linux-kernel@vger.kernel.org, Wei Tang <tangwei@cmss.chinamobile.com>
 
-On Monday, June 6, 2016 1:25:47 PM CEST Jeff Mahoney wrote:
-> new_insert_key only makes any sense when it's associated with a
-> new_insert_ptr, which is initialized to NULL and changed to a
-> buffer_head when we also initialize new_insert_key.  We can key off
-> of that to avoid the uninitialized warning.
-> 
-> Signed-off-by: Jeff Mahoney <jeffm@suse.com>
+This patch fixes the checkpatch.pl error to procfs.c:
 
-Thanks a lot for looking into it, that addresses the warning nicely.
+ERROR:INITIALISED_STATIC: do not initialise statics to NULL
 
-	Arnd
+Signed-off-by: Wei Tang <tangwei@cmss.chinamobile.com>
+---
+ fs/reiserfs/procfs.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-> ---
->  fs/reiserfs/ibalance.c | 3 ++-
->  1 file changed, 2 insertions(+), 1 deletion(-)
-> 
-> diff --git a/fs/reiserfs/ibalance.c b/fs/reiserfs/ibalance.c
-> index b751eea..5db6f45 100644
-> --- a/fs/reiserfs/ibalance.c
-> +++ b/fs/reiserfs/ibalance.c
-> @@ -1153,8 +1153,9 @@ int balance_internal(struct tree_balance *tb,
->                                        insert_ptr);
->         }
->  
-> -       memcpy(new_insert_key_addr, &new_insert_key, KEY_SIZE);
->         insert_ptr[0] = new_insert_ptr;
-> +       if (new_insert_ptr)
-> +               memcpy(new_insert_key_addr, &new_insert_key, KEY_SIZE);
->  
->         return order;
->  }
-> 
+diff --git a/fs/reiserfs/procfs.c b/fs/reiserfs/procfs.c
+index fe99915..22882e6 100644
+--- a/fs/reiserfs/procfs.c
++++ b/fs/reiserfs/procfs.c
+@@ -402,7 +402,7 @@ static const struct file_operations r_file_operations = {
+ 	.release = single_release,
+ };
+ 
+-static struct proc_dir_entry *proc_info_root = NULL;
++static struct proc_dir_entry *proc_info_root;
+ static const char proc_info_root_name[] = "fs/reiserfs";
+ 
+ static void add_file(struct super_block *sb, char *name,
+-- 
+1.9.1
 
 
