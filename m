@@ -1,95 +1,108 @@
-From: Jeff Mahoney <jeffm@suse.com>
-Subject: Re: reiserfsprogs v3.6.25
-Date: Tue, 7 Jun 2016 10:28:44 -0400
-Message-ID: <4eaa5319-4456-7dd0-259a-21251ad432ee@suse.com>
-References: <42434805-7b9f-bde1-e882-998f9f62676e@suse.com>
- <1465308038.1718.2.camel@z-51.de>
+From: <doiggl@velocitynet.com.au>
+Subject: Segmentation fault on #fsck.reiser4 --fix /dev/sdb
+Date: Wed, 08 Jun 2016 14:09:44 +1000
+Message-ID: <3c262e32710f6c83f10c03cc5f9abd95@mail.velocitynet.com.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
- protocol="application/pgp-signature";
- boundary="59huCMHeJg3rk7jg1xgGc06gLD9JWlhJp"
+Content-Transfer-Encoding: 8bit
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
-In-Reply-To: <1465308038.1718.2.camel@z-51.de>
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
-To: Felix Zielcke <fzielcke@z-51.de>, reiserfs-devel@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+To: reiserfs-devel <reiserfs-devel@vger.kernel.org>
 
-This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
---59huCMHeJg3rk7jg1xgGc06gLD9JWlhJp
-Content-Type: multipart/mixed; boundary="5WmBReaRlNlqNfVNJvPBguhX5wkODercG"
-From: Jeff Mahoney <jeffm@suse.com>
-To: Felix Zielcke <fzielcke@z-51.de>, reiserfs-devel@vger.kernel.org
-Message-ID: <4eaa5319-4456-7dd0-259a-21251ad432ee@suse.com>
-Subject: Re: reiserfsprogs v3.6.25
-References: <42434805-7b9f-bde1-e882-998f9f62676e@suse.com>
- <1465308038.1718.2.camel@z-51.de>
-In-Reply-To: <1465308038.1718.2.camel@z-51.de>
+Segmentation fault on #fsck.reiser4 --fix /dev/sdb
+Anyone know about this ?
+--Glenn
 
---5WmBReaRlNlqNfVNJvPBguhX5wkODercG
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+# rpm -qa | grep -i libreiser4
+libreiser4-1_1-0-1.1.0-13.1.x86_64
 
-On 6/7/16 10:00 AM, Felix Zielcke wrote:
-> Am Montag, den 06.06.2016, 14:23 -0400 schrieb Jeff Mahoney:
->> Hello all -
->>
->> I've just released reiserfsprogs v3.6.25, which contains a rollup of
->> the commits that have accumulated since the last release.  The
->> biggest
->> change is that libreiserfscore can now be used as a shared library
->> for
->> use with other projects (e.g. btrfs-convert).
->>
->> It is available now at:
->> https://www.kernel.org/pub/linux/kernel/people/jeffm/reiserfsprogs/v3
->> .6.25/
->=20
-> Hi Jeff,
->=20
-> I get a compile error. com_err.h is missing:
->=20
-> In file included from parse_time.c:8:0:
-> ../include/reiserfs_lib.h:14:21: fatal error: com_err.h: Datei oder Ver=
-zeichnis nicht gefunden
-> compilation terminated.
+# rpm -qa | grep -i reiser4progs
+reiser4progs-1.1.0-35.1.x86_64
 
-You're missing the libcom_err-devel package.  The configure script would
-have issued a warning but it should probably issue an error instead.
-I'll commit a patch for that.
+command used:
 
-Thanks,
+# fsck.reiser4 --fix /dev/sdb
+*******************************************************************
+This is an EXPERIMENTAL version of fsck.reiser4. Read README first.
+*******************************************************************
 
--Jeff
+Fscking the /dev/sdb block device.                                        
+                                                                          
+                         
+Will fix minor corruptions of the Reiser4 SuperBlock.                     
+                                                                          
+                         
+Will fix minor corruptions of the Reiser4 FileSystem.                     
+                                                                          
+                         
+Continue?                                                                 
+                                                                          
+                         
+(Yes/No): yes
+***** fsck.reiser4 started at Tue Jun  7 19:20:59 2016
+FSCK: backup.c: 505: repair_backup_open: Found backup does not match to
+the on-disk filesystem metadata.                                           
+                            
+Backup update is needed. Done.                                            
+                                                                          
+                         
+Reiser4 fs was detected on /dev/sdb.                                      
+                                                                          
+                         
+Master super block (16): 
+magic:          ReIsEr4 
+blksize:        4096 
+format:         0x0 (format40) 
+uuid:           3006ced1-7490-4ea8-a9b8-d82143c6bede 
+label:          <none> 
+ 
+Format super block (17): 
+plugin:         format40 
+description:    Disk-format plugin. 
+version:        1 
+magic:          ReIsEr40FoRmAt 
+mkfs id:        0x1ddaf754 
+flushes:        0 
+blocks:         488378640 
+free blocks:    217146980 
+root block:     37017218 
+tail policy:    0x2 (smart) 
+next oid:       0xedade 
+file count:     188313 
+tree height:    6 
+key policy:     LARGE 
+ 
+ 
+CHECKING THE STORAGE TREE                                                 
+                                                                          
+                         
+        Read nodes 197007773                                              
+                                                                          
+                         
+        Nodes left in the tree 197007773                                  
+                             
+                Leaves of them 194763637, Twigs of them 2217790           
+                             
+        Time interval: Tue Jun  7 19:22:57 2016 - Sat Jun 11 05:38:42 2016
+                             
+CHECKING EXTENT REGIONS.                                                  
+                             
+        Read twigs 2217790                                                
+                             
+        Time interval: Sat Jun 11 05:38:42 2016 - Wed Jun  8 11:48:02 2016
+                             
+CHECKING THE SEMANTIC TREE                                                
+                             
+FSCK: semantic.c: 573: repair_semantic_dir_open: Failed to recognize the
+plugin for the directory      
+[29:0:2a]. 
+FSCK: semantic.c: 651: repair_semantic_root_prepare: No root directory
+opened. 
+        Time interval: Wed Jun  8 11:48:02 2016 - Wed Jun  8 11:48:02 2016
+                           
+FSCK: repair.c: 547: repair_sem_fini: On-disk used block bitmap and really
+used block bitmap differ.   
+Segmentation fault
 
---=20
-Jeff Mahoney
-SUSE Labs
 
-
---5WmBReaRlNlqNfVNJvPBguhX5wkODercG--
-
---59huCMHeJg3rk7jg1xgGc06gLD9JWlhJp
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: OpenPGP digital signature
-Content-Disposition: attachment; filename="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG/MacGPG2 v2.0.19 (Darwin)
-Comment: GPGTools - http://gpgtools.org
-
-iQIcBAEBAgAGBQJXVtoiAAoJEB57S2MheeWyqvsP/jAoLxbco60+PWHUYfCfQ5bs
-SZxBcxe0xcf/nflO6tKiQ/+mLmExROKeBKW2KWTf6nW1PAN6kydkTzLWz3IHoMgS
-jDXq0jJuFCsdpJavnU9rbA2Y3t7JAG+UAZcnmOQsA1pK9pbWjAxW7Yr/dzV0gt3i
-M4utBnnWx2LSxVPhgimqxw2Sw5jREgjjEeMQfyzA5cKc7npTwrp6aiXyZMyNoYzd
-HhFaeRctuQ9KAT8f0y1Kp0Sn+OtQsg1g1tnOf7PBIk3UrGfosGnd2E/BXSw1lwx/
-kqGr/5DhW8c8Nwxf1QIuLHB3btoUZKzw5pAPfX6Mg8mGXWPd+3xvDi7WYOWtlW8p
-SObLTlJw1KnxR7S+r5Y3fiqXygkTFqYXfTHnnwbFJc1/lw/XqMuScpNzEZAAhv9O
-YJYbLnlVBcyC+YszmDRYjLsidkxKg68QesrewcuPZQQwa5pARfSCHtdgqsv5F8hv
-2pmZr8xn5O8AlSeTZe27Mo18SS5dJU4ea2EPxHw9l0PbpKzRI7b+qPXx/q7sSfR6
-ymgC+vu1txw9+K/npmHI1bucgr8aUcOYcdGPMER4mlk/9e0GU5LvAznjclPfbTdd
-fdGH7KPk8vAmza4+wJ2Y4rgUH/FaIeKV08UA9x/YlbZQ4szJxfvbNmH45DO85gG4
-GyKTFdZjMWWWWg31fJBA
-=Zu/Z
------END PGP SIGNATURE-----
-
---59huCMHeJg3rk7jg1xgGc06gLD9JWlhJp--
