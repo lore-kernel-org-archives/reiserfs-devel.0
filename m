@@ -1,38 +1,30 @@
-From: Arnd Bergmann <arnd@arndb.de>
+From: Paul Bolle <pebolle@tiscali.nl>
 Subject: Re: [PATCH] reiserfs: avoid uninitialized variable use
-Date: Wed, 15 Jun 2016 14:15:20 +0200
-Message-ID: <6368040.ggKGx5CyrW@wuerfel>
-References: <1464380569-3493380-1-git-send-email-arnd@arndb.de> <1465981566.9515.21.camel@tiscali.nl>
+Date: Wed, 15 Jun 2016 18:39:43 +0200
+Message-ID: <1466008783.28441.3.camel@tiscali.nl>
+References: <1464380569-3493380-1-git-send-email-arnd@arndb.de>
+	 <1465981566.9515.21.camel@tiscali.nl> <6368040.ggKGx5CyrW@wuerfel>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7Bit
+Content-Transfer-Encoding: 7bit
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
-In-Reply-To: <1465981566.9515.21.camel@tiscali.nl>
+In-Reply-To: <6368040.ggKGx5CyrW@wuerfel>
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
-To: Paul Bolle <pebolle@tiscali.nl>
+Content-Type: text/plain; charset="us-ascii"
+To: Arnd Bergmann <arnd@arndb.de>
 Cc: Andrew Morton <akpm@linux-foundation.org>, Alexander Viro <viro@zeniv.linux.org.uk>, reiserfs-devel@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Wednesday, June 15, 2016 11:06:06 AM CEST Paul Bolle wrote:
-> > Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-> > ---
-> > I thought I had send this on May 12 when I first became aware of
-> > the warning, but I can't find a reference to that now on any
-> > mailing list archives, and I'm not sure who is picking up
-> > reiserfs patches these days.
-> > 
-> > The warning is now one of the few 'allmodconfig' warnings for
-> > arm64 and possibly some other architectures.
-> 
-> x86 and x86_64 are two of those architectures. This patch silences the
-> warning on those architectures too.
-> 
-> (I wouldn't dare to say whether the patch is correct. I've looked at
-> this warning quite a few times in the last year and found the code hard
-> to grok. It's impressive that you managed to come up with an actual
-> fix.)
+On wo, 2016-06-15 at 14:15 +0200, Arnd Bergmann wrote:
+> Jan Kara has shown that my patch is completely wrong, and Jeff Mahoney
+> sent a correct one that is now in linux-next.
 
-Jan Kara has shown that my patch is completely wrong, and Jeff Mahoney
-sent a correct one that is now in linux-next.
+That must be "reiserfs: fix "new_insert_key may be used uninitialized
+..."". I missed it because, for some reason, the discussion of your
+patch never hit lkml but only reiserfs-devel. And also because I
+obviously didn't bother checking linux-next before replying to your
+message.
 
-	Arnd
+Thanks,
+
+
+Paul Bolle
