@@ -1,30 +1,50 @@
-From: Paul Bolle <pebolle@tiscali.nl>
-Subject: Re: [PATCH] reiserfs: avoid uninitialized variable use
-Date: Wed, 15 Jun 2016 18:39:43 +0200
-Message-ID: <1466008783.28441.3.camel@tiscali.nl>
-References: <1464380569-3493380-1-git-send-email-arnd@arndb.de>
-	 <1465981566.9515.21.camel@tiscali.nl> <6368040.ggKGx5CyrW@wuerfel>
+From: <doiggl@velocitynet.com.au>
+Subject: Fwd: fsck.reiser4 questions
+Date: Fri, 24 Jun 2016 00:24:59 +1000
+Message-ID: <03c4d1e758ea1926333f6adff7ee75ba@mail.velocitynet.com.au>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
-In-Reply-To: <6368040.ggKGx5CyrW@wuerfel>
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: Andrew Morton <akpm@linux-foundation.org>, Alexander Viro <viro@zeniv.linux.org.uk>, reiserfs-devel@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Edward Shishkin <edward.shishkin@gmail.com>
+Cc: reiserfs-devel@vger.kernel.org
 
-On wo, 2016-06-15 at 14:15 +0200, Arnd Bergmann wrote:
-> Jan Kara has shown that my patch is completely wrong, and Jeff Mahoney
-> sent a correct one that is now in linux-next.
+Hello,
+Some reiser4 questions for Edward Shishkin.
 
-That must be "reiserfs: fix "new_insert_key may be used uninitialized
-..."". I missed it because, for some reason, the discussion of your
-patch never hit lkml but only reiserfs-devel. And also because I
-obviously didn't bother checking linux-next before replying to your
-message.
+Is fsck broken in version reiser4progs-1.1.0  ?
 
-Thanks,
+What reiser4 checks and tests can I run on the the r4 meta data to see if
+it is  ok ? 
+Packed with 
+- I packed r4 meta-data with command
+
+# debugfs.reiser4 -P /dev/sdb  | gzip -9 > r4meta-sdb.gz
+
+I use:
+# fsck.reiser4 --build-sb --build-sb /dev/sdb
+# fsck.reiser4 --build-fs --build-fs /dev/sdb
+# fsck.reiser4 --fix  /dev/sdb
+
+Thanks
+--Glenn
+
+#  rpm -qa | grep -i reiser4progs
+reiser4progs-1.1.0-35.1.x86_64
+
+a copy of [reiser4 /dev/sdb] meta-data see:
+http://www.4shared.com/file/-RA17cXlba/metadata-sdb.html
+
+metadata-sdb.bz2
+2,049,018 KB | 2016-05-30
+
+Packed with with command
+
+# debugfs.reiser4 -P /dev/sdb  | gzip -9 > metadata-sdb.gz
 
 
-Paul Bolle
+Background history
+==================
+http://www.spinics.net/lists/reiserfs-devel/msg04206.html
