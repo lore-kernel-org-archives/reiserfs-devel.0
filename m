@@ -1,7 +1,7 @@
 From: <doiggl@velocitynet.com.au>
-Subject: Fwd: Here is a plain kernel based on 4.6.0 with the reiser4 patch enabled. [reiser4-for-4.6.0.patch]
-Date: Mon, 04 Jul 2016 18:37:00 +1000
-Message-ID: <dc7fd91ca786b591042816e0460a7ac7@mail.velocitynet.com.au>
+Subject: fsck.reiser4 --fix -y /dev/sdb [2 fatal corruptions were detected in FileSystem.]
+Date: Fri, 08 Jul 2016 15:05:47 +1000
+Message-ID: <00f934017e48470fe40f1f8072c3a41f@mail.velocitynet.com.au>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
@@ -11,47 +11,97 @@ Content-Type: text/plain; charset="us-ascii"
 To: reiserfs-devel@vger.kernel.org
 
 Hello,
-Here is a plain kernel based on 4.6.0 with the reiser4-for-4.6.0.patch
-built with
-the Opensuse build service [obs] system.
+will bug be fixed ?
+--Glenn
 
-The built rpms are here
+Is this the cause of problem ?
+see:
 
-https://build.opensuse.org/package/binaries/home:doiggl/kernel-reiser4?repository=openSUSE_13.2
+Re: reiser4progs revision.
+http://www.spinics.net/lists/reiserfs-devel/msg04577.html
 
-Architecture: i586
+At revision now:
+# rpm -qa |grep -i reiser4 |sort
+kernel-reiser4-4.6.0-1.1.x86_64
+libreiser4-1_1-0-1.1.0-13.1.x86_64
+reiser4progs-1.1.0-35.1.x86_64
 
-    kernel-reiser4-4.6.3-2.1.i686.rpm
-    kernel-reiser4-4.6.3-2.1.nosrc.rpm
-    kernel-reiser4-debuginfo-4.6.3-2.1.i686.rpm
-    kernel-reiser4-debugsource-4.6.3-2.1.i686.rpm
-    kernel-reiser4-devel-4.6.3-2.1.i686.rpm
-    rpmlint.log
+# fsck.reiser4 --fix -y /dev/sdb -L /tmp/fsck.reiser4--fix02--sdb.log
+*******************************************************************
+This is an EXPERIMENTAL version of fsck.reiser4. Read README first.
+*******************************************************************
 
-Architecture: x86_64
+Fscking the /dev/sdb block device.                                        
+                                                                          
+            
+Will fix minor corruptions of the Reiser4 SuperBlock.                     
+                                                                          
+            
+Will fix minor corruptions of the Reiser4 FileSystem.                     
+                                                                          
+            
+***** fsck.reiser4 started at Thu Jul  7 20:42:24 2016
+Backup update is needed. Done.                                            
+                                                                          
+            
+Reiser4 fs was detected on /dev/sdb.                                      
+                                                                          
+            
+Master super block (16): 
+magic:          ReIsEr4 
+blksize:        4096 
+format:         0x0 (format40) 
+uuid:           3006ced1-7490-4ea8-a9b8-d82143c6bede 
+label:          <none> 
+ 
+Format super block (17): 
+plugin:         format40 
+description:    Disk-format plugin. 
+version:        1 
+magic:          ReIsEr40FoRmAt 
+mkfs id:        0x1ddaf754 
+flushes:        0 
+blocks:         488378640 
+free blocks:    292574056 
+root block:     125733 
+tail policy:    0x2 (smart) 
+next oid:       0xedae0 
+file count:     138364 
+tree height:    6 
+key policy:     LARGE 
+ 
+ 
+CHECKING THE STORAGE TREE                                                 
+                                                                          
+            
+        Read nodes 168671776                                              
+                                                                          
+            
+        Nodes left in the tree 168671774 
+                Leaves of them 166751030, Twigs of them 1898463 
+        Nodes with wrong delimiting keys 2 
+                Leaves of them 0, Twigs of them 1 
+        Time interval: Thu Jul  7 20:44:19 2016 - Fri Jul  8 03:16:45 2016
 
-    kernel-reiser4-4.6.3-2.1.nosrc.rpm
-    kernel-reiser4-4.6.3-2.1.x86_64.rpm
-    kernel-reiser4-debuginfo-4.6.3-2.1.x86_64.rpm
-    kernel-reiser4-debugsource-4.6.3-2.1.x86_64.rpm
-    kernel-reiser4-devel-4.6.3-2.1.x86_64.rpm
-    kernel-reiser4-devel-debuginfo-4.6.3-2.1.x86_64.rpm
+CHECKING EXTENT REGIONS.                                                  
+                                                                          
+            
+        Read twigs 1898463                                                
+                                                                          
+            
+        Time interval: Fri Jul  8 03:16:45 2016 - Fri Jul  8 03:44:55 2016
 
-The project is here
-https://build.opensuse.org/package/show?package=kernel-reiser4&project=home%3Adoiggl
+Warn : Fatal corruptions were found. Semantic pass is skipped.            
+                                                                          
+            
+***** fsck.reiser4 finished at Fri Jul  8 03:44:55 2016
+Closing fs...done
 
-The log of the build is here {x86_64} as an example. [Its a long buildlog]
-https://build.opensuse.org/package/live_build_log/home:doiggl/kernel-reiser4/openSUSE_13.2/x86_64
+2 fatal corruptions were detected in FileSystem. Run with --build-fs
+option to fix them.
 
-The .spec used file is here
-https://build.opensuse.org/package/view_file/home:doiggl/kernel-reiser4?expand=1&file=kernel-reiser4.spec
+This was done in the past:
 
-Thanks to the opensuse-kernel list members for compilation advice.
-
-Patches applied:
-reiser4-for-4.6.0.patch
-
-It looks like obs built the rpms.
-Post the results to the list.
-
-Cheers Glenn
+http://www.spinics.net/lists/reiserfs-devel/msg04667.html
+[This is the sequence of --checks and --build-fs times of Reiser4 volume
+on disk /dev/sdb]
