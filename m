@@ -1,46 +1,28 @@
 From: bugzilla-daemon@bugzilla.kernel.org
-Subject: [Bug 121761] New: A message during compile
-Date: Sat, 09 Jul 2016 18:03:18 +0000
-Message-ID: <bug-121761-695@https.bugzilla.kernel.org/>
+Subject: [Bug 121761] A message during compile
+Date: Tue, 12 Jul 2016 17:22:18 +0000
+Message-ID: <bug-121761-695-EdJZ9ors1o@https.bugzilla.kernel.org/>
+References: <bug-121761-695@https.bugzilla.kernel.org/>
 Mime-Version: 1.0
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Transfer-Encoding: 7bit
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
+In-Reply-To: <bug-121761-695@https.bugzilla.kernel.org/>
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="utf-8"
+Content-Type: text/plain; charset="us-ascii"
 To: reiserfs-devel@vger.kernel.org
 
-https://bugzilla.kernel.org/show_bug.cgi?id=3D121761
+https://bugzilla.kernel.org/show_bug.cgi?id=121761
 
-            Bug ID: 121761
-           Summary: A message during compile
-           Product: File System
-           Version: 2.5
-    Kernel Version: 4.7.0-rc6
-          Hardware: x86-64
-                OS: Linux
-              Tree: Mainline
-            Status: NEW
-          Severity: normal
-          Priority: P1
-         Component: ReiserFS
-          Assignee: reiserfs-devel@vger.kernel.org
-          Reporter: uvladimir@ukr.net
-        Regression: No
+Jeff Mahoney <jeffm@suse.com> changed:
 
-CC [M]  fs/reiserfs/lbalance.o
-  CC [M]  fs/reiserfs/ibalance.o
-fs/reiserfs/ibalance.c: In function =E2=80=98balance_internal=E2=80=99:
-fs/reiserfs/ibalance.c:1156:2: warning: =E2=80=98new_insert_key=E2=80=99=
- may be used
-uninitialized in this function [-Wmaybe-uninitialized]
-  memcpy(new_insert_key_addr, &new_insert_key, KEY_SIZE);
-  ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+           What    |Removed                     |Added
+----------------------------------------------------------------------------
+                 CC|                            |jeffm@suse.com
 
---=20
+--- Comment #1 from Jeff Mahoney <jeffm@suse.com> ---
+https://git.kernel.org/cgit/linux/kernel/git/next/linux-next.git/commit/fs/reiserfs/ibalance.c?id=bf83031133d622631efdffa0e1dbf5adef3b0f80
+
+-- 
 You are receiving this mail because:
-You are the assignee for the bug.--
-To unsubscribe from this list: send the line "unsubscribe reiserfs-deve=
-l" in
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+You are the assignee for the bug.
