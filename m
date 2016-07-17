@@ -1,13 +1,13 @@
 From: jose@metztli-it.com
-Subject: Reiser4 (SFRN 4.0.1) linux-image-4.6.0-1+reiser4.0.1-amd64(4.6.3-1) d-i on Jessie successful install on HP Pavilion
-Date: Thu, 14 Jul 2016 12:51:55 +0000 (UTC)
-Message-ID: <20160714125155.C0D9C3F066@tlacatecolotl.metztli-it.com>
+Subject: Reiser4(SFRN 4.0.1) kernel 4.6.0-1+reiser4.0.1-amd64 [4.6.3-1+reiser4.0.1(2016-07-15)] d-i on Jessie successful install on HP Pavilion
+Date: Sun, 17 Jul 2016 17:36:24 +0000 (UTC)
+Message-ID: <20160717173624.CCC003DFB2@tlahuizcalpanteuctli.metztli-it.com>
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
 DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mixtli.metztli.it; q=dns/txt;
- s=mx; t=1468500720; h=From: Date: Message-Id: Subject: To: Sender;
- bh=6ENfJbocKBZDsU4eRBqwF6KcDloAomFGswKA/pAs5OI=; b=nL59kmsr3bucBOcWjjtju9QO83cYWcABCjk0kStFCuxUaeGr0LPz/i0aLs4SkKeGGSlz6gXE
- G8qnOYyn5aoyY5dtOSniVAGZORiJvOPXZf2xHonQv7kYgNm2OppZt1osJoDRjmTQY+CoN68s
- LTGYTijZ9LgkIz+4mqE6D7KiQ8Y=
+ s=mx; t=1468776984; h=From: Date: Message-Id: Subject: To: Sender;
+ bh=vb1rQxrBFUMbDeTorAelkGWzA6RGRGSm6TggU/j3L9k=; b=KGO9Up56Qud/Wsb6NxRz1tLBV8l7RDpslNX2ScLq+2FOuZusWDrDgnnTOb3JpJvSaStSGeld
+ pdj5b1AF2J1FU/sxl6BQQhJBKykD2zM5P98OqFtZlqIFc+UpHnkxbXluMNFkb3O1xRETOF/j
+ 0cQNQae9U5d4F7ej90dvwqpe3Ms=
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
 MIME-Version: 1.0
@@ -16,9 +16,9 @@ Content-Transfer-Encoding: 7bit
 To: reiserfs-devel@vger.kernel.org
 
 ---------- Forwarded message ----------
-From:  <jose@metztli-it.com>
-Date: Thu, Jul 14, 2016 at 12:18 PM
-Subject: installation-reports: Reiser4 (SFRN 4.0.1) linux-image-4.6.0-1+reiser4.0.1-amd64(4.6.3-1) d-i on Jessie successful install on HP Pavilion
+From: <jose@metztli-it.com>
+Date: Sun, Jul 17, 2016 at 5:27 PM
+Subject: Bug#831604: installation-reports: Reiser4(SFRN 4.0.1) kernel 4.6.0-1+reiser4.0.1-amd64 [4.6.3-1+reiser4.0.1(2016-07-15)] d-i on Jessie successful install on HP Pavilion
 To: Debian Bug Tracking System <submit@bugs.debian.org>
 
 
@@ -41,20 +41,23 @@ Dear Maintainer,
 -- Package-specific info:
 
 Boot method: USB
-Image version: https://metztli.it/readOnlyEphemeral/metztli-jessie_4.6.3-1.iso https://metztli.it/readOnlyEphemeral/metztli-jessie_4.6.3-1.SHA256SUM
-Date: July 14, 2016
+Image version: https://metztli.it/readOnlyEphemeral/metztli-jessie_4.6.3-1.iso
+               https://metztli.it/readOnlyEphemeral/metztli-jessie_4.6.3-1.SHA256SUM
+Date: Sun Jul 17 17:09:59 UTC 2016
 
-Machine: HP Pavilion dv6-6c53cl
+Machine: HP Pavilion dv6 laptop
 Partitions:
 Filesystem     Type     1K-blocks    Used Available Use% Mounted on
 udev           devtmpfs     10240       0     10240   0% /dev
-tmpfs          tmpfs      3276608    9248   3267360   1% /run
-/dev/sda5      reiser4   18557056 3893376  14663680  21% /
-tmpfs          tmpfs      8191512     560   8190952   1% /dev/shm
+tmpfs          tmpfs      3276608    9280   3267328   1% /run
+/dev/sda2      reiser4   20432028 3803900  16628128  19% /
+tmpfs          tmpfs      8191512     216   8191296   1% /dev/shm
 tmpfs          tmpfs         5120       4      5116   1% /run/lock
 tmpfs          tmpfs      8191512       0   8191512   0% /sys/fs/cgroup
-/dev/sda9      ext2        136269   57672     71327  45% /boot
+/dev/sda9      ext2        136269   57670     71329  45% /boot
+tmpfs          tmpfs      1638304       8   1638296   1% /run/user/118
 tmpfs          tmpfs      1638304      24   1638280   1% /run/user/1000
+/dev/sda5      reiser4   18557056 4103488  14453568  23% /mnt
 
 
 Base System Installation Checklist:
@@ -74,25 +77,22 @@ Install tasks:          [O]
 Install boot loader:    [O]
 Overall install:        [O]
 
-Comments/Problems:
-
+Comments/Problems: Smooth installation: https://metztli.it/readOnlyEphemeral/tlahuizcalpanteuctli.png
 Reiser4 [Software Format Release Number (SFRN) 4.0.1]-enabled d-i on USB[*], implemented expert install with Debian Desktop Environment GUI.
-Custom kernel embedded as UDEB in Debian-Installer (d-i), automatically downloaded kernel & matching reiser4progs from metztli.it.
-d-i also fetched required linux-base 4.3 dependency from Jessie backports and last d-i phase removed nfs-common and xserver-xorg-input-vmmouse[**]
- - as it conflicted with custom kernel package.
-
-https://metztli.it/readOnlyEphemeral/jessie-reiser4-tlacatecolotl.png
-
-Sample install sequence originally illustrated on Debian Sid:
-https://metztli.it/blog/index.php/ixiptli/reiser4-sfrn-4-0-1
-https://metztli.it/blog/index.php/ixiptli/installing-a-reiser4-patched-linux
+Custom kernel[**] embedded as UDEB in Debian-Installer (d-i), automatically downloaded kernel & matching reiser4progs from metztli.it.
+d-i also fetched required linux-base 4.3 dependency from Jessie backports and last d-i phase removed nfs-common.
 
 [*]
 dd if=metztli-jessie_4.6.3-1.iso of=/dev/sdb bs=4M; sync
 (where, of course, /dev/sdb represents [your] USB device)
 
-[**] Note removing xserver-xorg-input-vmmouse also removes task-gnome-desktop, task-desktop, and input driver metapackage xserver-xorg-input-all
--
+[**]
+Debian source packaging for Sid was modified to remove references to xserver-xorg-input-vmmouse & d-i modified/built appropriately:
+debian/config/amd64/defines
+debian/config/i386/defines
+debian/config/kernelarch-x86/config (i.e., disabled CONFIG_MOUSE_PS2_VMMOUSE=y)
+
+--
 
 Please make sure that the hardware-summary log file, and any other
 installation logs that you think would be useful are attached to this
@@ -105,13 +105,13 @@ Installer lsb-release:
 ==============================================
 DISTRIB_ID=Debian
 DISTRIB_DESCRIPTION="Debian GNU/Linux installer"
-DISTRIB_RELEASE="8 (jessie) - installer build 20160713-13:20"
+DISTRIB_RELEASE="8 (jessie) - installer build 20160716-13:43"
 X_INSTALLATION_MEDIUM=netboot
 
 ==============================================
 Installer hardware-summary:
 ==============================================
-uname -a: Linux tlacatecolotl 4.6.0-1+reiser4.0.1-amd64 #1 SMP Debian 4.6.3-1+reiser4.0.1 (2016-07-10) x86_64 Xonecuiltzin
+uname -a: Linux tlahuizcalpanteuctli 4.6.0-1+reiser4.0.1-amd64 #1 SMP Debian 4.6.3-1+reiser4.0.1 (2016-07-15) x86_64 Xonecuiltzin
 lspci -knn: 00:00.0 Host bridge [0600]: Intel Corporation 2nd Generation Core Processor Family DRAM Controller [8086:0104] (rev 09)
 lspci -knn:     Subsystem: Hewlett-Packard Company Device [103c:1658]
 lspci -knn: 00:02.0 VGA compatible controller [0300]: Intel Corporation 2nd Generation Core Processor Family Integrated Graphics Controller [8086:0116] (rev 09)
@@ -200,14 +200,13 @@ usb-list:    Level 00 Parent 00 Port 00  Class 09(hub  ) Subclass 00 Protocol 03
 usb-list:    Manufacturer: Linux 4.6.0-1+reiser4.0.1-amd64 xhci-hcd
 usb-list:    Interface 00: Class 09(hub  ) Subclass 00 Protocol 00 Driver hub
 lsmod: Module                  Size  Used by
-lsmod: fuse                   98304  0
 lsmod: ufs                    73728  0
 lsmod: qnx4                   16384  0
 lsmod: hfsplus               102400  0
 lsmod: hfs                    57344  0
 lsmod: minix                  36864  0
 lsmod: msdos                  20480  0
-lsmod: isofs                  40960  0
+lsmod: fuse                   98304  0
 lsmod: dm_mod                106496  0
 lsmod: md_mod                131072  0
 lsmod: xfs                   958464  0
@@ -222,14 +221,14 @@ lsmod: ext4                  593920  1
 lsmod: ecb                    16384  0
 lsmod: crc16                  16384  1 ext4
 lsmod: jbd2                  106496  1 ext4
-lsmod: crc32c_generic         16384  8
+lsmod: crc32c_generic         16384  4
 lsmod: mbcache                16384  2 ext4
 lsmod: r8169                  81920  0
 lsmod: mii                    16384  1 r8169
 lsmod: iwlwifi               147456  0
 lsmod: cfg80211              573440  1 iwlwifi
 lsmod: rfkill                 24576  1 cfg80211
-lsmod: nls_utf8               16384  3
+lsmod: nls_utf8               16384  2
 lsmod: nls_cp437              20480  0
 lsmod: vfat                   20480  0
 lsmod: fat                    69632  2 vfat,msdos
@@ -242,19 +241,19 @@ lsmod: sg                     32768  0
 lsmod: uas                    24576  0
 lsmod: usb_storage            69632  1 uas
 lsmod: sd_mod                 45056  4
-lsmod: ahci                   36864  3
-lsmod: libahci                32768  1 ahci
 lsmod: rtsx_pci_sdmmc         24576  0
-lsmod: libata                233472  2 ahci,libahci
+lsmod: ahci                   36864  3
 lsmod: xhci_pci               16384  0
 lsmod: ehci_pci               16384  0
+lsmod: libahci                32768  1 ahci
 lsmod: xhci_hcd              180224  1 xhci_pci
 lsmod: ehci_hcd               77824  1 ehci_pci
-lsmod: scsi_mod              233472  5 sg,uas,usb_storage,libata,sd_mod
+lsmod: libata                233472  2 ahci,libahci
 lsmod: sdhci_pci              28672  0
 lsmod: sdhci                  40960  1 sdhci_pci
-lsmod: rtsx_pci               53248  1 rtsx_pci_sdmmc
 lsmod: usbcore               241664  7 uas,usb_storage,ehci_hcd,ehci_pci,usbhid,xhci_hcd,xhci_pci
+lsmod: scsi_mod              233472  5 sg,uas,usb_storage,libata,sd_mod
+lsmod: rtsx_pci               53248  1 rtsx_pci_sdmmc
 lsmod: mmc_core              126976  3 sdhci,rtsx_pci_sdmmc,sdhci_pci
 lsmod: mfd_core               16384  1 rtsx_pci
 lsmod: usb_common             16384  1 usbcore
@@ -262,13 +261,13 @@ lsmod: thermal                20480  0
 df: Filesystem           1K-blocks      Used Available Use% Mounted on
 df: none                   1638304       152   1638152   0% /run
 df: devtmpfs               8177396         0   8177396   0% /dev
-df: /dev/sda5             18557056   3589584  14967472  19% /target
-df: /dev/sda5             18557056   3589584  14967472  19% /dev/.static/dev
+df: /dev/sda2             20432028   3628716  16803312  18% /target
+df: /dev/sda2             20432028   3628716  16803312  18% /dev/.static/dev
 df: devtmpfs               8177396         0   8177396   0% /target/dev
-df: /dev/sda9               136269     33057     95942  26% /target/boot
+df: /dev/sda9               136269     57670     71329  45% /target/boot
 free:              total       used       free     shared    buffers     cached
-free: Mem:      16383024    4419140   11963884     120484       4212    3819204
-free: -/+ buffers/cache:     595724   15787300
+free: Mem:      16383024    4476956   11906068     114804       4572    3868784
+free: -/+ buffers/cache:     603600   15779424
 free: Swap:      2931808          0    2931808
 /proc/cmdline: BOOT_IMAGE=linux priority=low vga=788 initrd=initrd.gz ---
 /proc/cpuinfo: processor        : 0
@@ -278,7 +277,7 @@ free: Swap:      2931808          0    2931808
 /proc/cpuinfo: model name       : Intel(R) Core(TM) i7-2670QM CPU @ 2.20GHz
 /proc/cpuinfo: stepping : 7
 /proc/cpuinfo: microcode        : 0x25
-/proc/cpuinfo: cpu MHz          : 1619.664
+/proc/cpuinfo: cpu MHz          : 1903.515
 /proc/cpuinfo: cache size       : 6144 KB
 /proc/cpuinfo: physical id      : 0
 /proc/cpuinfo: siblings : 8
@@ -292,7 +291,7 @@ free: Swap:      2931808          0    2931808
 /proc/cpuinfo: wp               : yes
 /proc/cpuinfo: flags            : fpu vme de pse tsc msr pae mce cx8 apic sep mtrr pge mca cmov pat pse36 clflush dts acpi mmx fxsr sse sse2 ss ht tm pbe syscall nx rdtscp lm constant_tsc arch_perfmon pebs bts rep_good nopl xtopology nonstop_tsc aperfmperf eagerfpu pni pclmulqdq dtes64 monitor ds_cpl vmx est tm2 ssse3 cx16 xtpr pdcm pcid sse4_1 sse4_2 x2apic popcnt tsc_deadline_timer aes xsave avx lahf_lm epb tpr_shadow vnmi flexpriority ept vpid xsaveopt dtherm ida arat pln pts
 /proc/cpuinfo: bugs             :
-/proc/cpuinfo: bogomips : 4390.21
+/proc/cpuinfo: bogomips : 4389.89
 /proc/cpuinfo: clflush size     : 64
 /proc/cpuinfo: cache_alignment  : 64
 /proc/cpuinfo: address sizes    : 36 bits physical, 48 bits virtual
@@ -305,7 +304,7 @@ free: Swap:      2931808          0    2931808
 /proc/cpuinfo: model name       : Intel(R) Core(TM) i7-2670QM CPU @ 2.20GHz
 /proc/cpuinfo: stepping : 7
 /proc/cpuinfo: microcode        : 0x25
-/proc/cpuinfo: cpu MHz          : 1600.929
+/proc/cpuinfo: cpu MHz          : 1804.945
 /proc/cpuinfo: cache size       : 6144 KB
 /proc/cpuinfo: physical id      : 0
 /proc/cpuinfo: siblings : 8
@@ -319,7 +318,7 @@ free: Swap:      2931808          0    2931808
 /proc/cpuinfo: wp               : yes
 /proc/cpuinfo: flags            : fpu vme de pse tsc msr pae mce cx8 apic sep mtrr pge mca cmov pat pse36 clflush dts acpi mmx fxsr sse sse2 ss ht tm pbe syscall nx rdtscp lm constant_tsc arch_perfmon pebs bts rep_good nopl xtopology nonstop_tsc aperfmperf eagerfpu pni pclmulqdq dtes64 monitor ds_cpl vmx est tm2 ssse3 cx16 xtpr pdcm pcid sse4_1 sse4_2 x2apic popcnt tsc_deadline_timer aes xsave avx lahf_lm epb tpr_shadow vnmi flexpriority ept vpid xsaveopt dtherm ida arat pln pts
 /proc/cpuinfo: bugs             :
-/proc/cpuinfo: bogomips : 4391.44
+/proc/cpuinfo: bogomips : 4391.14
 /proc/cpuinfo: clflush size     : 64
 /proc/cpuinfo: cache_alignment  : 64
 /proc/cpuinfo: address sizes    : 36 bits physical, 48 bits virtual
@@ -332,7 +331,7 @@ free: Swap:      2931808          0    2931808
 /proc/cpuinfo: model name       : Intel(R) Core(TM) i7-2670QM CPU @ 2.20GHz
 /proc/cpuinfo: stepping : 7
 /proc/cpuinfo: microcode        : 0x25
-/proc/cpuinfo: cpu MHz          : 1592.679
+/proc/cpuinfo: cpu MHz          : 1898.101
 /proc/cpuinfo: cache size       : 6144 KB
 /proc/cpuinfo: physical id      : 0
 /proc/cpuinfo: siblings : 8
@@ -346,7 +345,7 @@ free: Swap:      2931808          0    2931808
 /proc/cpuinfo: wp               : yes
 /proc/cpuinfo: flags            : fpu vme de pse tsc msr pae mce cx8 apic sep mtrr pge mca cmov pat pse36 clflush dts acpi mmx fxsr sse sse2 ss ht tm pbe syscall nx rdtscp lm constant_tsc arch_perfmon pebs bts rep_good nopl xtopology nonstop_tsc aperfmperf eagerfpu pni pclmulqdq dtes64 monitor ds_cpl vmx est tm2 ssse3 cx16 xtpr pdcm pcid sse4_1 sse4_2 x2apic popcnt tsc_deadline_timer aes xsave avx lahf_lm epb tpr_shadow vnmi flexpriority ept vpid xsaveopt dtherm ida arat pln pts
 /proc/cpuinfo: bugs             :
-/proc/cpuinfo: bogomips : 4391.16
+/proc/cpuinfo: bogomips : 4390.87
 /proc/cpuinfo: clflush size     : 64
 /proc/cpuinfo: cache_alignment  : 64
 /proc/cpuinfo: address sizes    : 36 bits physical, 48 bits virtual
@@ -359,7 +358,7 @@ free: Swap:      2931808          0    2931808
 /proc/cpuinfo: model name       : Intel(R) Core(TM) i7-2670QM CPU @ 2.20GHz
 /proc/cpuinfo: stepping : 7
 /proc/cpuinfo: microcode        : 0x25
-/proc/cpuinfo: cpu MHz          : 1744.960
+/proc/cpuinfo: cpu MHz          : 1628.601
 /proc/cpuinfo: cache size       : 6144 KB
 /proc/cpuinfo: physical id      : 0
 /proc/cpuinfo: siblings : 8
@@ -373,7 +372,7 @@ free: Swap:      2931808          0    2931808
 /proc/cpuinfo: wp               : yes
 /proc/cpuinfo: flags            : fpu vme de pse tsc msr pae mce cx8 apic sep mtrr pge mca cmov pat pse36 clflush dts acpi mmx fxsr sse sse2 ss ht tm pbe syscall nx rdtscp lm constant_tsc arch_perfmon pebs bts rep_good nopl xtopology nonstop_tsc aperfmperf eagerfpu pni pclmulqdq dtes64 monitor ds_cpl vmx est tm2 ssse3 cx16 xtpr pdcm pcid sse4_1 sse4_2 x2apic popcnt tsc_deadline_timer aes xsave avx lahf_lm epb tpr_shadow vnmi flexpriority ept vpid xsaveopt dtherm ida arat pln pts
 /proc/cpuinfo: bugs             :
-/proc/cpuinfo: bogomips : 4391.17
+/proc/cpuinfo: bogomips : 4390.89
 /proc/cpuinfo: clflush size     : 64
 /proc/cpuinfo: cache_alignment  : 64
 /proc/cpuinfo: address sizes    : 36 bits physical, 48 bits virtual
@@ -386,7 +385,7 @@ free: Swap:      2931808          0    2931808
 /proc/cpuinfo: model name       : Intel(R) Core(TM) i7-2670QM CPU @ 2.20GHz
 /proc/cpuinfo: stepping : 7
 /proc/cpuinfo: microcode        : 0x25
-/proc/cpuinfo: cpu MHz          : 1675.781
+/proc/cpuinfo: cpu MHz          : 1813.882
 /proc/cpuinfo: cache size       : 6144 KB
 /proc/cpuinfo: physical id      : 0
 /proc/cpuinfo: siblings : 8
@@ -400,7 +399,7 @@ free: Swap:      2931808          0    2931808
 /proc/cpuinfo: wp               : yes
 /proc/cpuinfo: flags            : fpu vme de pse tsc msr pae mce cx8 apic sep mtrr pge mca cmov pat pse36 clflush dts acpi mmx fxsr sse sse2 ss ht tm pbe syscall nx rdtscp lm constant_tsc arch_perfmon pebs bts rep_good nopl xtopology nonstop_tsc aperfmperf eagerfpu pni pclmulqdq dtes64 monitor ds_cpl vmx est tm2 ssse3 cx16 xtpr pdcm pcid sse4_1 sse4_2 x2apic popcnt tsc_deadline_timer aes xsave avx lahf_lm epb tpr_shadow vnmi flexpriority ept vpid xsaveopt dtherm ida arat pln pts
 /proc/cpuinfo: bugs             :
-/proc/cpuinfo: bogomips : 4391.20
+/proc/cpuinfo: bogomips : 4390.87
 /proc/cpuinfo: clflush size     : 64
 /proc/cpuinfo: cache_alignment  : 64
 /proc/cpuinfo: address sizes    : 36 bits physical, 48 bits virtual
@@ -413,7 +412,7 @@ free: Swap:      2931808          0    2931808
 /proc/cpuinfo: model name       : Intel(R) Core(TM) i7-2670QM CPU @ 2.20GHz
 /proc/cpuinfo: stepping : 7
 /proc/cpuinfo: microcode        : 0x25
-/proc/cpuinfo: cpu MHz          : 1698.125
+/proc/cpuinfo: cpu MHz          : 1809.843
 /proc/cpuinfo: cache size       : 6144 KB
 /proc/cpuinfo: physical id      : 0
 /proc/cpuinfo: siblings : 8
@@ -427,7 +426,7 @@ free: Swap:      2931808          0    2931808
 /proc/cpuinfo: wp               : yes
 /proc/cpuinfo: flags            : fpu vme de pse tsc msr pae mce cx8 apic sep mtrr pge mca cmov pat pse36 clflush dts acpi mmx fxsr sse sse2 ss ht tm pbe syscall nx rdtscp lm constant_tsc arch_perfmon pebs bts rep_good nopl xtopology nonstop_tsc aperfmperf eagerfpu pni pclmulqdq dtes64 monitor ds_cpl vmx est tm2 ssse3 cx16 xtpr pdcm pcid sse4_1 sse4_2 x2apic popcnt tsc_deadline_timer aes xsave avx lahf_lm epb tpr_shadow vnmi flexpriority ept vpid xsaveopt dtherm ida arat pln pts
 /proc/cpuinfo: bugs             :
-/proc/cpuinfo: bogomips : 4391.22
+/proc/cpuinfo: bogomips : 4390.89
 /proc/cpuinfo: clflush size     : 64
 /proc/cpuinfo: cache_alignment  : 64
 /proc/cpuinfo: address sizes    : 36 bits physical, 48 bits virtual
@@ -440,7 +439,7 @@ free: Swap:      2931808          0    2931808
 /proc/cpuinfo: model name       : Intel(R) Core(TM) i7-2670QM CPU @ 2.20GHz
 /proc/cpuinfo: stepping : 7
 /proc/cpuinfo: microcode        : 0x25
-/proc/cpuinfo: cpu MHz          : 1597.148
+/proc/cpuinfo: cpu MHz          : 1892.859
 /proc/cpuinfo: cache size       : 6144 KB
 /proc/cpuinfo: physical id      : 0
 /proc/cpuinfo: siblings : 8
@@ -454,7 +453,7 @@ free: Swap:      2931808          0    2931808
 /proc/cpuinfo: wp               : yes
 /proc/cpuinfo: flags            : fpu vme de pse tsc msr pae mce cx8 apic sep mtrr pge mca cmov pat pse36 clflush dts acpi mmx fxsr sse sse2 ss ht tm pbe syscall nx rdtscp lm constant_tsc arch_perfmon pebs bts rep_good nopl xtopology nonstop_tsc aperfmperf eagerfpu pni pclmulqdq dtes64 monitor ds_cpl vmx est tm2 ssse3 cx16 xtpr pdcm pcid sse4_1 sse4_2 x2apic popcnt tsc_deadline_timer aes xsave avx lahf_lm epb tpr_shadow vnmi flexpriority ept vpid xsaveopt dtherm ida arat pln pts
 /proc/cpuinfo: bugs             :
-/proc/cpuinfo: bogomips : 4391.21
+/proc/cpuinfo: bogomips : 4390.87
 /proc/cpuinfo: clflush size     : 64
 /proc/cpuinfo: cache_alignment  : 64
 /proc/cpuinfo: address sizes    : 36 bits physical, 48 bits virtual
@@ -467,7 +466,7 @@ free: Swap:      2931808          0    2931808
 /proc/cpuinfo: model name       : Intel(R) Core(TM) i7-2670QM CPU @ 2.20GHz
 /proc/cpuinfo: stepping : 7
 /proc/cpuinfo: microcode        : 0x25
-/proc/cpuinfo: cpu MHz          : 1508.718
+/proc/cpuinfo: cpu MHz          : 1893.632
 /proc/cpuinfo: cache size       : 6144 KB
 /proc/cpuinfo: physical id      : 0
 /proc/cpuinfo: siblings : 8
@@ -481,7 +480,7 @@ free: Swap:      2931808          0    2931808
 /proc/cpuinfo: wp               : yes
 /proc/cpuinfo: flags            : fpu vme de pse tsc msr pae mce cx8 apic sep mtrr pge mca cmov pat pse36 clflush dts acpi mmx fxsr sse sse2 ss ht tm pbe syscall nx rdtscp lm constant_tsc arch_perfmon pebs bts rep_good nopl xtopology nonstop_tsc aperfmperf eagerfpu pni pclmulqdq dtes64 monitor ds_cpl vmx est tm2 ssse3 cx16 xtpr pdcm pcid sse4_1 sse4_2 x2apic popcnt tsc_deadline_timer aes xsave avx lahf_lm epb tpr_shadow vnmi flexpriority ept vpid xsaveopt dtherm ida arat pln pts
 /proc/cpuinfo: bugs             :
-/proc/cpuinfo: bogomips : 4391.20
+/proc/cpuinfo: bogomips : 4390.92
 /proc/cpuinfo: clflush size     : 64
 /proc/cpuinfo: cache_alignment  : 64
 /proc/cpuinfo: address sizes    : 36 bits physical, 48 bits virtual
@@ -610,16 +609,16 @@ free: Swap:      2931808          0    2931808
 /proc/iomem: 44fe00000-44fffffff : RAM buffer
 /proc/interrupts:            CPU0       CPU1       CPU2       CPU3       CPU4       CPU5       CPU6       CPU7
 /proc/interrupts:   0:         20          0          0          0          0          0          0          0   IO-APIC   2-edge      timer
-/proc/interrupts:   1:       2464          0          0          0          0          0          0          0   IO-APIC   1-edge      i8042
-/proc/interrupts:   8:        104          0          0          0          0          0          0          0   IO-APIC   8-edge      rtc0
-/proc/interrupts:   9:        193          0          0          0          0          0          0          0   IO-APIC   9-fasteoi   acpi
+/proc/interrupts:   1:       6388          0          0          0          0          0          0          0   IO-APIC   1-edge      i8042
+/proc/interrupts:   8:         35          0          0          0          0          0          0          0   IO-APIC   8-edge      rtc0
+/proc/interrupts:   9:        114          0          0          0          0          0          0          0   IO-APIC   9-fasteoi   acpi
 /proc/interrupts:  12:          2          0          0          0          0          0          0          0   IO-APIC  12-edge      i8042
-/proc/interrupts:  16:         51          0          0          0          0          0          0          0   IO-APIC  16-fasteoi   ehci_hcd:usb1
+/proc/interrupts:  16:         53          0          0          0          0          0          0          0   IO-APIC  16-fasteoi   ehci_hcd:usb1
 /proc/interrupts:  19:          0          0          0          0          0          0          0          0   IO-APIC  19-fasteoi   mmc0
-/proc/interrupts:  20:        104          0          0          0          0          0          0          0   IO-APIC  20-fasteoi   ehci_hcd:usb3
+/proc/interrupts:  20:        106          0          0          0          0          0          0          0   IO-APIC  20-fasteoi   ehci_hcd:usb3
 /proc/interrupts:  24:          8          0          0          0          0          0          0          0   PCI-MSI 6815744-edge      rtsx_pci
-/proc/interrupts:  25:    1232759          0          0          0          0          0          0          0   PCI-MSI 524288-edge      eth0
-/proc/interrupts:  26:      32565          0          0          0          0          0          0          0   PCI-MSI 9961472-edge      xhci_hcd
+/proc/interrupts:  25:    1251557          0          0          0          0          0          0          0   PCI-MSI 524288-edge      eth0
+/proc/interrupts:  26:      36316          0          0          0          0          0          0          0   PCI-MSI 9961472-edge      xhci_hcd
 /proc/interrupts:  27:          0          0          0          0          0          0          0          0   PCI-MSI 9961473-edge      xhci_hcd
 /proc/interrupts:  28:          0          0          0          0          0          0          0          0   PCI-MSI 9961474-edge      xhci_hcd
 /proc/interrupts:  29:          0          0          0          0          0          0          0          0   PCI-MSI 9961475-edge      xhci_hcd
@@ -627,56 +626,56 @@ free: Swap:      2931808          0    2931808
 /proc/interrupts:  31:          0          0          0          0          0          0          0          0   PCI-MSI 9961477-edge      xhci_hcd
 /proc/interrupts:  32:          0          0          0          0          0          0          0          0   PCI-MSI 9961478-edge      xhci_hcd
 /proc/interrupts:  33:          0          0          0          0          0          0          0          0   PCI-MSI 9961479-edge      xhci_hcd
-/proc/interrupts:  34:    1907847          0          0          0          0          0          0          0   PCI-MSI 512000-edge      ahci[0000:00:1f.2]
-/proc/interrupts: NMI:         32          8         18          5         18          5         19          4   Non-maskable interrupts
-/proc/interrupts: LOC:    1684281     412427    7912165     855358    8363341     529714    9426253     526072   Local timer interrupts
+/proc/interrupts:  34:    1904381          0          0          0          0          0          0          0   PCI-MSI 512000-edge      ahci[0000:00:1f.2]
+/proc/interrupts: NMI:         34          9         19          4         17          8         19          6   Non-maskable interrupts
+/proc/interrupts: LOC:    1730617     193035    7887572     727150    8395146     780491    9158455     447720   Local timer interrupts
 /proc/interrupts: SPU:          0          0          0          0          0          0          0          0   Spurious interrupts
-/proc/interrupts: PMI:         32          8         18          5         18          5         19          4   Performance monitoring interrupts
+/proc/interrupts: PMI:         34          9         19          4         17          8         19          6   Performance monitoring interrupts
 /proc/interrupts: IWI:          0          0          0          0          0          0          0          0   IRQ work interrupts
 /proc/interrupts: RTR:          0          0          0          0          0          0          0          0   APIC ICR read retries
-/proc/interrupts: RES:       8570       3908      11228       2800       9097       1629       7433       1254   Rescheduling interrupts
-/proc/interrupts: CAL:        765        816        766        789        720        720        798        824   Function call interrupts
-/proc/interrupts: TLB:        815        338        783        370        646        369        697        342   TLB shootdowns
+/proc/interrupts: RES:      10697       5801      10974       1540       8532       2007       6907       1671   Rescheduling interrupts
+/proc/interrupts: CAL:        716        840        770        737        671        796        767        826   Function call interrupts
+/proc/interrupts: TLB:        965        396        804        371        837        373        754        344   TLB shootdowns
 /proc/interrupts: TRM:          0          0          0          0          0          0          0          0   Thermal event interrupts
 /proc/interrupts: THR:          0          0          0          0          0          0          0          0   Threshold APIC interrupts
 /proc/interrupts: DFR:          0          0          0          0          0          0          0          0   Deferred Error APIC interrupts
 /proc/interrupts: MCE:          0          0          0          0          0          0          0          0   Machine check exceptions
-/proc/interrupts: MCP:         87         87         87         87         87         87         87         87   Machine check polls
+/proc/interrupts: MCP:        103        103        103        103        103        103        103        103   Machine check polls
 /proc/interrupts: ERR:          0
 /proc/interrupts: MIS:          0
 /proc/interrupts: PIN:          0          0          0          0          0          0          0          0   Posted-interrupt notification event
 /proc/interrupts: PIW:          0          0          0          0          0          0          0          0   Posted-interrupt wakeup event
 /proc/meminfo: MemTotal:       16383024 kB
-/proc/meminfo: MemFree:        11963884 kB
-/proc/meminfo: MemAvailable:   15813300 kB
-/proc/meminfo: Buffers:            4212 kB
-/proc/meminfo: Cached:          3819204 kB
+/proc/meminfo: MemFree:        11905932 kB
+/proc/meminfo: MemAvailable:   15818332 kB
+/proc/meminfo: Buffers:            4572 kB
+/proc/meminfo: Cached:          3868784 kB
 /proc/meminfo: SwapCached:            0 kB
-/proc/meminfo: Active:          3771924 kB
-/proc/meminfo: Inactive:          81332 kB
-/proc/meminfo: Active(anon):     102920 kB
-/proc/meminfo: Inactive(anon):    47512 kB
-/proc/meminfo: Active(file):    3669004 kB
-/proc/meminfo: Inactive(file):    33820 kB
+/proc/meminfo: Active:          3784740 kB
+/proc/meminfo: Inactive:         118444 kB
+/proc/meminfo: Active(anon):     100640 kB
+/proc/meminfo: Inactive(anon):    44112 kB
+/proc/meminfo: Active(file):    3684100 kB
+/proc/meminfo: Inactive(file):    74332 kB
 /proc/meminfo: Unevictable:           0 kB
 /proc/meminfo: Mlocked:               0 kB
 /proc/meminfo: SwapTotal:       2931808 kB
 /proc/meminfo: SwapFree:        2931808 kB
-/proc/meminfo: Dirty:              2096 kB
+/proc/meminfo: Dirty:              1888 kB
 /proc/meminfo: Writeback:             0 kB
-/proc/meminfo: AnonPages:         28804 kB
-/proc/meminfo: Mapped:             5020 kB
-/proc/meminfo: Shmem:            120484 kB
-/proc/meminfo: Slab:             508076 kB
-/proc/meminfo: SReclaimable:     485380 kB
-/proc/meminfo: SUnreclaim:        22696 kB
-/proc/meminfo: KernelStack:        2464 kB
-/proc/meminfo: PageTables:         1056 kB
+/proc/meminfo: AnonPages:         29164 kB
+/proc/meminfo: Mapped:             4984 kB
+/proc/meminfo: Shmem:            114804 kB
+/proc/meminfo: Slab:             515584 kB
+/proc/meminfo: SReclaimable:     492756 kB
+/proc/meminfo: SUnreclaim:        22828 kB
+/proc/meminfo: KernelStack:        2560 kB
+/proc/meminfo: PageTables:          188 kB
 /proc/meminfo: NFS_Unstable:          0 kB
 /proc/meminfo: Bounce:                0 kB
 /proc/meminfo: WritebackTmp:          0 kB
 /proc/meminfo: CommitLimit:    11123320 kB
-/proc/meminfo: Committed_AS:     159620 kB
+/proc/meminfo: Committed_AS:     158272 kB
 /proc/meminfo: VmallocTotal:   34359738367 kB
 /proc/meminfo: VmallocUsed:           0 kB
 /proc/meminfo: VmallocChunk:          0 kB
@@ -687,8 +686,8 @@ free: Swap:      2931808          0    2931808
 /proc/meminfo: HugePages_Rsvd:        0
 /proc/meminfo: HugePages_Surp:        0
 /proc/meminfo: Hugepagesize:       2048 kB
-/proc/meminfo: DirectMap4k:      137472 kB
-/proc/meminfo: DirectMap2M:    16586752 kB
+/proc/meminfo: DirectMap4k:      143616 kB
+/proc/meminfo: DirectMap2M:    16580608 kB
 /proc/bus/input/devices: I: Bus=0011 Vendor=0001 Product=0001 Version=ab83
 /proc/bus/input/devices: N: Name="AT Translated Set 2 keyboard"
 /proc/bus/input/devices: P: Phys=isa0060/serio0/input0
