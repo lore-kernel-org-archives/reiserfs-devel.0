@@ -1,151 +1,176 @@
-From: Georgios Tsalikis <georgios@tsalikis.net>
-Subject: Re: Reiser4 extremely slow at deleting.
-Date: Wed, 27 Jul 2016 23:40:57 +0300
-Message-ID: <nnb68u$ioe$1@ger.gmane.org>
-References: <nnasaq$lpq$1@ger.gmane.org>
- <0aa0ad49-a6a7-4d53-8a91-aa78821156c2@intersafeit.com>
- <nnav5v$rgh$1@ger.gmane.org> <57990A72.8070509@gmail.com>
+From: <doiggl@velocitynet.com.au>
+Subject: How can reiser4 file system be recovered ? [/dev/sdb]
+Date: Fri, 29 Jul 2016 20:05:58 +1000
+Message-ID: <678ee79391799605c8a9d72498d5b94a@mail.velocitynet.com.au>
 Mime-Version: 1.0
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Transfer-Encoding: 8bit
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
-In-Reply-To: <57990A72.8070509@gmail.com>
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="utf-8"; format="flowed"
+Content-Type: text/plain; charset="us-ascii"
 To: reiserfs-devel@vger.kernel.org
 
-Thanks for responding Edward.
+Hello,
+How can reiser4 file system be recovered ? [/dev/sdb]
+Ideas, thoughts on how its done.
 
-That resstick.dd is a dd image of a thumbdrive with an operating system=
-=20
-and some media files in it.
-Now... i deleted another file. A backup of my $HOME. Approximately 70GB=
-=20
-and it took a second or two.
-Next is another dd of a whole Btrfs . Let's see how it deletes. In the=20
-meanwhile I am fscking because that last deletion caused free space to=20
-shrink. I will post separately about it.
+- Is it a case reiser4progs needs fixing ?
+http://www.spinics.net/lists/reiserfs-devel/msg04206.html
 
-On 27/07/2016 10:24 =CE=BC=CE=BC, Edward Shishkin wrote:
-> By default compression is turned on, and the file system tries to be=20
-> "smart".
-> However, default heuristics is not perfect. It works well for "/"=20
-> (setups created
-> during system installation). Also it works fine for various=20
-> development sets
-> (mixes of well-squeezable sources and not squeezable binaries), which=
-=20
-> is usual
-> environment for Gentoo people.
-> For media-files the default heuristics works very bad (is it clear,=20
-> why so?).
-> For large files it is strongly recommended to dedicate a separate=20
-> partition without
-> compression (mkfs option "create=3Dreg40").
->
-> Thanks,
-> Edward.
->
-> On 07/27/2016 08:39 PM, Georgios Tsalikis wrote:
->> Here is my disappointing data :p
->>
->> # measurefs.reiser4 -p /dev/sdc3
->> measurefs.reiser4 1.1.0
->> Format release: 4.0.1
->> Copyright (C) 2001-2005 by Hans Reiser, licensing governed by=20
->> reiser4progs/COPYING.
->>
->> Default profile:
->> create:          "ccreg40"         (id:0x4 type:0x0)    [Regular fil=
-e=20
->> plugin for creat(2)]
->> key:             "key_large"       (id:0x1 type:0xb)    [Key plugin]
->> node:            "node40"          (id:0x0 type:0x2)    [Node plugin=
-]
->> compress:        "lzo1"            (id:0x0 type:0xc) [Compression=20
->> plugin]
->> compressMode:    "conv"            (id:0x4 type:0xd) [Compression=20
->> Mode plugin]
->> cluster:         "64K"             (id:0x0 type:0x10) [Cluster plugi=
-n]
->> hash:            "r5_hash"         (id:0x1 type:0x3) [Directory entr=
-y=20
->> hash plugin]
->> fibration:       "ext_1_fibre"     (id:0x2 type:0x4)    [Key=20
->> fibration plugin]
->> formatting:      "smart"           (id:0x2 type:0x5)    [File body=20
->> formatting plugin]
->>
->> (actually i formatted it with node41 but it doesn't appear so)
->>
->> # ls -l resstick.dd
->> -rw-r--r-- 1 root root 22007840768 =CE=99=CE=BF=CF=8D=CE=BB 26 15:03=
- resstick.dd
->> # time rm resstick.dd
->>
->> real    21m43.005s
->> user    0m0.000s
->> sys    5m2.132s
->>
->> If this is not problematic then what is? It is a single deletion!!
->>
->>
->> On 27/07/2016 09:15 =CE=BC=CE=BC, Morgan Smith wrote:
->>> Was the file system created using the reg40 plugin or ccreg40 for o=
-n=20
->>> the
->>> fly compression?
->>>
->>> It seems to me I had this issue when using ccreg40 for on the fly
->>> compression. I wrote a similar request for help some years ago and =
-I
->>> believe the answer was to not use compression. IIRC it's not an iss=
-ue
->>> with the compression itself rather the handling of allocated space =
-for
->>> it and the shuffling that is done when releasing resources. I was=20
->>> unable
->>> to quickly find my old email to the list to confirm :(
->>>
->>> On 07/27/2016 11:51 AM, Georgios Tsalikis wrote:
->>>> It is almost always like this. For example a directory with 2.5GB =
-of
->>>> large files takes about 2 minutes. Right now i am deleting a large
->>>> directory with small files, I didn't keep the numbers before runni=
-ng,
->>>> but they are many directories with source code. Could it be
->>>> fragmentation? And how could I mitigate it? Thanks
->>>>
->>>>
->>>> --=20
->>>> To unsubscribe from this list: send the line "unsubscribe
->>>> reiserfs-devel" in
->>>> the body of a message to majordomo@vger.kernel.org
->>>> More majordomo info at http://vger.kernel.org/majordomo-info.html
->>> --=20
->>> To unsubscribe from this list: send the line "unsubscribe=20
->>> reiserfs-devel" in
->>> the body of a message to majordomo@vger.kernel.org
->>> More majordomo info at http://vger.kernel.org/majordomo-info.html
->>>
->>
->>
->> --=20
->> To unsubscribe from this list: send the line "unsubscribe=20
->> reiserfs-devel" in
->> the body of a message to majordomo@vger.kernel.org
->> More majordomo info at http://vger.kernel.org/majordomo-info.html
->
-> --=20
-> To unsubscribe from this list: send the line "unsubscribe=20
-> reiserfs-devel" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
->
+Thanks
+--Glenn
 
+previous trys:
+http://www.spinics.net/lists/reiserfs-devel/msg05102.html
+http://www.spinics.net/lists/reiserfs-devel/msg04685.html
 
---
-To unsubscribe from this list: send the line "unsubscribe reiserfs-deve=
-l" in
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+This is the sequence of --checks and --build-fs times of Reiser4 volume on
+disk /dev/sdb
+http://www.spinics.net/lists/reiserfs-devel/msg04667.html
+
+-- other info
+# measurefs.reiser4 -p -l  -f /dev/sdb                                    
+                                                                          
+ 
+measurefs.reiser4 1.1.0                                                   
+                                                                          
+      
+Format release: 4.0.1                                                     
+                                                                          
+      
+Copyright (C) 2001-2005 by Hans Reiser, licensing governed by
+reiser4progs/COPYING.                                                      
+                    
+                                                                          
+                                                                          
+        
+Default profile:                                                          
+                                                                          
+         
+create:          "ccreg40"         (id:0x4 type:0x0)    [Regular file
+plugin for creat(2)]                                                       
+              
+key:             "key_large"       (id:0x1 type:0xb)    [Key plugin]      
+                                                                          
+          
+node:            "node40"          (id:0x0 type:0x2)    [Node plugin]     
+                                                                          
+          
+compress:        "lzo1"            (id:0x0 type:0xc)    [Compression
+plugin]                                                                    
+                 
+compressMode:    "conv"            (id:0x4 type:0xd)    [Compression Mode
+plugin]                                                                    
+             
+cluster:         "64K"             (id:0x0 type:0x10)   [Cluster plugin]  
+                                                                          
+            
+hash:            "r5_hash"         (id:0x1 type:0x3)    [Directory entry
+hash plugin]                                                               
+                
+fibration:       "ext_1_fibre"     (id:0x2 type:0x4)    [Key fibration
+plugin]                                                                    
+                  
+formatting:      "smart"           (id:0x2 type:0x5)    [File body
+formatting plugin]                                                         
+                        
+                                                                          
+                                                                          
+                
+Known plugins:                                                            
+                                                                          
+                 
+"reg40"             (id:0x0 type:0x0) [Unix-file regular file plugin.]
+"dir40"             (id:0x1 type:0x0) [Directory file plugin.]
+"sym40"             (id:0x2 type:0x0) [Symlink file plugin.]
+"spl40"             (id:0x3 type:0x0) [Special file plugin.]
+"ccreg40"           (id:0x4 type:0x0) [Cryptcompress regular file plugin.]
+"stat40"            (id:0x0 type:0x1) [StatData item plugin.]
+"cde40"             (id:0x2 type:0x1) [Compound directory entry item
+plugin.]
+"nodeptr40"         (id:0x3 type:0x1) [Node pointer item plugin.]
+"extent40"          (id:0x5 type:0x1) [Extent file body item plugin.]
+"plain40"           (id:0x6 type:0x1) [Plain file body item plugin.]
+"ctail40"           (id:0x7 type:0x1) [Compressed file body item plugin.]
+"bbox40"            (id:0x8 type:0x1) [Safe link item plugin.]
+"node40"            (id:0x0 type:0x2) [Node layout plugin.]
+"node41"            (id:0x1 type:0x2) [Protected node layout plugin.]
+"rupasov_hash"      (id:0x0 type:0x3) [Rupasov hash plugin.]
+"r5_hash"           (id:0x1 type:0x3) [R5 hash plugin.]
+"tea_hash"          (id:0x2 type:0x3) [Tea hash plugin.]
+"fnv1_hash"         (id:0x3 type:0x3) [Fnv1 hash plugin.]
+"deg_hash"          (id:0x4 type:0x3) [Degenerate hash plugin.]
+"lexic_fibre"       (id:0x0 type:0x4) [Lexicographic fibration plugin.]
+"dot_o_fibre"       (id:0x1 type:0x4) ['.o' fibration plugin.]
+"ext_1_fibre"       (id:0x2 type:0x4) [1-symbol extention fibration
+plugin.]
+"ext_3_fibre"       (id:0x3 type:0x4) [3-symbol extention fibration
+plugin.]
+"extents"           (id:0x0 type:0x5) ['Extents only' tail policy plugin.]
+"tails"             (id:0x1 type:0x5) ['Tails only' tail policy plugin.]
+"smart"             (id:0x2 type:0x5) [Smart tail policy plugin.]
+"sdext_lw"          (id:0x0 type:0x6) [Light stat data extension plugin.]
+"sdext_unix"        (id:0x1 type:0x6) [Unix stat data extension plugin.]
+"sdext_lt"          (id:0x2 type:0x6) [Large times stat data extension
+plugin.]
+"sdext_symlink"     (id:0x3 type:0x6) [Symlink stat data extension
+plugin.]
+"sdext_plugin_set"  (id:0x4 type:0x6) [Plugin Set StatData extension
+plugin.]
+"sdext_flags"       (id:0x5 type:0x6) [Inode flags stat data extension
+plugin.]
+"sdext_crypto"      (id:0x7 type:0x6) [Crypto stat data extension plugin.]
+"sdext_heir_set"    (id:0x8 type:0x6) [Heir Set StatData extension
+plugin.]
+"format40"          (id:0x0 type:0x7) [Disk-format plugin.]
+"oid40"             (id:0x0 type:0x8) [Inode number allocator plugin.]
+"alloc40"           (id:0x0 type:0x9) [Space allocator plugin.]
+"journal40"         (id:0x0 type:0xa) [Journal plugin.]
+"key_short"         (id:0x0 type:0xb) [Short key plugin.]
+"key_large"         (id:0x1 type:0xb) [Large key plugin.]
+"lzo1"              (id:0x0 type:0xc) [lzo1 compression transform plugin.]
+"gzip1"             (id:0x1 type:0xc) [gzip1 compression transform
+plugin.]
+"none"              (id:0x0 type:0xd) ['Don't compress' compression mode
+plugin.]
+"latt"              (id:0x1 type:0xd) ['Check on dynamic lattice'
+compression mode plugin.]
+"ultim"             (id:0x2 type:0xd) ['Check ultimately' compression mode
+plugin.]
+"force"             (id:0x3 type:0xd) ['Compress evrything' compression
+mode plugin.]
+"conv"              (id:0x4 type:0xd) ['Convert to extent' compression
+mode plugin.]
+"64K"               (id:0x0 type:0x10) [64K size cluster plugin.]
+"32K"               (id:0x1 type:0x10) [32K size cluster plugin.]
+"16K"               (id:0x2 type:0x10) [16K size cluster plugin.]
+"8K"                (id:0x3 type:0x10) [8K size cluster plugin.]
+"4K"                (id:0x4 type:0x10) [4K size cluster plugin.]
+
+Tree statistics ... done                                                  
+                                                                          
+      
+Packing statistics:                                                       
+                                                                          
+    
+  Formatted nodes:    4094.45b (99.96%)
+  Branch nodes:       3991.65b (97.45%)
+  Twig nodes:         4069.33b (99.35%)
+  Leaf nodes:         4094.60b (99.97%)
+
+Node statistics:
+  Total nodes:      195776841
+  Formatted nodes:  169084618
+  Unformatted nodes: 26692223
+  Branch nodes:         22346
+  Twig nodes:         1903127
+  Leaf nodes:       193851368
+
+Item statistics:
+  Total items:      350921825
+  Nodeptr items:    169084617
+  Statdata items:      41164
+  Direntry items:        3723
+  Tail items:               0
+  Extent items:         25724
+ 
