@@ -1,59 +1,47 @@
-From: <doiggl@velocitynet.com.au>
-Subject: Reiser4 patch  [reiser4-for-4.6.0.patch] fails to apply to  linux-4.7
-Date: Sat, 30 Jul 2016 18:42:06 +1000
-Message-ID: <6fe272738b66d93e54de5fd6e27c7d97@mail.velocitynet.com.au>
+From: Edward Shishkin <edward.shishkin@gmail.com>
+Subject: Semantic (mountable) subvolumes in Reiser4
+Date: Sat, 30 Jul 2016 11:20:10 +0200
+Message-ID: <579C714A.7040304@gmail.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20120113;
+        h=message-id:date:from:user-agent:mime-version:to:subject
+         :content-transfer-encoding;
+        bh=F1IYHTRbK+0EUhcaXD2x1by+no9XDc1Fv7zH9zlezNk=;
+        b=oikHniGmOkkhm5dLMOfeI92QAJpa0LKnbe47kMUXgBsJZIBex1zHQaj7JJq2vFjvtG
+         Xz0BZFjormIeXtr+aITU8oiFXzAmg/ArmrHy/adb9A/XD6Vzih/yHfeEqfFhcVN0Un3z
+         GpYFs/2KDBw57Kw3FTvEz+da0IwSWGk7hH9UajLqm75MZHUeIxQSA08BXq8mR1ZO9qZD
+         KpbrsfZfnCxbk2Slcs/Hp47ZC5ldOv6rzTu2lDZap4hUHoCc7PBR5YI218J7mswj0GoE
+         zpLTt2/bdWxkF6u1Hmjejkj3DDDkqOkQdwaCUO9VlexUb4zSOb72lZt82v7Fs5LRL4p8
+         9kLw==
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-To: reiserfs-devel@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"; format="flowed"
+To: ReiserFS development mailing list <reiserfs-devel@vger.kernel.org>
 
-Hello,
-Reiser4 patch  [reiser4-for-4.6.0.patch] fails to apply to  linux-4.7
-please fix
---Glenn
+Semantic (mountable) subvolume is simply a named subtree of the semanic 
+tree.
+Such subtree has unusual root, which is not refered by the parent directory.
+That is, parent directory doesn't contain a record about that root. So 
+normally,
+you can not access this subtree. In order to access a semantic 
+subvolume, you
+first have to "mount" it. "Mounting" a semantic subvoume creates a 
+reference to
+its root (specifically, the mount point refers to that root), which makes it
+accessible. In other bits semantic subvolumes look like usual subtrees 
+of the
+semantic tree, which are always "visible".
 
-log #
-https://build.opensuse.org/build/home:doiggl/openSUSE_13.1/x86_64/kernel-vanilla/_log
-spec #
-https://build.opensuse.org/package/view_file/home:doiggl/kernel-vanilla/kernel-vanilla.spec?expand=1
-patches
-#https://build.opensuse.org/package/view_file/home:doiggl/kernel-vanilla/series.conf?expand=1
+Semantic subvolumes is not something new, they are present in some other 
+file
+systems (though with different names) and have many applications in
+virtualization (mostly due to their "isolation").
 
-[   39s] + cd linux-4.7
-[   39s] + /home/abuild/rpmbuild/SOURCES/apply-patches --vanilla
-/home/abuild/rpmbuild/SOURCES/series.conf ..
-[   39s] + patch -s -F0 -E -p1 --no-backup-if-mismatch -i
-../patches.rpmify/lustre-lloop-dont-change-logical-size
-[   39s] + patch -s -F0 -E -p1 --no-backup-if-mismatch -i
-../patches.rpmify/i915-fix-build-error-with-werror
-[   39s] + patch -s -F0 -E -p1 --no-backup-if-mismatch -i
-../patches.rpmify/reiser4-for-4.6.0.patch
-[   39s] 1 out of 5 hunks FAILED -- saving rejects to file
-fs/read_write.c.rej
-[   39s] 1 out of 8 hunks FAILED -- saving rejects to file
-include/linux/fs.h.rej
-[   39s] 1 out of 2 hunks FAILED -- saving rejects to file mm/vmscan.c.rej
-[   39s] ++ echo '*** patch ../patches.rpmify/reiser4-for-4.6.0.patch
-failed ***'
-[   39s] *** patch ../patches.rpmify/reiser4-for-4.6.0.patch failed ***
-[   39s] error: Bad exit status from /var/tmp/rpm-tmp.OBEacE (%prep)
-[   39s] 
-[   39s] 
-[   39s] RPM build errors:
-[   39s]     Bad exit status from /var/tmp/rpm-tmp.OBEacE (%prep)
-[   39s] 
-[   39s] build84 failed "build kernel-vanilla.spec" at Sat Jul 30 07:15:05
-UTC 2016.
-[   39s] 
-[   39s] ### WATCHDOG MARKER START ###
-[   43s] [   36.485157] sysrq: SysRq : Power Off
-[   43s] [   36.511881] reboot: Power down
-[   44s] ### WATCHDOG MARKER END ###
-[   44s] 
-[   44s] build84 failed "build kernel-vanilla.spec" at Sat Jul 30 07:15:11
-UTC 2016.
-[   44s] 
+Semantic subvolumes can be easily implemented in Reiser4. if someone cares,
+then I'll provide details.
 
+Thanks,
+Edward.
