@@ -1,56 +1,122 @@
-From: Jose R R <Jose.r.r@metztli-it.com>
-Subject: Debian 4.6.3-1+reiser4 -patched kernel for Jessie at Bintray
-Date: Wed, 3 Aug 2016 04:50:57 -0700
-Message-ID: <CAM12Q5RpAof4Tzist=XOiAcDjXKM9aiihxMvwen+hCq=pErvww@mail.gmail.com>
+From: <doiggl@velocitynet.com.au>
+Subject: list file-names and used-blocks from Reiser 4 meta data
+Date: Fri, 05 Aug 2016 13:41:04 +1000
+Message-ID: <21ff1fa694fe608753fe70fb52b2a447@mail.velocitynet.com.au>
 Mime-Version: 1.0
-Return-path: <bounce-debian-kernel=glddk-debian-kernel=m.gmane.org@lists.debian.org>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=metztli-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:sender:from:date:message-id:subject:to:cc;
-        bh=DU9J4yhELa4R15zNoawWWWFy/1lYF5NRGqXp3DT/7EI=;
-        b=ql5oL91y5bByxuBn+rLwhl2XpL0qq6EJPBtkEUX/9kvb0R+kDahe5/N4WmKCv1U+Ur
-         4YTIrCDabkeg3ocBpDqE2SS/20rngDk19MQCS/qEKJmr66N54ZAm9EBiDwH5ziqP8vWp
-         mvsj+a5CD61zwQOXx3jDXspTphaNCCaz1EsBJpNR86EUyqV5WWepHDSyBDBZOAZ5S+hS
-         ULAqoqyW5nviaBshA579TIebC6jslR9widz23UFft6VIPSMrnTiVUKcfbQIuQ9RBoIm7
-         nNOg4IinV/60j1ns4NdbjZje3bh+G4epiJ0uLtHp9/AjEQngjMsmn6AlHzcCaBRND1zu
-         5aTQ==
-Sender: jose.r.r@metztli.com
-Resent-Message-ID: <IBHKDNQY0NJ.A.OjC.2qdoXB@bendel>
-List-Id: <reiserfs-devel.vger.kernel.org>
-List-URL: <https://lists.debian.org/debian-kernel/>
-List-Post: <mailto:debian-kernel@lists.debian.org>
-List-Help: <mailto:debian-kernel-request@lists.debian.org?subject=help>
-List-Subscribe: <mailto:debian-kernel-request@lists.debian.org?subject=subscribe>
-List-Unsubscribe: <mailto:debian-kernel-request@lists.debian.org?subject=unsubscribe>
-List-Archive: https://lists.debian.org/msgid-search/CAM12Q5RpAof4Tzist=XOiAcDjXKM9aiihxMvwen+hCq=pErvww@mail.gmail.com
+Content-Transfer-Encoding: 8bit
+Return-path: <reiserfs-devel-owner@vger.kernel.org>
+Sender: reiserfs-devel-owner@vger.kernel.org
+List-ID: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: ReiserFS Development List <reiserfs-devel@vger.kernel.org>
-Cc: debian-kernel@lists.debian.org
+To: reiserfs-devel@vger.kernel.org
 
-Niltze, all!
+Hello,
 
-Couple of days ago I uploaded kernel 4.6.3-1+reiser4 (SFRN 4.0.1) for
-Jessie on AMD64, Debian packages to a Bintray repository.
-Additionally, reiser4progs 1.1.0-1 for Jessie on AMD64, Debian package
-was uploaded as well.
+From Reiser 4 meta-data -
+- Is it possible to list out file-names and used data blocks for each
+file-name ?
+- can file-name and used data blocks be copied to another partition and
+saved. ?
+- If so, has anyone got some code to do that ?
 
-https://bintray.com/metztli/reiser4/linux-image-4.6.0-1_reiser4.0.1-amd64
+[dir location and file-name]
+[used data block numbers for file-name]
+example:
 
-https://bintray.com/metztli/reiser4/reiser4progs_for_Jessie
+dirx/filename-a 
+19577
+195778
+1959
 
-Please make sure to read the kernel Release file for important instructions.
+dirx/filename-b
+9571
+957782
+9593
+9
 
-Or automate procedure outlined in Release file above by installing
-Debian Jessie natively onto Reiser4 (SFRN 4.0.1) via netboot ISO at
-SourceForge:
+dirx/filename-c
+8
+5
+3
+4
+20
 
-https://sf.net/projects/debian-reiser4/
+I could load that into database and check there are no same 'used block
+number' for two different file-names.
+Thanks
+--Glenn
 
-Unless anyone knows of a reason not to upload the generated kernel
-package files to Bintray (first time I do), I may subsequently upload
-Reiser4 (SFRN 4.0.1)-patched kernels 4.5 and 4.6.4.x for Jessie on
-AMD64.
+# measurefs.reiser4 -p -l  -f /dev/sdb                                    
+                                                                          
+ 
+measurefs.reiser4 1.1.0                                                   
+                                                                          
+      
+Format release: 4.0.1                                                     
+                                                                          
+      
+Copyright (C) 2001-2005 by Hans Reiser, licensing governed by
+reiser4progs/COPYING.                                                      
+                    
+                                                                          
+                                                                          
+        
+Default profile:                                                          
+                                                                          
+         
+create:          "ccreg40"         (id:0x4 type:0x0)    [Regular file
+plugin for creat(2)]                                                       
+              
+key:             "key_large"       (id:0x1 type:0xb)    [Key plugin]      
+                                                                          
+          
+node:            "node40"          (id:0x0 type:0x2)    [Node plugin]     
+                                                                          
+          
+compress:        "lzo1"            (id:0x0 type:0xc)    [Compression
+plugin]                                                                    
+                 
+compressMode:    "conv"            (id:0x4 type:0xd)    [Compression Mode
+plugin]                                                                    
+             
+cluster:         "64K"             (id:0x0 type:0x10)   [Cluster plugin]  
+                                                                          
+            
+hash:            "r5_hash"         (id:0x1 type:0x3)    [Directory entry
+hash plugin]                                                               
+                
+fibration:       "ext_1_fibre"     (id:0x2 type:0x4)    [Key fibration
+plugin]                                                                    
+                  
+formatting:      "smart"           (id:0x2 type:0x5)    [File body
+formatting plugin]                                                         
+                        
+.
+.
+Tree statistics ... done                                                  
+                                                                          
+      
+Packing statistics:                                                       
+                                                                          
+    
+  Formatted nodes:    4094.45b (99.96%)
+  Branch nodes:       3991.65b (97.45%)
+  Twig nodes:         4069.33b (99.35%)
+  Leaf nodes:         4094.60b (99.97%)
 
+Node statistics:
+  Total nodes:      195776841
+  Formatted nodes:  169084618
+  Unformatted nodes: 26692223
+  Branch nodes:         22346
+  Twig nodes:         1903127
+  Leaf nodes:       193851368
 
-Best Professional Regards.
+Item statistics:
+  Total items:      350921825
+  Nodeptr items:    169084617
+  Statdata items:      41164
+  Direntry items:        3723
+  Tail items:               0
+  Extent items:         25724
+
