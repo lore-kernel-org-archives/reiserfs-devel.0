@@ -1,7 +1,7 @@
 From: <doiggl@velocitynet.com.au>
-Subject: list file-names and used-blocks from Reiser 4 meta data
-Date: Fri, 05 Aug 2016 13:41:04 +1000
-Message-ID: <21ff1fa694fe608753fe70fb52b2a447@mail.velocitynet.com.au>
+Subject: Has anyone ever compiled the Reiser4 demo programs ?
+Date: Sat, 06 Aug 2016 23:25:03 +1000
+Message-ID: <819f0d4abe0d44ecc88c935af00724a6@mail.velocitynet.com.au>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
@@ -10,113 +10,107 @@ List-ID: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
 To: reiserfs-devel@vger.kernel.org
 
-Hello,
+Hello 
+Has anyone ever compiled the Reiser4 demo programs
 
-From Reiser 4 meta-data -
-- Is it possible to list out file-names and used data blocks for each
-file-name ?
-- can file-name and used data blocks be copied to another partition and
-saved. ?
-- If so, has anyone got some code to do that ?
+If so what commands were used ?
 
-[dir location and file-name]
-[used data block numbers for file-name]
-example:
-
-dirx/filename-a 
-19577
-195778
-1959
-
-dirx/filename-b
-9571
-957782
-9593
-9
-
-dirx/filename-c
-8
-5
-3
-4
-20
-
-I could load that into database and check there are no same 'used block
-number' for two different file-names.
-Thanks
 --Glenn
 
-# measurefs.reiser4 -p -l  -f /dev/sdb                                    
+I get this: 
+
+/tmp/reiser4progs-1.1.0/demos # gcc  ls.c
+In file included from ls.c:6:0:
+busy.h:17:23: fatal error: misc/misc.h: No such file or directory
+ #include <misc/misc.h>
+                       ^
+compilation terminated.
+
+/tmp/reiser4progs-1.1.0/demos # ll /tmp/reiser4progs-1.1.0/demos
+total 100
+-rw-r--r-- 1 root users   394 Jan  9  2009 Makefile.am
+-rw-r--r-- 1 root users 33088 Aug 24  2015 Makefile.in
+-rw-r--r-- 1 root users 13597 Jan  9  2009 busy.c
+-rw-r--r-- 1 root users  1409 Jan  9  2009 busy.h
+-rw-r--r-- 1 root users  4368 Jan  9  2009 cp.c
+-rw-r--r-- 1 root users  1559 Jan  9  2009 create.c
+-rw-r--r-- 1 root users  1263 Jan  9  2009 detect
+-rw-r--r-- 1 root users  1736 Jan  9  2009 ln.c
+-rw-r--r-- 1 root users  1048 Jan  9  2009 ls.c
+-rw-r--r-- 1 root users   761 Jan  9  2009 misc.c
+-rw-r--r-- 1 root users  1419 Jan  9  2009 rm.c
+-rw-r--r-- 1 root users   917 Jan  9  2009 stat.c
+-rw-r--r-- 1 root users  1158 Aug 24  2015 trunc.c
+
+
+/tmp/reiser4progs-1.1.0/demos # ll  /tmp/reiser4progs-1.1.0/include 
+/tmp/reiser4progs-1.1.0/include/misc
+/tmp/reiser4progs-1.1.0/include:
+total 25
+-rw-r--r-- 1 root users    34 Jan  9  2009 Makefile.am
+-rw-r--r-- 1 root users 18296 Aug 24  2015 Makefile.in
+drwxr-xr-x 2 root users   184 Aug 30  2015 aux
+drwxr-xr-x 2 root users   312 Aug 30  2015 misc
+drwxr-xr-x 2 root users   760 Aug 30  2015 reiser4                        
                                                                           
- 
-measurefs.reiser4 1.1.0                                                   
+        
+drwxr-xr-x 2 root users   760 Aug 30  2015 repair                         
                                                                           
-      
-Format release: 4.0.1                                                     
-                                                                          
-      
-Copyright (C) 2001-2005 by Hans Reiser, licensing governed by
-reiser4progs/COPYING.                                                      
-                    
+        
                                                                           
                                                                           
         
-Default profile:                                                          
+/tmp/reiser4progs-1.1.0/include/misc:                                     
                                                                           
          
-create:          "ccreg40"         (id:0x4 type:0x0)    [Regular file
-plugin for creat(2)]                                                       
-              
-key:             "key_large"       (id:0x1 type:0xb)    [Key plugin]      
+total 48                                                                  
+                                                                          
+         
+-rw-r--r-- 1 root users    81 Jan  9  2009 Makefile.am                    
+                                                                          
+         
+-rw-r--r-- 1 root users 14091 Aug 24  2015 Makefile.in                    
+                                                                          
+         
+-rw-r--r-- 1 root users   404 Jan  9  2009 exception.h                    
+                                                                          
+         
+-rw-r--r-- 1 root users   280 Jan  9  2009 gauge.h                        
+                                                                          
+         
+-rw-r--r-- 1 root users  1873 Jan  9  2009 misc.h                         
+                                                                          
+         
+-rw-r--r-- 1 root users   449 Jan  9  2009 mpressure.h                    
+                                                                          
+         
+-rw-r--r-- 1 root users   340 Jan  9  2009 profile.h                      
                                                                           
           
-node:            "node40"          (id:0x0 type:0x2)    [Node plugin]     
+-rw-r--r-- 1 root users   641 Jan  9  2009 ui.h                           
                                                                           
           
-compress:        "lzo1"            (id:0x0 type:0xc)    [Compression
-plugin]                                                                    
-                 
-compressMode:    "conv"            (id:0x4 type:0xd)    [Compression Mode
-plugin]                                                                    
-             
-cluster:         "64K"             (id:0x0 type:0x10)   [Cluster plugin]  
+-rw-r--r-- 1 root users   479 Aug 24  2015 version.h                      
                                                                           
-            
-hash:            "r5_hash"         (id:0x1 type:0x3)    [Directory entry
-hash plugin]                                                               
-                
-fibration:       "ext_1_fibre"     (id:0x2 type:0x4)    [Key fibration
-plugin]                                                                    
-                  
-formatting:      "smart"           (id:0x2 type:0x5)    [File body
-formatting plugin]                                                         
-                        
-.
-.
-Tree statistics ... done                                                  
-                                                                          
-      
-Packing statistics:                                                       
-                                                                          
-    
-  Formatted nodes:    4094.45b (99.96%)
-  Branch nodes:       3991.65b (97.45%)
-  Twig nodes:         4069.33b (99.35%)
-  Leaf nodes:         4094.60b (99.97%)
+          
 
-Node statistics:
-  Total nodes:      195776841
-  Formatted nodes:  169084618
-  Unformatted nodes: 26692223
-  Branch nodes:         22346
-  Twig nodes:         1903127
-  Leaf nodes:       193851368
+# gcc  -I /tmp/reiser4progs-1.1.0/include -I
+/tmp/reiser4progs-1.1.0/include/misc   ls.c
+/usr/lib64/gcc/x86_64-suse-linux/4.8/../../../../lib64/crt1.o: In function
+`_start':
+/home/abuild/rpmbuild/BUILD/glibc-2.19/csu/../sysdeps/x86_64/start.S:118:
+undefined reference to `main'
+/tmp/ccTReqOc.o: In function `ls_cmd':
+ls.c:(.text+0x46): undefined reference to `aal_exception_throw'
+ls.c:(.text+0x7a): undefined reference to `aal_exception_throw'
+ls.c:(.text+0xb2): undefined reference to `reiser4_semantic_open'
+ls.c:(.text+0xe4): undefined reference to `aal_exception_throw'
+ls.c:(.text+0x117): undefined reference to `reiser4_print_key'
+ls.c:(.text+0x14d): undefined reference to `reiser4_object_readdir'
+ls.c:(.text+0x171): undefined reference to `reiser4_print_key'
+ls.c:(.text+0x192): undefined reference to `reiser4_object_close'
+collect2: error: ld returned 1 exit status
 
-Item statistics:
-  Total items:      350921825
-  Nodeptr items:    169084617
-  Statdata items:      41164
-  Direntry items:        3723
-  Tail items:               0
-  Extent items:         25724
+using opensuse
+reiser4progs-1.1.0.tar.gz
 
