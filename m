@@ -1,48 +1,77 @@
-From: <doiggl@velocitynet.com.au>
-Subject: Re: Has anyone ever compiled the Reiser4 demo programs ?
-Date: Mon, 08 Aug 2016 00:01:25 +1000
-Message-ID: <4e57178c68f5bb2bb67392e472a02ede@mail.velocitynet.com.au>
-References: <819f0d4abe0d44ecc88c935af00724a6@mail.velocitynet.com.au>
+From: Edward Shishkin <edward.shishkin@gmail.com>
+Subject: [PATCH] reiser4: don't capture superblock at sync_fs()
+Date: Mon, 08 Aug 2016 21:34:45 +0200
+Message-ID: <57A8DED5.90509@gmail.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/mixed;
+ boundary="------------020405030500070901040101"
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
-In-Reply-To: <819f0d4abe0d44ecc88c935af00724a6@mail.velocitynet.com.au>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20120113;
+        h=message-id:date:from:user-agent:mime-version:to:subject;
+        bh=6KQxKJKJipsfyyuQylKXXzMh3+Sqga7j+QllZC96l08=;
+        b=bi0i3HykpuU9Udfk33FgKIQeXShyA/gq5iCUJ8pvjAlBhhlu6/Id3u6QsXsyDlYCIT
+         +nBwiZ6t3M6FUujFuVwnX7T9N+ggw0DtvTiu4TIQv7mavZtzOzK0fKS9XnYxChCI/agE
+         BpvFbQVM5qNbZpx/hnOAlD7tf6cVyVIB1PUftt9762SZByRxIeDNvwOZ5TTqJLxWu9uz
+         s4uhE8YqOFtH79bfiQLMeiANuCag8LMHcqFaC39YhmqFDrWQPKGJQ3UytM+e28Ft/zkr
+         DCbby8MqqktnhYlJQhnla2yjxy6augUtpi30QxreW8TyKT03C/QraSLJ6XkEDO+Tymqy
+         xEaw==
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-To: reiserfs-devel@vger.kernel.org
+To: ReiserFS development mailing list <reiserfs-devel@vger.kernel.org>
 
-Tried following,
-What is next step ?
-Thanks Glenn
+This is a multi-part message in MIME format.
+--------------020405030500070901040101
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-# ll /tmp/reiser4progs-1.1.0/include/misc/misc.h
-/tmp/reiser4progs-1.1.0/demos/busy.h
--rw-r--r-- 1 root users 1409 Jan  9  2009
-/tmp/reiser4progs-1.1.0/demos/busy.h
--rw-r--r-- 1 root users 1873 Jan  9  2009
-/tmp/reiser4progs-1.1.0/include/misc/misc.h
 
-# gcc -I/tmp/reiser4progs-1.1.0/demos/  -I/tmp/reiser4progs-1.1.0/include/
-ls.c
-/usr/lib64/gcc/x86_64-suse-linux/4.8/../../../../lib64/crt1.o: In function
-`_start':
-/home/abuild/rpmbuild/BUILD/glibc-2.19/csu/../sysdeps/x86_64/start.S:118:
-undefined reference to `main'
-/tmp/ccquggTV.o: In function `ls_cmd':
-ls.c:(.text+0x46): undefined reference to `aal_exception_throw'
-ls.c:(.text+0x7a): undefined reference to `aal_exception_throw'
-ls.c:(.text+0xb2): undefined reference to `reiser4_semantic_open'
-ls.c:(.text+0xe4): undefined reference to `aal_exception_throw'
-ls.c:(.text+0x117): undefined reference to `reiser4_print_key'
-ls.c:(.text+0x14d): undefined reference to `reiser4_object_readdir'
-ls.c:(.text+0x171): undefined reference to `reiser4_print_key'
-ls.c:(.text+0x192): undefined reference to `reiser4_object_close'
-collect2: error: ld returned 1 exit status
 
-# which ld
-/usr/bin/ld
+--------------020405030500070901040101
+Content-Type: text/x-patch;
+ name="reiser4-dont-capture-superblock.patch"
+Content-Transfer-Encoding: 7bit
+Content-Disposition: attachment;
+ filename="reiser4-dont-capture-superblock.patch"
 
-# ld -v
-GNU ld (GNU Binutils; openSUSE 13.1) 2.23.2
+Don't capture superblock at ->sync_fs().
 
+Signed-off-by: Edward Shishkin <edward.shishkin@gmail.com>
+---
+ fs/reiser4/super_ops.c |   15 +++++++--------
+ 1 file changed, 7 insertions(+), 8 deletions(-)
+
+--- a/fs/reiser4/super_ops.c
++++ b/fs/reiser4/super_ops.c
+@@ -401,7 +401,6 @@ static long reiser4_writeback_inodes(str
+ /* ->sync_fs() of super operations */
+ static int reiser4_sync_fs(struct super_block *super, int wait)
+ {
+-	int ret;
+ 	reiser4_context *ctx;
+ 	struct bdi_writeback *wb;
+ 	struct wb_writeback_work work = {
+@@ -424,14 +423,14 @@ static int reiser4_sync_fs(struct super_
+ 		return PTR_ERR(ctx);
+ 	}
+ 	/*
+-	 * Capture znode associated with super block
++	 * We don't capture superblock here.
++	 * Superblock is captured only by operations, which change
++	 * its fields different from free_blocks, nr_files, next_oid.
++	 * After system crash the mentioned fields are recovered from
++	 * journal records, see reiser4_journal_recover_sb_data().
++	 * Also superblock is captured at final commit when releasing
++	 * disk format.
+ 	 */
+-	ret = reiser4_capture_super_block(super);
+-	if (ret != 0)
+-		warning("vs-1701",
+-			"reiser4_capture_super_block failed in write_super: %d",
+-			ret);
+-
+ 	wb = &inode_to_bdi(reiser4_get_super_fake(super))->wb;
+ 	spin_lock(&wb->list_lock);
+ 	generic_writeback_sb_inodes(super, wb, &wbc, &work, true);
+
+--------------020405030500070901040101--
