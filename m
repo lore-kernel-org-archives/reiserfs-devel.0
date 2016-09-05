@@ -1,31 +1,44 @@
-From: <doiggl@velocitynet.com.au>
-Subject: [conclusion] Reiser4  existing metadata  [/dev/sdb]
-Date: Mon, 05 Sep 2016 19:50:17 +1000
-Message-ID: <89e8c80b3225c73a9e789383752ae97d@mail.velocitynet.com.au>
-Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
+From: Edward Shishkin <edward.shishkin@gmail.com>
+Subject: [PATCH] Prevent Oops when mounting forward-incompatible volumes.
+Date: Mon,  5 Sep 2016 18:13:21 +0200
+Message-ID: <1473092001-9402-1-git-send-email-edward.shishkin@gmail.com>
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20120113;
+        h=from:to:cc:subject:date:message-id;
+        bh=QcN5yEx2hsfaIzTmdotJdx5j/4JbrPxLXfJykOzV1rY=;
+        b=uRrroEmqPUnrWb1t2Osj7ua2eLwazBUPO0LjdYoxihNM/pdH6CMqpw5cnnsUvEeNkn
+         7Kf0i2N+L1iJVSvGtfF7cQvdz/X0mcx+SUbzmyhUFiMHqOqTlfbZHskzUrAchWyu11Q9
+         1bT/7RpoSOIjxxOYtQYiUzzGGwqRTDG9nFevE+G4dLHVlwy4yo3OihbI/Uml3QD2l+Z9
+         obisJ4XRjIq8zUCFTMb+VubPowaGrKuZDYNQ1K36SYUPD/0Mr9zBFzAwhZf8sQWv0VWS
+         lybI+UYvs+VkV7un+ildf6BHNF7YxxwBYDCIRjkX0zBnL5xthLrqKTFEQTLKCHlu1QnW
+         zibw==
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
+MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 To: reiserfs-devel@vger.kernel.org
+Cc: Edward Shishkin <edward.shishkin@gmail.com>
 
-Hello,
+Signed-off-by: Edward Shishkin <edward.shishkin@gmail.com>
+---
+ init_super.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Just letting you know I reformatted the Reiser4 volume to R3 start afresh
-[/dev/sdb]
-I kept a copy of existing metadata if you want to test with it.
+diff --git a/init_super.c b/init_super.c
+index bd1644b..fb37605 100644
+--- a/init_super.c
++++ b/init_super.c
+@@ -639,7 +639,7 @@ int reiser4_init_read_super(struct super_block *super, int silent)
+ 		}
+ 
+ 		sbinfo->df_plug =
+-			disk_format_plugin_by_id(
++			disk_format_plugin_by_unsafe_id(
+ 				le16_to_cpu(get_unaligned(&master_sb->disk_plugin_id)));
+ 		if (sbinfo->df_plug == NULL) {
+ 			if (!silent)
+-- 
+2.7.4
 
-Disk /dev/sdb: 2000.4 GB, 2000398934016 bytes, 3907029168 sectors
-Units = sectors of 1 * 512 = 512 bytes
-Sector size (logical/physical): 512 bytes / 512 bytes
-I/O size (minimum/optimal): 512 bytes / 512 bytes
-
-metadata-sdb
-2,096,365,664
-
-unpacked
-24742135567 May 28 17:17 metadata-sdb
-24,742,135,567
-
---Glenn
