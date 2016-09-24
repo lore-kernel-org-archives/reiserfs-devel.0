@@ -1,99 +1,57 @@
-From: <doiggl@velocitynet.com.au>
-Subject: Re: [PATCH] Prevent Oops when mounting forward-incompatible volumes.
-Date: Sat, 17 Sep 2016 22:05:33 +1000
-Message-ID: <9e2c36bdb12a3da6710de08ec49946f3@mail.velocitynet.com.au>
-References: <1473092001-9402-1-git-send-email-edward.shishkin@gmail.com>
+From: Edward Shishkin <edward.shishkin@gmail.com>
+Subject: Reiser4 Upstream Git Repositories on GitHub
+Date: Sat, 24 Sep 2016 22:16:55 +0200
+Message-ID: <57E6DF37.1050702@gmail.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
-In-Reply-To: <1473092001-9402-1-git-send-email-edward.shishkin@gmail.com>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20120113;
+        h=message-id:date:from:user-agent:mime-version:to:subject
+         :content-transfer-encoding;
+        bh=CKRhSUpmiWd/KhgjvLnsKSwbsw8tV63Udjmsm28xkTM=;
+        b=BxEsK4btKWnHJV+xlP/x0aYjivU6/QE2sYymafIV9Y7Vzitv7oWHshvi+kkh9bLawU
+         awAqWECQi9A3MN+7WbL4WLLKvSNmnzNHSj1hvERQUl74kfe7V01ebMK9wN8ohur3OYfm
+         tYSe9ZcfFqwDhXCd7S0YcbS1EcyY6j935kqVvASIjaOXVGYU9LDhoJH2L5HqXq7uzyFy
+         fDSkBggeHwx4whGf5VVVzxQOzuYo4o6kSqHWA/NiI6HkUsRH96pZ5F3PEDkHO2jTzhNZ
+         mKeqj2m35cZ1MIoMQ9bMhwyJeVO90fAMnAM9Vtcr248idMcoDw5aacwabKslX8x5q8Ab
+         npaQ==
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-To: Edward Shishkin <edward.shishkin@gmail.com>
-Cc: reiserfs-devel@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"; format="flowed"
+To: ReiserFS development mailing list <reiserfs-devel@vger.kernel.org>
 
-Hello,
-patch fails to apply to linux-4.7
-http://www.spinics.net/lists/reiserfs-devel/msg05165.html
+Hello everyone,
 
-[1]reiser4-prevent-oops-when-mounting-forward-incompatible-volumes.patch 
+I have set up the updated Namesys repositories at my Github page.
+Those repositories are supposed to contain the latest updates in
+the (stable) master branch and in other (experimental) branches that
+I'll announce.
 
--Whats missing ?
---Glenn
+1) https://github.com/edward6/reiser4
 
+This is a "standalone" reiser4 tree, which doesn't include specific
+changes of Linux kernel needed for reiser4 port. Such changes can be
+found at the project's page on Sourceforge:
+https://sourceforge.net/projects/reiser4/
 
-patch order
-	patches.rpmify/reiser4-for-4.7.0.patch
-	ppatches.rpmify/reiser4-prevent-oops-when-mounting-forward-incompatible-volumes.patch
+An example of work with the standalone reiser4 tree:
 
+. Patch the respective kernel with the latest available stuff from
+   Sourceforge;
+. cd to the "fs" directory;
+. delete the directory reiser4;
+. instead of the deleted stuff clone the standalone reiser4
+   repository from Github;
+. build and install as usual.
 
-From last build log:
-https://build.opensuse.org/package/live_build_log/home:doiggl/kernel-vanilla/openSUSE_13.2/x86_64
+2) Libaal and Reiser4progs:
 
-[  246s] + cd linux-4.7
-[  246s] + /home/abuild/rpmbuild/SOURCES/apply-patches --vanilla
-/home/abuild/rpmbuild/SOURCES/series.conf ..
-[  246s] + patch -s -F0 -E -p1 --no-backup-if-mismatch -i
-../patches.rpmify/lustre-lloop-dont-change-logical-size
-[  246s] + patch -s -F0 -E -p1 --no-backup-if-mismatch -i
-../patches.rpmify/i915-fix-build-error-with-werror
-[  246s] + patch -s -F0 -E -p1 --no-backup-if-mismatch -i
-../patches.rpmify/reiser4-for-4.7.0.patch
-[  246s] + patch -s -F0 -E -p1 --no-backup-if-mismatch -i
-../patches.rpmify/reiser4-prevent-oops-when-mounting-forward-incompatible-volumes.patch
-[  246s] The text leading up to this was:
-[  246s] --------------------------
-[  246s] |#Prevent-Oops-when-mounting-forward-incompatible-volumes.patch
-[  246s] |#http://www.spinics.net/lists/reiserfs-devel/msg05165.html
-[  246s] |---
-[  246s] | init_super.c | 2 +-
-[  246s] | 1 file changed, 1 insertion(+), 1 deletion(-)
-[  246s] |
-[  246s] |diff --git a/init_super.c b/init_super.c
-[  246s] |index bd1644b..fb37605 100644
-[  246s] |--- a/init_super.c
-[  246s] |+++ b/init_super.c
-[  246s] --------------------------
-[  246s] File to patch: 
-[  246s] Skip this patch? [y] 
-[  246s] 1 out of 1 hunk ignored
-[  246s] ++ echo '*** patch
-../patches.rpmify/reiser4-prevent-oops-when-mounting-forward-incompatible-volumes.patch
-failed ***'
-[  246s] *** patch
-../patches.rpmify/reiser4-prevent-oops-when-mounting-forward-incompatible-volumes.patch
-failed ***
-[  246s] error: Bad exit status from /var/tmp/rpm-tmp.jaeLa6 (%prep)
-[  246s] 
-[  246s] 
-[  246s] RPM build errors:
-[  246s]     Bad exit status from /var/tmp/rpm-tmp.jaeLa6 (%prep)
-[  246s] 
+https://github.com/edward6/libaal
+https://github.com/edward6/reiser4progs
 
-#[patch content]
+Before building Libaal and Reiser4progs execute the ./prepare script,
+which will create files needed for build process.
 
-# cat
-/home/r4/patches-latest/reiser4-prevent-oops-when-mounting-forward-incompatible-volumes.patch
-#Prevent-Oops-when-mounting-forward-incompatible-volumes.patch
-#http://www.spinics.net/lists/reiserfs-devel/msg05165.html
----
- init_super.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/init_super.c b/init_super.c
-index bd1644b..fb37605 100644
---- a/init_super.c
-+++ b/init_super.c
-@@ -639,7 +639,7 @@ int reiser4_init_read_super(struct super_block *super,
-int silent)
-                }
- 
-                sbinfo->df_plug =
--                       disk_format_plugin_by_id(
-+                       disk_format_plugin_by_unsafe_id(
-                               
-le16_to_cpu(get_unaligned(&master_sb->disk_plugin_id)));
-                if (sbinfo->df_plug == NULL) {
-                        if (!silent)
---
+Thanks,
+Edward.
