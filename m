@@ -1,29 +1,29 @@
 From: Ivan Shapovalov <intelfx@intelfx.name>
 Subject: Re: Reiser4 Upstream Git Repositories on GitHub
-Date: Tue, 27 Sep 2016 02:03:18 +0300
-Message-ID: <1474930998.1773.1.camel@intelfx.name>
+Date: Tue, 27 Sep 2016 04:43:11 +0300
+Message-ID: <1474940591.1773.4.camel@intelfx.name>
 References: <57E6DF37.1050702@gmail.com>
          <1474927548.10826.6.camel@intelfx.name> <57E9A32D.3000108@gmail.com>
 Reply-To: intelfx@intelfx.name
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg="pgp-sha512";
-        protocol="application/pgp-signature"; boundary="=-ELJ2YBBfdmDQY6MfxXpk"
+        protocol="application/pgp-signature"; boundary="=-E6/veKsuorYsxU2ZY3yz"
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=intelfx.name; s=google;
         h=message-id:subject:from:reply-to:to:date:in-reply-to:references
          :mime-version;
-        bh=4HfSp9duAaaJGDFelNAtHjzXE7hMRJ+/qa2lpxax5E0=;
-        b=MhmKAtxtJSb8JoO117g5wcZgGHct0ioYzQmqWX08qcJxPhBkSGbOuv0xwYJw5m1aAV
-         0GbAN0ioH4XfZpEJOSw9He9xDta1JFdNUKl9sMmq+8wpTZZYLn5IxrCPlKyXO2ivlg+n
-         /nWstlT1AJAuhWQE7oOIZB+LASL+yyMmXLwMw=
+        bh=LOQSnKJ23+4FotZO7lDk3V61MB3tS2PgIKZ1vOUkGlo=;
+        b=UFLzjz8rRRnMCvM2swyig7BZPStZ92A0ePgQBENYQbqD/NtDqzkpyy5WNxCV5ytymA
+         LB7SmzRapGpZ2xDt5g9Jqq/hIH5/Klm1dNI5dMpkTvMFnbJI8YZDQ7/pMpdIzpEuVtmv
+         uyjnCbvnhqT8qIOMOZr+D0cDPMZsABXCx1Jsc=
 In-Reply-To: <57E9A32D.3000108@gmail.com>
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
 To: Edward Shishkin <edward.shishkin@gmail.com>, ReiserFS development mailing list <reiserfs-devel@vger.kernel.org>
 
 
---=-ELJ2YBBfdmDQY6MfxXpk
+--=-E6/veKsuorYsxU2ZY3yz
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
@@ -84,31 +84,33 @@ On 2016-09-27 at 00:37 +0200, Edward Shishkin wrote:
 > There will be "all changes for 6 years" commit.
 > Is it much better?
 
-I'll check how much better it is exactly :)
+I've noticed that your tree has an if(0) in should_punch_hole(),
+while you've previously posted code for race detection in the hole
+punch mechanism, and this code is not in your tree... is this correct?
 
 --=20
 Ivan Shapovalov / intelfx /
---=-ELJ2YBBfdmDQY6MfxXpk
+--=-E6/veKsuorYsxU2ZY3yz
 Content-Type: application/pgp-signature; name="signature.asc"
 Content-Description: This is a digitally signed message part
 Content-Transfer-Encoding: 7bit
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIcBAABCgAGBQJX6ak2AAoJEHveF8jk4w6dX1oP/0sUS4moDCidoGMSO+k54D+s
-5sAHfJlMczD0mcB2d9k0UXQbtRC3QDAUUHXS8tp09PJ6KaeGWGE021F0Y9enQSuh
-N9N9p6Zn/D5sWWuUDgGROfY3QIJuRIOn8UeFd7mO8PQsdD6iRzz1q3Cj5S1VQcH0
-BtaB/Q8kQV3jLqfDkqAoO+e3llkztc/BeHiEVoMNjTYSA5Cg/B/BAuI9CYUjeQcy
-Vkf3fwKRttCjVnfdu+k/XTqU0o1Lyc3cY/pjIpSuVY/vOq5djPVV8Kzw5gVqNRWN
-7NuQeIG9j/oo+GfkjZE8H8IdJwn3jcFkJttrAMKZuWaZuG24RBJQAYvfYeh36Fx7
-Z3A+HgbO8d/B1UANzxcMl6pCmwX3egmiJFwtwyiYhbqaJfMZgf2zMcacSA7COyMD
-Ve05lQL1DzEuaGurGrmzAjBQylSU/VA+JaTqQ8fdAw++uGDfXl9kHu1Q5uVhBcm8
-gMDWCMxXPD8fT9XlWvSiXXDypyBmBIbUj+PABdxWBoJZa781fTkOYyRMFNzzI5GH
-tiEpfpc/L936KHITz2lrZljJ/0afuzy2dWVuQ/9ZX65CRsR08Sqi3YD+WgUfne4h
-orgYpO8NnQSaujs7d/dyLQrOvX5rRDezf3+7fuMVkujAs4hx2kxnyCXKIFAjyr+y
-fif0ruyznNBObjDXipVd
-=Iadg
+iQIcBAABCgAGBQJX6c6vAAoJEHveF8jk4w6dO7oP/A3bY8fk8IZ6FJZGuDAhz6el
+muCJkTcSbPckZKR8RpHsQG0qGZBAyePBgZ0fNEkqQqKqZF8Lu++xeQjKMIxZm31X
+0XZ/9acsuN88TsRM7iamUg5rueoUISA3/k/Xklk8uLzaZg2rniuV99ZxHiaDoiLT
+rtq6leBHMU9u8Z59Mr0YCBX+oMgvVDEuDMDpeK5fIxl6yqbNhhKVM+SilQvqPkjy
+tmu4U42mC3R8FwntBUveCrcbF9G/ed+WAXCWPOSIA2Qy7d1VERpJc6nXvkeMkoby
+QWfANSm47YpELVp17D0LpxLR0eXgzl66Dwsq7ffwjugBg9G3+UqsvAIjqjKeFxPS
+cojWUIlisSOeB91xMIe09HJIlxeaTBaICnSIvwWrgdYf4xLmdU6GUa/s48QhPbc4
+T8Bc/VlD2YMAyS5YeQJ5yRoRZs8+kJao6BF6FJnnhQgwatWskX7+WdSTsbdWbwjG
+9UG4xFifn6ukzXoh7bfoMcO7BTaQNYlQ8snyPbiqFjuztYYctuJlOQk1dCN1QaeY
+CYB4SqZLDWQPkTfFzaUAuR/KsLqvv3RXzwcFsgOqP4CUZKTTkg4WtFPgPPH2/LiA
+vn0FyO4Qcfi0rO3g+0tefxsNSuDUjG5so8+66VK7HrxDletEKljbMlnmLwVd0oCV
+8oWmPqpwnU5vdxpaY/d7
+=MLQD
 -----END PGP SIGNATURE-----
 
---=-ELJ2YBBfdmDQY6MfxXpk--
+--=-E6/veKsuorYsxU2ZY3yz--
 
