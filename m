@@ -1,144 +1,229 @@
 From: Ivan Shapovalov <intelfx@intelfx.name>
-Subject: [PATCH] reiser4: implement ->rename2() of struct inode_operations.
-Date: Fri, 30 Sep 2016 09:49:37 +0300
-Message-ID: <20160930064937.21460-1-intelfx@intelfx.name>
+Subject: Re: Reiser4 Upstream Git Repositories on GitHub
+Date: Fri, 30 Sep 2016 09:56:24 +0300
+Message-ID: <1475218584.19471.3.camel@intelfx.name>
+References: <57E6DF37.1050702@gmail.com>
+         <1474927548.10826.6.camel@intelfx.name> <57E9A32D.3000108@gmail.com>
+         <1474944195.1773.15.camel@intelfx.name>
+         <1921c810-5d7f-1de0-ec3d-48d123dba41f@gmail.com>
+         <1475001384.1609.2.camel@intelfx.name> <57EAE900.8060301@gmail.com>
+         <1475013062.1621.5.camel@intelfx.name>
+         <b2b6b412-6a80-37d3-0055-3fe84a195afd@gmail.com>
+Reply-To: intelfx@intelfx.name
+Mime-Version: 1.0
+Content-Type: multipart/signed; micalg="pgp-sha512";
+        protocol="application/pgp-signature"; boundary="=-X7HpENOhZGh87VEufhEO"
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=intelfx.name; s=google;
-        h=from:to:cc:subject:date:message-id;
-        bh=M4kztWHeoCoU654+7IOB08DJEvb60ez7Vyn2g6Bs2eM=;
-        b=eS7m017oWK3va2CEld7drxYh0nxlRE//61TpVaOYOZ3jvJNAC9U7IP27hAKnqDWxuh
-         BmE/GjsV8IRfqSEXx+Z9veSNlJ4Oq6gzDLw3dZB/5Vj6WZAE+KQFuNZHN5s1AEFX4/c4
-         9qvHJ/xLJ+sbX+xEUGVL6R0TRY6Io76qyEUjk=
+        h=message-id:subject:from:reply-to:to:date:in-reply-to:references
+         :mime-version;
+        bh=O+BLIYRoOdqtD8AdmkZdEQGBB8rwsppGZcAs1l8cPag=;
+        b=jBcScyr3echER9ufYEN8cW0MHnSSjaFLqc6+joALSYb7iJ6Ec3syVKWqAMaR3Ox98I
+         qPRdFFk7yKcm4ltegYxJuz3yJRuPRKglKft7h/nlz07s4elsMDOcuuI9+Q6X/l/fFmj1
+         X1zYgkDTBInClkEcjruGMxrJLe26tvzYZFA40=
+In-Reply-To: <b2b6b412-6a80-37d3-0055-3fe84a195afd@gmail.com>
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+To: Edward Shishkin <edward.shishkin@gmail.com>, ReiserFS development mailing list <reiserfs-devel@vger.kernel.org>
+
+
+--=-X7HpENOhZGh87VEufhEO
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+
+On 2016-09-28 at 12:17 +0200, Edward Shishkin wrote:
+> On 09/27/2016 11:51 PM, Ivan Shapovalov wrote:
+> > On 2016-09-27 at 23:47 +0200, Edward Shishkin wrote:
+> > > On 09/27/2016 08:36 PM, Ivan Shapovalov wrote:
+> > > > On 2016-09-27 at 16:13 +0200, Edward Shishkin wrote:
+> > > > > On 09/27/2016 04:43 AM, Ivan Shapovalov wrote:
+> > > > > > On 2016-09-27 at 00:37 +0200, Edward Shishkin wrote:
+> > > > > > > On 09/27/2016 12:05 AM, Ivan Shapovalov wrote:
+> > > > > > > > On 2016-09-24 at 22:16 +0200, Edward Shishkin wrote:
+> > > > > > > > > Hello everyone,
+> > > > > > > > >=20
+> > > > > > > > > I have set up the updated Namesys repositories at my
+> > > > > > > > > Github
+> > > > > > > > > page.
+> > > > > > > > > Those repositories are supposed to contain the latest
+> > > > > > > > > updates
+> > > > > > > > > in
+> > > > > > > > > the (stable) master branch and in other
+> > > > > > > > > (experimental)
+> > > > > > > > > branches
+> > > > > > > > > that
+> > > > > > > > > I'll announce.
+> > > > > > > > >=20
+> > > > > > > > > 1) https://github.com/edward6/reiser4
+> > > > > > > > >=20
+> > > > > > > > > This is a "standalone" reiser4 tree, which doesn't
+> > > > > > > > > include
+> > > > > > > > > specific
+> > > > > > > > > changes of Linux kernel needed for reiser4 port. Such
+> > > > > > > > > changes
+> > > > > > > > > can
+> > > > > > > > > be
+> > > > > > > > > found at the project's page on Sourceforge:
+> > > > > > > > > https://sourceforge.net/projects/reiser4/
+> > > > > > > > >=20
+> > > > > > > > > An example of work with the standalone reiser4 tree:
+> > > > > > > > >=20
+> > > > > > > > > . Patch the respective kernel with the latest
+> > > > > > > > > available
+> > > > > > > > > stuff
+> > > > > > > > > from
+> > > > > > > > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0Sourceforge;
+> > > > > > > > > . cd to the "fs" directory;
+> > > > > > > > > . delete the directory reiser4;
+> > > > > > > > > . instead of the deleted stuff clone the standalone
+> > > > > > > > > reiser4
+> > > > > > > > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0repository from=
+ Github;
+> > > > > > > > > . build and install as usual.
+> > > > > > > > >=20
+> > > > > > > > > 2) Libaal and Reiser4progs:
+> > > > > > > > >=20
+> > > > > > > > > https://github.com/edward6/libaal
+> > > > > > > > > https://github.com/edward6/reiser4progs
+> > > > > > > > >=20
+> > > > > > > > > Before building Libaal and Reiser4progs execute the
+> > > > > > > > > ./prepare
+> > > > > > > > > script,
+> > > > > > > > > which will create files needed for build process.
+> > > > > > > > >=20
+> > > > > > > > > Thanks,
+> > > > > > > > > Edward.
+> > > > > > > >=20
+> > > > > > > > Wow, finally.
+> > > > > > > >=20
+> > > > > > > > Maybe we could avoid that "all changes for 10 years"
+> > > > > > > > commit?
+> > > > > > >=20
+> > > > > > > Hi Ivan,
+> > > > > > > Sorry, don't have a time to granulate it.
+> > > > > > >=20
+> > > > > > > > I tried to keep track of all patches since 3.2...
+> > > > > > >=20
+> > > > > > > There will be "all changes for 6 years" commit.
+> > > > > > > Is it much better?
+> > > > > >=20
+> > > > > > So well, I finished splitting off all known diffs from that
+> > > > > > big
+> > > > > > commit.
+> > > > > > Tt was 12k(+)/8k(-), now it is 7k(+)/7k(-).
+> > > > > >=20
+> > > > > > The updated branch is here: https://github.com/intelfx/reis
+> > > > > > er4
+> > > > > > (unfortunately, not fast-forward).
+> > > > > >=20
+> > > > > > Moreover, my tree has accumulated quite a few differences
+> > > > > > from
+> > > > > > your
+> > > > > > one. I've dropped trivial discrepancies (comments,
+> > > > > > formatting
+> > > > > > etc.)
+> > > > > > and put the larger ones in separate branches:
+> > > > > >=20
+> > > > > > 1. https://github.com/intelfx/reiser4/tree/differences/enot
+> > > > > > ty
+> > > > > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0(unsupported ioctls return =
+-ENOTTY, not -ENOSYS)
+> > > > > >=20
+> > > > > > 2. https://github.com/intelfx/reiser4/tree/differences/migr
+> > > > > > atep
+> > > > > > age
+> > > > > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0(the ->migratepage() implem=
+entation, which I still do
+> > > > > > not
+> > > > > > completely
+> > > > > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0understand, but it wo=
+rks)
+> > > > > >=20
+> > > > > > 3. https://github.com/intelfx/reiser4/tree/differences/rena
+> > > > > > meat
+> > > > > > 2
+> > > > > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0(renameat2(RENAME_NOREPLACE=
+) implementation, which
+> > > > > > you
+> > > > > > haven't
+> > > > > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0merged somewhy)
+> > > > > >=20
+> > > > > > 4. https://github.com/intelfx/reiser4/tree/differences/adju
+> > > > > > st-t
+> > > > > > o-3.
+> > > > > > 15
+> > > > > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0(part of porting to 3.15 wh=
+ich, again, you haven't
+> > > > > > merged
+> > > > > > somewhy)
+> > > > > >=20
+> > > > > > These branches are on top of that granular "master".
+> > > > > > Anyway, please take a look.
+> > > > >=20
+> > > > > It was definitely useful work,
+> > > > > I'll look at those differences..
+> > > >=20
+> > > > Maybe you could also consider rebasing things on top of that
+> > > > extracted
+> > > > granular history?
+> > > >=20
+> > >=20
+> > > Interesting idea, but I am not able to estimate
+> > > complexity of such rebasing for now.
+> > >=20
+> >=20
+> > While we do not have any forks and can afford non-fast-forward
+> > updates
+> > of master, the complexity is almost nil.
+> >=20
+> > To rebase your format41 branch, one can do this:
+> >=20
+> > git rebase --preserve-merges --onto
+> > 3c7b3c5802e20381496f641fe64b6c1573228c6e
+> > 8a896fd48ed35c7dfa0188f9b7f4cbdfd469cacb format41
+> >=20
+> > where 8a896fd is merge-base of format41 and master (that big
+> > commit),
+> > and 3c7b3c5 is the corresponding commit of the synthesized history.
+> >=20
+> > Both commits have identical file content (`git diff 8a896fd
+> > 3c7b3c5`
+> > yields empty output).
+>=20
+> OK, everything went smoothly,
+> Thanks for scrupulously archiving things!
+>=20
+> Edward.
+
+In meantime, I have also generated a history of the kernel side changes
+(again, starting with 3.2). They are pretty small.
+Do I understand correctly that the kernel folks are reluctant to merge
+these ~150 lines?
+
+--=20
+Ivan Shapovalov / intelfx /
+--=-X7HpENOhZGh87VEufhEO
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: This is a digitally signed message part
 Content-Transfer-Encoding: 7bit
-To: reiserfs-devel@vger.kernel.org
-Cc: Edward Shishkin <edward.shishkin@gmail.com>, Ivan Shapovalov <intelfx@intelfx.name>
 
-For now, only support the basic case of flags == 0.
-Also support the case of flags == RENAME_NOREPLACE, because it is a no-op for
-local filesystems (destination existence is already checked by VFS).
+-----BEGIN PGP SIGNATURE-----
 
-Thus no functional changes to the existing code.
+iQIcBAABCgAGBQJX7gyYAAoJEHveF8jk4w6d9YoQAJ8RAenu8tTjecR45NuIIIgu
+8xvNJGgDxz2lyseh4VYXecoWfXjsZJOSz8L1Y7GjkH3ZX2LpDMw0QTsXnAqf9hKt
+5gp/ori3aibnREJK+B5U/GK/RLuBexkJsjvl47cRD7Lv/CcaMCt8CfIUpBjTrkHt
+DVI6y5Cu1DMXr4DGqNTiRYbHVj4TOcdwrLoGnlFokZRHkjpFoK1fEC6YdnuXJcZl
+JJljbZuiAt/oWAMKRHMxwmrbgfOZlBGnjgX9FTgA7cNUCbEeuoJKXHWz38xKXksN
+OeAeRal8I1gl+KEA30rGTPG3Yn0KFB8ybCtDk/qJYUGq5sSGmamQaUsIVlHFA41U
+kesLA+dqm9PLzu7FI+CiOgny/BapY3S94KuSUFWxv94WD3gerCEBaucKcMwdk6s+
+cpRzgFu5LY62/SqgEg6L4MCJl7ViENbH1y7JMX5LFpFgcbIX3i7ziPG0EYLNjePX
+EVw8J7pqEJBJfD7Na8FSunpbtdjq4tAZVx1bZXHWvINQqFW2O0/UpSwW7HA2XuRG
+U9kdMwd6GkXktA41VbK+PfI91XYZE9PSi9p9Z1ZrcHvIY4+k8N7f/xdMkm3WQugf
+KV21G7mwWZw1Ov9mnlm+5JPbbGAugnJJiZTNuNHWkjH5uzhLXI/DfcxBbXDerJ7I
+UaO9T2zpAsXPcyylW7Jh
+=ld5v
+-----END PGP SIGNATURE-----
 
-Signed-off-by: Ivan Shapovalov <intelfx@intelfx.name>
----
- plugin/inode_ops_rename.c | 47 ++++++++++++++++++++++++++++++++++++++++-------
- plugin/object.c           |  2 +-
- plugin/object.h           |  5 +++--
- 3 files changed, 44 insertions(+), 10 deletions(-)
-
-diff --git a/plugin/inode_ops_rename.c b/plugin/inode_ops_rename.c
-index 4d461dc..ddb7bf5 100644
---- a/plugin/inode_ops_rename.c
-+++ b/plugin/inode_ops_rename.c
-@@ -288,7 +288,7 @@ int reiser4_find_entry(struct inode *, struct dentry *, lock_handle * ,
- 	       znode_lock_mode, reiser4_dir_entry_desc *);
- int reiser4_update_dir(struct inode *);
- 
--/* this is common implementation of vfs's rename method of struct
-+/* this is common implementation of vfs's rename2 method of struct
-    inode_operations
-    See comments in the body.
- 
-@@ -299,12 +299,13 @@ int reiser4_update_dir(struct inode *);
-    entry. This should be re-considered when more than one different
-    directory plugin will be implemented.
- */
--int reiser4_rename_common(struct inode *old_dir /* directory where @old
--						 * is located */ ,
--			  struct dentry *old_name /* old name */ ,
--			  struct inode *new_dir /* directory where @new
--						 * is located */ ,
--			  struct dentry *new_name/* new name */)
-+int reiser4_rename2_common(struct inode *old_dir /* directory where @old
-+						  * is located */ ,
-+			   struct dentry *old_name /* old name */ ,
-+			   struct inode *new_dir /* directory where @new
-+						  * is located */ ,
-+			   struct dentry *new_name /* new name */ ,
-+			   unsigned flags /* specific flags */)
- {
- 	/* From `The Open Group Base Specifications Issue 6'
- 
-@@ -384,6 +385,26 @@ int reiser4_rename_common(struct inode *old_dir /* directory where @old
- 	   [N/A]
- 
- 	 */
-+
-+	/* From Documentation/filesystems/vfs.txt:
-+
-+	   rename2: this has an additional flags argument compared to rename.
-+		f no flags are supported by the filesystem then this method
-+		need not be implemented.  If some flags are supported then the
-+		filesystem must return -EINVAL for any unsupported or unknown
-+		flags.  Currently the following flags are implemented:
-+		(1) RENAME_NOREPLACE: this flag indicates that if the target
-+		of the rename exists the rename should fail with -EEXIST
-+		instead of replacing the target.  The VFS already checks for
-+		existence, so for local filesystems the RENAME_NOREPLACE
-+		implementation is equivalent to plain rename.
-+		(2) RENAME_EXCHANGE: exchange source and target.  Both must
-+		exist; this is checked by the VFS.  Unlike plain rename,
-+		source and target may be of different type.
-+	 */
-+
-+	static const unsigned supported_flags = RENAME_NOREPLACE;
-+
- 	reiser4_context *ctx;
- 	int result;
- 	int is_dir;		/* is @old_name directory */
-@@ -405,6 +426,18 @@ int reiser4_rename_common(struct inode *old_dir /* directory where @old
- 	if (IS_ERR(ctx))
- 		return PTR_ERR(ctx);
- 
-+	/*
-+	 * Check rename2() flags.
-+	 *
-+	 * "If some flags are supported then the filesystem must return
-+	 * -EINVAL for any unsupported or unknown flags."
-+	 *
-+	 * We support:
-+	 * - RENAME_NOREPLACE (no-op)
-+	 */
-+	if ((flags & supported_flags) != flags)
-+		return RETERR(-EINVAL);
-+
- 	old_entry = kzalloc(3 * sizeof(*old_entry) + 2 * sizeof(*new_lh) +
- 			    sizeof(*dotdot_name) + sizeof(*dataonstack),
- 			    reiser4_ctx_gfp_mask_get());
-diff --git a/plugin/object.c b/plugin/object.c
-index 7b0c2d2..9d10a0c 100644
---- a/plugin/object.c
-+++ b/plugin/object.c
-@@ -179,7 +179,7 @@ static struct inode_operations directory_i_ops = {
- 	.mkdir = reiser4_mkdir_common,
- 	.rmdir = reiser4_unlink_common,
- 	.mknod = reiser4_mknod_common,
--	.rename = reiser4_rename_common,
-+	.rename2 = reiser4_rename2_common,
- 	.permission = reiser4_permission_common,
- 	.setattr = reiser4_setattr_common,
- 	.getattr = reiser4_getattr_common
-diff --git a/plugin/object.h b/plugin/object.h
-index b5fd962..c69c6b0 100644
---- a/plugin/object.h
-+++ b/plugin/object.h
-@@ -22,8 +22,9 @@ int reiser4_symlink_common(struct inode *parent, struct dentry *dentry,
- 		   const char *linkname);
- int reiser4_mknod_common(struct inode *parent, struct dentry *dentry,
- 		 umode_t mode, dev_t rdev);
--int reiser4_rename_common(struct inode *old_dir, struct dentry *old_name,
--			  struct inode *new_dir, struct dentry *new_name);
-+int reiser4_rename2_common(struct inode *old_dir, struct dentry *old_name,
-+			   struct inode *new_dir, struct dentry *new_name,
-+			   unsigned flags);
- const char *reiser4_get_link_common(struct dentry *, struct inode *inode,
- 				    struct delayed_call *done);
- int reiser4_permission_common(struct inode *, int mask);
--- 
-2.10.0
+--=-X7HpENOhZGh87VEufhEO--
 
