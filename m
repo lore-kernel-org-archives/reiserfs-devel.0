@@ -1,183 +1,143 @@
-From: Edward Shishkin <edward.shishkin@gmail.com>
-Subject: Re: Reiser4 Upstream Git Repositories on GitHub
-Date: Mon, 03 Oct 2016 16:33:40 +0200
-Message-ID: <57F26C44.8060504@gmail.com>
-References: <57E6DF37.1050702@gmail.com>         <1474927548.10826.6.camel@intelfx.name> <57E9A32D.3000108@gmail.com>    <1474944195.1773.15.camel@intelfx.name>         <1921c810-5d7f-1de0-ec3d-48d123dba41f@gmail.com>        <1475001384.1609.2.camel@intelfx.name> <57EAE900.8060301@gmail.com>     <1475013062.1621.5.camel@intelfx.name>  <b2b6b412-6a80-37d3-0055-3fe84a195afd@gmail.com> <1475218584.19471.3.camel@intelfx.name>
+From: Ivan Shapovalov <intelfx@intelfx.name>
+Subject: Re: [PATCH] Adjust reiser4 for 3.15: replace
+ truncate_inode_pages(..., 0) with truncate_inode_pages_final(...).
+Date: Mon, 03 Oct 2016 17:40:46 +0300
+Message-ID: <1475505646.3029.13.camel@intelfx.name>
+References: <20160930063629.13794-1-intelfx@intelfx.name>
+                 <20160930064332.19365-1-intelfx@intelfx.name>
+         <1475218025.19471.1.camel@intelfx.name> <57F26B32.7040807@gmail.com>
+Reply-To: intelfx@intelfx.name
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg="pgp-sha512";
+        protocol="application/pgp-signature"; boundary="=-FTdDn0dntr1CKgY5Fbmz"
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20120113;
-        h=message-id:date:from:user-agent:mime-version:to:subject:references
-         :in-reply-to:content-transfer-encoding;
-        bh=SqnTWp5OvNXNYZOe2wr4tdTLSYI/pQgCCGWXdWOug9w=;
-        b=Y0EJBlkLPSXnHQph6Ly/Xv+h3kfeB3H1pyi7Mm8l1ugUMGFWvUSU8BCKdmZLGfzEk5
-         BXwVgrz/MQJr1639o5MT3IroPihihJ3MpCR0yYzcVmA+/FBd3klsY9qGtIflH30vrkeT
-         CNGwfm3gfCRxqN0ak6elXhEAgFZdEDzCQJ1fXoQbmb4qgabkXPfXBlRfaM7ODUPdXusv
-         1Iny897Qi97+sOm4u7CNXb6GsgpltCzFpfYiTqzG3SvBuUrCF+NLrugU1+BMlBa+JpMO
-         Q1zoU9kswqF6uRihdme+O1koEVwkVNOjEetBM7GTCKNOpgw0ZpcjdUvtO14cCjN/xxB2
-         UWRA==
-In-Reply-To: <1475218584.19471.3.camel@intelfx.name>
+        d=intelfx.name; s=google;
+        h=message-id:subject:from:reply-to:to:date:in-reply-to:references
+         :mime-version;
+        bh=WlZnqq07FbqRe+6z0z3T0+7UcgD2W82wvaybiek0PK8=;
+        b=PxI1T1i1+7dIfyT4qMtNOxM8ck24k/YQottvi6OU3HIVqOj+UXS89Y0lib+cMl6P/L
+         zrPGhgWFQd2tolNadDbCEr7swmwXrHWmzaYdBAS1LtNpA7jjArSGjh6/e0N6wvCiNC4o
+         y4Mzik1g+VOwj0hGtsKJgbRIwpnAQBOzj5C9E=
+In-Reply-To: <57F26B32.7040807@gmail.com>
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: intelfx@intelfx.name, ReiserFS development mailing list <reiserfs-devel@vger.kernel.org>
+To: Edward Shishkin <edward.shishkin@gmail.com>, reiserfs-devel@vger.kernel.org
 
-On 09/30/2016 08:56 AM, Ivan Shapovalov wrote:
-> On 2016-09-28 at 12:17 +0200, Edward Shishkin wrote:
->> On 09/27/2016 11:51 PM, Ivan Shapovalov wrote:
->>> On 2016-09-27 at 23:47 +0200, Edward Shishkin wrote:
->>>> On 09/27/2016 08:36 PM, Ivan Shapovalov wrote:
->>>>> On 2016-09-27 at 16:13 +0200, Edward Shishkin wrote:
->>>>>> On 09/27/2016 04:43 AM, Ivan Shapovalov wrote:
->>>>>>> On 2016-09-27 at 00:37 +0200, Edward Shishkin wrote:
->>>>>>>> On 09/27/2016 12:05 AM, Ivan Shapovalov wrote:
->>>>>>>>> On 2016-09-24 at 22:16 +0200, Edward Shishkin wrote:
->>>>>>>>>> Hello everyone,
->>>>>>>>>>
->>>>>>>>>> I have set up the updated Namesys repositories at my
->>>>>>>>>> Github
->>>>>>>>>> page.
->>>>>>>>>> Those repositories are supposed to contain the latest
->>>>>>>>>> updates
->>>>>>>>>> in
->>>>>>>>>> the (stable) master branch and in other
->>>>>>>>>> (experimental)
->>>>>>>>>> branches
->>>>>>>>>> that
->>>>>>>>>> I'll announce.
->>>>>>>>>>
->>>>>>>>>> 1) https://github.com/edward6/reiser4
->>>>>>>>>>
->>>>>>>>>> This is a "standalone" reiser4 tree, which doesn't
->>>>>>>>>> include
->>>>>>>>>> specific
->>>>>>>>>> changes of Linux kernel needed for reiser4 port. Such
->>>>>>>>>> changes
->>>>>>>>>> can
->>>>>>>>>> be
->>>>>>>>>> found at the project's page on Sourceforge:
->>>>>>>>>> https://sourceforge.net/projects/reiser4/
->>>>>>>>>>
->>>>>>>>>> An example of work with the standalone reiser4 tree:
->>>>>>>>>>
->>>>>>>>>> . Patch the respective kernel with the latest
->>>>>>>>>> available
->>>>>>>>>> stuff
->>>>>>>>>> from
->>>>>>>>>>         Sourceforge;
->>>>>>>>>> . cd to the "fs" directory;
->>>>>>>>>> . delete the directory reiser4;
->>>>>>>>>> . instead of the deleted stuff clone the standalone
->>>>>>>>>> reiser4
->>>>>>>>>>         repository from Github;
->>>>>>>>>> . build and install as usual.
->>>>>>>>>>
->>>>>>>>>> 2) Libaal and Reiser4progs:
->>>>>>>>>>
->>>>>>>>>> https://github.com/edward6/libaal
->>>>>>>>>> https://github.com/edward6/reiser4progs
->>>>>>>>>>
->>>>>>>>>> Before building Libaal and Reiser4progs execute the
->>>>>>>>>> ./prepare
->>>>>>>>>> script,
->>>>>>>>>> which will create files needed for build process.
->>>>>>>>>>
->>>>>>>>>> Thanks,
->>>>>>>>>> Edward.
->>>>>>>>> Wow, finally.
->>>>>>>>>
->>>>>>>>> Maybe we could avoid that "all changes for 10 years"
->>>>>>>>> commit?
->>>>>>>> Hi Ivan,
->>>>>>>> Sorry, don't have a time to granulate it.
->>>>>>>>
->>>>>>>>> I tried to keep track of all patches since 3.2...
->>>>>>>> There will be "all changes for 6 years" commit.
->>>>>>>> Is it much better?
->>>>>>> So well, I finished splitting off all known diffs from that
->>>>>>> big
->>>>>>> commit.
->>>>>>> Tt was 12k(+)/8k(-), now it is 7k(+)/7k(-).
->>>>>>>
->>>>>>> The updated branch is here: https://github.com/intelfx/reis
->>>>>>> er4
->>>>>>> (unfortunately, not fast-forward).
->>>>>>>
->>>>>>> Moreover, my tree has accumulated quite a few differences
->>>>>>> from
->>>>>>> your
->>>>>>> one. I've dropped trivial discrepancies (comments,
->>>>>>> formatting
->>>>>>> etc.)
->>>>>>> and put the larger ones in separate branches:
->>>>>>>
->>>>>>> 1. https://github.com/intelfx/reiser4/tree/differences/enot
->>>>>>> ty
->>>>>>>        (unsupported ioctls return -ENOTTY, not -ENOSYS)
->>>>>>>
->>>>>>> 2. https://github.com/intelfx/reiser4/tree/differences/migr
->>>>>>> atep
->>>>>>> age
->>>>>>>        (the ->migratepage() implementation, which I still do
->>>>>>> not
->>>>>>> completely
->>>>>>>         understand, but it works)
->>>>>>>
->>>>>>> 3. https://github.com/intelfx/reiser4/tree/differences/rena
->>>>>>> meat
->>>>>>> 2
->>>>>>>        (renameat2(RENAME_NOREPLACE) implementation, which
->>>>>>> you
->>>>>>> haven't
->>>>>>>         merged somewhy)
->>>>>>>
->>>>>>> 4. https://github.com/intelfx/reiser4/tree/differences/adju
->>>>>>> st-t
->>>>>>> o-3.
->>>>>>> 15
->>>>>>>        (part of porting to 3.15 which, again, you haven't
->>>>>>> merged
->>>>>>> somewhy)
->>>>>>>
->>>>>>> These branches are on top of that granular "master".
->>>>>>> Anyway, please take a look.
->>>>>> It was definitely useful work,
->>>>>> I'll look at those differences..
->>>>> Maybe you could also consider rebasing things on top of that
->>>>> extracted
->>>>> granular history?
->>>>>
->>>> Interesting idea, but I am not able to estimate
->>>> complexity of such rebasing for now.
->>>>
->>> While we do not have any forks and can afford non-fast-forward
->>> updates
->>> of master, the complexity is almost nil.
->>>
->>> To rebase your format41 branch, one can do this:
->>>
->>> git rebase --preserve-merges --onto
->>> 3c7b3c5802e20381496f641fe64b6c1573228c6e
->>> 8a896fd48ed35c7dfa0188f9b7f4cbdfd469cacb format41
->>>
->>> where 8a896fd is merge-base of format41 and master (that big
->>> commit),
->>> and 3c7b3c5 is the corresponding commit of the synthesized history.
->>>
->>> Both commits have identical file content (`git diff 8a896fd
->>> 3c7b3c5`
->>> yields empty output).
->> OK, everything went smoothly,
->> Thanks for scrupulously archiving things!
->>
->> Edward.
-> In meantime, I have also generated a history of the kernel side changes
-> (again, starting with 3.2). They are pretty small.
-> Do I understand correctly that the kernel folks are reluctant to merge
-> these ~150 lines?
 
-They are reluctant to merge stuff, which is not used by any subsystem
-of upstream kernel.
+--=-FTdDn0dntr1CKgY5Fbmz
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Edward.
+On 2016-10-03 at 16:29 +0200, Edward Shishkin wrote:
+> On 09/30/2016 08:47 AM, Ivan Shapovalov wrote:
+> > On 2016-09-30 at 09:43 +0300, Ivan Shapovalov wrote:
+> > > Upstream commit 91b0abe36a7b2b3b02d7500925a5f8455334f0e5
+> > > "mm + fs: store shadow entries in page cache".
+> > >=20
+> > > Moreover, the truncate_inode_pages(..., 0) in
+> > > delete_object_cryptcompress()
+> > > is not needed at all.
+> > >=20
+> > > Signed-off-by: Ivan Shapovalov <intelfx@intelfx.name>
+> > > ---
+> > > =C2=A0 plugin/file/cryptcompress.c | 2 --
+> > > =C2=A0 super_ops.c=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0| 2 +-
+> > > =C2=A0 2 files changed, 1 insertion(+), 3 deletions(-)
+> > >=20
+> > > diff --git a/plugin/file/cryptcompress.c
+> > > b/plugin/file/cryptcompress.c
+> > > index 59d8df8..5433de9 100644
+> > > --- a/plugin/file/cryptcompress.c
+> > > +++ b/plugin/file/cryptcompress.c
+> > > @@ -3595,8 +3595,6 @@ int delete_object_cryptcompress(struct
+> > > inode
+> > > *inode)
+> > > =C2=A0=C2=A0			(unsigned long
+> > > long)get_inode_oid(inode),
+> > > =C2=A0=C2=A0			result);
+> > > =C2=A0=C2=A0	}
+> > > -	truncate_inode_pages(inode->i_mapping, 0);
+> > > -	assert("edward-1487", pages_truncate_ok(inode, 0));
+> > > =C2=A0=C2=A0	/* and remove stat data */
+> > > =C2=A0=C2=A0	return reiser4_delete_object_common(inode);
+> > > =C2=A0 }
+> > > diff --git a/super_ops.c b/super_ops.c
+> > > index 73c18f2..697580c 100644
+> > > --- a/super_ops.c
+> > > +++ b/super_ops.c
+> > > @@ -215,7 +215,7 @@ static void reiser4_evict_inode(struct inode
+> > > *inode)
+> > > =C2=A0=C2=A0			fplug->delete_object(inode);
+> > > =C2=A0=C2=A0	}
+> > > =C2=A0=C2=A0
+> > > -	truncate_inode_pages(&inode->i_data, 0);
+> > > +	truncate_inode_pages_final(&inode->i_data);
+> > > =C2=A0=C2=A0	inode->i_blocks =3D 0;
+> > > =C2=A0=C2=A0	clear_inode(inode);
+> > > =C2=A0=C2=A0	reiser4_exit_context(ctx);
+> >=20
+> > BTW, this raises a question: in the ->evict_inode path, are we ever
+> > allowed to call plain truncate_inode_pages() (i. e. not *_final())?
+>=20
+> Actually, I would like to see a kind of assertion 1487 instead:
+> everything should be already truncated at that point.
+
+Do you mean that the assertion should go instead of
+truncate_inode_pages_final()? Doesn't that function contain extra
+logic, beyond removing pages?
+
+Moreover, that function seems to contain extra logic _before_ actually
+going off and truncating pages. This makes me wonder: doesn't this mean
+that we _must not ever_ call regular truncate_inode_pages() from
+inside=C2=A0->evict_inode()?
+
+I do not know VFS enough to answer these kinds of stupid questions...
+
+>=20
+> >=20
+> > The ->delete_object plugin methods do this as part of their logic,
+> > actually. At least the cryptcompress plugin calls
+> > truncate_inode_pages(..., new_size) at the end of
+> > prune_cryptcompress(), however I suspect that the regular file
+> > plugin
+> > also does this deep inside reiser4's guts.
+>=20
+> File body is truncated item-by-item from right to left. For each item
+> its ->kill_hook() method is called. It is responsible for truncating
+> attached pages. Bodies of cryptcompress files are not connected:
+> there can be pages without "parent" items (in the case of holes), so
+> in addition we call truncate_inode_pages() in prune_cryptcompress()
+> to kill those pages.
+>=20
+Understood. Thanks for explanation!
+(the above question is still in effect...)
+
+--=C2=A0
+Ivan Shapovalov / intelfx /
+
+--=-FTdDn0dntr1CKgY5Fbmz
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: This is a digitally signed message part
+Content-Transfer-Encoding: 7bit
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIcBAABCgAGBQJX8m3uAAoJEHveF8jk4w6dZ38P/jaVIeTYl0Wg7fvSeLM22VxI
+DW1JFxJocPibHz6OahMJeMB+83KocmJlWwQqvMI6o+9PkmSiuRsxNo/i+0o271EB
+l+ufaFyOZwqKt5oL5el/jPIAljdCxoZdosQKMhKoilUqzvcp4tdGKhuIGrDTwwTa
+uC0IMrcIKRxw3h2D3ikgtzZS2/+rkVu32XmE8CFJFgG2idC5OkpBVN74/261yH+C
+DXgnN8Afo7Jos6a2iIIjd18uw2z0FnJVOuQRO1sRPY9msTHVujmN3DimBMSQSGNm
+neFwhDPAYaj2mmOqYDFqjrzzYN0wAlHwGCNXU5Tz+87oVZq5yKCqyMM0vKagPC7R
+njJY/FFt5e0Z9ueGPbKddFxf2NzCfxmWCV9BJ0j13XqUW+OzTdEyCCnYrI2L4k8m
+l0SNqq6L9oLUW+1w0l3hVNLNcYiqSohFpwwh2vB9h/3lg6s4MPgwCtSZO6h3xJNA
+OO0irJDEEj88bRSGJDwBK6+lCKcZbIb5/IFLzzIKunAHnN2nnaVi2DAsn2uungwA
+AaOLCtPBky0oenaAp7NklpRUzBnTeHZy3H4B64WwJ7dj1z6Bo08V6B/Y+z0AyUwD
+WDWKxu5XMm79XrvKwNBBibo7W9FnlP3oy0MNVcLdMBwWY/Fn0fPjheVUeQCsHKHm
+dxAFrTWbU31Mg2LLz9pg
+=v1DU
+-----END PGP SIGNATURE-----
+
+--=-FTdDn0dntr1CKgY5Fbmz--
+
