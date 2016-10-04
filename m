@@ -1,13 +1,20 @@
 From: Edward Shishkin <edward.shishkin@gmail.com>
-Subject: Re: [PATCH] Adjust reiser4 for 3.15: replace
- truncate_inode_pages(..., 0) with truncate_inode_pages_final(...).
-Date: Tue, 4 Oct 2016 17:44:26 +0200
-Message-ID: <9529a268-cffe-5c42-0942-f944373becff@gmail.com>
-References: <20160930063629.13794-1-intelfx@intelfx.name>
- <20160930064332.19365-1-intelfx@intelfx.name>
- <1475218025.19471.1.camel@intelfx.name> <57F26B32.7040807@gmail.com>
- <1475505646.3029.13.camel@intelfx.name>
- <1475523931.3029.17.camel@intelfx.name>
+Subject: Re: Reiser4 Upstream Git Repositories on GitHub
+Date: Tue, 4 Oct 2016 17:52:17 +0200
+Message-ID: <0a727db9-6f81-3bef-f96a-c328e5b6ed66@gmail.com>
+References: <57E6DF37.1050702@gmail.com>
+ <1474927548.10826.6.camel@intelfx.name> <57E9A32D.3000108@gmail.com>
+ <1474944195.1773.15.camel@intelfx.name>
+ <1921c810-5d7f-1de0-ec3d-48d123dba41f@gmail.com>
+ <1475001384.1609.2.camel@intelfx.name> <57EAE900.8060301@gmail.com>
+ <1475013062.1621.5.camel@intelfx.name>
+ <b2b6b412-6a80-37d3-0055-3fe84a195afd@gmail.com>
+ <1475058981.10051.1.camel@intelfx.name>
+ <5aba3b45-ccd5-35bb-96a9-335c78022f92@gmail.com>
+ <3d1f6d29-b3a8-1e14-d622-a3e158ec79d1@gmail.com>
+ <1475074980.10051.3.camel@intelfx.name> <57EC20E7.8030906@gmail.com>
+ <1475099403.10051.5.camel@intelfx.name>
+ <314913f7-5bf0-3edc-ad0d-6a88567c0ae0@gmail.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
@@ -15,57 +22,97 @@ DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20120113;
         h=subject:to:references:from:message-id:date:user-agent:mime-version
          :in-reply-to:content-transfer-encoding;
-        bh=cFmDalGDX5APNC4ZZ+qV8eeJhIy+GODlyxYZWY7lO/o=;
-        b=z/VW829qgGPjluK0tAotOiXNnsKtDqZX2Ua2ko8Omat5EedeoZyH9ZZzs/D5gAh952
-         TH/jZ0ZMu3osiXVfXPoBQrU2Lt/qF0jz2QxX1Pvi6wE6Ev/AnRWwSDGjjXC2czkC1j51
-         obIfa1c3x1WczDvr8r4pHtkbYJNWE8/inmPvqyDQlZuI16FE8ON+TLwBVdTPiZSFJFFW
-         SONWjs0heEZwE35JRxmpW0VsCUoa2rn8dxW1AQi3BX8kdki5esqMPxmZNvXkWUy2HlWn
-         c/VLdWWI3xLHxbdapQV7GftaQ5bv+uT2GOPZn//rUSzHo370S+zIeBgrcV2kQGidCTYn
-         PXtA==
-In-Reply-To: <1475523931.3029.17.camel@intelfx.name>
+        bh=yRhRUeGjBlJlFa5NrXsG8MHXaDZoi6e94EeT8uOcD8o=;
+        b=UFUxEA4m9dcHBvDdgP05tgrJAeFubZ+J7n/oxP36wiLk6Ymo3zrHgN2Blr8fsfOw2g
+         gJZWN8cReFsuMGPqxC0QY03IMDqo12RPVoHeNCk1sziG4xGneQTaz7+ELMRm0BEgf5QK
+         Xlk6o/U6M6AO4sHesmO9iYMV2LFm8lNAcWyGihErldOT/VxDCwGPL52XW0w/jsV8fM8T
+         YlVXpD+J8q0zu8/bGAGwVU+bB8uANoSnBgkxEijQ/cjVODDmPZsELxLwEdx8drGd/YiZ
+         y0ILlYywEDfV+SGBGxPjVeJ/lbSZT7KxZGyhepteQuG1L88x8pGhZnqHJR20n1qzrwtU
+         Wxhw==
+In-Reply-To: <314913f7-5bf0-3edc-ad0d-6a88567c0ae0@gmail.com>
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: intelfx@intelfx.name, reiserfs-devel@vger.kernel.org
+To: intelfx@intelfx.name, ReiserFS development mailing list <reiserfs-devel@vger.kernel.org>
 
-Agreed,
-we have to call  *_final()
+On 09/29/2016 05:07 PM, Edward Shishkin wrote:
+[...]
+> BTW, your fstrim-scanner is the first candidate to scrub ;)
+>>>>> Actually, I think about a common multi-functional scanner, with 3
+>>>>> modes:
+>>>>> 1) discard only (handle only free blocks);
+>>>>> 2) scrub only (handle only busy blocks);
+>>>>> 3) combined (scan the whole partition; for free blocks call
+>>>>> discard,
+>>>>>        for busy ones call scrub).
+>>>>> Any ideas?
+>>>>>
+>>>>> Thanks,
+>>>>> Edward.
+>>>>> PS: We have an own ioctl number: 0xCD inherited from
+>>>>> ReiserFS(v3).
+>>>> I still have to finish the erase unit detection (which has
+>>>> completely
+>>>> stalled) to merge all this work. Moreover:
+>>>>
+>>>> For the fstrim, we have dropped all locking and serialization
+>>>> issues
+>>>> and declared that fstrim is best-effort: if it misses some blocks
+>>>> due
+>>>> to concurrent transactions allocating and freeing blocks, it
+>>>> doesn't
+>>>> matter.
+>>>>
+>>>> For the scrub, this won't fly...
+>>> Indeed, the requirements to fstrim and scrub are different,
+>>> but, as I remember, the last decision was to not miss:
+>>> http://marc.info/?l=reiserfs-devel&m=141391883022745&w=2
+>>> so everything will fly just perfectly..
+>>>
+>>> Edward.
+>> This is different thing, it's about grabbing space in bigger chunks...
+>> If a concurrent transaction allocates some space and frees some space,
+>> we don't care, because it will then be discarded "online".
+>>
+>> But in case of the scrub, how do we protect from the storage tree
+>> changing right beneath us?
+>
+> Yup, it seems that the idea of common scanner is dead.
+> It should be an independent tool. I think, we need to simply scan the
+> storage tree, do whatever is needed for each node, and make it dirty.
 
-Thanks,
+My last thought is that online scrub is not needed.
+
+Global synchronization issues can not happen online. They can happen
+only offline (after fsck-ing). Respectively, I suggest to move the
+global synchronization stuff to user-space, where it will be extremely
+simple (a sort of dd-ing partitions in parallel, plus we'll need a
+user-space version of init_volume.c to collect all mirrors properly).
+
+What can happen online is only(*) local fixable problems (when after
+IO completion page is uptodate, but checksum verification failed).
+There are 2 approaches:
+
+1) Fix those local problems online: if __jparse() detects a local
+    problem, then simply issue a "correction" - a write request for the
+    original subvolume, and wait for its completion _before_ marking
+    jnode parsed (to prevent "rollbacks").
+
+2) In the case of local problem mark status block of the volume to
+    indicate that global synchronization is required before fsck-ing.
+    Then we forget about all local problems in that mount session.
+    I didn't calculate the probability of simultaneous corruption of
+    original and replica blocks with the same blocknumbers (don't have
+    any input numbers), but I suspect that it is vanishingly small.
+
+So, we need either pre- and post-fsck global offline synchronizations,
+or global post-fsck one plus online local self-healing.
+
+----
+(*) I don't consider non-fixable IO errors (including death of one or
+more mirrors) that you can handle online with block layer's RAID-1.
+However, we also can implement such kind of failover in reiser4.
+Downgrading arrays is simple to implement. Upgrading ones will again
+require global online synchronization (scrub).
+
 Edward.
-
-On 10/03/2016 09:45 PM, Ivan Shapovalov wrote:
-> On 2016-10-03 at 17:40 +0300, Ivan Shapovalov wrote:
->> On 2016-10-03 at 16:29 +0200, Edward Shishkin wrote:
->>> On 09/30/2016 08:47 AM, Ivan Shapovalov wrote:
->>>> On 2016-09-30 at 09:43 +0300, Ivan Shapovalov wrote:
->>>>> [...]
->>>> BTW, this raises a question: in the ->evict_inode path, are we
->>>> ever
->>>> allowed to call plain truncate_inode_pages() (i. e. not
->>>> *_final())?
->>> Actually, I would like to see a kind of assertion 1487 instead:
->>> everything should be already truncated at that point.
->> Do you mean that the assertion should go instead of
->> truncate_inode_pages_final()? Doesn't that function contain extra
->> logic, beyond removing pages?
->>
->> Moreover, that function seems to contain extra logic _before_
->> actually
->> going off and truncating pages. This makes me wonder: doesn't this
->> mean
->> that we _must not ever_ call regular truncate_inode_pages() from
->> inside ->evict_inode()?
->>
->> I do not know VFS enough to answer these kinds of stupid questions...
-> Looks like the answer is "no, everything is OK". If ->evict_inode()
-> races with remove_mapping() and shadow entries are installed into the
-> radix tree, the *_final() call will still catch them. By association
-> this means that this call is still needed.
->
-> (However, now I wonder how does this work with regular truncate and
-> whether the radix tree can hold shadow entries for already truncated
-> pages during an inode's lifetime, but this is a purely VFS/mm
-> question.)
->
-
