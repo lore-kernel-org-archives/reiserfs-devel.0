@@ -1,83 +1,77 @@
-From: jose@mictlantecuhtli.metztli-it.com (Jose R Rodriguez)
-Subject: Debian GCC6 and reiser4-patched Linux kernel build issues
-Date: Tue,  1 Nov 2016 10:59:11 -0700 (PDT)
-Message-ID: <20161101175911.6BDFD303179@mictlantecuhtli.metztli-it.com>
+From: Jose R R <Jose.r.r@metztli-it.com>
+Subject: Re: Bug#842040: Please add https support
+Date: Thu, 10 Nov 2016 01:14:33 -0800
+Message-ID: <CAM12Q5TKLd8q-++E0xGOfVjikWf8b8gruQwBsG8bNJZA_Auk5w@mail.gmail.com>
+References: <CAM+PWT2rpx_7qTL=Vga8RgDWiyryxkcxpErphFWsAyZNe6Vqxw@mail.gmail.com>
+Mime-Version: 1.0
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
-DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mixtli.metztli.it; q=dns/txt;
- s=mx; t=1478023153; h=From: Date: Message-Id: To: Subject: Sender;
- bh=E5FIpPIzeeSQ8bNHAJ8jP1aZAIznDVVOefSs9ShE6Ro=; b=Op0btK2etuVoNbQFSMr9rCJNah53zrgsutlkQFD2vDpWHcRQR/Xj5lwtXI8B34fM/9EEfp+w
- tqveqinfVCQf3fXlf6ScPsqlDE5ZapAnEnIv7s7QtoiRGxTtjLY3v3WtZRhRSyKDDnj0lmqC
- BR7O73wmyofQUu3o+wHV3F82BvE=
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=metztli-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:sender:in-reply-to:references:from:date:message-id
+         :subject:to:cc;
+        bh=KFsN5byf9PGQ18zAEacDbRExP7SfrYXSkHAhNPUJKK0=;
+        b=O03Kpn8HX8FOLrGRwTCuwm8hX/5jIbJ8sJLB7AN1w0+1lPutuzXA7AXVURUQlUjyBb
+         NXzYN/r6Be1c26X0v3dP6VuiozYAVYWRIPZLWbWkH3wBQ0uJIpHVikjLb1HODaw2+Af6
+         ScR4SJ2uqdj0PPHldLlQTy+rFcKBjqcMwZ9hI3nObfViZ1PAfLgMJuHSw1hYoSEdHnTr
+         UT9tvIPbYcvNja6m3KqJayU8idOp23AbI8gsZT1tG2Js+LVMkr0sjjQ5JMVbhPhta7T4
+         UEw1zOebhgyT4uyVRkkw3kN8F3cK+fwMhWHdOi/xsUC/hna2raH87O1646vE6KS2JFRs
+         wXEA==
+In-Reply-To: <CAM+PWT2rpx_7qTL=Vga8RgDWiyryxkcxpErphFWsAyZNe6Vqxw@mail.gmail.com>
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
-MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: reiserfs-devel@vger.kernel.org
+To: Marga Manterola <marga@google.com>, 842040@bugs.debian.org
+Cc: ReiserFS Development List <reiserfs-devel@vger.kernel.org>
 
----------- Forwarded message ----------
-From: Jose R R <Jose[]@metztli.it>
-Date: Tue, Nov 1, 2016 at 10:25 AM
-Subject: Re: Bug#841368: gcc-6 6.2.0-7 breaks kernel build if stack protection is enabled
-To: Konstantin Demin <rock[]@gmail.com>, ReiserFS Development List <reiserfs-devel@vger.kernel.org>
+Niltze [Hello]!
 
+On Tue, Oct 25, 2016 at 6:17 AM, Marga Manterola <marga@google.com> wrote:
+> Package: debian-installer
+> Severity: normal
+>
+> The installer currently doesn't support downloading packages from https
+> mirrors, because busybox's wget doesn't support https.
 
-On Tue, Nov 1, 2016 at 8:04 AM, Konstantin Demin <rockdrilla@gmail.com> wrote:
-> Nota bene: please answer to this mail directly without CC-ing to
-> debian mailing lists ;)
+In order to add SSL support to BusyBox wget, itself to be used wih
+ssl_helper, I used matrixssl-3-4-2-open.tgz
+< http://www.matrixssl.org/ >
+
+to build my custom BusyBox udeb for my Reiser4-enabled Debian-Installer
+< https://sf.net/projects/debian-reiser4/ >
+
+No idea if suggestion fulfills bug need - just my 2 cents ;-)
+
 >
-> I've done refactor on top of debian source package "linux".
-> If you're interested, I'll send you sources :)
+> The wget package has been changed to provide a udeb, compiled against the
+> libssl udeb, so that it provides https support.
 >
-> $ dpkg-parsechangelog
-> Source: linux
-> Version: 4.8.6-1000
-> Distribution: experimental
-> Urgency: high
-> Maintainer: Konstantin Demin <rockdrilla@gmail.com>
-> Timestamp: 1477980554
-> Date: Tue, 01 Nov 2016 09:09:14 +0300
-> Changes:
-> linux (4.8.6-1000) experimental; urgency=high
-> .
->   * New upstream release: https://kernelnewbies.org/Linux_4.8
->   * New upstream stable update:
->     https://www.kernel.org/pub/linux/kernel/v4.x/ChangeLog-4.8.1
->     https://www.kernel.org/pub/linux/kernel/v4.x/ChangeLog-4.8.2
->     https://www.kernel.org/pub/linux/kernel/v4.x/ChangeLog-4.8.3
->     https://www.kernel.org/pub/linux/kernel/v4.x/ChangeLog-4.8.4
->     https://www.kernel.org/pub/linux/kernel/v4.x/ChangeLog-4.8.5
->     https://www.kernel.org/pub/linux/kernel/v4.x/ChangeLog-4.8.6
-> .
->   [ Konstantin Demin ]
->   * merge changes from Debian
->   * drop Debian DFSG patches (I'll go to hell for this)
->   * drop patches for unsupported architectures (and this too)
->   * update 3rd party patches:
->     - AuFS:  4.7-20160912  >  4.8-20161010
->     - BFQ:   4.7-v8r3      >  4.8-v8r4
->     - BFS:   4.7-502+      >  4.8-512+
->     - UKSM:  4.7-0.1.2.5   >  4.8-0.1.2.5
->   * refresh patches
->   * update configs
+> The change needed in d-i is to add the wget udeb and it's dependencies
+> (libcrypto1.0.2, libssl1.0.2 and libpcre3) to the initrd.
 >
+> Regarding total size (as this was mentioned when I discussed this in the
+> past), this is the size of the needed udebs:
+> -rw-r----- 1 marga marga 878072 Sep 26 20:17
+> libcrypto1.0.2-udeb_1.0.2j-1_amd64.udeb
+> -rw-r----- 1 marga marga 153852 Aug 19 12:59 libpcre3-udeb_8.39-2_amd64.udeb
+> -rw-r----- 1 marga marga 141318 Sep 26 20:17
+> libssl1.0.2-udeb_1.0.2j-1_amd64.udeb
+> -rw-r----- 1 marga marga 147960 Sep 26 15:19 wget-udeb_1.18-4_amd64.udeb
+>
+> And this is the size difference of the old initrd and the new one:
+> -rw-r----- 1 marga eng 22580707 Oct 25 02:07 initrd.gz
+> -rw-r----- 1 marga eng 23381570 Oct 25 15:11 newinitrd.gz
+>
+> So, approximately 780k extra for the initrd image (3.5% increase)
+>
+> Thanks!
 > --
-> SY,
-> Konstantin Demin
-
-If shared your particular flags to debian bug list was to provide additional input so they can fix the GCC6 issue upstream -- as it is very annoying.
-
-I build most of my kernels patched with Reiser4 as that is the environment where I work, even in the Google Compute Engine (GCE) Cloud.
-Additionally, I have built a Reiser4-enabled Jessie Debian-Installer (d-i), which I offer free to download at SourceForge:
-
-Please see: https://sf.net/projects/debian-reiser4/
-
-At the moment I am sticking to Linux kernel 4.7.x since reiser4 patch does not currently apply to 4.8.x - but thanks for your kind offer.
-
-We will keep in touch.
+> Cheers,
+> Marga
 
 
-Best Professional Regards.
+Best Professional Regards
+
 -- 
 Jose R R
 http://metztli.it
@@ -86,4 +80,3 @@ Try at no charge http://b2evolution.net for http://OpenShift.com PaaS
 ---------------------------------------------------------------------------------------------
 from our GitHub http://Nepohualtzintzin.com repository. Cloud the easy way!
 ---------------------------------------------------------------------------------------------
-
