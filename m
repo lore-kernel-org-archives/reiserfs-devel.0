@@ -1,299 +1,403 @@
-From: =?UTF-8?B?RHXFoWFuIMSMb2xpxIc=?= <dusanc@gmail.com>
-Subject: Re: [ANNOUNCE] Reiser4 Logical Volumes. Mirrors and Failover
-Date: Sun, 20 Nov 2016 17:17:28 +0100
-Message-ID: <CADW=+3k=iutYaWbu5q=hHe-C_wn0xA6f2cBsNRdnJwVrvWfsGg@mail.gmail.com>
-References: <57E7026B.20001@gmail.com> <58318FFA.6090806@gmail.com>
+From: =?UTF-8?B?TWlsYW4gQnXFoWth?= <milan.buska@gmail.com>
+Subject: Reiser4 Logical Volumes. Mirrors and Failover
+Date: Tue, 22 Nov 2016 15:20:48 +0000
+Message-ID: <CAFCWPP+r==XQcjfsjNwMGDk87Eur_3BoVKB+r-0JLRi7Y6KSTg@mail.gmail.com>
 Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20120113;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=bXX0puLYqSCrrOtdlX8Iz3yIEqA99jxkc1U8vuxoUII=;
-        b=zObpH+4Jw4lX6sUlelERBNVzVC8iylkbh1g7c9snA97/xEs1Ud49HSUrhHDiw8mzzE
-         9uP6+25h9aj//eZgq3BlpS8wU2op0968hDQVTpfYlJ2S2ho9jejtK1qObmPVoKLHdI4X
-         jeeVK7nIH3lR58KTVtcF3Dmm5HkKfQGSWLTOifUK/ghMZG8UNWTX/ELgmZ+YZOHxzPS1
-         Wgt824hpU73Z63UscGbhxeo2IB14on5dqW4Lqfmdhsq+zDA2I5tMKfOAcKq97Sjbl406
-         G2GJS8FfjNmk92l2kiJZIlnpR9CE9IAk1zcFmp4nuDCvyPcfDPe9cXTj7L90UvERxDqJ
-         5KUg==
-In-Reply-To: <58318FFA.6090806@gmail.com>
+        h=mime-version:from:date:message-id:subject:to
+         :content-transfer-encoding;
+        bh=UVtG3ggeAaa0FHcqZgBhHB6/VYU8+++x1DrsGIpWFOk=;
+        b=TLOEbJegZIUCILS4gAZceZ1EGqjDx79E+byr7DhEHy6/FvOlP3ipwORwWR1Hk+n50u
+         ND53eiQO39GxzxOiw+MAte5x9PZhypgLIu5wq66mhdeYsGdYPi7GnbIt+9+8eDW55Hua
+         6OXUpBzyqylDXArLeKyxqxxf/0e2iKa4xW4p9NlKtkutH+UFutifLQhAkQwGJ9BiMBkQ
+         WrPKxy7YolYqrp1k3rDwzPczOKxAqQIzrqmAeI7W/g3+XJdW9DihYqU2Nd2wZnMvnOhC
+         ZGFke9xzoWKdpZyd109pDaOFJBYNHM3KA1FNYApcMNWi9x9Ufc9ykhibAxzwuxzdPP/P
+         b3qg==
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Edward Shishkin <edward.shishkin@gmail.com>
-Cc: ReiserFS development mailing list <reiserfs-devel@vger.kernel.org>, =?UTF-8?B?TWlsYW4gQnXFoWth?= <milan.buska@gmail.com>
+Content-Type: text/plain; charset="macroman"
+To: Reiserfs development mailing list <reiserfs-devel@vger.kernel.org>
 
-On Sun, Nov 20, 2016 at 12:58 PM, Edward Shishkin
-<edward.shishkin@gmail.com> wrote:
-> On 09/25/2016 12:47 AM, Edward Shishkin wrote:
->>
->> Logical Volumes
->>
->>
->> Reiser4 will support logical (compound) volumes. For now we have
->> implemented the simplest ones - mirrors. As a supplement to existing
->> checksums it will provide a failover - an important feature, which
->> will reduce number of cases when your volume needs to be repaired by
->> fsck.
->>
->> Reiser4 subvolume is a component of logical volume. Subvolume is
->> always associated with a physical, or logical (built of RAID, LVM,
->> etc means) block device. Every subvolume possesses:
->>
->> . volume ID;
->> . subvolume ID;
->> . mirror ID;
->> . number of replicas.
->>
->> mirror ID is a serial number from 0 till 65535. Subvolume with mirror
->> ID 0 has a special name - original. Other ones are called replicas.
->> We use to say "original A has a replica B" (or "B replicates A",
->> which is the same), iff A and B possess the same subvolume ID.
->> Original with all its replicas are called "mirrors".
->>
->> For subvolumes we have introduced a special disk format plugin
->> "format41". In accordance with Reiser4 development model it means
->> forward incompatibility. We have introduced it intentionally, for
->> protection. Indeed, for clear reasons users must not have possibility
->> to RW-mount separate replicas (without originals).
->> The multi-device extension is backward compatible: all volumes of the
->> old format (format40) are supported as logical volumes composed of
->> only one (original) subvolume.
->>
->>
->>            Registration and activation of subvolumes
->>
->>
->> For now every Reiser4 logical volume has only one original subvolume.
->> Number of replicas can be 0, or more. Logical volume can be mount
->> by usual mount command. Simply specify any its subvolume (the
->> original, or some its replica). The only condition is that original
->> and all its replicas should be registered in the system. If original,
->> or some its replica are not registered, then mount will fail with a
->> respective kernel message.
->>
->> Currently there is no tool to register specified subvolume (TBD).
->> However, mount command always tries to register the specified device.
->> The registration policy is "sticky". It means that your device won't
->> be unregistered after umount, as well as failed mount. (You will be
->> able to unregister it mandatory by a special tool - TBD).
->>
->> Procedure of registration reads the master super-block of the
->> subvolume and puts the subvolume header to a specilal list of
->> registered subvolumes.
->>
->> Mounting a logical volume activates all its registered components.
->> Procedure of activation reads format super-block of the subvolume, and
->> performs other actions like initialization of space maps, transaction
->> replay, etc. as specified by the method ->init_format() of respective
->> disk format plugin. Pointer to an activated subvolume is placed to a
->> special table of active subvolumes.
->>
->>
->>                        Mirror operations
->>
->>
->> So original and mirrors actually represent RAID0 on the filesystem
->> level.
->>
->> COMMENT. We aren't engaged in marketing fraud on collecting all
->> features of the block layer's RAID and LVM. Reiser4 mirrors implement
->> a failover, that block layers's RAID0 is not able to provide.
->>
->> It will be possible to "upgrade", or "downgrade" a reiser4 array of
->> mirrors by attaching / detaching online one, or more replicas by
->> special user-space tools (mirror.reiser4, TBD). Also by those tools it
->> will be possible to swap original with any its replica, or make a new
->> original from any replica, if the old one is lost for some reasons.
->>
->> Fsck will refuse to check/repir replica. Fsck is supposed to work only
->> with original subvolumes. After mounting an fsck-ed original, kernel
->> will automatically run a special on-line backgroud procedure (scrub)
->> in order to synchronize the repaired original with all its replicas.
->>
->> Once in a while user has to check his array of mirrors by running
->> scrub in the background mode.
->>
->> WARNING: Bear in mind once and forever: Replica is not a backup!!!
->>
->>
->>                        Technical Notes
->>
->>
->> 1. Reiser4 Transaction Design document is transferred to logical
->> volumes without any modifications, but with a small addition. Atom is
->> now composed of per-subvolume components.
->>
->> 2. By design all mirrors differ only in mirror-IDs which are stored in
->> master super-block. Format super-blocks of mirrors are identical. This
->> approach provides best performance and full parallelism in issuing IO
->> requests for mirrors. The minus is a small compromise in design,
->> according to which master super-block doesn't participate in
->> transactions. It means that mirror operations on upgrading/degrading/
->> swapping can not spawn usual transactions, which can be committed
->> and (re)played using existing transaction manager. That is, mirror
->> operations won't survive a system crash. If a system crash happens
->> during a mirror operation, then the mirror structure should be
->> checked/fixed offline by the mirror tools (kernel will refuse to mount
->> unchecked array of mirrors). Fortunately, all critical mirror
->> operations issue small number of IO requests, so that probability of
->> their interruption is close to zero.
->>
->> 3. We don't commit transactions on all mirrors, only on the original
->> subvolume (this is the single functional difference of original and
->> its replicas). Transaction (re)play, of course, is going on all
->> mirrors using the wandering maps/blocks of the original subvolume.
->>
->>
->>                    How to test the new features
->>
->>
->> Checkout branch "format41" of the upstream reiser4 and reiser4progs
->> git repos on https://github.com/edward6 Build and install as usual.
->>
->> Mirrors can be created by mkfs.reiser4 option -m. If this option is
->> specified, then the first listed device will be the original, other
->> ones - replicas. All devices of an array should have the same size.
->> Further we'll avoid that restriction.
->>
->> IMPORTANT: when creating mirrors specify node41 plugin (with checksum
->> support). Otherwise, your mirrors won't be more useful than block
->> layer's RAID0.
->>
->> Register all your mirrors, trying to "mount" them one-by-one in any
->> order. If you have N mirrors (i.e. one original and N-1 replicas),
->> then first N-1 mount commands will fail. Of course, it is not too
->> graceful, but this is temporal solution. The N-th "attempt" should
->> succeed. Have a fun. Unmount as usual.
->>
->>
->>                            Example
->>
->>
->> Suppose we have 2 partitions /dev/sda7 and /dev/sda8 of equal
->> size. Let's create an array of 2 mirrors:
->>
->> # mkfs.reiser4 -my -o node=node41 /dev/sda7 /dev/sda8
->>
->> Take a look at original subvolume:
->>
->> # debugfs.reiser4 /dev/sda7
->>
->> Take a look at replica:
->>
->> # debugfs.reiser4 /dev/sda8
->>
->> Find differences ;)
->>
->> Register the original subvolume
->>
->> # mount /dev/sda7 /mnt
->> mount: wrong fs type, bad option, bad superblock blablabla....
->> # dmesg
->> reiser4[mount(20914)]: check_active_replicas
->> (fs/reiser4/init_volume.c:268)[edward-1750]:
->> WARNING: /dev/sda7 requires replicas, which are not registered.
->>
->> Register the replica and mount the array:
->>
->> #mount /dev/sda8 /mnt
->> #dmesg
->>
->> reiser4: registered subvolume (/dev/sda8)
->> reiser4 (sda8): found disk format 4.0.1.
->> reiser4 (/dev/sda7): using Hybrid Transaction Model.
->>
->> Let's copy a file /etc/services to our array of mirrors:
->>
->> # cp /etc/services /mnt/.
->>
->> Unmount the array:
->>
->> # umount /mnt
->>
->> Find a root block: it goes the first in the tree dump:
->>
->> # debugfs.reiser4 -t /dev/sda7
->>
->> In our case the root block has blocknumber #79
->>
->> Let's now take a look on how our failover works. The death defying
->> act: we erase the root block of the original subvolume:
->>
->> # dd if=/dev/zero of=/dev/sda7 bs=4096 count=1 seek=79
->>
->> We know that the mount procedure load the root block. Let's try to
->> mount our array with the corrupted root block:
->>
->> # mount /dev/sda8 /mnt
->>
->> Everything works..
->> Take a look at kernel messages:
->>
->> # dmesg
->> reiser4[mount(21224)]: parse_node41
->> (fs/reiser4/plugin/node/node41.c:79)[edward-1645]:
->> WARNING: block 79 (/dev/sda7): bad checksum. Please, scrub the volume.
->>
->>
->>                              TODO
->>
->>
->> 1) Mirror tools (upgrade/downgrade a mirror array, swap original and
->>     specified replica, convert replica to an original, visualization of
->> mirror
->>     arrays, etc);
->> 2) Scrub (online background checking and synchronizaton of mirrors);
->> 3) Checksumming format super-block;
->> 4) Issuing discard requests for replicas on SSD devices.
->>
->> All items are very simple to implement. If anyone cares, then I'll
->> provide details.
->>
->>
->
->
-> So the latest update is that we don't need online scrub: this feature
-> is inherent to badly designed file systems.
->
-> Instead we provide transparent (on the fly) failover. That is, in the
-> case of IO error (because of death of device, etc), or if checksum
-> verification failed (because of bitrot, etc), reiser4 immediately
-> issues IO requests against replica devices.
->
-> Thus, the latest version of TODO list includes the following items:
->
-> 1. Implementation of Mirror Tools (upgrade/downgrade/synchronize a
->    mirror array, swap original and specified replica, convert replica
->    to an original, visualization of mirror arrays, etc);
->
-> 2. Checksumming format super-block and bitmap blocks;
->
-> 3. Issuing discard requests for replicas on SSD devices.
->
-> 4. Testing.
->
->    a) Testing overall stability of format41:
->       Create a mirrored volume and perform usual stressing by fsx,
->       stress.sh, dbench, etc.
->
->    b) Testing the feature of failover:
->       Create a mirrored volume and emulate data corruption and death
->       of devices under some workload. To emulate data corruption use
->       dd to fill metadata blocks with zeros. To emulate death of
->       devices, simply create one or more mirrors on USB sticks and
->       remove them during heavy IO activity.
->
-Both test scenarios are implemented in xfstests and reiser4 is supported.
+Hi.
+
+My problem - the procedure of individual commands.
+
+root@ishi:[~]
+# dmesg | grep reiser4
+[    0.000000] Linux version 4.7.2-SAUX-reiser4 (root@ishi) (gcc
+version 5.2.0 (GCC) ) #1 SMP Sun Nov 20 19:19:27 UTC 2016
+[    0.000000] Command line: BOOT_IMAGE=3D/vmlinuz-4.7.2-SAUX-reiser4
+root=3D/dev/sdb2 ro rootflags=3Dtxmode=3Dwa quiet
+[    0.000000] Kernel command line:
+BOOT_IMAGE=3D/vmlinuz-4.7.2-SAUX-reiser4 root=3D/dev/sdb2 ro
+rootflags=3Dtxmode=3Dwa quiet
+[    3.750151] usb usb1: Manufacturer: Linux 4.7.2-SAUX-reiser4 ehci_hcd
+[    3.760151] usb usb2: Manufacturer: Linux 4.7.2-SAUX-reiser4 ehci_hcd
+[    3.761776] usb usb3: Manufacturer: Linux 4.7.2-SAUX-reiser4 xhci-hcd
+[    3.762263] usb usb4: Manufacturer: Linux 4.7.2-SAUX-reiser4 xhci-hcd
+[    3.762893] usb usb5: Manufacturer: Linux 4.7.2-SAUX-reiser4 xhci-hcd
+[    3.763068] usb usb6: Manufacturer: Linux 4.7.2-SAUX-reiser4 xhci-hcd
+[    3.875733] reiser4: sdb2: found disk format 4.0.1.
+[    3.875768] reiser4: sdb2: use 'fsck.reiser4 --fix' to complete
+disk format upgrade.
+[    4.063641] reiser4: sdb2: using Write-Anywhere Transaction Model.
+[    4.063651] VFS: Mounted root (reiser4 filesystem) readonly on device 8:=
+18.
+
+root@ishi:[~]
+# blkid | grep reiser4
+/dev/sdb2: LABEL=3D"SYSTEM-ROOT"
+UUID=3D"631c2925-dca7-41be-b40c-46e7b2052e28" TYPE=3D"reiser4"
+PARTUUID=3D"0215fc7d-02"
+/dev/sdd5: UUID=3D"bd01257d-7af7-4729-a970-c614ccda434e" TYPE=3D"reiser4"
+PARTUUID=3D"614f1fba-05"
+/dev/sdd6: UUID=3D"bd01257d-7af7-4729-a970-c614ccda434e" TYPE=3D"reiser4"
+PARTUUID=3D"614f1fba-06"
+
+root@ishi:[~]
+# fdisk -l | grep sdd
+Disk /dev/sdd: 119.2 GiB, 128035676160 bytes, 250069680 sectors
+/dev/sdd1  *         2048    616447    614400  300M 83 Linux
+/dev/sdd2          616448 250069679 249453232  119G  5 Extended
+/dev/sdd5          618496 122253311 121634816   58G 83 Linux
+/dev/sdd6       122255360 243890175 121634816   58G 83 Linux
+/dev/sdd7       243892224 250069679   6177456    3G 82 Linux swap / Solaris
+
+root@ishi:[~]
+# debugfs.reiser4 /dev/sdd5
+debugfs.reiser4 1.1.0
+Format release: 4.1.1
+Copyright (C) 2001-2005 by Hans Reiser, licensing governed by
+reiser4progs/COPYING.
+
+Master super block (16):
+magic:          ReIsEr4
+blksize:        4096
+format:         0x1 (format41)
+mirror id:      0
+replicas:       1
+volume uuid:    bd01257d-7af7-4729-a970-c614ccda434e
+subvol uuid:    4af98787-f659-4567-a66c-1a5f3b9767a1
+label:          <none>
+
+Format super block (17):
+subvolume id:   0
+num subvols:    1
+plugin:         format41
+description:    Standard layout for logical volumes.
+version:        1
+magic:          ReIsEr40FoRmAt
+mkfs id:        0x47846701
+flushes:        0
+blocks:         15204352
+free blocks:    15203849
+root block:     23
+tail policy:    0x2 (smart)
+next oid:       0x10000
+file count:     1
+tree height:    2
+key policy:     LARGE
+
+FS status block (21):
+FS marked consistent
+
+root@ishi:[~]
+# debugfs.reiser4 /dev/sdd6
+debugfs.reiser4 1.1.0
+Format release: 4.1.1
+Copyright (C) 2001-2005 by Hans Reiser, licensing governed by
+reiser4progs/COPYING.
+
+Master super block (16):
+magic:          ReIsEr4
+blksize:        4096
+format:         0x1 (format41)
+mirror id:      1
+replicas:       1
+volume uuid:    bd01257d-7af7-4729-a970-c614ccda434e
+subvol uuid:    cc7f1605-7636-45d0-a237-5f9e4a7d457e
+label:          <none>
+
+Format super block (17):
+subvolume id:   0
+num subvols:    1
+plugin:         format41
+description:    Standard layout for logical volumes.
+version:        1
+magic:          ReIsEr40FoRmAt
+mkfs id:        0x47846701
+flushes:        0
+blocks:         15204352
+free blocks:    15203849
+root block:     23
+tail policy:    0x2 (smart)
+next oid:       0x10000
+file count:     1
+tree height:    2
+key policy:     LARGE
+
+FS status block (21):
+FS marked consistent
+
+root@ishi:[~]
+# fsck.reiser4 --yes /dev/sdd5
+*******************************************************************
+This is an EXPERIMENTAL version of fsck.reiser4. Read README first.
+*******************************************************************
+
+Fscking the /dev/sdd5 block device.
+Will check the consistency of the Reiser4 SuperBlock.
+Will check the consistency of the Reiser4 FileSystem.
+***** fsck.reiser4 started at Tue Nov 22 15:52:03 2016
+Reiser4 fs was detected on /dev/sdd5.
+Master super block (16):
+magic:          ReIsEr4
+blksize:        4096
+format:         0x1 (format41)
+mirror id:      0
+replicas:       1
+volume uuid:    bd01257d-7af7-4729-a970-c614ccda434e
+subvol uuid:    4af98787-f659-4567-a66c-1a5f3b9767a1
+label:          <none>
+
+Format super block (17):
+subvolume id:   0
+num subvols:    1
+plugin:         format41
+description:    Standard layout for logical volumes.
+version:        1
+magic:          ReIsEr40FoRmAt
+mkfs id:        0x47846701
+flushes:        0
+blocks:         15204352
+free blocks:    15203849
+root block:     23
+tail policy:    0x2 (smart)
+next oid:       0x10000
+file count:     1
+tree height:    2
+key policy:     LARGE
 
 
->
-> Thanks,
-> Edward.
->
->
-> --
-> To unsubscribe from this list: send the line "unsubscribe reiserfs-devel" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+CHECKING THE STORAGE TREE
+        Read nodes 2
+        Nodes left in the tree 2
+                Leaves of them 1, Twigs of them 1
+        Time interval: Tue Nov 22 15:52:03 2016 - Tue Nov 22 15:52:03 2016
+CHECKING EXTENT REGIONS.
+        Read twigs 1
+        Time interval: Tue Nov 22 15:52:03 2016 - Tue Nov 22 15:52:03 2016
+CHECKING THE SEMANTIC TREE
+        Found 1 objects (some could be encountered more then once).
+        Time interval: Tue Nov 22 15:52:03 2016 - Tue Nov 22 15:52:03 2016
+***** fsck.reiser4 finished at Tue Nov 22 15:52:03 2016
+Closing fs...done
+
+FS is consistent.
+
+root@ishi:[~]
+# fsck.reiser4 --yes /dev/sdd6
+*******************************************************************
+This is an EXPERIMENTAL version of fsck.reiser4. Read README first.
+*******************************************************************
+
+Fscking the /dev/sdd6 block device.
+Will check the consistency of the Reiser4 SuperBlock.
+Will check the consistency of the Reiser4 FileSystem.
+***** fsck.reiser4 started at Tue Nov 22 15:52:34 2016
+FSCK: master.c: 125: repair_master_check_struct: Refuse to check/repar
+replica. Fsck works only with original subvolumes.
+Fatal: Failed to open the master super block.
+
+Operational error occurred while fscking.
+
+root@ishi:[~]
+# mount /dev/sdd5 /mnt
+[  498.457176] BUG: unable to handle kernel paging request at 0000138800000=
+000
+[  498.457370] IP: [<0000138800000000>] 0x138800000000
+[  498.457559] PGD 0
+[  498.457949] Oops: 0010 [#1] SMP
+[  498.458373] Modules linked in: nf_conntrack_ipv4 nf_defrag_ipv4
+xt_addrtype xt_conntrack nf_conntrack iptable_filter xt_tcpudp xt_DSCP
+iptable_mangle ip_tables x_tables cfg80211 rfkill joydev hid_generic
+usbhid hid uvcvideo snd_usb_audio snd_hda_codec_hdmi snd_usbmidi_lib
+videobuf2_vmalloc videobuf2_memops snd_rawmidi videobuf2_v4l2
+snd_seq_device videobuf2_core videodev snd_hda_codec_via
+snd_hda_codec_generic nouveau iTCO_wdt iTCO_vendor_support mxm_wmi wmi
+coretemp hwmon x86_pkg_temp_thermal ttm intel_powerclamp
+drm_kms_helper kvm_intel snd_hda_intel kvm psmouse serio_raw irqbypass
+snd_hda_codec crct10dif_pclmul evdev crc32_pclmul snd_hda_core
+crc32c_intel snd_hwdep ghash_clmulni_intel drm agpgart i2c_algo_bit
+fb_sys_fops syscopyarea sysfillrect sysimgblt snd_pcm atl1c snd_timer
+i2c_i801 snd soundcore i2c_core lpc_ich shpchp fan thermal battery
+acpi_cpufreq video processor button
+[  498.460662] CPU: 2 PID: 2000 Comm: mount Not tainted 4.7.2-SAUX-reiser4 =
+#1
+[  498.461297] Hardware name: Gigabyte Technology Co., Ltd. To be
+filled by O.E.M./Z77-D3H, BIOS F23b 01/06/2014
+[  498.461883] task: ffff8807fa935780 ti: ffff8807eca18000 task.ti:
+ffff8807eca18000
+[  498.462535] RIP: 0010:[<0000138800000000>]  [<0000138800000000>]
+0x138800000000
+[  498.463126] RSP: 0018:ffff8807eca1bc70  EFLAGS: 00010246
+[  498.463731] RAX: ffffffff81e513e8 RBX: ffff8807f7a49800 RCX: 00000000000=
+00000
+[  498.464346] RDX: 0000000000000000 RSI: 0000000000000000 RDI: ffff8807f7a=
+49800
+[  498.464971] RBP: ffff8807eca1bda0 R08: ffff88081ef9fa30 R09: 00000000000=
+00001
+[  498.465638] R10: ffff8807eca1bc08 R11: 0000000000000001 R12: 00000000000=
+00000
+[  498.466298] R13: ffff8807f7a4e800 R14: ffff8807f7a4e950 R15: 00000000000=
+00000
+[  498.466933] FS:  00007fd643cc0780(0000) GS:ffff88081ed00000(0000)
+knlGS:0000000000000000
+[  498.467606] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+[  498.468247] CR2: 0000138800000000 CR3: 00000007ec8e9000 CR4: 00000000001=
+406e0
+[  498.468907] Stack:
+[  498.469558]  ffffffff81237eff 000000004b1b5d0b 0000000000000000
+0000000000000001
+[  498.470260]  ffff8807eca1bc90 ffff8807eca1bc90 ffff8807eca1bca0
+ffff8807eca1bca0
+[  498.470955]  0000000000000000 0000000000000000 0000000000000000
+0000000000000000
+[  498.471638] Call Trace:
+[  498.472371]  [<ffffffff81237eff>] ? fill_super+0x101/0x27c
+[  498.473087]  [<ffffffff8119801a>] mount_bdev+0x141/0x193
+[  498.473783]  [<ffffffff81237dfe>] ? reiser4_mount+0x17/0x17
+[  498.474491]  [<ffffffff81237dfc>] reiser4_mount+0x15/0x17
+[  498.475207]  [<ffffffff81198d2d>] mount_fs+0x67/0x12e
+[  498.475917]  [<ffffffff811af22b>] vfs_kern_mount+0x6a/0xe2
+[  498.476642]  [<ffffffff811b1d3b>] do_mount+0x8ee/0xa2a
+[  498.477399]  [<ffffffff811b209e>] SyS_mount+0x77/0x9f
+[  498.478134]  [<ffffffff818fa71f>] entry_SYSCALL_64_fastpath+0x17/0x93
+[  498.478858] Code:  Bad RIP value.
+[  498.479589] RIP  [<0000138800000000>] 0x138800000000
+[  498.480304]  RSP <ffff8807eca1bc70>
+[  498.481055] CR2: 0000138800000000
+[  498.481787] ---[ end trace abb63613c002b217 ]---
+[  498.482586] reiser4[mount(2000)]: release_unix_file
+(fs/reiser4/plugin/file/file.c:2358)[vs-44]:
+[  498.482586] WARNING: out of memory?
+[  498.483995] reiser4[mount(2000)]: release_unix_file
+(fs/reiser4/plugin/file/file.c:2358)[vs-44]:
+[  498.483995] WARNING: out of memory?
+[  498.485422] reiser4[mount(2000)]: release_unix_file
+(fs/reiser4/plugin/file/file.c:2358)[vs-44]:
+[  498.485422] WARNING: out of memory?
+[  498.486878] reiser4[mount(2000)]: release_unix_file
+(fs/reiser4/plugin/file/file.c:2358)[vs-44]:
+[  498.486878] WARNING: out of memory?
+[  498.488438] reiser4[mount(2000)]: release_unix_file
+(fs/reiser4/plugin/file/file.c:2358)[vs-44]:
+[  498.488438] WARNING: out of memory?
+Killed
+
+root@ishi:[~]
+# mount /dev/sdd6 /mnt
+[  540.345866] BUG: unable to handle kernel paging request at 0000138800000=
+000
+[  540.346127] IP: [<0000138800000000>] 0x138800000000
+[  540.346869] PGD 0
+[  540.347624] Oops: 0010 [#2] SMP
+[  540.348423] Modules linked in: nf_conntrack_ipv4 nf_defrag_ipv4
+xt_addrtype xt_conntrack nf_conntrack iptable_filter xt_tcpudp xt_DSCP
+iptable_mangle ip_tables x_tables cfg80211 rfkill joydev hid_generic
+usbhid hid uvcvideo snd_usb_audio snd_hda_codec_hdmi snd_usbmidi_lib
+videobuf2_vmalloc videobuf2_memops snd_rawmidi videobuf2_v4l2
+snd_seq_device videobuf2_core videodev snd_hda_codec_via
+snd_hda_codec_generic nouveau iTCO_wdt iTCO_vendor_support mxm_wmi wmi
+coretemp hwmon x86_pkg_temp_thermal ttm intel_powerclamp
+drm_kms_helper kvm_intel snd_hda_intel kvm psmouse serio_raw irqbypass
+snd_hda_codec crct10dif_pclmul evdev crc32_pclmul snd_hda_core
+crc32c_intel snd_hwdep ghash_clmulni_intel drm agpgart i2c_algo_bit
+fb_sys_fops syscopyarea sysfillrect sysimgblt snd_pcm atl1c snd_timer
+i2c_i801 snd soundcore i2c_core lpc_ich shpchp fan thermal battery
+acpi_cpufreq video processor button
+[  540.351912] CPU: 0 PID: 2003 Comm: mount Tainted: G      D
+4.7.2-SAUX-reiser4 #1
+[  540.352769] Hardware name: Gigabyte Technology Co., Ltd. To be
+filled by O.E.M./Z77-D3H, BIOS F23b 01/06/2014
+[  540.353659] task: ffff8807fa937080 ti: ffff8807ec828000 task.ti:
+ffff8807ec828000
+[  540.354587] RIP: 0010:[<0000138800000000>]  [<0000138800000000>]
+0x138800000000
+[  540.355517] RSP: 0018:ffff8807ec82bc70  EFLAGS: 00010246
+[  540.356418] RAX: ffffffff81e513e8 RBX: ffff8807f7a4f800 RCX: 00000000000=
+00000
+[  540.357334] RDX: 0000000000000000 RSI: 0000000000000000 RDI: ffff8807f7a=
+4f800
+[  540.358265] RBP: ffff8807ec82bda0 R08: ffff88081ef98320 R09: 00000000000=
+00001
+[  540.359166] R10: ffff8807ec82bc08 R11: 0000000000000001 R12: 00000000000=
+00000
+[  540.360106] R13: ffff8807f7a4d800 R14: ffff8807f7a4d950 R15: 00000000000=
+00000
+[  540.360983] FS:  00007f78ee5ff780(0000) GS:ffff88081ec00000(0000)
+knlGS:0000000000000000
+[  540.361840] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+[  540.362666] CR2: 0000138800000000 CR3: 00000007ec8f7000 CR4: 00000000001=
+406f0
+[  540.363470] Stack:
+[  540.364248]  ffffffff81237eff 000000004b1b5d0b 0000000000000000
+0000000000000001
+[  540.365085]  ffff8807ec82bc90 ffff8807ec82bc90 ffff8807ec82bca0
+ffff8807ec82bca0
+[  540.365865]  0000000000000000 0000000000000000 0000000000000000
+0000000000000000
+[  540.366676] Call Trace:
+[  540.367455]  [<ffffffff81237eff>] ? fill_super+0x101/0x27c
+[  540.368239]  [<ffffffff8119801a>] mount_bdev+0x141/0x193
+[  540.369017]  [<ffffffff81237dfe>] ? reiser4_mount+0x17/0x17
+[  540.369794]  [<ffffffff81237dfc>] reiser4_mount+0x15/0x17
+[  540.370594]  [<ffffffff81198d2d>] mount_fs+0x67/0x12e
+[  540.371374]  [<ffffffff811af22b>] vfs_kern_mount+0x6a/0xe2
+[  540.372133]  [<ffffffff811b1d3b>] do_mount+0x8ee/0xa2a
+[  540.372906]  [<ffffffff811b209e>] SyS_mount+0x77/0x9f
+[  540.373648]  [<ffffffff818fa71f>] entry_SYSCALL_64_fastpath+0x17/0x93
+[  540.374377] Code:  Bad RIP value.
+[  540.375141] RIP  [<0000138800000000>] 0x138800000000
+[  540.375899]  RSP <ffff8807ec82bc70>
+[  540.376657] CR2: 0000138800000000
+[  540.377416] ---[ end trace abb63613c002b218 ]---
+[  540.378225] reiser4[mount(2003)]: release_unix_file
+(fs/reiser4/plugin/file/file.c:2358)[vs-44]:
+[  540.378225] WARNING: out of memory?
+[  540.379645] reiser4[mount(2003)]: release_unix_file
+(fs/reiser4/plugin/file/file.c:2358)[vs-44]:
+[  540.379645] WARNING: out of memory?
+[  540.381186] reiser4[mount(2003)]: release_unix_file
+(fs/reiser4/plugin/file/file.c:2358)[vs-44]:
+[  540.381186] WARNING: out of memory?
+[  540.382734] reiser4[mount(2003)]: release_unix_file
+(fs/reiser4/plugin/file/file.c:2358)[vs-44]:
+[  540.382734] WARNING: out of memory?
+[  540.384380] reiser4[mount(2003)]: release_unix_file
+(fs/reiser4/plugin/file/file.c:2358)[vs-44]:
+[  540.384380] WARNING: out of memory?
+Killed
+
+root@ishi:[~]    :-(((
+
+after all - cmd - sync reboot poweroff - not working !!!
+
+followed by a hard reboot
+
+I Linux distribution Crux
+
+Best regards
+
+
+Milan Bu=C5=A1ka
+
+
+--=20
+---------------------------------------------------------------------------=
+-
+Remember, no question is too stupid and no problem
+          too small--We've all been beginners
