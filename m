@@ -1,59 +1,73 @@
-From: Michal Hocko <mhocko@kernel.org>
-Subject: Re: [PATCH 2/9 v2] xfs: introduce and use KM_NOLOCKDEP to silence
- reclaim lockdep false positives
-Date: Fri, 16 Dec 2016 23:01:21 +0100
-Message-ID: <20161216220121.GC7645@dhcp22.suse.cz>
-References: <20161215140715.12732-1-mhocko@kernel.org>
- <20161215140715.12732-3-mhocko@kernel.org>
- <20161216154041.GA7645@dhcp22.suse.cz>
- <20161216163749.GE8447@bfoster.bfoster>
+From: Kees Cook <keescook@chromium.org>
+Subject: [PATCH] reiserfs: use designated initializers
+Date: Fri, 16 Dec 2016 17:04:35 -0800
+Message-ID: <20161217010435.GA140601@beast>
 Mime-Version: 1.0
-Return-path: <owner-linux-mm@kvack.org>
+Return-path: <reiserfs-devel-owner@vger.kernel.org>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=date:from:to:cc:subject:message-id:mime-version:content-disposition;
+        bh=e6luwXuIHQ02Nea0wiRwlqm7XD9e3pGflsMbi42cia8=;
+        b=IPXwU1EHhNmHAb8KBp+OCkq/cZNCGAcSTJFMiMgnq9T1OOfLQJalS8beJOJsreXZcq
+         cl5OYJ7ZyjQH2j8Ss6UPhNkPbszqvgTvqin7VT6x3o0uhx8FXTYZIqnVrfwMCBlr03yp
+         v7Y9HT3SmsTi1d2ifIthori+NLgSSYUhRR8PU=
 Content-Disposition: inline
-In-Reply-To: <20161216163749.GE8447@bfoster.bfoster>
-Sender: owner-linux-mm@kvack.org
+Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Brian Foster <bfoster@redhat.com>
-Cc: linux-mm@kvack.org, linux-fsdevel@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>, Dave Chinner <david@fromorbit.com>, Theodore Ts'o <tytso@mit.edu>, Chris Mason <clm@fb.com>, David Sterba <dsterba@suse.cz>, Jan Kara <jack@suse.cz>, ceph-devel@vger.kernel.org, cluster-devel@redhat.com, linux-nfs@vger.kernel.org, logfs@logfs.org, linux-xfs@vger.kernel.org, linux-ext4@vger.kernel.org, linux-btrfs@vger.kernel.org, linux-mtd@lists.infradead.org, reiserfs-devel@vger.kernel.org, linux-ntfs-dev@lists.sourceforge.net, linux-f2fs-devel@lists.sourceforge.net, linux-afs@lists.infradead.org, LKML <linux-kernel@vger.kernel.org>
+To: linux-kernel@vger.kernel.org
+Cc: reiserfs-devel@vger.kernel.org
 
-On Fri 16-12-16 11:37:50, Brian Foster wrote:
-> On Fri, Dec 16, 2016 at 04:40:41PM +0100, Michal Hocko wrote:
-> > Updated patch after Mike noticed a BUG_ON when KM_NOLOCKDEP is used.
-> > ---
-> > From 1497e713e11639157aef21cae29052cb3dc7ab44 Mon Sep 17 00:00:00 2001
-> > From: Michal Hocko <mhocko@suse.com>
-> > Date: Thu, 15 Dec 2016 13:06:43 +0100
-> > Subject: [PATCH] xfs: introduce and use KM_NOLOCKDEP to silence reclaim
-> >  lockdep false positives
-> > 
-> > Now that the page allocator offers __GFP_NOLOCKDEP let's introduce
-> > KM_NOLOCKDEP alias for the xfs allocation APIs. While we are at it
-> > also change KM_NOFS users introduced by b17cb364dbbb ("xfs: fix missing
-> > KM_NOFS tags to keep lockdep happy") and use the new flag for them
-> > instead. There is really no reason to make these allocations contexts
-> > weaker just because of the lockdep which even might not be enabled
-> > in most cases.
-> > 
-> 
-> Hi Michal,
-> 
-> I haven't gone back to fully grok b17cb364dbbb ("xfs: fix missing
-> KM_NOFS tags to keep lockdep happy"), so I'm not really familiar with
-> the original problem. FWIW, there was another KM_NOFS instance added by
-> that commit in xlog_cil_prepare_log_vecs() that is now in
-> xlog_cil_alloc_shadow_bufs(). Perhaps Dave can confirm whether the
-> original issue still applies..?
+Prepare to mark sensitive kernel structures for randomization by making
+sure they're using designated initializers. These were identified during
+allyesconfig builds of x86, arm, and arm64, with most initializer fixes
+extracted from grsecurity.
 
-Yes, I've noticed that but the reworked code looked sufficiently
-different that I didn't dare to simply convert it.
+Signed-off-by: Kees Cook <keescook@chromium.org>
+---
+ fs/reiserfs/item_ops.c | 24 ++++++++++++------------
+ 1 file changed, 12 insertions(+), 12 deletions(-)
+
+diff --git a/fs/reiserfs/item_ops.c b/fs/reiserfs/item_ops.c
+index aca73dd73906..e3c558d1b78c 100644
+--- a/fs/reiserfs/item_ops.c
++++ b/fs/reiserfs/item_ops.c
+@@ -724,18 +724,18 @@ static void errcatch_print_vi(struct virtual_item *vi)
+ }
+ 
+ static struct item_operations errcatch_ops = {
+-	errcatch_bytes_number,
+-	errcatch_decrement_key,
+-	errcatch_is_left_mergeable,
+-	errcatch_print_item,
+-	errcatch_check_item,
+-
+-	errcatch_create_vi,
+-	errcatch_check_left,
+-	errcatch_check_right,
+-	errcatch_part_size,
+-	errcatch_unit_num,
+-	errcatch_print_vi
++	.bytes_number = errcatch_bytes_number,
++	.decrement_key = errcatch_decrement_key,
++	.is_left_mergeable = errcatch_is_left_mergeable,
++	.print_item = errcatch_print_item,
++	.check_item = errcatch_check_item,
++
++	.create_vi = errcatch_create_vi,
++	.check_left = errcatch_check_left,
++	.check_right = errcatch_check_right,
++	.part_size = errcatch_part_size,
++	.unit_num = errcatch_unit_num,
++	.print_vi = errcatch_print_vi
+ };
+ 
+ #if ! (TYPE_STAT_DATA == 0 && TYPE_INDIRECT == 1 && TYPE_DIRECT == 2 && TYPE_DIRENTRY == 3)
 -- 
-Michal Hocko
-SUSE Labs
+2.7.4
 
---
-To unsubscribe, send a message with 'unsubscribe linux-mm' in
-the body to majordomo@kvack.org.  For more info on Linux MM,
-see: http://www.linux-mm.org/ .
-Don't email: <a href=mailto:"dont@kvack.org"> email@kvack.org </a>
+
+-- 
+Kees Cook
+Nexus Security
