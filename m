@@ -1,541 +1,417 @@
-From: =?UTF-8?B?RHXFoWFuIMSMb2xpxIc=?= <dusanc@gmail.com>
-Subject: Re: [BUG] on mount with reiser4-for-4.8
-Date: Sun, 18 Dec 2016 14:46:25 +0100
-Message-ID: <CADW=+3khBM_KWb0nc8s9431UdniGa0etDXMZh7gwA0f1MOxfqg@mail.gmail.com>
-References: <CADW=+3=UA1ugAVzrLMw-R8T5dWXjWnwwfUJHYfDp-VFMPyE5jg@mail.gmail.com>
- <5855B20D.6020304@gmail.com> <CADW=+3n30cS=w6T69fdeTkhzdEN4oed4YHbtgx8i9BXdz4mJ=w@mail.gmail.com>
- <585684AA.3010306@gmail.com>
+From: Jan Kara <jack@suse.cz>
+Subject: Re: [PATCH 0/9 v2] scope GFP_NOFS api
+Date: Mon, 19 Dec 2016 10:25:08 +0100
+Message-ID: <20161219092508.GC17598@quack2.suse.cz>
+References: <20161215140715.12732-1-mhocko@kernel.org>
+ <1481900758.31172.20.camel@gmail.com>
+ <20161216153502.GP13940@dhcp22.suse.cz>
+ <1481905648.4304.12.camel@gmail.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Return-path: <reiserfs-devel-owner@vger.kernel.org>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=YVuYwffOGCkeDE2MU3JTcXA81CsgHnIcEbal+bTdtkE=;
-        b=myLC1sz+yfyDEJkETh26xRtnJU0CYxwxW/aOfpSIiTc+r3Wd5Eq3dz51OQATeQX1IE
-         9eP34WIdYz4CJvpRL3dCNKMVMgZ9B/C5vFVxfIUWlg55woMAgPv3vWrWd36hSESkJlz5
-         ds5p1yOJ1QprzMVdvwGaLQDG3x2rTyChRS56aeBI0iGEbSK+VjDe6M3rEEvr9g76FSXv
-         r2mDDs/3FfdDSpjXmsjmxXrHYmRV2/X9U1W7mmugyJ6gZHBRm/4+4PBYJ3rt7aLs1BLs
-         EmAmrK+yk7Hy8mxRKdr0F73KBU01koT3/v/FbvJesJEX3VnTkoaZkoAmj9SUMXl0VIEH
-         uuDg==
-In-Reply-To: <585684AA.3010306@gmail.com>
-Sender: reiserfs-devel-owner@vger.kernel.org
+Return-path: <owner-linux-mm@kvack.org>
+Content-Disposition: inline
+In-Reply-To: <1481905648.4304.12.camel@gmail.com>
+Sender: owner-linux-mm@kvack.org
 List-ID: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="utf-8"
-To: Edward Shishkin <edward.shishkin@gmail.com>
-Cc: reiserfs-devel <reiserfs-devel@vger.kernel.org>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Mike Galbraith <umgwanakikbuti@gmail.com>
+Cc: Michal Hocko <mhocko@kernel.org>, linux-mm@kvack.org, linux-fsdevel@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>, Dave Chinner <david@fromorbit.com>, Theodore Ts'o <tytso@mit.edu>, Chris Mason <clm@fb.com>, David Sterba <dsterba@suse.cz>, Jan Kara <jack@suse.cz>, ceph-devel@vger.kernel.org, cluster-devel@redhat.com, linux-nfs@vger.kernel.org, logfs@logfs.org, linux-xfs@vger.kernel.org, linux-ext4@vger.kernel.org, linux-btrfs@vger.kernel.org, linux-mtd@lists.infradead.org, reiserfs-devel@vger.kernel.org, linux-ntfs-dev@lists.sourceforge.net, linux-f2fs-devel@lists.sourceforge.net, linux-afs@lists.infradead.org, LKML <linux-kernel@vger.kernel.org>, "Peter Zijlstra (Intel)" <peterz@infradead.org>
 
-That was it, no more BUG on mount.
+On Fri 16-12-16 17:27:28, Mike Galbraith wrote:
+> On Fri, 2016-12-16 at 16:35 +0100, Michal Hocko wrote:
+> > On Fri 16-12-16 16:05:58, Mike Galbraith wrote:
+> > > On Thu, 2016-12-15 at 15:07 +0100, Michal Hocko wrote:
+> > > > Hi,
+> > > > I have posted the previous version here [1]. Since then I have added a
+> > > > support to suppress reclaim lockdep warnings (__GFP_NOLOCKDEP) to allow
+> > > > removing GFP_NOFS usage motivated by the lockdep false positives. On top
+> > > > of that I've tried to convert few KM_NOFS usages to use the new flag in
+> > > > the xfs code base. This would need a review from somebody familiar with
+> > > > xfs of course.
+> > > 
+> > > The wild ass guess below prevents the xfs explosion below when running
+> > > ltp zram tests.
+> > 
+> > Yes this looks correct. Thanks for noticing. I will fold it to the
+> > patch2. Thanks for testing Mike!
+> 
+> I had ulterior motives, was hoping you might have made the irksome RT
+> gripe below just _go away_, as staring at it ain't working out ;-)
+> 
+> [ 1441.309006] =========================================================
+> [ 1441.309006] [ INFO: possible irq lock inversion dependency detected ]
+> [ 1441.309007] 4.10.0-rt9-rt #11 Tainted: G            E  
+> [ 1441.309007] ---------------------------------------------------------
+> [ 1441.309008] kswapd0/165 just changed the state of lock:
+> [ 1441.309009]  (&journal->j_state_lock){+.+.-.}, at: [<ffffffffa00a6d60>] jbd2_complete_transaction+0x20/0x90 [jbd2]
+> [ 1441.309017] but this lock took another, RECLAIM_FS-unsafe lock in the past:
+> [ 1441.309017]  (&tb->tb6_lock){+.+.+.}
+> [ 1441.309018] and interrupts could create inverse lock ordering between them.
+> [ 1441.309018] other info that might help us debug this:
+> [ 1441.309018] Chain exists of: &journal->j_state_lock --> &journal->j_list_lock --> &tb->tb6_lock
+> [ 1441.309019]  Possible interrupt unsafe locking scenario:
+> [ 1441.309019]        CPU0                    CPU1
+> [ 1441.309019]        ----                    ----
+> [ 1441.309019]   lock(&tb->tb6_lock);
+> [ 1441.309020]                                local_irq_disable();
+> [ 1441.309020]                                lock(&journal->j_state_lock);
+> [ 1441.309020]                                lock(&journal->j_list_lock);
+> [ 1441.309021]   <Interrupt>
+> [ 1441.309021]     lock(&journal->j_state_lock);
 
-Thanks a lot
+Hum, so AFAICT this is just a false positive resulting from lockdep
+allocation context tracking being implemented via interrupt context
+tracking. At least I don't see how you could possibly enter FS reclaim
+under &tb->tb6_lock...
 
-Dushan
+								Honza
 
-On Sun, Dec 18, 2016 at 1:44 PM, Edward Shishkin
-<edward.shishkin@gmail.com> wrote:
-> Try this one in addition.
->
-> Thanks,
-> Edward.
->
->
-> On 12/18/2016 01:17 PM, Du=C5=A1an =C4=8Coli=C4=87 wrote:
->>
->> It's OK now, mounts read-only on error.
->>
->> What about that BUG on mount?
->>
->> On Sat, Dec 17, 2016 at 10:45 PM, Edward Shishkin
->> <edward.shishkin@gmail.com> wrote:
->>>
->>> Please, check if this help.
->>> Apply from reiser4 directory.
->>>
->>> Thanks,
->>> Edward.
->>>
->>>
->>> On 12/17/2016 10:08 PM, Du=C5=A1an =C4=8Coli=C4=87 wrote:
->>>>
->>>> When mounting reiser4 partitions I get the following bug, but the
->>>> system keeps working, even as reiser4 remounted partition as read
->>>> only.
->>>>
->>>> All R4 partitions are ccreg40.
->>>>
->>>> Thanks
->>>>
->>>> Dushan
->>>>
->>>>    cat /etc/fstab | grep -v "#"
->>>>
->>>>
->>>> /dev/sda1        /boot        ext2        noauto,noatime    1 2
->>>> /dev/md123              none            swap            sw
->>>> 0
->>>> 0
->>>> /dev/sda2        /        reiser4        noatime,onerror=3Dremount-ro
->>>> 0 0
->>>> /dev/md125        /mnt/backup    reiser4
->>>> noatime,noauto,onerror=3Dremount-ro    0 0
->>>> /dev/md126        /mnt/media    reiser4
->>>> noatime,users,onerror=3Dremount-ro    0 0
->>>> /dev/md127        /usr/portage    reiser4
->>>> noatime,onerror=3Dremount-ro        0 0
->>>> /dev/dvdrom        /mnt/cdrom    auto        noauto,ro    0 0
->>>> shm            /dev/shm    tmpfs        nodev,nosuid,noexec    0 0
->>>>
->>>>
->>>> cat /proc/mdstat
->>>> Personalities : [raid1]
->>>> md122 : active raid1 sdc1[1] sdb1[0]
->>>>         104320 blocks [2/2] [UU]
->>>>
->>>> md123 : active raid1 sdc2[1] sdb2[0]
->>>>         594304 blocks [2/2] [UU]
->>>>
->>>> md124 : active raid1 sdc5[1] sdb5[0]
->>>>         9775424 blocks [2/2] [UU]
->>>>
->>>> md125 : active raid1 sdc6[1] sdb6[0]
->>>>         68364480 blocks [2/2] [UU]
->>>>
->>>> md126 : active raid1 sdc7[1] sdb7[0]
->>>>         403110912 blocks [2/2] [UU]
->>>>
->>>> md127 : active raid1 sdc8[1] sdb8[0]
->>>>         6433920 blocks [2/2] [UU]
->>>>
->>>>    df
->>>>
->>>> Filesystem     1K-blocks      Used Available Use% Mounted on
->>>> /dev/sda2       37017728  30413152   6604576  83% /
->>>> tmpfs             680644      1012    679632   1% /run
->>>> dev                10240         0     10240   0% /dev
->>>> shm              3403212      1284   3401928   1% /dev/shm
->>>> cgroup_root        10240         0     10240   0% /sys/fs/cgroup
->>>> /dev/md126     383034100 350741596  32292504  92% /mnt/media
->>>> /dev/md127       6113484   5605344    508140  92% /usr/portage
->>>> none             3403212        12   3403200   1% /run/user/1001
->>>> none             3403212         0   3403212   0% /run/user/1000
->>>> /dev/md125      64959612  52568760  12390852  81% /mnt/backup
->>>>
->>>>
->>>> dmesg
->>>>
->>>> [    2.057469] reiser4[swapper/0(1)]: try_init_format40
->>>> (fs/reiser4/plugin/disk_format/disk_format40.c:303)[vpf-1364]:
->>>>                  NOTICE: Warning: mounting sda2 with fatal errors,
->>>> forcing read-only mount.
->>>> [    2.060544] reiser4: sda2: found disk format 4.0.1.
->>>> [    2.062410]
->>>> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
->>>> [    2.063993] BUG: KASAN: use-after-free in
->>>> init_format_format40+0x401/0x750 at addr ffff8801d0fc0850
->>>> [    2.065616] Read of size 4 by task swapper/0/1
->>>> [    2.067228] CPU: 0 PID: 1 Comm: swapper/0 Not tainted 4.8.11-gentoo
->>>> #3
->>>> [    2.068857] Hardware name: Gigabyte Technology Co., Ltd. To be
->>>> filled by O.E.M./B75-D3V, BIOS F5 07/04/2012
->>>> [    2.070566]  ffff8801d08f4580 ffff8801d6327a20 ffffffff81424185
->>>> ffff8801d6000600
->>>> [    2.072316]  ffff8801d0fc0800 ffff8801d6327a48 ffffffff811ff90c
->>>> ffff8801d6327ad8
->>>> [    2.074078]  ffff8801d0fc0800 ffff8801d0fc0800 ffff8801d6327ac8
->>>> ffffffff811ffb79
->>>> [    2.075861] Call Trace:
->>>> [    2.077616]  [<ffffffff81424185>] dump_stack+0x4d/0x68
->>>> [    2.079402]  [<ffffffff811ff90c>] kasan_object_err+0x1c/0x70
->>>> [    2.081216]  [<ffffffff811ffb79>] kasan_report_error+0x1c9/0x4b0
->>>> [    2.083049]  [<ffffffff812a10cf>] ? zget+0xdf/0x3c0
->>>> [    2.084876]  [<ffffffff811ffef4>] kasan_report+0x34/0x40
->>>> [    2.086717]  [<ffffffff81304b11>] ? init_format_format40+0x401/0x75=
-0
->>>> [    2.088594]  [<ffffffff811ff601>] __asan_load4+0x61/0x80
->>>> [    2.090471]  [<ffffffff81304b11>] init_format_format40+0x401/0x750
->>>> [    2.092356]  [<ffffffff812c4f3a>] fill_super+0x14a/0x300
->>>> [    2.094224]  [<ffffffff81209b6f>] mount_bdev+0x1bf/0x200
->>>> [    2.096073]  [<ffffffff812c4df0>] ? reiser4_mount+0x20/0x20
->>>> [    2.097930]  [<ffffffff812c4de0>] reiser4_mount+0x10/0x20
->>>> [    2.099785]  [<ffffffff81209dfe>] mount_fs+0x2e/0xe0
->>>> [    2.101654]  [<ffffffff81231a96>] vfs_kern_mount+0x66/0x190
->>>> [    2.103528]  [<ffffffff81233af2>] do_mount+0x1d2/0x1080
->>>> [    2.105397]  [<ffffffff811fe944>] ? kasan_check_write+0x14/0x20
->>>> [    2.107295]  [<ffffffff811c4624>] ? strndup_user+0x54/0x70
->>>> [    2.109187]  [<ffffffff81234e46>] SyS_mount+0x66/0xb0
->>>> [    2.111089]  [<ffffffff820a8759>] mount_block_root+0x171/0x3ac
->>>> [    2.113023]  [<ffffffff820a8a0b>] mount_root+0x77/0xd8
->>>> [    2.114955]  [<ffffffff820a8ba1>] prepare_namespace+0x135/0x16d
->>>> [    2.116887]  [<ffffffff820a84ec>] kernel_init_freeable+0x237/0x24b
->>>> [    2.118811]  [<ffffffff81a50e9e>] kernel_init+0xe/0x120
->>>> [    2.120713]  [<ffffffff81a5780f>] ret_from_fork+0x1f/0x40
->>>> [    2.122618]  [<ffffffff81a50e90>] ? rest_init+0x80/0x80
->>>> [    2.124522] Object at ffff8801d0fc0800, in cache kmalloc-512 size:
->>>> 512
->>>> [    2.126453] Allocated:
->>>> [    2.128364] PID =3D 1
->>>> [    2.130261]  [<ffffffff8109f536>] save_stack_trace+0x26/0x50
->>>> [    2.132219]  [<ffffffff811fe802>] kasan_kmalloc.part.5+0x62/0xf0
->>>> [    2.134206]  [<ffffffff811ff018>] kasan_kmalloc+0x78/0xa0
->>>> [    2.136188]  [<ffffffff813048bc>] init_format_format40+0x1ac/0x750
->>>> [    2.138174]  [<ffffffff812c4f3a>] fill_super+0x14a/0x300
->>>> [    2.140144]  [<ffffffff81209b6f>] mount_bdev+0x1bf/0x200
->>>> [    2.142096]  [<ffffffff812c4de0>] reiser4_mount+0x10/0x20
->>>> [    2.144055]  [<ffffffff81209dfe>] mount_fs+0x2e/0xe0
->>>> [    2.146028]  [<ffffffff81231a96>] vfs_kern_mount+0x66/0x190
->>>> [    2.148016]  [<ffffffff81233af2>] do_mount+0x1d2/0x1080
->>>> [    2.150014]  [<ffffffff81234e46>] SyS_mount+0x66/0xb0
->>>> [    2.152026]  [<ffffffff820a8759>] mount_block_root+0x171/0x3ac
->>>> [    2.154055]  [<ffffffff820a8a0b>] mount_root+0x77/0xd8
->>>> [    2.156066]  [<ffffffff820a8ba1>] prepare_namespace+0x135/0x16d
->>>> [    2.158074]  [<ffffffff820a84ec>] kernel_init_freeable+0x237/0x24b
->>>> [    2.160079]  [<ffffffff81a50e9e>] kernel_init+0xe/0x120
->>>> [    2.162020]  [<ffffffff81a5780f>] ret_from_fork+0x1f/0x40
->>>> [    2.163918] Freed:
->>>> [    2.165760] PID =3D 1
->>>> [    2.167562]  [<ffffffff8109f536>] save_stack_trace+0x26/0x50
->>>> [    2.169376]  [<ffffffff811feed7>] kasan_slab_free+0xb7/0x180
->>>> [    2.171150]  [<ffffffff811fd67b>] kfree+0x6b/0x90
->>>> [    2.172895]  [<ffffffff81304b09>] init_format_format40+0x3f9/0x750
->>>> [    2.174616]  [<ffffffff812c4f3a>] fill_super+0x14a/0x300
->>>> [    2.176290]  [<ffffffff81209b6f>] mount_bdev+0x1bf/0x200
->>>> [    2.177962]  [<ffffffff812c4de0>] reiser4_mount+0x10/0x20
->>>> [    2.179633]  [<ffffffff81209dfe>] mount_fs+0x2e/0xe0
->>>> [    2.181273]  [<ffffffff81231a96>] vfs_kern_mount+0x66/0x190
->>>> [    2.182910]  [<ffffffff81233af2>] do_mount+0x1d2/0x1080
->>>> [    2.184541]  [<ffffffff81234e46>] SyS_mount+0x66/0xb0
->>>> [    2.186171]  [<ffffffff820a8759>] mount_block_root+0x171/0x3ac
->>>> [    2.187804]  [<ffffffff820a8a0b>] mount_root+0x77/0xd8
->>>> [    2.189430]  [<ffffffff820a8ba1>] prepare_namespace+0x135/0x16d
->>>> [    2.191056]  [<ffffffff820a84ec>] kernel_init_freeable+0x237/0x24b
->>>> [    2.192683]  [<ffffffff81a50e9e>] kernel_init+0xe/0x120
->>>> [    2.194296]  [<ffffffff81a5780f>] ret_from_fork+0x1f/0x40
->>>> [    2.195902] Memory state around the buggy address:
->>>> [    2.197517]  ffff8801d0fc0700: fc fc fc fc fc fc fc fc fc fc fc fc
->>>> fc fc fc fc
->>>> [    2.199178]  ffff8801d0fc0780: fc fc fc fc fc fc fc fc fc fc fc fc
->>>> fc fc fc fc
->>>> [    2.200818] >ffff8801d0fc0800: fb fb fb fb fb fb fb fb fb fb fb fb
->>>> fb fb fb fb
->>>> [    2.202460]                                                  ^
->>>> [    2.204114]  ffff8801d0fc0880: fb fb fb fb fb fb fb fb fb fb fb fb
->>>> fb fb fb fb
->>>> [    2.205804]  ffff8801d0fc0900: fb fb fb fb fb fb fb fb fb fb fb fb
->>>> fb fb fb fb
->>>> [    2.207471]
->>>> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
->>>> [    2.209162] Disabling lock debugging due to kernel taint
->>>> [    2.210933] reiser4: sda2: use 'fsck.reiser4 --fix' to complete
->>>> disk format upgrade.
->>>> [    2.212696] usb 1-1.4: new high-speed USB device number 3 using
->>>> ehci-pci
->>>> [    2.214507] usb 2-1.5: new full-speed USB device number 3 using
->>>> ehci-pci
->>>> [    2.234910] hid-generic 0003:051D:0002.0002: device has no
->>>> listeners, quitting
->>>> [    2.312037] reiser4: sda2: using Hybrid Transaction Model.
->>>> [    2.313880] VFS: Mounted root (reiser4 filesystem) readonly on devi=
-ce
->>>> 8:2.
->>>> [    2.315949] Freeing unused kernel memory: 968K (ffffffff82086000 -
->>>> ffffffff82178000)
->>>> [    2.317823] Write protecting the kernel read-only data: 16384k
->>>> [    2.320900] Freeing unused kernel memory: 1636K (ffff880001a67000 -
->>>> ffff880001c00000)
->>>> [    2.331114] Freeing unused kernel memory: 1848K (ffff880001e32000 -
->>>> ffff880002000000)
->>>> [    2.334644] hub 1-1.4:1.0: USB hub found
->>>> [    2.336766] hub 1-1.4:1.0: 2 ports detected
->>>> [    2.624398] usb 1-1.4.2: new full-speed USB device number 4 using
->>>> ehci-pci
->>>> [    5.221431] random: crng init done
->>>> [    7.579186] Adding 594300k swap on /dev/md123.  Priority:-1
->>>> extents:1 across:594300k
->>>> [    7.661464] reiser4: md126: found disk format 4.0.1.
->>>> [    7.661541]
->>>> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
->>>> [    7.661546] BUG: KASAN: use-after-free in
->>>> init_format_format40+0x401/0x750 at addr ffff8801cfaf1350
->>>> [    7.661548] Read of size 4 by task mount/1662
->>>> [    7.661551] CPU: 0 PID: 1662 Comm: mount Tainted: G    B
->>>> 4.8.11-gentoo #3
->>>> [    7.661552] Hardware name: Gigabyte Technology Co., Ltd. To be
->>>> filled by O.E.M./B75-D3V, BIOS F5 07/04/2012
->>>> [    7.661553]  ffff8801ceef3580 ffff8801cf087b28 ffffffff81424185
->>>> ffff8801d6000600
->>>> [    7.661556]  ffff8801cfaf1300 ffff8801cf087b50 ffffffff811ff90c
->>>> ffff8801cf087be0
->>>> [    7.661559]  ffff8801cfaf1300 ffff8801cfaf1300 ffff8801cf087bd0
->>>> ffffffff811ffb79
->>>> [    7.661561] Call Trace:
->>>> [    7.661565]  [<ffffffff81424185>] dump_stack+0x4d/0x68
->>>> [    7.661569]  [<ffffffff811ff90c>] kasan_object_err+0x1c/0x70
->>>> [    7.661571]  [<ffffffff811ffb79>] kasan_report_error+0x1c9/0x4b0
->>>> [    7.661574]  [<ffffffff812a10cf>] ? zget+0xdf/0x3c0
->>>> [    7.661577]  [<ffffffff811ffef4>] kasan_report+0x34/0x40
->>>> [    7.661580]  [<ffffffff81304b11>] ? init_format_format40+0x401/0x75=
-0
->>>> [    7.661582]  [<ffffffff811ff601>] __asan_load4+0x61/0x80
->>>> [    7.661585]  [<ffffffff81304b11>] init_format_format40+0x401/0x750
->>>> [    7.661588]  [<ffffffff812c4f3a>] fill_super+0x14a/0x300
->>>> [    7.661591]  [<ffffffff81209b6f>] mount_bdev+0x1bf/0x200
->>>> [    7.661593]  [<ffffffff812c4df0>] ? reiser4_mount+0x20/0x20
->>>> [    7.661594]  [<ffffffff812c4de0>] reiser4_mount+0x10/0x20
->>>> [    7.661597]  [<ffffffff81209dfe>] mount_fs+0x2e/0xe0
->>>> [    7.661600]  [<ffffffff81231a96>] vfs_kern_mount+0x66/0x190
->>>> [    7.661602]  [<ffffffff81233af2>] do_mount+0x1d2/0x1080
->>>> [    7.661604]  [<ffffffff812337f1>] ? copy_mount_options+0x111/0x220
->>>> [    7.661606]  [<ffffffff812337da>] ? copy_mount_options+0xfa/0x220
->>>> [    7.661608]  [<ffffffff81234e46>] SyS_mount+0x66/0xb0
->>>> [    7.661613]  [<ffffffff81a5761b>] entry_SYSCALL_64_fastpath+0x13/0x=
-8f
->>>> [    7.661614] Object at ffff8801cfaf1300, in cache kmalloc-512 size:
->>>> 512
->>>> [    7.661615] Allocated:
->>>> [    7.661615] PID =3D 1662
->>>> [    7.661616]  [<ffffffff8109f536>] save_stack_trace+0x26/0x50
->>>> [    7.661620]  [<ffffffff811fe802>] kasan_kmalloc.part.5+0x62/0xf0
->>>> [    7.661622]  [<ffffffff811ff018>] kasan_kmalloc+0x78/0xa0
->>>> [    7.661625]  [<ffffffff813048bc>] init_format_format40+0x1ac/0x750
->>>> [    7.661628]  [<ffffffff812c4f3a>] fill_super+0x14a/0x300
->>>> [    7.661630]  [<ffffffff81209b6f>] mount_bdev+0x1bf/0x200
->>>> [    7.661632]  [<ffffffff812c4de0>] reiser4_mount+0x10/0x20
->>>> [    7.661634]  [<ffffffff81209dfe>] mount_fs+0x2e/0xe0
->>>> [    7.661637]  [<ffffffff81231a96>] vfs_kern_mount+0x66/0x190
->>>> [    7.661639]  [<ffffffff81233af2>] do_mount+0x1d2/0x1080
->>>> [    7.661641]  [<ffffffff81234e46>] SyS_mount+0x66/0xb0
->>>> [    7.661643]  [<ffffffff81a5761b>] entry_SYSCALL_64_fastpath+0x13/0x=
-8f
->>>> [    7.661646] Freed:
->>>> [    7.661646] PID =3D 1662
->>>> [    7.661647]  [<ffffffff8109f536>] save_stack_trace+0x26/0x50
->>>> [    7.661649]  [<ffffffff811feed7>] kasan_slab_free+0xb7/0x180
->>>> [    7.661652]  [<ffffffff811fd67b>] kfree+0x6b/0x90
->>>> [    7.661654]  [<ffffffff81304b09>] init_format_format40+0x3f9/0x750
->>>> [    7.661657]  [<ffffffff812c4f3a>] fill_super+0x14a/0x300
->>>> [    7.661659]  [<ffffffff81209b6f>] mount_bdev+0x1bf/0x200
->>>> [    7.661662]  [<ffffffff812c4de0>] reiser4_mount+0x10/0x20
->>>> [    7.661664]  [<ffffffff81209dfe>] mount_fs+0x2e/0xe0
->>>> [    7.661666]  [<ffffffff81231a96>] vfs_kern_mount+0x66/0x190
->>>> [    7.661668]  [<ffffffff81233af2>] do_mount+0x1d2/0x1080
->>>> [    7.661670]  [<ffffffff81234e46>] SyS_mount+0x66/0xb0
->>>> [    7.661672]  [<ffffffff81a5761b>] entry_SYSCALL_64_fastpath+0x13/0x=
-8f
->>>> [    7.661675] Memory state around the buggy address:
->>>> [    7.661677]  ffff8801cfaf1200: fb fb fb fb fb fb fb fb fb fb fb fb
->>>> fb fb fb fb
->>>> [    7.661679]  ffff8801cfaf1280: fc fc fc fc fc fc fc fc fc fc fc fc
->>>> fc fc fc fc
->>>> [    7.661681] >ffff8801cfaf1300: fb fb fb fb fb fb fb fb fb fb fb fb
->>>> fb fb fb fb
->>>> [    7.661681]                                                  ^
->>>> [    7.661683]  ffff8801cfaf1380: fb fb fb fb fb fb fb fb fb fb fb fb
->>>> fb fb fb fb
->>>> [    7.661684]  ffff8801cfaf1400: fb fb fb fb fb fb fb fb fb fb fb fb
->>>> fb fb fb fb
->>>> [    7.661685]
->>>> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
->>>> [   10.972840] rcu-perf:rcu_perf_writer 0 has 100 measurements
->>>> [   11.016722] rcu-perf:Test complete
->>>> [   26.835385] reiser4: md126: using Hybrid Transaction Model.
->>>> [   26.857910] reiser4: md127: found disk format 4.0.1.
->>>> [   26.857995]
->>>> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
->>>> [   26.858002] BUG: KASAN: use-after-free in
->>>> init_format_format40+0x401/0x750 at addr ffff8801cbf560d0
->>>> [   26.858003] Read of size 4 by task mount/1662
->>>> [   26.858006] CPU: 0 PID: 1662 Comm: mount Tainted: G    B
->>>> 4.8.11-gentoo #3
->>>> [   26.858007] Hardware name: Gigabyte Technology Co., Ltd. To be
->>>> filled by O.E.M./B75-D3V, BIOS F5 07/04/2012
->>>> [   26.858009]  ffff8801b9ded5c0 ffff8801cf087b28 ffffffff81424185
->>>> ffff8801d6000600
->>>> [   26.858012]  ffff8801cbf56080 ffff8801cf087b50 ffffffff811ff90c
->>>> ffff8801cf087be0
->>>> [   26.858014]  ffff8801cbf56080 ffff8801cbf56080 ffff8801cf087bd0
->>>> ffffffff811ffb79
->>>> [   26.858017] Call Trace:
->>>> [   26.858020]  [<ffffffff81424185>] dump_stack+0x4d/0x68
->>>> [   26.858024]  [<ffffffff811ff90c>] kasan_object_err+0x1c/0x70
->>>> [   26.858027]  [<ffffffff811ffb79>] kasan_report_error+0x1c9/0x4b0
->>>> [   26.858029]  [<ffffffff812a10cf>] ? zget+0xdf/0x3c0
->>>> [   26.858032]  [<ffffffff811ffef4>] kasan_report+0x34/0x40
->>>> [   26.858035]  [<ffffffff81304b11>] ? init_format_format40+0x401/0x75=
-0
->>>> [   26.858038]  [<ffffffff811ff601>] __asan_load4+0x61/0x80
->>>> [   26.858040]  [<ffffffff81304b11>] init_format_format40+0x401/0x750
->>>> [   26.858043]  [<ffffffff812c4f3a>] fill_super+0x14a/0x300
->>>> [   26.858046]  [<ffffffff81209b6f>] mount_bdev+0x1bf/0x200
->>>> [   26.858048]  [<ffffffff812c4df0>] ? reiser4_mount+0x20/0x20
->>>> [   26.858050]  [<ffffffff812c4de0>] reiser4_mount+0x10/0x20
->>>> [   26.858052]  [<ffffffff81209dfe>] mount_fs+0x2e/0xe0
->>>> [   26.858055]  [<ffffffff81231a96>] vfs_kern_mount+0x66/0x190
->>>> [   26.858057]  [<ffffffff81233af2>] do_mount+0x1d2/0x1080
->>>> [   26.858059]  [<ffffffff812337da>] ? copy_mount_options+0xfa/0x220
->>>> [   26.858061]  [<ffffffff81234e46>] SyS_mount+0x66/0xb0
->>>> [   26.858065]  [<ffffffff81a5761b>] entry_SYSCALL_64_fastpath+0x13/0x=
-8f
->>>> [   26.858067] Object at ffff8801cbf56080, in cache kmalloc-512 size:
->>>> 512
->>>> [   26.858067] Allocated:
->>>> [   26.858068] PID =3D 1662
->>>> [   26.858069]  [<ffffffff8109f536>] save_stack_trace+0x26/0x50
->>>> [   26.858072]  [<ffffffff811fe802>] kasan_kmalloc.part.5+0x62/0xf0
->>>> [   26.858075]  [<ffffffff811ff018>] kasan_kmalloc+0x78/0xa0
->>>> [   26.858077]  [<ffffffff813048bc>] init_format_format40+0x1ac/0x750
->>>> [   26.858080]  [<ffffffff812c4f3a>] fill_super+0x14a/0x300
->>>> [   26.858082]  [<ffffffff81209b6f>] mount_bdev+0x1bf/0x200
->>>> [   26.858085]  [<ffffffff812c4de0>] reiser4_mount+0x10/0x20
->>>> [   26.858087]  [<ffffffff81209dfe>] mount_fs+0x2e/0xe0
->>>> [   26.858089]  [<ffffffff81231a96>] vfs_kern_mount+0x66/0x190
->>>> [   26.858091]  [<ffffffff81233af2>] do_mount+0x1d2/0x1080
->>>> [   26.858093]  [<ffffffff81234e46>] SyS_mount+0x66/0xb0
->>>> [   26.858095]  [<ffffffff81a5761b>] entry_SYSCALL_64_fastpath+0x13/0x=
-8f
->>>> [   26.858098] Freed:
->>>> [   26.858099] PID =3D 1662
->>>> [   26.858099]  [<ffffffff8109f536>] save_stack_trace+0x26/0x50
->>>> [   26.858102]  [<ffffffff811feed7>] kasan_slab_free+0xb7/0x180
->>>> [   26.858104]  [<ffffffff811fd67b>] kfree+0x6b/0x90
->>>> [   26.858107]  [<ffffffff81304b09>] init_format_format40+0x3f9/0x750
->>>> [   26.858109]  [<ffffffff812c4f3a>] fill_super+0x14a/0x300
->>>> [   26.858111]  [<ffffffff81209b6f>] mount_bdev+0x1bf/0x200
->>>> [   26.858114]  [<ffffffff812c4de0>] reiser4_mount+0x10/0x20
->>>> [   26.858116]  [<ffffffff81209dfe>] mount_fs+0x2e/0xe0
->>>> [   26.858118]  [<ffffffff81231a96>] vfs_kern_mount+0x66/0x190
->>>> [   26.858120]  [<ffffffff81233af2>] do_mount+0x1d2/0x1080
->>>> [   26.858122]  [<ffffffff81234e46>] SyS_mount+0x66/0xb0
->>>> [   26.858124]  [<ffffffff81a5761b>] entry_SYSCALL_64_fastpath+0x13/0x=
-8f
->>>> [   26.858128] Memory state around the buggy address:
->>>> [   26.858130]  ffff8801cbf55f80: fc fc fc fc fc fc fc fc fc fc fc fc
->>>> fc fc fc fc
->>>> [   26.858131]  ffff8801cbf56000: fc fc fc fc fc fc fc fc fc fc fc fc
->>>> fc fc fc fc
->>>> [   26.858133] >ffff8801cbf56080: fb fb fb fb fb fb fb fb fb fb fb fb
->>>> fb fb fb fb
->>>> [   26.858134]                                                  ^
->>>> [   26.858135]  ffff8801cbf56100: fb fb fb fb fb fb fb fb fb fb fb fb
->>>> fb fb fb fb
->>>> [   26.858137]  ffff8801cbf56180: fb fb fb fb fb fb fb fb fb fb fb fb
->>>> fb fb fb fb
->>>> [   26.858137]
->>>> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
->>>> [   27.199941] reiser4: md127: using Hybrid Transaction Model.
->>>>
->>>>
->>>> [33530.203469] reiser4[mount(11677)]: try_init_format40
->>>> (fs/reiser4/plugin/disk_format/disk_format40.c:303)[vpf-1364]:
->>>>                  NOTICE: Warning: mounting md125 with fatal errors,
->>>> forcing read-only mount.
->>>> [33530.203480] reiser4: md125: found disk format 4.0.1.
->>>> [33530.203564]
->>>> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
->>>> [33530.203570] BUG: KASAN: use-after-free in
->>>> init_format_format40+0x401/0x750 at addr ffff88013164d810
->>>> [33530.203571] Read of size 4 by task mount/11677
->>>> [33530.203574] CPU: 0 PID: 11677 Comm: mount Tainted: G    B
->>>> 4.8.11-gentoo #3
->>>> [33530.203575] Hardware name: Gigabyte Technology Co., Ltd. To be
->>>> filled by O.E.M./B75-D3V, BIOS F5 07/04/2012
->>>> [33530.203577]  ffff88000e65ce80 ffff88000da87b28 ffffffff81424185
->>>> ffff8801d6000600
->>>> [33530.203580]  ffff88013164d7c0 ffff88000da87b50 ffffffff811ff90c
->>>> ffff88000da87be0
->>>> [33530.203582]  ffff88013164d7c0 ffff88013164d7c0 ffff88000da87bd0
->>>> ffffffff811ffb79
->>>> [33530.203585] Call Trace:
->>>> [33530.203588]  [<ffffffff81424185>] dump_stack+0x4d/0x68
->>>> [33530.203592]  [<ffffffff811ff90c>] kasan_object_err+0x1c/0x70
->>>> [33530.203595]  [<ffffffff811ffb79>] kasan_report_error+0x1c9/0x4b0
->>>> [33530.203597]  [<ffffffff812a10cf>] ? zget+0xdf/0x3c0
->>>> [33530.203600]  [<ffffffff811ffef4>] kasan_report+0x34/0x40
->>>> [33530.203603]  [<ffffffff81304b11>] ? init_format_format40+0x401/0x75=
-0
->>>> [33530.203605]  [<ffffffff811ff601>] __asan_load4+0x61/0x80
->>>> [33530.203608]  [<ffffffff81304b11>] init_format_format40+0x401/0x750
->>>> [33530.203610]  [<ffffffff812c4f3a>] fill_super+0x14a/0x300
->>>> [33530.203613]  [<ffffffff81209b6f>] mount_bdev+0x1bf/0x200
->>>> [33530.203615]  [<ffffffff812c4df0>] ? reiser4_mount+0x20/0x20
->>>> [33530.203617]  [<ffffffff812c4de0>] reiser4_mount+0x10/0x20
->>>> [33530.203620]  [<ffffffff81209dfe>] mount_fs+0x2e/0xe0
->>>> [33530.203622]  [<ffffffff81231a96>] vfs_kern_mount+0x66/0x190
->>>> [33530.203625]  [<ffffffff81233af2>] do_mount+0x1d2/0x1080
->>>> [33530.203627]  [<ffffffff812337f1>] ? copy_mount_options+0x111/0x220
->>>> [33530.203629]  [<ffffffff812337da>] ? copy_mount_options+0xfa/0x220
->>>> [33530.203631]  [<ffffffff81234e46>] SyS_mount+0x66/0xb0
->>>> [33530.203635]  [<ffffffff81a5761b>] entry_SYSCALL_64_fastpath+0x13/0x=
-8f
->>>> [33530.203637] Object at ffff88013164d7c0, in cache kmalloc-512 size:
->>>> 512
->>>> [33530.203637] Allocated:
->>>> [33530.203638] PID =3D 11677
->>>> [33530.203639]  [<ffffffff8109f536>] save_stack_trace+0x26/0x50
->>>> [33530.203642]  [<ffffffff811fe802>] kasan_kmalloc.part.5+0x62/0xf0
->>>> [33530.203645]  [<ffffffff811ff018>] kasan_kmalloc+0x78/0xa0
->>>> [33530.203647]  [<ffffffff813048bc>] init_format_format40+0x1ac/0x750
->>>> [33530.203650]  [<ffffffff812c4f3a>] fill_super+0x14a/0x300
->>>> [33530.203652]  [<ffffffff81209b6f>] mount_bdev+0x1bf/0x200
->>>> [33530.203654]  [<ffffffff812c4de0>] reiser4_mount+0x10/0x20
->>>> [33530.203656]  [<ffffffff81209dfe>] mount_fs+0x2e/0xe0
->>>> [33530.203659]  [<ffffffff81231a96>] vfs_kern_mount+0x66/0x190
->>>> [33530.203661]  [<ffffffff81233af2>] do_mount+0x1d2/0x1080
->>>> [33530.203663]  [<ffffffff81234e46>] SyS_mount+0x66/0xb0
->>>> [33530.203665]  [<ffffffff81a5761b>] entry_SYSCALL_64_fastpath+0x13/0x=
-8f
->>>> [33530.203668] Freed:
->>>> [33530.203669] PID =3D 11677
->>>> [33530.203669]  [<ffffffff8109f536>] save_stack_trace+0x26/0x50
->>>> [33530.203671]  [<ffffffff811feed7>] kasan_slab_free+0xb7/0x180
->>>> [33530.203674]  [<ffffffff811fd67b>] kfree+0x6b/0x90
->>>> [33530.203676]  [<ffffffff81304b09>] init_format_format40+0x3f9/0x750
->>>> [33530.203679]  [<ffffffff812c4f3a>] fill_super+0x14a/0x300
->>>> [33530.203681]  [<ffffffff81209b6f>] mount_bdev+0x1bf/0x200
->>>> [33530.203683]  [<ffffffff812c4de0>] reiser4_mount+0x10/0x20
->>>> [33530.203685]  [<ffffffff81209dfe>] mount_fs+0x2e/0xe0
->>>> [33530.203688]  [<ffffffff81231a96>] vfs_kern_mount+0x66/0x190
->>>> [33530.203690]  [<ffffffff81233af2>] do_mount+0x1d2/0x1080
->>>> [33530.203692]  [<ffffffff81234e46>] SyS_mount+0x66/0xb0
->>>> [33530.203694]  [<ffffffff81a5761b>] entry_SYSCALL_64_fastpath+0x13/0x=
-8f
->>>> [33530.203697] Memory state around the buggy address:
->>>> [33530.203699]  ffff88013164d700: fc fc fc fc fc fc fc fc fc fc fc fc
->>>> fc fc fc fc
->>>> [33530.203701]  ffff88013164d780: fc fc fc fc fc fc fc fc fb fb fb fb
->>>> fb fb fb fb
->>>> [33530.203703] >ffff88013164d800: fb fb fb fb fb fb fb fb fb fb fb fb
->>>> fb fb fb fb
->>>> [33530.203703]                          ^
->>>> [33530.203705]  ffff88013164d880: fb fb fb fb fb fb fb fb fb fb fb fb
->>>> fb fb fb fb
->>>> [33530.203707]  ffff88013164d900: fb fb fb fb fb fb fb fb fb fb fb fb
->>>> fb fb fb fb
->>>> [33530.203707]
->>>> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
->>>> [33533.485380] reiser4: md125: using Hybrid Transaction Model.
->>>> --
->>>> To unsubscribe from this list: send the line "unsubscribe
->>>> reiserfs-devel"
->>>> in
->>>> the body of a message to majordomo@vger.kernel.org
->>>> More majordomo info at  http://vger.kernel.org/majordomo-info.html
->>>
->>>
->
+> [ 1441.309021] *** DEADLOCK ***
+> [ 1441.309022] 2 locks held by kswapd0/165:
+> [ 1441.309022]  #0:  (shrinker_rwsem){+.+...}, at: [<ffffffff811efa2a>] shrink_slab+0x7a/0x6c0
+> [ 1441.309027]  #1:  (&type->s_umount_key#29){+.+.+.}, at: [<ffffffff8126f20b>] trylock_super+0x1b/0x50
+> [ 1441.309030] the shortest dependencies between 2nd lock and 1st lock:
+> [ 1441.309031]    -> (&tb->tb6_lock){+.+.+.} ops: 271 {
+> [ 1441.309032]       HARDIRQ-ON-W at:
+> [ 1441.309035] [<ffffffff810e11b8>] __lock_acquire+0x938/0x1770
+> [ 1441.309036] [<ffffffff810e2564>] lock_acquire+0xd4/0x270
+> [ 1441.309039] [<ffffffff8174d291>] rt_write_lock+0x31/0x40
+> [ 1441.309041] [<ffffffff816e66e3>] __ip6_ins_rt+0x33/0x70
+> [ 1441.309043] [<ffffffff816eccd1>] ip6_route_add+0x81/0xd0
+> [ 1441.309044] [<ffffffff816dbf33>] addrconf_prefix_route+0x133/0x1d0
+> [ 1441.309046] [<ffffffff816e16eb>] inet6_addr_add+0x1eb/0x250
+> [ 1441.309047] [<ffffffff816e294b>] inet6_rtm_newaddr+0x33b/0x410
+> [ 1441.309049] [<ffffffff81613c35>] rtnetlink_rcv_msg+0x95/0x220
+> [ 1441.309051] [<ffffffff8163a477>] netlink_rcv_skb+0xa7/0xc0
+> [ 1441.309053] [<ffffffff8160de88>] rtnetlink_rcv+0x28/0x30
+> [ 1441.309054] [<ffffffff81639e53>] netlink_unicast+0x143/0x1f0
+> [ 1441.309055] [<ffffffff8163a222>] netlink_sendmsg+0x322/0x3a0
+> [ 1441.309057] [<ffffffff815d5c48>] sock_sendmsg+0x38/0x50
+> [ 1441.309058] [<ffffffff815d60a6>] SYSC_sendto+0xf6/0x170
+> [ 1441.309060] [<ffffffff815d6f6e>] SyS_sendto+0xe/0x10
+> [ 1441.309061] [<ffffffff8174d545>] entry_SYSCALL_64_fastpath+0x23/0xc6
+> [ 1441.309061]       SOFTIRQ-ON-W at:
+> [ 1441.309063] [<ffffffff810e0b03>] __lock_acquire+0x283/0x1770
+> [ 1441.309064] [<ffffffff810e2564>] lock_acquire+0xd4/0x270
+> [ 1441.309064] [<ffffffff8174d291>] rt_write_lock+0x31/0x40
+> [ 1441.309065] [<ffffffff816e66e3>] __ip6_ins_rt+0x33/0x70
+> [ 1441.309067] [<ffffffff816eccd1>] ip6_route_add+0x81/0xd0
+> [ 1441.309067] [<ffffffff816dbf33>] addrconf_prefix_route+0x133/0x1d0
+> [ 1441.309068] [<ffffffff816e16eb>] inet6_addr_add+0x1eb/0x250
+> [ 1441.309069] [<ffffffff816e294b>] inet6_rtm_newaddr+0x33b/0x410
+> [ 1441.309071] [<ffffffff81613c35>] rtnetlink_rcv_msg+0x95/0x220
+> [ 1441.309073] [<ffffffff8163a477>] netlink_rcv_skb+0xa7/0xc0
+> [ 1441.309074] [<ffffffff8160de88>] rtnetlink_rcv+0x28/0x30
+> [ 1441.309075] [<ffffffff81639e53>] netlink_unicast+0x143/0x1f0
+> [ 1441.309077] [<ffffffff8163a222>] netlink_sendmsg+0x322/0x3a0
+> [ 1441.309078] [<ffffffff815d5c48>] sock_sendmsg+0x38/0x50
+> [ 1441.309079] [<ffffffff815d60a6>] SYSC_sendto+0xf6/0x170
+> [ 1441.309080] [<ffffffff815d6f6e>] SyS_sendto+0xe/0x10
+> [ 1441.309081] [<ffffffff8174d545>] entry_SYSCALL_64_fastpath+0x23/0xc6
+> [ 1441.309081]       RECLAIM_FS-ON-W at:
+> [ 1441.309082] [<ffffffff810e0316>] mark_held_locks+0x66/0x90
+> [ 1441.309084] [<ffffffff810e34a8>] lockdep_trace_alloc+0xd8/0x120
+> [ 1441.309085] [<ffffffff81246df6>] kmem_cache_alloc_node+0x36/0x310
+> [ 1441.309086] [<ffffffff815dfd4e>] __alloc_skb+0x4e/0x280
+> [ 1441.309088] [<ffffffff816ee6ac>] inet6_rt_notify+0x5c/0x130
+> [ 1441.309089] [<ffffffff816f101b>] fib6_add+0x56b/0xa30
+> [ 1441.309090] [<ffffffff816e66f8>] __ip6_ins_rt+0x48/0x70
+> [ 1441.309091] [<ffffffff816eccd1>] ip6_route_add+0x81/0xd0
+> [ 1441.309092] [<ffffffff816dbf33>] addrconf_prefix_route+0x133/0x1d0
+> [ 1441.309093] [<ffffffff816e16eb>] inet6_addr_add+0x1eb/0x250
+> [ 1441.309094] [<ffffffff816e294b>] inet6_rtm_newaddr+0x33b/0x410
+> [ 1441.309096] [<ffffffff81613c35>] rtnetlink_rcv_msg+0x95/0x220
+> [ 1441.309097] [<ffffffff8163a477>] netlink_rcv_skb+0xa7/0xc0
+> [ 1441.309098] [<ffffffff8160de88>] rtnetlink_rcv+0x28/0x30
+> [ 1441.309099] [<ffffffff81639e53>] netlink_unicast+0x143/0x1f0
+> [ 1441.309100] [<ffffffff8163a222>] netlink_sendmsg+0x322/0x3a0
+> [ 1441.309102] [<ffffffff815d5c48>] sock_sendmsg+0x38/0x50
+> [ 1441.309103] [<ffffffff815d60a6>] SYSC_sendto+0xf6/0x170
+> [ 1441.309104] [<ffffffff815d6f6e>] SyS_sendto+0xe/0x10
+> [ 1441.309105] [<ffffffff8174d545>] entry_SYSCALL_64_fastpath+0x23/0xc6
+> [ 1441.309105]       INITIAL USE at:
+> [ 1441.309106] [<ffffffff810e0b4e>] __lock_acquire+0x2ce/0x1770
+> [ 1441.309107] [<ffffffff810e2564>] lock_acquire+0xd4/0x270
+> [ 1441.309108] [<ffffffff8174d291>] rt_write_lock+0x31/0x40
+> [ 1441.309109] [<ffffffff816e66e3>] __ip6_ins_rt+0x33/0x70
+> [ 1441.309110] [<ffffffff816eccd1>] ip6_route_add+0x81/0xd0
+> [ 1441.309111] [<ffffffff816dbf33>] addrconf_prefix_route+0x133/0x1d0
+> [ 1441.309112] [<ffffffff816e16eb>] inet6_addr_add+0x1eb/0x250
+> [ 1441.309113] [<ffffffff816e294b>] inet6_rtm_newaddr+0x33b/0x410
+> [ 1441.309115] [<ffffffff81613c35>] rtnetlink_rcv_msg+0x95/0x220
+> [ 1441.309116] [<ffffffff8163a477>] netlink_rcv_skb+0xa7/0xc0
+> [ 1441.309117] [<ffffffff8160de88>] rtnetlink_rcv+0x28/0x30
+> [ 1441.309118] [<ffffffff81639e53>] netlink_unicast+0x143/0x1f0
+> [ 1441.309119] [<ffffffff8163a222>] netlink_sendmsg+0x322/0x3a0
+> [ 1441.309120] [<ffffffff815d5c48>] sock_sendmsg+0x38/0x50
+> [ 1441.309121] [<ffffffff815d60a6>] SYSC_sendto+0xf6/0x170
+> [ 1441.309122] [<ffffffff815d6f6e>] SyS_sendto+0xe/0x10
+> [ 1441.309123] [<ffffffff8174d545>] entry_SYSCALL_64_fastpath+0x23/0xc6
+> [ 1441.309123]     }
+> [ 1441.309125]     ... key      at: [<ffffffff82dd96e0>] __key.59908+0x0/0x8
+> [ 1441.309125]     ... acquired at:
+> [ 1441.309126] [<ffffffff810e2564>] lock_acquire+0xd4/0x270
+> [ 1441.309127] [<ffffffff8174d307>] rt_read_lock+0x47/0x60
+> [ 1441.309128] [<ffffffff816ea541>] ip6_pol_route+0x61/0xa60
+> [ 1441.309130] [<ffffffff816eaf5a>] ip6_pol_route_input+0x1a/0x20
+> [ 1441.309131] [<ffffffff81718f21>] fib6_rule_action+0xa1/0x1e0
+> [ 1441.309133] [<ffffffff81621e53>] fib_rules_lookup+0x153/0x2e0
+> [ 1441.309134] [<ffffffff81719219>] fib6_rule_lookup+0x59/0xc0
+> [ 1441.309135] [<ffffffff816e6a3e>] ip6_route_input_lookup+0x4e/0x60
+> [ 1441.309136] [<ffffffff816ec59d>] ip6_route_input+0xdd/0x1a0
+> [ 1441.309137] [<ffffffff816d87d0>] ip6_rcv_finish+0x60/0x200
+> [ 1441.309139] [<ffffffffa09e00b0>] ip_sabotage_in+0x30/0x40 [br_netfilter]
+> [ 1441.309141] [<ffffffff8163c7ac>] nf_hook_slow+0x2c/0xf0
+> [ 1441.309142] [<ffffffff816d998a>] ipv6_rcv+0x72a/0x980
+> [ 1441.309143] [<ffffffff815f81ef>] __netif_receive_skb_core+0x38f/0xd20
+> [ 1441.309144] [<ffffffff815f8b98>] __netif_receive_skb+0x18/0x60
+> [ 1441.309145] [<ffffffff815fa4c1>] netif_receive_skb_internal+0x61/0x1d0
+> [ 1441.309147] [<ffffffff815fa668>] netif_receive_skb+0x38/0x180
+> [ 1441.309151] [<ffffffffa09b77e5>] br_pass_frame_up+0xd5/0x2c0 [bridge]
+> [ 1441.309154] [<ffffffffa09b7d66>] br_handle_frame_finish+0x256/0x5c0 [bridge]
+> [ 1441.309156] [<ffffffffa09e159c>] br_nf_hook_thresh+0xac/0x220 [br_netfilter]
+> [ 1441.309157] [<ffffffffa09e2ee3>] br_nf_pre_routing_finish_ipv6+0x1c3/0x340 [br_netfilter]
+> [ 1441.309158] [<ffffffffa09e349d>] br_nf_pre_routing_ipv6+0xdd/0x27a [br_netfilter]
+> [ 1441.309159] [<ffffffffa09e2942>] br_nf_pre_routing+0x1b2/0x540 [br_netfilter]
+> [ 1441.309160] [<ffffffff8163c7ac>] nf_hook_slow+0x2c/0xf0
+> [ 1441.309163] [<ffffffffa09b82f7>] br_handle_frame+0x227/0x5b0 [bridge]
+> [ 1441.309164] [<ffffffff815f8036>] __netif_receive_skb_core+0x1d6/0xd20
+> [ 1441.309165] [<ffffffff815f8b98>] __netif_receive_skb+0x18/0x60
+> [ 1441.309166] [<ffffffff815fa4c1>] netif_receive_skb_internal+0x61/0x1d0
+> [ 1441.309167] [<ffffffff815fbca2>] napi_gro_receive+0x192/0x250
+> [ 1441.309171] [<ffffffffa03f2163>] rtl8169_poll+0x183/0x6a0 [r8169]
+> [ 1441.309172] [<ffffffff815faea0>] net_rx_action+0x3b0/0x700
+> [ 1441.309173] [<ffffffff810841a5>] do_current_softirqs+0x285/0x680
+> [ 1441.309174] [<ffffffff81084607>] __local_bh_enable+0x67/0x80
+> [ 1441.309177] [<ffffffff810f7d81>] irq_forced_thread_fn+0x41/0x60
+> [ 1441.309178] [<ffffffff810f832f>] irq_thread+0x13f/0x1e0
+> [ 1441.309179] [<ffffffff810a5ecc>] kthread+0x10c/0x140
+> [ 1441.309180] [<ffffffff8174d7da>] ret_from_fork+0x2a/0x40
+> [ 1441.309181]   -> (&per_cpu(local_softirq_locks[i], __cpu).lock){+.+...} ops: 3582145 {
+> [ 1441.309182]      HARDIRQ-ON-W at:
+> [ 1441.309183] [<ffffffff810e11b8>] __lock_acquire+0x938/0x1770
+> [ 1441.309184] [<ffffffff810e2564>] lock_acquire+0xd4/0x270
+> [ 1441.309185] [<ffffffff8174cdea>] rt_spin_lock__no_mg+0x5a/0x70
+> [ 1441.309186] [<ffffffff81084094>] do_current_softirqs+0x174/0x680
+> [ 1441.309187] [<ffffffff81084607>] __local_bh_enable+0x67/0x80
+> [ 1441.309188] [<ffffffff8113c631>] cgroup_idr_alloc.constprop.41+0x61/0x80
+> [ 1441.309190] [<ffffffff811d4d5b>] cgroup_setup_root+0x65/0x28f
+> [ 1441.309191] [<ffffffff81d9ef88>] cgroup_init+0xf7/0x3e5
+> [ 1441.309193] [<ffffffff81d770d1>] start_kernel+0x43f/0x484
+> [ 1441.309194] [<ffffffff81d76599>] x86_64_start_reservations+0x2a/0x2c
+> [ 1441.309195] [<ffffffff81d766d8>] x86_64_start_kernel+0x13d/0x14c
+> [ 1441.309196] [<ffffffff810001b5>] start_cpu+0x5/0x14
+> [ 1441.309196]      SOFTIRQ-ON-W at:
+> [ 1441.309197] [<ffffffff810e0b03>] __lock_acquire+0x283/0x1770
+> [ 1441.309198] [<ffffffff810e2564>] lock_acquire+0xd4/0x270
+> [ 1441.309199] [<ffffffff8174cdea>] rt_spin_lock__no_mg+0x5a/0x70
+> [ 1441.309200] [<ffffffff81084094>] do_current_softirqs+0x174/0x680
+> [ 1441.309201] [<ffffffff81084607>] __local_bh_enable+0x67/0x80
+> [ 1441.309202] [<ffffffff8113c631>] cgroup_idr_alloc.constprop.41+0x61/0x80
+> [ 1441.309203] [<ffffffff811d4d5b>] cgroup_setup_root+0x65/0x28f
+> [ 1441.309204] [<ffffffff81d9ef88>] cgroup_init+0xf7/0x3e5
+> [ 1441.309204] [<ffffffff81d770d1>] start_kernel+0x43f/0x484
+> [ 1441.309205] [<ffffffff81d76599>] x86_64_start_reservations+0x2a/0x2c
+> [ 1441.309206] [<ffffffff81d766d8>] x86_64_start_kernel+0x13d/0x14c
+> [ 1441.309207] [<ffffffff810001b5>] start_cpu+0x5/0x14
+> [ 1441.309207]      INITIAL USE at:
+> [ 1441.309208] [<ffffffff810e0b4e>] __lock_acquire+0x2ce/0x1770
+> [ 1441.309209] [<ffffffff810e2564>] lock_acquire+0xd4/0x270
+> [ 1441.309210] [<ffffffff8174cdea>] rt_spin_lock__no_mg+0x5a/0x70
+> [ 1441.309211] [<ffffffff81084094>] do_current_softirqs+0x174/0x680
+> [ 1441.309212] [<ffffffff81084607>] __local_bh_enable+0x67/0x80
+> [ 1441.309213] [<ffffffff8113c631>] cgroup_idr_alloc.constprop.41+0x61/0x80
+> [ 1441.309213] [<ffffffff811d4d5b>] cgroup_setup_root+0x65/0x28f
+> [ 1441.309215] [<ffffffff81d9ef88>] cgroup_init+0xf7/0x3e5
+> [ 1441.309216] [<ffffffff81d770d1>] start_kernel+0x43f/0x484
+> [ 1441.309216] [<ffffffff81d76599>] x86_64_start_reservations+0x2a/0x2c
+> [ 1441.309217] [<ffffffff81d766d8>] x86_64_start_kernel+0x13d/0x14c
+> [ 1441.309218] [<ffffffff810001b5>] start_cpu+0x5/0x14
+> [ 1441.309218]    }
+> [ 1441.309220]    ... key      at: [<ffffffff81f6c110>] __key.38555+0x0/0x8
+> [ 1441.309220]    ... acquired at:
+> [ 1441.309221] [<ffffffff810e2564>] lock_acquire+0xd4/0x270
+> [ 1441.309222] [<ffffffff8174cdea>] rt_spin_lock__no_mg+0x5a/0x70
+> [ 1441.309222] [<ffffffff81084094>] do_current_softirqs+0x174/0x680
+> [ 1441.309223] [<ffffffff81084607>] __local_bh_enable+0x67/0x80
+> [ 1441.309225] [<ffffffff81200bc9>] wb_wakeup_delayed+0x69/0x70
+> [ 1441.309226] [<ffffffff812a0aab>] __mark_inode_dirty+0x60b/0x7c0
+> [ 1441.309227] [<ffffffff812ab235>] mark_buffer_dirty+0xb5/0x240
+> [ 1441.309231] [<ffffffffa009ba1d>] __jbd2_journal_temp_unlink_buffer+0xbd/0xe0 [jbd2]
+> [ 1441.309233] [<ffffffffa009e40a>] __jbd2_journal_refile_buffer+0xba/0xe0 [jbd2]
+> [ 1441.309235] [<ffffffffa009fbed>] jbd2_journal_commit_transaction+0x112d/0x2130 [jbd2]
+> [ 1441.309237] [<ffffffffa00a53dd>] kjournald2+0xcd/0x270 [jbd2]
+> [ 1441.309239] [<ffffffff810a5ecc>] kthread+0x10c/0x140
+> [ 1441.309239] [<ffffffff8174d7da>] ret_from_fork+0x2a/0x40
+> [ 1441.309240]  -> (&journal->j_list_lock){+.+...} ops: 587416 {
+> [ 1441.309241]     HARDIRQ-ON-W at:
+> [ 1441.309242] [<ffffffff810e11b8>] __lock_acquire+0x938/0x1770
+> [ 1441.309243] [<ffffffff810e2564>] lock_acquire+0xd4/0x270
+> [ 1441.309244] [<ffffffff8174cd6f>] rt_spin_lock+0x5f/0x80
+> [ 1441.309246] [<ffffffffa009d529>] do_get_write_access+0x3b9/0x5c0 [jbd2]
+> [ 1441.309248] [<ffffffffa009d761>] jbd2_journal_get_write_access+0x31/0x60 [jbd2]
+> [ 1441.309259] [<ffffffffa0105259>] __ext4_journal_get_write_access+0x49/0x90 [ext4]
+> [ 1441.309264] [<ffffffffa00c5cb2>] ext4_file_open+0x1c2/0x230 [ext4]
+> [ 1441.309265] [<ffffffff81268281>] do_dentry_open+0x231/0x360
+> [ 1441.309266] [<ffffffff81269642>] vfs_open+0x52/0x80
+> [ 1441.309268] [<ffffffff8127b206>] path_openat+0x476/0xdd0
+> [ 1441.309269] [<ffffffff8127d64e>] do_filp_open+0x7e/0xd0
+> [ 1441.309270] [<ffffffff812723b7>] do_open_execat+0x67/0x150
+> [ 1441.309271] [<ffffffff812739ec>] do_execveat_common.isra.34+0x25c/0x9a0
+> [ 1441.309272] [<ffffffff8127415c>] do_execve+0x2c/0x30
+> [ 1441.309274] [<ffffffff81098c46>] call_usermodehelper_exec_async+0xf6/0x130
+> [ 1441.309274] [<ffffffff8174d7da>] ret_from_fork+0x2a/0x40
+> [ 1441.309275]     SOFTIRQ-ON-W at:
+> [ 1441.309276] [<ffffffff810e0b03>] __lock_acquire+0x283/0x1770
+> [ 1441.309277] [<ffffffff810e2564>] lock_acquire+0xd4/0x270
+> [ 1441.309277] [<ffffffff8174cd6f>] rt_spin_lock+0x5f/0x80
+> [ 1441.309279] [<ffffffffa009d529>] do_get_write_access+0x3b9/0x5c0 [jbd2]
+> [ 1441.309281] [<ffffffffa009d761>] jbd2_journal_get_write_access+0x31/0x60 [jbd2]
+> [ 1441.309288] [<ffffffffa0105259>] __ext4_journal_get_write_access+0x49/0x90 [ext4]
+> [ 1441.309293] [<ffffffffa00c5cb2>] ext4_file_open+0x1c2/0x230 [ext4]
+> [ 1441.309294] [<ffffffff81268281>] do_dentry_open+0x231/0x360
+> [ 1441.309295] [<ffffffff81269642>] vfs_open+0x52/0x80
+> [ 1441.309296] [<ffffffff8127b206>] path_openat+0x476/0xdd0
+> [ 1441.309297] [<ffffffff8127d64e>] do_filp_open+0x7e/0xd0
+> [ 1441.309298] [<ffffffff812723b7>] do_open_execat+0x67/0x150
+> [ 1441.309299] [<ffffffff812739ec>] do_execveat_common.isra.34+0x25c/0x9a0
+> [ 1441.309300] [<ffffffff8127415c>] do_execve+0x2c/0x30
+> [ 1441.309301] [<ffffffff81098c46>] call_usermodehelper_exec_async+0xf6/0x130
+> [ 1441.309302] [<ffffffff8174d7da>] ret_from_fork+0x2a/0x40
+> [ 1441.309302]     INITIAL USE at:
+> [ 1441.309303] [<ffffffff810e0b4e>] __lock_acquire+0x2ce/0x1770
+> [ 1441.309304] [<ffffffff810e2564>] lock_acquire+0xd4/0x270
+> [ 1441.309305] [<ffffffff8174cd6f>] rt_spin_lock+0x5f/0x80
+> [ 1441.309307] [<ffffffffa009d529>] do_get_write_access+0x3b9/0x5c0 [jbd2]
+> [ 1441.309308] [<ffffffffa009d761>] jbd2_journal_get_write_access+0x31/0x60 [jbd2]
+> [ 1441.309314] [<ffffffffa0105259>] __ext4_journal_get_write_access+0x49/0x90 [ext4]
+> [ 1441.309319] [<ffffffffa00c5cb2>] ext4_file_open+0x1c2/0x230 [ext4]
+> [ 1441.309319] [<ffffffff81268281>] do_dentry_open+0x231/0x360
+> [ 1441.309320] [<ffffffff81269642>] vfs_open+0x52/0x80
+> [ 1441.309321] [<ffffffff8127b206>] path_openat+0x476/0xdd0
+> [ 1441.309322] [<ffffffff8127d64e>] do_filp_open+0x7e/0xd0
+> [ 1441.309323] [<ffffffff812723b7>] do_open_execat+0x67/0x150
+> [ 1441.309324] [<ffffffff812739ec>] do_execveat_common.isra.34+0x25c/0x9a0
+> [ 1441.309325] [<ffffffff8127415c>] do_execve+0x2c/0x30
+> [ 1441.309326] [<ffffffff81098c46>] call_usermodehelper_exec_async+0xf6/0x130
+> [ 1441.309327] [<ffffffff8174d7da>] ret_from_fork+0x2a/0x40
+> [ 1441.309327]   }
+> [ 1441.309330]   ... key      at: [<ffffffffa00af5c0>] __key.47251+0x0/0xffffffffffff9a40 [jbd2]
+> [ 1441.309330]   ... acquired at:
+> [ 1441.309331] [<ffffffff810e2564>] lock_acquire+0xd4/0x270
+> [ 1441.309331] [<ffffffff8174cd6f>] rt_spin_lock+0x5f/0x80
+> [ 1441.309333] [<ffffffffa009ee25>] jbd2_journal_commit_transaction+0x365/0x2130 [jbd2]
+> [ 1441.309335] [<ffffffffa00a53dd>] kjournald2+0xcd/0x270 [jbd2]
+> [ 1441.309337] [<ffffffff810a5ecc>] kthread+0x10c/0x140
+> [ 1441.309337] [<ffffffff8174d7da>] ret_from_fork+0x2a/0x40
+> [ 1441.309338] -> (&journal->j_state_lock){+.+.-.} ops: 5849939 {
+> [ 1441.309339]    HARDIRQ-ON-W at:
+> [ 1441.309340] [<ffffffff810e11b8>] __lock_acquire+0x938/0x1770
+> [ 1441.309341] [<ffffffff810e2564>] lock_acquire+0xd4/0x270
+> [ 1441.309341] [<ffffffff8174d291>] rt_write_lock+0x31/0x40
+> [ 1441.309348] [<ffffffffa00e9c0d>] ext4_init_journal_params+0x4d/0xc0 [ext4]
+> [ 1441.309353] [<ffffffffa00f515e>] ext4_fill_super+0x1e4e/0x3770 [ext4]
+> [ 1441.309355] [<ffffffff8126ee4a>] mount_bdev+0x18a/0x1c0
+> [ 1441.309360] [<ffffffffa00e9705>] ext4_mount+0x15/0x20 [ext4]
+> [ 1441.309361] [<ffffffff8126fa79>] mount_fs+0x39/0x170
+> [ 1441.309362] [<ffffffff81290817>] vfs_kern_mount+0x67/0x130
+> [ 1441.309363] [<ffffffff812939fb>] do_mount+0x1bb/0xc60
+> [ 1441.309364] [<ffffffff81294773>] SyS_mount+0x83/0xd0
+> [ 1441.309365] [<ffffffff8174d545>] entry_SYSCALL_64_fastpath+0x23/0xc6
+> [ 1441.309365]    SOFTIRQ-ON-W at:
+> [ 1441.309366] [<ffffffff810e0b03>] __lock_acquire+0x283/0x1770
+> [ 1441.309367] [<ffffffff810e2564>] lock_acquire+0xd4/0x270
+> [ 1441.309368] [<ffffffff8174d291>] rt_write_lock+0x31/0x40
+> [ 1441.309373] [<ffffffffa00e9c0d>] ext4_init_journal_params+0x4d/0xc0 [ext4]
+> [ 1441.309378] [<ffffffffa00f515e>] ext4_fill_super+0x1e4e/0x3770 [ext4]
+> [ 1441.309379] [<ffffffff8126ee4a>] mount_bdev+0x18a/0x1c0
+> [ 1441.309383] [<ffffffffa00e9705>] ext4_mount+0x15/0x20 [ext4]
+> [ 1441.309385] [<ffffffff8126fa79>] mount_fs+0x39/0x170
+> [ 1441.309385] [<ffffffff81290817>] vfs_kern_mount+0x67/0x130
+> [ 1441.309386] [<ffffffff812939fb>] do_mount+0x1bb/0xc60
+> [ 1441.309387] [<ffffffff81294773>] SyS_mount+0x83/0xd0
+> [ 1441.309388] [<ffffffff8174d545>] entry_SYSCALL_64_fastpath+0x23/0xc6
+> [ 1441.309388]    IN-RECLAIM_FS-W at:
+> [ 1441.309390] [<ffffffff810e0b36>] __lock_acquire+0x2b6/0x1770
+> [ 1441.309391] [<ffffffff810e2564>] lock_acquire+0xd4/0x270
+> [ 1441.309391] [<ffffffff8174d307>] rt_read_lock+0x47/0x60
+> [ 1441.309394] [<ffffffffa00a6d60>] jbd2_complete_transaction+0x20/0x90 [jbd2]
+> [ 1441.309398] [<ffffffffa00d472e>] ext4_evict_inode+0x37e/0x700 [ext4]
+> [ 1441.309400] [<ffffffff8128b221>] evict+0xd1/0x1a0
+> [ 1441.309401] [<ffffffff8128b33d>] dispose_list+0x4d/0x70
+> [ 1441.309402] [<ffffffff8128c60b>] prune_icache_sb+0x4b/0x60
+> [ 1441.309404] [<ffffffff8126f381>] super_cache_scan+0x141/0x190
+> [ 1441.309405] [<ffffffff811efc27>] shrink_slab+0x277/0x6c0
+> [ 1441.309406] [<ffffffff811f4523>] shrink_node+0x2e3/0x2f0
+> [ 1441.309407] [<ffffffff811f5a7f>] kswapd+0x34f/0x980
+> [ 1441.309409] [<ffffffff810a5ecc>] kthread+0x10c/0x140
+> [ 1441.309409] [<ffffffff8174d7da>] ret_from_fork+0x2a/0x40
+> [ 1441.309410]    INITIAL USE at:
+> [ 1441.309411] [<ffffffff810e0b4e>] __lock_acquire+0x2ce/0x1770
+> [ 1441.309412] [<ffffffff810e2564>] lock_acquire+0xd4/0x270
+> [ 1441.309412] [<ffffffff8174d291>] rt_write_lock+0x31/0x40
+> [ 1441.309417] [<ffffffffa00e9c0d>] ext4_init_journal_params+0x4d/0xc0 [ext4]
+> [ 1441.309422] [<ffffffffa00f515e>] ext4_fill_super+0x1e4e/0x3770 [ext4]
+> [ 1441.309423] [<ffffffff8126ee4a>] mount_bdev+0x18a/0x1c0
+> [ 1441.309427] [<ffffffffa00e9705>] ext4_mount+0x15/0x20 [ext4]
+> [ 1441.309429] [<ffffffff8126fa79>] mount_fs+0x39/0x170
+> [ 1441.309429] [<ffffffff81290817>] vfs_kern_mount+0x67/0x130
+> [ 1441.309430] [<ffffffff812939fb>] do_mount+0x1bb/0xc60
+> [ 1441.309431] [<ffffffff81294773>] SyS_mount+0x83/0xd0
+> [ 1441.309432] [<ffffffff8174d545>] entry_SYSCALL_64_fastpath+0x23/0xc6
+> [ 1441.309432]  }
+> [ 1441.309435]  ... key      at: [<ffffffffa00af5b0>] __key.47253+0x0/0xffffffffffff9a50 [jbd2]
+> [ 1441.309435]  ... acquired at:
+> [ 1441.309436] [<ffffffff810df99e>] check_usage_forwards+0x11e/0x120
+> [ 1441.309437] [<ffffffff810e01a8>] mark_lock+0x1e8/0x2f0
+> [ 1441.309437] [<ffffffff810e0b36>] __lock_acquire+0x2b6/0x1770
+> [ 1441.309438] [<ffffffff810e2564>] lock_acquire+0xd4/0x270
+> [ 1441.309439] [<ffffffff8174d307>] rt_read_lock+0x47/0x60
+> [ 1441.309441] [<ffffffffa00a6d60>] jbd2_complete_transaction+0x20/0x90 [jbd2]
+> [ 1441.309446] [<ffffffffa00d472e>] ext4_evict_inode+0x37e/0x700 [ext4]
+> [ 1441.309447] [<ffffffff8128b221>] evict+0xd1/0x1a0
+> [ 1441.309448] [<ffffffff8128b33d>] dispose_list+0x4d/0x70
+> [ 1441.309449] [<ffffffff8128c60b>] prune_icache_sb+0x4b/0x60
+> [ 1441.309450] [<ffffffff8126f381>] super_cache_scan+0x141/0x190
+> [ 1441.309451] [<ffffffff811efc27>] shrink_slab+0x277/0x6c0
+> [ 1441.309452] [<ffffffff811f4523>] shrink_node+0x2e3/0x2f0
+> [ 1441.309453] [<ffffffff811f5a7f>] kswapd+0x34f/0x980
+> [ 1441.309454] [<ffffffff810a5ecc>] kthread+0x10c/0x140
+> [ 1441.309455] [<ffffffff8174d7da>] ret_from_fork+0x2a/0x40
+> [ 1441.309455] stack backtrace:
+> [ 1441.309457] CPU: 0 PID: 165 Comm: kswapd0 Tainted: G            E   4.10.0-rt9-rt #11
+> [ 1441.309457] Hardware name: MEDION MS-7848/MS-7848, BIOS M7848W08.20C 09/23/2013
+> [ 1441.309457] Call Trace:
+> [ 1441.309459]  dump_stack+0x85/0xc8
+> [ 1441.309461]  print_irq_inversion_bug.part.34+0x1ac/0x1b8
+> [ 1441.309462]  check_usage_forwards+0x11e/0x120
+> [ 1441.309463]  ? check_usage_backwards+0x120/0x120
+> [ 1441.309463]  mark_lock+0x1e8/0x2f0
+> [ 1441.309464]  __lock_acquire+0x2b6/0x1770
+> [ 1441.309465]  ? __lock_acquire+0x420/0x1770
+> [ 1441.309466]  lock_acquire+0xd4/0x270
+> [ 1441.309468]  ? jbd2_complete_transaction+0x20/0x90 [jbd2]
+> [ 1441.309469]  rt_read_lock+0x47/0x60
+> [ 1441.309471]  ? jbd2_complete_transaction+0x20/0x90 [jbd2]
+> [ 1441.309472]  jbd2_complete_transaction+0x20/0x90 [jbd2]
+> [ 1441.309477]  ext4_evict_inode+0x37e/0x700 [ext4]
+> [ 1441.309478]  evict+0xd1/0x1a0
+> [ 1441.309479]  dispose_list+0x4d/0x70
+> [ 1441.309480]  prune_icache_sb+0x4b/0x60
+> [ 1441.309481]  super_cache_scan+0x141/0x190
+> [ 1441.309482]  shrink_slab+0x277/0x6c0
+> [ 1441.309483]  shrink_node+0x2e3/0x2f0
+> [ 1441.309485]  kswapd+0x34f/0x980
+> [ 1441.309487]  kthread+0x10c/0x140
+> [ 1441.309488]  ? mem_cgroup_shrink_node+0x390/0x390
+> [ 1441.309488]  ? kthread_park+0x90/0x90
+> [ 1441.309489]  ret_from_fork+0x2a/0x40
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
+
+--
+To unsubscribe, send a message with 'unsubscribe linux-mm' in
+the body to majordomo@kvack.org.  For more info on Linux MM,
+see: http://www.linux-mm.org/ .
+Don't email: <a href=mailto:"dont@kvack.org"> email@kvack.org </a>
