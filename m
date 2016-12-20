@@ -1,8 +1,8 @@
-From: "Darrick J. Wong" <darrick.wong@oracle.com>
+From: Michal Hocko <mhocko@kernel.org>
 Subject: Re: [PATCH 2/9] xfs: introduce and use KM_NOLOCKDEP to silence
  reclaim lockdep false positives
-Date: Mon, 19 Dec 2016 14:06:19 -0800
-Message-ID: <20161219220619.GA7296@birch.djwong.org>
+Date: Tue, 20 Dec 2016 09:38:18 +0100
+Message-ID: <20161220083818.GB3769@dhcp22.suse.cz>
 References: <20161215140715.12732-1-mhocko@kernel.org>
  <20161215140715.12732-3-mhocko@kernel.org>
  <20161219212413.GN4326@dastard>
@@ -15,9 +15,9 @@ List-ID: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: Dave Chinner <david@fromorbit.com>
-Cc: Michal Hocko <mhocko@kernel.org>, linux-mm@kvack.org, linux-fsdevel@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>, Theodore Ts'o <tytso@mit.edu>, Chris Mason <clm@fb.com>, David Sterba <dsterba@suse.cz>, Jan Kara <jack@suse.cz>, ceph-devel@vger.kernel.org, cluster-devel@redhat.com, linux-nfs@vger.kernel.org, logfs@logfs.org, linux-xfs@vger.kernel.org, linux-ext4@vger.kernel.org, linux-btrfs@vger.kernel.org, linux-mtd@lists.infradead.org, reiserfs-devel@vger.kernel.org, linux-ntfs-dev@lists.sourceforge.net, linux-f2fs-devel@lists.sourceforge.net, linux-afs@lists.infradead.org, LKML <linux-kernel@vger.kernel.org>, Michal Hocko <mhocko@suse.com>
+Cc: linux-mm@kvack.org, linux-fsdevel@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>, Theodore Ts'o <tytso@mit.edu>, Chris Mason <clm@fb.com>, David Sterba <dsterba@suse.cz>, Jan Kara <jack@suse.cz>, ceph-devel@vger.kernel.org, cluster-devel@redhat.com, linux-nfs@vger.kernel.org, logfs@logfs.org, linux-xfs@vger.kernel.org, linux-ext4@vger.kernel.org, linux-btrfs@vger.kernel.org, linux-mtd@lists.infradead.org, reiserfs-devel@vger.kernel.org, linux-ntfs-dev@lists.sourceforge.net, linux-f2fs-devel@lists.sourceforge.net, linux-afs@lists.infradead.org, LKML <linux-kernel@vger.kernel.org>
 
-On Tue, Dec 20, 2016 at 08:24:13AM +1100, Dave Chinner wrote:
+On Tue 20-12-16 08:24:13, Dave Chinner wrote:
 > On Thu, Dec 15, 2016 at 03:07:08PM +0100, Michal Hocko wrote:
 > > From: Michal Hocko <mhocko@suse.com>
 > > 
@@ -34,29 +34,24 @@ On Tue, Dec 20, 2016 at 08:24:13AM +1100, Dave Chinner wrote:
 > I'd suggest that it might be better to drop this patch for now -
 > it's not necessary for the context flag changeover but does
 > introduce a risk of regressions if the conversion is wrong.
-
-I was just about to write in that while I didn't see anything obviously
-wrong with the NOFS removals, I also don't know for sure that we can't
-end up recursively in those code paths (specifically the directory
-traversal thing).
-
---D
-
+> 
 > Hence I think this is better as a completely separate series
 > which audits and changes all the unnecessary KM_NOFS allocations
 > in one go. I've never liked whack-a-mole style changes like this -
 > do it once, do it properly....
-> 
-> Cheers,
-> 
-> Dave.
-> -- 
-> Dave Chinner
-> david@fromorbit.com
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-ext4" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+
+OK, fair enough. I thought it might be better to have an example user so
+that others can follow but as you say, the risk of regression is really
+there and these kind of changes definitely need a throughout review.
+
+I am not sure I will be able to post more of those changes because that
+requires an intimate knowledge of the fs so I hope somebody can take
+over there and follow up.
+
+Thanks!
+-- 
+Michal Hocko
+SUSE Labs
 
 --
 To unsubscribe, send a message with 'unsubscribe linux-mm' in
