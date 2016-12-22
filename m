@@ -1,80 +1,47 @@
-From: Dave Chinner <david@fromorbit.com>
-Subject: Re: [PATCH 2/9] xfs: introduce and use KM_NOLOCKDEP to silence
- reclaim lockdep false positives
-Date: Wed, 21 Dec 2016 08:39:01 +1100
-Message-ID: <20161220213901.GQ4326@dastard>
-References: <20161215140715.12732-1-mhocko@kernel.org>
- <20161215140715.12732-3-mhocko@kernel.org>
- <20161219212413.GN4326@dastard>
- <20161219220619.GA7296@birch.djwong.org>
+From: Jose R R <jose.r.r@metztli.com>
+Subject: Reiser4-for-4.8.0 patch and Debian Jessie Backports linux_4.8.11-1~bpo8+1
+Date: Wed, 21 Dec 2016 23:40:34 -0800
+Message-ID: <CAM12Q5Q9ohPAF02BV+mGabqp5RBbi79SSaGLdwzn1y4BXYUvwA@mail.gmail.com>
 Mime-Version: 1.0
-Return-path: <owner-linux-mm@kvack.org>
-Content-Disposition: inline
-In-Reply-To: <20161219220619.GA7296@birch.djwong.org>
-Sender: owner-linux-mm@kvack.org
+Return-path: <reiserfs-devel-owner@vger.kernel.org>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=metztli-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:from:date:message-id:subject:to;
+        bh=WFIl8Qa2o3IKwrj6dA0Mh5Jr2GwR3paDmPl1M2lkuK4=;
+        b=C5Fqw6AEqHU7i0l0UG4f1hb2S0X5Ek/6rUD8QTnS5tlWcbov1oA+OOyL5TYwvLP6qF
+         p/WvY6l0NG0ihUOSw8NkPXhhw1v24dlQoKC/I+mwpO/hcJ3UOjWmW67/Peq3teGPYYe9
+         tNIZU1KOl/KjL/VXU0yxZ5YblHU2X2m7tUC3qYznqoquF1rPPy54K7qIgVtr+9d0QDe2
+         dbrbW9PxBv0H056MRBW9kIkUBH/H6zyJS+h9VT/AGC12ctXsF6wnGD8zdrXXhkrweMc6
+         t9bcIcCPePEoffBY/eEXwmeLThABWuM5lDdhEjM0fot57736gJaJwWRvLQEY753Y/ize
+         vm8Q==
+Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: "Darrick J. Wong" <darrick.wong@oracle.com>
-Cc: Michal Hocko <mhocko@kernel.org>, linux-mm@kvack.org, linux-fsdevel@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>, Theodore Ts'o <tytso@mit.edu>, Chris Mason <clm@fb.com>, David Sterba <dsterba@suse.cz>, Jan Kara <jack@suse.cz>, ceph-devel@vger.kernel.org, cluster-devel@redhat.com, linux-nfs@vger.kernel.org, logfs@logfs.org, linux-xfs@vger.kernel.org, linux-ext4@vger.kernel.org, linux-btrfs@vger.kernel.org, linux-mtd@lists.infradead.org, reiserfs-devel@vger.kernel.org, linux-ntfs-dev@lists.sourceforge.net, linux-f2fs-devel@lists.sourceforge.net, linux-afs@lists.infradead.org, LKML <linux-kernel@vger.kernel.org>, Michal Hocko <mhocko@suse.com>
+To: ReiserFS Development List <reiserfs-devel@vger.kernel.org>, debian-boot@lists.debian.org
 
-On Mon, Dec 19, 2016 at 02:06:19PM -0800, Darrick J. Wong wrote:
-> On Tue, Dec 20, 2016 at 08:24:13AM +1100, Dave Chinner wrote:
-> > On Thu, Dec 15, 2016 at 03:07:08PM +0100, Michal Hocko wrote:
-> > > From: Michal Hocko <mhocko@suse.com>
-> > > 
-> > > Now that the page allocator offers __GFP_NOLOCKDEP let's introduce
-> > > KM_NOLOCKDEP alias for the xfs allocation APIs. While we are at it
-> > > also change KM_NOFS users introduced by b17cb364dbbb ("xfs: fix missing
-> > > KM_NOFS tags to keep lockdep happy") and use the new flag for them
-> > > instead. There is really no reason to make these allocations contexts
-> > > weaker just because of the lockdep which even might not be enabled
-> > > in most cases.
-> > > 
-> > > Signed-off-by: Michal Hocko <mhocko@suse.com>
-> > 
-> > I'd suggest that it might be better to drop this patch for now -
-> > it's not necessary for the context flag changeover but does
-> > introduce a risk of regressions if the conversion is wrong.
-> 
-> I was just about to write in that while I didn't see anything obviously
-> wrong with the NOFS removals, I also don't know for sure that we can't
-> end up recursively in those code paths (specifically the directory
-> traversal thing).
+Niltze!
 
-The issue is with code paths that can be called from both inside and
-outside transaction context - lockdep complains when it sees an
-allocation path that is used with both GFP_NOFS and GFP_KERNEL
-context, as it doesn't know that the GFP_KERNEL usage is safe or
-not.
+Had to modify/rename Reiser4-for-4.8.0 patch with one-liner:
 
-So things like the directory buffer path, which can be called from
-readdir without a transaction context, have various KM_NOFS flags
-scattered through it so that lockdep doesn't get all upset every
-time readdir is called...
+gzip -dc reiser4-for-4.8.0.patch.gz | \
+sed 's/inode_change_ok(inode/setattr_prepare(dentry/' | \
+gzip -9 - > reiser4-for-4.8.11+.patch.gz
 
-There are other cases like this - btree manipulation via bunmapi()
-can be called without transaction context to remove delayed alloc
-extents, and that puts all of the btree cursor and  incore extent
-list handling in the same boat (all those allocations are KM_NOFS),
-etc.
+to get around a build error in linux/fs/reiser4/plugin/inode_ops.c
+as elaborated on
+< https://metztli.it/blog/index.php/aH2?blog=4 >
 
-So it's not really recursion that is the problem here - it's
-different allocation contexts that lockdep can't know about unless
-it's told about them. We've done that with KM_NOFS in the past; in
-future we should use this KM_NOLOCKDEP flag, though I'd prefer a
-better name for it. e.g. KM_NOTRANS to indicate that the allocation
-can occur both inside and outside of transaction context....
+And successfully generate U/DEBs for Debian-Installer (d-i)
 
-Cheers,
 
-Dave.
+Best Professional Regards.
 -- 
-Dave Chinner
-david@fromorbit.com
-
---
-To unsubscribe, send a message with 'unsubscribe linux-mm' in
-the body to majordomo@kvack.org.  For more info on Linux MM,
-see: http://www.linux-mm.org/ .
-Don't email: <a href=mailto:"dont@kvack.org"> email@kvack.org </a>
+Jose R R
+http://metztli.it
+---------------------------------------------------------------------------------------------
+Download Debian-Reiser4 for AMD64 https://sf.net/projects/debian-reiser4/
+---------------------------------------------------------------------------------------------
+Try at no charge http://b2evolution.net for http://OpenShift.com PaaS
+---------------------------------------------------------------------------------------------
+from our GitHub http://Nepohualtzintzin.com repository. Cloud the easy way!
