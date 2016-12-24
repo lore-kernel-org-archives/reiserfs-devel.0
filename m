@@ -1,670 +1,725 @@
-From: =?UTF-8?B?RHXFoWFuIMSMb2xpxIc=?= <dusanc@gmail.com>
-Subject: Re: [BUG] on mount with reiser4-for-4.8
-Date: Sat, 24 Dec 2016 09:48:31 +0100
-Message-ID: <CADW=+3mdz1_O1P-Z5bL00ieJ7e6dPL4S0ibCXwiXHuscvf4s8g@mail.gmail.com>
-References: <CADW=+3=UA1ugAVzrLMw-R8T5dWXjWnwwfUJHYfDp-VFMPyE5jg@mail.gmail.com>
- <5855B20D.6020304@gmail.com> <CADW=+3n30cS=w6T69fdeTkhzdEN4oed4YHbtgx8i9BXdz4mJ=w@mail.gmail.com>
- <585684AA.3010306@gmail.com> <CADW=+3khBM_KWb0nc8s9431UdniGa0etDXMZh7gwA0f1MOxfqg@mail.gmail.com>
+From: Jose R Rodriguez <jose@metztli-it.com>
+Subject: installation-reports: Jessie-backported Reiser4-patched Linux 4.8.15-1 on
+ UpCloud 8-core/48Gig RAM KVM Cloud infrastructure successful installation
+Date: Sat, 24 Dec 2016 05:22:37 -0800
+Message-ID: <20161224132237.2467.40254.reportbug@cohuatlicue.metztli-it.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=yZtbP46D3/D+Sa6tLZkLmO+WehdbR2LpjLURP6cvzuA=;
-        b=Vj1rODV3qptKxWdtkDCywumIvUKt6RSOy00z3JCJFwhJFTMqJ6OfAqF9gvGcAr35pQ
-         k1r8znRZe/2lPPWctvYODu9IzHmZWM49KvOG1r8Qs0g+PV0M/JVxIuDsROVQoaexI1mN
-         VE2VV1C/rByy8Ed3z/RMiNdI40idjr1Sf47M8Dsg/gh6l4+CdeNUglWKmo8deOcIYoMi
-         vf37ta0WKakFUxUXssh1gIFxBPSGe1QoX69VKPHavlzHE+qlNe4Z5EaKIS5PmVfD8Tj6
-         J3p69Y7mBo3PslE2tpCMwnUcWaVZNgESFsCJUIeGDlGbwvoND3BLolDetpZy34+trZaC
-         L6/w==
-In-Reply-To: <CADW=+3khBM_KWb0nc8s9431UdniGa0etDXMZh7gwA0f1MOxfqg@mail.gmail.com>
+DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mixtli.metztli.it; q=dns/txt;
+ s=mx; t=1482585758; h=Date: Message-ID: Cc: Subject: To: From:
+ Content-Transfer-Encoding: MIME-Version: Content-Type: Sender;
+ bh=/lYG3gAy57RoQDoh6C/j4LaFMLp5H6QtzJtQCQj1jpw=; b=deoLaBtqPILxjspCVTSz6vPBfy7AEf02CiBd8UVMMdcvw6N6e+Cpx6WODxst26/lDeuS/zZi
+ c1lGAzEEHQGGTE2eUxZGSSjW3XCxln291OOb+QbY0N1DzAIkcwOxgjqBJQQ1Vds4bzx1dMR7
+ afZMjkhdbTQ6C3gvSpCmFn233DM=
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="utf-8"
-To: Edward Shishkin <edward.shishkin@gmail.com>
-Cc: reiserfs-devel <reiserfs-devel@vger.kernel.org>
+To: Debian Bug Tracking System <submit@bugs.debian.org>
+Cc: reiserfs-devel@vger.kernel.org
 
-On Sun, Dec 18, 2016 at 2:46 PM, Du=C5=A1an =C4=8Coli=C4=87 <dusanc@gmail.c=
-om> wrote:
-> That was it, no more BUG on mount.
->
-I spoke prematurely.
+Package: installation-reports
+Severity: normal
 
-Looks like I had 2 different BUGs on mount:
-1. BUG when mounting partition with old disk format - that was solved
-with 4.8.1 patch
-2. BUG when mounting dismounted partition - this one is not solved
+Dear Maintainer,
 
-When partitions are mounted on boot they mount OK, but when system
-finishes booting when I try to mount them I get this BUG:
+*** Reporter, please consider answering these questions, where appropriate ***
 
+   * What led up to the situation?
+   * What exactly did you do (or not do) that was effective (or
+     ineffective)?
+   * What was the outcome of this action?
+   * What outcome did you expect instead?
 
-Dec 24 09:41:21 krshina3 kernel: reiser4: md127: found disk format 4.0.1.
-Dec 24 09:41:21 krshina3 kernel: mount: page allocation failure:
-order:5, mode:0x26040c0(GFP_KERNEL|__GFP_COMP|__GFP_NOTRACK)
-Dec 24 09:41:21 krshina3 kernel: CPU: 0 PID: 3859 Comm: mount Not
-tainted 4.8.11-gentoo #5
-Dec 24 09:41:21 krshina3 kernel: Hardware name: Gigabyte Technology
-Co., Ltd. To be filled by O.E.M./B75-D3V, BIOS F5 07/04/2012
-Dec 24 09:41:21 krshina3 kernel:  0000000000400000 ffff88007d0379b0
-ffffffff814241c5 0000000000000005
-Dec 24 09:41:21 krshina3 kernel:  0000000000000000 ffff88007d037a40
-ffffffff811ab42a 026040c07d0379f0
-Dec 24 09:41:21 krshina3 kernel:  0000000000000202 0000000000000004
-00000040026040c0 ffff88007d037ad0
-Dec 24 09:41:21 krshina3 kernel: Call Trace:
-Dec 24 09:41:21 krshina3 kernel:  [<ffffffff814241c5>] dump_stack+0x4d/0x68
-Dec 24 09:41:21 krshina3 kernel:  [<ffffffff811ab42a>]
-warn_alloc_failed+0xba/0x160
-Dec 24 09:41:21 krshina3 kernel:  [<ffffffff811aa483>] ?
-get_page_from_freelist+0x143/0xcf0
-Dec 24 09:41:21 krshina3 kernel:  [<ffffffff811ab863>]
-__alloc_pages_nodemask+0x2f3/0xd40
-Dec 24 09:41:21 krshina3 kernel:  [<ffffffff810ca0d8>] ?
-kmemcheck_pte_lookup+0x28/0x60
-Dec 24 09:41:21 krshina3 kernel:  [<ffffffff811fc28d>]
-cache_alloc_refill+0xed/0x6a0
-Dec 24 09:41:21 krshina3 kernel:  [<ffffffff811fc189>]
-kmem_cache_alloc+0xf9/0x110
-Dec 24 09:41:21 krshina3 kernel:  [<ffffffff812a060f>]
-znodes_tree_init+0x5f/0x210
-Dec 24 09:41:21 krshina3 kernel:  [<ffffffff812ac8ee>]
-reiser4_init_tree+0x8e/0x150
-Dec 24 09:41:21 krshina3 kernel:  [<ffffffff81304a55>]
-init_format_format40+0x345/0x790
-Dec 24 09:41:21 krshina3 kernel:  [<ffffffff81229aa4>] ?
-unlock_new_inode+0x64/0xa0
-Dec 24 09:41:21 krshina3 kernel:  [<ffffffff812c4f3a>] fill_super+0x14a/0x3=
-00
-Dec 24 09:41:21 krshina3 kernel:  [<ffffffff81209b6f>] mount_bdev+0x1bf/0x2=
-00
-Dec 24 09:41:21 krshina3 kernel:  [<ffffffff812c4df0>] ? reiser4_mount+0x20=
-/0x20
-Dec 24 09:41:21 krshina3 kernel:  [<ffffffff812c4de0>] reiser4_mount+0x10/0=
-x20
-Dec 24 09:41:21 krshina3 kernel:  [<ffffffff81209dfe>] mount_fs+0x2e/0xe0
-Dec 24 09:41:21 krshina3 kernel:  [<ffffffff81231a96>] vfs_kern_mount+0x66/=
-0x190
-Dec 24 09:41:21 krshina3 kernel:  [<ffffffff81233af2>] do_mount+0x1d2/0x108=
-0
-Dec 24 09:41:21 krshina3 kernel:  [<ffffffff812337f1>] ?
-copy_mount_options+0x111/0x220
-Dec 24 09:41:21 krshina3 kernel:  [<ffffffff812337da>] ?
-copy_mount_options+0xfa/0x220
-Dec 24 09:41:21 krshina3 kernel:  [<ffffffff81234e46>] SyS_mount+0x66/0xb0
-Dec 24 09:41:21 krshina3 kernel:  [<ffffffff81a5765b>]
-entry_SYSCALL_64_fastpath+0x13/0x8f
-Dec 24 09:41:21 krshina3 kernel: Mem-Info:
-Dec 24 09:41:21 krshina3 kernel: active_anon:453454
-inactive_anon:113498 isolated_anon:0\x0a active_file:189238
-inactive_file:800785 isolated_file:0\x0a unevictable:1866 dirty:1092
-writeback:0 unstable:0\x0a slab_reclaimable:55782
-slab_unreclaimable:60397\x0a mapped:20308 shmem:11803 pagetables:2738
-bounce:0\x0a free:13271 free_pcp:0 free_cma:0
-Dec 24 09:41:21 krshina3 kernel: Node 0 active_anon:1813816kB
-inactive_anon:453992kB active_file:756952kB inactive_file:3203140kB
-unevictable:7464kB isolated(anon):0kB isolated(file):0kB
-mapped:81232kB dirty:4368kB writeback:0kB shmem:47212kB
-writeback_tmp:0kB unstable:0kB pages_scanned:0 all_unreclaimable? no
-Dec 24 09:41:21 krshina3 kernel: DMA free:15896kB min:24kB low:36kB
-high:48kB active_anon:0kB inactive_anon:0kB active_file:0kB
-inactive_file:0kB unevictable:0kB writepending:0kB present:15984kB
-managed:15900kB mlocked:0kB slab_reclaimable:0kB
-slab_unreclaimable:4kB kernel_stack:0kB pagetables:0kB bounce:0kB
-free_pcp:0kB local_pcp:0kB free_cma:0kB
-Dec 24 09:41:21 krshina3 kernel: lowmem_reserve[]: 0 3191 6627 6627
-Dec 24 09:41:21 krshina3 kernel: DMA32 free:22044kB min:5012kB
-low:8280kB high:11548kB active_anon:810196kB inactive_anon:351420kB
-active_file:172284kB inactive_file:1693924kB unevictable:0kB
-writepending:2036kB present:3360704kB managed:3272764kB mlocked:0kB
-slab_reclaimable:85100kB slab_unreclaimable:120576kB
-kernel_stack:416kB pagetables:3108kB bounce:0kB free_pcp:0kB
-local_pcp:0kB free_cma:0kB
-Dec 24 09:41:21 krshina3 kernel: lowmem_reserve[]: 0 0 3435 3435
-Dec 24 09:41:21 krshina3 kernel: Normal free:15144kB min:5392kB
-low:8908kB high:12424kB active_anon:1003620kB inactive_anon:102572kB
-active_file:584668kB inactive_file:1509216kB unevictable:7464kB
-writepending:2332kB present:4691968kB managed:3517764kB mlocked:7464kB
-slab_reclaimable:138028kB slab_unreclaimable:121008kB
-kernel_stack:4608kB pagetables:7844kB bounce:0kB free_pcp:0kB
-local_pcp:0kB free_cma:0kB
-Dec 24 09:41:21 krshina3 kernel: lowmem_reserve[]: 0 0 0 0
-Dec 24 09:41:21 krshina3 kernel: DMA: 2*4kB (U) 0*8kB 1*16kB (U)
-0*32kB 2*64kB (U) 1*128kB (U) 1*256kB (U) 0*512kB 1*1024kB (U)
-1*2048kB (M) 3*4096kB (M) =3D 15896kB
-Dec 24 09:41:21 krshina3 kernel: DMA32: 909*4kB (M) 662*8kB (ME)
-313*16kB (UME) 176*32kB (UME) 39*64kB (ME) 0*128kB 0*256kB 0*512kB
-0*1024kB 0*2048kB 0*4096kB =3D 22068kB
-Dec 24 09:41:21 krshina3 kernel: Normal: 1493*4kB (UM) 397*8kB (UME)
-375*16kB (UME) 1*32kB (E) 0*64kB 0*128kB 0*256kB 0*512kB 0*1024kB
-0*2048kB 0*4096kB =3D 15180kB
-Dec 24 09:41:21 krshina3 kernel: Node 0 hugepages_total=3D0
-hugepages_free=3D0 hugepages_surp=3D0 hugepages_size=3D2048kB
-Dec 24 09:41:21 krshina3 kernel: 1003306 total pagecache pages
-Dec 24 09:41:21 krshina3 kernel: 0 pages in swap cache
-Dec 24 09:41:21 krshina3 kernel: Swap cache stats: add 0, delete 0, find 0/=
-0
-Dec 24 09:41:21 krshina3 kernel: Free swap  =3D 9775420kB
-Dec 24 09:41:21 krshina3 kernel: Total swap =3D 9775420kB
-Dec 24 09:41:21 krshina3 kernel: 2017164 pages RAM
-Dec 24 09:41:21 krshina3 kernel: 0 pages HighMem/MovableOnly
-Dec 24 09:41:21 krshina3 kernel: 315557 pages reserved
+*** End of the template - remove these template lines ***
 
 
+-- Package-specific info:
 
-> Thanks a lot
->
-> Dushan
->
-> On Sun, Dec 18, 2016 at 1:44 PM, Edward Shishkin
-> <edward.shishkin@gmail.com> wrote:
->> Try this one in addition.
->>
->> Thanks,
->> Edward.
->>
->>
->> On 12/18/2016 01:17 PM, Du=C5=A1an =C4=8Coli=C4=87 wrote:
->>>
->>> It's OK now, mounts read-only on error.
->>>
->>> What about that BUG on mount?
->>>
->>> On Sat, Dec 17, 2016 at 10:45 PM, Edward Shishkin
->>> <edward.shishkin@gmail.com> wrote:
->>>>
->>>> Please, check if this help.
->>>> Apply from reiser4 directory.
->>>>
->>>> Thanks,
->>>> Edward.
->>>>
->>>>
->>>> On 12/17/2016 10:08 PM, Du=C5=A1an =C4=8Coli=C4=87 wrote:
->>>>>
->>>>> When mounting reiser4 partitions I get the following bug, but the
->>>>> system keeps working, even as reiser4 remounted partition as read
->>>>> only.
->>>>>
->>>>> All R4 partitions are ccreg40.
->>>>>
->>>>> Thanks
->>>>>
->>>>> Dushan
->>>>>
->>>>>    cat /etc/fstab | grep -v "#"
->>>>>
->>>>>
->>>>> /dev/sda1        /boot        ext2        noauto,noatime    1 2
->>>>> /dev/md123              none            swap            sw
->>>>> 0
->>>>> 0
->>>>> /dev/sda2        /        reiser4        noatime,onerror=3Dremount-ro
->>>>> 0 0
->>>>> /dev/md125        /mnt/backup    reiser4
->>>>> noatime,noauto,onerror=3Dremount-ro    0 0
->>>>> /dev/md126        /mnt/media    reiser4
->>>>> noatime,users,onerror=3Dremount-ro    0 0
->>>>> /dev/md127        /usr/portage    reiser4
->>>>> noatime,onerror=3Dremount-ro        0 0
->>>>> /dev/dvdrom        /mnt/cdrom    auto        noauto,ro    0 0
->>>>> shm            /dev/shm    tmpfs        nodev,nosuid,noexec    0 0
->>>>>
->>>>>
->>>>> cat /proc/mdstat
->>>>> Personalities : [raid1]
->>>>> md122 : active raid1 sdc1[1] sdb1[0]
->>>>>         104320 blocks [2/2] [UU]
->>>>>
->>>>> md123 : active raid1 sdc2[1] sdb2[0]
->>>>>         594304 blocks [2/2] [UU]
->>>>>
->>>>> md124 : active raid1 sdc5[1] sdb5[0]
->>>>>         9775424 blocks [2/2] [UU]
->>>>>
->>>>> md125 : active raid1 sdc6[1] sdb6[0]
->>>>>         68364480 blocks [2/2] [UU]
->>>>>
->>>>> md126 : active raid1 sdc7[1] sdb7[0]
->>>>>         403110912 blocks [2/2] [UU]
->>>>>
->>>>> md127 : active raid1 sdc8[1] sdb8[0]
->>>>>         6433920 blocks [2/2] [UU]
->>>>>
->>>>>    df
->>>>>
->>>>> Filesystem     1K-blocks      Used Available Use% Mounted on
->>>>> /dev/sda2       37017728  30413152   6604576  83% /
->>>>> tmpfs             680644      1012    679632   1% /run
->>>>> dev                10240         0     10240   0% /dev
->>>>> shm              3403212      1284   3401928   1% /dev/shm
->>>>> cgroup_root        10240         0     10240   0% /sys/fs/cgroup
->>>>> /dev/md126     383034100 350741596  32292504  92% /mnt/media
->>>>> /dev/md127       6113484   5605344    508140  92% /usr/portage
->>>>> none             3403212        12   3403200   1% /run/user/1001
->>>>> none             3403212         0   3403212   0% /run/user/1000
->>>>> /dev/md125      64959612  52568760  12390852  81% /mnt/backup
->>>>>
->>>>>
->>>>> dmesg
->>>>>
->>>>> [    2.057469] reiser4[swapper/0(1)]: try_init_format40
->>>>> (fs/reiser4/plugin/disk_format/disk_format40.c:303)[vpf-1364]:
->>>>>                  NOTICE: Warning: mounting sda2 with fatal errors,
->>>>> forcing read-only mount.
->>>>> [    2.060544] reiser4: sda2: found disk format 4.0.1.
->>>>> [    2.062410]
->>>>> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
->>>>> [    2.063993] BUG: KASAN: use-after-free in
->>>>> init_format_format40+0x401/0x750 at addr ffff8801d0fc0850
->>>>> [    2.065616] Read of size 4 by task swapper/0/1
->>>>> [    2.067228] CPU: 0 PID: 1 Comm: swapper/0 Not tainted 4.8.11-gento=
-o
->>>>> #3
->>>>> [    2.068857] Hardware name: Gigabyte Technology Co., Ltd. To be
->>>>> filled by O.E.M./B75-D3V, BIOS F5 07/04/2012
->>>>> [    2.070566]  ffff8801d08f4580 ffff8801d6327a20 ffffffff81424185
->>>>> ffff8801d6000600
->>>>> [    2.072316]  ffff8801d0fc0800 ffff8801d6327a48 ffffffff811ff90c
->>>>> ffff8801d6327ad8
->>>>> [    2.074078]  ffff8801d0fc0800 ffff8801d0fc0800 ffff8801d6327ac8
->>>>> ffffffff811ffb79
->>>>> [    2.075861] Call Trace:
->>>>> [    2.077616]  [<ffffffff81424185>] dump_stack+0x4d/0x68
->>>>> [    2.079402]  [<ffffffff811ff90c>] kasan_object_err+0x1c/0x70
->>>>> [    2.081216]  [<ffffffff811ffb79>] kasan_report_error+0x1c9/0x4b0
->>>>> [    2.083049]  [<ffffffff812a10cf>] ? zget+0xdf/0x3c0
->>>>> [    2.084876]  [<ffffffff811ffef4>] kasan_report+0x34/0x40
->>>>> [    2.086717]  [<ffffffff81304b11>] ? init_format_format40+0x401/0x7=
-50
->>>>> [    2.088594]  [<ffffffff811ff601>] __asan_load4+0x61/0x80
->>>>> [    2.090471]  [<ffffffff81304b11>] init_format_format40+0x401/0x750
->>>>> [    2.092356]  [<ffffffff812c4f3a>] fill_super+0x14a/0x300
->>>>> [    2.094224]  [<ffffffff81209b6f>] mount_bdev+0x1bf/0x200
->>>>> [    2.096073]  [<ffffffff812c4df0>] ? reiser4_mount+0x20/0x20
->>>>> [    2.097930]  [<ffffffff812c4de0>] reiser4_mount+0x10/0x20
->>>>> [    2.099785]  [<ffffffff81209dfe>] mount_fs+0x2e/0xe0
->>>>> [    2.101654]  [<ffffffff81231a96>] vfs_kern_mount+0x66/0x190
->>>>> [    2.103528]  [<ffffffff81233af2>] do_mount+0x1d2/0x1080
->>>>> [    2.105397]  [<ffffffff811fe944>] ? kasan_check_write+0x14/0x20
->>>>> [    2.107295]  [<ffffffff811c4624>] ? strndup_user+0x54/0x70
->>>>> [    2.109187]  [<ffffffff81234e46>] SyS_mount+0x66/0xb0
->>>>> [    2.111089]  [<ffffffff820a8759>] mount_block_root+0x171/0x3ac
->>>>> [    2.113023]  [<ffffffff820a8a0b>] mount_root+0x77/0xd8
->>>>> [    2.114955]  [<ffffffff820a8ba1>] prepare_namespace+0x135/0x16d
->>>>> [    2.116887]  [<ffffffff820a84ec>] kernel_init_freeable+0x237/0x24b
->>>>> [    2.118811]  [<ffffffff81a50e9e>] kernel_init+0xe/0x120
->>>>> [    2.120713]  [<ffffffff81a5780f>] ret_from_fork+0x1f/0x40
->>>>> [    2.122618]  [<ffffffff81a50e90>] ? rest_init+0x80/0x80
->>>>> [    2.124522] Object at ffff8801d0fc0800, in cache kmalloc-512 size:
->>>>> 512
->>>>> [    2.126453] Allocated:
->>>>> [    2.128364] PID =3D 1
->>>>> [    2.130261]  [<ffffffff8109f536>] save_stack_trace+0x26/0x50
->>>>> [    2.132219]  [<ffffffff811fe802>] kasan_kmalloc.part.5+0x62/0xf0
->>>>> [    2.134206]  [<ffffffff811ff018>] kasan_kmalloc+0x78/0xa0
->>>>> [    2.136188]  [<ffffffff813048bc>] init_format_format40+0x1ac/0x750
->>>>> [    2.138174]  [<ffffffff812c4f3a>] fill_super+0x14a/0x300
->>>>> [    2.140144]  [<ffffffff81209b6f>] mount_bdev+0x1bf/0x200
->>>>> [    2.142096]  [<ffffffff812c4de0>] reiser4_mount+0x10/0x20
->>>>> [    2.144055]  [<ffffffff81209dfe>] mount_fs+0x2e/0xe0
->>>>> [    2.146028]  [<ffffffff81231a96>] vfs_kern_mount+0x66/0x190
->>>>> [    2.148016]  [<ffffffff81233af2>] do_mount+0x1d2/0x1080
->>>>> [    2.150014]  [<ffffffff81234e46>] SyS_mount+0x66/0xb0
->>>>> [    2.152026]  [<ffffffff820a8759>] mount_block_root+0x171/0x3ac
->>>>> [    2.154055]  [<ffffffff820a8a0b>] mount_root+0x77/0xd8
->>>>> [    2.156066]  [<ffffffff820a8ba1>] prepare_namespace+0x135/0x16d
->>>>> [    2.158074]  [<ffffffff820a84ec>] kernel_init_freeable+0x237/0x24b
->>>>> [    2.160079]  [<ffffffff81a50e9e>] kernel_init+0xe/0x120
->>>>> [    2.162020]  [<ffffffff81a5780f>] ret_from_fork+0x1f/0x40
->>>>> [    2.163918] Freed:
->>>>> [    2.165760] PID =3D 1
->>>>> [    2.167562]  [<ffffffff8109f536>] save_stack_trace+0x26/0x50
->>>>> [    2.169376]  [<ffffffff811feed7>] kasan_slab_free+0xb7/0x180
->>>>> [    2.171150]  [<ffffffff811fd67b>] kfree+0x6b/0x90
->>>>> [    2.172895]  [<ffffffff81304b09>] init_format_format40+0x3f9/0x750
->>>>> [    2.174616]  [<ffffffff812c4f3a>] fill_super+0x14a/0x300
->>>>> [    2.176290]  [<ffffffff81209b6f>] mount_bdev+0x1bf/0x200
->>>>> [    2.177962]  [<ffffffff812c4de0>] reiser4_mount+0x10/0x20
->>>>> [    2.179633]  [<ffffffff81209dfe>] mount_fs+0x2e/0xe0
->>>>> [    2.181273]  [<ffffffff81231a96>] vfs_kern_mount+0x66/0x190
->>>>> [    2.182910]  [<ffffffff81233af2>] do_mount+0x1d2/0x1080
->>>>> [    2.184541]  [<ffffffff81234e46>] SyS_mount+0x66/0xb0
->>>>> [    2.186171]  [<ffffffff820a8759>] mount_block_root+0x171/0x3ac
->>>>> [    2.187804]  [<ffffffff820a8a0b>] mount_root+0x77/0xd8
->>>>> [    2.189430]  [<ffffffff820a8ba1>] prepare_namespace+0x135/0x16d
->>>>> [    2.191056]  [<ffffffff820a84ec>] kernel_init_freeable+0x237/0x24b
->>>>> [    2.192683]  [<ffffffff81a50e9e>] kernel_init+0xe/0x120
->>>>> [    2.194296]  [<ffffffff81a5780f>] ret_from_fork+0x1f/0x40
->>>>> [    2.195902] Memory state around the buggy address:
->>>>> [    2.197517]  ffff8801d0fc0700: fc fc fc fc fc fc fc fc fc fc fc fc
->>>>> fc fc fc fc
->>>>> [    2.199178]  ffff8801d0fc0780: fc fc fc fc fc fc fc fc fc fc fc fc
->>>>> fc fc fc fc
->>>>> [    2.200818] >ffff8801d0fc0800: fb fb fb fb fb fb fb fb fb fb fb fb
->>>>> fb fb fb fb
->>>>> [    2.202460]                                                  ^
->>>>> [    2.204114]  ffff8801d0fc0880: fb fb fb fb fb fb fb fb fb fb fb fb
->>>>> fb fb fb fb
->>>>> [    2.205804]  ffff8801d0fc0900: fb fb fb fb fb fb fb fb fb fb fb fb
->>>>> fb fb fb fb
->>>>> [    2.207471]
->>>>> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
->>>>> [    2.209162] Disabling lock debugging due to kernel taint
->>>>> [    2.210933] reiser4: sda2: use 'fsck.reiser4 --fix' to complete
->>>>> disk format upgrade.
->>>>> [    2.212696] usb 1-1.4: new high-speed USB device number 3 using
->>>>> ehci-pci
->>>>> [    2.214507] usb 2-1.5: new full-speed USB device number 3 using
->>>>> ehci-pci
->>>>> [    2.234910] hid-generic 0003:051D:0002.0002: device has no
->>>>> listeners, quitting
->>>>> [    2.312037] reiser4: sda2: using Hybrid Transaction Model.
->>>>> [    2.313880] VFS: Mounted root (reiser4 filesystem) readonly on dev=
-ice
->>>>> 8:2.
->>>>> [    2.315949] Freeing unused kernel memory: 968K (ffffffff82086000 -
->>>>> ffffffff82178000)
->>>>> [    2.317823] Write protecting the kernel read-only data: 16384k
->>>>> [    2.320900] Freeing unused kernel memory: 1636K (ffff880001a67000 =
--
->>>>> ffff880001c00000)
->>>>> [    2.331114] Freeing unused kernel memory: 1848K (ffff880001e32000 =
--
->>>>> ffff880002000000)
->>>>> [    2.334644] hub 1-1.4:1.0: USB hub found
->>>>> [    2.336766] hub 1-1.4:1.0: 2 ports detected
->>>>> [    2.624398] usb 1-1.4.2: new full-speed USB device number 4 using
->>>>> ehci-pci
->>>>> [    5.221431] random: crng init done
->>>>> [    7.579186] Adding 594300k swap on /dev/md123.  Priority:-1
->>>>> extents:1 across:594300k
->>>>> [    7.661464] reiser4: md126: found disk format 4.0.1.
->>>>> [    7.661541]
->>>>> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
->>>>> [    7.661546] BUG: KASAN: use-after-free in
->>>>> init_format_format40+0x401/0x750 at addr ffff8801cfaf1350
->>>>> [    7.661548] Read of size 4 by task mount/1662
->>>>> [    7.661551] CPU: 0 PID: 1662 Comm: mount Tainted: G    B
->>>>> 4.8.11-gentoo #3
->>>>> [    7.661552] Hardware name: Gigabyte Technology Co., Ltd. To be
->>>>> filled by O.E.M./B75-D3V, BIOS F5 07/04/2012
->>>>> [    7.661553]  ffff8801ceef3580 ffff8801cf087b28 ffffffff81424185
->>>>> ffff8801d6000600
->>>>> [    7.661556]  ffff8801cfaf1300 ffff8801cf087b50 ffffffff811ff90c
->>>>> ffff8801cf087be0
->>>>> [    7.661559]  ffff8801cfaf1300 ffff8801cfaf1300 ffff8801cf087bd0
->>>>> ffffffff811ffb79
->>>>> [    7.661561] Call Trace:
->>>>> [    7.661565]  [<ffffffff81424185>] dump_stack+0x4d/0x68
->>>>> [    7.661569]  [<ffffffff811ff90c>] kasan_object_err+0x1c/0x70
->>>>> [    7.661571]  [<ffffffff811ffb79>] kasan_report_error+0x1c9/0x4b0
->>>>> [    7.661574]  [<ffffffff812a10cf>] ? zget+0xdf/0x3c0
->>>>> [    7.661577]  [<ffffffff811ffef4>] kasan_report+0x34/0x40
->>>>> [    7.661580]  [<ffffffff81304b11>] ? init_format_format40+0x401/0x7=
-50
->>>>> [    7.661582]  [<ffffffff811ff601>] __asan_load4+0x61/0x80
->>>>> [    7.661585]  [<ffffffff81304b11>] init_format_format40+0x401/0x750
->>>>> [    7.661588]  [<ffffffff812c4f3a>] fill_super+0x14a/0x300
->>>>> [    7.661591]  [<ffffffff81209b6f>] mount_bdev+0x1bf/0x200
->>>>> [    7.661593]  [<ffffffff812c4df0>] ? reiser4_mount+0x20/0x20
->>>>> [    7.661594]  [<ffffffff812c4de0>] reiser4_mount+0x10/0x20
->>>>> [    7.661597]  [<ffffffff81209dfe>] mount_fs+0x2e/0xe0
->>>>> [    7.661600]  [<ffffffff81231a96>] vfs_kern_mount+0x66/0x190
->>>>> [    7.661602]  [<ffffffff81233af2>] do_mount+0x1d2/0x1080
->>>>> [    7.661604]  [<ffffffff812337f1>] ? copy_mount_options+0x111/0x220
->>>>> [    7.661606]  [<ffffffff812337da>] ? copy_mount_options+0xfa/0x220
->>>>> [    7.661608]  [<ffffffff81234e46>] SyS_mount+0x66/0xb0
->>>>> [    7.661613]  [<ffffffff81a5761b>] entry_SYSCALL_64_fastpath+0x13/0=
-x8f
->>>>> [    7.661614] Object at ffff8801cfaf1300, in cache kmalloc-512 size:
->>>>> 512
->>>>> [    7.661615] Allocated:
->>>>> [    7.661615] PID =3D 1662
->>>>> [    7.661616]  [<ffffffff8109f536>] save_stack_trace+0x26/0x50
->>>>> [    7.661620]  [<ffffffff811fe802>] kasan_kmalloc.part.5+0x62/0xf0
->>>>> [    7.661622]  [<ffffffff811ff018>] kasan_kmalloc+0x78/0xa0
->>>>> [    7.661625]  [<ffffffff813048bc>] init_format_format40+0x1ac/0x750
->>>>> [    7.661628]  [<ffffffff812c4f3a>] fill_super+0x14a/0x300
->>>>> [    7.661630]  [<ffffffff81209b6f>] mount_bdev+0x1bf/0x200
->>>>> [    7.661632]  [<ffffffff812c4de0>] reiser4_mount+0x10/0x20
->>>>> [    7.661634]  [<ffffffff81209dfe>] mount_fs+0x2e/0xe0
->>>>> [    7.661637]  [<ffffffff81231a96>] vfs_kern_mount+0x66/0x190
->>>>> [    7.661639]  [<ffffffff81233af2>] do_mount+0x1d2/0x1080
->>>>> [    7.661641]  [<ffffffff81234e46>] SyS_mount+0x66/0xb0
->>>>> [    7.661643]  [<ffffffff81a5761b>] entry_SYSCALL_64_fastpath+0x13/0=
-x8f
->>>>> [    7.661646] Freed:
->>>>> [    7.661646] PID =3D 1662
->>>>> [    7.661647]  [<ffffffff8109f536>] save_stack_trace+0x26/0x50
->>>>> [    7.661649]  [<ffffffff811feed7>] kasan_slab_free+0xb7/0x180
->>>>> [    7.661652]  [<ffffffff811fd67b>] kfree+0x6b/0x90
->>>>> [    7.661654]  [<ffffffff81304b09>] init_format_format40+0x3f9/0x750
->>>>> [    7.661657]  [<ffffffff812c4f3a>] fill_super+0x14a/0x300
->>>>> [    7.661659]  [<ffffffff81209b6f>] mount_bdev+0x1bf/0x200
->>>>> [    7.661662]  [<ffffffff812c4de0>] reiser4_mount+0x10/0x20
->>>>> [    7.661664]  [<ffffffff81209dfe>] mount_fs+0x2e/0xe0
->>>>> [    7.661666]  [<ffffffff81231a96>] vfs_kern_mount+0x66/0x190
->>>>> [    7.661668]  [<ffffffff81233af2>] do_mount+0x1d2/0x1080
->>>>> [    7.661670]  [<ffffffff81234e46>] SyS_mount+0x66/0xb0
->>>>> [    7.661672]  [<ffffffff81a5761b>] entry_SYSCALL_64_fastpath+0x13/0=
-x8f
->>>>> [    7.661675] Memory state around the buggy address:
->>>>> [    7.661677]  ffff8801cfaf1200: fb fb fb fb fb fb fb fb fb fb fb fb
->>>>> fb fb fb fb
->>>>> [    7.661679]  ffff8801cfaf1280: fc fc fc fc fc fc fc fc fc fc fc fc
->>>>> fc fc fc fc
->>>>> [    7.661681] >ffff8801cfaf1300: fb fb fb fb fb fb fb fb fb fb fb fb
->>>>> fb fb fb fb
->>>>> [    7.661681]                                                  ^
->>>>> [    7.661683]  ffff8801cfaf1380: fb fb fb fb fb fb fb fb fb fb fb fb
->>>>> fb fb fb fb
->>>>> [    7.661684]  ffff8801cfaf1400: fb fb fb fb fb fb fb fb fb fb fb fb
->>>>> fb fb fb fb
->>>>> [    7.661685]
->>>>> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
->>>>> [   10.972840] rcu-perf:rcu_perf_writer 0 has 100 measurements
->>>>> [   11.016722] rcu-perf:Test complete
->>>>> [   26.835385] reiser4: md126: using Hybrid Transaction Model.
->>>>> [   26.857910] reiser4: md127: found disk format 4.0.1.
->>>>> [   26.857995]
->>>>> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
->>>>> [   26.858002] BUG: KASAN: use-after-free in
->>>>> init_format_format40+0x401/0x750 at addr ffff8801cbf560d0
->>>>> [   26.858003] Read of size 4 by task mount/1662
->>>>> [   26.858006] CPU: 0 PID: 1662 Comm: mount Tainted: G    B
->>>>> 4.8.11-gentoo #3
->>>>> [   26.858007] Hardware name: Gigabyte Technology Co., Ltd. To be
->>>>> filled by O.E.M./B75-D3V, BIOS F5 07/04/2012
->>>>> [   26.858009]  ffff8801b9ded5c0 ffff8801cf087b28 ffffffff81424185
->>>>> ffff8801d6000600
->>>>> [   26.858012]  ffff8801cbf56080 ffff8801cf087b50 ffffffff811ff90c
->>>>> ffff8801cf087be0
->>>>> [   26.858014]  ffff8801cbf56080 ffff8801cbf56080 ffff8801cf087bd0
->>>>> ffffffff811ffb79
->>>>> [   26.858017] Call Trace:
->>>>> [   26.858020]  [<ffffffff81424185>] dump_stack+0x4d/0x68
->>>>> [   26.858024]  [<ffffffff811ff90c>] kasan_object_err+0x1c/0x70
->>>>> [   26.858027]  [<ffffffff811ffb79>] kasan_report_error+0x1c9/0x4b0
->>>>> [   26.858029]  [<ffffffff812a10cf>] ? zget+0xdf/0x3c0
->>>>> [   26.858032]  [<ffffffff811ffef4>] kasan_report+0x34/0x40
->>>>> [   26.858035]  [<ffffffff81304b11>] ? init_format_format40+0x401/0x7=
-50
->>>>> [   26.858038]  [<ffffffff811ff601>] __asan_load4+0x61/0x80
->>>>> [   26.858040]  [<ffffffff81304b11>] init_format_format40+0x401/0x750
->>>>> [   26.858043]  [<ffffffff812c4f3a>] fill_super+0x14a/0x300
->>>>> [   26.858046]  [<ffffffff81209b6f>] mount_bdev+0x1bf/0x200
->>>>> [   26.858048]  [<ffffffff812c4df0>] ? reiser4_mount+0x20/0x20
->>>>> [   26.858050]  [<ffffffff812c4de0>] reiser4_mount+0x10/0x20
->>>>> [   26.858052]  [<ffffffff81209dfe>] mount_fs+0x2e/0xe0
->>>>> [   26.858055]  [<ffffffff81231a96>] vfs_kern_mount+0x66/0x190
->>>>> [   26.858057]  [<ffffffff81233af2>] do_mount+0x1d2/0x1080
->>>>> [   26.858059]  [<ffffffff812337da>] ? copy_mount_options+0xfa/0x220
->>>>> [   26.858061]  [<ffffffff81234e46>] SyS_mount+0x66/0xb0
->>>>> [   26.858065]  [<ffffffff81a5761b>] entry_SYSCALL_64_fastpath+0x13/0=
-x8f
->>>>> [   26.858067] Object at ffff8801cbf56080, in cache kmalloc-512 size:
->>>>> 512
->>>>> [   26.858067] Allocated:
->>>>> [   26.858068] PID =3D 1662
->>>>> [   26.858069]  [<ffffffff8109f536>] save_stack_trace+0x26/0x50
->>>>> [   26.858072]  [<ffffffff811fe802>] kasan_kmalloc.part.5+0x62/0xf0
->>>>> [   26.858075]  [<ffffffff811ff018>] kasan_kmalloc+0x78/0xa0
->>>>> [   26.858077]  [<ffffffff813048bc>] init_format_format40+0x1ac/0x750
->>>>> [   26.858080]  [<ffffffff812c4f3a>] fill_super+0x14a/0x300
->>>>> [   26.858082]  [<ffffffff81209b6f>] mount_bdev+0x1bf/0x200
->>>>> [   26.858085]  [<ffffffff812c4de0>] reiser4_mount+0x10/0x20
->>>>> [   26.858087]  [<ffffffff81209dfe>] mount_fs+0x2e/0xe0
->>>>> [   26.858089]  [<ffffffff81231a96>] vfs_kern_mount+0x66/0x190
->>>>> [   26.858091]  [<ffffffff81233af2>] do_mount+0x1d2/0x1080
->>>>> [   26.858093]  [<ffffffff81234e46>] SyS_mount+0x66/0xb0
->>>>> [   26.858095]  [<ffffffff81a5761b>] entry_SYSCALL_64_fastpath+0x13/0=
-x8f
->>>>> [   26.858098] Freed:
->>>>> [   26.858099] PID =3D 1662
->>>>> [   26.858099]  [<ffffffff8109f536>] save_stack_trace+0x26/0x50
->>>>> [   26.858102]  [<ffffffff811feed7>] kasan_slab_free+0xb7/0x180
->>>>> [   26.858104]  [<ffffffff811fd67b>] kfree+0x6b/0x90
->>>>> [   26.858107]  [<ffffffff81304b09>] init_format_format40+0x3f9/0x750
->>>>> [   26.858109]  [<ffffffff812c4f3a>] fill_super+0x14a/0x300
->>>>> [   26.858111]  [<ffffffff81209b6f>] mount_bdev+0x1bf/0x200
->>>>> [   26.858114]  [<ffffffff812c4de0>] reiser4_mount+0x10/0x20
->>>>> [   26.858116]  [<ffffffff81209dfe>] mount_fs+0x2e/0xe0
->>>>> [   26.858118]  [<ffffffff81231a96>] vfs_kern_mount+0x66/0x190
->>>>> [   26.858120]  [<ffffffff81233af2>] do_mount+0x1d2/0x1080
->>>>> [   26.858122]  [<ffffffff81234e46>] SyS_mount+0x66/0xb0
->>>>> [   26.858124]  [<ffffffff81a5761b>] entry_SYSCALL_64_fastpath+0x13/0=
-x8f
->>>>> [   26.858128] Memory state around the buggy address:
->>>>> [   26.858130]  ffff8801cbf55f80: fc fc fc fc fc fc fc fc fc fc fc fc
->>>>> fc fc fc fc
->>>>> [   26.858131]  ffff8801cbf56000: fc fc fc fc fc fc fc fc fc fc fc fc
->>>>> fc fc fc fc
->>>>> [   26.858133] >ffff8801cbf56080: fb fb fb fb fb fb fb fb fb fb fb fb
->>>>> fb fb fb fb
->>>>> [   26.858134]                                                  ^
->>>>> [   26.858135]  ffff8801cbf56100: fb fb fb fb fb fb fb fb fb fb fb fb
->>>>> fb fb fb fb
->>>>> [   26.858137]  ffff8801cbf56180: fb fb fb fb fb fb fb fb fb fb fb fb
->>>>> fb fb fb fb
->>>>> [   26.858137]
->>>>> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
->>>>> [   27.199941] reiser4: md127: using Hybrid Transaction Model.
->>>>>
->>>>>
->>>>> [33530.203469] reiser4[mount(11677)]: try_init_format40
->>>>> (fs/reiser4/plugin/disk_format/disk_format40.c:303)[vpf-1364]:
->>>>>                  NOTICE: Warning: mounting md125 with fatal errors,
->>>>> forcing read-only mount.
->>>>> [33530.203480] reiser4: md125: found disk format 4.0.1.
->>>>> [33530.203564]
->>>>> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
->>>>> [33530.203570] BUG: KASAN: use-after-free in
->>>>> init_format_format40+0x401/0x750 at addr ffff88013164d810
->>>>> [33530.203571] Read of size 4 by task mount/11677
->>>>> [33530.203574] CPU: 0 PID: 11677 Comm: mount Tainted: G    B
->>>>> 4.8.11-gentoo #3
->>>>> [33530.203575] Hardware name: Gigabyte Technology Co., Ltd. To be
->>>>> filled by O.E.M./B75-D3V, BIOS F5 07/04/2012
->>>>> [33530.203577]  ffff88000e65ce80 ffff88000da87b28 ffffffff81424185
->>>>> ffff8801d6000600
->>>>> [33530.203580]  ffff88013164d7c0 ffff88000da87b50 ffffffff811ff90c
->>>>> ffff88000da87be0
->>>>> [33530.203582]  ffff88013164d7c0 ffff88013164d7c0 ffff88000da87bd0
->>>>> ffffffff811ffb79
->>>>> [33530.203585] Call Trace:
->>>>> [33530.203588]  [<ffffffff81424185>] dump_stack+0x4d/0x68
->>>>> [33530.203592]  [<ffffffff811ff90c>] kasan_object_err+0x1c/0x70
->>>>> [33530.203595]  [<ffffffff811ffb79>] kasan_report_error+0x1c9/0x4b0
->>>>> [33530.203597]  [<ffffffff812a10cf>] ? zget+0xdf/0x3c0
->>>>> [33530.203600]  [<ffffffff811ffef4>] kasan_report+0x34/0x40
->>>>> [33530.203603]  [<ffffffff81304b11>] ? init_format_format40+0x401/0x7=
-50
->>>>> [33530.203605]  [<ffffffff811ff601>] __asan_load4+0x61/0x80
->>>>> [33530.203608]  [<ffffffff81304b11>] init_format_format40+0x401/0x750
->>>>> [33530.203610]  [<ffffffff812c4f3a>] fill_super+0x14a/0x300
->>>>> [33530.203613]  [<ffffffff81209b6f>] mount_bdev+0x1bf/0x200
->>>>> [33530.203615]  [<ffffffff812c4df0>] ? reiser4_mount+0x20/0x20
->>>>> [33530.203617]  [<ffffffff812c4de0>] reiser4_mount+0x10/0x20
->>>>> [33530.203620]  [<ffffffff81209dfe>] mount_fs+0x2e/0xe0
->>>>> [33530.203622]  [<ffffffff81231a96>] vfs_kern_mount+0x66/0x190
->>>>> [33530.203625]  [<ffffffff81233af2>] do_mount+0x1d2/0x1080
->>>>> [33530.203627]  [<ffffffff812337f1>] ? copy_mount_options+0x111/0x220
->>>>> [33530.203629]  [<ffffffff812337da>] ? copy_mount_options+0xfa/0x220
->>>>> [33530.203631]  [<ffffffff81234e46>] SyS_mount+0x66/0xb0
->>>>> [33530.203635]  [<ffffffff81a5761b>] entry_SYSCALL_64_fastpath+0x13/0=
-x8f
->>>>> [33530.203637] Object at ffff88013164d7c0, in cache kmalloc-512 size:
->>>>> 512
->>>>> [33530.203637] Allocated:
->>>>> [33530.203638] PID =3D 11677
->>>>> [33530.203639]  [<ffffffff8109f536>] save_stack_trace+0x26/0x50
->>>>> [33530.203642]  [<ffffffff811fe802>] kasan_kmalloc.part.5+0x62/0xf0
->>>>> [33530.203645]  [<ffffffff811ff018>] kasan_kmalloc+0x78/0xa0
->>>>> [33530.203647]  [<ffffffff813048bc>] init_format_format40+0x1ac/0x750
->>>>> [33530.203650]  [<ffffffff812c4f3a>] fill_super+0x14a/0x300
->>>>> [33530.203652]  [<ffffffff81209b6f>] mount_bdev+0x1bf/0x200
->>>>> [33530.203654]  [<ffffffff812c4de0>] reiser4_mount+0x10/0x20
->>>>> [33530.203656]  [<ffffffff81209dfe>] mount_fs+0x2e/0xe0
->>>>> [33530.203659]  [<ffffffff81231a96>] vfs_kern_mount+0x66/0x190
->>>>> [33530.203661]  [<ffffffff81233af2>] do_mount+0x1d2/0x1080
->>>>> [33530.203663]  [<ffffffff81234e46>] SyS_mount+0x66/0xb0
->>>>> [33530.203665]  [<ffffffff81a5761b>] entry_SYSCALL_64_fastpath+0x13/0=
-x8f
->>>>> [33530.203668] Freed:
->>>>> [33530.203669] PID =3D 11677
->>>>> [33530.203669]  [<ffffffff8109f536>] save_stack_trace+0x26/0x50
->>>>> [33530.203671]  [<ffffffff811feed7>] kasan_slab_free+0xb7/0x180
->>>>> [33530.203674]  [<ffffffff811fd67b>] kfree+0x6b/0x90
->>>>> [33530.203676]  [<ffffffff81304b09>] init_format_format40+0x3f9/0x750
->>>>> [33530.203679]  [<ffffffff812c4f3a>] fill_super+0x14a/0x300
->>>>> [33530.203681]  [<ffffffff81209b6f>] mount_bdev+0x1bf/0x200
->>>>> [33530.203683]  [<ffffffff812c4de0>] reiser4_mount+0x10/0x20
->>>>> [33530.203685]  [<ffffffff81209dfe>] mount_fs+0x2e/0xe0
->>>>> [33530.203688]  [<ffffffff81231a96>] vfs_kern_mount+0x66/0x190
->>>>> [33530.203690]  [<ffffffff81233af2>] do_mount+0x1d2/0x1080
->>>>> [33530.203692]  [<ffffffff81234e46>] SyS_mount+0x66/0xb0
->>>>> [33530.203694]  [<ffffffff81a5761b>] entry_SYSCALL_64_fastpath+0x13/0=
-x8f
->>>>> [33530.203697] Memory state around the buggy address:
->>>>> [33530.203699]  ffff88013164d700: fc fc fc fc fc fc fc fc fc fc fc fc
->>>>> fc fc fc fc
->>>>> [33530.203701]  ffff88013164d780: fc fc fc fc fc fc fc fc fb fb fb fb
->>>>> fb fb fb fb
->>>>> [33530.203703] >ffff88013164d800: fb fb fb fb fb fb fb fb fb fb fb fb
->>>>> fb fb fb fb
->>>>> [33530.203703]                          ^
->>>>> [33530.203705]  ffff88013164d880: fb fb fb fb fb fb fb fb fb fb fb fb
->>>>> fb fb fb fb
->>>>> [33530.203707]  ffff88013164d900: fb fb fb fb fb fb fb fb fb fb fb fb
->>>>> fb fb fb fb
->>>>> [33530.203707]
->>>>> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
->>>>> [33533.485380] reiser4: md125: using Hybrid Transaction Model.
->>>>> --
->>>>> To unsubscribe from this list: send the line "unsubscribe
->>>>> reiserfs-devel"
->>>>> in
->>>>> the body of a message to majordomo@vger.kernel.org
->>>>> More majordomo info at  http://vger.kernel.org/majordomo-info.html
->>>>
->>>>
->>
+Boot method: netboot ISO image 'dd' /dev/vdb
+Image version: https://sourceforge.net/projects/debian-reiser4/ built on 12-23-2016
+Date: 12-24-2016 01:56 AM PST
+
+Machine: https://www.upcloud.com KVM Cloud infrastructure
+Partitions:
+udev           devtmpfs     10240       0     10240   0% /dev
+tmpfs          tmpfs      9893140    8976   9884164   1% /run
+/dev/vda6      reiser4   20423272 4523220  15900052  23% /
+tmpfs          tmpfs     24732840     144  24732696   1% /dev/shm
+tmpfs          tmpfs         5120       0      5120   0% /run/lock
+tmpfs          tmpfs     24732840       0  24732840   0% /sys/fs/cgroup
+/dev/vda5      jfs        9725448   10252   9715196   1% /home
+/dev/vda1      ext2        188403   22408    156267  13% /boot
+tmpfs          tmpfs      4946572      20   4946552   1% /run/user/1000
+
+
+Base System Installation Checklist:
+[O] = OK, [E] = Error (please elaborate below), [ ] = didn't try it
+
+Initial boot:           [O]
+Detect network card:    [O]
+Configure network:      [O]
+Detect CD:              [O]
+Load installer modules: [O]
+Clock/timezone setup:   [O]
+User/password setup:    [O]
+Detect hard drives:     [O]
+Partition hard drives:  [O]
+Install base system:    [O]
+Install tasks:          [O]
+Install boot loader:    [O]
+Overall install:        [O]
+
+Comments/Problems:
+Analyzing the 'various bugfixes and fixed vulnerabilities' in Sid kernel 4.8.15-1
+I realized I had to do a Jessie-backports for Reiser4 (SFRN) 4.0.1 AND test neboot
+installation in massive KVM Cloud instance of 12-cores / 48 Gig RAM.
+
+"We also encourage installation reports to be sent even if the installation is successful,
+so that we can get as much information as possible on the largest number of hardware configurations"
+< https://www.debian.org/releases/stable/amd64/ch05s04.html.en#submit-bug >
+
+Smooth installation of Reiser4-enabled kernel 4.8.15-1 & reiser4progs built/fetched for Jessie
+netboot installer.
+
+Only conflict is with nfs-commmon -- which hangs the newly installed Reiser4 Linux OS upon boot.
+Accordingly this particular Debian netboot installer will purge nfs-common at end of installation
+so that GNU/Linux Debian Jessie OS boots without issues from its initial ext2 boot ~150MB partition
+into Reiser4 root file system.
+
+https://metztli.it/readOnlyEphemeral/Cohuatlicue_UpCloud.png
+
+Notice below - netboot installer UDEB kernel only differs in name 'Cohuatlicue' from kernel 4.8.15-1
+downloaded via SSL from meztli.it
+
+-- 
+
+Please make sure that the hardware-summary log file, and any other
+installation logs that you think would be useful are attached to this
+report. Please compress large files using gzip.
+
+Once you have filled out this report, mail it to submit@bugs.debian.org.
+
+==============================================
+Installer lsb-release:
+==============================================
+DISTRIB_ID=Debian
+DISTRIB_DESCRIPTION="Debian GNU/Linux installer"
+DISTRIB_RELEASE="8 (jessie) - installer build 20161224-05:26"
+X_INSTALLATION_MEDIUM=netboot
+
+==============================================
+Installer hardware-summary:
+==============================================
+uname -a: Linux cohuatlicue 4.8.0-2+cohuatlicue-amd64 #1 SMP Debian 4.8.15-1+cohuatlicue (2016-12-22) x86_64 Xonecuiltzin
+lspci -knn: 00:00.0 Host bridge [0600]: Intel Corporation 440FX - 82441FX PMC [Natoma] [8086:1237] (rev 02)
+lspci -knn: 	Subsystem: Red Hat, Inc Device [1af4:1100]
+lspci -knn: 00:01.0 ISA bridge [0601]: Intel Corporation 82371SB PIIX3 ISA [Natoma/Triton II] [8086:7000]
+lspci -knn: 	Subsystem: Red Hat, Inc Device [1af4:1100]
+lspci -knn: 00:01.1 IDE interface [0101]: Intel Corporation 82371SB PIIX3 IDE [Natoma/Triton II] [8086:7010]
+lspci -knn: 	Subsystem: Red Hat, Inc Device [1af4:1100]
+lspci -knn: 	Kernel driver in use: ata_piix
+lspci -knn: 00:01.2 USB controller [0c03]: Intel Corporation 82371SB PIIX3 USB [Natoma/Triton II] [8086:7020] (rev 01)
+lspci -knn: 	Subsystem: Red Hat, Inc Device [1af4:1100]
+lspci -knn: 	Kernel driver in use: uhci_hcd
+lspci -knn: 00:01.3 Bridge [0680]: Intel Corporation 82371AB/EB/MB PIIX4 ACPI [8086:7113] (rev 03)
+lspci -knn: 	Subsystem: Red Hat, Inc Device [1af4:1100]
+lspci -knn: 00:02.0 VGA compatible controller [0300]: Cirrus Logic GD 5446 [1013:00b8]
+lspci -knn: 	Subsystem: Red Hat, Inc Device [1af4:1100]
+lspci -knn: 00:03.0 SCSI storage controller [0100]: Red Hat, Inc Virtio block device [1af4:1001]
+lspci -knn: 	Subsystem: Red Hat, Inc Device [1af4:0002]
+lspci -knn: 	Kernel driver in use: virtio-pci
+lspci -knn: 00:10.0 Ethernet controller [0200]: Red Hat, Inc Virtio network device [1af4:1000]
+lspci -knn: 	Subsystem: Red Hat, Inc Device [1af4:0001]
+lspci -knn: 	Kernel driver in use: virtio-pci
+lspci -knn: 00:11.0 Ethernet controller [0200]: Red Hat, Inc Virtio network device [1af4:1000]
+lspci -knn: 	Subsystem: Red Hat, Inc Device [1af4:0001]
+lspci -knn: 	Kernel driver in use: virtio-pci
+lspci -knn: 00:12.0 Ethernet controller [0200]: Red Hat, Inc Virtio network device [1af4:1000]
+lspci -knn: 	Subsystem: Red Hat, Inc Device [1af4:0001]
+lspci -knn: 	Kernel driver in use: virtio-pci
+usb-list: 
+usb-list: Bus 01 Device 01: UHCI Host Controller [1d6b:0001]
+usb-list:    Level 00 Parent 00 Port 00  Class 09(hub  ) Subclass 00 Protocol 00
+usb-list:    Manufacturer: Linux 4.8.0-2+cohuatlicue-amd64 uhci_hcd
+usb-list:    Interface 00: Class 09(hub  ) Subclass 00 Protocol 00 Driver hub
+usb-list: 
+usb-list: Bus 01 Device 02: QEMU USB Tablet [0627:0001]
+usb-list:    Level 01 Parent 01 Port 00  Class 00(>ifc ) Subclass 00 Protocol 00
+usb-list:    Manufacturer: QEMU
+usb-list:    Interface 00: Class 03(HID  ) Subclass 00 Protocol 02 Driver usbhid
+lsmod: Module                  Size  Used by
+lsmod: nls_utf8               16384  1 
+lsmod: dm_mod                114688  0 
+lsmod: md_mod                131072  0 
+lsmod: xfs                  1052672  0 
+lsmod: libcrc32c              16384  1 xfs
+lsmod: reiser4               446464  1 
+lsmod: jfs                   176128  1 
+lsmod: btrfs                1048576  0 
+lsmod: xor                    24576  1 btrfs
+lsmod: raid6_pq              102400  1 btrfs
+lsmod: ntfs                  106496  0 
+lsmod: vfat                   20480  0 
+lsmod: fat                    69632  1 vfat
+lsmod: ext4                  593920  1 
+lsmod: crc16                  16384  1 ext4
+lsmod: jbd2                  110592  1 ext4
+lsmod: crc32c_generic         16384  4 
+lsmod: fscrypto               28672  1 ext4
+lsmod: ecb                    16384  0 
+lsmod: mbcache                16384  2 ext4
+lsmod: usb_storage            73728  0 
+lsmod: hid_generic            16384  0 
+lsmod: usbhid                 53248  0 
+lsmod: hid                   118784  2 hid_generic,usbhid
+lsmod: sg                     32768  0 
+lsmod: sr_mod                 24576  0 
+lsmod: cdrom                  61440  1 sr_mod
+lsmod: ata_generic            16384  0 
+lsmod: virtio_net             28672  0 
+lsmod: virtio_blk             20480  4 
+lsmod: ata_piix               36864  0 
+lsmod: uhci_hcd               45056  0 
+lsmod: libata                249856  2 ata_piix,ata_generic
+lsmod: ehci_hcd               81920  0 
+lsmod: virtio_pci             24576  0 
+lsmod: virtio_ring            24576  3 virtio_blk,virtio_net,virtio_pci
+lsmod: usbcore               249856  4 usbhid,usb_storage,ehci_hcd,uhci_hcd
+lsmod: scsi_mod              225280  4 usb_storage,libata,sr_mod,sg
+lsmod: virtio                 16384  3 virtio_blk,virtio_net,virtio_pci
+lsmod: usb_common             16384  1 usbcore
+df: Filesystem           1K-blocks      Used Available Use% Mounted on
+df: none                   4946572        72   4946500   0% /run
+df: devtmpfs              24718608         0  24718608   0% /dev
+df: /dev/vda6             20423272    910520  19512752   4% /target
+df: /dev/vda1               188403     22050    156625  12% /target/boot
+df: /dev/vda5              9725448      1348   9724100   0% /target/home
+df: /dev/vda6             20423272    910520  19512752   4% /dev/.static/dev
+df: devtmpfs              24718608         0  24718608   0% /target/dev
+free:              total       used       free     shared    buffers     cached
+free: Mem:      49465696    1420892   48044804     115044       3496    1100584
+free: -/+ buffers/cache:     316812   49148884
+free: Swap:            0          0          0
+/proc/cmdline: BOOT_IMAGE=linux priority=low vga=788 initrd=initrd.gz --- 
+/proc/cpuinfo: processor	: 0
+/proc/cpuinfo: vendor_id	: GenuineIntel
+/proc/cpuinfo: cpu family	: 6
+/proc/cpuinfo: model		: 63
+/proc/cpuinfo: model name	: Intel(R) Xeon(R) CPU E5-2687W v3 @ 3.10GHz
+/proc/cpuinfo: stepping	: 2
+/proc/cpuinfo: microcode	: 0x1
+/proc/cpuinfo: cpu MHz		: 3099.996
+/proc/cpuinfo: cache size	: 25600 KB
+/proc/cpuinfo: physical id	: 0
+/proc/cpuinfo: siblings	: 1
+/proc/cpuinfo: core id		: 0
+/proc/cpuinfo: cpu cores	: 1
+/proc/cpuinfo: apicid		: 0
+/proc/cpuinfo: initial apicid	: 0
+/proc/cpuinfo: fpu		: yes
+/proc/cpuinfo: fpu_exception	: yes
+/proc/cpuinfo: cpuid level	: 13
+/proc/cpuinfo: wp		: yes
+/proc/cpuinfo: flags		: fpu vme de pse tsc msr pae mce cx8 apic sep mtrr pge mca cmov pat pse36 clflush mmx fxsr sse sse2 ss syscall nx pdpe1gb rdtscp lm constant_tsc arch_perfmon rep_good nopl eagerfpu pni pclmulqdq ssse3 fma cx16 pcid sse4_1 sse4_2 x2apic movbe popcnt tsc_deadline_timer aes xsave avx f16c rdrand hypervisor lahf_lm abm fsgsbase tsc_adjust bmi1 avx2 smep bmi2 erms invpcid xsaveopt arat
+/proc/cpuinfo: bugs		:
+/proc/cpuinfo: bogomips	: 6199.99
+/proc/cpuinfo: clflush size	: 64
+/proc/cpuinfo: cache_alignment	: 64
+/proc/cpuinfo: address sizes	: 40 bits physical, 48 bits virtual
+/proc/cpuinfo: power management:
+/proc/cpuinfo: 
+/proc/cpuinfo: processor	: 1
+/proc/cpuinfo: vendor_id	: GenuineIntel
+/proc/cpuinfo: cpu family	: 6
+/proc/cpuinfo: model		: 63
+/proc/cpuinfo: model name	: Intel(R) Xeon(R) CPU E5-2687W v3 @ 3.10GHz
+/proc/cpuinfo: stepping	: 2
+/proc/cpuinfo: microcode	: 0x1
+/proc/cpuinfo: cpu MHz		: 3099.996
+/proc/cpuinfo: cache size	: 25600 KB
+/proc/cpuinfo: physical id	: 1
+/proc/cpuinfo: siblings	: 1
+/proc/cpuinfo: core id		: 0
+/proc/cpuinfo: cpu cores	: 1
+/proc/cpuinfo: apicid		: 1
+/proc/cpuinfo: initial apicid	: 1
+/proc/cpuinfo: fpu		: yes
+/proc/cpuinfo: fpu_exception	: yes
+/proc/cpuinfo: cpuid level	: 13
+/proc/cpuinfo: wp		: yes
+/proc/cpuinfo: flags		: fpu vme de pse tsc msr pae mce cx8 apic sep mtrr pge mca cmov pat pse36 clflush mmx fxsr sse sse2 ss syscall nx pdpe1gb rdtscp lm constant_tsc arch_perfmon rep_good nopl eagerfpu pni pclmulqdq ssse3 fma cx16 pcid sse4_1 sse4_2 x2apic movbe popcnt tsc_deadline_timer aes xsave avx f16c rdrand hypervisor lahf_lm abm fsgsbase tsc_adjust bmi1 avx2 smep bmi2 erms invpcid xsaveopt arat
+/proc/cpuinfo: bugs		:
+/proc/cpuinfo: bogomips	: 6199.99
+/proc/cpuinfo: clflush size	: 64
+/proc/cpuinfo: cache_alignment	: 64
+/proc/cpuinfo: address sizes	: 40 bits physical, 48 bits virtual
+/proc/cpuinfo: power management:
+/proc/cpuinfo: 
+/proc/cpuinfo: processor	: 2
+/proc/cpuinfo: vendor_id	: GenuineIntel
+/proc/cpuinfo: cpu family	: 6
+/proc/cpuinfo: model		: 63
+/proc/cpuinfo: model name	: Intel(R) Xeon(R) CPU E5-2687W v3 @ 3.10GHz
+/proc/cpuinfo: stepping	: 2
+/proc/cpuinfo: microcode	: 0x1
+/proc/cpuinfo: cpu MHz		: 3099.996
+/proc/cpuinfo: cache size	: 25600 KB
+/proc/cpuinfo: physical id	: 2
+/proc/cpuinfo: siblings	: 1
+/proc/cpuinfo: core id		: 0
+/proc/cpuinfo: cpu cores	: 1
+/proc/cpuinfo: apicid		: 2
+/proc/cpuinfo: initial apicid	: 2
+/proc/cpuinfo: fpu		: yes
+/proc/cpuinfo: fpu_exception	: yes
+/proc/cpuinfo: cpuid level	: 13
+/proc/cpuinfo: wp		: yes
+/proc/cpuinfo: flags		: fpu vme de pse tsc msr pae mce cx8 apic sep mtrr pge mca cmov pat pse36 clflush mmx fxsr sse sse2 ss syscall nx pdpe1gb rdtscp lm constant_tsc arch_perfmon rep_good nopl eagerfpu pni pclmulqdq ssse3 fma cx16 pcid sse4_1 sse4_2 x2apic movbe popcnt tsc_deadline_timer aes xsave avx f16c rdrand hypervisor lahf_lm abm fsgsbase tsc_adjust bmi1 avx2 smep bmi2 erms invpcid xsaveopt arat
+/proc/cpuinfo: bugs		:
+/proc/cpuinfo: bogomips	: 6199.99
+/proc/cpuinfo: clflush size	: 64
+/proc/cpuinfo: cache_alignment	: 64
+/proc/cpuinfo: address sizes	: 40 bits physical, 48 bits virtual
+/proc/cpuinfo: power management:
+/proc/cpuinfo: 
+/proc/cpuinfo: processor	: 3
+/proc/cpuinfo: vendor_id	: GenuineIntel
+/proc/cpuinfo: cpu family	: 6
+/proc/cpuinfo: model		: 63
+/proc/cpuinfo: model name	: Intel(R) Xeon(R) CPU E5-2687W v3 @ 3.10GHz
+/proc/cpuinfo: stepping	: 2
+/proc/cpuinfo: microcode	: 0x1
+/proc/cpuinfo: cpu MHz		: 3099.996
+/proc/cpuinfo: cache size	: 25600 KB
+/proc/cpuinfo: physical id	: 3
+/proc/cpuinfo: siblings	: 1
+/proc/cpuinfo: core id		: 0
+/proc/cpuinfo: cpu cores	: 1
+/proc/cpuinfo: apicid		: 3
+/proc/cpuinfo: initial apicid	: 3
+/proc/cpuinfo: fpu		: yes
+/proc/cpuinfo: fpu_exception	: yes
+/proc/cpuinfo: cpuid level	: 13
+/proc/cpuinfo: wp		: yes
+/proc/cpuinfo: flags		: fpu vme de pse tsc msr pae mce cx8 apic sep mtrr pge mca cmov pat pse36 clflush mmx fxsr sse sse2 ss syscall nx pdpe1gb rdtscp lm constant_tsc arch_perfmon rep_good nopl eagerfpu pni pclmulqdq ssse3 fma cx16 pcid sse4_1 sse4_2 x2apic movbe popcnt tsc_deadline_timer aes xsave avx f16c rdrand hypervisor lahf_lm abm fsgsbase tsc_adjust bmi1 avx2 smep bmi2 erms invpcid xsaveopt arat
+/proc/cpuinfo: bugs		:
+/proc/cpuinfo: bogomips	: 6199.99
+/proc/cpuinfo: clflush size	: 64
+/proc/cpuinfo: cache_alignment	: 64
+/proc/cpuinfo: address sizes	: 40 bits physical, 48 bits virtual
+/proc/cpuinfo: power management:
+/proc/cpuinfo: 
+/proc/cpuinfo: processor	: 4
+/proc/cpuinfo: vendor_id	: GenuineIntel
+/proc/cpuinfo: cpu family	: 6
+/proc/cpuinfo: model		: 63
+/proc/cpuinfo: model name	: Intel(R) Xeon(R) CPU E5-2687W v3 @ 3.10GHz
+/proc/cpuinfo: stepping	: 2
+/proc/cpuinfo: microcode	: 0x1
+/proc/cpuinfo: cpu MHz		: 3099.996
+/proc/cpuinfo: cache size	: 25600 KB
+/proc/cpuinfo: physical id	: 4
+/proc/cpuinfo: siblings	: 1
+/proc/cpuinfo: core id		: 0
+/proc/cpuinfo: cpu cores	: 1
+/proc/cpuinfo: apicid		: 4
+/proc/cpuinfo: initial apicid	: 4
+/proc/cpuinfo: fpu		: yes
+/proc/cpuinfo: fpu_exception	: yes
+/proc/cpuinfo: cpuid level	: 13
+/proc/cpuinfo: wp		: yes
+/proc/cpuinfo: flags		: fpu vme de pse tsc msr pae mce cx8 apic sep mtrr pge mca cmov pat pse36 clflush mmx fxsr sse sse2 ss syscall nx pdpe1gb rdtscp lm constant_tsc arch_perfmon rep_good nopl eagerfpu pni pclmulqdq ssse3 fma cx16 pcid sse4_1 sse4_2 x2apic movbe popcnt tsc_deadline_timer aes xsave avx f16c rdrand hypervisor lahf_lm abm fsgsbase tsc_adjust bmi1 avx2 smep bmi2 erms invpcid xsaveopt arat
+/proc/cpuinfo: bugs		:
+/proc/cpuinfo: bogomips	: 6199.99
+/proc/cpuinfo: clflush size	: 64
+/proc/cpuinfo: cache_alignment	: 64
+/proc/cpuinfo: address sizes	: 40 bits physical, 48 bits virtual
+/proc/cpuinfo: power management:
+/proc/cpuinfo: 
+/proc/cpuinfo: processor	: 5
+/proc/cpuinfo: vendor_id	: GenuineIntel
+/proc/cpuinfo: cpu family	: 6
+/proc/cpuinfo: model		: 63
+/proc/cpuinfo: model name	: Intel(R) Xeon(R) CPU E5-2687W v3 @ 3.10GHz
+/proc/cpuinfo: stepping	: 2
+/proc/cpuinfo: microcode	: 0x1
+/proc/cpuinfo: cpu MHz		: 3099.996
+/proc/cpuinfo: cache size	: 25600 KB
+/proc/cpuinfo: physical id	: 5
+/proc/cpuinfo: siblings	: 1
+/proc/cpuinfo: core id		: 0
+/proc/cpuinfo: cpu cores	: 1
+/proc/cpuinfo: apicid		: 5
+/proc/cpuinfo: initial apicid	: 5
+/proc/cpuinfo: fpu		: yes
+/proc/cpuinfo: fpu_exception	: yes
+/proc/cpuinfo: cpuid level	: 13
+/proc/cpuinfo: wp		: yes
+/proc/cpuinfo: flags		: fpu vme de pse tsc msr pae mce cx8 apic sep mtrr pge mca cmov pat pse36 clflush mmx fxsr sse sse2 ss syscall nx pdpe1gb rdtscp lm constant_tsc arch_perfmon rep_good nopl eagerfpu pni pclmulqdq ssse3 fma cx16 pcid sse4_1 sse4_2 x2apic movbe popcnt tsc_deadline_timer aes xsave avx f16c rdrand hypervisor lahf_lm abm fsgsbase tsc_adjust bmi1 avx2 smep bmi2 erms invpcid xsaveopt arat
+/proc/cpuinfo: bugs		:
+/proc/cpuinfo: bogomips	: 6199.99
+/proc/cpuinfo: clflush size	: 64
+/proc/cpuinfo: cache_alignment	: 64
+/proc/cpuinfo: address sizes	: 40 bits physical, 48 bits virtual
+/proc/cpuinfo: power management:
+/proc/cpuinfo: 
+/proc/cpuinfo: processor	: 6
+/proc/cpuinfo: vendor_id	: GenuineIntel
+/proc/cpuinfo: cpu family	: 6
+/proc/cpuinfo: model		: 63
+/proc/cpuinfo: model name	: Intel(R) Xeon(R) CPU E5-2687W v3 @ 3.10GHz
+/proc/cpuinfo: stepping	: 2
+/proc/cpuinfo: microcode	: 0x1
+/proc/cpuinfo: cpu MHz		: 3099.996
+/proc/cpuinfo: cache size	: 25600 KB
+/proc/cpuinfo: physical id	: 6
+/proc/cpuinfo: siblings	: 1
+/proc/cpuinfo: core id		: 0
+/proc/cpuinfo: cpu cores	: 1
+/proc/cpuinfo: apicid		: 6
+/proc/cpuinfo: initial apicid	: 6
+/proc/cpuinfo: fpu		: yes
+/proc/cpuinfo: fpu_exception	: yes
+/proc/cpuinfo: cpuid level	: 13
+/proc/cpuinfo: wp		: yes
+/proc/cpuinfo: flags		: fpu vme de pse tsc msr pae mce cx8 apic sep mtrr pge mca cmov pat pse36 clflush mmx fxsr sse sse2 ss syscall nx pdpe1gb rdtscp lm constant_tsc arch_perfmon rep_good nopl eagerfpu pni pclmulqdq ssse3 fma cx16 pcid sse4_1 sse4_2 x2apic movbe popcnt tsc_deadline_timer aes xsave avx f16c rdrand hypervisor lahf_lm abm fsgsbase tsc_adjust bmi1 avx2 smep bmi2 erms invpcid xsaveopt arat
+/proc/cpuinfo: bugs		:
+/proc/cpuinfo: bogomips	: 6199.99
+/proc/cpuinfo: clflush size	: 64
+/proc/cpuinfo: cache_alignment	: 64
+/proc/cpuinfo: address sizes	: 40 bits physical, 48 bits virtual
+/proc/cpuinfo: power management:
+/proc/cpuinfo: 
+/proc/cpuinfo: processor	: 7
+/proc/cpuinfo: vendor_id	: GenuineIntel
+/proc/cpuinfo: cpu family	: 6
+/proc/cpuinfo: model		: 63
+/proc/cpuinfo: model name	: Intel(R) Xeon(R) CPU E5-2687W v3 @ 3.10GHz
+/proc/cpuinfo: stepping	: 2
+/proc/cpuinfo: microcode	: 0x1
+/proc/cpuinfo: cpu MHz		: 3099.996
+/proc/cpuinfo: cache size	: 25600 KB
+/proc/cpuinfo: physical id	: 7
+/proc/cpuinfo: siblings	: 1
+/proc/cpuinfo: core id		: 0
+/proc/cpuinfo: cpu cores	: 1
+/proc/cpuinfo: apicid		: 7
+/proc/cpuinfo: initial apicid	: 7
+/proc/cpuinfo: fpu		: yes
+/proc/cpuinfo: fpu_exception	: yes
+/proc/cpuinfo: cpuid level	: 13
+/proc/cpuinfo: wp		: yes
+/proc/cpuinfo: flags		: fpu vme de pse tsc msr pae mce cx8 apic sep mtrr pge mca cmov pat pse36 clflush mmx fxsr sse sse2 ss syscall nx pdpe1gb rdtscp lm constant_tsc arch_perfmon rep_good nopl eagerfpu pni pclmulqdq ssse3 fma cx16 pcid sse4_1 sse4_2 x2apic movbe popcnt tsc_deadline_timer aes xsave avx f16c rdrand hypervisor lahf_lm abm fsgsbase tsc_adjust bmi1 avx2 smep bmi2 erms invpcid xsaveopt arat
+/proc/cpuinfo: bugs		:
+/proc/cpuinfo: bogomips	: 6199.99
+/proc/cpuinfo: clflush size	: 64
+/proc/cpuinfo: cache_alignment	: 64
+/proc/cpuinfo: address sizes	: 40 bits physical, 48 bits virtual
+/proc/cpuinfo: power management:
+/proc/cpuinfo: 
+/proc/cpuinfo: processor	: 8
+/proc/cpuinfo: vendor_id	: GenuineIntel
+/proc/cpuinfo: cpu family	: 6
+/proc/cpuinfo: model		: 63
+/proc/cpuinfo: model name	: Intel(R) Xeon(R) CPU E5-2687W v3 @ 3.10GHz
+/proc/cpuinfo: stepping	: 2
+/proc/cpuinfo: microcode	: 0x1
+/proc/cpuinfo: cpu MHz		: 3099.996
+/proc/cpuinfo: cache size	: 25600 KB
+/proc/cpuinfo: physical id	: 8
+/proc/cpuinfo: siblings	: 1
+/proc/cpuinfo: core id		: 0
+/proc/cpuinfo: cpu cores	: 1
+/proc/cpuinfo: apicid		: 8
+/proc/cpuinfo: initial apicid	: 8
+/proc/cpuinfo: fpu		: yes
+/proc/cpuinfo: fpu_exception	: yes
+/proc/cpuinfo: cpuid level	: 13
+/proc/cpuinfo: wp		: yes
+/proc/cpuinfo: flags		: fpu vme de pse tsc msr pae mce cx8 apic sep mtrr pge mca cmov pat pse36 clflush mmx fxsr sse sse2 ss syscall nx pdpe1gb rdtscp lm constant_tsc arch_perfmon rep_good nopl eagerfpu pni pclmulqdq ssse3 fma cx16 pcid sse4_1 sse4_2 x2apic movbe popcnt tsc_deadline_timer aes xsave avx f16c rdrand hypervisor lahf_lm abm fsgsbase tsc_adjust bmi1 avx2 smep bmi2 erms invpcid xsaveopt arat
+/proc/cpuinfo: bugs		:
+/proc/cpuinfo: bogomips	: 6199.99
+/proc/cpuinfo: clflush size	: 64
+/proc/cpuinfo: cache_alignment	: 64
+/proc/cpuinfo: address sizes	: 40 bits physical, 48 bits virtual
+/proc/cpuinfo: power management:
+/proc/cpuinfo: 
+/proc/cpuinfo: processor	: 9
+/proc/cpuinfo: vendor_id	: GenuineIntel
+/proc/cpuinfo: cpu family	: 6
+/proc/cpuinfo: model		: 63
+/proc/cpuinfo: model name	: Intel(R) Xeon(R) CPU E5-2687W v3 @ 3.10GHz
+/proc/cpuinfo: stepping	: 2
+/proc/cpuinfo: microcode	: 0x1
+/proc/cpuinfo: cpu MHz		: 3099.996
+/proc/cpuinfo: cache size	: 25600 KB
+/proc/cpuinfo: physical id	: 9
+/proc/cpuinfo: siblings	: 1
+/proc/cpuinfo: core id		: 0
+/proc/cpuinfo: cpu cores	: 1
+/proc/cpuinfo: apicid		: 9
+/proc/cpuinfo: initial apicid	: 9
+/proc/cpuinfo: fpu		: yes
+/proc/cpuinfo: fpu_exception	: yes
+/proc/cpuinfo: cpuid level	: 13
+/proc/cpuinfo: wp		: yes
+/proc/cpuinfo: flags		: fpu vme de pse tsc msr pae mce cx8 apic sep mtrr pge mca cmov pat pse36 clflush mmx fxsr sse sse2 ss syscall nx pdpe1gb rdtscp lm constant_tsc arch_perfmon rep_good nopl eagerfpu pni pclmulqdq ssse3 fma cx16 pcid sse4_1 sse4_2 x2apic movbe popcnt tsc_deadline_timer aes xsave avx f16c rdrand hypervisor lahf_lm abm fsgsbase tsc_adjust bmi1 avx2 smep bmi2 erms invpcid xsaveopt arat
+/proc/cpuinfo: bugs		:
+/proc/cpuinfo: bogomips	: 6199.99
+/proc/cpuinfo: clflush size	: 64
+/proc/cpuinfo: cache_alignment	: 64
+/proc/cpuinfo: address sizes	: 40 bits physical, 48 bits virtual
+/proc/cpuinfo: power management:
+/proc/cpuinfo: 
+/proc/cpuinfo: processor	: 10
+/proc/cpuinfo: vendor_id	: GenuineIntel
+/proc/cpuinfo: cpu family	: 6
+/proc/cpuinfo: model		: 63
+/proc/cpuinfo: model name	: Intel(R) Xeon(R) CPU E5-2687W v3 @ 3.10GHz
+/proc/cpuinfo: stepping	: 2
+/proc/cpuinfo: microcode	: 0x1
+/proc/cpuinfo: cpu MHz		: 3099.996
+/proc/cpuinfo: cache size	: 25600 KB
+/proc/cpuinfo: physical id	: 10
+/proc/cpuinfo: siblings	: 1
+/proc/cpuinfo: core id		: 0
+/proc/cpuinfo: cpu cores	: 1
+/proc/cpuinfo: apicid		: 10
+/proc/cpuinfo: initial apicid	: 10
+/proc/cpuinfo: fpu		: yes
+/proc/cpuinfo: fpu_exception	: yes
+/proc/cpuinfo: cpuid level	: 13
+/proc/cpuinfo: wp		: yes
+/proc/cpuinfo: flags		: fpu vme de pse tsc msr pae mce cx8 apic sep mtrr pge mca cmov pat pse36 clflush mmx fxsr sse sse2 ss syscall nx pdpe1gb rdtscp lm constant_tsc arch_perfmon rep_good nopl eagerfpu pni pclmulqdq ssse3 fma cx16 pcid sse4_1 sse4_2 x2apic movbe popcnt tsc_deadline_timer aes xsave avx f16c rdrand hypervisor lahf_lm abm fsgsbase tsc_adjust bmi1 avx2 smep bmi2 erms invpcid xsaveopt arat
+/proc/cpuinfo: bugs		:
+/proc/cpuinfo: bogomips	: 6199.99
+/proc/cpuinfo: clflush size	: 64
+/proc/cpuinfo: cache_alignment	: 64
+/proc/cpuinfo: address sizes	: 40 bits physical, 48 bits virtual
+/proc/cpuinfo: power management:
+/proc/cpuinfo: 
+/proc/cpuinfo: processor	: 11
+/proc/cpuinfo: vendor_id	: GenuineIntel
+/proc/cpuinfo: cpu family	: 6
+/proc/cpuinfo: model		: 63
+/proc/cpuinfo: model name	: Intel(R) Xeon(R) CPU E5-2687W v3 @ 3.10GHz
+/proc/cpuinfo: stepping	: 2
+/proc/cpuinfo: microcode	: 0x1
+/proc/cpuinfo: cpu MHz		: 3099.996
+/proc/cpuinfo: cache size	: 25600 KB
+/proc/cpuinfo: physical id	: 11
+/proc/cpuinfo: siblings	: 1
+/proc/cpuinfo: core id		: 0
+/proc/cpuinfo: cpu cores	: 1
+/proc/cpuinfo: apicid		: 11
+/proc/cpuinfo: initial apicid	: 11
+/proc/cpuinfo: fpu		: yes
+/proc/cpuinfo: fpu_exception	: yes
+/proc/cpuinfo: cpuid level	: 13
+/proc/cpuinfo: wp		: yes
+/proc/cpuinfo: flags		: fpu vme de pse tsc msr pae mce cx8 apic sep mtrr pge mca cmov pat pse36 clflush mmx fxsr sse sse2 ss syscall nx pdpe1gb rdtscp lm constant_tsc arch_perfmon rep_good nopl eagerfpu pni pclmulqdq ssse3 fma cx16 pcid sse4_1 sse4_2 x2apic movbe popcnt tsc_deadline_timer aes xsave avx f16c rdrand hypervisor lahf_lm abm fsgsbase tsc_adjust bmi1 avx2 smep bmi2 erms invpcid xsaveopt arat
+/proc/cpuinfo: bugs		:
+/proc/cpuinfo: bogomips	: 6199.99
+/proc/cpuinfo: clflush size	: 64
+/proc/cpuinfo: cache_alignment	: 64
+/proc/cpuinfo: address sizes	: 40 bits physical, 48 bits virtual
+/proc/cpuinfo: power management:
+/proc/cpuinfo: 
+/proc/ioports: 0000-0cf7 : PCI Bus 0000:00
+/proc/ioports:   0000-001f : dma1
+/proc/ioports:   0020-0021 : pic1
+/proc/ioports:   0040-0043 : timer0
+/proc/ioports:   0050-0053 : timer1
+/proc/ioports:   0060-0060 : keyboard
+/proc/ioports:   0064-0064 : keyboard
+/proc/ioports:   0070-0071 : rtc0
+/proc/ioports:   0080-008f : dma page reg
+/proc/ioports:   00a0-00a1 : pic2
+/proc/ioports:   00c0-00df : dma2
+/proc/ioports:   00f0-00ff : fpu
+/proc/ioports:   0170-0177 : 0000:00:01.1
+/proc/ioports:     0170-0177 : ata_piix
+/proc/ioports:   01f0-01f7 : 0000:00:01.1
+/proc/ioports:     01f0-01f7 : ata_piix
+/proc/ioports:   02f8-02ff : serial
+/proc/ioports:   0376-0376 : 0000:00:01.1
+/proc/ioports:     0376-0376 : ata_piix
+/proc/ioports:   03c0-03df : vesafb
+/proc/ioports:   03f6-03f6 : 0000:00:01.1
+/proc/ioports:     03f6-03f6 : ata_piix
+/proc/ioports:   03f8-03ff : serial
+/proc/ioports: 0cf8-0cff : PCI conf1
+/proc/ioports: 0d00-ffff : PCI Bus 0000:00
+/proc/ioports:   afe0-afe3 : ACPI GPE0_BLK
+/proc/ioports:   b000-b03f : 0000:00:01.3
+/proc/ioports:     b000-b003 : ACPI PM1a_EVT_BLK
+/proc/ioports:     b004-b005 : ACPI PM1a_CNT_BLK
+/proc/ioports:     b008-b00b : ACPI PM_TMR
+/proc/ioports:   b100-b10f : 0000:00:01.3
+/proc/ioports:   c000-c03f : 0000:00:03.0
+/proc/ioports:     c000-c03f : virtio-pci-legacy
+/proc/ioports:   c040-c05f : 0000:00:01.2
+/proc/ioports:     c040-c05f : uhci_hcd
+/proc/ioports:   c060-c07f : 0000:00:10.0
+/proc/ioports:     c060-c07f : virtio-pci-legacy
+/proc/ioports:   c080-c09f : 0000:00:11.0
+/proc/ioports:     c080-c09f : virtio-pci-legacy
+/proc/ioports:   c0a0-c0bf : 0000:00:12.0
+/proc/ioports:     c0a0-c0bf : virtio-pci-legacy
+/proc/ioports:   c0c0-c0cf : 0000:00:01.1
+/proc/ioports:     c0c0-c0cf : ata_piix
+/proc/iomem: 00000000-00000fff : reserved
+/proc/iomem: 00001000-0009fbff : System RAM
+/proc/iomem: 0009fc00-0009ffff : reserved
+/proc/iomem: 000a0000-000bffff : PCI Bus 0000:00
+/proc/iomem: 000c0000-000c95ff : Video ROM
+/proc/iomem: 000c9800-000ca1ff : Adapter ROM
+/proc/iomem: 000ca800-000cb1ff : Adapter ROM
+/proc/iomem: 000cb800-000cc1ff : Adapter ROM
+/proc/iomem: 000cc800-000cebff : Adapter ROM
+/proc/iomem: 000f0000-000fffff : reserved
+/proc/iomem:   000f0000-000fffff : System ROM
+/proc/iomem: 00100000-dfff9fff : System RAM
+/proc/iomem: dfffa000-dfffffff : reserved
+/proc/iomem: e0000000-febfffff : PCI Bus 0000:00
+/proc/iomem:   fc000000-fdffffff : 0000:00:02.0
+/proc/iomem:     fc000000-fc3fffff : vesafb
+/proc/iomem:   febc0000-febcffff : 0000:00:10.0
+/proc/iomem:   febd0000-febdffff : 0000:00:11.0
+/proc/iomem:   febe0000-febeffff : 0000:00:12.0
+/proc/iomem:   febf0000-febf0fff : 0000:00:02.0
+/proc/iomem:   febf1000-febf1fff : 0000:00:03.0
+/proc/iomem:   febf2000-febf2fff : 0000:00:10.0
+/proc/iomem:   febf3000-febf3fff : 0000:00:11.0
+/proc/iomem:   febf4000-febf4fff : 0000:00:12.0
+/proc/iomem: fec00000-fec003ff : IOAPIC 0
+/proc/iomem: fed00000-fed003ff : HPET 0
+/proc/iomem:   fed00000-fed003ff : PNP0103:00
+/proc/iomem: fee00000-fee00fff : Local APIC
+/proc/iomem: feffc000-feffffff : reserved
+/proc/iomem: fffc0000-ffffffff : reserved
+/proc/iomem: 100000000-c1fffffff : System RAM
+/proc/iomem:   680a00000-680fe9d3e : Kernel code
+/proc/iomem:   680fe9d3f-6815326bf : Kernel data
+/proc/iomem:   681693000-68175cfff : Kernel bss
+/proc/interrupts:            CPU0       CPU1       CPU2       CPU3       CPU4       CPU5       CPU6       CPU7       CPU8       CPU9       CPU10      CPU11      
+/proc/interrupts:   0:         12          0          0          0          0          0          0          0          0          0          0          0   IO-APIC   2-edge      timer
+/proc/interrupts:   1:       2299          0          0          0          0          0          0          0          0          0          0          0   IO-APIC   1-edge      i8042
+/proc/interrupts:   8:          7          0          0          0          0          0          0          0          0          0          0          0   IO-APIC   8-edge      rtc0
+/proc/interrupts:   9:          0          0          0          0          0          0          0          0          0          0          0          0   IO-APIC   9-fasteoi   acpi
+/proc/interrupts:  11:         32          0          0          0          0          0          0          0          0          0          0          0   IO-APIC  11-fasteoi   uhci_hcd:usb1
+/proc/interrupts:  12:          3          0          0          0          0          0          0          0          0          0          0          0   IO-APIC  12-edge      i8042
+/proc/interrupts:  14:       1582          0          0          0          0          0          0          0          0          0          0          0   IO-APIC  14-edge      ata_piix
+/proc/interrupts:  15:          0          0          0          0          0          0          0          0          0          0          0          0   IO-APIC  15-edge      ata_piix
+/proc/interrupts:  24:          0          0          0          0          0          0          0          0          0          0          0          0   PCI-MSI 49152-edge      virtio0-config
+/proc/interrupts:  25:     370521          0          0          0          0          0          0          0          0          0          0          0   PCI-MSI 49153-edge      virtio0-req.0
+/proc/interrupts:  26:          0          0          0          0          0          0          0          0          0          0          0          0   PCI-MSI 262144-edge      virtio1-config
+/proc/interrupts:  27:      20709          0          0          0          0          0          0          0          0          0          0          0   PCI-MSI 262145-edge      virtio1-input.0
+/proc/interrupts:  28:          1          0          0          0          0          0          0          0          0          0          0          0   PCI-MSI 262146-edge      virtio1-output.0
+/proc/interrupts:  29:          0          0          0          0          0          0          0          0          0          0          0          0   PCI-MSI 278528-edge      virtio2-config
+/proc/interrupts:  30:          1          0          0          0          0          0          0          0          0          0          0          0   PCI-MSI 278529-edge      virtio2-input.0
+/proc/interrupts:  31:          0          0          0          0          0          0          0          0          0          0          0          0   PCI-MSI 278530-edge      virtio2-output.0
+/proc/interrupts:  32:          0          0          0          0          0          0          0          0          0          0          0          0   PCI-MSI 294912-edge      virtio3-config
+/proc/interrupts:  33:          2          0          0          0          0          0          0          0          0          0          0          0   PCI-MSI 294913-edge      virtio3-input.0
+/proc/interrupts:  34:          0          0          0          0          0          0          0          0          0          0          0          0   PCI-MSI 294914-edge      virtio3-output.0
+/proc/interrupts: NMI:          0          0          0          0          0          0          0          0          0          0          0          0   Non-maskable interrupts
+/proc/interrupts: LOC:      32834      21056      19331      16498      22746      24922      29302      23075      48760      23901      23419      62564   Local timer interrupts
+/proc/interrupts: SPU:          0          0          0          0          0          0          0          0          0          0          0          0   Spurious interrupts
+/proc/interrupts: PMI:          0          0          0          0          0          0          0          0          0          0          0          0   Performance monitoring interrupts
+/proc/interrupts: IWI:          5          0          0          0          0          0          0          0          0          0          0          0   IRQ work interrupts
+/proc/interrupts: RTR:          0          0          0          0          0          0          0          0          0          0          0          0   APIC ICR read retries
+/proc/interrupts: RES:      29327      27168      25523      21173      29072      88296      23869      37114      38197      38354      27607      45361   Rescheduling interrupts
+/proc/interrupts: CAL:       3041      11142      10596       5671      10113     130857       7304      29910      89802      56610      29432      14093   Function call interrupts
+/proc/interrupts: TLB:       2585       2574       2233       1988       2115       2047       2657       2486       2123       2324       3033       2751   TLB shootdowns
+/proc/interrupts: TRM:          0          0          0          0          0          0          0          0          0          0          0          0   Thermal event interrupts
+/proc/interrupts: THR:          0          0          0          0          0          0          0          0          0          0          0          0   Threshold APIC interrupts
+/proc/interrupts: DFR:          0          0          0          0          0          0          0          0          0          0          0          0   Deferred Error APIC interrupts
+/proc/interrupts: MCE:          0          0          0          0          0          0          0          0          0          0          0          0   Machine check exceptions
+/proc/interrupts: MCP:          4          4          4          4          4          4          4          4          4          4          4          4   Machine check polls
+/proc/interrupts: ERR:          0
+/proc/interrupts: MIS:          0
+/proc/interrupts: PIN:          0          0          0          0          0          0          0          0          0          0          0          0   Posted-interrupt notification event
+/proc/interrupts: PIW:          0          0          0          0          0          0          0          0          0          0          0          0   Posted-interrupt wakeup event
+/proc/meminfo: MemTotal:       49465696 kB
+/proc/meminfo: MemFree:        48044532 kB
+/proc/meminfo: MemAvailable:   48625312 kB
+/proc/meminfo: Buffers:            3496 kB
+/proc/meminfo: Cached:          1100584 kB
+/proc/meminfo: SwapCached:            0 kB
+/proc/meminfo: Active:          1042072 kB
+/proc/meminfo: Inactive:          83972 kB
+/proc/meminfo: Active(anon):      91412 kB
+/proc/meminfo: Inactive(anon):    45432 kB
+/proc/meminfo: Active(file):     950660 kB
+/proc/meminfo: Inactive(file):    38540 kB
+/proc/meminfo: Unevictable:           0 kB
+/proc/meminfo: Mlocked:               0 kB
+/proc/meminfo: SwapTotal:             0 kB
+/proc/meminfo: SwapFree:              0 kB
+/proc/meminfo: Dirty:               552 kB
+/proc/meminfo: Writeback:             0 kB
+/proc/meminfo: AnonPages:         22236 kB
+/proc/meminfo: Mapped:             5504 kB
+/proc/meminfo: Shmem:            115044 kB
+/proc/meminfo: Slab:             157124 kB
+/proc/meminfo: SReclaimable:     140044 kB
+/proc/meminfo: SUnreclaim:        17080 kB
+/proc/meminfo: KernelStack:        4000 kB
+/proc/meminfo: PageTables:          948 kB
+/proc/meminfo: NFS_Unstable:          0 kB
+/proc/meminfo: Bounce:                0 kB
+/proc/meminfo: WritebackTmp:          0 kB
+/proc/meminfo: CommitLimit:    24732848 kB
+/proc/meminfo: Committed_AS:     148104 kB
+/proc/meminfo: VmallocTotal:   34359738367 kB
+/proc/meminfo: VmallocUsed:           0 kB
+/proc/meminfo: VmallocChunk:          0 kB
+/proc/meminfo: HardwareCorrupted:     0 kB
+/proc/meminfo: AnonHugePages:         0 kB
+/proc/meminfo: ShmemHugePages:        0 kB
+/proc/meminfo: ShmemPmdMapped:        0 kB
+/proc/meminfo: HugePages_Total:       0
+/proc/meminfo: HugePages_Free:        0
+/proc/meminfo: HugePages_Rsvd:        0
+/proc/meminfo: HugePages_Surp:        0
+/proc/meminfo: Hugepagesize:       2048 kB
+/proc/meminfo: DirectMap4k:       55272 kB
+/proc/meminfo: DirectMap2M:     5187584 kB
+/proc/meminfo: DirectMap1G:    45088768 kB
+/proc/bus/input/devices: I: Bus=0011 Vendor=0001 Product=0001 Version=ab41
+/proc/bus/input/devices: N: Name="AT Translated Set 2 keyboard"
+/proc/bus/input/devices: P: Phys=isa0060/serio0/input0
+/proc/bus/input/devices: S: Sysfs=/devices/platform/i8042/serio0/input/input0
+/proc/bus/input/devices: U: Uniq=
+/proc/bus/input/devices: H: Handlers=sysrq kbd leds 
+/proc/bus/input/devices: B: PROP=0
+/proc/bus/input/devices: B: EV=120013
+/proc/bus/input/devices: B: KEY=402000000 3803078f800d001 feffffdfffefffff fffffffffffffffe
+/proc/bus/input/devices: B: MSC=10
+/proc/bus/input/devices: B: LED=7
+/proc/bus/input/devices: 
+/proc/bus/input/devices: I: Bus=0003 Vendor=0627 Product=0001 Version=0001
+/proc/bus/input/devices: N: Name="QEMU QEMU USB Tablet"
+/proc/bus/input/devices: P: Phys=usb-0000:00:01.2-1/input0
+/proc/bus/input/devices: S: Sysfs=/devices/pci0000:00/0000:00:01.2/usb1/1-1/1-1:1.0/0003:0627:0001.0001/input/input2
+/proc/bus/input/devices: U: Uniq=42
+/proc/bus/input/devices: H: Handlers=mouse0 
+/proc/bus/input/devices: B: PROP=0
+/proc/bus/input/devices: B: EV=1f
+/proc/bus/input/devices: B: KEY=70000 0 0 0 0
+/proc/bus/input/devices: B: REL=100
+/proc/bus/input/devices: B: ABS=3
+/proc/bus/input/devices: B: MSC=10
+/proc/bus/input/devices: 
+
+-- System Information:
+Debian Release: 8.6
+  APT prefers stable-updates
+  APT policy: (500, 'stable-updates'), (500, 'stable')
+Architecture: amd64 (x86_64)
+
+Kernel: Linux 4.8.0-2+reiser4.0.1-amd64 (SMP w/12 CPU cores)
+Locale: LANG=en_US.UTF-8, LC_CTYPE=en_US.UTF-8 (charmap=UTF-8)
+Shell: /bin/sh linked to /bin/dash
+Init: systemd (via /run/systemd/system)
