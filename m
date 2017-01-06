@@ -1,117 +1,197 @@
-From: bugzilla-daemon@bugzilla.kernel.org
-Subject: [Bug 190071] The patch "reiserfs: switch to
- generic_{get,set,remove}xattr()" introduced with 4.4.27 causes kernel panic
- on root mount
-Date: Fri, 30 Dec 2016 21:25:15 +0000
-Message-ID: <bug-190071-695-Is9rJNLxgY@https.bugzilla.kernel.org/>
-References: <bug-190071-695@https.bugzilla.kernel.org/>
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-devel-owner@vger.kernel.org>
-In-Reply-To: <bug-190071-695@https.bugzilla.kernel.org/>
-Sender: reiserfs-devel-owner@vger.kernel.org
+From: Michal Hocko <mhocko@kernel.org>
+Subject: [PATCH 1/8] lockdep: allow to disable reclaim lockup detection
+Date: Fri,  6 Jan 2017 15:11:00 +0100
+Message-ID: <20170106141107.23953-2-mhocko@kernel.org>
+References: <20170106141107.23953-1-mhocko@kernel.org>
+Return-path: <owner-linux-mm@kvack.org>
+In-Reply-To: <20170106141107.23953-1-mhocko@kernel.org>
+Sender: owner-linux-mm@kvack.org
 List-ID: <reiserfs-devel.vger.kernel.org>
+MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
-To: reiserfs-devel@vger.kernel.org
+Content-Transfer-Encoding: 7bit
+To: linux-mm@kvack.org, linux-fsdevel@vger.kernel.org
+Cc: Andrew Morton <akpm@linux-foundation.org>, Dave Chinner <david@fromorbit.com>, djwong@kernel.org, Theodore Ts'o <tytso@mit.edu>, Chris Mason <clm@fb.com>, David Sterba <dsterba@suse.cz>, Jan Kara <jack@suse.cz>, ceph-devel@vger.kernel.org, cluster-devel@redhat.com, linux-nfs@vger.kernel.org, logfs@logfs.org, linux-xfs@vger.kernel.org, linux-ext4@vger.kernel.org, linux-btrfs@vger.kernel.org, linux-mtd@lists.infradead.org, reiserfs-devel@vger.kernel.org, linux-ntfs-dev@lists.sourceforge.net, linux-f2fs-devel@lists.sourceforge.net, linux-afs@lists.infradead.org, LKML <linux-kernel@vger.kernel.org>, Michal Hocko <mhocko@suse.com>
 
-https://bugzilla.kernel.org/show_bug.cgi?id=190071
+From: Michal Hocko <mhocko@suse.com>
 
-dflogeras2@gmail.com changed:
+The current implementation of the reclaim lockup detection can lead to
+false positives and those even happen and usually lead to tweak the
+code to silence the lockdep by using GFP_NOFS even though the context
+can use __GFP_FS just fine. See
+http://lkml.kernel.org/r/20160512080321.GA18496@dastard as an example.
 
-           What    |Removed                     |Added
-----------------------------------------------------------------------------
-                 CC|                            |dflogeras2@gmail.com
+=================================
+[ INFO: inconsistent lock state ]
+4.5.0-rc2+ #4 Tainted: G           O
+---------------------------------
+inconsistent {RECLAIM_FS-ON-R} -> {IN-RECLAIM_FS-W} usage.
+kswapd0/543 [HC0[0]:SC0[0]:HE1:SE1] takes:
 
---- Comment #1 from dflogeras2@gmail.com ---
-I think I am seeing the same thing in ARM.  I updated from 4.4.26 to 4.4.39 and
-when I tried to access a partition (rsync) using reiserfs I got the following:
+(&xfs_nondir_ilock_class){++++-+}, at: [<ffffffffa00781f7>] xfs_ilock+0x177/0x200 [xfs]
 
+{RECLAIM_FS-ON-R} state was registered at:
+  [<ffffffff8110f369>] mark_held_locks+0x79/0xa0
+  [<ffffffff81113a43>] lockdep_trace_alloc+0xb3/0x100
+  [<ffffffff81224623>] kmem_cache_alloc+0x33/0x230
+  [<ffffffffa008acc1>] kmem_zone_alloc+0x81/0x120 [xfs]
+  [<ffffffffa005456e>] xfs_refcountbt_init_cursor+0x3e/0xa0 [xfs]
+  [<ffffffffa0053455>] __xfs_refcount_find_shared+0x75/0x580 [xfs]
+  [<ffffffffa00539e4>] xfs_refcount_find_shared+0x84/0xb0 [xfs]
+  [<ffffffffa005dcb8>] xfs_getbmap+0x608/0x8c0 [xfs]
+  [<ffffffffa007634b>] xfs_vn_fiemap+0xab/0xc0 [xfs]
+  [<ffffffff81244208>] do_vfs_ioctl+0x498/0x670
+  [<ffffffff81244459>] SyS_ioctl+0x79/0x90
+  [<ffffffff81847cd7>] entry_SYSCALL_64_fastpath+0x12/0x6f
 
-Dec 30 03:10:10 cubie kernel: Unable to handle kernel NULL pointer dereference
-at virtual address 00000000
-Dec 30 03:10:10 cubie kernel: pgd = ea608000
-Dec 30 03:10:10 cubie kernel: [00000000] *pgd=6a603831, *pte=00000000,
-*ppte=00000000
-Dec 30 03:10:10 cubie kernel: Internal error: Oops: 17 [#1] SMP ARM
-Dec 30 03:10:10 cubie kernel: Modules linked in: ipt_REJECT nf_reject_ipv4
-xt_tcpudp iptable_filter ip_tables x_tables reiserfs dm_mod sun4i_codec
-snd_soc_core snd_pcm_dmaengine snd_pcm dwmac_sunxi stmmac_platform stmmac ptp
-of_mdio libphy snd_timer snd i2c_mv64xxx soundcore i2c_core sunxi_wdt leds_gpio
-Dec 30 03:10:10 cubie kernel: CPU: 0 PID: 5174 Comm: rsync Not tainted
-4.4.39-gentoo #1
-Dec 30 03:10:10 cubie kernel: Hardware name: Allwinner sun7i (A20) Family
-Dec 30 03:10:10 cubie kernel: task: e5977440 ti: e101e000 task.ti: e101e000
-Dec 30 03:10:10 cubie kernel: PC is at xattr_resolve_name+0x10/0x98
-Dec 30 03:10:10 cubie kernel: LR is at generic_getxattr+0x2c/0x5c
-Dec 30 03:10:10 cubie kernel: pc : [<c0108cb8>]    lr : [<c0108d6c>]    psr:
-a00f0013\x0asp : e101fe00  ip : e101fe1c  fp : 00000006
-Dec 30 03:10:10 cubie kernel: r10: d82a847c  r9 : e5aa5cc0  r8 : e101ff1c
-Dec 30 03:10:10 cubie kernel: r7 : e101ff1c  r6 : c04b59e8  r5 : 00000000  r4 :
-d82857f8
-Dec 30 03:10:10 cubie kernel: r3 : 00000000  r2 : 00000000  r1 : e101fe1c  r0 :
-00000000
-Dec 30 03:10:10 cubie kernel: Flags: NzCv  IRQs on  FIQs on  Mode SVC_32  ISA
-ARM  Segment none
-Dec 30 03:10:10 cubie kernel: Control: 10c5387d  Table: 6a60806a  DAC: 00000051
-Dec 30 03:10:10 cubie kernel: Process rsync (pid: 5174, stack limit =
-0xe101e210)
-Dec 30 03:10:10 cubie kernel: Stack: (0xe101fe00 to 0xe1020000)
-Dec 30 03:10:10 cubie kernel: fe00: d82857f8 00000000 00000000 c0108d6c
-ef7c60e8 efa392c0 5209675f c04b59e8
-Dec 30 03:10:10 cubie kernel: fe20: d82857f8 00000000 00000000 c01e442c
-d82a83a8 c00ff910 d82a83a8 d82857f8
-Dec 30 03:10:10 cubie kernel: fe40: d82a83a8 c00ff9cc e5b07528 c00cd134
-00000049 ea608000 00000055 0000004d
-Dec 30 03:10:10 cubie kernel: fe60: ea60ad38 00000134 000b4e4c 00000000
-00000001 00000000 00000000 e105b0b0
-Dec 30 03:10:10 cubie kernel: fe80: e5977440 e101ff30 e5aa5cc0 c00a87a8
-e105b108 00000041 b4e8d000 e101ffb0
-Dec 30 03:10:10 cubie kernel: fea0: e5977440 edf93500 e105b108 e101ff30
-d82a8418 e5aa5cc0 e101ff1c 00001ae9
-Dec 30 03:10:10 cubie kernel: fec0: 000001ff 00000000 00000006 c00a8a78
-e105b0c0 00000000 00000800 00000000
-Dec 30 03:10:10 cubie kernel: fee0: 00000000 e5aa5cc0 00001ae9 00000000
-00000000 e101ff88 e101e000 00000000
-Dec 30 03:10:10 cubie kernel: ff00: 00000006 c00e6c28 00001ae9 c000929c
-00000000 b4e4c008 00001ae9 00000001
-Dec 30 03:10:10 cubie kernel: ff20: 00000000 00001ae9 e101ff14 00000001
-e5aa5cc0 00000000 00000000 00000000
-Dec 30 03:10:10 cubie kernel: ff40: 00000000 00000000 00000000 00000000
-e5aa5cc0 00001ae9 b4e4c008 e101ff88
-Dec 30 03:10:10 cubie kernel: ff60: c000f6c4 c00e73b0 b6ef0000 c00bd4e4
-e5aa5cc0 e5aa5cc0 00001ae9 b4e4c008
-Dec 30 03:10:10 cubie kernel: ff80: c000f6c4 c00e7bd8 00000000 00000000
-00040008 00000000 b4e4c008 00091fb0
-Dec 30 03:10:10 cubie kernel: ffa0: 00000004 c000f500 00000000 b4e4c008
-00000006 b4e4c008 00001ae9 00001ae9
-Dec 30 03:10:10 cubie kernel: ffc0: 00000000 b4e4c008 00091fb0 00000004
-00001ae9 00000000 00091d78 00000006
-Dec 30 03:10:10 cubie kernel: ffe0: 00000000 bec5bb74 000484a4 b6e7f260
-600f0010 00000006 00000000 00000000
-Dec 30 03:10:10 cubie kernel: [<c0108cb8>] (xattr_resolve_name) from
-[<c0108d6c>] (generic_getxattr+0x2c/0x5c)
-Dec 30 03:10:11 cubie kernel: [<c0108d6c>] (generic_getxattr) from [<c01e442c>]
-(cap_inode_need_killpriv+0x2c/0x44)
-Dec 30 03:10:11 cubie kernel: [<c01e442c>] (cap_inode_need_killpriv) from
-[<c00ff910>] (dentry_needs_remove_privs.part.6+0x18/0x2c)
-Dec 30 03:10:11 cubie kernel: [<c00ff910>] (dentry_needs_remove_privs.part.6)
-from [<c00ff9cc>] (file_remove_privs+0x8c/0xe8)
-Dec 30 03:10:11 cubie kernel: [<c00ff9cc>] (file_remove_privs) from
-[<c00a87a8>] (__generic_file_write_iter+0x5c/0x1ec)
-Dec 30 03:10:11 cubie kernel: [<c00a87a8>] (__generic_file_write_iter) from
-[<c00a8a78>] (generic_file_write_iter+0x140/0x25c)
-Dec 30 03:10:11 cubie kernel: [<c00a8a78>] (generic_file_write_iter) from
-[<c00e6c28>] (__vfs_write+0xa8/0xd8)
-Dec 30 03:10:11 cubie kernel: [<c00e6c28>] (__vfs_write) from [<c00e73b0>]
-(vfs_write+0x90/0x164)
-Dec 30 03:10:11 cubie kernel: [<c00e73b0>] (vfs_write) from [<c00e7bd8>]
-(SyS_write+0x44/0x9c)
-Dec 30 03:10:11 cubie kernel: [<c00e7bd8>] (SyS_write) from [<c000f500>]
-(ret_fast_syscall+0x0/0x3c)
-Dec 30 03:10:11 cubie kernel: Code: e92d4070 e5916000 e3560000 0a00001f
-(e5904000)
-Dec 30 03:10:11 cubie kernel: ---[ end trace 325de232048f8448 ]---
+       CPU0
+       ----
+  lock(&xfs_nondir_ilock_class);
+  <Interrupt>
+    lock(&xfs_nondir_ilock_class);
 
+ *** DEADLOCK ***
+
+3 locks held by kswapd0/543:
+
+stack backtrace:
+CPU: 0 PID: 543 Comm: kswapd0 Tainted: G           O    4.5.0-rc2+ #4
+
+Hardware name: innotek GmbH VirtualBox/VirtualBox, BIOS VirtualBox 12/01/2006
+
+ ffffffff82a34f10 ffff88003aa078d0 ffffffff813a14f9 ffff88003d8551c0
+ ffff88003aa07920 ffffffff8110ec65 0000000000000000 0000000000000001
+ ffff880000000001 000000000000000b 0000000000000008 ffff88003d855aa0
+Call Trace:
+ [<ffffffff813a14f9>] dump_stack+0x4b/0x72
+ [<ffffffff8110ec65>] print_usage_bug+0x215/0x240
+ [<ffffffff8110ee85>] mark_lock+0x1f5/0x660
+ [<ffffffff8110e100>] ? print_shortest_lock_dependencies+0x1a0/0x1a0
+ [<ffffffff811102e0>] __lock_acquire+0xa80/0x1e50
+ [<ffffffff8122474e>] ? kmem_cache_alloc+0x15e/0x230
+ [<ffffffffa008acc1>] ? kmem_zone_alloc+0x81/0x120 [xfs]
+ [<ffffffff811122e8>] lock_acquire+0xd8/0x1e0
+ [<ffffffffa00781f7>] ? xfs_ilock+0x177/0x200 [xfs]
+ [<ffffffffa0083a70>] ? xfs_reflink_cancel_cow_range+0x150/0x300 [xfs]
+ [<ffffffff8110aace>] down_write_nested+0x5e/0xc0
+ [<ffffffffa00781f7>] ? xfs_ilock+0x177/0x200 [xfs]
+ [<ffffffffa00781f7>] xfs_ilock+0x177/0x200 [xfs]
+ [<ffffffffa0083a70>] xfs_reflink_cancel_cow_range+0x150/0x300 [xfs]
+ [<ffffffffa0085bdc>] xfs_fs_evict_inode+0xdc/0x1e0 [xfs]
+ [<ffffffff8124d7d5>] evict+0xc5/0x190
+ [<ffffffff8124d8d9>] dispose_list+0x39/0x60
+ [<ffffffff8124eb2b>] prune_icache_sb+0x4b/0x60
+ [<ffffffff8123317f>] super_cache_scan+0x14f/0x1a0
+ [<ffffffff811e0d19>] shrink_slab.part.63.constprop.79+0x1e9/0x4e0
+ [<ffffffff811e50ee>] shrink_zone+0x15e/0x170
+ [<ffffffff811e5ef1>] kswapd+0x4f1/0xa80
+ [<ffffffff811e5a00>] ? zone_reclaim+0x230/0x230
+ [<ffffffff810e6882>] kthread+0xf2/0x110
+ [<ffffffff810e6790>] ? kthread_create_on_node+0x220/0x220
+ [<ffffffff8184803f>] ret_from_fork+0x3f/0x70
+ [<ffffffff810e6790>] ? kthread_create_on_node+0x220/0x220
+
+To quote Dave:
+"
+Ignoring whether reflink should be doing anything or not, that's a
+"xfs_refcountbt_init_cursor() gets called both outside and inside
+transactions" lockdep false positive case. The problem here is
+lockdep has seen this allocation from within a transaction, hence a
+GFP_NOFS allocation, and now it's seeing it in a GFP_KERNEL context.
+Also note that we have an active reference to this inode.
+
+So, because the reclaim annotations overload the interrupt level
+detections and it's seen the inode ilock been taken in reclaim
+("interrupt") context, this triggers a reclaim context warning where
+it thinks it is unsafe to do this allocation in GFP_KERNEL context
+holding the inode ilock...
+"
+
+This sounds like a fundamental problem of the reclaim lock detection.
+It is really impossible to annotate such a special usecase IMHO unless
+the reclaim lockup detection is reworked completely. Until then it
+is much better to provide a way to add "I know what I am doing flag"
+and mark problematic places. This would prevent from abusing GFP_NOFS
+flag which has a runtime effect even on configurations which have
+lockdep disabled.
+
+Introduce __GFP_NOLOCKDEP flag which tells the lockdep gfp tracking to
+skip the current allocation request.
+
+While we are at it also make sure that the radix tree doesn't
+accidentaly override tags stored in the upper part of the gfp_mask.
+
+Suggested-by: Peter Zijlstra <peterz@infradead.org>
+Acked-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+Signed-off-by: Michal Hocko <mhocko@suse.com>
+---
+ include/linux/gfp.h      | 10 +++++++++-
+ kernel/locking/lockdep.c |  4 ++++
+ lib/radix-tree.c         |  2 ++
+ 3 files changed, 15 insertions(+), 1 deletion(-)
+
+diff --git a/include/linux/gfp.h b/include/linux/gfp.h
+index 4175dca4ac39..1a934383cc20 100644
+--- a/include/linux/gfp.h
++++ b/include/linux/gfp.h
+@@ -41,6 +41,11 @@ struct vm_area_struct;
+ #define ___GFP_OTHER_NODE	0x800000u
+ #define ___GFP_WRITE		0x1000000u
+ #define ___GFP_KSWAPD_RECLAIM	0x2000000u
++#ifdef CONFIG_LOCKDEP
++#define ___GFP_NOLOCKDEP	0x4000000u
++#else
++#define ___GFP_NOLOCKDEP	0
++#endif
+ /* If the above are modified, __GFP_BITS_SHIFT may need updating */
+ 
+ /*
+@@ -186,8 +191,11 @@ struct vm_area_struct;
+ #define __GFP_NOTRACK_FALSE_POSITIVE (__GFP_NOTRACK)
+ #define __GFP_OTHER_NODE ((__force gfp_t)___GFP_OTHER_NODE)
+ 
++/* Disable lockdep for GFP context tracking */
++#define __GFP_NOLOCKDEP ((__force gfp_t)___GFP_NOLOCKDEP)
++
+ /* Room for N __GFP_FOO bits */
+-#define __GFP_BITS_SHIFT 26
++#define __GFP_BITS_SHIFT (26 + IS_ENABLED(CONFIG_LOCKDEP))
+ #define __GFP_BITS_MASK ((__force gfp_t)((1 << __GFP_BITS_SHIFT) - 1))
+ 
+ /*
+diff --git a/kernel/locking/lockdep.c b/kernel/locking/lockdep.c
+index 844cd04bb453..59e94ce8a0cf 100644
+--- a/kernel/locking/lockdep.c
++++ b/kernel/locking/lockdep.c
+@@ -2879,6 +2879,10 @@ static void __lockdep_trace_alloc(gfp_t gfp_mask, unsigned long flags)
+ 	if (DEBUG_LOCKS_WARN_ON(irqs_disabled_flags(flags)))
+ 		return;
+ 
++	/* Disable lockdep if explicitly requested */
++	if (gfp_mask & __GFP_NOLOCKDEP)
++		return;
++
+ 	mark_held_locks(curr, RECLAIM_FS);
+ }
+ 
+diff --git a/lib/radix-tree.c b/lib/radix-tree.c
+index 5ccf00277233..c63b719346ae 100644
+--- a/lib/radix-tree.c
++++ b/lib/radix-tree.c
+@@ -2198,6 +2198,8 @@ static int radix_tree_cpu_dead(unsigned int cpu)
+ void __init radix_tree_init(void)
+ {
+ 	int ret;
++
++	BUILD_BUG_ON(RADIX_TREE_MAX_TAGS + __GFP_BITS_SHIFT > 32);
+ 	radix_tree_node_cachep = kmem_cache_create("radix_tree_node",
+ 			sizeof(struct radix_tree_node), 0,
+ 			SLAB_PANIC | SLAB_RECLAIM_ACCOUNT,
 -- 
-You are receiving this mail because:
-You are the assignee for the bug.
+2.11.0
+
+--
+To unsubscribe, send a message with 'unsubscribe linux-mm' in
+the body to majordomo@kvack.org.  For more info on Linux MM,
+see: http://www.linux-mm.org/ .
+Don't email: <a href=mailto:"dont@kvack.org"> email@kvack.org </a>
