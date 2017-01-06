@@ -1,107 +1,138 @@
-From: Michal Hocko <mhocko@kernel.org>
-Subject: [DEBUG PATCH 2/2] silent warnings which we cannot do anything about
-Date: Fri,  6 Jan 2017 15:18:45 +0100
-Message-ID: <20170106141845.24362-3-mhocko@kernel.org>
-References: <20170106141107.23953-1-mhocko@kernel.org>
- <20170106141845.24362-1-mhocko@kernel.org>
-Return-path: <owner-linux-mm@kvack.org>
-In-Reply-To: <20170106141845.24362-1-mhocko@kernel.org>
-Sender: owner-linux-mm@kvack.org
+From: Edward Shishkin <edward.shishkin@gmail.com>
+Subject: Re: [RFC] Smart fibration plugin ext_4321
+Date: Fri, 06 Jan 2017 15:44:03 +0200
+Message-ID: <586F9F23.5010409@gmail.com>
+References: <CADW=+3=Vwi1LFJn8imp7H6woiRP2Oa0=Q=_K-dDqc=hc2cOkZg@mail.gmail.com> <586165C2.3000702@gmail.com> <CADW=+3moCR2ufXeD4BmXFG0WE5uS2VpM95S6ZiggKg4BD47tfg@mail.gmail.com>
+Mime-Version: 1.0
+Content-Transfer-Encoding: 8bit
+Return-path: <reiserfs-devel-owner@vger.kernel.org>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=message-id:date:from:user-agent:mime-version:to:cc:subject
+         :references:in-reply-to:content-transfer-encoding;
+        bh=ZHeE9XWejHuEObO6l59yr+2x5eIHwr9DISdeYon8TWE=;
+        b=HLLW8sEkFA7J2kfn4zoA0rMsBBkp48Gk/TAiFflX6Jav8hOLv8pNdxWoBldy9eMg7V
+         k+H+nc/44iPc0RXzpWBTNSCfHX6+r/hDoKRLcor8b6NqPxrrslBVMKRXc71oi2yYBOA2
+         +ny1ZRN0QZI0qYQBA515XSjIXAhxUTevU9gw+4S6Dbw/HviQyY7ajSdIeQQ4vhumQeGX
+         UZWDhtYVz77adIbJag/d0+hnXv6ReO8kjJW1lCErpujhQWuWq4c0i50tZJ5/do12HWrv
+         8uMe2TU5gUiXC1B3FuAbz+6k/QAT6g1gM9TNO2UXVlYA7cNzPMoAc7yDBwxN+FFFyGyh
+         +vZA==
+In-Reply-To: <CADW=+3moCR2ufXeD4BmXFG0WE5uS2VpM95S6ZiggKg4BD47tfg@mail.gmail.com>
+Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: linux-mm@kvack.org, linux-fsdevel@vger.kernel.org
-Cc: Andrew Morton <akpm@linux-foundation.org>, Dave Chinner <david@fromorbit.com>, djwong@kernel.org, Theodore Ts'o <tytso@mit.edu>, Chris Mason <clm@fb.com>, David Sterba <dsterba@suse.cz>, Jan Kara <jack@suse.cz>, ceph-devel@vger.kernel.org, cluster-devel@redhat.com, linux-nfs@vger.kernel.org, logfs@logfs.org, linux-xfs@vger.kernel.org, linux-ext4@vger.kernel.org, linux-btrfs@vger.kernel.org, linux-mtd@lists.infradead.org, reiserfs-devel@vger.kernel.org, linux-ntfs-dev@lists.sourceforge.net, linux-f2fs-devel@lists.sourceforge.net, linux-afs@lists.infradead.org, LKML <linux-kernel@vger.kernel.org>, Michal Hocko <mhocko@suse.com>
+Content-Type: text/plain; charset="utf-8"; format="flowed"
+To: =?UTF-8?B?RHXFoWFuIMSMb2xpxIc=?= <dusanc@gmail.com>
+Cc: reiserfs-devel <reiserfs-devel@vger.kernel.org>
 
-From: Michal Hocko <mhocko@suse.com>
+On 12/26/2016 11:13 PM, Dušan Čolić wrote:
+> On Mon, Dec 26, 2016 at 7:47 PM, Edward Shishkin
+> <edward.shishkin@gmail.com> wrote:
+>>
+>>
+>> On 12/25/2016 02:59 AM, Dušan Čolić wrote:
+>>> Fibration is a great way to decrease fragmentation and increase throughput.
+>>> Currently there are 4 fibration plugins, lex, dot.o, ext_1 and ext_3
+>>> and they all have their upsides and downsides.
+>>>
+>>> Proposed fibration plugin combines them all so that it combines files
+>>> with same extensions for 1, 2. 3 and 4 character extension  in groups
+>>> and sorts them in same fiber group.
+>>>
+>>> With this fibration plugin all eg. xvid files would be in same group
+>>> in folder on disk sorted alphabetically
+>>
+>>
+>> What application wants all xvid files to be in the same group?
+>> Do you have any benchmark numbers which show advantages
+>> of the new plugin?
+>>
+> Xvid files are just an example.
+> ext_1234 fibration would be equal to sum of ext_1, ext_2, ext_3, ext_4
+> and dot_o in one.
+>
+> In currently default plugin (dot_o) we sort all files by name from the
+> start except .o files which we put at the end.
+> So if we had a source directory with .c .h and .o files in it files by
+> extension would be sorted like: chchchchchchchchoooooooooooooo
+> I presumed that in some use cases it is better to have files be sorted
+> ccccccccccchhhhhhhhhhhhhhoooooooooooo
+>
+> Hypothesis is to use the premise that files of same extension are in
+> same order of size to reduce fragmentation.
 
-THIS PATCH IS FOR TESTING ONLY AND NOT MEANT TO HIT LINUS TREE
 
-There are some code paths used by all the filesystems which we cannot
-change to drop the GFP_NOFS, yet they generate a lot of warnings.
-Provide {disable,enable}_scope_gfp_check to silence those.
-alloc_page_buffers and grow_dev_page are silenced right away.
+What kind of fragmentation you are talking about?
+Internal (which results in "dead" disk space), or
+external (which results in a lot of "extents")?
 
-Signed-off-by: Michal Hocko <mhocko@suse.com>
----
- fs/buffer.c           |  4 ++++
- include/linux/sched.h | 11 +++++++++++
- mm/page_alloc.c       |  3 +++
- 3 files changed, 18 insertions(+)
+Edward.
 
-diff --git a/fs/buffer.c b/fs/buffer.c
-index 28484b3ebc98..dbe529e7881b 100644
---- a/fs/buffer.c
-+++ b/fs/buffer.c
-@@ -873,7 +873,9 @@ struct buffer_head *alloc_page_buffers(struct page *page, unsigned long size,
- 	head = NULL;
- 	offset = PAGE_SIZE;
- 	while ((offset -= size) >= 0) {
-+		disable_scope_gfp_check();
- 		bh = alloc_buffer_head(GFP_NOFS);
-+		enable_scope_gfp_check();
- 		if (!bh)
- 			goto no_grow;
- 
-@@ -1003,7 +1005,9 @@ grow_dev_page(struct block_device *bdev, sector_t block,
- 	 */
- 	gfp_mask |= __GFP_NOFAIL;
- 
-+	disable_scope_gfp_check();
- 	page = find_or_create_page(inode->i_mapping, index, gfp_mask);
-+	enable_scope_gfp_check();
- 	if (!page)
- 		return ret;
- 
-diff --git a/include/linux/sched.h b/include/linux/sched.h
-index 59428926e989..f60294732ed5 100644
---- a/include/linux/sched.h
-+++ b/include/linux/sched.h
-@@ -1988,6 +1988,7 @@ struct task_struct {
- 	/* A live task holds one reference. */
- 	atomic_t stack_refcount;
- #endif
-+	bool disable_scope_gfp_warn;
- 	unsigned long nofs_caller;
- 	unsigned long noio_caller;
- /* CPU-specific state of this task */
-@@ -2390,6 +2391,16 @@ static inline unsigned int __memalloc_nofs_save(unsigned long caller)
- 	return flags;
- }
- 
-+static inline void disable_scope_gfp_check(void)
-+{
-+	current->disable_scope_gfp_warn = true;
-+}
-+
-+static inline void enable_scope_gfp_check(void)
-+{
-+	current->disable_scope_gfp_warn = false;
-+}
-+
- #define memalloc_nofs_save()	__memalloc_nofs_save(_RET_IP_)
- 
- static inline void memalloc_nofs_restore(unsigned int flags)
-diff --git a/mm/page_alloc.c b/mm/page_alloc.c
-index 87a2bb5262b2..5405278bd733 100644
---- a/mm/page_alloc.c
-+++ b/mm/page_alloc.c
-@@ -3762,6 +3762,9 @@ void debug_scope_gfp_context(gfp_t gfp_mask)
- 	if (!(gfp_mask & __GFP_DIRECT_RECLAIM))
- 		return;
- 
-+	if (current->disable_scope_gfp_warn)
-+		return;
-+
- 	if (current->flags & PF_MEMALLOC_NOIO)
- 		restrict_mask = __GFP_IO;
- 	else if ((current->flags & PF_MEMALLOC_NOFS) && (gfp_mask & __GFP_IO))
--- 
-2.11.0
 
---
-To unsubscribe, send a message with 'unsubscribe linux-mm' in
-the body to majordomo@kvack.org.  For more info on Linux MM,
-see: http://www.linux-mm.org/ .
-Don't email: <a href=mailto:"dont@kvack.org"> email@kvack.org </a>
+>
+> If we group files of same extension in groups in one directory, when
+> we write files of same extension after deletion of some files of one
+> extension  their group would be in same order as the deleted file so
+> they would be written in similar place and occupy the 'hole' of
+> similar size.
+> Ofc I am not talking about files of few kB size where Reiser4 is great
+> at packing but about files from few MB to few GB.
+>
+> Eg. directory with mp3 and xvid files. mp3s are on the order of MB and
+> xvid on the order of GB. If we sort them just by name order of xvid
+> and mp3 files in one directory would be random so when deleting the
+> smaller ones we would make random holes (like from
+> mxmxmxxmmmxxxxmxxmmmx to mx xmxx  mx  xmx mmmx).
+> With grouping of writing where all mp3s would be written first and all
+> xvid after them after some deletions we would have smaller holes
+> grouped first  and larger last (like from mmmmmmmmmmmmxxxxxxxxxx to mm
+> m   mmm mmxx xxx xxx) but the main thing that after writing we would
+> write mp3s in mp3 holes and xvid in xvid holes ergo. reduce
+> fragmentation  (like from mm m   mmm mmxx xxx xxx to
+> mmMmMMMmmmXmmxxXxxx xxx) that we would create if we would try to write
+> xvid over mp3 holes.
+>
+> One obvious use case where I hypothesize that this type of fibration
+> is better long term would be directories with content similar to usual
+> Downloads directory, a lot of different types (and siyes) of files
+> that get written and deleted a lot.
+>
+> ext_1234 fibration is the same as dot_o for directories with only one
+> or one and .o file extension.
+>
+> Ofc this is just a hypothesis that I would like to prove with some
+> fragmentation benchmarks but I wanted to hear your thoughts.
+>
+> And while I was looking through the code I found a part that I
+> comprehended, elegant and easy to understand so I wanted to make
+> something so I could learn more.
+>
+>
+>> Thanks,
+>> Edward.
+>>
+> Thank you for your time and effort
+>
+> Dushan
+>
+>
+>>
+>>>    so that we will avoid putting
+>>> small files between them and in that way reduce fragmentation. That
+>>> group (xvid 4 character extensions) would be among last groups under
+>>> one directory so that all small files would be written before it.
+>>>
+>>> Problem with the attached patch is that currently every fibre value is
+>>> defined as u64  (eg. static __u64 fibre_ext_3) but if I understood
+>>> correctly comments in kassign.c and fibration.c fibration part of the
+>>> key is only 7 bits long.
+>>> If that is true how did fibre_ext_3 worked?
+>>>
+>>> Thanks
+>>>
+>>> Dushan
+>>
+> --
+> To unsubscribe from this list: send the line "unsubscribe reiserfs-devel" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+
