@@ -1,101 +1,52 @@
-From: Jose R R <Jose.r.r@metztli-it.com>
-Subject: Re: Bug#850713: linux-image-4.8.0-0.bpo.2-amd64: can't mount NFS
- shares via nfs referrals
-Date: Mon, 16 Jan 2017 16:32:17 -0800
-Message-ID: <CAM12Q5TiKtMPOMz-Q=E2smS9iMWWFH_FTAx+Rr9NgvK1kH0gng__31659.7168254249$1484613572$gmane$org@mail.gmail.com>
-References: <3654f1ee-a35d-685e-6428-70db82e8b27d@uni-mainz.de>
- <1483979321.3983.134.camel@decadent.org.uk> <508cc2b1-0aa1-a390-49d2-452342f0aef3@uni-mainz.de>
- <050869ba-0ba3-5a8f-b3db-0515634a8a36@uni-mainz.de> <1b57a517-5cdc-e93b-173b-5b56724f43f6@uni-mainz.de>
+From: Theodore Ts'o <tytso@mit.edu>
+Subject: Re: [PATCH 8/8] Revert "ext4: fix wrong gfp type under transaction"
+Date: Mon, 16 Jan 2017 21:56:07 -0500
+Message-ID: <20170117025607.frrcdbduthhutrzj@thunk.org>
+References: <20170106141107.23953-1-mhocko@kernel.org>
+ <20170106141107.23953-9-mhocko@kernel.org>
 Mime-Version: 1.0
-Return-path: <reiserfs-devel-owner@vger.kernel.org>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=metztli-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:sender:in-reply-to:references:from:date:message-id
-         :subject:to:cc;
-        bh=8NgR3sgovczVnTH48BLl4jp7lbvXGTUYCFMdnHLrCss=;
-        b=JYQJq3URjOSsn73ahILoNmAm/6uAINTJmoIzaSOStepSOiVtvtUqBoVHeJjApBgOey
-         8nPdVu4wQLfvFtsHLRTqjGOsXuQrkMfKVasBcEUvB91aDRMVNs0BVaL8HLuMFewWi1Ku
-         y3U2ni3vQauD1H6NC1KEKwNZMe1hiQ8yLKs/0AoQDR+T9L1cUy88lWOMrA8wKf1HUc87
-         Q6xKJEhQTuoROJKHH0/Njzb1woWp2luwPdkwW34j12xdac429QVvn8ab42Jx0kuChT6m
-         Qf4kK7hRm5BYQim/2NmOXtC+bRrnYKwCS8u/7DVETq6OZFgZ3NCm94c0ivSfqwg/CiaG
-         ZS6g==
-In-Reply-To: <1b57a517-5cdc-e93b-173b-5b56724f43f6@uni-mainz.de>
-Sender: reiserfs-devel-owner@vger.kernel.org
+Return-path: <owner-linux-mm@kvack.org>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=thunk.org; s=ef5046eb;
+	h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date; bh=uWnbFByXTOuZ3R0q6TTTxdwJBBkjoov9m8k8aJFOaSY=;
+	b=WArVErbR3kGgPNCPX9P2x2I33Jd8ZkHqjj8nwaRjGrrqfsvJVSab9B/tgRQepaWk/FBjM9ppHSEyCDfufwaBZ4z2FWCR87OWVnAPTJ4lX+Wk1mcWXBapKQFlI7So4J4leV1U/OTRl12ZrbTdqY/D6fPRvPcLbIgRIZYdX/+jBQs=;
+Content-Disposition: inline
+In-Reply-To: <20170106141107.23953-9-mhocko@kernel.org>
+Sender: owner-linux-mm@kvack.org
 List-ID: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Christoph Martin <martin@uni-mainz.de>, 850713@bugs.debian.org
-Cc: =?UTF-8?B?SsO2cmcgSMO2aGxl?= <hoehle@uni-mainz.de>
+To: Michal Hocko <mhocko@kernel.org>
+Cc: linux-mm@kvack.org, linux-fsdevel@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>, Dave Chinner <david@fromorbit.com>, djwong@kernel.org, Chris Mason <clm@fb.com>, David Sterba <dsterba@suse.cz>, Jan Kara <jack@suse.cz>, ceph-devel@vger.kernel.org, cluster-devel@redhat.com, linux-nfs@vger.kernel.org, logfs@logfs.org, linux-xfs@vger.kernel.org, linux-ext4@vger.kernel.org, linux-btrfs@vger.kernel.org, linux-mtd@lists.infradead.org, reiserfs-devel@vger.kernel.org, linux-ntfs-dev@lists.sourceforge.net, linux-f2fs-devel@lists.sourceforge.net, linux-afs@lists.infradead.org, LKML <linux-kernel@vger.kernel.org>, Michal Hocko <mhocko@suse.com>
 
-Niltze [Hello]-
+On Fri, Jan 06, 2017 at 03:11:07PM +0100, Michal Hocko wrote:
+> From: Michal Hocko <mhocko@suse.com>
+> 
+> This reverts commit 216553c4b7f3e3e2beb4981cddca9b2027523928. Now that
+> the transaction context uses memalloc_nofs_save and all allocations
+> within the this context inherit GFP_NOFS automatically, there is no
+> reason to mark specific allocations explicitly.
+> 
+> This patch should not introduce any functional change. The main point
+> of this change is to reduce explicit GFP_NOFS usage inside ext4 code
+> to make the review of the remaining usage easier.
+> 
+> Signed-off-by: Michal Hocko <mhocko@suse.com>
+> Reviewed-by: Jan Kara <jack@suse.cz>
 
-'just my 2 cents':
+Changes in the jbd2 layer aren't going to guarantee that
+memalloc_nofs_save() will be executed if we are running ext4 without a
+journal (aka in no journal mode).  And this is a *very* common
+configuration; it's how ext4 is used inside Google in our production
+servers.
 
+So that means the earlier patches will probably need to be changed so
+the nOFS scope is done in the ext4_journal_{start,stop} functions in
+fs/ext4/ext4_jbd2.c.
 
-On Mon, Jan 16, 2017 at 6:39 AM, Christoph Martin <martin@uni-mainz.de> wrote:
->
-> Some more analysis:
->
-> attached are two syslogs of gssd in verbose mode.
->
-> You can see that in both servers the user acl directory gets mounted
-> from fs02 within user context:
->
-> rpc.gssd[6528]: handle_gssd_upcall: 'mech=krb5 uid=4015 enctypes
-> ...
-> rpc.gssd[6528]: creating context using fsuid 4015 (save_uid 0)
->
-> When trying to mount the group acl share from fsgroups 4.8 server logs:
->
-> rpc.gssd[27548]: handle_gssd_upcall: 'mech=krb5 uid=0 service=*
-> ...
-> rpc.gssd[27548]: creating context using fsuid 0 (save_uid 0)
->
-> the 4.7 server logs:
->
-> rpc.gssd[6528]: handle_gssd_upcall: 'mech=krb5 uid=4015
-> ...
-> rpc.gssd[6528]: creating context using fsuid 4015
->
->
-> As a result of this difference the nfs tries to mount the directory on
-> 4.7 with a user kerberos ticket and gets NFS4_OK in line 265 of
-> linux-4.7-nfsrefer.dump while 4.8 tries with machine kerberos ticket and
-> gets NFS4ERR_ACCESS in line 231 of linux-4.8-nfsrefer.dump.
->
-> Christoph
+					- Ted
 
-
-I experienced issues installing nfs-common package from official
-maintainers jessie repositories during my jessie-backport reiser4
--patched Linux kernel efforts. Accordingly I jessie-backport'ed
-nfs-common and nfs-kernel-server packages that you will find at:
-
-https://sourceforge.net/projects/debian-reiser4/files/nfs-common-reiser4-bp/
-
-As a matter of fact just uploaded jessie-backport'ed (kerberos)
-krb5-1.15-1 package that I had built priorly -- as part of my initial
-efforts building first 2 packages mentioned above.
-
-https://sourceforge.net/projects/debian-reiser4/files/jessie-krb5-1.15-1_bp/
-
-By the way none of those packages have *any dependencies* on reiser4
-other than being built in a machine with that file system ;-)
-
-You are welcomed to give those a try but I offer no guarantees whatsoever.
-
-
-Best Professional Regards.
-
-
-P.S. you may need krb5-config from Sid (Unstable) -- as the above are backports.
--- 
-Jose R R
-http://metztli.it
----------------------------------------------------------------------------------------------
-Download Debian-Reiser4 for AMD64 https://sf.net/projects/debian-reiser4/
----------------------------------------------------------------------------------------------
-Try at no charge http://b2evolution.net for http://OpenShift.com PaaS
----------------------------------------------------------------------------------------------
-from our GitHub http://Nepohualtzintzin.com repository. Cloud the easy way!
----------------------------------------------------------------------------------------------
+--
+To unsubscribe, send a message with 'unsubscribe linux-mm' in
+the body to majordomo@kvack.org.  For more info on Linux MM,
+see: http://www.linux-mm.org/ .
+Don't email: <a href=mailto:"dont@kvack.org"> email@kvack.org </a>
