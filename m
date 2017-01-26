@@ -1,84 +1,48 @@
-From: Michal Hocko <mhocko@kernel.org>
-Subject: Re: [PATCH 8/8] Revert "ext4: fix wrong gfp type under transaction"
-Date: Thu, 26 Jan 2017 08:44:55 +0100
-Message-ID: <20170126074455.GC8456@dhcp22.suse.cz>
-References: <20170106141107.23953-9-mhocko@kernel.org>
- <20170117025607.frrcdbduthhutrzj@thunk.org>
- <20170117082425.GD19699@dhcp22.suse.cz>
- <20170117151817.GR19699@dhcp22.suse.cz>
- <20170117155916.dcizr65bwa6behe7@thunk.org>
- <20170117161618.GT19699@dhcp22.suse.cz>
- <20170117172925.GA2486@quack2.suse.cz>
- <20170119083956.GE30786@dhcp22.suse.cz>
- <20170119092236.GC2565@quack2.suse.cz>
- <20170119094405.GK30786@dhcp22.suse.cz>
-Mime-Version: 1.0
-Return-path: <owner-linux-mm@kvack.org>
-Content-Disposition: inline
-In-Reply-To: <20170119094405.GK30786@dhcp22.suse.cz>
-Sender: owner-linux-mm@kvack.org
+From: edward.shishkin@gmail.com
+Subject: [PATCH 1/3] Reiser4: fix typo in lzo1_overrun calculation
+Date: Thu, 26 Jan 2017 13:23:35 +0100
+Message-ID: <1485433417-10554-1-git-send-email-edward.shishkin@gmail.com>
+Return-path: <reiserfs-devel-owner@vger.kernel.org>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=moWi4uNNwjrlve8nqPSP0sFyxDTPZVNjoWbr2GWawkM=;
+        b=ZD3LTOJ3MHBzLoO5Tbbgj2b2Ysg6aUwD8RimK14+lp+8QMVm1dlNODZdWMsbnXZtt5
+         J1yTJWOJcainiOHUHFdy/Vw9TxWyK/mYyBGmYz3ofWk9rEpctqdcPCCYuhKSEdRgi6Vn
+         p5YNR9Kwj8JvPVGLO+fmnX2lJIkyn3jjbvWktw2FlbFZT4B3mOmqYd/k7LPNvN8kEQBC
+         moP6r9f8O+4EEFfqNGIMbn8dx+/rwFCiAlcs+yXAjN115Jkp9CF6T+hfaqx88gK47xHV
+         4/Q1+5rH3lrV9eRFGjXHZRVGPYdhZRclnqgcTAT1hNAlRWZkeGlJMblRLOSQBYBWvUar
+         gKiw==
+Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
+MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Theodore Ts'o <tytso@mit.edu>
-Cc: Jan Kara <jack@suse.cz>, linux-mm@kvack.org, linux-fsdevel@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>, Dave Chinner <david@fromorbit.com>, djwong@kernel.org, Chris Mason <clm@fb.com>, David Sterba <dsterba@suse.cz>, ceph-devel@vger.kernel.org, cluster-devel@redhat.com, linux-nfs@vger.kernel.org, logfs@logfs.org, linux-xfs@vger.kernel.org, linux-ext4@vger.kernel.org, linux-btrfs@vger.kernel.org, linux-mtd@lists.infradead.org, reiserfs-devel@vger.kernel.org, linux-ntfs-dev@lists.sourceforge.net, linux-f2fs-devel@lists.sourceforge.net, linux-afs@lists.infradead.org, LKML <linux-kernel@vger.kernel.org>
+To: Reiserfs development mailing list <reiserfs-devel@vger.kernel.org>
+Cc: Edward Shishkin <edward.shishkin@gmail.com>
 
-On Thu 19-01-17 10:44:05, Michal Hocko wrote:
-> On Thu 19-01-17 10:22:36, Jan Kara wrote:
-> > On Thu 19-01-17 09:39:56, Michal Hocko wrote:
-> > > On Tue 17-01-17 18:29:25, Jan Kara wrote:
-> > > > On Tue 17-01-17 17:16:19, Michal Hocko wrote:
-> > > > > > > But before going to play with that I am really wondering whether we need
-> > > > > > > all this with no journal at all. AFAIU what Jack told me it is the
-> > > > > > > journal lock(s) which is the biggest problem from the reclaim recursion
-> > > > > > > point of view. What would cause a deadlock in no journal mode?
-> > > > > > 
-> > > > > > We still have the original problem for why we need GFP_NOFS even in
-> > > > > > ext2.  If we are in a writeback path, and we need to allocate memory,
-> > > > > > we don't want to recurse back into the file system's writeback path.
-> > > > > 
-> > > > > But we do not enter the writeback path from the direct reclaim. Or do
-> > > > > you mean something other than pageout()'s mapping->a_ops->writepage?
-> > > > > There is only try_to_release_page where we get back to the filesystems
-> > > > > but I do not see any NOFS protection in ext4_releasepage.
-> > > > 
-> > > > Maybe to expand a bit: These days, direct reclaim can call ->releasepage()
-> > > > callback, ->evict_inode() callback (and only for inodes with i_nlink > 0),
-> > > > shrinkers. That's it. So the recursion possibilities are rather more limited
-> > > > than they used to be several years ago and we likely do not need as much
-> > > > GFP_NOFS protection as we used to.
-> > > 
-> > > Thanks for making my remark more clear Jack! I would just want to add
-> > > that I was playing with the patch below (it is basically
-> > > GFP_NOFS->GFP_KERNEL for all allocations which trigger warning from the
-> > > debugging patch which means they are called from within transaction) and
-> > > it didn't hit the lockdep when running xfstests both with or without the
-> > > enabled journal.
-> > > 
-> > > So am I still missing something or the nojournal mode is safe and the
-> > > current series is OK wrt. ext*?
-> > 
-> > I'm convinced the current series is OK, only real life will tell us whether
-> > we missed something or not ;)
-> 
-> I would like to extend the changelog of "jbd2: mark the transaction
-> context with the scope GFP_NOFS context".
-> 
-> "
-> Please note that setups without journal do not suffer from potential
-> recursion problems and so they do not need the scope protection because
-> neither ->releasepage nor ->evict_inode (which are the only fs entry
-> points from the direct reclaim) can reenter a locked context which is
-> doing the allocation currently.
-> "
+From: Edward Shishkin <edward.shishkin@gmail.com>
 
-Could you comment on this Ted, please?
+Fix typo found by BratSinot.
+
+Signed-off-by: Edward Shishkin <edward.shishkin@gmail.com>
+---
+ plugin/compress/compress.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/plugin/compress/compress.c b/plugin/compress/compress.c
+index 5c3df83..a574933 100644
+--- a/plugin/compress/compress.c
++++ b/plugin/compress/compress.c
+@@ -214,7 +214,7 @@ static int lzo1_init(void)
+ 
+ static int lzo1_overrun(unsigned in_len)
+ {
+-	return in_len / 64 + 16 + 3;
++	return in_len / 16 + 64 + 3;
+ }
+ 
+ static coa_t lzo1_alloc(tfm_action act)
 -- 
-Michal Hocko
-SUSE Labs
+2.7.4
 
---
-To unsubscribe, send a message with 'unsubscribe linux-mm' in
-the body to majordomo@kvack.org.  For more info on Linux MM,
-see: http://www.linux-mm.org/ .
-Don't email: <a href=mailto:"dont@kvack.org"> email@kvack.org </a>
