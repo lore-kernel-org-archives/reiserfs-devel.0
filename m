@@ -1,50 +1,39 @@
-From: edward.shishkin@gmail.com
-Subject: [PATCH 3/3] Reiser4: use vmalloc instead of kmalloc to alloacte zhash table
-Date: Thu, 26 Jan 2017 13:23:37 +0100
-Message-ID: <1485433417-10554-3-git-send-email-edward.shishkin@gmail.com>
-References: <1485433417-10554-1-git-send-email-edward.shishkin@gmail.com>
+From: Edward Shishkin <edward.shishkin@gmail.com>
+Subject: Reiser4 for Linux 4.9-2
+Date: Thu, 26 Jan 2017 16:55:58 +0100
+Message-ID: <bd6692bb-7ecc-f5ab-28cb-a9cc26c53e95@gmail.com>
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=E41IyT5TNZj1lGjvpamN6GFaxzCz5Kfe3moNAQya+h8=;
-        b=dijvo4Kj9svElcG1xOdS1kKKUuZw8xOK56wNIcBMBj0cSWlk8/MnxEmzMBHYKquHeC
-         Q5oSY3v4xBqLQa9+JNpqC+ih45FgN0PptNQIXgEJAgKo493RaeGPJQKRHMjoq7HkyzR4
-         aC8G0M5GwncscFTS5drlSA9czR+7lluIT2LY9NFwl6rtOYKKjKvnv4yVDQGwAQO7awda
-         Ycl+T7gf/Zz7RIExhWpIAkrreEjcezfz+aww2vTmy+nJro+I3yoJDDQc4KGuQw6lAh0H
-         CNyAujp0XsmIgGpYynhAhyt2Jim9yyNkalWumr0cni/WVJG1cziOUyud3IB2p/fD4wqG
-         sipw==
-In-Reply-To: <1485433417-10554-1-git-send-email-edward.shishkin@gmail.com>
+        h=from:subject:to:message-id:date:user-agent:mime-version
+         :content-transfer-encoding;
+        bh=clu72mzQ6DtQwHnHEAAl7EoQNslfOHKVjU4+VP4FIyA=;
+        b=rvOjVgXgArOJuJp6twWUmcBwhjoRo+e9HHkBL11OUT/9o7ZbBhi3F0r6NNWeMpaIyw
+         p9u5WCrFBSs2rq+1s3RnQObUnBoHNoSsXoRDX1j/LBWkuTYIMvJEl/RVBaRsj8zLXW5L
+         C+oDAa9gy9pTvRl1HdZkx+QSVhLCWQ9gMdx1s3n3nDLI5+4HfXbzH7DvZjeGVbK1F401
+         C4LAZGzA/1eDiPj0jNXhodD2MieDhniyS2vnW+tYsYebr68fPfvVOzhMDZtx+seY5iK0
+         +FMXbyd0S8TiQPPQeeS3NhG3TbupCdqmnx5H49RBusYvHRjymEaGGhPzBCowwRK9gi92
+         2mjg==
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="us-ascii"; format="flowed"
 To: Reiserfs development mailing list <reiserfs-devel@vger.kernel.org>
-Cc: Edward Shishkin <edward.shishkin@gmail.com>
 
-From: Edward Shishkin <edward.shishkin@gmail.com>
+IMPORTANT! This is a must-upgrade for all users, who use transparent
+compression with lzo. That is, almost for everyone, since lzo-compression
+is a default mode in reiser4.
 
-Signed-off-by: Edward Shishkin <edward.shishkin@gmail.com>
----
- znode.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+Changes since reiser4-for-4.9.1:
 
-diff --git a/znode.c b/znode.c
-index 2581a0a..f7c77ef 100644
---- a/znode.c
-+++ b/znode.c
-@@ -188,8 +188,8 @@ blknrhashfn(z_hash_table * table, const reiser4_block_nr * b)
- }
- 
- /* The hash table definition */
--#define KMALLOC(size) kmalloc((size), reiser4_ctx_gfp_mask_get())
--#define KFREE(ptr, size) kfree(ptr)
-+#define KMALLOC(size) reiser4_vmalloc(size)
-+#define KFREE(ptr, size) vfree(ptr)
- TYPE_SAFE_HASH_DEFINE(z, znode, reiser4_block_nr, zjnode.key.z, zjnode.link.z,
- 		      blknrhashfn, blknreq);
- #undef KFREE
--- 
-2.7.4
+. Fixed typo in lzo1_overrun calculation found by BratSinot. This is an old
+   bug, which can lead to memory corruption when using lzo-compression.
+. Use __GFP_REPEAT flag for costly memory allocation in init_tree();
+. Use vmalloc instead of kmalloc to alloacte znode hash table.
 
+Please, find here:
+https://sourceforge.net/projects/reiser4/files/reiser4-for-linux-4.x/
+
+Thanks,
+Edward.
