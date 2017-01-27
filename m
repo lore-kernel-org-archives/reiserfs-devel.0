@@ -1,39 +1,61 @@
-From: Edward Shishkin <edward.shishkin@gmail.com>
-Subject: Reiser4 for Linux 4.9-2
-Date: Thu, 26 Jan 2017 16:55:58 +0100
-Message-ID: <bd6692bb-7ecc-f5ab-28cb-a9cc26c53e95@gmail.com>
+From: Theodore Ts'o <tytso-3s7WtUTddSA@public.gmane.org>
+Subject: Re: [PATCH 8/8] Revert "ext4: fix wrong gfp type under transaction"
+Date: Fri, 27 Jan 2017 01:13:18 -0500
+Message-ID: <20170127061318.xd2qxashbl4dajez@thunk.org>
+References: <20170117025607.frrcdbduthhutrzj@thunk.org>
+ <20170117082425.GD19699@dhcp22.suse.cz>
+ <20170117151817.GR19699@dhcp22.suse.cz>
+ <20170117155916.dcizr65bwa6behe7@thunk.org>
+ <20170117161618.GT19699@dhcp22.suse.cz>
+ <20170117172925.GA2486@quack2.suse.cz>
+ <20170119083956.GE30786@dhcp22.suse.cz>
+ <20170119092236.GC2565@quack2.suse.cz>
+ <20170119094405.GK30786@dhcp22.suse.cz>
+ <20170126074455.GC8456@dhcp22.suse.cz>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-devel-owner@vger.kernel.org>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:subject:to:message-id:date:user-agent:mime-version
-         :content-transfer-encoding;
-        bh=clu72mzQ6DtQwHnHEAAl7EoQNslfOHKVjU4+VP4FIyA=;
-        b=rvOjVgXgArOJuJp6twWUmcBwhjoRo+e9HHkBL11OUT/9o7ZbBhi3F0r6NNWeMpaIyw
-         p9u5WCrFBSs2rq+1s3RnQObUnBoHNoSsXoRDX1j/LBWkuTYIMvJEl/RVBaRsj8zLXW5L
-         C+oDAa9gy9pTvRl1HdZkx+QSVhLCWQ9gMdx1s3n3nDLI5+4HfXbzH7DvZjeGVbK1F401
-         C4LAZGzA/1eDiPj0jNXhodD2MieDhniyS2vnW+tYsYebr68fPfvVOzhMDZtx+seY5iK0
-         +FMXbyd0S8TiQPPQeeS3NhG3TbupCdqmnx5H49RBusYvHRjymEaGGhPzBCowwRK9gi92
-         2mjg==
-Sender: reiserfs-devel-owner@vger.kernel.org
+Return-path: <linux-nfs-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=thunk.org; s=ef5046eb;
+        h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date; bh=2tchKKvz3YDn0Ig3FCaTenf/WqgNGWNmR3h4efOrfb8=;
+        b=xz2bPiABwu1xHAVEdwobE7vdAHbyBV6Gd2G1w+rugHE1aMZraZ1w6jyLcD9s432fw+RNMtLXe3f4wrbUjNx7/DxK/zHmJ5NWsFMznXMaZ5mWL4fk6nEu77/+FHDjWcCUqR6ISJgHe+lKc3ERvb2hj38xgf0j1IENAAhnadMoweI=;
+Content-Disposition: inline
+In-Reply-To: <20170126074455.GC8456-2MMpYkNvuYDjFM9bn6wA6Q@public.gmane.org>
+Sender: linux-nfs-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-ID: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: Reiserfs development mailing list <reiserfs-devel@vger.kernel.org>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Michal Hocko <mhocko-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+Cc: Jan Kara <jack-AlSwsSmVLrQ@public.gmane.org>, linux-mm-Bw31MaZKKs3YtjvyW6yDsg@public.gmane.org, linux-fsdevel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Andrew Morton <akpm-de/tnXTf+JLsfHDXvbKv3WD2FQJk+8+b@public.gmane.org>, Dave Chinner <david-FqsqvQoI3Ljby3iVrkZq2A@public.gmane.org>, djwong-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, Chris Mason <clm-b10kYP2dOMg@public.gmane.org>, David Sterba <dsterba-AlSwsSmVLrQ@public.gmane.org>, ceph-devel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, cluster-devel-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org, linux-nfs-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, logfs-PCqxUs/MD9bYtjvyW6yDsg@public.gmane.org, linux-xfs-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-ext4-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-btrfs-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-mtd-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, reiserfs-devel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-ntfs-dev-5NWGOfrQmneRv+LV9MX5uipxlwaOVQ5f@public.gmane.org, linux-f2fs-devel-5NWGOfrQmneRv+LV9MX5uipxlwaOVQ5f@public.gmane.org, linux-afs-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, LKML <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 
-IMPORTANT! This is a must-upgrade for all users, who use transparent
-compression with lzo. That is, almost for everyone, since lzo-compression
-is a default mode in reiser4.
+On Thu, Jan 26, 2017 at 08:44:55AM +0100, Michal Hocko wrote:
+> > > I'm convinced the current series is OK, only real life will tell us whether
+> > > we missed something or not ;)
+> > 
+> > I would like to extend the changelog of "jbd2: mark the transaction
+> > context with the scope GFP_NOFS context".
+> > 
+> > "
+> > Please note that setups without journal do not suffer from potential
+> > recursion problems and so they do not need the scope protection because
+> > neither ->releasepage nor ->evict_inode (which are the only fs entry
+> > points from the direct reclaim) can reenter a locked context which is
+> > doing the allocation currently.
+> > "
+> 
+> Could you comment on this Ted, please?
 
-Changes since reiser4-for-4.9.1:
+I guess....   so there still is one way this could screw us, and it's this reason for GFP_NOFS:
 
-. Fixed typo in lzo1_overrun calculation found by BratSinot. This is an old
-   bug, which can lead to memory corruption when using lzo-compression.
-. Use __GFP_REPEAT flag for costly memory allocation in init_tree();
-. Use vmalloc instead of kmalloc to alloacte znode hash table.
+        - to prevent from stack overflows during the reclaim because
+	          the allocation is performed from a deep context already
 
-Please, find here:
-https://sourceforge.net/projects/reiser4/files/reiser4-for-linux-4.x/
+The writepages call stack can be pretty deep.  (Especially if we're
+using ext4 in no journal mode over, say, iSCSI.)
 
-Thanks,
-Edward.
+How much stack space can get consumed by a reclaim?
+
+						- Ted
+    		 
+--
+To unsubscribe from this list: send the line "unsubscribe linux-nfs" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
