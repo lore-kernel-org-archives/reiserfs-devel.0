@@ -1,290 +1,158 @@
-From: <doiggl@velocitynet.com.au>
-Subject: Would it be possible for someone to port source code of resize_reiserfs to handle reiser4 partitions ? [sdbX]
-Date: Tue, 07 Mar 2017 00:30:46 +1100
-Message-ID: <b42a51171d3f7a89e442fec23fb4d781@mail.velocitynet.com.au>
-Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Return-path: <reiserfs-devel-owner@vger.kernel.org>
-Sender: reiserfs-devel-owner@vger.kernel.org
+From: Michal Hocko <mhocko@kernel.org>
+Subject: [PATCH 1/7] lockdep: teach lockdep about memalloc_noio_save
+Date: Mon,  6 Mar 2017 14:14:02 +0100
+Message-ID: <20170306131408.9828-2-mhocko@kernel.org>
+References: <20170306131408.9828-1-mhocko@kernel.org>
+Return-path: <owner-linux-mm@kvack.org>
+In-Reply-To: <20170306131408.9828-1-mhocko@kernel.org>
+Sender: owner-linux-mm@kvack.org
 List-ID: <reiserfs-devel.vger.kernel.org>
+MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
-To: Reiserfs development mailing list <reiserfs-devel@vger.kernel.org>
-
-Hello,
-Would it be possible for someone to port source code of resize_reiserfs to
-handle reiser4 partitions ? [sdbX]
-
-reiserfsprogs-3.6.25.tar.xz
-
-
-I can assist with reiser4 testing on a r4 volume , their are some files on
-it [with some spare space on volume] to help verify  results/syntax.
-I know there are meta metadata differences r3 vs r4
-
-
-Cheers
---Glenn 
-
-
-
-## reiserfsprogs resize_reiserfs content.
-
-http://www.linuxfromscratch.org/blfs/view/svn/postlfs/reiserfs.html
-https://www.kernel.org/pub/linux/kernel/people/jeffm/reiserfsprogs/v3.6.25/reiserfsprogs-3.6.25.tar.xz
-
-# ll reiserfsprogs-3.6.25/resize_reiserfs/
-total 64
--rw-r--r-- 1 root root   215 Sep 17  2013 Makefile.am
--rw-r--r-- 1 root root 22976 Jun  7  2016 Makefile.in
--rw-r--r-- 1 root root  7936 Sep 17  2013 do_shrink.c
--rw-r--r-- 1 root root   621 Aug 27  2013 fe.c
--rw-r--r-- 1 root root   909 Sep 17  2013 resize.h
--rw-r--r-- 1 root root  2988 Jun  7  2016 resize_reiserfs.8
--rw-r--r-- 1 root root  2999 Jun  7  2016 resize_reiserfs.8.in
--rw-r--r-- 1 root root  8584 Jun  7  2016 resize_reiserfs.c
-
-
-resize_reiserfs output example runs against reiser v3 volume:
-
-resize_reiserfs v3 outout 
-#########################
-
-#  resize_reiserfs
-Usage: resize_reiserfs  [-s[+|-]#[G|M|K]] [-fqvV] device
-
-# resize_reiserfs ?
-resize_reiserfs 3.6.25
-
-cannot open '?': No such file or directory
-
-
-# resize_reiserfs --help
-resize_reiserfs: invalid option -- '-'
-Usage: resize_reiserfs  [-s[+|-]#[G|M|K]] [-fqvV] device
-
-# resize_reiserfs /dev/sdb2
-resize_reiserfs 3.6.25
-
-- no r3 on /dev/sdb2
-
-# resize_reiserfs /dev/sdb2
-resize_reiserfs 3.6.25
-
-cannot open '/dev/sdb2': No such file or directory
-
-# resize_reiserfs /dev/sdb2
-resize_reiserfs 3.6.25
-
-
-reiserfs_open: the reiserfs superblock cannot be found on /dev/sdb2.
-
-## reiser v3 on /dev/sdb1
-
-# resize_reiserfs --help
-resize_reiserfs: invalid option -- '-'
-Usage: resize_reiserfs  [-s[+|-]#[G|M|K]] [-fqvV] device
-
-# mount /dev/sdb1 /media/disk
-
-# df -h
-Filesystem      Size  Used Avail Use% Mounted on
-       1.5T  253G  1.3T  17% /media/disk
-
-# cd /tmp
-# umount /dev/sdb1
-
-# resize_reiserfs -s -1G /dev/sdb1
-resize_reiserfs 3.6.25
-
-You are running BETA version of reiserfs shrinker.
-This version is only for testing or VERY CAREFUL use.
-Backup of you data is recommended.
-
-Do you want to continue? [y/N]:y
-Processing the tree: 0%....20%....40%....60%....80%....100%               
-     left 0, 226936 /sec
-
-nodes processed (moved):
-int        413 (0),
-leaves     68189 (0),
-unfm       66196804 (338),
-total      66265406 (338).
-
-check for used blocks in truncated region
-
-ReiserFS report:
-blocksize             4096
-block count           402390784 (402652928)
-free blocks           336104888 (336367024)
-bitmap block count    12280 (12288)
-
-Syncing..done
-
-#
-
-resize_reiserfs: Resizing finished successfully.
-
- # resize_reiserfs -s -1M -v  /dev/sdb1
-resize_reiserfs 3.6.25
-
-You are running BETA version of reiserfs shrinker.
-This version is only for testing or VERY CAREFUL use.
-Backup of you data is recommended.
-
-Do you want to continue? [y/N]:y
-processind the tree 0%..20%...40..   
-
-#
-# resize_reiserfs -s -1M -v  /dev/sdb1
-resize_reiserfs 3.6.25
-
-You are running BETA version of reiserfs shrinker.
-This version is only for testing or VERY CAREFUL use.
-Backup of you data is recommended.
-
-Do you want to continue? [y/N]:y
-Processing the tree: 0%....20%....40%....60%....80%....100%               
-     left 0, 226161 /sec
-
-nodes processed (moved):
-int        413 (0),
-leaves     68189 (0),
-unfm       66196804 (0),
-total      66265406 (0).
-
-check for used blocks in truncated region
-
-ReiserFS report:
-blocksize             4096
-block count           402390528 (402390784)
-free blocks           336104632 (336104888)
-bitmap block count    12280 (12280)
-
-Syncing..done
-
-
-resize_reiserfs: Resizing finished successfully.
-
-#
-# resize_reiserfs -s +100M -v  /dev/sdb1
-resize_reiserfs 3.6.25
-
-ReiserFS report:
-blocksize             4096
-block count           402416128 (402390528)
-free blocks           336130231 (336104632)
-bitmap block count    12281 (12280)
-
-Syncing..done
-
-
-resize_reiserfs: Resizing finished successfully.
-#
-
-# resize_reiserfs -s +1G /dev/sdb1
-resize_reiserfs 3.6.25
-
-/dev/sdb1 is of 402652928 blocks size only with reiserfs of 402544128
-blocks
-size on it. You are trying to expand reiserfs up to 402806272 blocks size.
-You probably forgot to expand your partition size.
-
-# resize_reiserfs -s 10 /dev/sdb1
-resize_reiserfs 3.6.25
-
-Can't shrink filesystem on-line.
-
-
-# resize_reiserfs -s +100M /dev/sdb1
-resize_reiserfs 3.6.25
-
-ReiserFS report:
-blocksize             4096
-block count           402595328 (402569728)
-free blocks           336309425 (336283826)
-bitmap block count    12287 (12286)
-
-Syncing..done
-
-
-resize_reiserfs: Resizing finished successfully.
-
-# resize_reiserfs -s +100M /dev/sdb1
-resize_reiserfs 3.6.25
-
-ReiserFS report:
-blocksize             4096
-block count           402620928 (402595328)
-free blocks           336335024 (336309425)
-bitmap block count    12288 (12287)
-
-Syncing..done
-
-
-resize_reiserfs: Resizing finished successfully.
-
-# resize_reiserfs -s +20M /dev/sdb1
-resize_reiserfs 3.6.25
-
-ReiserFS report:
-blocksize             4096
-block count           402651648 (402646528)
-free blocks           336365744 (336360624)
-bitmap block count    12288 (12288)
-
-Syncing..done
-
-
-resize_reiserfs: Resizing finished successfully.
-
-# resize_reiserfs -s +10M /dev/sdb1
-resize_reiserfs 3.6.25
-
-/dev/sdb1 is of 402652928 blocks size only with reiserfs of 402651648
-blocks
-size on it. You are trying to expand reiserfs up to 402654208 blocks size.
-You probably forgot to expand your partition size.
-
- # resize_reiserfs -s +10M /dev/sdb1
-resize_reiserfs 3.6.25
-
-/dev/sdb1 is of 402652928 blocks size only with reiserfs of 402651648
-blocks
-size on it. You are trying to expand reiserfs up to 402654208 blocks size.
-You probably forgot to expand your partition size.
-
-
-# resize_reiserfs -s +5M /dev/sdb1
-resize_reiserfs 3.6.25
-
-ReiserFS report:
-blocksize             4096
-block count           402652928 (402651648)
-free blocks           336367024 (336365744)
-bitmap block count    12288 (12288)
-
-Syncing..done
-
-
-resize_reiserfs: Resizing finished successfully
-
-# time mount /dev/sdb1 /media/disk
-
-real    0m0.236s
-user    0m0.004s
-sys     0m0.008s
-
-
-# df -h
-Filesystem           Size  Used Avail Use% Mounted on
-r3 vol> /dev/sdb1    1.5T  253G  1.3T  17% /media/disk
-r4 vol> /dev/sdb2    311G  109G  203G  35% /media/disk2
-
-
-# time umount /dev/sdb1
-
-real    0m0.050s
-user    0m0.004s
-sys     0m0.008s
-
-
+Content-Transfer-Encoding: 7bit
+To: Andrew Morton <akpm@linux-foundation.org>, linux-fsdevel@vger.kernel.org
+Cc: linux-mm@kvack.org, Dave Chinner <david@fromorbit.com>, djwong@kernel.org, Theodore Ts'o <tytso@mit.edu>, Chris Mason <clm@fb.com>, David Sterba <dsterba@suse.cz>, Jan Kara <jack@suse.cz>, ceph-devel@vger.kernel.org, cluster-devel@redhat.com, linux-nfs@vger.kernel.org, logfs@logfs.org, linux-xfs@vger.kernel.org, linux-ext4@vger.kernel.org, linux-btrfs@vger.kernel.org, linux-mtd@lists.infradead.org, reiserfs-devel@vger.kernel.org, linux-ntfs-dev@lists.sourceforge.net, linux-f2fs-devel@lists.sourceforge.net, linux-afs@lists.infradead.org, LKML <linux-kernel@vger.kernel.org>, Nikolay Borisov <nborisov@suse.com>, Michal Hocko <mhocko@suse.com>, Michal Hocko <mhocko@suse.cz>, "Peter Zijlstra (Intel)" <peterz@infradead.org>
+
+From: Nikolay Borisov <nborisov@suse.com>
+
+Commit 21caf2fc1931 ("mm: teach mm by current context info to not do I/O
+during memory allocation") added the memalloc_noio_(save|restore) functions
+to enable people to modify the MM behavior by disabling I/O during memory
+allocation. This was further extended in Fixes: 934f3072c17c ("mm: clear
+__GFP_FS when PF_MEMALLOC_NOIO is set"). memalloc_noio_* functions prevent
+allocation paths recursing back into the filesystem without explicitly
+changing the flags for every allocation site. However, lockdep hasn't been
+keeping up with the changes and it entirely misses handling the memalloc_noio
+adjustments. Instead, it is left to the callers of __lockdep_trace_alloc to
+call the function after they have shaven the respective GFP flags which
+can lead to false positives:
+
+[  644.173373] =================================
+[  644.174012] [ INFO: inconsistent lock state ]
+[  644.174012] 4.10.0-nbor #134 Not tainted
+[  644.174012] ---------------------------------
+[  644.174012] inconsistent {IN-RECLAIM_FS-W} -> {RECLAIM_FS-ON-W} usage.
+[  644.174012] fsstress/3365 [HC0[0]:SC0[0]:HE1:SE1] takes:
+[  644.174012]  (&xfs_nondir_ilock_class){++++?.}, at: [<ffffffff8136f231>] xfs_ilock+0x141/0x230
+[  644.174012] {IN-RECLAIM_FS-W} state was registered at:
+[  644.174012]   __lock_acquire+0x62a/0x17c0
+[  644.174012]   lock_acquire+0xc5/0x220
+[  644.174012]   down_write_nested+0x4f/0x90
+[  644.174012]   xfs_ilock+0x141/0x230
+[  644.174012]   xfs_reclaim_inode+0x12a/0x320
+[  644.174012]   xfs_reclaim_inodes_ag+0x2c8/0x4e0
+[  644.174012]   xfs_reclaim_inodes_nr+0x33/0x40
+[  644.174012]   xfs_fs_free_cached_objects+0x19/0x20
+[  644.174012]   super_cache_scan+0x191/0x1a0
+[  644.174012]   shrink_slab+0x26f/0x5f0
+[  644.174012]   shrink_node+0xf9/0x2f0
+[  644.174012]   kswapd+0x356/0x920
+[  644.174012]   kthread+0x10c/0x140
+[  644.174012]   ret_from_fork+0x31/0x40
+[  644.174012] irq event stamp: 173777
+[  644.174012] hardirqs last  enabled at (173777): [<ffffffff8105b440>] __local_bh_enable_ip+0x70/0xc0
+[  644.174012] hardirqs last disabled at (173775): [<ffffffff8105b407>] __local_bh_enable_ip+0x37/0xc0
+[  644.174012] softirqs last  enabled at (173776): [<ffffffff81357e2a>] _xfs_buf_find+0x67a/0xb70
+[  644.174012] softirqs last disabled at (173774): [<ffffffff81357d8b>] _xfs_buf_find+0x5db/0xb70
+[  644.174012]
+[  644.174012] other info that might help us debug this:
+[  644.174012]  Possible unsafe locking scenario:
+[  644.174012]
+[  644.174012]        CPU0
+[  644.174012]        ----
+[  644.174012]   lock(&xfs_nondir_ilock_class);
+[  644.174012]   <Interrupt>
+[  644.174012]     lock(&xfs_nondir_ilock_class);
+[  644.174012]
+[  644.174012]  *** DEADLOCK ***
+[  644.174012]
+[  644.174012] 4 locks held by fsstress/3365:
+[  644.174012]  #0:  (sb_writers#10){++++++}, at: [<ffffffff81208d04>] mnt_want_write+0x24/0x50
+[  644.174012]  #1:  (&sb->s_type->i_mutex_key#12){++++++}, at: [<ffffffff8120ea2f>] vfs_setxattr+0x6f/0xb0
+[  644.174012]  #2:  (sb_internal#2){++++++}, at: [<ffffffff8138185c>] xfs_trans_alloc+0xfc/0x140
+[  644.174012]  #3:  (&xfs_nondir_ilock_class){++++?.}, at: [<ffffffff8136f231>] xfs_ilock+0x141/0x230
+[  644.174012]
+[  644.174012] stack backtrace:
+[  644.174012] CPU: 0 PID: 3365 Comm: fsstress Not tainted 4.10.0-nbor #134
+[  644.174012] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS Ubuntu-1.8.2-1ubuntu1 04/01/2014
+[  644.174012] Call Trace:
+[  644.174012]  dump_stack+0x85/0xc9
+[  644.174012]  print_usage_bug.part.37+0x284/0x293
+[  644.174012]  ? print_shortest_lock_dependencies+0x1b0/0x1b0
+[  644.174012]  mark_lock+0x27e/0x660
+[  644.174012]  mark_held_locks+0x66/0x90
+[  644.174012]  lockdep_trace_alloc+0x6f/0xd0
+[  644.174012]  kmem_cache_alloc_node_trace+0x3a/0x2c0
+[  644.174012]  ? vm_map_ram+0x2a1/0x510
+[  644.174012]  vm_map_ram+0x2a1/0x510
+[  644.174012]  ? vm_map_ram+0x46/0x510
+[  644.174012]  _xfs_buf_map_pages+0x77/0x140
+[  644.174012]  xfs_buf_get_map+0x185/0x2a0
+[  644.174012]  xfs_attr_rmtval_set+0x233/0x430
+[  644.174012]  xfs_attr_leaf_addname+0x2d2/0x500
+[  644.174012]  xfs_attr_set+0x214/0x420
+[  644.174012]  xfs_xattr_set+0x59/0xb0
+[  644.174012]  __vfs_setxattr+0x76/0xa0
+[  644.174012]  __vfs_setxattr_noperm+0x5e/0xf0
+[  644.174012]  vfs_setxattr+0xae/0xb0
+[  644.174012]  ? __might_fault+0x43/0xa0
+[  644.174012]  setxattr+0x15e/0x1a0
+[  644.174012]  ? __lock_is_held+0x53/0x90
+[  644.174012]  ? rcu_read_lock_sched_held+0x93/0xa0
+[  644.174012]  ? rcu_sync_lockdep_assert+0x2f/0x60
+[  644.174012]  ? __sb_start_write+0x130/0x1d0
+[  644.174012]  ? mnt_want_write+0x24/0x50
+[  644.174012]  path_setxattr+0x8f/0xc0
+[  644.174012]  SyS_lsetxattr+0x11/0x20
+[  644.174012]  entry_SYSCALL_64_fastpath+0x23/0xc6
+
+Let's fix this by making lockdep explicitly do the shaving of respective
+GFP flags.
+
+Fixes: 934f3072c17c ("mm: clear __GFP_FS when PF_MEMALLOC_NOIO is set")
+Acked-by: Michal Hocko <mhocko@suse.cz>
+Acked-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+Signed-off-by: Nikolay Borisov <nborisov@suse.com>
+Signed-off-by: Michal Hocko <mhocko@suse.com>
+---
+ kernel/locking/lockdep.c | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
+
+diff --git a/kernel/locking/lockdep.c b/kernel/locking/lockdep.c
+index 12e38c213b70..25c33dcd86d7 100644
+--- a/kernel/locking/lockdep.c
++++ b/kernel/locking/lockdep.c
+@@ -30,6 +30,7 @@
+ #include <linux/sched.h>
+ #include <linux/sched/clock.h>
+ #include <linux/sched/task.h>
++#include <linux/sched/mm.h>
+ #include <linux/delay.h>
+ #include <linux/module.h>
+ #include <linux/proc_fs.h>
+@@ -2863,6 +2864,8 @@ static void __lockdep_trace_alloc(gfp_t gfp_mask, unsigned long flags)
+ 	if (unlikely(!debug_locks))
+ 		return;
+ 
++	gfp_mask = memalloc_noio_flags(gfp_mask);
++
+ 	/* no reclaim without waiting on it */
+ 	if (!(gfp_mask & __GFP_DIRECT_RECLAIM))
+ 		return;
+@@ -3854,7 +3857,7 @@ EXPORT_SYMBOL_GPL(lock_unpin_lock);
+ 
+ void lockdep_set_current_reclaim_state(gfp_t gfp_mask)
+ {
+-	current->lockdep_reclaim_gfp = gfp_mask;
++	current->lockdep_reclaim_gfp = memalloc_noio_flags(gfp_mask);
+ }
+ 
+ void lockdep_clear_current_reclaim_state(void)
+-- 
+2.11.0
+
+--
+To unsubscribe, send a message with 'unsubscribe linux-mm' in
+the body to majordomo@kvack.org.  For more info on Linux MM,
+see: http://www.linux-mm.org/ .
+Don't email: <a href=mailto:"dont@kvack.org"> email@kvack.org </a>
