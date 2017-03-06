@@ -1,221 +1,65 @@
-From: <doiggl@velocitynet.com.au>
-Subject: determine last used block on reiser4 volume to allow [truncate] of r4 volume query [sdb2]
-Date: Sat, 04 Mar 2017 17:09:13 +1100
-Message-ID: <6bc2296553663ee9a710b42702a4a04f@mail.velocitynet.com.au>
+From: Michal Hocko <mhocko@kernel.org>
+Subject: Re: [PATCH 7/8] Revert "ext4: avoid deadlocks in the writeback path
+ by using sb_getblk_gfp"
+Date: Mon, 6 Mar 2017 12:59:15 +0100
+Message-ID: <20170306115915.GB27953@dhcp22.suse.cz>
+References: <20170106141107.23953-1-mhocko@kernel.org>
+ <20170106141107.23953-8-mhocko@kernel.org>
+ <20170117030118.727jqyamjhojzajb@thunk.org>
+ <20170117075450.GC19699@dhcp22.suse.cz>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Return-path: <reiserfs-devel-owner@vger.kernel.org>
-Sender: reiserfs-devel-owner@vger.kernel.org
+Return-path: <owner-linux-mm@kvack.org>
+Content-Disposition: inline
+In-Reply-To: <20170117075450.GC19699@dhcp22.suse.cz>
+Sender: owner-linux-mm@kvack.org
 List-ID: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: Reiserfs development mailing list <reiserfs-devel@vger.kernel.org>
+Content-Transfer-Encoding: 7bit
+To: Theodore Ts'o <tytso@mit.edu>
+Cc: linux-mm@kvack.org, linux-fsdevel@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>, Dave Chinner <david@fromorbit.com>, djwong@kernel.org, Chris Mason <clm@fb.com>, David Sterba <dsterba@suse.cz>, Jan Kara <jack@suse.cz>, ceph-devel@vger.kernel.org, cluster-devel@redhat.com, linux-nfs@vger.kernel.org, logfs@logfs.org, linux-xfs@vger.kernel.org, linux-ext4@vger.kernel.org, linux-btrfs@vger.kernel.org, linux-mtd@lists.infradead.org, reiserfs-devel@vger.kernel.org, linux-ntfs-dev@lists.sourceforge.net, linux-f2fs-devel@lists.sourceforge.net, linux-afs@lists.infradead.org, LKML <linux-kernel@vger.kernel.org>
 
-Hello,
-q01 - Could this method be used to find the last used block on reiser4
-volume to allow [truncate] of volume ?
-q02 - what tools or commands can be used to truncate reiser4 partition 
-past the last used  block ?
+On Tue 17-01-17 08:54:50, Michal Hocko wrote:
+> On Mon 16-01-17 22:01:18, Theodore Ts'o wrote:
+> > On Fri, Jan 06, 2017 at 03:11:06PM +0100, Michal Hocko wrote:
+> > > From: Michal Hocko <mhocko@suse.com>
+> > > 
+> > > This reverts commit c45653c341f5c8a0ce19c8f0ad4678640849cb86 because
+> > > sb_getblk_gfp is not really needed as
+> > > sb_getblk
+> > >   __getblk_gfp
+> > >     __getblk_slow
+> > >       grow_buffers
+> > >         grow_dev_page
+> > > 	  gfp_mask = mapping_gfp_constraint(inode->i_mapping, ~__GFP_FS) | gfp
+> > > 
+> > > so __GFP_FS is cleared unconditionally and therefore the above commit
+> > > didn't have any real effect in fact.
+> > > 
+> > > This patch should not introduce any functional change. The main point
+> > > of this change is to reduce explicit GFP_NOFS usage inside ext4 code to
+> > > make the review of the remaining usage easier.
+> > > 
+> > > Signed-off-by: Michal Hocko <mhocko@suse.com>
+> > > Reviewed-by: Jan Kara <jack@suse.cz>
+> > 
+> > If I'm not mistaken, this patch is not dependent on any of the other
+> > patches in this series (and the other patches are not dependent on
+> > this one).  Hence, I could take this patch via the ext4 tree, correct?
+> 
+> Yes, that is correct
 
-thanks
---Glenn
+Hi Ted,
+this doesn't seem to be in any of the branches [1]. I plan to resend the
+whole scope nofs series, should I add this to the pile or you are going
+to route it via your tree?
 
-Steps used:
+[1] git://git.kernel.org/pub/scm/linux/kernel/git/tytso/ext4.git
+-- 
+Michal Hocko
+SUSE Labs
 
-Disk /dev/sdb: 2000.4 GB, 2000398934016 bytes
-255 heads, 63 sectors/track, 243201 cylinders, total 3907029168 sectors
-Units = sectors of 1 * 512 = 512 bytes
-Sector size (logical/physical): 512 bytes / 512 bytes
-I/O size (minimum/optimal): 512 bytes / 512 bytes
-Disk identifier: 0x0009a8dd
-
-# fdisk -l
-
-   Device Boot      Start         End      Blocks   Id  System\
-/dev/sdb2      3221225472  3907028991   342901760   83  Linux
-
-
-
-example: mount volume and find accessible files 
-# mount /dev/sdb2 /media/disk2
-
-# df -h
-Filesystem      Size  Used Avail Use% Mounted on
-/dev/sdb2       311G  109G  203G  35% /media/disk2
-
-
-# ll /media/disk2
-total 113430164
--rw-r--r-- 1 root root 116148741254 Feb 28 21:12 r4files-sdb.tgz
--rw-r--r-- 1 root root      2466549 Mar  4 00:45 reiser4-for-4.10.0.patch
--rw-r--r-- 1 root root       625844 Mar  4 00:45
-reiser4-for-4.10.0.patch.gz
--rw-r--r-- 1 root root       625387 Mar  4 00:49
-reiser4-for-4.9.3.patch.gz
-
-# cd /media/disk2
-find . |sort > /tmp/files-on-volume.txt
-
-
-
-#  cat /tmp/files-on-volume.txt
-.
-./r4files-sdb.tgz
-./reiser4-for-4.10.0.patch
-./reiser4-for-4.10.0.patch.gz
-./reiser4-for-4.9.3.patch.gz
-
-# cd /tmp
-/tmp # umount /dev/sdb2
-
-
-# debugfs.reiser4 /dev/sdb2  --print-nodes r4files-sdb.tgz >
-/tmp/print-nodes.txt
-debugfs.reiser4 1.1.0
-Format release: 4.0.1
-Copyright (C) 2001-2005 by Hans Reiser, licensing governed by
-reiser4progs/COPYING. 
-
-# debugfs.reiser4 /dev/sdb2  --print-nodes r4files-sdb.tgz |grep -i
-"UNITS="                >  /tmp/print-nodes-units.txt
-# debugfs.reiser4 /dev/sdb2  --print-nodes r4files-sdb.tgz |grep -i
-"UNITS="  | cut -c12-  |sed 's/char//g' 
-
-# debugfs.reiser4 /dev/sdb2  --print-super
-debugfs.reiser4 1.1.0
-Format release: 4.0.1
-Copyright (C) 2001-2005 by Hans Reiser, licensing governed by
-reiser4progs/COPYING. 
-
-Master super block (16):
-magic:          ReIsEr4
-blksize:        4096
-format:         0x0 (format40)
-uuid:           139d06a8-1886-44a0-a058-8f9da1ab88cf
-label:          <none>
-
-Format super block (17):
-plugin:         format40
-description:    Disk-format plugin.
-version:        1
-magic:          ReIsEr40FoRmAt
-mkfs id:        0x14b9244f
-flushes:        0
-blocks:         85725440
-free blocks:    57365574
-root block:     28395039
-tail policy:    0x2 (smart)
-next oid:       0x10004
-file count:     5
-tree height:    3
-key policy:     LARGE
-
-FS status block (21):
-FS marked consistent
-
-
-#
-# debugfs.reiser4 /dev/sdb2  --print-nodes r4files-sdb.tgz |grep -i
-"UNITS="  | cut -c12-  | sed 's/ /\n/g'  |hesd 
-debugfs.reiser4 1.1.0
-Format release: 4.0.1
-Copyright (C) 2001-2005 by Hans Reiser, licensing governed by
-reiser4progs/COPYING. 
-
-36925(28547)
-65474(32734)
-98209(32735)
-130946(32734)
-163681(32735)
-196418(32734)
-229153(32735)
-261889(32735)
-294626(32734)
-327361(32735)
-
-# debugfs.reiser4 /dev/sdb2  --print-nodes r4files-sdb.tgz |grep -i
-"UNITS="  | cut -c12-  | sed 's/ /\n/g'  | cut -d"(" -f1 |head
-debugfs.reiser4 1.1.0
-Format release: 4.0.1
-Copyright (C) 2001-2005 by Hans Reiser, licensing governed by
-reiser4progs/COPYING. 
-
-36925
-65474
-98209
-130946
-163681
-196418
-229153
-261889
-294626
-327361
-
-
-
--last used block
-# debugfs.reiser4 /dev/sdb2  --print-nodes r4files-sdb.tgz |grep -i
-"UNITS="  | cut -c12-  | sed 's/ /\n/g'  | cut -d"(" -f1 |tail
-debugfs.reiser4 1.1.0
-Format release: 4.0.1
-Copyright (C) 2001-2005 by Hans Reiser, licensing governed by
-reiser4progs/COPYING. 
-
-28120225
-28152961
-28185697
-28187399
-28218433
-28251169
-28283905
-28316641
-28349377
-28382113
-
-
-# debugfs.reiser4 /dev/sdb2  --print-nodes reiser4-for-4.10.0.patch   
-|grep -i "UNITS="  | cut -c12-  | sed 's/ /\n/g'  | cut -d"(" -f1 |tail
-debugfs.reiser4 1.1.0
-Format release: 4.0.1
-Copyright (C) 2001-2005 by Hans Reiser, licensing governed by
-reiser4progs/COPYING. 
-#
-
-# debugfs.reiser4 /dev/sdb2  --print-nodes reiser4-for-4.9.3.patch.gz 
-|grep -i "UNITS="  | cut -c12-  | sed 's/ /\n/g'  | cut -d"(" -f1 |tail
-debugfs.reiser4 1.1.0
-Format release: 4.0.1
-Copyright (C) 2001-2005 by Hans Reiser, licensing governed by
-reiser4progs/COPYING. 
-
-394733
-394886
-
-
-
-
-- block calculations
---------------------
-
-blocks:         85725440
-free blocks:    57365574
-last block used 28382113
-
-total blocks for r4 volume - last block used on r4 volume 
-
-85725440 - 28382113
-
-
-85,725,440 -
-28,382,113
-----------
-57,343,327
-----------
-
-
-volume could shrink to minimum of total blocks for r4 volume - (last block
-used on r4 volume  + 1 ) = [28382114]
-no r4 used blocks need to be altered or moved,
-
--Is this correct ?
-Thanks
---Glenn
+--
+To unsubscribe, send a message with 'unsubscribe linux-mm' in
+the body to majordomo@kvack.org.  For more info on Linux MM,
+see: http://www.linux-mm.org/ .
+Don't email: <a href=mailto:"dont@kvack.org"> email@kvack.org </a>
