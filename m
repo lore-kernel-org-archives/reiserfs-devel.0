@@ -1,68 +1,57 @@
-From: David Sterba <dsterba@suse.cz>
-Subject: Re: [PATCH 4/7] mm: introduce memalloc_nofs_{save,restore} API
-Date: Thu, 9 Mar 2017 12:42:53 +0100
-Message-ID: <20170309114253.GA14605@twin.jikos.cz>
-References: <20170306131408.9828-1-mhocko@kernel.org>
- <20170306131408.9828-5-mhocko@kernel.org>
- <20170306132214.1769368301d9e671e1bc68be@linux-foundation.org>
- <20170307150956.GM28642@dhcp22.suse.cz>
-Reply-To: dsterba@suse.cz
+From: Daniel Horne <daniel.horne@gmail.com>
+Subject: Reiser4 xattr format.
+Date: Fri, 10 Mar 2017 22:22:48 +0000
+Message-ID: <CAJZSrNL=7a4Z7oCc+H2e66wveA9OH2k_kuPYa4YwYq4FkOe+nA@mail.gmail.com>
 Mime-Version: 1.0
-Return-path: <owner-linux-mm@kvack.org>
-Content-Disposition: inline
-In-Reply-To: <20170307150956.GM28642@dhcp22.suse.cz>
-Sender: owner-linux-mm@kvack.org
+Return-path: <reiserfs-devel-owner@vger.kernel.org>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:from:date:message-id:subject:to;
+        bh=6D67PVUPawbvBM0beDLZ0EBllxYH5YVDFNNfkKqv48Q=;
+        b=EOVbruD402Ig3djoVeNJH7YmgQAnKvJWgwJszfztAbuL5FFv6te3cjLRs79OhwHmc4
+         q3tVMTIpScWMGk2pK0lkpwWZzN7oqD5ixxSv5HfHYknygPx/etGD+9vtt4kpCRz1/1tG
+         vc/ClUaJyg9vJAvL7pA2HJtMaAKMiUu8Jz6zgoLEq9WiWzau4Wduc9hHhCp3apjAUOVU
+         FHfuZzur1XmFZez+XzyfS5VrCkbqJzu2gIBKBMOz1vjPYYfPh24xkbgVNx/LXEo4xLHQ
+         lR/00g/FoYtYLtrxl99P8LnAHSQ0liOq8mX/y47R/N9x/ijDXQRtuyN1xpaYp0QMHuuM
+         en8Q==
+Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Michal Hocko <mhocko@kernel.org>
-Cc: Andrew Morton <akpm@linux-foundation.org>, linux-fsdevel@vger.kernel.org, linux-mm@kvack.org, Dave Chinner <david@fromorbit.com>, djwong@kernel.org, Theodore Ts'o <tytso@mit.edu>, Chris Mason <clm@fb.com>, David Sterba <dsterba@suse.cz>, Jan Kara <jack@suse.cz>, ceph-devel@vger.kernel.org, cluster-devel@redhat.com, linux-nfs@vger.kernel.org, logfs@logfs.org, linux-xfs@vger.kernel.org, linux-ext4@vger.kernel.org, linux-btrfs@vger.kernel.org, linux-mtd@lists.infradead.org, reiserfs-devel@vger.kernel.org, linux-ntfs-dev@lists.sourceforge.net, linux-f2fs-devel@lists.sourceforge.net, linux-afs@lists.infradead.org, LKML <linux-kernel@vger.kernel.org>, Vlastimil Babka <vbabka@suse.cz>
+To: Reiserfs mailing list <reiserfs-devel@vger.kernel.org>
 
-On Tue, Mar 07, 2017 at 04:09:56PM +0100, Michal Hocko wrote:
-> On Mon 06-03-17 13:22:14, Andrew Morton wrote:
-> > On Mon,  6 Mar 2017 14:14:05 +0100 Michal Hocko <mhocko@kernel.org> wrote:
-> [...]
-> > > --- a/include/linux/gfp.h
-> > > +++ b/include/linux/gfp.h
-> > > @@ -210,8 +210,16 @@ struct vm_area_struct;
-> > >   *
-> > >   * GFP_NOIO will use direct reclaim to discard clean pages or slab pages
-> > >   *   that do not require the starting of any physical IO.
-> > > + *   Please try to avoid using this flag directly and instead use
-> > > + *   memalloc_noio_{save,restore} to mark the whole scope which cannot
-> > > + *   perform any IO with a short explanation why. All allocation requests
-> > > + *   will inherit GFP_NOIO implicitly.
-> > >   *
-> > >   * GFP_NOFS will use direct reclaim but will not use any filesystem interfaces.
-> > > + *   Please try to avoid using this flag directly and instead use
-> > > + *   memalloc_nofs_{save,restore} to mark the whole scope which cannot/shouldn't
-> > > + *   recurse into the FS layer with a short explanation why. All allocation
-> > > + *   requests will inherit GFP_NOFS implicitly.
-> > 
-> > I wonder if these are worth a checkpatch rule.
-> 
-> I am not really sure, to be honest. This may easilly end up people
-> replacing
-> 
-> do_alloc(GFP_NOFS)
-> 
-> with
-> 
-> memalloc_nofs_save()
-> do_alloc(GFP_KERNEL)
-> memalloc_nofs_restore()
-> 
-> which doesn't make any sense of course. From my experience, people tend
-> to do stupid things just to silent checkpatch warnings very often.
-> Moreover I believe we need to do the transition to the new api first
-> before we can push back on the explicit GFP_NOFS usage. Maybe then we
-> can think about the a checkpatch warning.
+I've been looking into implementing xattr support, but I've a couple
+of questions regarding how to deal with the on-disk format.
 
-I agree will all your objections against adding that to checkpatch, at
-this point it's less harmful to use GFP_NOFS.
+--Do we want all xattrs to be dealt with using the same generic
+handler, or might it be worthwhile implementing a "plugin layer" to
+allow different xattrs to be stored differently?
 
---
-To unsubscribe, send a message with 'unsubscribe linux-mm' in
-the body to majordomo@kvack.org.  For more info on Linux MM,
-see: http://www.linux-mm.org/ .
-Don't email: <a href=mailto:"dont@kvack.org"> email@kvack.org </a>
+I can see that in the case of verifying the security on a file, the
+system would read the username and mode (stat-data), posix ACLs and
+selinux info in quick succession, so it'd be advantageous to store
+those contiguously. In an earlier conversation with E.Shishkin, he
+suggested using a stat-data plugin for xattr support, and I can see
+that being appropriate in the case of ACLs and SELinux contexts, but
+not in the more general case.
+
+-- Are there any guidelines for the layout of the internals of objects
+on Reiser4?
+
+It's a correctness requirement to only return the proper contents for
+a given prefix/xattr name. The easiest way to do this would be to just
+store the full xattr name in each item. Seems a bit redundant, though,
+given that the vast majority of xattr access will be to a couple of
+common attribute types (such as posix ACL and selinux). Perhaps we
+could do this more efficiently by having each attribute name assigned
+a 32-bit int, though we'd have to store a dictionary somewhere on the
+volume to map the full names to these short codes.
+Hashing the name to a fixed size int is also a possibility, though as
+this is a security requirement we'd have to use a cryptographic hash
+of significant length, which probably wouldn't save much space..
+
+-- How to structure the item layout so fsck can cleanly tell a corrupt
+item from a healthy one.
+
+Thanks,
+DH
