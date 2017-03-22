@@ -1,76 +1,85 @@
-From: Ross Vandegrift <ross@kallisti.us>
-Subject: Re: [E-devel] EFL 1.19.0-beta3 (from git) package for Debian
- Experimental
-Date: Tue, 21 Mar 2017 19:55:42 -0400
-Message-ID: <20170321235542.bz3kyjs6fvl5yyrg@stgulik>
-References: <CAM12Q5SCMgk=W0C-==XKzF4bo8CFh-y3QJWfXGcTAD2tV1mJAw@mail.gmail.com>
- <20170320201511.lbmu27zod7buhbcg@vanvanmojo.kallisti.us>
- <CAM12Q5TZqe2WiZXQniYQy_zTArGDsbUgaDujaKTaiYyYMskT9Q@mail.gmail.com>
+From: <doiggl@velocitynet.com.au>
+Subject: Is there a program or some code to print out all details of a reiser4 superblock and what it stores [sdbX] ?
+Date: Wed, 22 Mar 2017 14:08:30 +1100
+Message-ID: <7f109055fbd4ed2fc369734f850863be@mail.velocitynet.com.au>
 Mime-Version: 1.0
-Return-path: <bounce-debian-devel=glddg-debian-devel-5=m.gmane.org@lists.debian.org>
-Content-Disposition: inline
-In-Reply-To: <CAM12Q5TZqe2WiZXQniYQy_zTArGDsbUgaDujaKTaiYyYMskT9Q@mail.gmail.com>
-Resent-Message-ID: <JnqJXip9fuD.A.r3H.d2b0YB@bendel>
-List-Id: <reiserfs-devel.vger.kernel.org>
-List-URL: <https://lists.debian.org/debian-devel/>
-List-Post: <mailto:debian-devel@lists.debian.org>
-List-Help: <mailto:debian-devel-request@lists.debian.org?subject=help>
-List-Subscribe: <mailto:debian-devel-request@lists.debian.org?subject=subscribe>
-List-Unsubscribe: <mailto:debian-devel-request@lists.debian.org?subject=unsubscribe>
-List-Archive: https://lists.debian.org/msgid-search/20170321235542.bz3kyjs6fvl5yyrg@stgulik
+Content-Transfer-Encoding: 8bit
+Return-path: <reiserfs-devel-owner@vger.kernel.org>
+Sender: reiserfs-devel-owner@vger.kernel.org
+List-ID: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Enlightenment developer list <enlightenment-devel@lists.sourceforge.net>
-Cc: debian-devel@lists.debian.org, ReiserFS Development List <reiserfs-devel@vger.kernel.org>
+To: Ivan Shapovalov <intelfx@intelfx.name>
+Cc: Edward Shishkin <edward.shishkin@gmail.com>, Reiserfs development mailing list <reiserfs-devel@vger.kernel.org>
 
-On Mon, Mar 20, 2017 at 04:44:53PM -0700, Jose R R wrote:
-> On Mon, Mar 20, 2017 at 1:19 PM, Ross Vandegrift <ross@kallisti.us> wrote:
-> >
-> > On Sun, Mar 19, 2017 at 11:47:39PM -0700, Jose R R wrote:
-> > > https://git.enlightenment.org/core/efl.git/
-> > >
-> > > Notwithstanding, I intended to package Enlightenment and make download
-> > > available for my SourceForge Debian-Reiser4 netboot installer.
-> > >
-> > > EFL debian packaging:
-> > > http://http.debian.net/debian/pool/main/e/efl/efl_1.18.4-1.debian.tar.xz
-> >
-> > Any reason you want to rebuild from git instead of using the packages in
-> > experimental?  If you've found a problem, I'd like to fix it.  On sid &
-> > stretch they should install without difficulty.
-> 
-> I will try anything, until something works. Then I will proceed to
-> work on the backport for the stable Debian (Jessie) to complement
-> Reiser4 kernel, backported{ linux-base, nfs-common, reiser4progs
-> (reiser4 fs utilities), etc.}. If I install packages directly from
-> Debian unstable(Sid), testing (Stretch), or -- in this particular
-> case, experimental -- repositories onto stable/Jessie-backports, the
-> end user will end up with dependency hell, i.e, broken installation.
+#
+Hello
+Edward, Ivan, list: 
+Question:
+Is there a program or some code to print out all details of a reiser4
+superblock and what it stores ?
+Thanks
+--Glenn
 
-Oh I see - I misunderstood your previous message and thought you were
-targeting sid.  You need to backport + rebuild for jessie.  IIRC, the
-only change I needed was to remove the auto dbgsym stuff.
+# fsck.reiser4 -y --check /dev/sdb2
+*******************************************************************
+This is an EXPERIMENTAL version of fsck.reiser4. Read README first.
+*******************************************************************
 
-[snip]
-> FAIL: tests/evas/evas_suite
-> ===========================
-> 
-> /mnt/caxtolli/usr/src/build/enlightenment-debian/sid-omeyi/efl-1.18.4/src/tests/evas/.libs/evas_suite: symbol lookup error: /mnt/caxtolli/usr/src/build/enlightenment-debian/sid-omeyi/efl-1.18.4/src/lib/efl/.libs/libefl.so.1: undefined symbol: _eo_call_end
-> FAIL tests/evas/evas_suite (exit status: 127)
+Fscking the /dev/sdb2 block device.                                       
+                                
+Will check the consistency of the Reiser4 SuperBlock.                     
+                                
+Will check the consistency of the Reiser4 FileSystem.                     
+                                
+***** fsck.reiser4 started at Wed Mar 22 13:03:37 2017
+Reiser4 fs was detected on /dev/sdb2.                                     
+                                
+Master super block (16): 
+magic:          ReIsEr4 
+blksize:        4096 
+format:         0x0 (format40) 
+uuid:           139d06a8-1886-44a0-a058-8f9da1ab88cf 
+label:          <none> 
+ 
+Format super block (17): 
+plugin:         format40 
+description:    Disk-format plugin. 
+version:        1 
+magic:          ReIsEr40FoRmAt 
+mkfs id:        0x14b9244f 
+flushes:        18446744073709551615 
+blocks:         85725440 
+free blocks:    56409668 
+root block:     29252877 
+tail policy:    0x2 (smart) 
+next oid:       0x19612 
+file count:     27 
+tree height:    5 
+key policy:     LARGE 
+ 
+ 
+CHECKING THE STORAGE TREE                                                 
+                                
+        Read nodes 833657                                                 
+                                
+        Nodes left in the tree 833657 
+                Leaves of them 824168, Twigs of them 9377 
+        Time interval: Wed Mar 22 13:03:58 2017 - Wed Mar 22 13:05:44 2017
 
-This seems suspicious - the linker can't find a symbol in libefl.so.
-Are you building with some other patches?
+CHECKING EXTENT REGIONS.                                                  
+                                
+        Read twigs 9377                                                   
+                                
+        Time interval: Wed Mar 22 13:05:44 2017 - Wed Mar 22 13:05:45 2017
 
-[snip]
-> FAIL: tests/eio/eio_suite
-> =========================
-> 
-> Running suite(s): Eio
-[snip]
-> 98%: Checks: 51, Failures: 1, Errors: 0
-> tests/eio/eio_test_manager.c:68:F:Eio Job:efl_io_manager_test_ls_funcs:0: Failure '(*number_of_listed_files) != test_count' occurred
+CHECKING THE SEMANTIC TREE                                                
+                                
+        Found 27 objects (some could be encountered more then once).      
+                                
+        Time interval: Wed Mar 22 13:05:45 2017 - Wed Mar 22 13:05:54 2017
 
-I don't recall seeing this test fail before, sorry.
+***** fsck.reiser4 finished at Wed Mar 22 13:05:54 2017
+Closing fs...done
 
-Ross
+FS is consistent.
 
