@@ -1,85 +1,53 @@
-From: <doiggl@velocitynet.com.au>
-Subject: Is there a program or some code to print out all details of a reiser4 superblock and what it stores [sdbX] ?
-Date: Wed, 22 Mar 2017 14:08:30 +1100
-Message-ID: <7f109055fbd4ed2fc369734f850863be@mail.velocitynet.com.au>
-Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
+From: Arnd Bergmann <arnd@arndb.de>
+Subject: [PATCH] reiserfs: avoid a -Wmaybe-uninitialized warning
+Date: Thu, 23 Mar 2017 16:06:13 +0100
+Message-ID: <20170323150627.347589-1-arnd@arndb.de>
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
+MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
-To: Ivan Shapovalov <intelfx@intelfx.name>
-Cc: Edward Shishkin <edward.shishkin@gmail.com>, Reiserfs development mailing list <reiserfs-devel@vger.kernel.org>
+Content-Transfer-Encoding: 7bit
+To: 
+Cc: Andrew Morton <akpm@linux-foundation.org>, Jan Kara <jack@suse.cz>, Arnd Bergmann <arnd@arndb.de>, reiserfs-devel@vger.kernel.org, linux-kernel@vger.kernel.org
 
-#
-Hello
-Edward, Ivan, list: 
-Question:
-Is there a program or some code to print out all details of a reiser4
-superblock and what it stores ?
-Thanks
---Glenn
+The latest gcc-7.0.1 snapshot warns about an unintialized variable use:
 
-# fsck.reiser4 -y --check /dev/sdb2
-*******************************************************************
-This is an EXPERIMENTAL version of fsck.reiser4. Read README first.
-*******************************************************************
+In file included from fs/reiserfs/lbalance.c:8:0:
+fs/reiserfs/lbalance.c: In function 'leaf_item_bottle.isra.3':
+fs/reiserfs/reiserfs.h:1279:13: error: '*((void *)&n_ih+8).v' may be used uninitialized in this function [-Werror=maybe-uninitialized]
+  v2->v = (v2->v & cpu_to_le64(15ULL << 60)) | cpu_to_le64(offset);
+           ~~^~~
+fs/reiserfs/reiserfs.h:1279:13: error: '*((void *)&n_ih+8).v' may be used uninitialized in this function [-Werror=maybe-uninitialized]
+  v2->v = (v2->v & cpu_to_le64(15ULL << 60)) | cpu_to_le64(offset);
 
-Fscking the /dev/sdb2 block device.                                       
-                                
-Will check the consistency of the Reiser4 SuperBlock.                     
-                                
-Will check the consistency of the Reiser4 FileSystem.                     
-                                
-***** fsck.reiser4 started at Wed Mar 22 13:03:37 2017
-Reiser4 fs was detected on /dev/sdb2.                                     
-                                
-Master super block (16): 
-magic:          ReIsEr4 
-blksize:        4096 
-format:         0x0 (format40) 
-uuid:           139d06a8-1886-44a0-a058-8f9da1ab88cf 
-label:          <none> 
+This happens because the offset/type pair that is stored in
+ih.key.u.k_offset_v2 is actually uninitialized when we call
+set_le_ih_k_offset() and set_le_ih_k_type(). After we have called both,
+all data is correct, but the first of the two reads uninitialized data
+for the type field and writes it back before it gets overwritten.
+
+This works around the warning by initializing the k_offset_v2 through
+the slightly larger memcpy().
+
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+---
+ fs/reiserfs/lbalance.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/fs/reiserfs/lbalance.c b/fs/reiserfs/lbalance.c
+index 249594a821e0..8eed8f5f6881 100644
+--- a/fs/reiserfs/lbalance.c
++++ b/fs/reiserfs/lbalance.c
+@@ -475,7 +475,7 @@ static void leaf_item_bottle(struct buffer_info *dest_bi,
+ 			 * 'cpy_bytes'; create new item header;
+ 			 * n_ih = new item_header;
+ 			 */
+-			memcpy(&n_ih, ih, SHORT_KEY_SIZE);
++			memcpy(&n_ih, ih, KEY_SIZE);
  
-Format super block (17): 
-plugin:         format40 
-description:    Disk-format plugin. 
-version:        1 
-magic:          ReIsEr40FoRmAt 
-mkfs id:        0x14b9244f 
-flushes:        18446744073709551615 
-blocks:         85725440 
-free blocks:    56409668 
-root block:     29252877 
-tail policy:    0x2 (smart) 
-next oid:       0x19612 
-file count:     27 
-tree height:    5 
-key policy:     LARGE 
- 
- 
-CHECKING THE STORAGE TREE                                                 
-                                
-        Read nodes 833657                                                 
-                                
-        Nodes left in the tree 833657 
-                Leaves of them 824168, Twigs of them 9377 
-        Time interval: Wed Mar 22 13:03:58 2017 - Wed Mar 22 13:05:44 2017
-
-CHECKING EXTENT REGIONS.                                                  
-                                
-        Read twigs 9377                                                   
-                                
-        Time interval: Wed Mar 22 13:05:44 2017 - Wed Mar 22 13:05:45 2017
-
-CHECKING THE SEMANTIC TREE                                                
-                                
-        Found 27 objects (some could be encountered more then once).      
-                                
-        Time interval: Wed Mar 22 13:05:45 2017 - Wed Mar 22 13:05:54 2017
-
-***** fsck.reiser4 finished at Wed Mar 22 13:05:54 2017
-Closing fs...done
-
-FS is consistent.
+ 			/* Endian safe, both le */
+ 			n_ih.ih_version = ih->ih_version;
+-- 
+2.9.0
 
