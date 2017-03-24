@@ -1,137 +1,98 @@
-From: Jan Kara <jack@suse.cz>
-Subject: Re: [PATCH] reiserfs: avoid a -Wmaybe-uninitialized warning
-Date: Thu, 23 Mar 2017 19:25:51 +0100
-Message-ID: <20170323182551.GA32502@quack2.suse.cz>
-References: <20170323150627.347589-1-arnd@arndb.de>
+From: Jose R R <jose.r.r@metztli.com>
+Subject: Re: [E-devel] EFL 1.19.0-beta3 (from git) package for Debian
+	Experimental
+Date: Fri, 24 Mar 2017 05:24:28 -0700
+Message-ID: <CAM12Q5Rh5dqgJ-OXMnO8R0kk3xFuNcrsO4EBkpvN78vHgd=FxA@mail.gmail.com>
+References: <CAM12Q5SCMgk=W0C-==XKzF4bo8CFh-y3QJWfXGcTAD2tV1mJAw@mail.gmail.com>
+	<20170320201511.lbmu27zod7buhbcg@vanvanmojo.kallisti.us>
+	<CAM12Q5TZqe2WiZXQniYQy_zTArGDsbUgaDujaKTaiYyYMskT9Q@mail.gmail.com>
+	<20170321235542.bz3kyjs6fvl5yyrg@stgulik>
+	<CAM12Q5QJUfF+sLdL6-hipQi610jAHfqY_dNsBG7POFVteqRh5A@mail.gmail.com>
+	<20170323125510.3w5ov7rr226662m4@vanvanmojo.kallisti.us>
+Reply-To: Enlightenment developer list
+	<enlightenment-devel@lists.sourceforge.net>
 Mime-Version: 1.0
-Content-Type: multipart/mixed; boundary="KsGdsel6WgEHnImy"
-Return-path: <reiserfs-devel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20170323150627.347589-1-arnd@arndb.de>
-Sender: reiserfs-devel-owner@vger.kernel.org
-List-ID: <reiserfs-devel.vger.kernel.org>
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: Andrew Morton <akpm@linux-foundation.org>, Jan Kara <jack@suse.cz>, reiserfs-devel@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <enlightenment-devel-bounces@lists.sourceforge.net>
+In-Reply-To: <20170323125510.3w5ov7rr226662m4@vanvanmojo.kallisti.us>
+List-Id: <reiserfs-devel.vger.kernel.org>
+List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/enlightenment-devel>,
+	<mailto:enlightenment-devel-request@lists.sourceforge.net?subject=unsubscribe>
+List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=enlightenment-devel>
+List-Post: <mailto:enlightenment-devel@lists.sourceforge.net>
+List-Help: <mailto:enlightenment-devel-request@lists.sourceforge.net?subject=help>
+List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/enlightenment-devel>,
+	<mailto:enlightenment-devel-request@lists.sourceforge.net?subject=subscribe>
+Errors-To: enlightenment-devel-bounces@lists.sourceforge.net
+To: Enlightenment developer list <enlightenment-devel@lists.sourceforge.net>
+Cc: debian-devel@lists.debian.org, ReiserFS Development List <reiserfs-devel@vger.kernel.org>
+
+On Thu, Mar 23, 2017 at 5:55 AM, Ross Vandegrift <ross@kallisti.us> wrote:
+> On Wed, Mar 22, 2017 at 04:50:38AM -0700, Jose R R wrote:
+>> First I modify debian/rules, option: --enable-fb
+>>
+-------------------------------------------------------------------------------------------------------------------------------------------------
+>> [...]
+>> ifeq (linux,$(DEB_HOST_ARCH_OS))
+>>         arch_flags += --enable-fb    <=## Directive is overlooked. DEB
+>> build fails *because* it's missing
+>> [...]
+>> override_dh_auto_configure:
+>>         dh_auto_configure --verbose -- \
+>>         [...]
+>>         --enable-fb \       <=## Added explicitly here, satisfies
+dh_install
+>>         $(arch_flags)
+>> [...]
+>>
+------------------------------------------------------------------------------------------------------------------------------------------------
+>
+> You only need this change because you're calling debian/rules directly.
+> If you use dpkg-buildpackage then DEB_HOST_ARCH_OS will be set, and the
+> Makefile will automatically add --enable-fb.
+>
+
+Until recently I followed Debian Handbook debian/rules 'directly'
+guidelines for building the Debianized kernel:
+
+https://kernel-handbook.alioth.debian.org/ch-common-tasks.html#s-common-official
+
+--and still do for all other software I've backported; thus, I thought
+build of EFL DEBs as similar.
+
+Then I began to use dpkg-buildpackage to build my Jessie-backports of
+Reiser4-patched Debian kernels due to debian/rules procedure unexpectedly
+failing to build subsequently newer kernel packages.
+
+Notwithstanding, using dpkg-buildpackage to build EFL indeed does
+--enable-fb but does not build (after skipping referenced tests in this
+thread) the following two packages, which using debian/rules 'directly'
+*does* build (.1, of course, after dch):
+
+efl-1.18.4-1.1-DEBs/efl-doc_1.18.4-1.1_all.deb
+efl-1.18.4-1.1-DEBs/libelementary-data_1.18.4-1.1_all.deb
+
+Probably irrelevant but just letting you know.
+
+Anyhow, I appreciate all the helpful input from everyone involved. I was
+able to build EFL DEBs and I just have to alter certain variables and/or
+build environment to find a proper optimization.
+
+Thank you all.
 
 
---KsGdsel6WgEHnImy
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Best Professional Regards.
 
-On Thu 23-03-17 16:06:13, Arnd Bergmann wrote:
-> The latest gcc-7.0.1 snapshot warns about an unintialized variable use:
-> 
-> In file included from fs/reiserfs/lbalance.c:8:0:
-> fs/reiserfs/lbalance.c: In function 'leaf_item_bottle.isra.3':
-> fs/reiserfs/reiserfs.h:1279:13: error: '*((void *)&n_ih+8).v' may be used uninitialized in this function [-Werror=maybe-uninitialized]
->   v2->v = (v2->v & cpu_to_le64(15ULL << 60)) | cpu_to_le64(offset);
->            ~~^~~
-> fs/reiserfs/reiserfs.h:1279:13: error: '*((void *)&n_ih+8).v' may be used uninitialized in this function [-Werror=maybe-uninitialized]
->   v2->v = (v2->v & cpu_to_le64(15ULL << 60)) | cpu_to_le64(offset);
-> 
-> This happens because the offset/type pair that is stored in
-> ih.key.u.k_offset_v2 is actually uninitialized when we call
-> set_le_ih_k_offset() and set_le_ih_k_type(). After we have called both,
-> all data is correct, but the first of the two reads uninitialized data
-> for the type field and writes it back before it gets overwritten.
-> 
-> This works around the warning by initializing the k_offset_v2 through
-> the slightly larger memcpy().
-> 
-> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-
-Thanks. I've queued up slightly updated patch (attached).
-
-								Honza
-
-> ---
->  fs/reiserfs/lbalance.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/fs/reiserfs/lbalance.c b/fs/reiserfs/lbalance.c
-> index 249594a821e0..8eed8f5f6881 100644
-> --- a/fs/reiserfs/lbalance.c
-> +++ b/fs/reiserfs/lbalance.c
-> @@ -475,7 +475,7 @@ static void leaf_item_bottle(struct buffer_info *dest_bi,
->  			 * 'cpy_bytes'; create new item header;
->  			 * n_ih = new item_header;
->  			 */
-> -			memcpy(&n_ih, ih, SHORT_KEY_SIZE);
-> +			memcpy(&n_ih, ih, KEY_SIZE);
->  
->  			/* Endian safe, both le */
->  			n_ih.ih_version = ih->ih_version;
-> -- 
-> 2.9.0
-> 
 -- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
-
---KsGdsel6WgEHnImy
-Content-Type: text/x-patch; charset=us-ascii
-Content-Disposition: attachment; filename="0001-reiserfs-avoid-a-Wmaybe-uninitialized-warning.patch"
-
-From ab4949640d6674b617b314ad3c2c00353304bab9 Mon Sep 17 00:00:00 2001
-From: Arnd Bergmann <arnd@arndb.de>
-Date: Thu, 23 Mar 2017 16:06:13 +0100
-Subject: [PATCH] reiserfs: avoid a -Wmaybe-uninitialized warning
-
-The latest gcc-7.0.1 snapshot warns about an unintialized variable use:
-
-In file included from fs/reiserfs/lbalance.c:8:0:
-fs/reiserfs/lbalance.c: In function 'leaf_item_bottle.isra.3':
-fs/reiserfs/reiserfs.h:1279:13: error: '*((void *)&n_ih+8).v' may be used uninitialized in this function [-Werror=maybe-uninitialized]
-  v2->v = (v2->v & cpu_to_le64(15ULL << 60)) | cpu_to_le64(offset);
-           ~~^~~
-fs/reiserfs/reiserfs.h:1279:13: error: '*((void *)&n_ih+8).v' may be used uninitialized in this function [-Werror=maybe-uninitialized]
-  v2->v = (v2->v & cpu_to_le64(15ULL << 60)) | cpu_to_le64(offset);
-
-This happens because the offset/type pair that is stored in
-ih.key.u.k_offset_v2 is actually uninitialized when we call
-set_le_ih_k_offset() and set_le_ih_k_type(). After we have called both,
-all data is correct, but the first of the two reads uninitialized data
-for the type field and writes it back before it gets overwritten.
-
-This works around the warning by initializing the k_offset_v2 through
-the slightly larger memcpy().
-
-[JK: Remove now unused define and make it obvious we initialize the key]
-
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-Signed-off-by: Jan Kara <jack@suse.cz>
----
- fs/reiserfs/lbalance.c | 2 +-
- fs/reiserfs/reiserfs.h | 1 -
- 2 files changed, 1 insertion(+), 2 deletions(-)
-
-diff --git a/fs/reiserfs/lbalance.c b/fs/reiserfs/lbalance.c
-index 249594a821e0..f5cebd70d903 100644
---- a/fs/reiserfs/lbalance.c
-+++ b/fs/reiserfs/lbalance.c
-@@ -475,7 +475,7 @@ static void leaf_item_bottle(struct buffer_info *dest_bi,
- 			 * 'cpy_bytes'; create new item header;
- 			 * n_ih = new item_header;
- 			 */
--			memcpy(&n_ih, ih, SHORT_KEY_SIZE);
-+			memcpy(&n_ih.ih_key, &ih->ih_key, KEY_SIZE);
- 
- 			/* Endian safe, both le */
- 			n_ih.ih_version = ih->ih_version;
-diff --git a/fs/reiserfs/reiserfs.h b/fs/reiserfs/reiserfs.h
-index 2adcde137c3f..5dcf3ab83886 100644
---- a/fs/reiserfs/reiserfs.h
-+++ b/fs/reiserfs/reiserfs.h
-@@ -1326,7 +1326,6 @@ struct cpu_key {
- #define KEY_NOT_FOUND 0
- 
- #define KEY_SIZE (sizeof(struct reiserfs_key))
--#define SHORT_KEY_SIZE (sizeof (__u32) + sizeof (__u32))
- 
- /* return values for search_by_key and clones */
- #define ITEM_FOUND 1
--- 
-2.10.2
-
-
---KsGdsel6WgEHnImy--
+Jose R R
+http://metztli.it
+---------------------------------------------------------------------------------------------
+Download Debian-Reiser4 for AMD64 https://sf.net/projects/debian-reiser4/
+---------------------------------------------------------------------------------------------
+Try at no charge http://b2evolution.net for http://OpenShift.com PaaS
+---------------------------------------------------------------------------------------------
+from our GitHub http://Nepohualtzintzin.com repository. Cloud the easy way!
+------------------------------------------------------------------------------
+Check out the vibrant tech community on one of the world's most
+engaging tech sites, Slashdot.org! http://sdm.link/slashdot
