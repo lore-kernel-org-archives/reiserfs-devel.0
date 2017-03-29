@@ -1,116 +1,122 @@
-From: Cyril Brulebois <kibi@debian.org>
+From: Jose R R <jose@metztli-it.com>
 Subject: Re: Bug#858849: installation-reports: Successful Jessie installation
  with backported kernel 4.9.16-1+reiser4.0.1 on i915 system AMD64
-Date: Wed, 29 Mar 2017 17:48:39 +0200
-Message-ID: <20170329154839.GE17320@mraw.org>
+Date: Wed, 29 Mar 2017 09:27:42 -0700
+Message-ID: <CAM12Q5TtciuHO-mPiyXE6E_WmvVM_A5N_fxrYVbqZdrCUSxcXQ@mail.gmail.com>
 References: <20170327163053.8989.51286.reportbug@xiuhcohuatl.metztli-it.com>
- <20170328030000.GC27809@mraw.org>
- <CAM12Q5QoPtqyE7V0oshZRQOraVJV-82PrYFhytNfwRNBoaRA9g@mail.gmail.com>
+ <20170328030000.GC27809@mraw.org> <CAM12Q5QoPtqyE7V0oshZRQOraVJV-82PrYFhytNfwRNBoaRA9g@mail.gmail.com>
+ <20170329154839.GE17320@mraw.org>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="EXKGNeO8l0xGFBjy"
+Content-Transfer-Encoding: quoted-printable
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mraw.org; s=mail;
-        h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date; bh=1w21jXA9LrCLFeSER/sRuRQq3DfPgM8geN2t51TKnpo=;
-        b=WXtZP0HGzLadp3xEv49z19ICwlTej1wIO3GODpWbpKM/cbi4meSN8+gIbR9uOKsw0NN5tDxVGO9XwxDUxypijt/Ph1z4NnJGmMCwuUSyV1H9MAnVWVDV5yeJQwiXW5uHC8fO5g1EKwni6IZg2jVyDrEGVqKg/aj33aYWs7ebX1I=;
-Content-Disposition: inline
-In-Reply-To: <CAM12Q5QoPtqyE7V0oshZRQOraVJV-82PrYFhytNfwRNBoaRA9g@mail.gmail.com>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=metztli-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:sender:in-reply-to:references:from:date:message-id
+         :subject:to:cc:content-transfer-encoding;
+        bh=JYIZmEKX8bwzrfniK/muX/kdlRHMDOXX5TGOtUvBE3Y=;
+        b=C/6keQchzBAOVseAui7u+36j05L0GzTfUJqmeL547UCX5A7tjs2FD5m9LKuiDgR7Pv
+         REue444CCSRxIR8cdEJ4Z9aYZQn9VVvjSjJyGFIuQRC4qRCJyI0rx0gSzxryiN6dUEDe
+         1i6Egk3nN705WAvHv+hUJsLRDtgEma2krDBnk27t5DvCHSX9ACPOHzjlhMLVeGu+dkXB
+         sSXq7WOmwREZtC38FOB+tT5M5YC2BQWe0nL1uyk9OSBnkC6P2PnBCr4xcMKPAS6WcndP
+         b7P6AdNJnP7BXzZLkQ2HJoTTYGxZWlpWGVASRsNxUwR6yWhOA98O0KLtm/fSIjsTe/af
+         hZtw==
+In-Reply-To: <20170329154839.GE17320@mraw.org>
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
-To: Jose R R <jose@metztli-it.com>
+Content-Type: text/plain; charset="utf-8"
+To: Cyril Brulebois <kibi@debian.org>
 Cc: 858849@bugs.debian.org, ReiserFS Development List <reiserfs-devel@vger.kernel.org>
 
+Niltze,
 
---EXKGNeO8l0xGFBjy
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On Wed, Mar 29, 2017 at 8:48 AM, Cyril Brulebois <kibi@debian.org> wrote:
+> Hi,
+>
+> Jose R R <jose@metztli-it.com> (2017-03-29):
+>> With all due respect, 99% of the build code for the debian-installer
+>> is yours. As well as the build pulls 99% UDEBs from official debian
+>> repositories.
+>
+> That doesn't mean that everything built on top of it has to be reported
+> on Debian mailing lists and bug tracker. See derivative distributions,
+> they have their own issue tracker, and only forward specific issues.
+>
+>> i.e., this is a Debian issue, not mine -- as I did not even touch that
+>> code and/or modules -- which 1 month ago actually did work smooth:
+>>
+>> Netboot debian-installer was unable to load firmware from second USB
+>> for wifi connection; accordingly, in another virtual screen, I mounted
+>> the 2nd USB and manually copied the firmware directory onto the
+>> installer environment /lib. d-i then detected the wifi signal, etc.
+>>
+>>
+>> Second, report on this unofficial jessie-backports kernel
+>> 4.9.16-1+reiser4.0.1 sheds light on the fact I experienced *no issue*
+>> with module i915, as had been reported by (maintainer?): <
+>> https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=3D858078 > thus, in a
+>> collateral manner, I am contributing to official debian development.
+>
+> If you want to reply to submitters/maintainers, reply to specific bug
+> reports/threads, instead of sending lengthy mails to other people?
+>
+>> Finally, I am not requesting *any* support. I am simply reporting that
+>> your d-i pulling official UDEBs actually have been successful, with
+>> minor modifications and a few extra UDEBs of mine, in my installation
+>> experience, following Debian documentation guidelines:
+>
+> I haven't put words in your mouth and suggested you were requesting some
+> support. I'm just not convinced such reports are useful. If you
+> encounter specific issues, report specific bug reports against the
+> relevant component.
+>
+> debian-boot@ isn't and shouldn't be the destination of each and every
+> thing connected to, or merely using, Debian Installer.
+>
+>> "We also encourage installation reports to be sent even if the
+>> installation is successful, so that we can get as much information as
+>> possible on the largest number of hardware configurations." <
+>> https://www.debian.org/releases/stable/amd64/ch05s04.html.en#submit-bug
+>> >
+>
+> Sure, with official images.
+>
+>> If you are still 'bothered' with my sporadic submissions, I encourage
+>> you to modify the documentation to specifically exclude the glaring
+>> omission.
+>
+> I could be adding a specific =E2=80=9Cwe don't need reiser4-specific repo=
+rts=E2=80=9D
 
-Hi,
+Please do add that phrase; thus removing any ambiguities and cover the
+glaring omission in the Debian documentation.
 
-Jose R R <jose@metztli-it.com> (2017-03-29):
-> With all due respect, 99% of the build code for the debian-installer
-> is yours. As well as the build pulls 99% UDEBs from official debian
-> repositories.
+That clarification will prevent other individuals -- who have
+downloaded the netboot installer from SourceForge -- from potentially
+reporting via the debian mechanism -- once the installation completes.
 
-That doesn't mean that everything built on top of it has to be reported
-on Debian mailing lists and bug tracker. See derivative distributions,
-they have their own issue tracker, and only forward specific issues.
-
-> i.e., this is a Debian issue, not mine -- as I did not even touch that
-> code and/or modules -- which 1 month ago actually did work smooth:
->=20
-> Netboot debian-installer was unable to load firmware from second USB
-> for wifi connection; accordingly, in another virtual screen, I mounted
-> the 2nd USB and manually copied the firmware directory onto the
-> installer environment /lib. d-i then detected the wifi signal, etc.
->=20
->=20
-> Second, report on this unofficial jessie-backports kernel
-> 4.9.16-1+reiser4.0.1 sheds light on the fact I experienced *no issue*
-> with module i915, as had been reported by (maintainer?): <
-> https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=3D858078 > thus, in a
-> collateral manner, I am contributing to official debian development.
-
-If you want to reply to submitters/maintainers, reply to specific bug
-reports/threads, instead of sending lengthy mails to other people?
-
-> Finally, I am not requesting *any* support. I am simply reporting that
-> your d-i pulling official UDEBs actually have been successful, with
-> minor modifications and a few extra UDEBs of mine, in my installation
-> experience, following Debian documentation guidelines:
-
-I haven't put words in your mouth and suggested you were requesting some
-support. I'm just not convinced such reports are useful. If you
-encounter specific issues, report specific bug reports against the
-relevant component.
-
-debian-boot@ isn't and shouldn't be the destination of each and every
-thing connected to, or merely using, Debian Installer.
-
-> "We also encourage installation reports to be sent even if the
-> installation is successful, so that we can get as much information as
-> possible on the largest number of hardware configurations." <
-> https://www.debian.org/releases/stable/amd64/ch05s04.html.en#submit-bug
-> >
-
-Sure, with official images.
-
-> If you are still 'bothered' with my sporadic submissions, I encourage
-> you to modify the documentation to specifically exclude the glaring
-> omission.
-
-I could be adding a specific =E2=80=9Cwe don't need reiser4-specific report=
-s=E2=80=9D
-there, but I would hope this isn't needed, since the only submitter of
-such reports against images we don't build, publish, or support, seems
-to be you.
-
-Thanks for your cooperation.
+Additionally, appending =E2=80=9Cwe don't need reiser4-specific reports=E2=
+=80=9D will
+be a welcome *explicit* change in policy from other FOSS projects,
+like GNU Parted, where the unspoken censorship on reiser4 bites anyone
+who submits patches in support of the
+'Batman Machine': Reiser4
+< https://metztli.it/readOnlyEphemeral/Batman_Machine-Reiser4.pdf >
 
 
-KiBi.
+Again, thank you.
 
---EXKGNeO8l0xGFBjy
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
+Best Professional Regards.
 
-iQIcBAEBCAAGBQJY29dIAAoJEP+RSvDCs1UgOZsQALbJNvkrPdP2aUM+om+Qv9ow
-W1YbTbX4bIUnix/sdAEVvj6EMc+2s23tkweRTNdaPmv+o60iVxVhe28987e5k1pz
-j8HatFfNTd4qS1zTpUn6NhNMEeN7JAUNTf3BaocY4VF3jN6KTB1tYjNTtOtu6XVg
-BAzKIuloGSYVOskF/0i4vyucPPfCgKJddl4QQiR9F6M16usqPRqAl1DJuQ2gII0y
-tgRPzjQXuSx7LWnf+D10PdV4c3oSRkbVMydp2C7F4KN0hkczIWNrDzg3106ScAxi
-mmx0A1DQtFT0sTjExqXMIFsAwFNaKKQrdtqStDIPR3HkCcLvgVkW00ZD7BhLKiBK
-hwXd/fcca7DIcVw8NSYzdSQ7u903YlJ+G2YJzJxXKFo5yAQWQpe87aUulbWVm9hR
-Qoy0xC76dkW8ddKlfZ6azxMdts5fG3LSura87LNzKC8+IrYE21TrvfhgLaLQtneV
-9eg2zOsovM7NTPPY4z/tZ6UuZXh47QW3W0yLQhFsT+dXQCmjtCKV+HOJhUXXT+iH
-Rk0GH6h/PAe4uFSxY+OUV5NeOrTOLHJqNUb/eC5e7tD4c1+FPPCl4SyD+XnrzakW
-y2Z1sKlGc1nlwMFHciIWzSwy01VlfeDfMR5Yd1Z+6UHOyqsZl88uMhTSB1PUlEoK
-4wmBH1GVTWpCixf0e9vI
-=SK2+
------END PGP SIGNATURE-----
-
---EXKGNeO8l0xGFBjy--
+--=20
+Jose R R
+http://metztli.it
+---------------------------------------------------------------------------=
+------------------
+Download Debian-Reiser4 for AMD64 https://sf.net/projects/debian-reiser4/
+---------------------------------------------------------------------------=
+------------------
+Try at no charge http://b2evolution.net for http://OpenShift.com PaaS
+---------------------------------------------------------------------------=
+------------------
+from our GitHub http://Nepohualtzintzin.com repository. Cloud the easy way!
