@@ -1,75 +1,73 @@
-From: Steve McIntyre <steve@einval.com>
-Subject: Bug#858849: installation-reports: Successful Jessie installation with backported kernel 4.9.16-1+reiser4.0.1 on i915 system AMD64
-Date: Wed, 29 Mar 2017 17:46:33 +0100
-Message-ID: <20170329164633.GE1983@einval.com>
-References: <20170327163053.8989.51286.reportbug@xiuhcohuatl.metztli-it.com>
- <20170328030000.GC27809@mraw.org>
- <CAM12Q5QoPtqyE7V0oshZRQOraVJV-82PrYFhytNfwRNBoaRA9g@mail.gmail.com>
- <20170329154839.GE17320@mraw.org>
- <CAM12Q5TtciuHO-mPiyXE6E_WmvVM_A5N_fxrYVbqZdrCUSxcXQ@mail.gmail.com>
-Reply-To: Steve McIntyre <steve@einval.com>, 858849@bugs.debian.org
+From: Kees Cook <keescook@chromium.org>
+Subject: [RESEND][PATCH] reiserfs: Use designated initializers
+Date: Wed, 29 Mar 2017 14:04:19 -0700
+Message-ID: <20170329210419.GA40066@beast>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Return-path: <bounce-debian-bugs-dist=glddb-debian-bugs-dist=m.gmane.org@lists.debian.org>
-Resent-To: debian-bugs-dist@lists.debian.org
-Resent-Message-ID: <handler.858849.B858849.149080603414293@bugs.debian.org>
+Return-path: <reiserfs-devel-owner@vger.kernel.org>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=date:from:to:cc:subject:message-id:mime-version:content-disposition;
+        bh=KT+s54FhzY3Fg20NYOjZ6R/1wLbNwI/xhrF/5SgUDkw=;
+        b=b1m/S50Xr/CYmkS1hzuU7jXQQBlvpdJEUwKGY3jK6o5GKKSZDmNHsgeuKwVGOCsw6t
+         DlKZo6H1Ew0z3CnRD34jvfherAK3+4+JilWTde4rn0BjRr6APLMzC78WYPC6WQ8nZitd
+         8IBP7j1wzXKm5GGKm2Hs2M+pP8YldiTOV3WdI=
 Content-Disposition: inline
-In-Reply-To: <CAM12Q5TtciuHO-mPiyXE6E_WmvVM_A5N_fxrYVbqZdrCUSxcXQ@mail.gmail.com>
-List-Id: <reiserfs-devel.vger.kernel.org>
-List-URL: <https://lists.debian.org/debian-bugs-dist/>
-List-Post: <mailto:debian-bugs-dist@lists.debian.org>
-List-Help: <mailto:debian-bugs-dist-request@lists.debian.org?subject=help>
-List-Subscribe: <mailto:debian-bugs-dist-request@lists.debian.org?subject=subscribe>
-List-Unsubscribe: <mailto:debian-bugs-dist-request@lists.debian.org?subject=unsubscribe>
-Content-Type: text/plain; charset="utf-8"
-To: Jose R R <jose@metztli-it.com>, 858849@bugs.debian.org
-Cc: Cyril Brulebois <kibi@debian.org>, ReiserFS Development List <reiserfs-devel@vger.kernel.org>
+Sender: reiserfs-devel-owner@vger.kernel.org
+List-ID: <reiserfs-devel.vger.kernel.org>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: linux-kernel@vger.kernel.org, reiserfs-devel@vger.kernel.org
 
-Hi,
+Prepare to mark sensitive kernel structures for randomization by making
+sure they're using designated initializers. These were identified during
+allyesconfig builds of x86, arm, and arm64, with most initializer fixes
+extracted from grsecurity.
 
-On Wed, Mar 29, 2017 at 09:27:42AM -0700, Jose R R wrote:
->On Wed, Mar 29, 2017 at 8:48 AM, Cyril Brulebois <kibi@debian.org> wrote:
->> Jose R R <jose@metztli-it.com> (2017-03-29):
->>
->>> "We also encourage installation reports to be sent even if the
->>> installation is successful, so that we can get as much information as
->>> possible on the largest number of hardware configurations." <
->>> https://www.debian.org/releases/stable/amd64/ch05s04.html.en#submit-bug
->>> >
->>
->> Sure, with official images.
->>
->>> If you are still 'bothered' with my sporadic submissions, I encourage
->>> you to modify the documentation to specifically exclude the glaring
->>> omission.
->>
->> I could be adding a specific “we don't need reiser4-specific reports”
->
->Please do add that phrase; thus removing any ambiguities and cover the
->glaring omission in the Debian documentation.
+Signed-off-by: Kees Cook <keescook@chromium.org>
+---
+ fs/reiserfs/item_ops.c | 24 ++++++++++++------------
+ 1 file changed, 12 insertions(+), 12 deletions(-)
 
-It's hardly a "glaring omission" that we don't list *explicitly*:
+diff --git a/fs/reiserfs/item_ops.c b/fs/reiserfs/item_ops.c
+index aca73dd73906..e3c558d1b78c 100644
+--- a/fs/reiserfs/item_ops.c
++++ b/fs/reiserfs/item_ops.c
+@@ -724,18 +724,18 @@ static void errcatch_print_vi(struct virtual_item *vi)
+ }
+ 
+ static struct item_operations errcatch_ops = {
+-	errcatch_bytes_number,
+-	errcatch_decrement_key,
+-	errcatch_is_left_mergeable,
+-	errcatch_print_item,
+-	errcatch_check_item,
+-
+-	errcatch_create_vi,
+-	errcatch_check_left,
+-	errcatch_check_right,
+-	errcatch_part_size,
+-	errcatch_unit_num,
+-	errcatch_print_vi
++	.bytes_number = errcatch_bytes_number,
++	.decrement_key = errcatch_decrement_key,
++	.is_left_mergeable = errcatch_is_left_mergeable,
++	.print_item = errcatch_print_item,
++	.check_item = errcatch_check_item,
++
++	.create_vi = errcatch_create_vi,
++	.check_left = errcatch_check_left,
++	.check_right = errcatch_check_right,
++	.part_size = errcatch_part_size,
++	.unit_num = errcatch_unit_num,
++	.print_vi = errcatch_print_vi
+ };
+ 
+ #if ! (TYPE_STAT_DATA == 0 && TYPE_INDIRECT == 1 && TYPE_DIRECT == 2 && TYPE_DIRENTRY == 3)
+-- 
+2.7.4
 
- * we don't want reiser4-specific reports
- * we don't want Ubuntu installation reports
- * we don't want installation reports about other modified images
 
-You're reading the "Installation Guide for Debian", not the
-"Installation Guide for every unofficial user-modified version of
-Debian". The docs are meant to describe how to install Debian using
-Debian's installer - is that not obvious?
-
->That clarification will prevent other individuals -- who have
->downloaded the netboot installer from SourceForge -- from potentially
->reporting via the debian mechanism -- once the installation completes.
->
->Additionally, appending “we don't need reiser4-specific reports” will
->be a welcome *explicit* change in policy from other FOSS projects,
->like GNU Parted, where the unspoken censorship on reiser4 bites anyone
->who submits patches in support of the
->'Batman Machine': Reiser4
->< https://metztli.it/readOnlyEphemeral/Batman_Machine-Reiser4.pdf >
-
-I understand that you're working on reiser4 stuff and you'd like to
-publicise it - that's cool and I hope it's working well for you! But
-spamming us here is *not* helping. OK?
+-- 
+Kees Cook
+Pixel Security
