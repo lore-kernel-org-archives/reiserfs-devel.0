@@ -1,122 +1,146 @@
 From: Jan Kara <jack@suse.cz>
-Subject: [PATCH 1/2] reiserfs: Make cancel_old_flush() reliable
-Date: Wed,  5 Apr 2017 14:32:24 +0200
-Message-ID: <20170405123225.670-1-jack@suse.cz>
+Subject: [PATCH 04/11] jfs: Set flags on quota files directly
+Date: Wed, 12 Apr 2017 09:26:04 +0200
+Message-ID: <20170412072611.29017-5-jack@suse.cz>
+References: <20170412072611.29017-1-jack@suse.cz>
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
+In-Reply-To: <20170412072611.29017-1-jack@suse.cz>
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: reiserfs-devel@vger.kernel.org
-Cc: Jan Beulich <jbeulich@suse.com>, Jan Kara <jack@suse.cz>
+To: linux-fsdevel@vger.kernel.org
+Cc: linux-ext4@vger.kernel.org, reiserfs-devel@vger.kernel.org, jfs-discussion@lists.sourceforge.net, Jan Kara <jack@suse.cz>
 
-Currently canceling of delayed work that flushes old data using
-cancel_old_flush() does not prevent work from being requeued. Thus
-in theory new work can be queued after cancel_old_flush() from
-reiserfs_freeze() has run. This will become larger problem once
-flush_old_commits() can requeue the work itself.
-
-Fix the problem by recording in sbi->work_queue that flushing work is
-canceled and should not be requeued.
+Currently immutable and noatime flags on quota files are set by quota
+code which requires us to copy inode->i_flags to our on disk version
+of quota flags in GETFLAGS ioctl and copy_to_dinode(). Move to
+setting / clearing these on-disk flags directly to save that copying.
 
 Signed-off-by: Jan Kara <jack@suse.cz>
 ---
- fs/reiserfs/journal.c  |  2 +-
- fs/reiserfs/reiserfs.h |  1 +
- fs/reiserfs/super.c    | 21 +++++++++++++++------
- 3 files changed, 17 insertions(+), 7 deletions(-)
+ fs/jfs/super.c | 79 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++--
+ 1 file changed, 77 insertions(+), 2 deletions(-)
 
-diff --git a/fs/reiserfs/journal.c b/fs/reiserfs/journal.c
-index aa40c242f1db..da01f497180a 100644
---- a/fs/reiserfs/journal.c
-+++ b/fs/reiserfs/journal.c
-@@ -1961,7 +1961,7 @@ static int do_journal_release(struct reiserfs_transaction_handle *th,
- 	 * will be requeued because superblock is being shutdown and doesn't
- 	 * have MS_ACTIVE set.
- 	 */
--	cancel_delayed_work_sync(&REISERFS_SB(sb)->old_work);
-+	reiserfs_cancel_old_flush(sb);
- 	/* wait for all commits to finish */
- 	cancel_delayed_work_sync(&SB_JOURNAL(sb)->j_work);
+diff --git a/fs/jfs/super.c b/fs/jfs/super.c
+index c64c2574a0aa..e8aad7d87b8c 100644
+--- a/fs/jfs/super.c
++++ b/fs/jfs/super.c
+@@ -45,6 +45,7 @@
+ #include "jfs_acl.h"
+ #include "jfs_debug.h"
+ #include "jfs_xattr.h"
++#include "jfs_dinode.h"
  
-diff --git a/fs/reiserfs/reiserfs.h b/fs/reiserfs/reiserfs.h
-index 5dcf3ab83886..6ca00471afbf 100644
---- a/fs/reiserfs/reiserfs.h
-+++ b/fs/reiserfs/reiserfs.h
-@@ -2948,6 +2948,7 @@ int reiserfs_allocate_list_bitmaps(struct super_block *s,
- 				   struct reiserfs_list_bitmap *, unsigned int);
- 
- void reiserfs_schedule_old_flush(struct super_block *s);
-+void reiserfs_cancel_old_flush(struct super_block *s);
- void add_save_link(struct reiserfs_transaction_handle *th,
- 		   struct inode *inode, int truncate);
- int remove_save_link(struct inode *inode, int truncate);
-diff --git a/fs/reiserfs/super.c b/fs/reiserfs/super.c
-index feabcde0290d..91cf5cbd6332 100644
---- a/fs/reiserfs/super.c
-+++ b/fs/reiserfs/super.c
-@@ -90,7 +90,9 @@ static void flush_old_commits(struct work_struct *work)
- 	s = sbi->s_journal->j_work_sb;
- 
- 	spin_lock(&sbi->old_work_lock);
--	sbi->work_queued = 0;
-+	/* Avoid clobbering the cancel state... */
-+	if (sbi->work_queued == 1)
-+		sbi->work_queued = 0;
- 	spin_unlock(&sbi->old_work_lock);
- 
- 	reiserfs_sync_fs(s, 1);
-@@ -117,21 +119,22 @@ void reiserfs_schedule_old_flush(struct super_block *s)
- 	spin_unlock(&sbi->old_work_lock);
- }
- 
--static void cancel_old_flush(struct super_block *s)
-+void reiserfs_cancel_old_flush(struct super_block *s)
- {
- 	struct reiserfs_sb_info *sbi = REISERFS_SB(s);
- 
--	cancel_delayed_work_sync(&REISERFS_SB(s)->old_work);
- 	spin_lock(&sbi->old_work_lock);
--	sbi->work_queued = 0;
-+	/* Make sure no new flushes will be queued */
-+	sbi->work_queued = 2;
- 	spin_unlock(&sbi->old_work_lock);
-+	cancel_delayed_work_sync(&REISERFS_SB(s)->old_work);
- }
- 
- static int reiserfs_freeze(struct super_block *s)
- {
- 	struct reiserfs_transaction_handle th;
- 
--	cancel_old_flush(s);
-+	reiserfs_cancel_old_flush(s);
- 
- 	reiserfs_write_lock(s);
- 	if (!(s->s_flags & MS_RDONLY)) {
-@@ -152,7 +155,13 @@ static int reiserfs_freeze(struct super_block *s)
- 
- static int reiserfs_unfreeze(struct super_block *s)
- {
-+	struct reiserfs_sb_info *sbi = REISERFS_SB(s);
-+
- 	reiserfs_allow_writes(s);
-+	spin_lock(&sbi->old_work_lock);
-+	/* Allow old_work to run again */
-+	sbi->work_queued = 0;
-+	spin_unlock(&sbi->old_work_lock);
+ MODULE_DESCRIPTION("The Journaled Filesystem (JFS)");
+ MODULE_AUTHOR("Steve Best/Dave Kleikamp/Barry Arndt, IBM");
+@@ -181,6 +182,35 @@ static int jfs_statfs(struct dentry *dentry, struct kstatfs *buf)
  	return 0;
  }
  
-@@ -2194,7 +2203,7 @@ static int reiserfs_fill_super(struct super_block *s, void *data, int silent)
- 	if (sbi->commit_wq)
- 		destroy_workqueue(sbi->commit_wq);
++#ifdef CONFIG_QUOTA
++static int jfs_quota_off(struct super_block *sb, int type);
++static int jfs_quota_on(struct super_block *sb, int type, int format_id,
++			const struct path *path);
++
++static void jfs_quota_off_umount(struct super_block *sb)
++{
++	int type;
++
++	for (type = 0; type < MAXQUOTAS; type++)
++		jfs_quota_off(sb, type);
++}
++
++static const struct quotactl_ops jfs_quotactl_ops = {
++	.quota_on	= jfs_quota_on,
++	.quota_off	= jfs_quota_off,
++	.quota_sync	= dquot_quota_sync,
++	.get_state	= dquot_get_state,
++	.set_info	= dquot_set_dqinfo,
++	.get_dqblk	= dquot_get_dqblk,
++	.set_dqblk	= dquot_set_dqblk,
++	.get_nextdqblk	= dquot_get_next_dqblk,
++};
++#else
++static inline void jfs_quota_off_umount(struct super_block *sb)
++{
++}
++#endif
++
+ static void jfs_put_super(struct super_block *sb)
+ {
+ 	struct jfs_sb_info *sbi = JFS_SBI(sb);
+@@ -188,7 +218,7 @@ static void jfs_put_super(struct super_block *sb)
  
--	cancel_delayed_work_sync(&REISERFS_SB(s)->old_work);
-+	reiserfs_cancel_old_flush(s);
+ 	jfs_info("In jfs_put_super");
  
- 	reiserfs_free_bitmap_cache(s);
- 	if (SB_BUFFER_WITH_SB(s))
+-	dquot_disable(sb, -1, DQUOT_USAGE_ENABLED | DQUOT_LIMITS_ENABLED);
++	jfs_quota_off_umount(sb);
+ 
+ 	rc = jfs_umount(sb);
+ 	if (rc)
+@@ -536,7 +566,7 @@ static int jfs_fill_super(struct super_block *sb, void *data, int silent)
+ 	sb->s_xattr = jfs_xattr_handlers;
+ #ifdef CONFIG_QUOTA
+ 	sb->dq_op = &dquot_operations;
+-	sb->s_qcop = &dquot_quotactl_ops;
++	sb->s_qcop = &jfs_quotactl_ops;
+ 	sb->s_quota_types = QTYPE_MASK_USR | QTYPE_MASK_GRP;
+ #endif
+ 
+@@ -840,6 +870,51 @@ static struct dquot **jfs_get_dquots(struct inode *inode)
+ {
+ 	return JFS_IP(inode)->i_dquot;
+ }
++
++static int jfs_quota_on(struct super_block *sb, int type, int format_id,
++			const struct path *path)
++{
++	int err;
++	struct inode *inode;
++
++	err = dquot_quota_on(sb, type, format_id, path);
++	if (err)
++		return err;
++
++	inode = d_inode(path->dentry);
++	inode_lock(inode);
++	JFS_IP(inode)->mode2 |= JFS_NOATIME_FL | JFS_IMMUTABLE_FL;
++	inode_set_flags(inode, S_NOATIME | S_IMMUTABLE,
++			S_NOATIME | S_IMMUTABLE);
++	inode_unlock(inode);
++	mark_inode_dirty(inode);
++
++	return 0;
++}
++
++static int jfs_quota_off(struct super_block *sb, int type)
++{
++	struct inode *inode = sb_dqopt(sb)->files[type];
++	int err;
++
++	if (!inode || !igrab(inode))
++		goto out;
++
++	err = dquot_quota_off(sb, type);
++	if (err)
++		goto out_put;
++
++	inode_lock(inode);
++	JFS_IP(inode)->mode2 &= ~(JFS_NOATIME_FL | JFS_IMMUTABLE_FL);
++	inode_set_flags(inode, 0, S_NOATIME | S_IMMUTABLE);
++	inode_unlock(inode);
++	mark_inode_dirty(inode);
++out_put:
++	iput(inode);
++	return err;
++out:
++	return dquot_quota_off(sb, type);
++}
+ #endif
+ 
+ static const struct super_operations jfs_super_operations = {
 -- 
-2.10.2
+2.12.0
 
