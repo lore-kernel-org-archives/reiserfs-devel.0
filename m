@@ -1,33 +1,33 @@
 From: Andreas Dilger <adilger@dilger.ca>
-Subject: Re: [PATCH 07/11] ext2: Remove ext2_get_inode_flags()
-Date: Wed, 12 Apr 2017 22:05:10 -0600
-Message-ID: <09D4377E-DD27-4CC6-A9FC-00CBD8CE3701@dilger.ca>
+Subject: Re: [PATCH 06/11] ext4: Remove ext4_get_inode_flags()
+Date: Wed, 12 Apr 2017 22:05:56 -0600
+Message-ID: <EF0164C7-020B-4434-9F78-2EB9FE70EF6D@dilger.ca>
 References: <20170412072611.29017-1-jack@suse.cz>
- <20170412072611.29017-8-jack@suse.cz>
+ <20170412072611.29017-7-jack@suse.cz>
 Mime-Version: 1.0 (Mac OS X Mail 10.3 \(3273\))
 Content-Type: multipart/signed;
- boundary="Apple-Mail=_84CA34E2-43AF-45F5-8B45-E25CC765B1E0";
+ boundary="Apple-Mail=_35C16FAA-7049-4EBC-A70A-19561E1D04C2";
  protocol="application/pgp-signature"; micalg=pgp-sha1
-Return-path: <linux-ext4-owner@vger.kernel.org>
+Return-path: <reiserfs-devel-owner@vger.kernel.org>
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=dilger-ca.20150623.gappssmtp.com; s=20150623;
         h=from:message-id:mime-version:subject:date:in-reply-to:cc:to
          :references;
-        bh=M/uU61xvlE0TmC/vMihbSeeb4bRI8C18Prh0lNOIkRI=;
-        b=jA1P+YyB+9Fgu1J3+UuR4ilrak5dlf/sZEzfLKGd9B2lWN2ObWneT2/ERLS7DUOhd3
-         z7K0NqMhk+wPaSHxZ4HA6P0sNjQga6EFhbw0dAvD6eAQkxPSRvekvr6gRs3kGk2D6Yfq
-         3jDZgumr8RXYvU5Zmd6GROmj4SV9Y8b6dFQHb33vt7zlYS2L5Ntn7BYDF/eLeSYD9J21
-         bUvNy5EKAQn5fqDue8bbl5xO2Y7jTXTeDF1lIBfVp9o/bd4EjkP9Vf8+SIsSS4z+Fsq2
-         h2vKN5rr0jACnY3BhSYHdMQGqHZkAAeV+06EbK1ml5siP3A1F3Ar1I9CxRi2qzwB7Qu9
-         u8nA==
-In-Reply-To: <20170412072611.29017-8-jack@suse.cz>
-Sender: linux-ext4-owner@vger.kernel.org
+        bh=0t0aAuGBDfl/BWn82pZ7MHkBvutgebtB4JkP9jjn74o=;
+        b=XP3C/ZZk4ZLjCdWZubzddBwyTpw+kYXRT+0zC8CvLHSdWLi1zDeKFST4QCGs41hk29
+         I/mjtFF3z95oL8sOr3lGz4Dto2AS4+igs3c0wxNJcZGOGunQASg6YzPV6nrvdx9puNgQ
+         Vdk4OKH5PDJKiDSBEYTEnNs2r+tlhqES7QXAPLQDL0H803LqOilnCX1QO3HPOWWZ5juo
+         pNKicSiQzedh0RCGjGFWrOC+Sb1XofDQ5yCAkhmYrChBqyT+I4yABCk44gwRZa902fqs
+         CpUDrzSHjIDc3VNLF+nPbTGm0sr75HSr1wQi0V73+vBhgAypPemB1U7Knbp7IYW83Ykb
+         Kr/Q==
+In-Reply-To: <20170412072611.29017-7-jack@suse.cz>
+Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
 To: Jan Kara <jack@suse.cz>
-Cc: linux-fsdevel@vger.kernel.org, linux-ext4@vger.kernel.org, reiserfs-devel@vger.kernel.org, jfs-discussion@lists.sourceforge.net
+Cc: linux-fsdevel <linux-fsdevel@vger.kernel.org>, linux-ext4 <linux-ext4@vger.kernel.org>, reiserfs-devel@vger.kernel.org, jfs-discussion@lists.sourceforge.net
 
 
---Apple-Mail=_84CA34E2-43AF-45F5-8B45-E25CC765B1E0
+--Apple-Mail=_35C16FAA-7049-4EBC-A70A-19561E1D04C2
 Content-Transfer-Encoding: quoted-printable
 Content-Type: text/plain;
 	charset=us-ascii
@@ -35,85 +35,102 @@ Content-Type: text/plain;
 On Apr 12, 2017, at 1:26 AM, Jan Kara <jack@suse.cz> wrote:
 >=20
 > Now that all places setting inode->i_flags that should be reflected in
-> on-disk flags are gone, we can remove ext2_get_inode_flags() call.
+> on-disk flags are gone, we can remove ext4_get_inode_flags() call.
 >=20
 > Signed-off-by: Jan Kara <jack@suse.cz>
 
 Reviewed-by: Andreas Dilger <adilger@dilger.ca>
 
 > ---
-> fs/ext2/ext2.h  |  1 -
-> fs/ext2/inode.c | 20 --------------------
-> fs/ext2/ioctl.c |  1 -
-> 3 files changed, 22 deletions(-)
+> fs/ext4/ext4.h  |  1 -
+> fs/ext4/inode.c | 26 --------------------------
+> fs/ext4/ioctl.c |  2 --
+> 3 files changed, 29 deletions(-)
 >=20
-> diff --git a/fs/ext2/ext2.h b/fs/ext2/ext2.h
-> index 5e64de9c5093..c7cfe9afa375 100644
-> --- a/fs/ext2/ext2.h
-> +++ b/fs/ext2/ext2.h
-> @@ -779,7 +779,6 @@ extern void ext2_evict_inode(struct inode *);
-> extern int ext2_get_block(struct inode *, sector_t, struct buffer_head =
-*, int);
-> extern int ext2_setattr (struct dentry *, struct iattr *);
-> extern void ext2_set_inode_flags(struct inode *inode);
-> -extern void ext2_get_inode_flags(struct ext2_inode_info *);
-> extern int ext2_fiemap(struct inode *inode, struct fiemap_extent_info =
-*fieinfo,
-> 		       u64 start, u64 len);
->=20
-> diff --git a/fs/ext2/inode.c b/fs/ext2/inode.c
-> index 128cce540645..1e2663fbbc54 100644
-> --- a/fs/ext2/inode.c
-> +++ b/fs/ext2/inode.c
-> @@ -1384,25 +1384,6 @@ void ext2_set_inode_flags(struct inode *inode)
-> 		inode->i_flags |=3D S_DAX;
+> diff --git a/fs/ext4/ext4.h b/fs/ext4/ext4.h
+> index f493af666591..3e8a03b88b3a 100644
+> --- a/fs/ext4/ext4.h
+> +++ b/fs/ext4/ext4.h
+> @@ -2476,7 +2476,6 @@ extern int ext4_truncate(struct inode *);
+> extern int ext4_punch_hole(struct inode *inode, loff_t offset, loff_t =
+length);
+> extern int ext4_truncate_restart_trans(handle_t *, struct inode *, int =
+nblocks);
+> extern void ext4_set_inode_flags(struct inode *);
+> -extern void ext4_get_inode_flags(struct ext4_inode_info *);
+> extern int ext4_alloc_da_blocks(struct inode *inode);
+> extern void ext4_set_aops(struct inode *inode);
+> extern int ext4_writepage_trans_blocks(struct inode *);
+> diff --git a/fs/ext4/inode.c b/fs/ext4/inode.c
+> index 4247d8d25687..cfd8b29bbf92 100644
+> --- a/fs/ext4/inode.c
+> +++ b/fs/ext4/inode.c
+> @@ -4502,31 +4502,6 @@ void ext4_set_inode_flags(struct inode *inode)
+> 			=
+S_SYNC|S_APPEND|S_IMMUTABLE|S_NOATIME|S_DIRSYNC|S_DAX);
 > }
 >=20
-> -/* Propagate flags from i_flags to EXT2_I(inode)->i_flags */
-> -void ext2_get_inode_flags(struct ext2_inode_info *ei)
+> -/* Propagate flags from i_flags to EXT4_I(inode)->i_flags */
+> -void ext4_get_inode_flags(struct ext4_inode_info *ei)
 > -{
-> -	unsigned int flags =3D ei->vfs_inode.i_flags;
+> -	unsigned int vfs_fl;
+> -	unsigned long old_fl, new_fl;
 > -
-> -	ei->i_flags &=3D ~(EXT2_SYNC_FL|EXT2_APPEND_FL|
-> -			=
-EXT2_IMMUTABLE_FL|EXT2_NOATIME_FL|EXT2_DIRSYNC_FL);
-> -	if (flags & S_SYNC)
-> -		ei->i_flags |=3D EXT2_SYNC_FL;
-> -	if (flags & S_APPEND)
-> -		ei->i_flags |=3D EXT2_APPEND_FL;
-> -	if (flags & S_IMMUTABLE)
-> -		ei->i_flags |=3D EXT2_IMMUTABLE_FL;
-> -	if (flags & S_NOATIME)
-> -		ei->i_flags |=3D EXT2_NOATIME_FL;
-> -	if (flags & S_DIRSYNC)
-> -		ei->i_flags |=3D EXT2_DIRSYNC_FL;
+> -	do {
+> -		vfs_fl =3D ei->vfs_inode.i_flags;
+> -		old_fl =3D ei->i_flags;
+> -		new_fl =3D old_fl & ~(EXT4_SYNC_FL|EXT4_APPEND_FL|
+> -				EXT4_IMMUTABLE_FL|EXT4_NOATIME_FL|
+> -				EXT4_DIRSYNC_FL);
+> -		if (vfs_fl & S_SYNC)
+> -			new_fl |=3D EXT4_SYNC_FL;
+> -		if (vfs_fl & S_APPEND)
+> -			new_fl |=3D EXT4_APPEND_FL;
+> -		if (vfs_fl & S_IMMUTABLE)
+> -			new_fl |=3D EXT4_IMMUTABLE_FL;
+> -		if (vfs_fl & S_NOATIME)
+> -			new_fl |=3D EXT4_NOATIME_FL;
+> -		if (vfs_fl & S_DIRSYNC)
+> -			new_fl |=3D EXT4_DIRSYNC_FL;
+> -	} while (cmpxchg(&ei->i_flags, old_fl, new_fl) !=3D old_fl);
 > -}
 > -
-> struct inode *ext2_iget (struct super_block *sb, unsigned long ino)
+> static blkcnt_t ext4_inode_blocks(struct ext4_inode *raw_inode,
+> 				  struct ext4_inode_info *ei)
 > {
-> 	struct ext2_inode_info *ei;
-> @@ -1563,7 +1544,6 @@ static int __ext2_write_inode(struct inode =
-*inode, int do_sync)
-> 	if (ei->i_state & EXT2_STATE_NEW)
-> 		memset(raw_inode, 0, EXT2_SB(sb)->s_inode_size);
+> @@ -4963,7 +4938,6 @@ static int ext4_do_update_inode(handle_t =
+*handle,
+> 	if (ext4_test_inode_state(inode, EXT4_STATE_NEW))
+> 		memset(raw_inode, 0, =
+EXT4_SB(inode->i_sb)->s_inode_size);
 >=20
-> -	ext2_get_inode_flags(ei);
+> -	ext4_get_inode_flags(ei);
 > 	raw_inode->i_mode =3D cpu_to_le16(inode->i_mode);
-> 	if (!(test_opt(sb, NO_UID32))) {
-> 		raw_inode->i_uid_low =3D cpu_to_le16(low_16_bits(uid));
-> diff --git a/fs/ext2/ioctl.c b/fs/ext2/ioctl.c
-> index 191e02b28ce8..087f122cca42 100644
-> --- a/fs/ext2/ioctl.c
-> +++ b/fs/ext2/ioctl.c
-> @@ -29,7 +29,6 @@ long ext2_ioctl(struct file *filp, unsigned int cmd, =
-unsigned long arg)
+> 	i_uid =3D i_uid_read(inode);
+> 	i_gid =3D i_gid_read(inode);
+> diff --git a/fs/ext4/ioctl.c b/fs/ext4/ioctl.c
+> index a4273ddb9922..184e74eb3004 100644
+> --- a/fs/ext4/ioctl.c
+> +++ b/fs/ext4/ioctl.c
+> @@ -500,7 +500,6 @@ long ext4_ioctl(struct file *filp, unsigned int =
+cmd, unsigned long arg)
 >=20
 > 	switch (cmd) {
-> 	case EXT2_IOC_GETFLAGS:
-> -		ext2_get_inode_flags(ei);
-> 		flags =3D ei->i_flags & EXT2_FL_USER_VISIBLE;
+> 	case EXT4_IOC_GETFLAGS:
+> -		ext4_get_inode_flags(ei);
+> 		flags =3D ei->i_flags & EXT4_FL_USER_VISIBLE;
 > 		return put_user(flags, (int __user *) arg);
-> 	case EXT2_IOC_SETFLAGS: {
+> 	case EXT4_IOC_SETFLAGS: {
+> @@ -888,7 +887,6 @@ long ext4_ioctl(struct file *filp, unsigned int =
+cmd, unsigned long arg)
+> 		struct fsxattr fa;
+>=20
+> 		memset(&fa, 0, sizeof(struct fsxattr));
+> -		ext4_get_inode_flags(ei);
+> 		fa.fsx_xflags =3D ext4_iflags_to_xflags(ei->i_flags & =
+EXT4_FL_USER_VISIBLE);
+>=20
+> 		if (ext4_has_feature_project(inode->i_sb)) {
 > --
 > 2.12.0
 >=20
@@ -126,7 +143,7 @@ Cheers, Andreas
 
 
 
---Apple-Mail=_84CA34E2-43AF-45F5-8B45-E25CC765B1E0
+--Apple-Mail=_35C16FAA-7049-4EBC-A70A-19561E1D04C2
 Content-Transfer-Encoding: 7bit
 Content-Disposition: attachment;
 	filename=signature.asc
@@ -137,9 +154,9 @@ Content-Description: Message signed with OpenPGP
 -----BEGIN PGP SIGNATURE-----
 Comment: GPGTools - http://gpgtools.org
 
-iD8DBQFY7vj2pIg59Q01vtYRAtj+AKDZyN9S4togsfrmSQIIRRFy2oswUwCfQT+c
-2DaXKnpwXqTyJq+6rZSgvJY=
-=XyXL
+iD8DBQFY7vkkpIg59Q01vtYRAgFZAJwO/MV3Fh9XZbP56/gzck0C985oSQCgrfnQ
+58zXwiI+mImTTVgSEHOuF/U=
+=Jwpf
 -----END PGP SIGNATURE-----
 
---Apple-Mail=_84CA34E2-43AF-45F5-8B45-E25CC765B1E0--
+--Apple-Mail=_35C16FAA-7049-4EBC-A70A-19561E1D04C2--
