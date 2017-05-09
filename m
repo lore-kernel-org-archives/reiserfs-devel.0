@@ -1,7 +1,7 @@
 From: jeffm@suse.com
-Subject: [PATCH 3/4] reiserfs: protect message formatting and printing with mutex
-Date: Tue,  9 May 2017 16:50:12 -0400
-Message-ID: <20170509205013.568-4-jeffm@suse.com>
+Subject: [PATCH 2/4] reiserfs: use snprintf for buffer formatting
+Date: Tue,  9 May 2017 16:50:11 -0400
+Message-ID: <20170509205013.568-3-jeffm@suse.com>
 References: <20170509205013.568-1-jeffm@suse.com>
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
 In-Reply-To: <20170509205013.568-1-jeffm@suse.com>
@@ -15,161 +15,311 @@ Cc: Jeff Mahoney <jeffm@suse.com>
 
 From: Jeff Mahoney <jeffm@suse.com>
 
-Reiserfs uses a static buffer for formatting and printing messages.
-It's possible for one thread to overwrite the buffer while another is
-printing it.  Depending on timing, it's possible to get the printer to
-crash if a pointer argument lands at the right time.  We use a spinlock
-to protect against concurrent formatting, but it doesn't cover printk.
-This patch converts the spinlock to a mutex and covers the printk as
-well.  There are currently no callers of these routines that do so with
-a spinlock held.
+We use a fixed-length buffer for formatting messages but don't do
+any bounds checking on it.  This patch makes proper use of snprintf
+and bounds tracking to ensure that we don't overflow.
 
 Signed-off-by: Jeff Mahoney <jeffm@suse.com>
 ---
- fs/reiserfs/prints.c | 26 +++++++++++++++++++-------
- 1 file changed, 19 insertions(+), 7 deletions(-)
+ fs/reiserfs/prints.c | 213 +++++++++++++++++++++++++++++++++------------------
+ 1 file changed, 138 insertions(+), 75 deletions(-)
 
 diff --git a/fs/reiserfs/prints.c b/fs/reiserfs/prints.c
-index 1af3febb0419..db7b02b06fcc 100644
+index 2f6a7b42fa31..1af3febb0419 100644
 --- a/fs/reiserfs/prints.c
 +++ b/fs/reiserfs/prints.c
-@@ -218,7 +218,7 @@ static char *is_there_reiserfs_struct(char *fmt, int *what)
-  * printk ("bad key %lu %lu %lu %lu", key->k_dir_id, key->k_objectid,
-  *         key->k_offset, key->k_uniqueness);
-  */
--static DEFINE_SPINLOCK(error_lock);
-+static DEFINE_MUTEX(error_lock);
- static void prepare_error_buf(const char *fmt, va_list args)
+@@ -6,6 +6,7 @@
+ #include <linux/fs.h>
+ #include "reiserfs.h"
+ #include <linux/string.h>
++#include <linux/ctype.h>
+ #include <linux/buffer_head.h>
+ 
+ #include <stdarg.h>
+@@ -76,83 +77,111 @@ static char *le_type(struct reiserfs_key *key)
+ }
+ 
+ /* %k */
+-static void sprintf_le_key(char *buf, struct reiserfs_key *key)
++static int snprintf_le_key(char *buf, size_t size, struct reiserfs_key *key)
  {
- 	char *fmt1 = fmt_buf;
-@@ -228,7 +228,7 @@ static void prepare_error_buf(const char *fmt, va_list args)
- 	int left = sizeof(error_buf);
- 	int bytes = 0;
+-	if (key)
+-		sprintf(buf, "[%d %d %s %s]", le32_to_cpu(key->k_dir_id),
++	if (!key)
++		return snprintf(buf, size, "[NULL]");
++
++	return snprintf(buf, size, "[%d %d %s %s]", le32_to_cpu(key->k_dir_id),
+ 			le32_to_cpu(key->k_objectid), le_offset(key),
+ 			le_type(key));
+-	else
+-		sprintf(buf, "[NULL]");
+ }
  
--	spin_lock(&error_lock);
-+	WARN_ON(!mutex_is_locked(&error_lock));
+ /* %K */
+-static void sprintf_cpu_key(char *buf, struct cpu_key *key)
++static int snprintf_cpu_key(char *buf, size_t size, struct cpu_key *key)
+ {
+-	if (key)
+-		sprintf(buf, "[%d %d %s %s]", key->on_disk_key.k_dir_id,
++	if (!key)
++		return snprintf(buf, size, "[NULL]");
++
++	return snprintf(buf, size, "[%d %d %s %s]", key->on_disk_key.k_dir_id,
+ 			key->on_disk_key.k_objectid, reiserfs_cpu_offset(key),
+ 			cpu_type(key));
+-	else
+-		sprintf(buf, "[NULL]");
+ }
  
- 	strcpy(fmt1, fmt);
- 
-@@ -301,8 +301,6 @@ static void prepare_error_buf(const char *fmt, va_list args)
- 	}
- out:
- 	vsnprintf(p, left, fmt1, args);
--	spin_unlock(&error_lock);
+-static void sprintf_de_head(char *buf, struct reiserfs_de_head *deh)
++static int snprintf_de_head(char *buf, size_t size,
++			    struct reiserfs_de_head *deh)
+ {
+-	if (deh)
+-		sprintf(buf,
+-			"[offset=%d dir_id=%d objectid=%d location=%d state=%04x]",
++	if (!deh)
++		return snprintf(buf, size, "[NULL]");
++
++	return snprintf(buf, size,
++		        "[offset=%d dir_id=%d objectid=%d location=%d state=%04x]",
+ 			deh_offset(deh), deh_dir_id(deh), deh_objectid(deh),
+ 			deh_location(deh), deh_state(deh));
+-	else
+-		sprintf(buf, "[NULL]");
 -
  }
  
- /*
-@@ -327,6 +325,7 @@ static void prepare_error_buf(const char *fmt, va_list args)
- void __reiserfs_warning(const struct super_block *sb, const char *id,
- 			 const char *function, const char *fmt, ...)
+-static void sprintf_item_head(char *buf, struct item_head *ih)
++static int snprintf_item_head(char *buf, size_t size, struct item_head *ih)
  {
-+	mutex_lock(&error_lock);
- 	do_reiserfs_warning(fmt);
- 	if (sb)
- 		printk(KERN_WARNING "REISERFS warning (device %s): %s%s%s: "
-@@ -335,35 +334,42 @@ void __reiserfs_warning(const struct super_block *sb, const char *id,
- 	else
- 		printk(KERN_WARNING "REISERFS warning: %s%s%s: %s\n",
- 		       id ? id : "", id ? " " : "", function, error_buf);
-+	mutex_unlock(&error_lock);
+-	if (ih) {
+-		strcpy(buf,
+-		       (ih_version(ih) == KEY_FORMAT_3_6) ? "*3.6* " : "*3.5*");
+-		sprintf_le_key(buf + strlen(buf), &(ih->ih_key));
+-		sprintf(buf + strlen(buf), ", item_len %d, item_location %d, "
+-			"free_space(entry_count) %d",
+-			ih_item_len(ih), ih_location(ih), ih_free_space(ih));
+-	} else
+-		sprintf(buf, "[NULL]");
++	const char *key_format;
++	int used = 0;
++	if (!ih)
++		return snprintf(buf, size, "[NULL]");
++
++	key_format = (ih_version(ih) == KEY_FORMAT_3_6) ? "*3.6*" : "*3.5*";
++	used += snprintf(buf, size, "%s", key_format);
++	if (used > size)
++		return used;
++
++	used += snprintf_le_key(buf + used, size - used, &(ih->ih_key));
++	if (used > size)
++		return used;
++
++	used += snprintf(buf + used, size - used,
++			 ", item_len %d, item_location %d, free_space(entry_count) %d",
++			 ih_item_len(ih), ih_location(ih), ih_free_space(ih));
++	return used;
  }
  
- /* No newline.. reiserfs_info calls can be followed by printk's */
- void reiserfs_info(struct super_block *sb, const char *fmt, ...)
+-static void sprintf_direntry(char *buf, struct reiserfs_dir_entry *de)
++static int snprintf_direntry(char *buf, size_t size,
++			     struct reiserfs_dir_entry *de)
  {
-+	mutex_lock(&error_lock);
- 	do_reiserfs_warning(fmt);
- 	if (sb)
- 		printk(KERN_NOTICE "REISERFS (device %s): %s",
- 		       sb->s_id, error_buf);
- 	else
- 		printk(KERN_NOTICE "REISERFS %s:", error_buf);
-+	mutex_unlock(&error_lock);
+ 	char name[20];
+ 
+-	memcpy(name, de->de_name, de->de_namelen > 19 ? 19 : de->de_namelen);
+-	name[de->de_namelen > 19 ? 19 : de->de_namelen] = 0;
+-	sprintf(buf, "\"%s\"==>[%d %d]", name, de->de_dir_id, de->de_objectid);
++	if (!de)
++		return snprintf(buf, size, "[NULL]");
++
++	if (de->de_name) {
++		memcpy(name, de->de_name, de->de_namelen > 19 ? 19 : de->de_namelen);
++		name[de->de_namelen > 19 ? 19 : de->de_namelen] = 0;
++	} else
++		strcpy(name, "[NULL]");
++	return snprintf(buf, size, "\"%s\"==>[%d %d]",
++			name, de->de_dir_id, de->de_objectid);
  }
  
- /* No newline.. reiserfs_printk calls can be followed by printk's */
- static void reiserfs_printk(const char *fmt, ...)
+-static void sprintf_block_head(char *buf, struct buffer_head *bh)
++static int snprintf_block_head(char *buf, size_t size, struct buffer_head *bh)
  {
-+	mutex_lock(&error_lock);
- 	do_reiserfs_warning(fmt);
- 	printk(error_buf);
-+	mutex_unlock(&error_lock);
+-	sprintf(buf, "level=%d, nr_items=%d, free_space=%d rdkey ",
+-		B_LEVEL(bh), B_NR_ITEMS(bh), B_FREE_SPACE(bh));
++	if (!bh)
++		return snprintf(buf, size, "[NULL]");
++
++	return snprintf(buf, size,
++			"level=%d, nr_items=%d, free_space=%d rdkey ",
++			B_LEVEL(bh), B_NR_ITEMS(bh), B_FREE_SPACE(bh));
  }
  
- void reiserfs_debug(struct super_block *s, int level, const char *fmt, ...)
+-static void sprintf_buffer_head(char *buf, struct buffer_head *bh)
++static int snprintf_buffer_head(char *buf, size_t size, struct buffer_head *bh)
  {
- #ifdef CONFIG_REISERFS_CHECK
-+	mutex_lock(&error_lock);
- 	do_reiserfs_warning(fmt);
- 	if (s)
- 		printk(KERN_DEBUG "REISERFS debug (device %s): %s\n",
- 		       s->s_id, error_buf);
- 	else
- 		printk(KERN_DEBUG "REISERFS debug: %s\n", error_buf);
-+	mutex_unlock(&error_lock);
- #endif
+-	sprintf(buf,
+-		"dev %pg, size %zd, blocknr %llu, count %d, state 0x%lx, page %p, (%s, %s, %s)",
+-		bh->b_bdev, bh->b_size,
+-		(unsigned long long)bh->b_blocknr, atomic_read(&(bh->b_count)),
+-		bh->b_state, bh->b_page,
+-		buffer_uptodate(bh) ? "UPTODATE" : "!UPTODATE",
+-		buffer_dirty(bh) ? "DIRTY" : "CLEAN",
+-		buffer_locked(bh) ? "LOCKED" : "UNLOCKED");
++	if (!bh)
++		return snprintf(buf, size, "[NULL]");
++
++	return snprintf(buf, size,
++			"dev %pg, size %zd, blocknr %llu, count %d, state 0x%lx, page %p, (%s, %s, %s)",
++			bh->b_bdev, bh->b_size,
++			(unsigned long long)bh->b_blocknr,
++			atomic_read(&bh->b_count),
++			bh->b_state, bh->b_page,
++			buffer_uptodate(bh) ? "UPTODATE" : "!UPTODATE",
++			buffer_dirty(bh) ? "DIRTY" : "CLEAN",
++			buffer_locked(bh) ? "LOCKED" : "UNLOCKED");
  }
  
-@@ -417,6 +423,7 @@ void reiserfs_debug(struct super_block *s, int level, const char *fmt, ...)
- void __reiserfs_panic(struct super_block *sb, const char *id,
- 		      const char *function, const char *fmt, ...)
+-static void sprintf_disk_child(char *buf, struct disk_child *dc)
++static int snprintf_disk_child(char *buf, size_t size, struct disk_child *dc)
  {
-+	mutex_lock(&error_lock);
- 	do_reiserfs_warning(fmt);
- 
- #ifdef CONFIG_REISERFS_CHECK
-@@ -429,16 +436,16 @@ void __reiserfs_panic(struct super_block *sb, const char *id,
- 	else
- 		printk(KERN_WARNING "REISERFS panic: %s%s%s: %s\n",
- 		      id ? id : "", id ? " " : "", function, error_buf);
-+	mutex_unlock(&error_lock);
- 	BUG();
+-	sprintf(buf, "[dc_number=%d, dc_size=%u]", dc_block_number(dc),
+-		dc_size(dc));
++	if (!dc)
++		return snprintf(buf, size, "[NULL]");
++
++	return snprintf(buf, size, "[dc_number=%d, dc_size=%u]",
++			dc_block_number(dc), dc_size(dc));
  }
  
- void __reiserfs_error(struct super_block *sb, const char *id,
- 		      const char *function, const char *fmt, ...)
- {
-+	mutex_lock(&error_lock);
- 	do_reiserfs_warning(fmt);
+ static char *is_there_reiserfs_struct(char *fmt, int *what)
+@@ -160,8 +189,14 @@ static char *is_there_reiserfs_struct(char *fmt, int *what)
+ 	char *k = fmt;
  
--	BUG_ON(sb == NULL);
--
- 	if (reiserfs_error_panic(sb))
- 		__reiserfs_panic(sb, id, function, error_buf);
+ 	while ((k = strchr(k, '%')) != NULL) {
+-		if (k[1] == 'k' || k[1] == 'K' || k[1] == 'h' || k[1] == 't' ||
+-		    k[1] == 'z' || k[1] == 'b' || k[1] == 'y' || k[1] == 'a') {
++		if (k[1] == 'k' || k[1] == 'K' || k[1] == 't' ||
++		    k[1] == 'b' || k[1] == 'y' || k[1] == 'a') {
++			*what = k[1];
++			break;
++		}
++
++		/* We can't gobble up normal qualifiers */
++		if ((k[1] == 'z' || k[1] == 'h') && !isalpha(k[2])) {
+ 			*what = k[1];
+ 			break;
+ 		}
+@@ -190,6 +225,8 @@ static void prepare_error_buf(const char *fmt, va_list args)
+ 	char *k;
+ 	char *p = error_buf;
+ 	int what;
++	int left = sizeof(error_buf);
++	int bytes = 0;
  
-@@ -448,6 +455,7 @@ void __reiserfs_error(struct super_block *sb, const char *id,
- 	else
- 		printk(KERN_CRIT "REISERFS error (device %s): %s: %s\n",
- 		       sb->s_id, function, error_buf);
-+	mutex_unlock(&error_lock);
+ 	spin_lock(&error_lock);
  
- 	if (sb->s_flags & MS_RDONLY)
- 		return;
-@@ -459,6 +467,7 @@ void __reiserfs_error(struct super_block *sb, const char *id,
+@@ -198,46 +235,72 @@ static void prepare_error_buf(const char *fmt, va_list args)
+ 	while ((k = is_there_reiserfs_struct(fmt1, &what)) != NULL) {
+ 		*k = 0;
  
- void reiserfs_abort(struct super_block *sb, int errno, const char *fmt, ...)
- {
-+	mutex_lock(&error_lock);
- 	do_reiserfs_warning(fmt);
+-		p += vsprintf(p, fmt1, args);
++		bytes = vsnprintf(p, left, fmt1, args);
++		if (bytes >= left)
++			goto out;
++
++		p += bytes;
++		left -= bytes;
  
- 	if (reiserfs_error_panic(sb)) {
-@@ -466,11 +475,14 @@ void reiserfs_abort(struct super_block *sb, int errno, const char *fmt, ...)
- 		      error_buf);
+ 		switch (what) {
+-		case 'k':
+-			sprintf_le_key(p, va_arg(args, struct reiserfs_key *));
+-			break;
+-		case 'K':
+-			sprintf_cpu_key(p, va_arg(args, struct cpu_key *));
++		case 'k': {
++			struct reiserfs_key *key;
++			key = va_arg(args, struct reiserfs_key *);
++			bytes = snprintf_le_key(p, left, key);
+ 			break;
+-		case 'h':
+-			sprintf_item_head(p, va_arg(args, struct item_head *));
++		}
++		case 'K': {
++			struct cpu_key *key;
++			key = va_arg(args, struct cpu_key *);
++			bytes = snprintf_cpu_key(p, left, key);
+ 			break;
+-		case 't':
+-			sprintf_direntry(p,
+-					 va_arg(args,
+-						struct reiserfs_dir_entry *));
++		}
++		case 'h': {
++			struct item_head *ih;
++			ih = va_arg(args, struct item_head *);
++			bytes = snprintf_item_head(p, left, ih);
+ 			break;
+-		case 'y':
+-			sprintf_disk_child(p,
+-					   va_arg(args, struct disk_child *));
++		}
++		case 't': {
++			struct reiserfs_dir_entry *de;
++			de = va_arg(args, struct reiserfs_dir_entry *);
++			bytes = snprintf_direntry(p, left, de);
+ 			break;
+-		case 'z':
+-			sprintf_block_head(p,
+-					   va_arg(args, struct buffer_head *));
++		}
++		case 'y': {
++			struct disk_child *dc;
++			dc = va_arg(args, struct disk_child *);
++			bytes = snprintf_disk_child(p, left, dc);
+ 			break;
+-		case 'b':
+-			sprintf_buffer_head(p,
+-					    va_arg(args, struct buffer_head *));
++		}
++		case 'z': {
++			struct buffer_head *bh;
++			bh = va_arg(args, struct buffer_head *);
++			bytes = snprintf_block_head(p, left, bh);
+ 			break;
+-		case 'a':
+-			sprintf_de_head(p,
+-					va_arg(args,
+-					       struct reiserfs_de_head *));
++		}
++		case 'b': {
++			struct buffer_head *bh;
++			bh = va_arg(args, struct buffer_head *);
++			bytes = snprintf_buffer_head(p, left, bh);
+ 			break;
+ 		}
++		case 'a': {
++			struct reiserfs_de_head *deh;
++			deh = va_arg(args, struct reiserfs_de_head *);
++			bytes = snprintf_de_head(p, left, deh);
++			break;
++		}};
++
++		if (bytes >= left)
++			goto out;
+ 
+-		p += strlen(p);
++		p += bytes;
++		left -= bytes;
+ 		fmt1 = k + 2;
  	}
+-	vsprintf(p, fmt1, args);
++out:
++	vsnprintf(p, left, fmt1, args);
+ 	spin_unlock(&error_lock);
  
--	if (reiserfs_is_journal_aborted(SB_JOURNAL(sb)))
-+	if (reiserfs_is_journal_aborted(SB_JOURNAL(sb))) {
-+		mutex_unlock(&error_lock);
- 		return;
-+	}
- 
- 	printk(KERN_CRIT "REISERFS abort (device %s): %s\n", sb->s_id,
- 	       error_buf);
-+	mutex_unlock(&error_lock);
- 
- 	sb->s_flags |= MS_RDONLY;
- 	reiserfs_abort_journal(sb, errno);
+ }
 -- 
 2.11.0
 
