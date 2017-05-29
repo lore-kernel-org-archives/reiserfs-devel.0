@@ -1,25 +1,30 @@
 From: Tim Savannah <kata198@gmail.com>
 Subject: [PATCH 1/1] - Fix reiserfs WARNING in dquot_writeback_dquots
-Date: Mon, 29 May 2017 00:55:44 -0400
-Message-ID: <CALxoUzt5C08r0VwS6JjBbP7UvvbqhTTFjGOZJDQeQMbyPiyotw@mail.gmail.com>
+Date: Mon, 29 May 2017 00:57:15 -0400
+Message-ID: <CALxoUzv8NooVZmuZgXr1TiXrYqRx1TQ9GeOejJ2KvkNuiuPrUg@mail.gmail.com>
 Mime-Version: 1.0
+Content-Type: multipart/mixed; boundary="94eb2c114e9c5c84ac0550a2854d"
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=mime-version:from:date:message-id:subject:to:cc;
-        bh=Z6kOCemokvXdfrMaIJqESBWefhtJPkPKqwINzfDqJXU=;
-        b=ewwidSPyRqiV396TPpGAQzl0Cr3jANPvP8yZoVxA3IbCIkfgdTI5u6OS4xDbOJPvJF
-         BAXGvcr4eYCtZ6ewcDezYC8Vjp+jlwqmHH50pCZS+m2vfsgMT/mTnuR8R7Ba55ZR24nY
-         OUM5WJK1Ndv/Ap/3tOYSIRsnuoc8NQpCYqebphUu25A29iGEzxOoRe0962o1rfxVU1Wv
-         tdp/SpSFH1fazw5AsKi1Xvwq65fwlHiNMMcM4WUMDJcEgVgohHJxnj2f0/CC1Hdj5Ifc
-         g5oBHvxFGeown8Cn9jKxZUxh+mEuEAKcAg0EWA8Zfz0fNq5l3rip5GbHqAMLaViUyp7e
-         F5Wg==
+        bh=Rgfr55oRxv1ymY5Cmxp0IxQUueoycTI4FwpCgRRRMic=;
+        b=jDHtcew4u5SlPpd7DgBFWiHA7esWcHFR4B1T7Vm7D+kZwSfQV9OeJz3QiZEMsHVOZT
+         ywQMuvv4XNMnOh/CUi+OCJOHRXZE0YoTUG7+MPnjx43D/ePLjj0aUOuwt94KdnpVli93
+         PDqERYXYS08LI3t48jW9LuRGA6dDVrMC7zv2IItv+VS3a7WdX16OwVWM0qYlf37Hp4CW
+         XZz2DKWCx/AurJ3v58bHnUTiDMXoXA8p1q/4RkJv9Sj3brAUT2vqMrPMd2DMDU9oxglC
+         eAX+IgPKldIYBoChihUnxMaCAaEiDtgUUBNeAEVKZLbBVqKrnZ2Cj2w6WJj2vEr8GcKy
+         jXAw==
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
 To: reiserfs-devel@vger.kernel.org
 Cc: linux-kernel@vger.kernel.org
+
+--94eb2c114e9c5c84ac0550a2854d
+Content-Type: text/plain; charset="UTF-8"
+
+Oops, sent last one without patch on accident. Attached this time.
+
 
 This has been happening for me since 4.10
 
@@ -85,3 +90,24 @@ without issue.
 
 Thanks,
 - Tim Savannah
+
+--94eb2c114e9c5c84ac0550a2854d
+Content-Type: text/x-patch; charset="US-ASCII"; name="fix-reiserfs-dquot-warning.patch"
+Content-Disposition: attachment; filename="fix-reiserfs-dquot-warning.patch"
+Content-Transfer-Encoding: base64
+X-Attachment-Id: f_j39o46bp0
+
+LS0tIGEvZnMvcmVpc2VyZnMvc3VwZXIuYwkyMDE3LTA1LTI5IDAwOjE0OjQ1LjAwMDAwMDAwMCAt
+MDQwMAorKysgYi9mcy9yZWlzZXJmcy9zdXBlci5jCTIwMTctMDUtMjkgMDA6NTE6NDQuMDAwMDAw
+MDAwIC0wNDAwCkBAIC02NywxNyArNjcsMjggQEAKIHN0YXRpYyBpbnQgcmVpc2VyZnNfc3luY19m
+cyhzdHJ1Y3Qgc3VwZXJfYmxvY2sgKnMsIGludCB3YWl0KQogewogCXN0cnVjdCByZWlzZXJmc190
+cmFuc2FjdGlvbl9oYW5kbGUgdGg7CisJaW50IGdvdF9sb2NrOwogCiAJLyoKIAkgKiBXcml0ZWJh
+Y2sgcXVvdGEgaW4gbm9uLWpvdXJuYWxsZWQgcXVvdGEgY2FzZSAtIGpvdXJuYWxsZWQgcXVvdGEg
+aGFzCiAJICogbm8gZGlydHkgZHF1b3RzCiAJICovCisKKwlpZiAoIGRvd25fcmVhZF90cnlsb2Nr
+KCZzLT5zX3Vtb3VudCkgKQorCQlnb3RfbG9jayA9IDE7CisJZWxzZQorCQlnb3RfbG9jayA9IDA7
+CisKIAlkcXVvdF93cml0ZWJhY2tfZHF1b3RzKHMsIC0xKTsKIAlyZWlzZXJmc193cml0ZV9sb2Nr
+KHMpOwogCWlmICgham91cm5hbF9iZWdpbigmdGgsIHMsIDEpKQogCQlpZiAoIWpvdXJuYWxfZW5k
+X3N5bmMoJnRoKSkKIAkJCXJlaXNlcmZzX2ZsdXNoX29sZF9jb21taXRzKHMpOwogCXJlaXNlcmZz
+X3dyaXRlX3VubG9jayhzKTsKKworCWlmICggZ290X2xvY2sgKQorCQl1cF9yZWFkKCZzLT5zX3Vt
+b3VudCk7CisKIAlyZXR1cm4gMDsKIH0KIAo=
+--94eb2c114e9c5c84ac0550a2854d--
