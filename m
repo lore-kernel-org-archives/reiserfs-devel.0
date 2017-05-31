@@ -1,21 +1,21 @@
 From: Tahsin Erdogan <tahsin@google.com>
-Subject: [PATCH 11/28] ext4: clean up ext4_xattr_inode_get()
-Date: Wed, 31 May 2017 01:15:00 -0700
-Message-ID: <20170531081517.11438-11-tahsin@google.com>
+Subject: [PATCH 15/28] ext4: fix ext4_xattr_move_to_block()
+Date: Wed, 31 May 2017 01:15:04 -0700
+Message-ID: <20170531081517.11438-15-tahsin@google.com>
 References: <20170531081517.11438-1-tahsin@google.com>
-Return-path: <linux-kernel-owner@vger.kernel.org>
+Return-path: <linux-ext4-owner@vger.kernel.org>
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=google.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=1gKjTERK614My7r4qzsWhdUftMuENDS4rmt5H6dSPiA=;
-        b=ftHETDvw6IWIpjEIR4G8Ccr9A+vqUCDH7/oJtucZYvvH8sD+qVdqmlW2EQzbDZlncv
-         AuwDmlMxpnBSTCpwjDRx2QZNrHA1tFXkcym9iNmC4JAy4JMR2RPIrPW4oHEnRRzFGcCy
-         6wXzar9azCI0ZXDSWImdSB3YBEy1zXeNCRzNjSF34V/YNFVp/HrkW8kf41Q+0MkgKJee
-         3Gg5f9ugxNkO9pBJWs6QEuaYPEajvnwsCrrbRHn5VilQg3t/f+sQhp1il4hy71jLztzZ
-         kNeBKab0X/yECeotKVzrmDkLYMM4c2Ai5Dewc8dUFNfTr9Bdzr4C2r98u0mLPoaeIWZK
-         LPfw==
+        bh=QKZzM+6hEe6AFT13ilULZzZNaueE31BVGKy+FPJqldM=;
+        b=Cv2ysnfsToxSVrv1T73unA9SRUoVhEGIiVzW3jJ7sgGzLCrPyVTuf5gQ9u69fd3ND4
+         kxgqAs6bI85vLZO35OZI8nrA/YF2gYJFyYl9sbr3E8PPjsdNE6KvfAsr1USY+giNFKBr
+         wS2za9iAdCDk2NLsuZxpfdj7kk8xy7iJq0DiO4Ul13KlwUn6iDPoNGuoUtNaXy3VHouu
+         At6V2lTDwZPNrzVkFhFFVDYUsXHNQyNct+zjcqy4fbcF+sd/0pnv6RXn0h8F1Jk9xpMf
+         W50mrImaJqHLH5nHpU0AzKZtrvbFyDhC1R6ZA/JkPhS2Mr7wJ6Nrno/5DW9bRmhGAjia
+         6IQQ==
 In-Reply-To: <20170531081517.11438-1-tahsin@google.com>
-Sender: linux-kernel-owner@vger.kernel.org
+Sender: linux-ext4-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
@@ -23,98 +23,68 @@ Content-Transfer-Encoding: 7bit
 To: Jan Kara <jack@suse.com>, Theodore Ts'o <tytso@mit.edu>, Andreas Dilger <adilger.kernel@dilger.ca>, Dave Kleikamp <shaggy@kernel.org>, Alexander Viro <viro@zeniv.linux.org.uk>, Mark Fasheh <mfasheh@versity.com>, Joel Becker <jlbec@evilplan.org>, Jens Axboe <axboe@fb.com>, Deepa Dinamani <deepa.kernel@gmail.com>, Mike Christie <mchristi@redhat.com>, Fabian Frederick <fabf@skynet.be>, linux-ext4@vger.kernel.org
 Cc: linux-kernel@vger.kernel.org, jfs-discussion@lists.sourceforge.net, linux-fsdevel@vger.kernel.org, ocfs2-devel@oss.oracle.com, reiserfs-devel@vger.kernel.org, Tahsin Erdogan <tahsin@google.com>
 
-The input and output values of *size parameter are equal on successful
-return from ext4_xattr_inode_get(). On error return, the callers ignore
-the output value so there is no need to update it.
-
-Also check for NULL return from ext4_bread(). If the actual xattr inode
-size happens to be smaller than the expected size, ext4_bread() may
-return NULL which would indicate data corruption.
+When moving xattr entries from inline area to a xattr block, entries
+that refer to external xattr inodes need special handling because
+value data is not available in the inline area but rather should be
+read from its external inode.
 
 Signed-off-by: Tahsin Erdogan <tahsin@google.com>
 ---
- fs/ext4/xattr.c | 35 +++++++++++++----------------------
- 1 file changed, 13 insertions(+), 22 deletions(-)
+ fs/ext4/xattr.c | 19 +++++++++++++------
+ 1 file changed, 13 insertions(+), 6 deletions(-)
 
 diff --git a/fs/ext4/xattr.c b/fs/ext4/xattr.c
-index d9477d01be9b..8e855fc2eb03 100644
+index 6a6bee246873..9c243b3510b7 100644
 --- a/fs/ext4/xattr.c
 +++ b/fs/ext4/xattr.c
-@@ -278,37 +278,28 @@ ext4_xattr_find_entry(struct ext4_xattr_entry **pentry, int name_index,
- /*
-  * Read the EA value from an inode.
-  */
--static int
--ext4_xattr_inode_read(struct inode *ea_inode, void *buf, size_t *size)
-+static int ext4_xattr_inode_read(struct inode *ea_inode, void *buf, size_t size)
- {
- 	unsigned long block = 0;
- 	struct buffer_head *bh = NULL;
--	int blocksize;
--	size_t csize, ret_size = 0;
--
--	if (*size == 0)
--		return 0;
-+	int blocksize = ea_inode->i_sb->s_blocksize;
-+	size_t csize, copied = 0;
+@@ -1658,18 +1658,16 @@ static int ext4_xattr_move_to_block(handle_t *handle, struct inode *inode,
+ 	struct ext4_xattr_ibody_find *is = NULL;
+ 	struct ext4_xattr_block_find *bs = NULL;
+ 	char *buffer = NULL, *b_entry_name = NULL;
+-	size_t value_offs, value_size;
++	size_t value_size = le32_to_cpu(entry->e_value_size);
+ 	struct ext4_xattr_info i = {
+ 		.value = NULL,
+ 		.value_len = 0,
+ 		.name_index = entry->e_name_index,
++		.in_inode = !!entry->e_value_inum,
+ 	};
+ 	struct ext4_xattr_ibody_header *header = IHDR(inode, raw_inode);
+ 	int error;
  
--	blocksize = ea_inode->i_sb->s_blocksize;
+-	value_offs = le16_to_cpu(entry->e_value_offs);
+-	value_size = le32_to_cpu(entry->e_value_size);
 -
--	while (ret_size < *size) {
--		csize = (*size - ret_size) > blocksize ? blocksize :
--							*size - ret_size;
-+	while (copied < size) {
-+		csize = (size - copied) > blocksize ? blocksize : size - copied;
- 		bh = ext4_bread(NULL, ea_inode, block, 0);
--		if (IS_ERR(bh)) {
--			*size = ret_size;
-+		if (IS_ERR(bh))
- 			return PTR_ERR(bh);
--		}
-+		if (!bh)
-+			return -EFSCORRUPTED;
+ 	is = kzalloc(sizeof(struct ext4_xattr_ibody_find), GFP_NOFS);
+ 	bs = kzalloc(sizeof(struct ext4_xattr_block_find), GFP_NOFS);
+ 	buffer = kmalloc(value_size, GFP_NOFS);
+@@ -1685,7 +1683,17 @@ static int ext4_xattr_move_to_block(handle_t *handle, struct inode *inode,
+ 	bs->bh = NULL;
+ 
+ 	/* Save the entry name and the entry value */
+-	memcpy(buffer, (void *)IFIRST(header) + value_offs, value_size);
++	if (entry->e_value_inum) {
++		error = ext4_xattr_inode_get(inode,
++					     le32_to_cpu(entry->e_value_inum),
++					     buffer, value_size);
++		if (error)
++			goto out;
++	} else {
++		size_t value_offs = le16_to_cpu(entry->e_value_offs);
++		memcpy(buffer, (void *)IFIRST(header) + value_offs, value_size);
++	}
 +
- 		memcpy(buf, bh->b_data, csize);
- 		brelse(bh);
+ 	memcpy(b_entry_name, entry->e_name, entry->e_name_len);
+ 	b_entry_name[entry->e_name_len] = '\0';
+ 	i.name = b_entry_name;
+@@ -1703,7 +1711,6 @@ static int ext4_xattr_move_to_block(handle_t *handle, struct inode *inode,
+ 	if (error)
+ 		goto out;
  
- 		buf += csize;
- 		block += 1;
--		ret_size += csize;
-+		copied += csize;
- 	}
--
--	*size = ret_size;
--
- 	return 0;
- }
- 
-@@ -360,7 +351,7 @@ static int ext4_xattr_inode_iget(struct inode *parent, unsigned long ea_ino,
-  */
- static int
- ext4_xattr_inode_get(struct inode *inode, unsigned long ea_ino, void *buffer,
--		     size_t *size)
-+		     size_t size)
- {
- 	struct inode *ea_inode;
- 	int ret;
-@@ -417,7 +408,7 @@ ext4_xattr_block_get(struct inode *inode, int name_index, const char *name,
- 		if (entry->e_value_inum) {
- 			error = ext4_xattr_inode_get(inode,
- 					     le32_to_cpu(entry->e_value_inum),
--					     buffer, &size);
-+					     buffer, size);
- 			if (error)
- 				goto cleanup;
- 		} else {
-@@ -467,7 +458,7 @@ ext4_xattr_ibody_get(struct inode *inode, int name_index, const char *name,
- 		if (entry->e_value_inum) {
- 			error = ext4_xattr_inode_get(inode,
- 					     le32_to_cpu(entry->e_value_inum),
--					     buffer, &size);
-+					     buffer, size);
- 			if (error)
- 				goto cleanup;
- 		} else {
+-	i.name = b_entry_name;
+ 	i.value = buffer;
+ 	i.value_len = value_size;
+ 	error = ext4_xattr_block_find(inode, &i, bs);
 -- 
 2.13.0.219.gdb65acc882-goog
 
