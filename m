@@ -1,48 +1,42 @@
-From: "Darrick J. Wong" <darrick.wong@oracle.com>
-Subject: Re: [PATCH v2 27/28] ext4: xattr inode deduplication
-Date: Fri, 2 Jun 2017 10:59:35 -0700
-Message-ID: <20170602175935.GB5626@birch.djwong.org>
-References: <20170531160004.GG4510@birch.djwong.org>
-	<20170531223357.800-1-tahsin@google.com>
-	<20170602054143.GA5626@birch.djwong.org>
-	<CAAeU0aN+Ts=SqGFEMOer=rguprDNX4Mo1Eyj+j1Y=dd-zdbkZw@mail.gmail.com>
+From: Edward Shishkin <edward.shishkin@gmail.com>
+Subject: Re: reiser4: BUG during a backup (sequentially reading the whole
+ fs) on 4.9
+Date: Fri, 02 Jun 2017 23:37:49 +0300
+Message-ID: <5931CC9D.6080801@gmail.com>
+References: <1488211296.5395.2.camel@intelfx.name>               <f7c80f08-6e89-226b-7914-54d2385aa834@gmail.com>                <1488212421.5395.3.camel@intelfx.name>          <4a88640c-8d98-1cc0-5713-3abd76abf208@gmail.com>                <1496328566.8314.2.camel@intelfx.name>          <290631df-dc46-e8ef-041f-c353b7eecf88@gmail.com>        <1496339175.12062.1.camel@intelfx.name> <59307242.5010705@gmail.com> <1496357947.4940.2.camel@intelfx.name>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <ocfs2-devel-bounces@oss.oracle.com>
-Content-Disposition: inline
-In-Reply-To: <CAAeU0aN+Ts=SqGFEMOer=rguprDNX4Mo1Eyj+j1Y=dd-zdbkZw@mail.gmail.com>
-List-Id: <reiserfs-devel.vger.kernel.org>
-List-Unsubscribe: <https://oss.oracle.com/mailman/listinfo/ocfs2-devel>,
-	<mailto:ocfs2-devel-request@oss.oracle.com?subject=unsubscribe>
-List-Archive: <http://oss.oracle.com/pipermail/ocfs2-devel>
-List-Post: <mailto:ocfs2-devel@oss.oracle.com>
-List-Help: <mailto:ocfs2-devel-request@oss.oracle.com?subject=help>
-List-Subscribe: <https://oss.oracle.com/mailman/listinfo/ocfs2-devel>,
-	<mailto:ocfs2-devel-request@oss.oracle.com?subject=subscribe>
-Sender: ocfs2-devel-bounces@oss.oracle.com
-Errors-To: ocfs2-devel-bounces@oss.oracle.com
-To: Tahsin Erdogan <tahsin@google.com>
-Cc: Deepa Dinamani <deepa.kernel@gmail.com>, Dave Kleikamp <shaggy@kernel.org>, jfs-discussion@lists.sourceforge.net, Theodore Ts'o <tytso@mit.edu>, linux-kernel@vger.kernel.org, reiserfs-devel@vger.kernel.org, Jens Axboe <axboe@fb.com>, linux-fsdevel@vger.kernel.org, Mike Christie <mchristi@redhat.com>, Andreas Dilger <adilger.kernel@dilger.ca>, Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.com>, Fabian Frederick <fabf@skynet.be>, linux-ext4@vger.kernel.org, ocfs2-devel@oss.oracle.com
+Return-path: <reiserfs-devel-owner@vger.kernel.org>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=message-id:date:from:user-agent:mime-version:to:subject:references
+         :in-reply-to:content-transfer-encoding;
+        bh=1wdob96WFEUfPW9JQYj2Zpiz5oOJ/qUExl30HEcHHxE=;
+        b=EFF1zjkOxa3zBRiWAOUf837ZYg5raC/BuIRkF/Xlymo25NpsW6MgoTbly1pD1FmfuP
+         WZ0/UKDxwOVUv5iSsQa1LazrYEg2r82zryN2Z93VCUurv0D5XafCwF33EoTVZdwFtYQq
+         OP3gTGykquL2RhvPQi+P5a6pnOjZnAHhbxl7+hmXsTNvkLwwlPugoJOZM0CRDi1IAR4q
+         GtkfaIfkk1VuGZjSB6lPs4QnTVEmpl2O5obWXG9aUc4c8BiajLVVIebtk9UCql/sMQi9
+         S0qpILqEimLYRRgw6ssMoGFvQbB1+iMD8UKruVnx0CvzcQ451MTQSWK5PTRqVyTBmRCR
+         fC6Q==
+In-Reply-To: <1496357947.4940.2.camel@intelfx.name>
+Sender: reiserfs-devel-owner@vger.kernel.org
+List-ID: <reiserfs-devel.vger.kernel.org>
+Content-Type: text/plain; charset="us-ascii"; format="flowed"
+To: intelfx@intelfx.name, Reiserfs development mailing list <reiserfs-devel@vger.kernel.org>
 
-On Fri, Jun 02, 2017 at 05:46:22AM -0700, Tahsin Erdogan wrote:
-> > Hmm... normally we'd supply sbi->s_csum_seed as the second argument so
-> > that the metadata checksum value also has the fs uuid stamped into it.
-> 
-> I have thought about using sbi->s_csum_seed and was a little hesitant
-> because it involves adding more complexity to e2fsprogs to handle
-> cases like changing uuid or turning off metadata_csum. After thinking
-> more about this, I think it is doable.
+Alas, can not reproduce it.
+I suspect garbage on the leaf level. For some reasons
+fsck can not detect it (on semantic pass).
+How big is your partition?
+Could you dd it to a file and let me download that file?
 
-e2fsprogs already has code to walk the fs to rewrite/remove checksums,
-so it shouldn't be too much effort to tap into that to rewrite the
-ea_info hash.
+Thanks,
+Edward.
 
-> > Even if you dismiss that, we usually follow the convention of
-> > initializing the crc32c calculation with (~0U), not (0U), to strengthen
-> > crc32c's ability to detect zeroes being injected at the start of the
-> > stream.
-> 
-> Agreed, using ~0 is definitely better than 0.
+On 06/02/2017 01:59 AM, Ivan Shapovalov wrote:
+> Looking forward to your results.
+>
+> And by "looking at the tree" you mean the debugfs output, right?
+>
+> Thanks,
 
---D
