@@ -1,224 +1,108 @@
-From: Tahsin Erdogan <tahsin@google.com>
-Subject: [PATCH 31/31] ext4: strong binding of xattr inode references
-Date: Wed, 14 Jun 2017 10:23:50 -0700
-Message-ID: <20170614172351.18992-1-tahsin@google.com>
-Return-path: <linux-fsdevel-owner@vger.kernel.org>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=2ifydzE1FJXlBE9jMuV+gM1es7V4PqJ53cw/aj/5LcA=;
-        b=p0+N4u3aHrcTpU+6FMS2pbBKhnXRH80OjnzVh44kn3k0lOM4W4bewRkeVAzrAvUByE
-         MhcqtSrc7238h3RpotQowOd6QmIJhciSTEQit7xQuy3o35VzpQiBn/gwB618isxpeoUe
-         CPn/OHM+xw3f9t7JmMIm3XAWZMHiQkyTpleOhnjP4gES19ENfPdDKQN8LsmTX6RFGQtD
-         kJ2kDsfPAVjNCbcayXiOu4vNHVrs41J5vcIiPftsZzmZ6kJ6MLU1WHDLII12ZjBMmjyh
-         +6wUOgzLf51a65TT5uVmLIsgNlvdAOyty3s8Cls2UDBEtlhvRyrdL4wuG48N/CecK4Z0
-         yDkg==
-Sender: linux-fsdevel-owner@vger.kernel.org
-List-ID: <reiserfs-devel.vger.kernel.org>
-MIME-Version: 1.0
+From: "Darrick J. Wong" <darrick.wong@oracle.com>
+Subject: Re: [PATCH 29/31] ext4: reserve space for xattr
+	entries/names
+Date: Wed, 14 Jun 2017 16:05:18 -0700
+Message-ID: <20170614230518.GA4518@birch.djwong.org>
+References: <20170614172326.18670-1-tahsin@google.com>
+Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: "Darrick J . Wong" <darrick.wong@oracle.com>, Jan Kara <jack@suse.com>, Theodore Ts'o <tytso@mit.edu>, Andreas Dilger <adilger.kernel@dilger.ca>, Dave Kleikamp <shaggy@kernel.org>, Alexander Viro <viro@zeniv.linux.org.uk>, Mark Fasheh <mfasheh@versity.com>, Joel Becker <jlbec@evilplan.org>, Jens Axboe <axboe@fb.com>, Deepa Dinamani <deepa.kernel@gmail.com>, Mike Christie <mchristi@redhat.com>, Fabian Frederick <fabf@skynet.be>, linux-ext4@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org, jfs-discussion@lists.sourceforge.net, linux-fsdevel@vger.kernel.org, ocfs2-devel@oss.oracle.com, reiserfs-devel@vger.kernel.org, Tahsin Erdogan <tahsin@google.com>
+Return-path: <ocfs2-devel-bounces@oss.oracle.com>
+Content-Disposition: inline
+In-Reply-To: <20170614172326.18670-1-tahsin@google.com>
+List-Id: <reiserfs-devel.vger.kernel.org>
+List-Unsubscribe: <https://oss.oracle.com/mailman/listinfo/ocfs2-devel>,
+	<mailto:ocfs2-devel-request@oss.oracle.com?subject=unsubscribe>
+List-Archive: <http://oss.oracle.com/pipermail/ocfs2-devel>
+List-Post: <mailto:ocfs2-devel@oss.oracle.com>
+List-Help: <mailto:ocfs2-devel-request@oss.oracle.com?subject=help>
+List-Subscribe: <https://oss.oracle.com/mailman/listinfo/ocfs2-devel>,
+	<mailto:ocfs2-devel-request@oss.oracle.com?subject=subscribe>
+Sender: ocfs2-devel-bounces@oss.oracle.com
+Errors-To: ocfs2-devel-bounces@oss.oracle.com
+To: Tahsin Erdogan <tahsin@google.com>
+Cc: Deepa Dinamani <deepa.kernel@gmail.com>, Dave Kleikamp <shaggy@kernel.org>, jfs-discussion@lists.sourceforge.net, Theodore Ts'o <tytso@mit.edu>, linux-kernel@vger.kernel.org, reiserfs-devel@vger.kernel.org, Jens Axboe <axboe@fb.com>, linux-fsdevel@vger.kernel.org, Mike Christie <mchristi@redhat.com>, Andreas Dilger <adilger.kernel@dilger.ca>, Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.com>, Fabian Frederick <fabf@skynet.be>, linux-ext4@vger.kernel.org, ocfs2-devel@oss.oracle.com
 
-To verify that a xattr entry is not pointing to the wrong xattr inode,
-we currently check that the target inode has EXT4_EA_INODE_FL flag set and
-also the entry size matches the target inode size.
+On Wed, Jun 14, 2017 at 10:23:26AM -0700, Tahsin Erdogan wrote:
+> New ea_inode feature allows putting large xattr values into external
+> inodes. struct ext4_xattr_entry and the attribute name however have to
+> remain in the inode extra space or external attribute block. Once that
+> space is exhausted, no further entries can be added. Some of that space
+> could also be used by values that fit in there at the time of addition.
+> 
+> So, a single xattr entry whose value barely fits in the external block
+> could prevent further entries being added.
+> 
+> To mitigate the problem, this patch introduces a notion of reserve in
+> the
+> external attribute block that cannot be used by value data. This reserve
+> is enforced when ea_inode feature is enabled. The amount of reserve is
+> arbitrarily chosen to be min(block_size/8, 1024). The table below shows
+> how much space is reserved for each block size and the guaranteed
+> mininum
+> number of entries that can be placed in the external attribute block.
+> 
+> block size     reserved bytes  entries (name length = 16)
+>  1k            128              3
+>  2k            256              7
+>  4k            512             15
 
-For stronger validation, also incorporate crc32c hash of the value into
-the e_hash field. This is done regardless of whether the entry lives in
-the inode body or external attribute block.
+Why not just spill the values into their own ea_inodes if we need the
+space?  I guess that has the disadvantage that now we need to reserve
+quite a few more journal credits ((1 inode block, 1 bbitmap block, 1
+ibitmap block, 1 data block) * nr_inline_values) just in case we end up
+spilling all the values.
 
-Signed-off-by: Tahsin Erdogan <tahsin@google.com>
----
- fs/ext4/xattr.c | 106 +++++++++++++++++++++++++++++++++++---------------------
- 1 file changed, 67 insertions(+), 39 deletions(-)
+--D
 
-diff --git a/fs/ext4/xattr.c b/fs/ext4/xattr.c
-index 6c6dce2f874e..7e9134fb4bb8 100644
---- a/fs/ext4/xattr.c
-+++ b/fs/ext4/xattr.c
-@@ -77,8 +77,8 @@ static void ext4_xattr_block_cache_insert(struct mb_cache *,
- static struct buffer_head *
- ext4_xattr_block_cache_find(struct inode *, struct ext4_xattr_header *,
- 			    struct mb_cache_entry **);
--static void ext4_xattr_hash_entry(struct ext4_xattr_entry *entry,
--				  void *value_base);
-+static __le32 ext4_xattr_hash_entry(char *name, size_t name_len, __le32 *value,
-+				    size_t value_count);
- static void ext4_xattr_rehash(struct ext4_xattr_header *);
- 
- static const struct xattr_handler * const ext4_xattr_handler_map[] = {
-@@ -389,18 +389,20 @@ static int ext4_xattr_inode_iget(struct inode *parent, unsigned long ea_ino,
- }
- 
- /*
-- * Read the value from the EA inode.
-+ * Read xattr value from the EA inode.
-  */
- static int
--ext4_xattr_inode_get(struct inode *inode, unsigned long ea_ino, void *buffer,
--		     size_t size)
-+ext4_xattr_inode_get(struct inode *inode, struct ext4_xattr_entry *entry,
-+		     void *buffer, size_t size)
- {
- 	struct mb_cache *ea_inode_cache = EA_INODE_CACHE(inode);
- 	struct inode *ea_inode;
-+	__le32 calc_e_hash, tmp_data;
- 	u32 hash;
- 	int err;
- 
--	err = ext4_xattr_inode_iget(inode, ea_ino, &ea_inode);
-+	err = ext4_xattr_inode_iget(inode, le32_to_cpu(entry->e_value_inum),
-+				    &ea_inode);
- 	if (err) {
- 		ea_inode = NULL;
- 		goto out;
-@@ -415,11 +417,25 @@ ext4_xattr_inode_get(struct inode *inode, unsigned long ea_ino, void *buffer,
- 	}
- 
- 	err = ext4_xattr_inode_read(ea_inode, buffer, size);
--	if (!err) {
--		hash = ext4_xattr_inode_get_hash(ea_inode);
--		mb_cache_entry_create(ea_inode_cache, GFP_NOFS, hash,
--				      ea_inode->i_ino, true /* reusable */);
-+	if (err)
-+		goto out;
-+
-+	hash = ext4_xattr_inode_get_hash(ea_inode);
-+
-+	/* Verify e_hash. */
-+	tmp_data = cpu_to_le32(hash);
-+	calc_e_hash = ext4_xattr_hash_entry(entry->e_name, entry->e_name_len,
-+					    &tmp_data, 1);
-+	if (calc_e_hash != entry->e_hash) {
-+		ext4_warning_inode(inode,
-+			"Entry calc_e_hash=%#x does not match e_hash=%#x",
-+			le32_to_cpu(calc_e_hash), le32_to_cpu(entry->e_hash));
-+		err = -EFSCORRUPTED;
-+		goto out;
- 	}
-+
-+	mb_cache_entry_create(ea_inode_cache, GFP_NOFS, hash, ea_inode->i_ino,
-+			      true /* reusable */);
- out:
- 	iput(ea_inode);
- 	return err;
-@@ -465,9 +481,8 @@ ext4_xattr_block_get(struct inode *inode, int name_index, const char *name,
- 		if (size > buffer_size)
- 			goto cleanup;
- 		if (entry->e_value_inum) {
--			error = ext4_xattr_inode_get(inode,
--					     le32_to_cpu(entry->e_value_inum),
--					     buffer, size);
-+			error = ext4_xattr_inode_get(inode, entry, buffer,
-+						     size);
- 			if (error)
- 				goto cleanup;
- 		} else {
-@@ -515,9 +530,8 @@ ext4_xattr_ibody_get(struct inode *inode, int name_index, const char *name,
- 		if (size > buffer_size)
- 			goto cleanup;
- 		if (entry->e_value_inum) {
--			error = ext4_xattr_inode_get(inode,
--					     le32_to_cpu(entry->e_value_inum),
--					     buffer, size);
-+			error = ext4_xattr_inode_get(inode, entry, buffer,
-+						     size);
- 			if (error)
- 				goto cleanup;
- 		} else {
-@@ -1634,12 +1648,36 @@ static int ext4_xattr_set_entry(struct ext4_xattr_info *i,
- 		here->e_value_size = cpu_to_le32(i->value_len);
- 	}
- 
--	if (is_block) {
--		if (s->not_found || i->value)
--			ext4_xattr_hash_entry(here, s->base);
--		ext4_xattr_rehash((struct ext4_xattr_header *)s->base);
-+	if (i->value) {
-+		__le32 hash = 0;
-+
-+		/* Entry hash calculation. */
-+		if (in_inode) {
-+			__le32 crc32c_hash;
-+
-+			/*
-+			 * Feed crc32c hash instead of the raw value for entry
-+			 * hash calculation. This is to avoid walking
-+			 * potentially long value buffer again.
-+			 */
-+			crc32c_hash = cpu_to_le32(
-+				       ext4_xattr_inode_get_hash(new_ea_inode));
-+			hash = ext4_xattr_hash_entry(here->e_name,
-+						     here->e_name_len,
-+						     &crc32c_hash, 1);
-+		} else if (is_block) {
-+			__le32 *value = s->base + min_offs - new_size;
-+
-+			hash = ext4_xattr_hash_entry(here->e_name,
-+						     here->e_name_len, value,
-+						     new_size >> 2);
-+		}
-+		here->e_hash = hash;
- 	}
- 
-+	if (is_block)
-+		ext4_xattr_rehash((struct ext4_xattr_header *)s->base);
-+
- 	ret = 0;
- out:
- 	iput(old_ea_inode);
-@@ -2421,9 +2459,7 @@ static int ext4_xattr_move_to_block(handle_t *handle, struct inode *inode,
- 
- 	/* Save the entry name and the entry value */
- 	if (entry->e_value_inum) {
--		error = ext4_xattr_inode_get(inode,
--					     le32_to_cpu(entry->e_value_inum),
--					     buffer, value_size);
-+		error = ext4_xattr_inode_get(inode, entry, buffer, value_size);
- 		if (error)
- 			goto out;
- 	} else {
-@@ -2913,30 +2949,22 @@ ext4_xattr_block_cache_find(struct inode *inode,
-  *
-  * Compute the hash of an extended attribute.
-  */
--static void ext4_xattr_hash_entry(struct ext4_xattr_entry *entry,
--				  void *value_base)
-+static __le32 ext4_xattr_hash_entry(char *name, size_t name_len, __le32 *value,
-+				    size_t value_count)
- {
- 	__u32 hash = 0;
--	char *name = entry->e_name;
--	int n;
- 
--	for (n = 0; n < entry->e_name_len; n++) {
-+	while (name_len--) {
- 		hash = (hash << NAME_HASH_SHIFT) ^
- 		       (hash >> (8*sizeof(hash) - NAME_HASH_SHIFT)) ^
- 		       *name++;
- 	}
--
--	if (!entry->e_value_inum && entry->e_value_size) {
--		__le32 *value = (__le32 *)((char *)value_base +
--			le16_to_cpu(entry->e_value_offs));
--		for (n = (le32_to_cpu(entry->e_value_size) +
--		     EXT4_XATTR_ROUND) >> EXT4_XATTR_PAD_BITS; n; n--) {
--			hash = (hash << VALUE_HASH_SHIFT) ^
--			       (hash >> (8*sizeof(hash) - VALUE_HASH_SHIFT)) ^
--			       le32_to_cpu(*value++);
--		}
-+	while (value_count--) {
-+		hash = (hash << VALUE_HASH_SHIFT) ^
-+		       (hash >> (8*sizeof(hash) - VALUE_HASH_SHIFT)) ^
-+		       le32_to_cpu(*value++);
- 	}
--	entry->e_hash = cpu_to_le32(hash);
-+	return cpu_to_le32(hash);
- }
- 
- #undef NAME_HASH_SHIFT
--- 
-2.13.1.508.gb3defc5cc-goog
-
+>  8k            1024            31
+> 16k            1024            31
+> 32k            1024            31
+> 64k            1024            31
+> 
+> Signed-off-by: Tahsin Erdogan <tahsin@google.com>
+> ---
+>  fs/ext4/xattr.c | 20 ++++++++++++++++++++
+>  1 file changed, 20 insertions(+)
+> 
+> diff --git a/fs/ext4/xattr.c b/fs/ext4/xattr.c
+> index 3ad1fc62cbf0..c9579d220a0c 100644
+> --- a/fs/ext4/xattr.c
+> +++ b/fs/ext4/xattr.c
+> @@ -1428,6 +1428,12 @@ static int ext4_xattr_inode_lookup_create(handle_t *handle, struct inode *inode,
+>  	return 0;
+>  }
+>  
+> +/*
+> + * Reserve min(block_size/8, 1024) bytes for xattr entries/names if ea_inode
+> + * feature is enabled.
+> + */
+> +#define EXT4_XATTR_BLOCK_RESERVE(inode)	min(i_blocksize(inode)/8, 1024U)
+> +
+>  static int ext4_xattr_set_entry(struct ext4_xattr_info *i,
+>  				struct ext4_xattr_search *s,
+>  				handle_t *handle, struct inode *inode)
+> @@ -1487,6 +1493,20 @@ static int ext4_xattr_set_entry(struct ext4_xattr_info *i,
+>  			ret = -ENOSPC;
+>  			goto out;
+>  		}
+> +
+> +		/*
+> +		 * If storing the value in an external inode is an option,
+> +		 * reserve space for xattr entries/names in the external
+> +		 * attribute block so that a long value does not occupy the
+> +		 * whole space and prevent futher entries being added.
+> +		 */
+> +		if (ext4_has_feature_ea_inode(inode->i_sb) && new_size &&
+> +		    (s->end - s->base) == i_blocksize(inode) &&
+> +		    (min_offs + old_size - new_size) <
+> +					EXT4_XATTR_BLOCK_RESERVE(inode)) {
+> +			ret = -ENOSPC;
+> +			goto out;
+> +		}
+>  	}
+>  
+>  	/*
+> -- 
+> 2.13.1.508.gb3defc5cc-goog
+> 
