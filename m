@@ -1,51 +1,81 @@
-From: Tahsin Erdogan <tahsin@google.com>
-Subject: Re: [PATCH 30/31] ext4: eliminate xattr entry e_hash recalculation
- for removes
-Date: Fri, 16 Jun 2017 19:04:44 -0700
-Message-ID: <CAAeU0aMuV7EHw5ZwdF52__baS36CsaB4MN03iqUdyLh1Fc6HzA@mail.gmail.com>
-References: <20170614172340.18720-1-tahsin@google.com> <20170615091026.GG1764@quack2.suse.cz>
+From: Jose R R <jose.r.r@metztli.com>
+Subject: Re: Debian Reiser4
+Date: Sat, 17 Jun 2017 06:20:34 -0700
+Message-ID: <CAM12Q5SsUU6Tgd=n818dBHWTkRNxjf1naOVB8jogJoQst95TPg@mail.gmail.com>
+References: <CAM12Q5RpO04Zy7ZTEO85QCmohox0+UqzBDihCjEszZ2VckRSSA@mail.gmail.com>
+ <4103581495868794@web31g.yandex.ru>
 Mime-Version: 1.0
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
+        d=metztli-com.20150623.gappssmtp.com; s=20150623;
         h=mime-version:in-reply-to:references:from:date:message-id:subject:to
          :cc;
-        bh=Hvg6rO2Y2mi6RCbWRFF3KZCC3RUFKRWS93+OeJvXvK4=;
-        b=u0Q7HXMhkyHQasYsy6mwdzv15ENlCYIWV8z8rxYlN4lYajb5AJGbP1s1v9bihJ1fbG
-         nAO9v7MuscTtgMYj5wNXIe0m97im8L+SNrH9+pJtS/bixBhneEMWxtCuF7LMoWR2oodU
-         daCrc5PIz86RZkt0njlbGmM1REMQVAh9jb0IfFYxtLt/ZLS0FVC4X630/ASbVX57CBKJ
-         /NLeRDes6fLtdyyMVmz032lmlVy4oWixpi+QYfc2K8SlxtliDh/Ipydv2ok2jq+W7azJ
-         hR/S09nvHJgvROPR5jut0Dsije1SW7+OqJlVTghl9Gqykcz3ckTAEx8YZB+IzVXm0T5s
-         6/pg==
-In-Reply-To: <20170615091026.GG1764@quack2.suse.cz>
+        bh=F09KSEhELx0Z0F8Qrwf9BD7bfbguFgoUOEIz2hMMjQg=;
+        b=kiyhlfE+oAFKJH4tbJGnsFYHio5dFQwZtekD0EnTcQPHIyLdBci6ATg2mnbLv3837h
+         e7ZecZ0zxZ7Cqwca/e179H0X4d2cqkQI75ARUteL8wrLsyDWdZDvb48r1y0ZsEfcAZzo
+         bWrXa7Toxp7XGw4RCmZOOVLcJi+8LSkLt+YGVprVi2Fw2GKXQSPfNQQTnf8vaTXaBxrn
+         1YGZf7aNd4utYr5HoUn5Q1tSmEl8kIZ6g8vi+u5cLLR6pY244wujlHtl0DwvsOvWZHKM
+         Y/CQ7y2AQlzltVAvZ37cdIDxytYszGhRwo1Y0KbshA78x33d0ucPVur1oacacJnxawqo
+         ZF2g==
+In-Reply-To: <4103581495868794@web31g.yandex.ru>
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Jan Kara <jack@suse.cz>
-Cc: "Darrick J . Wong" <darrick.wong@oracle.com>, Jan Kara <jack@suse.com>, Theodore Ts'o <tytso@mit.edu>, Andreas Dilger <adilger.kernel@dilger.ca>, Dave Kleikamp <shaggy@kernel.org>, Alexander Viro <viro@zeniv.linux.org.uk>, Mark Fasheh <mfasheh@versity.com>, Joel Becker <jlbec@evilplan.org>, Jens Axboe <axboe@fb.com>, Deepa Dinamani <deepa.kernel@gmail.com>, Mike Christie <mchristi@redhat.com>, Fabian Frederick <fabf@skynet.be>, linux-ext4@vger.kernel.org, linux-kernel@vger.kernel.org, jfs-discussion@lists.sourceforge.net, linux-fsdevel@vger.kernel.org, ocfs2-devel@oss.oracle.com, reiserfs-devel@vger.kernel.org
+To: Ladislav Bodnar <ladislav@distrowatch.com>
+Cc: debian-boot@lists.debian.org, debian-devel@lists.debian.org, ReiserFS Development List <reiserfs-devel@vger.kernel.org>
 
-On Thu, Jun 15, 2017 at 2:10 AM, Jan Kara <jack@suse.cz> wrote:
-> I agree with moving ext4_xattr_rehash_entry() out of ext4_xattr_rehash().
-> However how about just keeping ext4_xattr_rehash() in
-> ext4_xattr_block_set() (so that you don't have to pass aditional argument
-> to ext4_xattr_set_entry()) and calling ext4_xattr_rehash_entry() when
-> i->value != NULL? That would seem easier and cleaner as well...
+Good day, Ladislav-
 
-The is_block parameter is also used to decide whether block reserve
-check should be performed:
 
-@@ -1500,8 +1502,8 @@ static int ext4_xattr_set_entry(struct ext4_xattr_info *i,
-                 * attribute block so that a long value does not occupy the
-                 * whole space and prevent futher entries being added.
-                 */
--               if (ext4_has_feature_ea_inode(inode->i_sb) && new_size &&
--                   (s->end - s->base) == i_blocksize(inode) &&
-+               if (ext4_has_feature_ea_inode(inode->i_sb) &&
-+                   new_size && is_block &&
-                    (min_offs + old_size - new_size) <
-                                        EXT4_XATTR_BLOCK_RESERVE(inode)) {
-                        ret = -ENOSPC;
 
-Because of that, I think moving ext4_xattr_rehash to caller makes it
-bit more complicated. Let me know if you disagree.
+On Sat, May 27, 2017 at 12:06 AM, Ladislav Bodnar
+<ladislav@distrowatch.com> wrote:
+> 27.05.2017, 15:03, "Jose R R" <jose.r.r@metztli.com>:
+>> It has as base the official Debian Jessie AMD64 distribution:
+>> < https://sf.net/projects/debian-reiser4/ >
+>
+> The word "Debian" is registered trademark. Please find another name for your
+> distribution.
+>
+> Ladislav
+
+Taking heed of your advice, and on the occasion of June 17, 2017, the
+official Debian Stretch release date, I hereby let you know that I
+have created alternate Stretch web name for referenced project:
+Metztli Reiser4 < https://sf.net/projects/metztli-reiser4/ > so as not
+to infringe on Debian's trademark.
+
+In this new debian-installer I began experimenting with Reiser4
+-patched experimental kernel 'trunk' -- made available by DD Ben --
+advancing gradually until I achieved Linux kernel
+4.11.4-1+reiser4.0.1. Which is the kernel that I uploaded and released
+on @sourceforge today. Thus, I believe is the only reiser4 -enabled
+Stretch released with Linux kernel 4.11 (please note some of the
+images reference 'trunk' from my prior experiments).
+
+I have stripped nano editor from the installer and replaced it with
+excellent xvi editor < https://github.com/martinwguy/xvi >; and as a
+backup there remains elvis-tiny wrapped by vi. Although my testing has
+been on limited hardware and cloud environments, I think those
+referenced vi-clones will be dormant and awakened to 'save the day'
+during unanticipated situations.
+
+Even for a non-expert installation, Metztli-Reiser4 for AMD64 makes
+sure to install the reiser4 -enabled kernel at the end of the routine.
+
+
+Best Professional Regards.
+
+
+-- 
+Jose R R
+http://metztli.it
+---------------------------------------------------------------------------------------------
+Download Metztli-Reiser4: Debian Stretch with Linux 4.11
+---------------------------------------------------------------------------------------------
+for AMD64 https://sf.net/projects/metztli-reiser4/
+---------------------------------------------------------------------------------------------
+Try at no charge http://b2evolution.net for http://OpenShift.com PaaS
+---------------------------------------------------------------------------------------------
+from our GitHub http://Nepohualtzintzin.com repository. Cloud the easy way!
