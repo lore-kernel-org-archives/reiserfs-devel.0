@@ -1,104 +1,54 @@
-From: Cyril Brulebois <kibi@debian.org>
-Subject: Re: Debian Reiser4
-Date: Sat, 17 Jun 2017 22:41:38 +0200
-Message-ID: <20170617204138.GM6521@mraw.org>
-References: <CAM12Q5RpO04Zy7ZTEO85QCmohox0+UqzBDihCjEszZ2VckRSSA@mail.gmail.com>
- <4103581495868794@web31g.yandex.ru>
- <CAM12Q5SsUU6Tgd=n818dBHWTkRNxjf1naOVB8jogJoQst95TPg@mail.gmail.com>
+From: Jan Kara <jack@suse.cz>
+Subject: Re: [PATCH 30/31] ext4: eliminate xattr entry e_hash recalculation
+ for removes
+Date: Mon, 19 Jun 2017 10:10:02 +0200
+Message-ID: <20170619081002.GC11837@quack2.suse.cz>
+References: <20170614172340.18720-1-tahsin@google.com>
+ <20170615091026.GG1764@quack2.suse.cz>
+ <CAAeU0aMuV7EHw5ZwdF52__baS36CsaB4MN03iqUdyLh1Fc6HzA@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="U/5EjKfnYgGK6hcj"
-Return-path: <bounce-debian-boot=debian-boot=m.gmane.org@lists.debian.org>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mraw.org; s=mail;
-	h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date; bh=9nxLTpsVWUvneQLy/YRrres1xdUk4okptQ2CjO+LD7g=;
-	b=AbLxlFgE+vkjIe9tDYv4eNQooF4C2H5NqOPlUhmwMDlccIOVGeXd/3P1q3zAWGT3QBaBW7QIBTYcvJbcuR9LOM8vY+W/TvVXkL7LtKyrBU/ch+s5X1kJ0M0pEijuTs8tO9URKXvygOvTBUbhrQOB/q9NGTO5M4PnyuE//7HTmks=;
+Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <CAM12Q5SsUU6Tgd=n818dBHWTkRNxjf1naOVB8jogJoQst95TPg@mail.gmail.com>
-Resent-Message-ID: <2BAyHNPh6wD.A.KhH.TQZRZB@bendel>
-List-Id: <reiserfs-devel.vger.kernel.org>
-List-URL: <https://lists.debian.org/debian-boot/>
-List-Post: <mailto:debian-boot@lists.debian.org>
-List-Help: <mailto:debian-boot-request@lists.debian.org?subject=help>
-List-Subscribe: <mailto:debian-boot-request@lists.debian.org?subject=subscribe>
-List-Unsubscribe: <mailto:debian-boot-request@lists.debian.org?subject=unsubscribe>
-List-Archive: https://lists.debian.org/msgid-search/20170617204138.GM6521@mraw.org
-To: Jose R R <jose.r.r@metztli.com>
-Cc: Ladislav Bodnar <ladislav@distrowatch.com>, debian-boot@lists.debian.org, debian-devel@lists.debian.org, ReiserFS Development List <reiserfs-devel@vger.kernel.org>, listmaster@lists.debian.org
+In-Reply-To: <CAAeU0aMuV7EHw5ZwdF52__baS36CsaB4MN03iqUdyLh1Fc6HzA@mail.gmail.com>
+Sender: linux-kernel-owner@vger.kernel.org
+List-ID: <reiserfs-devel.vger.kernel.org>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Tahsin Erdogan <tahsin@google.com>
+Cc: Jan Kara <jack@suse.cz>, "Darrick J . Wong" <darrick.wong@oracle.com>, Jan Kara <jack@suse.com>, Theodore Ts'o <tytso@mit.edu>, Andreas Dilger <adilger.kernel@dilger.ca>, Dave Kleikamp <shaggy@kernel.org>, Alexander Viro <viro@zeniv.linux.org.uk>, Mark Fasheh <mfasheh@versity.com>, Joel Becker <jlbec@evilplan.org>, Jens Axboe <axboe@fb.com>, Deepa Dinamani <deepa.kernel@gmail.com>, Mike Christie <mchristi@redhat.com>, Fabian Frederick <fabf@skynet.be>, linux-ext4@vger.kernel.org, linux-kernel@vger.kernel.org, jfs-discussion@lists.sourceforge.net, linux-fsdevel@vger.kernel.org, ocfs2-devel@oss.oracle.com, reiserfs-devel@vger.kernel.org
 
+On Fri 16-06-17 19:04:44, Tahsin Erdogan wrote:
+> On Thu, Jun 15, 2017 at 2:10 AM, Jan Kara <jack@suse.cz> wrote:
+> > I agree with moving ext4_xattr_rehash_entry() out of ext4_xattr_rehash().
+> > However how about just keeping ext4_xattr_rehash() in
+> > ext4_xattr_block_set() (so that you don't have to pass aditional argument
+> > to ext4_xattr_set_entry()) and calling ext4_xattr_rehash_entry() when
+> > i->value != NULL? That would seem easier and cleaner as well...
+> 
+> The is_block parameter is also used to decide whether block reserve
+> check should be performed:
+> 
+> @@ -1500,8 +1502,8 @@ static int ext4_xattr_set_entry(struct ext4_xattr_info *i,
+>                  * attribute block so that a long value does not occupy the
+>                  * whole space and prevent futher entries being added.
+>                  */
+> -               if (ext4_has_feature_ea_inode(inode->i_sb) && new_size &&
+> -                   (s->end - s->base) == i_blocksize(inode) &&
+> +               if (ext4_has_feature_ea_inode(inode->i_sb) &&
+> +                   new_size && is_block &&
+>                     (min_offs + old_size - new_size) <
+>                                         EXT4_XATTR_BLOCK_RESERVE(inode)) {
+>                         ret = -ENOSPC;
+> 
+> Because of that, I think moving ext4_xattr_rehash to caller makes it
+> bit more complicated. Let me know if you disagree.
 
---U/5EjKfnYgGK6hcj
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+What I dislike is the leakage of information about particular type of
+storage into ext4_xattr_set_entry(). However I agree that it would be
+cumbersome to handle this reservation check differently so ok.
 
-Jose,
+								Honza
 
-Jose R R <jose.r.r@metztli.com> (2017-06-17):
-> On Sat, May 27, 2017 at 12:06 AM, Ladislav Bodnar
-> <ladislav@distrowatch.com> wrote:
-> > 27.05.2017, 15:03, "Jose R R" <jose.r.r@metztli.com>:
-> >> It has as base the official Debian Jessie AMD64 distribution:
-> >> < https://sf.net/projects/debian-reiser4/ >
-> >
-> > The word "Debian" is registered trademark. Please find another name for=
- your
-> > distribution.
-> >
-> > Ladislav
->=20
-> Taking heed of your advice, and on the occasion of June 17, 2017, the
-> official Debian Stretch release date, I hereby let you know that I
-> have created alternate Stretch web name for referenced project:
-> Metztli Reiser4 < https://sf.net/projects/metztli-reiser4/ > so as not
-> to infringe on Debian's trademark.
->=20
-> In this new debian-installer I began experimenting with Reiser4
-> -patched experimental kernel 'trunk' -- made available by DD Ben --
-> advancing gradually until I achieved Linux kernel
-> 4.11.4-1+reiser4.0.1. Which is the kernel that I uploaded and released
-> on @sourceforge today. Thus, I believe is the only reiser4 -enabled
-> Stretch released with Linux kernel 4.11 (please note some of the
-> images reference 'trunk' from my prior experiments).
->=20
-> I have stripped nano editor from the installer and replaced it with
-> excellent xvi editor < https://github.com/martinwguy/xvi >; and as a
-> backup there remains elvis-tiny wrapped by vi. Although my testing has
-> been on limited hardware and cloud environments, I think those
-> referenced vi-clones will be dormant and awakened to 'save the day'
-> during unanticipated situations.
->=20
-> Even for a non-expert installation, Metztli-Reiser4 for AMD64 makes
-> sure to install the reiser4 -enabled kernel at the end of the routine.
-
-Please stop sending your reiser4-spam to debian-boot@, you've been asked
-that several times already.
-
-Looping in listmasters.
-=20
-
-KiBi.
-
---U/5EjKfnYgGK6hcj
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iQIcBAEBCAAGBQJZRZP/AAoJEP+RSvDCs1UgEZUP/j8lVATCUjpEhoYw9RxptFzJ
-s1eJWuowRiu5uWfpWczP9fu8lORuLAHdVuAGiKyJsQJX1hFlGGtV/yNNzwAFEgdz
-6msdilkgL45l55E1R6torpz91T+ZqDJjMvObwKoYWb//amdFMuhGq9V+HuZZeKVg
-HNqwUq7iaXBGsr5da9GvLPjMULhkenLB0HJw3xMHY/V3CEZy5bnaHvxgrfskKkXn
-IresSjqEn4k+zfnZ6CldoKnKh+rdl2nPacXt7pggogkTQNB6s0NZTtIqOmq7jqyO
-bIBI1229PEvzs8bz8v9M9uE256IGQrJWjLYSKb8EaAswEjuEvBqn/jPdkd3T6DNn
-gR9IPbTbeBb1mQqPrBjCGomFxZC+ZQ2P9TZt485G+uC7WfKI1KPOLXEB6BkRa8ee
-iP841KEGXmR3lJqF6WEWr8NBTOD9oZRI4QNXwhuFp/a3S1CqC++rL9LnFcTHOV+z
-ZA175yzpY1Pli9YokWzYtKBNHVxXf/iFo+XJuKkYQc4ewwitbGAFXJ40ei1aRNKW
-boD6Dra6QuuYmY/QyWjbfwNzimNGZQEf+XmDx98pk/yR4C59FWlXqqkVkmjfFT9G
-VHZgTuYilJ05w/IQIWORvIiWrk2M5jrYbZtWcCjF7ys3CPVRQu8p2ZwWqPl3718c
-hS8VP5sj4X3ujGiuDmEv
-=+b4r
------END PGP SIGNATURE-----
-
---U/5EjKfnYgGK6hcj--
-
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
