@@ -1,47 +1,69 @@
 From: Jan Kara <jack@suse.cz>
-Subject: [PATCH 0/11 v1] Fix inheritance of SGID in presence
-	of default ACLs
-Date: Thu, 22 Jun 2017 15:31:04 +0200
-Message-ID: <20170622133115.16968-1-jack@suse.cz>
-Return-path: <cluster-devel-bounces@redhat.com>
-DKIM-Filter: OpenDKIM Filter v2.11.0 mx1.redhat.com DDC34142876
-DKIM-Filter: OpenDKIM Filter v2.11.0 mx1.redhat.com 7BE943DBCA
-List-Id: <reiserfs-devel.vger.kernel.org>
-List-Unsubscribe: <https://www.redhat.com/mailman/options/cluster-devel>,
-	<mailto:cluster-devel-request@redhat.com?subject=unsubscribe>
-List-Archive: <https://www.redhat.com/archives/cluster-devel>
-List-Post: <mailto:cluster-devel@redhat.com>
-List-Help: <mailto:cluster-devel-request@redhat.com?subject=help>
-List-Subscribe: <https://www.redhat.com/mailman/listinfo/cluster-devel>,
-	<mailto:cluster-devel-request@redhat.com?subject=subscribe>
-Sender: cluster-devel-bounces@redhat.com
-Errors-To: cluster-devel-bounces@redhat.com
+Subject: [PATCH 10/11] reiserfs: Don't clear SGID when inheriting ACLs
+Date: Thu, 22 Jun 2017 15:31:14 +0200
+Message-ID: <20170622133115.16968-11-jack@suse.cz>
+References: <20170622133115.16968-1-jack@suse.cz>
+Return-path: <linux-fsdevel-owner@vger.kernel.org>
+In-Reply-To: <20170622133115.16968-1-jack@suse.cz>
+Sender: linux-fsdevel-owner@vger.kernel.org
+List-ID: <reiserfs-devel.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: linux-fsdevel@vger.kernel.org
-Cc: Theodore Ts'o <tytso@mit.edu>, Dave Kleikamp <shaggy@kernel.org>, jfs-discussion@lists.sourceforge.net, cluster-devel@redhat.com, Jan Kara <jack@suse.cz>, "Darrick J . Wong" <darrick.wong@oracle.com>, linux-btrfs@vger.kernel.org, reiserfs-devel@vger.kernel.org, linux-xfs@vger.kernel.org, David Sterba <dsterba@suse.com>, pvfs2-developers@beowulf-underground.org, linux-ext4@vger.kernel.org, ocfs2-devel@oss.oracle.com, Mike Marshall <hubcap@omnibond.com>
+Cc: Andreas Gruenbacher <agruenba@redhat.com>, Jan Kara <jack@suse.cz>, stable@vger.kernel.org, reiserfs-devel@vger.kernel.org
 
-Hello,
+When new directory 'DIR1' is created in a directory 'DIR0' with SGID bit
+set, DIR1 is expected to have SGID bit set (and owning group equal to
+the owning group of 'DIR0'). However when 'DIR0' also has some default
+ACLs that 'DIR1' inherits, setting these ACLs will result in SGID bit on
+'DIR1' to get cleared if user is not member of the owning group.
 
-this patch set fixes a problem introduced by commit 073931017b49 "posix_acl:
-Clear SGID bit when setting file permissions". The problem is that when new
-directory 'DIR1' is created in a directory 'DIR0' with SGID bit set, DIR1 is
-expected to have SGID bit set (and owning group equal to the owning group of
-'DIR0'). However when 'DIR0' also has some default ACLs that 'DIR1' inherits,
-setting these ACLs will result in SGID bit on 'DIR1' to get cleared if user is
-not member of the owning group.
+Fix the problem by moving posix_acl_update_mode() out of
+__reiserfs_set_acl() into reiserfs_set_acl(). That way the function will
+not be called when inheriting ACLs which is what we want as it prevents
+SGID bit clearing and the mode has been properly set by
+posix_acl_create() anyway.
 
-The problem is fixed by moving posix_acl_update_mode() so that it does not
-get called when default ACLs are inherited.
+Fixes: 073931017b49d9458aa351605b43a7e34598caef
+CC: stable@vger.kernel.org
+CC: reiserfs-devel@vger.kernel.org
+Signed-off-by: Jan Kara <jack@suse.cz>
+---
+ fs/reiserfs/xattr_acl.c | 12 +++++++-----
+ 1 file changed, 7 insertions(+), 5 deletions(-)
 
-I have created new generic/441 test for this and verified that generic/314,
-generic/375, and generic/441 pass for ext2, ext4, btrfs, xfs, ocfs2, reiserfs.
-
-All patches in this series are completely independent so fs maintainers please
-pick them up as soon as they get reviewed. I'm leaving for three weeks of
-vacation at the end of the week so I won't be able to push this further for
-some time.
-
-								Honza
+diff --git a/fs/reiserfs/xattr_acl.c b/fs/reiserfs/xattr_acl.c
+index 3d2256a425ee..d92a1dc6ee70 100644
+--- a/fs/reiserfs/xattr_acl.c
++++ b/fs/reiserfs/xattr_acl.c
+@@ -37,7 +37,14 @@ reiserfs_set_acl(struct inode *inode, struct posix_acl *acl, int type)
+ 	error = journal_begin(&th, inode->i_sb, jcreate_blocks);
+ 	reiserfs_write_unlock(inode->i_sb);
+ 	if (error == 0) {
++		if (type == ACL_TYPE_ACCESS && acl) {
++			error = posix_acl_update_mode(inode, &inode->i_mode,
++						      &acl);
++			if (error)
++				goto unlock;
++		}
+ 		error = __reiserfs_set_acl(&th, inode, type, acl);
++unlock:
+ 		reiserfs_write_lock(inode->i_sb);
+ 		error2 = journal_end(&th);
+ 		reiserfs_write_unlock(inode->i_sb);
+@@ -241,11 +248,6 @@ __reiserfs_set_acl(struct reiserfs_transaction_handle *th, struct inode *inode,
+ 	switch (type) {
+ 	case ACL_TYPE_ACCESS:
+ 		name = XATTR_NAME_POSIX_ACL_ACCESS;
+-		if (acl) {
+-			error = posix_acl_update_mode(inode, &inode->i_mode, &acl);
+-			if (error)
+-				return error;
+-		}
+ 		break;
+ 	case ACL_TYPE_DEFAULT:
+ 		name = XATTR_NAME_POSIX_ACL_DEFAULT;
+-- 
+2.12.3
 
