@@ -1,67 +1,57 @@
-From: Jan Kara <jack@suse.cz>
-Subject: Re: [PATCH RESEND] reiserfs: fix race in prealloc discard
-Date: Fri, 23 Jun 2017 09:40:52 +0200
-Message-ID: <20170623074052.GB25149@quack2.suse.cz>
-References: <0ff7fab4-e2df-8815-6cc4-439076e9b815@suse.com>
+From: bugzilla-daemon@bugzilla.kernel.org
+Subject: [Bug 195211] WARNING: CPU: 4 PID: 342 at fs/quota/dquot.c:619
+ dquot_writeback_dquots+0x25e/0x270
+Date: Tue, 27 Jun 2017 22:46:51 +0000
+Message-ID: <bug-195211-695-GIrLttjuO2@https.bugzilla.kernel.org/>
+References: <bug-195211-695@https.bugzilla.kernel.org/>
 Mime-Version: 1.0
+Content-Transfer-Encoding: 8BIT
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <0ff7fab4-e2df-8815-6cc4-439076e9b815@suse.com>
+In-Reply-To: <bug-195211-695@https.bugzilla.kernel.org/>
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Jeff Mahoney <jeffm@suse.com>
-Cc: reiserfs-devel@vger.kernel.org, Jan Kara <jack@suse.com>
+To: reiserfs-devel@kernel.org
 
-On Thu 22-06-17 16:47:34, Jeff Mahoney wrote:
-> The main loop in __discard_prealloc is protected by the reiserfs write lock
-> which is dropped across schedules like the BKL it replaced.  The problem is
-> that it checks the value, calls a routine that schedules, and then adjusts
-> the state.  As a result, two threads that are calling
-> reiserfs_prealloc_discard at the same time can race when one calls
-> reiserfs_free_prealloc_block, the lock is dropped, and the other calls
-> reiserfs_free_prealloc_block with the same block number.  In the right
-> circumstances, it can cause the prealloc count to go negative.
-> 
-> Signed-off-by: Jeff Mahoney <jeffm@suse.com>
+https://bugzilla.kernel.org/show_bug.cgi?id=195211
 
-Thanks. Added to my tree.
+menefis (platunovae+kernel@gmail.com) changed:
 
-								Honza
+           What    |Removed                     |Added
+----------------------------------------------------------------------------
+                 CC|                            |platunovae+kernel@gmail.com
 
-> ---
-> 
->  bitmap.c |   12 ++++++++++--
->  1 file changed, 10 insertions(+), 2 deletions(-)
-> 
-> --- a/fs/reiserfs/bitmap.c
-> +++ b/fs/reiserfs/bitmap.c
-> @@ -479,9 +479,17 @@ static void __discard_prealloc(struct re
->  			       "inode has negative prealloc blocks count.");
->  #endif
->  	while (ei->i_prealloc_count > 0) {
-> -		reiserfs_free_prealloc_block(th, inode, ei->i_prealloc_block);
-> -		ei->i_prealloc_block++;
-> +		b_blocknr_t block_to_free;
-> +
-> +		/*
-> +		 * reiserfs_free_prealloc_block can drop the write lock,
-> +		 * which could allow another caller to free the same block.
-> +		 * We can protect against it by modifying the prealloc
-> +		 * state before calling it.
-> +		 */
-> +		block_to_free = ei->i_prealloc_block++;
->  		ei->i_prealloc_count--;
-> +		reiserfs_free_prealloc_block(th, inode, block_to_free);
->  		dirty = 1;
->  	}
->  	if (dirty)
-> 
-> 
-> -- 
-> Jeff Mahoney
-> SUSE Labs
+--- Comment #3 from menefis (platunovae+kernel@gmail.com) ---
+ArchLinux, same here:
+
+------------[ cut here ]------------
+WARNING: CPU: 1 PID: 270 at fs/quota/dquot.c:620
+dquot_writeback_dquots+0x29b/0x2a0
+Modules linked in: xfs nls_iso8859_1 nls_cp437 vfat fat btusb btrtl btbcm
+btintel joydev bluetooth mousedev crc16 amdgpu arc4 iTCO_wdt
+iTCO_vendor_support intel_rapl x86_pk
+ sg acpi_call(O) ip_tables x_tables sd_mod hid_generic usbhid hid
+rtsx_pci_sdmmc mmc_core serio_raw atkbd libps2 ahci libahci xhci_pci xhci_hcd
+libata ehci_pci ehci_hcd scs
+CPU: 1 PID: 270 Comm: kworker/1:2 Tainted: G           O    4.11.6-3-ARCH #1
+Hardware name: LENOVO 20B3A02SRT/20B3A02SRT, BIOS GPET70WW (1.70 ) 05/04/2017
+Workqueue: events_long flush_old_commits [reiserfs]
+Call Trace:
+ dump_stack+0x63/0x81
+ __warn+0xcb/0xf0
+ warn_slowpath_null+0x1d/0x20
+ dquot_writeback_dquots+0x29b/0x2a0
+ reiserfs_sync_fs+0x2a/0x90 [reiserfs]
+ ? finish_task_switch+0x78/0x200
+ flush_old_commits+0x47/0x50 [reiserfs]
+ process_one_work+0x1e0/0x490
+ worker_thread+0x48/0x4e0
+ kthread+0x125/0x140
+ ? process_one_work+0x490/0x490
+ ? kthread_create_on_node+0x70/0x70
+ ret_from_fork+0x2c/0x40
+---[ end trace 17b60446368cc5d8 ]---
+
 -- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+You are receiving this mail because:
+You are the assignee for the bug.
