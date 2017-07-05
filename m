@@ -1,37 +1,38 @@
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+From: Steven Rostedt <rostedt@goodmis.org>
 Subject: Re: [PATCH 01/14] VFS: Don't use save/replace_mount_options if not
  using generic_show_options
-Date: Wed, 5 Jul 2017 20:50:24 +0200
-Message-ID: <20170705185024.GE22044@kroah.com>
-References: <149926824154.20611.6104595541055328700.stgit@warthog.procyon.org.uk>
- <149926824918.20611.721200514474820755.stgit@warthog.procyon.org.uk>
+Date: Wed, 5 Jul 2017 14:54:46 -0400
+Message-ID: <20170705145446.69fa3248@gandalf.local.home>
+References: <20170705113023.4dbbc3a6@gandalf.local.home>
+        <149926824154.20611.6104595541055328700.stgit@warthog.procyon.org.uk>
+        <149926824918.20611.721200514474820755.stgit@warthog.procyon.org.uk>
+        <21063.1499268809@warthog.procyon.org.uk>
 Mime-Version: 1.0
-Return-path: <reiserfs-devel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <149926824918.20611.721200514474820755.stgit@warthog.procyon.org.uk>
-Sender: reiserfs-devel-owner@vger.kernel.org
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <21063.1499268809@warthog.procyon.org.uk>
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
 To: David Howells <dhowells@redhat.com>
-Cc: viro@zeniv.linux.org.uk, reiserfs-devel@vger.kernel.org, Steven Rostedt <rostedt@goodmis.org>, linux-kernel@vger.kernel.org, Chris Mason <clm@fb.com>, linux-fsdevel@vger.kernel.org, linux-btrfs@vger.kernel.org
+Cc: viro@zeniv.linux.org.uk, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, reiserfs-devel@vger.kernel.org, linux-kernel@vger.kernel.org, Chris Mason <clm@fb.com>, linux-fsdevel@vger.kernel.org, linux-btrfs@vger.kernel.org
 
-On Wed, Jul 05, 2017 at 04:24:09PM +0100, David Howells wrote:
-> btrfs, debugfs, reiserfs and tracefs call save_mount_options() and reiserfs
-> calls replace_mount_options(), but they then implement their own
-> ->show_options() methods and don't touch s_options, rendering the saved
-> options unnecessary.  I'm trying to eliminate s_options to make it easier
-> to implement a context-based mount where the mount options can be passed
-> individually over a file descriptor.
-> 
-> Remove the calls to save/replace_mount_options() call in these cases.
-> 
-> Signed-off-by: David Howells <dhowells@redhat.com>
-> cc: Chris Mason <clm@fb.com>
-> cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-> cc: Steven Rostedt <rostedt@goodmis.org>
-> cc: linux-btrfs@vger.kernel.org
-> cc: reiserfs-devel@vger.kernel.org
+On Wed, 05 Jul 2017 16:33:29 +0100
+David Howells <dhowells@redhat.com> wrote:
 
-For debugfs:
-Acked-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+> Steven Rostedt <rostedt@goodmis.org> wrote:
+> 
+> > As this is patch 1/14, is there any dependency on this working? That
+> > is, it is safe to simply remove this caller from those locations? Or
+> > are there dependencies on having any of the 2-14 patches added to make
+> > it not cause issues?  
+> 
+> Patch 14 removes the then-unused helpers, but patches 1-13 otherwise are
+> independent of each other and have no dependencies on earlier patches.
+> 
+
+So basically it's an useless function call wrt tracefs. In that case...
+
+Acked-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
+
+-- Steve
