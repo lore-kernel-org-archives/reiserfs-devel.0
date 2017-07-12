@@ -1,77 +1,44 @@
-From: Ernesto =?utf-8?Q?A=2E_Fern=C3=A1ndez?= 
-        <ernesto.mnd.fernandez@gmail.com>
-Subject: [PATCH 5/5] reiserfs: preserve i_mode if __reiserfs_set_acl() fails
-Date: Wed, 12 Jul 2017 06:56:04 -0300
-Message-ID: <3ab632985cbf6fdd2ee5284482b9749c5893a5a1.1499805488.git.ernesto.mnd.fernandez@gmail.com>
+From: Christoph Hellwig <hch@infradead.org>
+Subject: Re: [PATCH 0/5] Failure to set acl may alter group permissions
+Date: Wed, 12 Jul 2017 04:47:19 -0700
+Message-ID: <20170712114719.GA14398@infradead.org>
 References: <cover.1499805484.git.ernesto.mnd.fernandez@gmail.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: base64
-Return-path: <linux-ext4-owner@vger.kernel.org>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to;
-        bh=TMmZq7Qzw3BH0kJox15/TiUl28cHvnvsVK5EElBlT3g=;
-        b=Gy/SKL8G9RlBMJWFlXTy9//buoMVe54CctKiepPyQqA3l7ypgXcSApbS1aF+FheAer
-         STH7DuRSkqTcVoVs4Ab/SYxgkT+HRGbMcFAxrE3qCtfTiPFhCHvPnPWEJNlr4LEYmA+r
-         muxsB663jKHbUBe0uWIy+BSL2hkEGqj1mojDYnMjKNjgnEcwVzscbbBJEZspjD8DhQYV
-         blfTusA6Zm+behXXXDe7F15POY+yo7tCC1Jnd8bvWJQavMplyPdvZG8SCLIenD43KR04
-         SwnjC+oJ3Q54R0K/Uw0bY4k0mDeOJzO5a/iJY01qCx91MRwYyEAbwT2avq2C52pMO1Sk
-         AtSg==
+Content-Transfer-Encoding: quoted-printable
+Return-path: <reiserfs-devel-owner@vger.kernel.org>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Transfer-Encoding
+        :Content-Type:MIME-Version:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To
+        :Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+        Resent-To:Resent-Cc:Resent-Message-ID:References:List-Id:List-Help:
+        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+        bh=vICnftoOZUmdUfFRpKHzZuqMRLGlFDke6FJCv+2WPJ4=; b=GsJa4htuoaIa93U8rjwX83JFZJ
+        ecyfszly3PD1TnFyV1tXDkbsCTkYhLUMolGeMRKWS3yq3HZorHJiWpA3E10QcgHNJLRHYuQD3EQu5
+        Q6J1oeVJ5bqDMWdokzZxHG/hyYG86+WYyaIPwTUwXJ7qKQdEaqsnCu4sku+ubJ/wsxhG7PlU9E8Oj
+        fsBbAkfG+0Wj6HlNVSucUfoBNMwnklT06KFpcm3c5Isj5uLNdzjh7uBYWulWMcu6yjOXSgA7FnGcZ
+        5lNIqxuewdetvG3DbWxrrqawhgIuqOOZiSbEsYT7jm6wBsBWFHzJC/nCuD1hXO5ckClIZivH8Ux1k
+    
 Content-Disposition: inline
 In-Reply-To: <cover.1499805484.git.ernesto.mnd.fernandez@gmail.com>
-Sender: linux-ext4-owner@vger.kernel.org
+Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="macroman"
-To: Jan Kara <jack@suse.com>, Theodore Ts'o <tytso@mit.edu>, Andreas Dilger <adilger.kernel@dilger.ca>, Dave Kleikamp <shaggy@kernel.org>, linux-ext4@vger.kernel.org, jfs-discussion@lists.sourceforge.net, reiserfs-devel@vger.kernel.org
+Content-Type: text/plain; charset="iso-8859-1"
+To: Ernesto =?iso-8859-1?Q?A=2E_Fern=E1ndez?= <ernesto.mnd.fernandez@gmail.com>
+Cc: Jan Kara <jack@suse.com>, Theodore Ts'o <tytso@mit.edu>, Andreas Dilger <adilger.kernel@dilger.ca>, Dave Kleikamp <shaggy@kernel.org>, linux-ext4@vger.kernel.org, jfs-discussion@lists.sourceforge.net, reiserfs-devel@vger.kernel.org, fstests@vger.kernel.org
 
-V2hlbiBjaGFuZ2luZyBhIGZpbGUncyBhY2wgbWFzaywgX19yZWlzZXJmc19zZXRfYWNsKCkgd2ls
-bCBmaXJzdCBzZXQgdGhlCmdyb3VwIGJpdHMgb2YgaV9tb2RlIHRvIHRoZSB2YWx1ZSBvZiB0aGUg
-bWFzaywgYW5kIG9ubHkgdGhlbiBzZXQgdGhlCmFjdHVhbCBleHRlbmRlZCBhdHRyaWJ1dGUgcmVw
-cmVzZW50aW5nIHRoZSBuZXcgYWNsLgoKSWYgdGhlIHNlY29uZCBwYXJ0IGZhaWxzIChkdWUgdG8g
-bGFjayBvZiBzcGFjZSwgZm9yIGV4YW1wbGUpIGFuZCB0aGUgZmlsZQpoYWQgbm8gYWNsIGF0dHJp
-YnV0ZSB0byBiZWdpbiB3aXRoLCB0aGUgc3lzdGVtIHdpbGwgZnJvbSBub3cgb24gYXNzdW1lCnRo
-YXQgdGhlIG1hc2sgcGVybWlzc2lvbiBiaXRzIGFyZSBhY3R1YWwgZ3JvdXAgcGVybWlzc2lvbiBi
-aXRzLCBwb3RlbnRpYWxseQpncmFudGluZyBhY2Nlc3MgdG8gdGhlIHdyb25nIHVzZXJzLgoKUHJl
-dmVudCB0aGlzIGJ5IG9ubHkgY2hhbmdpbmcgdGhlIGlub2RlIG1vZGUgYWZ0ZXIgdGhlIGFjbCBo
-YXMgYmVlbiBzZXQuCkFsc28gbWFrZSByZWlzZXJmc194YXR0cl9zZXRfaGFuZGxlKCkgcmV0dXJu
-IC1FTk9EQVRBIG9ubHkgaW4gY2FzZSBvZgphY3R1YWwgZXJyb3IsIGFuZCByZXR1cm4gMCB3aGVu
-IHJlcXVlc3RlZCBkZWxldGlvbiBvZiBhIG5vbmV4aXN0ZW50IGFjbC4KVGhpcyBpcyBtb3JlIGNv
-bnNpc3RlbnQgd2l0aCB0aGUgYmVoYXZpb3VyIG9mIG90aGVyICpfeGF0dHJfc2V0KCkKZnVuY3Rp
-b25zIGFuZCBtYWtlcyB0aGUgcGF0Y2ggc2ltcGxlci4KClNpZ25lZC1vZmYtYnk6IEVybmVzdG8g
-QS4gRmVybsOhbmRleiA8ZXJuZXN0by5tbmQuZmVybmFuZGV6QGdtYWlsLmNvbT4KLS0tCiBmcy9y
-ZWlzZXJmcy94YXR0ci5jICAgICB8ICA0ICsrKysKIGZzL3JlaXNlcmZzL3hhdHRyX2FjbC5jIHwg
-MjUgKysrKysrKysrLS0tLS0tLS0tLS0tLS0tLQogMiBmaWxlcyBjaGFuZ2VkLCAxMyBpbnNlcnRp
-b25zKCspLCAxNiBkZWxldGlvbnMoLSkKCmRpZmYgLS1naXQgYS9mcy9yZWlzZXJmcy94YXR0ci5j
-IGIvZnMvcmVpc2VyZnMveGF0dHIuYwppbmRleCBlODdhYTIxLi45MzZhNTdhIDEwMDY0NAotLS0g
-YS9mcy9yZWlzZXJmcy94YXR0ci5jCisrKyBiL2ZzL3JlaXNlcmZzL3hhdHRyLmMKQEAgLTUxMyw2
-ICs1MTMsMTAgQEAgcmVpc2VyZnNfeGF0dHJfc2V0X2hhbmRsZShzdHJ1Y3QgcmVpc2VyZnNfdHJh
-bnNhY3Rpb25faGFuZGxlICp0aCwKIAogCWlmICghYnVmZmVyKSB7CiAJCWVyciA9IGxvb2t1cF9h
-bmRfZGVsZXRlX3hhdHRyKGlub2RlLCBuYW1lKTsKKwkJaWYgKGZsYWdzICYgWEFUVFJfUkVQTEFD
-RSkKKwkJCXJldHVybiBlcnI7CisJCWlmIChlcnIgPT0gLUVOT0RBVEEpCisJCQllcnIgPSAwOwog
-CQlyZXR1cm4gZXJyOwogCX0KIApkaWZmIC0tZ2l0IGEvZnMvcmVpc2VyZnMveGF0dHJfYWNsLmMg
-Yi9mcy9yZWlzZXJmcy94YXR0cl9hY2wuYwppbmRleCAzZDIyNTZhLi5jMDJlNWFjIDEwMDY0NAot
-LS0gYS9mcy9yZWlzZXJmcy94YXR0cl9hY2wuYworKysgYi9mcy9yZWlzZXJmcy94YXR0cl9hY2wu
-YwpAQCAtMjM3LDE0ICsyMzcsMTcgQEAgX19yZWlzZXJmc19zZXRfYWNsKHN0cnVjdCByZWlzZXJm
-c190cmFuc2FjdGlvbl9oYW5kbGUgKnRoLCBzdHJ1Y3QgaW5vZGUgKmlub2RlLAogCXZvaWQgKnZh
-bHVlID0gTlVMTDsKIAlzaXplX3Qgc2l6ZSA9IDA7CiAJaW50IGVycm9yOworCWludCB1cGRhdGVf
-bW9kZSA9IDA7CisJdW1vZGVfdCBtb2RlID0gaW5vZGUtPmlfbW9kZTsKIAogCXN3aXRjaCAodHlw
-ZSkgewogCWNhc2UgQUNMX1RZUEVfQUNDRVNTOgogCQluYW1lID0gWEFUVFJfTkFNRV9QT1NJWF9B
-Q0xfQUNDRVNTOwogCQlpZiAoYWNsKSB7Ci0JCQllcnJvciA9IHBvc2l4X2FjbF91cGRhdGVfbW9k
-ZShpbm9kZSwgJmlub2RlLT5pX21vZGUsICZhY2wpOworCQkJZXJyb3IgPSBwb3NpeF9hY2xfdXBk
-YXRlX21vZGUoaW5vZGUsICZtb2RlLCAmYWNsKTsKIAkJCWlmIChlcnJvcikKIAkJCQlyZXR1cm4g
-ZXJyb3I7CisJCQl1cGRhdGVfbW9kZSA9IDE7CiAJCX0KIAkJYnJlYWs7CiAJY2FzZSBBQ0xfVFlQ
-RV9ERUZBVUxUOgpAQCAtMjY0LDI1ICsyNjcsMTUgQEAgX19yZWlzZXJmc19zZXRfYWNsKHN0cnVj
-dCByZWlzZXJmc190cmFuc2FjdGlvbl9oYW5kbGUgKnRoLCBzdHJ1Y3QgaW5vZGUgKmlub2RlLAog
-CiAJZXJyb3IgPSByZWlzZXJmc194YXR0cl9zZXRfaGFuZGxlKHRoLCBpbm9kZSwgbmFtZSwgdmFs
-dWUsIHNpemUsIDApOwogCi0JLyoKLQkgKiBFbnN1cmUgdGhhdCB0aGUgaW5vZGUgZ2V0cyBkaXJ0
-aWVkIGlmIHdlJ3JlIG9ubHkgdXNpbmcKLQkgKiB0aGUgbW9kZSBiaXRzIGFuZCBhbiBvbGQgQUNM
-IGRpZG4ndCBleGlzdC4gV2UgZG9uJ3QgbmVlZAotCSAqIHRvIGNoZWNrIGlmIHRoZSBpbm9kZSBp
-cyBoYXNoZWQgaGVyZSBzaW5jZSB3ZSB3b24ndCBnZXQKLQkgKiBjYWxsZWQgYnkgcmVpc2VyZnNf
-aW5oZXJpdF9kZWZhdWx0X2FjbCgpLgotCSAqLwotCWlmIChlcnJvciA9PSAtRU5PREFUQSkgewot
-CQllcnJvciA9IDA7Ci0JCWlmICh0eXBlID09IEFDTF9UWVBFX0FDQ0VTUykgeworCWtmcmVlKHZh
-bHVlKTsKKwlpZiAoIWVycm9yKSB7CisJCXNldF9jYWNoZWRfYWNsKGlub2RlLCB0eXBlLCBhY2wp
-OworCQlpZiAodXBkYXRlX21vZGUpIHsKKwkJCWlub2RlLT5pX21vZGUgPSBtb2RlOwogCQkJaW5v
-ZGUtPmlfY3RpbWUgPSBjdXJyZW50X3RpbWUoaW5vZGUpOwogCQkJbWFya19pbm9kZV9kaXJ0eShp
-bm9kZSk7CiAJCX0KIAl9Ci0KLQlrZnJlZSh2YWx1ZSk7Ci0KLQlpZiAoIWVycm9yKQotCQlzZXRf
-Y2FjaGVkX2FjbChpbm9kZSwgdHlwZSwgYWNsKTs=
+On Wed, Jul 12, 2017 at 06:53:22AM -0300, Ernesto A. Fern=E1ndez wrote:
+> If your working directory is on a filesystem mounted with extended user
+> attributes (and acl of course), this script will trigger the issue by
+> filling the drive:
+>=20
+>=20
+> touch test.file
+> chmod go-rwx test.file
+> yes xxxxxxxxxx > test.file
+> i=3D1
+> while setfattr -n user.$i test.file; do
+>   ((++i))
+> done
+> setfacl -m m:r test.file
+
+Can you please wire this up for xfstests?
