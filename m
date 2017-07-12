@@ -1,42 +1,63 @@
-From: David Sterba <dsterba@suse.cz>
-Subject: Re: [PATCH 01/14] VFS: Don't use save/replace_mount_options if not
- using generic_show_options
-Date: Mon, 10 Jul 2017 18:15:12 +0200
-Message-ID: <20170710161512.GM2866@twin.jikos.cz>
-References: <149926824154.20611.6104595541055328700.stgit@warthog.procyon.org.uk>
- <149926824918.20611.721200514474820755.stgit@warthog.procyon.org.uk>
-Reply-To: dsterba@suse.cz
+From: Ernesto =?utf-8?Q?A=2E_Fern=C3=A1ndez?= 
+        <ernesto.mnd.fernandez@gmail.com>
+Subject: [PATCH 0/5] Failure to set acl may alter group permissions
+Date: Wed, 12 Jul 2017 06:53:22 -0300
+Message-ID: <cover.1499805484.git.ernesto.mnd.fernandez@gmail.com>
 Mime-Version: 1.0
-Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Transfer-Encoding: base64
+Return-path: <reiserfs-devel-owner@vger.kernel.org>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:subject:message-id:mime-version:content-disposition
+         :content-transfer-encoding;
+        bh=8k/dGCjHWxxQsGx1SduWsInZm6IbTt0px4jFIEvvJ8I=;
+        b=eGXZ7LbCf1z/AHyH2YVD+W49II8qetL2vZLhQkY2Ud+zhXs1D+fCppDy01sLuHaENT
+         Mjt9246ShWlNjXhzdF1psbDEqyucF3gs4OdbekjZ/so88Bngbv93jtPnGKV1THvlKRdH
+         NOaY6ngd/1jN5sBfNXVvpYPVRrJleCZhUifK8RZBNbJcbupZ712Rz9oWGd/UJVSpCAjt
+         i02dBhiUHy2BpBYw4bvi+SLZwZ3FeU+EjxYdHXnJOR93y5f9DyTDAz5icy1JR3FUL5vc
+         VCoMeoRg7sHGeuLWOOPZ14LjDecczf5WF9Sbfwn5ygE4wmrdxM/bExM1S+rcAyxzgZl4
+         K21A==
 Content-Disposition: inline
-In-Reply-To: <149926824918.20611.721200514474820755.stgit@warthog.procyon.org.uk>
-Sender: linux-kernel-owner@vger.kernel.org
+Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: David Howells <dhowells@redhat.com>
-Cc: viro@zeniv.linux.org.uk, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, reiserfs-devel@vger.kernel.org, Steven Rostedt <rostedt@goodmis.org>, linux-kernel@vger.kernel.org, Chris Mason <clm@fb.com>, linux-fsdevel@vger.kernel.org, linux-btrfs@vger.kernel.org
+Content-Type: text/plain; charset="macroman"
+To: Jan Kara <jack@suse.com>, Theodore Ts'o <tytso@mit.edu>, Andreas Dilger <adilger.kernel@dilger.ca>, Dave Kleikamp <shaggy@kernel.org>, linux-ext4@vger.kernel.org, jfs-discussion@lists.sourceforge.net, reiserfs-devel@vger.kernel.org
 
-On Wed, Jul 05, 2017 at 04:24:09PM +0100, David Howells wrote:
-> btrfs, debugfs, reiserfs and tracefs call save_mount_options() and reiserfs
-> calls replace_mount_options(), but they then implement their own
-> ->show_options() methods and don't touch s_options, rendering the saved
-> options unnecessary.  I'm trying to eliminate s_options to make it easier
-> to implement a context-based mount where the mount options can be passed
-> individually over a file descriptor.
-> 
-> Remove the calls to save/replace_mount_options() call in these cases.
-> 
-> Signed-off-by: David Howells <dhowells@redhat.com>
-> cc: Chris Mason <clm@fb.com>
-> cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-> cc: Steven Rostedt <rostedt@goodmis.org>
-> cc: linux-btrfs@vger.kernel.org
-> cc: reiserfs-devel@vger.kernel.org
-> ---
-
-For
-
->  fs/btrfs/super.c    |    1 -
-
-Acked-by: David Sterba <dsterba@suse.com>
+V2hlbiBjaGFuZ2luZyBhIGZpbGUncyBhY2wgbWFzaywgdGhlIGZ1bmN0aW9uIHRoYXQgc2V0cyB0
+aGUgYWNjZXNzIGNvbnRyb2wKbGlzdCAoZXh0Ml9zZXRfYWNsKCksIF9fZXh0NF9zZXRfYWNsKCks
+IF9famZzX3NldF9hY2woKS4uLikgd2lsbCBmaXJzdCBzZXQKdGhlIGdyb3VwIHBlcm1pc3Npb24g
+Yml0cyBvZiB0aGUgZmlsZSB0byB0aGUgdmFsdWUgb2YgdGhlIG1hc2sgKGJ5IGNhbGxpbmcKcG9z
+aXhfYWNsX3VwZGF0ZV9tb2RlKCkpLCBhbmQgb25seSB0aGVuIHNldCB0aGUgYWN0dWFsIGV4dGVu
+ZGVkIGF0dHJpYnV0ZQpyZXByZXNlbnRpbmcgdGhlIG5ldyBhY2wuCgpUaGUgcHJvYmxlbSBpcywg
+bm9uZSBvZiB0aGVzZSBmdW5jdGlvbnMgdHJ5IHRvIHJlc3RvcmUgdGhlIG9yaWdpbmFsCnBlcm1p
+c3Npb24gYml0cyBpZiB0aGUgc2Vjb25kIHBhcnQgZmFpbHMuIElmIHRoaXMgaGFwcGVucyB0byBh
+IGZpbGUgdGhhdApoYWQgbm8gYWNsIGF0dHJpYnV0ZXMgdG8gYmVnaW4gd2l0aCwgdGhlIHN5c3Rl
+bSB3aWxsIGZyb20gbm93IG9uIGFzc3VtZQp0aGF0IHRoZSBtYXNrIHBlcm1pc3Npb24gYml0cyBh
+cmUgYWN0dWFsIGdyb3VwIHBlcm1pc3Npb24gYml0cywKcG90ZW50aWFsbHkgZ3JhbnRpbmcgYWNj
+ZXNzIHRvIHRoZSB3cm9uZyB1c2Vycy4KCklmIHlvdXIgd29ya2luZyBkaXJlY3RvcnkgaXMgb24g
+YSBmaWxlc3lzdGVtIG1vdW50ZWQgd2l0aCBleHRlbmRlZCB1c2VyCmF0dHJpYnV0ZXMgKGFuZCBh
+Y2wgb2YgY291cnNlKSwgdGhpcyBzY3JpcHQgd2lsbCB0cmlnZ2VyIHRoZSBpc3N1ZSBieQpmaWxs
+aW5nIHRoZSBkcml2ZToKCgp0b3VjaCB0ZXN0LmZpbGUKY2htb2QgZ28tcnd4IHRlc3QuZmlsZQp5
+ZXMgeHh4eHh4eHh4eCA+IHRlc3QuZmlsZQppPTEKd2hpbGUgc2V0ZmF0dHIgLW4gdXNlci4kaSB0
+ZXN0LmZpbGU7IGRvCiAgKCgrK2kpKQpkb25lCnNldGZhY2wgLW0gbTpyIHRlc3QuZmlsZQoKCkJ5
+IHRoZSB0aW1lIHRoZSBzY3JpcHQgcmV0dXJucywgdGhlIGdyb3VwIHRoYXQgb3ducyB0ZXN0LmZp
+bGUgbWF5IGhhdmUgcmVhZApwZXJtaXNzaW9ucyB0aGF0IHdlcmUgbmV2ZXIgZ3JhbnRlZC4gVGhp
+cyBoYXBwZW5zIHJlbGlhYmx5IG9uIGF0IGxlYXN0CmV4dDIsIGV4dDQsIGpmcyBhbmQgcmVpc2Vy
+ZnMuCgpJIHdpbGwgZm9sbG93IHRoaXMgbWFpbCB3aXRoIHBhdGNoIGRyYWZ0cyBmb3IgdGhvc2Ug
+ZmlsZXN5c3RlbXMuIEkgYmVsaWV2ZQptb3N0IGZpbGVzeXN0ZW1zIHRoYXQgc3VwcG9ydCBhY2wg
+d2lsbCBuZWVkIGEgcGF0Y2gsIGJ1dCBwZXJoYXBzIGl0J3MgYmVzdAppZiBJIHNoYXJlIHdoYXQg
+SSBoYXZlIHNvIGZhci4KClRoYW5rIHlvdSBmb3IgeW91ciBhdHRlbnRpb24uCgpFcm5lc3RvIEEu
+IEZlcm7DoW5kZXogKDUpOgogIGV4dDQ6IHByZXNlcnZlIGlfbW9kZSBpZiBfX2V4dDRfc2V0X2Fj
+bCgpIGZhaWxzCiAgZXh0MjogcHJlc2VydmUgaV9tb2RlIGlmIGV4dDJfc2V0X2FjbCgpIGZhaWxz
+CiAgZXh0MjogZml4IGxpbmUgb3ZlciA4MCBjaGFyYWN0ZXJzIGluIGV4dDJfc2V0X2FjbCgpCiAg
+amZzOiBwcmVzZXJ2ZSBpX21vZGUgaWYgX19qZnNfc2V0X2FjbCgpIGZhaWxzCiAgcmVpc2VyZnM6
+IHByZXNlcnZlIGlfbW9kZSBpZiBfX3JlaXNlcmZzX3NldF9hY2woKSBmYWlscwoKIGZzL2V4dDIv
+YWNsLmMgICAgICAgICAgIHwgMjUgKysrKysrKysrKysrKysrKy0tLS0tLS0tLQogZnMvZXh0NC9h
+Y2wuYyAgICAgICAgICAgfCAxNSArKysrKysrKysrKy0tLS0KIGZzL2pmcy9hY2wuYyAgICAgICAg
+ICAgIHwgMTUgKysrKysrKysrKystLS0tCiBmcy9yZWlzZXJmcy94YXR0ci5jICAgICB8ICA0ICsr
+KysKIGZzL3JlaXNlcmZzL3hhdHRyX2FjbC5jIHwgMjUgKysrKysrKysrLS0tLS0tLS0tLS0tLS0t
+LQogNSBmaWxlcyBjaGFuZ2VkLCA1MSBpbnNlcnRpb25zKCspLCAzMyBkZWxldGlvbnMoLSkKCi0t
+IAoyLjEuNAoKLS0KVG8gdW5zdWJzY3JpYmUgZnJvbSB0aGlzIGxpc3Q6IHNlbmQgdGhlIGxpbmUg
+InVuc3Vic2NyaWJlIHJlaXNlcmZzLWRldmVsIiBpbgp0aGUgYm9keSBvZiBhIG1lc3NhZ2UgdG8g
+bWFqb3Jkb21vQHZnZXIua2VybmVsLm9yZwpNb3JlIG1ham9yZG9tbyBpbmZvIGF0ICBodHRwOi8v
+dmdlci5rZXJuZWwub3JnL21ham9yZG9tby1pbmZvLmh0bWwK
