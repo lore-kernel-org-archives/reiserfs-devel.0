@@ -1,44 +1,99 @@
-From: Christoph Hellwig <hch@infradead.org>
-Subject: Re: [PATCH 0/5] Failure to set acl may alter group permissions
-Date: Wed, 12 Jul 2017 04:47:19 -0700
-Message-ID: <20170712114719.GA14398@infradead.org>
+From: Ernesto =?utf-8?Q?A=2E_Fern=C3=A1ndez?= 
+        <ernesto.mnd.fernandez@gmail.com>
+Subject: [xfstests PATCH] generic: add test of file mode when setfacl fails
+Date: Thu, 13 Jul 2017 06:40:04 -0300
+Message-ID: <20170713094003.GA4959@debian.home>
 References: <cover.1499805484.git.ernesto.mnd.fernandez@gmail.com>
+ <20170712114719.GA14398@infradead.org>
 Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: base64
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Transfer-Encoding
-        :Content-Type:MIME-Version:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To
-        :Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-        Resent-To:Resent-Cc:Resent-Message-ID:References:List-Id:List-Help:
-        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=vICnftoOZUmdUfFRpKHzZuqMRLGlFDke6FJCv+2WPJ4=; b=GsJa4htuoaIa93U8rjwX83JFZJ
-        ecyfszly3PD1TnFyV1tXDkbsCTkYhLUMolGeMRKWS3yq3HZorHJiWpA3E10QcgHNJLRHYuQD3EQu5
-        Q6J1oeVJ5bqDMWdokzZxHG/hyYG86+WYyaIPwTUwXJ7qKQdEaqsnCu4sku+ubJ/wsxhG7PlU9E8Oj
-        fsBbAkfG+0Wj6HlNVSucUfoBNMwnklT06KFpcm3c5Isj5uLNdzjh7uBYWulWMcu6yjOXSgA7FnGcZ
-        5lNIqxuewdetvG3DbWxrrqawhgIuqOOZiSbEsYT7jm6wBsBWFHzJC/nCuD1hXO5ckClIZivH8Ux1k
-    
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:content-transfer-encoding:in-reply-to;
+        bh=KV6QRXan6KKFAbYa6vBSlfCKU7nghjmM52xNxQ9oG9s=;
+        b=fU67Jtba67MTTorD8G3Os/wyQlmj9CD1VWCGNcLN+YlCmrnfTSFPEh9+8FfS9WO2u6
+         1SLfvGW5IUooNko0B6ESEsG6c0+gNvohcaXjI9YNZiac/+OeqJ/qWn9GiBSdZWC500xr
+         t2qzDLSUILyyx8EGq+OkOi8njiEfRLy0JjQDqEUZRVIKrD9Km1/V2DK5S7jBpiSE1X5R
+         oM8iO5mHLYV8dIaN1onPa4yUH27BDvncYo0LUhG1LO9cC0PnUlHBFhTr4DPqW7sbMfIX
+         YJBaRWQY56/wylAdgSu/FDOfUSsQ8y6QYddNFgRj2F3nNGiUCOkeESkO+fUYPlTMzjlW
+         3CQQ==
 Content-Disposition: inline
-In-Reply-To: <cover.1499805484.git.ernesto.mnd.fernandez@gmail.com>
+In-Reply-To: <20170712114719.GA14398@infradead.org>
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="iso-8859-1"
-To: Ernesto =?iso-8859-1?Q?A=2E_Fern=E1ndez?= <ernesto.mnd.fernandez@gmail.com>
+Content-Type: text/plain; charset="macroman"
+To: Christoph Hellwig <hch@infradead.org>
 Cc: Jan Kara <jack@suse.com>, Theodore Ts'o <tytso@mit.edu>, Andreas Dilger <adilger.kernel@dilger.ca>, Dave Kleikamp <shaggy@kernel.org>, linux-ext4@vger.kernel.org, jfs-discussion@lists.sourceforge.net, reiserfs-devel@vger.kernel.org, fstests@vger.kernel.org
 
-On Wed, Jul 12, 2017 at 06:53:22AM -0300, Ernesto A. Fern=E1ndez wrote:
-> If your working directory is on a filesystem mounted with extended user
-> attributes (and acl of course), this script will trigger the issue by
-> filling the drive:
->=20
->=20
-> touch test.file
-> chmod go-rwx test.file
-> yes xxxxxxxxxx > test.file
-> i=3D1
-> while setfattr -n user.$i test.file; do
->   ((++i))
-> done
-> setfacl -m m:r test.file
-
-Can you please wire this up for xfstests?
+Q2hlY2sgdGhhdCB0aGUgZ3JvdXAgcGVybWlzc2lvbiBiaXRzIG9mIGEgZmlsZSBhcmUgbm90IGFs
+dGVyZWQgd2hlbiBzZXRmYWNsCmZhaWxzLiBBdCB0aGUgdGltZSBvZiB0aGlzIHBhdGNoIHRoZSB0
+ZXN0IGZhaWxzIGZvciBhdCBsZWFzdCBleHQyLCBleHQ0IGFuZApqZnMuIEl0IGlzIG5vdCBydW4g
+YWdhaW5zdCByZWlzZXJmcywgc2luY2UgeGZzdGVzdHMgY2xhaW1zIHRoYXQgImF0dHJzIGFyZQpu
+b3Qgc3VwcG9ydGVkIGJ5IHRoaXMgZmlsZXN5c3RlbSB0eXBlIi4KClRoZSBmYWlsdXJlIHRvIHNl
+dCBhY2xzIGlzIGluZHVjZWQgYnkgZmlsbGluZyB0aGUgZGV2aWNlLCBzbyB0byBzYXZlIHRpbWUK
+dGhpcyBzaG91bGQgcHJvYmFibHkgYmUgcnVuIHdpdGggYSBzbWFsbCBURVNUX0RFVi4KCk5vdGUg
+dGhhdCB0aGlzIHRlc3QgaXMgbm90IG1lYW5pbmdmdWwgZm9yIGFsbCBmaWxlc3lzdGVtcywgYmVj
+YXVzZSBzb21lCndpbGwgc3RpbGwgc3VjY2VlZCBpbiBzZXR0aW5nIHRoZSBhY2xzLiBUaGlzIGRv
+ZXMgbm90IG1lYW4gdGhleSBkb24ndCBoYXZlCmEgYnVnIGluIGhvdyB0aGV5IHdvdWxkIGhhbmRs
+ZSBhbiBlcnJvci4KClNpZ25lZC1vZmYtYnk6IEVybmVzdG8gQS4gRmVybsOhbmRleiA8ZXJuZXN0
+by5tbmQuZmVybmFuZGV6QGdtYWlsLmNvbT4KLS0tCiB0ZXN0cy9nZW5lcmljLzQ0NyAgICAgfCA4
+OCArKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysKIHRl
+c3RzL2dlbmVyaWMvNDQ3Lm91dCB8ICAyICsrCiB0ZXN0cy9nZW5lcmljL2dyb3VwICAgfCAgMSAr
+CiAzIGZpbGVzIGNoYW5nZWQsIDkxIGluc2VydGlvbnMoKykKIGNyZWF0ZSBtb2RlIDEwMDc1NSB0
+ZXN0cy9nZW5lcmljLzQ0NwogY3JlYXRlIG1vZGUgMTAwNjQ0IHRlc3RzL2dlbmVyaWMvNDQ3Lm91
+dAoKZGlmZiAtLWdpdCBhL3Rlc3RzL2dlbmVyaWMvNDQ3IGIvdGVzdHMvZ2VuZXJpYy80NDcKbmV3
+IGZpbGUgbW9kZSAxMDA3NTUKaW5kZXggMDAwMDAwMC4uYjVmYWJkMwotLS0gL2Rldi9udWxsCisr
+KyBiL3Rlc3RzL2dlbmVyaWMvNDQ3CkBAIC0wLDAgKzEsODggQEAKKyMhIC9iaW4vYmFzaAorIyBG
+UyBRQSBUZXN0IDQ0NworIworIyBGaWxsIHRoZSBkZXZpY2UgYW5kIHNldCBhcyBtYW55IGV4dGVu
+ZGVkIGF0dHJpYnV0ZXMgdG8gYSBmaWxlIGFzCisjIHBvc3NpYmxlLiBUaGVuIGNhbGwgc2V0ZmFj
+bCBvbiBpdCBhbmQsIGlmIHRoaXMgZmFpbHMgZm9yIGxhY2sgb2YKKyMgc3BhY2UsIHRlc3QgdGhh
+dCB0aGUgcGVybWlzc2lvbnMgcmVtYWluIHRoZSBzYW1lLgorIworIy0tLS0tLS0tLS0tLS0tLS0t
+LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tCisj
+IENvcHlyaWdodCAoYykgMjAxNyBFcm5lc3RvIEEuIEZlcm5hbmRlei4gIEFsbCBSaWdodHMgUmVz
+ZXJ2ZWQuCisjCisjIFRoaXMgcHJvZ3JhbSBpcyBmcmVlIHNvZnR3YXJlOyB5b3UgY2FuIHJlZGlz
+dHJpYnV0ZSBpdCBhbmQvb3IKKyMgbW9kaWZ5IGl0IHVuZGVyIHRoZSB0ZXJtcyBvZiB0aGUgR05V
+IEdlbmVyYWwgUHVibGljIExpY2Vuc2UgYXMKKyMgcHVibGlzaGVkIGJ5IHRoZSBGcmVlIFNvZnR3
+YXJlIEZvdW5kYXRpb24uCisjCisjIFRoaXMgcHJvZ3JhbSBpcyBkaXN0cmlidXRlZCBpbiB0aGUg
+aG9wZSB0aGF0IGl0IHdvdWxkIGJlIHVzZWZ1bCwKKyMgYnV0IFdJVEhPVVQgQU5ZIFdBUlJBTlRZ
+OyB3aXRob3V0IGV2ZW4gdGhlIGltcGxpZWQgd2FycmFudHkgb2YKKyMgTUVSQ0hBTlRBQklMSVRZ
+IG9yIEZJVE5FU1MgRk9SIEEgUEFSVElDVUxBUiBQVVJQT1NFLiAgU2VlIHRoZQorIyBHTlUgR2Vu
+ZXJhbCBQdWJsaWMgTGljZW5zZSBmb3IgbW9yZSBkZXRhaWxzLgorIworIyBZb3Ugc2hvdWxkIGhh
+dmUgcmVjZWl2ZWQgYSBjb3B5IG9mIHRoZSBHTlUgR2VuZXJhbCBQdWJsaWMgTGljZW5zZQorIyBh
+bG9uZyB3aXRoIHRoaXMgcHJvZ3JhbTsgaWYgbm90LCB3cml0ZSB0aGUgRnJlZSBTb2Z0d2FyZSBG
+b3VuZGF0aW9uLAorIyBJbmMuLCAgNTEgRnJhbmtsaW4gU3QsIEZpZnRoIEZsb29yLCBCb3N0b24s
+IE1BICAwMjExMC0xMzAxICBVU0EKKyMtLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
+LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLQorIworCitzZXE9YGJhc2VuYW1l
+ICQwYAorc2VxcmVzPSRSRVNVTFRfRElSLyRzZXEKK2VjaG8gIlFBIG91dHB1dCBjcmVhdGVkIGJ5
+ICRzZXEiCisKK2hlcmU9YHB3ZGAKK3RtcD0vdG1wLyQkCitzdGF0dXM9MQkjIGZhaWx1cmUgaXMg
+dGhlIGRlZmF1bHQhCit0cmFwICJfY2xlYW51cDsgZXhpdCBcJHN0YXR1cyIgMCAxIDIgMyAxNQor
+CitfY2xlYW51cCgpCit7CisJY2QgJFRFU1RfRElSCisJcm0gLWYgJFRGSUxFCisJY2QgLworCXJt
+IC1mICR0bXAuKgorfQorCisjIGdldCBzdGFuZGFyZCBlbnZpcm9ubWVudCwgZmlsdGVycyBhbmQg
+Y2hlY2tzCisuIC4vY29tbW9uL3JjCisuIC4vY29tbW9uL2ZpbHRlcgorLiAuL2NvbW1vbi9hdHRy
+CisKKyMgcmVtb3ZlIHByZXZpb3VzICRzZXFyZXMuZnVsbCBiZWZvcmUgdGVzdAorcm0gLWYgJHNl
+cXJlcy5mdWxsCisKKyMgcmVhbCBRQSB0ZXN0IHN0YXJ0cyBoZXJlCisKKyMgTW9kaWZ5IGFzIGFw
+cHJvcHJpYXRlLgorX3N1cHBvcnRlZF9mcyBnZW5lcmljCitfc3VwcG9ydGVkX29zIExpbnV4Citf
+cmVxdWlyZV90ZXN0CitfcmVxdWlyZV9hY2xzCitfcmVxdWlyZV9hdHRycworCitjZCAkVEVTVF9E
+SVIKK1RGSUxFPXRlc3RmaWxlLiRzZXEKKworIyBDcmVhdGUgdGhlIHRlc3QgZmlsZSBhbmQgY2hv
+b3NlIGl0cyBwZXJtaXNzaW9ucworcm0gLWYgJFRGSUxFCit0b3VjaCAkVEZJTEUKK2NobW9kIHUr
+cnd4ICRURklMRQorY2htb2QgZ28tcnd4ICRURklMRQorCisjIFRyeSB0byBydW4gb3V0IG9mIHNw
+YWNlIHNvIHNldGZhY2wgd2lsbCBmYWlsCit5ZXMgeHh4eHh4eHh4eCAmPiAkVEZJTEUKK2k9MQor
+d2hpbGUgc2V0ZmF0dHIgLW4gdXNlci4kaSAkVEZJTEUgJj4gL2Rldi9udWxsOyBkbworCSgoKytp
+KSkKK2RvbmUKKworaWYgc2V0ZmFjbCAtbSBtOnIgJFRGSUxFICY+IC9kZXYvbnVsbDsgdGhlbgor
+CSMgc2V0ZmFjbCBzdWNjZWVkZWQsIHNvIHRoZSB0ZXN0IHdhcyBtZWFuaW5nbGVzcworCSMgVGhl
+IGZpbGVzeXN0ZW0gbWlnaHQgc3RpbGwgaGF2ZSBhbiBpc3N1ZQorCXN0YXR1cz0wCisJZWNobyAi
+LXJ3eC0tLS0tLSIKKwlleGl0CitmaQorCisjIFNpbmNlIHNldGZhY2wgZmFpbGVkLCB0aGUgcGVy
+bWlzc2lvbnMgc2hvdWxkIG5vdCBoYXZlIGNoYW5nZWQKK3N0YXQgLWMgJUEgJFRGSUxFCisKK3N0
+YXR1cz0wCitleGl0CmRpZmYgLS1naXQgYS90ZXN0cy9nZW5lcmljLzQ0Ny5vdXQgYi90ZXN0cy9n
+ZW5lcmljLzQ0Ny5vdXQKbmV3IGZpbGUgbW9kZSAxMDA2NDQKaW5kZXggMDAwMDAwMC4uYWRlYzg3
+NwotLS0gL2Rldi9udWxsCisrKyBiL3Rlc3RzL2dlbmVyaWMvNDQ3Lm91dApAQCAtMCwwICsxLDIg
+QEAKK1FBIG91dHB1dCBjcmVhdGVkIGJ5IDQ0NworLXJ3eC0tLS0tLQpkaWZmIC0tZ2l0IGEvdGVz
+dHMvZ2VuZXJpYy9ncm91cCBiL3Rlc3RzL2dlbmVyaWMvZ3JvdXAKaW5kZXggOGMxZTIxYS4uZjEx
+ZDc5OCAxMDA2NDQKLS0tIGEvdGVzdHMvZ2VuZXJpYy9ncm91cAorKysgYi90ZXN0cy9nZW5lcmlj
+L2dyb3VwCkBAIC00NDksMyArNDQ5LDQgQEAKIDQ0NCBhdXRvIHF1aWNrIGFjbAogNDQ1IGF1dG8g
+cXVpY2sgcncKIDQ0NiBhdXRvIHF1aWNrIHJ3IGRhbmdlcm91cworNDQ3IGFjbAotLSAKMi4xLjQK
+CgotLQpUbyB1bnN1YnNjcmliZSBmcm9tIHRoaXMgbGlzdDogc2VuZCB0aGUgbGluZSAidW5zdWJz
+Y3JpYmUgcmVpc2VyZnMtZGV2ZWwiIGluCnRoZSBib2R5IG9mIGEgbWVzc2FnZSB0byBtYWpvcmRv
+bW9Admdlci5rZXJuZWwub3JnCk1vcmUgbWFqb3Jkb21vIGluZm8gYXQgIGh0dHA6Ly92Z2VyLmtl
+cm5lbC5vcmcvbWFqb3Jkb21vLWluZm8uaHRtbAo=
