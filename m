@@ -1,99 +1,54 @@
-From: Ernesto =?utf-8?Q?A=2E_Fern=C3=A1ndez?= 
-        <ernesto.mnd.fernandez@gmail.com>
-Subject: [xfstests PATCH] generic: add test of file mode when setfacl fails
-Date: Thu, 13 Jul 2017 06:40:04 -0300
-Message-ID: <20170713094003.GA4959@debian.home>
+From: Christoph Hellwig <hch@infradead.org>
+Subject: Re: [xfstests PATCH] generic: add test of file mode when setfacl
+ fails
+Date: Thu, 13 Jul 2017 04:55:07 -0700
+Message-ID: <20170713115507.GA10435@infradead.org>
 References: <cover.1499805484.git.ernesto.mnd.fernandez@gmail.com>
  <20170712114719.GA14398@infradead.org>
+ <20170713094003.GA4959@debian.home>
 Mime-Version: 1.0
-Content-Transfer-Encoding: base64
-Return-path: <reiserfs-devel-owner@vger.kernel.org>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to;
-        bh=KV6QRXan6KKFAbYa6vBSlfCKU7nghjmM52xNxQ9oG9s=;
-        b=fU67Jtba67MTTorD8G3Os/wyQlmj9CD1VWCGNcLN+YlCmrnfTSFPEh9+8FfS9WO2u6
-         1SLfvGW5IUooNko0B6ESEsG6c0+gNvohcaXjI9YNZiac/+OeqJ/qWn9GiBSdZWC500xr
-         t2qzDLSUILyyx8EGq+OkOi8njiEfRLy0JjQDqEUZRVIKrD9Km1/V2DK5S7jBpiSE1X5R
-         oM8iO5mHLYV8dIaN1onPa4yUH27BDvncYo0LUhG1LO9cC0PnUlHBFhTr4DPqW7sbMfIX
-         YJBaRWQY56/wylAdgSu/FDOfUSsQ8y6QYddNFgRj2F3nNGiUCOkeESkO+fUYPlTMzjlW
-         3CQQ==
+Content-Transfer-Encoding: quoted-printable
+Return-path: <linux-ext4-owner@vger.kernel.org>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Transfer-Encoding
+        :Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:
+        Sender:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
+        Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
+        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+        bh=ey8vBuWU8G2W1JA8Q5zGXCPCC2eZQOjmLlR7By1tzQ4=; b=jbCouOEYAICTbxEWI5dCy97Nf2
+        SqxCYiRgI7jYmXSO+dyQljLBlRBzS+ahfjQ9N/u3EyhcDBaBWMA3UqkLAFacjy0rpR6p5Z3XIAncE
+        2b3SIdg0UCAdHnpnn0HaeRwei3UlAGa9V0P4gegIB7IVoPqXAEx671gCXIx7o7iBATh2RpCD9BcRc
+        4KaTYDelUcp5SqjMuc9BoCwQhklVYYHTzejhxk8QqlrsMnSZzQdx2MDzTX1iFReD7H+3TXksabIxL
+        OoqVZnTeuck5aBOXPT/tGNKzb26jvNnKpWu1kKHRIPJl1wzo9YcGtI0kbTVlKJfn3UVJoqX7PQuWC
+    
 Content-Disposition: inline
-In-Reply-To: <20170712114719.GA14398@infradead.org>
-Sender: reiserfs-devel-owner@vger.kernel.org
+In-Reply-To: <20170713094003.GA4959@debian.home>
+Sender: linux-ext4-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="macroman"
-To: Christoph Hellwig <hch@infradead.org>
-Cc: Jan Kara <jack@suse.com>, Theodore Ts'o <tytso@mit.edu>, Andreas Dilger <adilger.kernel@dilger.ca>, Dave Kleikamp <shaggy@kernel.org>, linux-ext4@vger.kernel.org, jfs-discussion@lists.sourceforge.net, reiserfs-devel@vger.kernel.org, fstests@vger.kernel.org
+Content-Type: text/plain; charset="iso-8859-1"
+To: Ernesto =?iso-8859-1?Q?A=2E_Fern=E1ndez?= <ernesto.mnd.fernandez@gmail.com>
+Cc: Christoph Hellwig <hch@infradead.org>, Jan Kara <jack@suse.com>, Theodore Ts'o <tytso@mit.edu>, Andreas Dilger <adilger.kernel@dilger.ca>, Dave Kleikamp <shaggy@kernel.org>, linux-ext4@vger.kernel.org, jfs-discussion@lists.sourceforge.net, reiserfs-devel@vger.kernel.org, fstests@vger.kernel.org
 
-Q2hlY2sgdGhhdCB0aGUgZ3JvdXAgcGVybWlzc2lvbiBiaXRzIG9mIGEgZmlsZSBhcmUgbm90IGFs
-dGVyZWQgd2hlbiBzZXRmYWNsCmZhaWxzLiBBdCB0aGUgdGltZSBvZiB0aGlzIHBhdGNoIHRoZSB0
-ZXN0IGZhaWxzIGZvciBhdCBsZWFzdCBleHQyLCBleHQ0IGFuZApqZnMuIEl0IGlzIG5vdCBydW4g
-YWdhaW5zdCByZWlzZXJmcywgc2luY2UgeGZzdGVzdHMgY2xhaW1zIHRoYXQgImF0dHJzIGFyZQpu
-b3Qgc3VwcG9ydGVkIGJ5IHRoaXMgZmlsZXN5c3RlbSB0eXBlIi4KClRoZSBmYWlsdXJlIHRvIHNl
-dCBhY2xzIGlzIGluZHVjZWQgYnkgZmlsbGluZyB0aGUgZGV2aWNlLCBzbyB0byBzYXZlIHRpbWUK
-dGhpcyBzaG91bGQgcHJvYmFibHkgYmUgcnVuIHdpdGggYSBzbWFsbCBURVNUX0RFVi4KCk5vdGUg
-dGhhdCB0aGlzIHRlc3QgaXMgbm90IG1lYW5pbmdmdWwgZm9yIGFsbCBmaWxlc3lzdGVtcywgYmVj
-YXVzZSBzb21lCndpbGwgc3RpbGwgc3VjY2VlZCBpbiBzZXR0aW5nIHRoZSBhY2xzLiBUaGlzIGRv
-ZXMgbm90IG1lYW4gdGhleSBkb24ndCBoYXZlCmEgYnVnIGluIGhvdyB0aGV5IHdvdWxkIGhhbmRs
-ZSBhbiBlcnJvci4KClNpZ25lZC1vZmYtYnk6IEVybmVzdG8gQS4gRmVybsOhbmRleiA8ZXJuZXN0
-by5tbmQuZmVybmFuZGV6QGdtYWlsLmNvbT4KLS0tCiB0ZXN0cy9nZW5lcmljLzQ0NyAgICAgfCA4
-OCArKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysKIHRl
-c3RzL2dlbmVyaWMvNDQ3Lm91dCB8ICAyICsrCiB0ZXN0cy9nZW5lcmljL2dyb3VwICAgfCAgMSAr
-CiAzIGZpbGVzIGNoYW5nZWQsIDkxIGluc2VydGlvbnMoKykKIGNyZWF0ZSBtb2RlIDEwMDc1NSB0
-ZXN0cy9nZW5lcmljLzQ0NwogY3JlYXRlIG1vZGUgMTAwNjQ0IHRlc3RzL2dlbmVyaWMvNDQ3Lm91
-dAoKZGlmZiAtLWdpdCBhL3Rlc3RzL2dlbmVyaWMvNDQ3IGIvdGVzdHMvZ2VuZXJpYy80NDcKbmV3
-IGZpbGUgbW9kZSAxMDA3NTUKaW5kZXggMDAwMDAwMC4uYjVmYWJkMwotLS0gL2Rldi9udWxsCisr
-KyBiL3Rlc3RzL2dlbmVyaWMvNDQ3CkBAIC0wLDAgKzEsODggQEAKKyMhIC9iaW4vYmFzaAorIyBG
-UyBRQSBUZXN0IDQ0NworIworIyBGaWxsIHRoZSBkZXZpY2UgYW5kIHNldCBhcyBtYW55IGV4dGVu
-ZGVkIGF0dHJpYnV0ZXMgdG8gYSBmaWxlIGFzCisjIHBvc3NpYmxlLiBUaGVuIGNhbGwgc2V0ZmFj
-bCBvbiBpdCBhbmQsIGlmIHRoaXMgZmFpbHMgZm9yIGxhY2sgb2YKKyMgc3BhY2UsIHRlc3QgdGhh
-dCB0aGUgcGVybWlzc2lvbnMgcmVtYWluIHRoZSBzYW1lLgorIworIy0tLS0tLS0tLS0tLS0tLS0t
-LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tCisj
-IENvcHlyaWdodCAoYykgMjAxNyBFcm5lc3RvIEEuIEZlcm5hbmRlei4gIEFsbCBSaWdodHMgUmVz
-ZXJ2ZWQuCisjCisjIFRoaXMgcHJvZ3JhbSBpcyBmcmVlIHNvZnR3YXJlOyB5b3UgY2FuIHJlZGlz
-dHJpYnV0ZSBpdCBhbmQvb3IKKyMgbW9kaWZ5IGl0IHVuZGVyIHRoZSB0ZXJtcyBvZiB0aGUgR05V
-IEdlbmVyYWwgUHVibGljIExpY2Vuc2UgYXMKKyMgcHVibGlzaGVkIGJ5IHRoZSBGcmVlIFNvZnR3
-YXJlIEZvdW5kYXRpb24uCisjCisjIFRoaXMgcHJvZ3JhbSBpcyBkaXN0cmlidXRlZCBpbiB0aGUg
-aG9wZSB0aGF0IGl0IHdvdWxkIGJlIHVzZWZ1bCwKKyMgYnV0IFdJVEhPVVQgQU5ZIFdBUlJBTlRZ
-OyB3aXRob3V0IGV2ZW4gdGhlIGltcGxpZWQgd2FycmFudHkgb2YKKyMgTUVSQ0hBTlRBQklMSVRZ
-IG9yIEZJVE5FU1MgRk9SIEEgUEFSVElDVUxBUiBQVVJQT1NFLiAgU2VlIHRoZQorIyBHTlUgR2Vu
-ZXJhbCBQdWJsaWMgTGljZW5zZSBmb3IgbW9yZSBkZXRhaWxzLgorIworIyBZb3Ugc2hvdWxkIGhh
-dmUgcmVjZWl2ZWQgYSBjb3B5IG9mIHRoZSBHTlUgR2VuZXJhbCBQdWJsaWMgTGljZW5zZQorIyBh
-bG9uZyB3aXRoIHRoaXMgcHJvZ3JhbTsgaWYgbm90LCB3cml0ZSB0aGUgRnJlZSBTb2Z0d2FyZSBG
-b3VuZGF0aW9uLAorIyBJbmMuLCAgNTEgRnJhbmtsaW4gU3QsIEZpZnRoIEZsb29yLCBCb3N0b24s
-IE1BICAwMjExMC0xMzAxICBVU0EKKyMtLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
-LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLQorIworCitzZXE9YGJhc2VuYW1l
-ICQwYAorc2VxcmVzPSRSRVNVTFRfRElSLyRzZXEKK2VjaG8gIlFBIG91dHB1dCBjcmVhdGVkIGJ5
-ICRzZXEiCisKK2hlcmU9YHB3ZGAKK3RtcD0vdG1wLyQkCitzdGF0dXM9MQkjIGZhaWx1cmUgaXMg
-dGhlIGRlZmF1bHQhCit0cmFwICJfY2xlYW51cDsgZXhpdCBcJHN0YXR1cyIgMCAxIDIgMyAxNQor
-CitfY2xlYW51cCgpCit7CisJY2QgJFRFU1RfRElSCisJcm0gLWYgJFRGSUxFCisJY2QgLworCXJt
-IC1mICR0bXAuKgorfQorCisjIGdldCBzdGFuZGFyZCBlbnZpcm9ubWVudCwgZmlsdGVycyBhbmQg
-Y2hlY2tzCisuIC4vY29tbW9uL3JjCisuIC4vY29tbW9uL2ZpbHRlcgorLiAuL2NvbW1vbi9hdHRy
-CisKKyMgcmVtb3ZlIHByZXZpb3VzICRzZXFyZXMuZnVsbCBiZWZvcmUgdGVzdAorcm0gLWYgJHNl
-cXJlcy5mdWxsCisKKyMgcmVhbCBRQSB0ZXN0IHN0YXJ0cyBoZXJlCisKKyMgTW9kaWZ5IGFzIGFw
-cHJvcHJpYXRlLgorX3N1cHBvcnRlZF9mcyBnZW5lcmljCitfc3VwcG9ydGVkX29zIExpbnV4Citf
-cmVxdWlyZV90ZXN0CitfcmVxdWlyZV9hY2xzCitfcmVxdWlyZV9hdHRycworCitjZCAkVEVTVF9E
-SVIKK1RGSUxFPXRlc3RmaWxlLiRzZXEKKworIyBDcmVhdGUgdGhlIHRlc3QgZmlsZSBhbmQgY2hv
-b3NlIGl0cyBwZXJtaXNzaW9ucworcm0gLWYgJFRGSUxFCit0b3VjaCAkVEZJTEUKK2NobW9kIHUr
-cnd4ICRURklMRQorY2htb2QgZ28tcnd4ICRURklMRQorCisjIFRyeSB0byBydW4gb3V0IG9mIHNw
-YWNlIHNvIHNldGZhY2wgd2lsbCBmYWlsCit5ZXMgeHh4eHh4eHh4eCAmPiAkVEZJTEUKK2k9MQor
-d2hpbGUgc2V0ZmF0dHIgLW4gdXNlci4kaSAkVEZJTEUgJj4gL2Rldi9udWxsOyBkbworCSgoKytp
-KSkKK2RvbmUKKworaWYgc2V0ZmFjbCAtbSBtOnIgJFRGSUxFICY+IC9kZXYvbnVsbDsgdGhlbgor
-CSMgc2V0ZmFjbCBzdWNjZWVkZWQsIHNvIHRoZSB0ZXN0IHdhcyBtZWFuaW5nbGVzcworCSMgVGhl
-IGZpbGVzeXN0ZW0gbWlnaHQgc3RpbGwgaGF2ZSBhbiBpc3N1ZQorCXN0YXR1cz0wCisJZWNobyAi
-LXJ3eC0tLS0tLSIKKwlleGl0CitmaQorCisjIFNpbmNlIHNldGZhY2wgZmFpbGVkLCB0aGUgcGVy
-bWlzc2lvbnMgc2hvdWxkIG5vdCBoYXZlIGNoYW5nZWQKK3N0YXQgLWMgJUEgJFRGSUxFCisKK3N0
-YXR1cz0wCitleGl0CmRpZmYgLS1naXQgYS90ZXN0cy9nZW5lcmljLzQ0Ny5vdXQgYi90ZXN0cy9n
-ZW5lcmljLzQ0Ny5vdXQKbmV3IGZpbGUgbW9kZSAxMDA2NDQKaW5kZXggMDAwMDAwMC4uYWRlYzg3
-NwotLS0gL2Rldi9udWxsCisrKyBiL3Rlc3RzL2dlbmVyaWMvNDQ3Lm91dApAQCAtMCwwICsxLDIg
-QEAKK1FBIG91dHB1dCBjcmVhdGVkIGJ5IDQ0NworLXJ3eC0tLS0tLQpkaWZmIC0tZ2l0IGEvdGVz
-dHMvZ2VuZXJpYy9ncm91cCBiL3Rlc3RzL2dlbmVyaWMvZ3JvdXAKaW5kZXggOGMxZTIxYS4uZjEx
-ZDc5OCAxMDA2NDQKLS0tIGEvdGVzdHMvZ2VuZXJpYy9ncm91cAorKysgYi90ZXN0cy9nZW5lcmlj
-L2dyb3VwCkBAIC00NDksMyArNDQ5LDQgQEAKIDQ0NCBhdXRvIHF1aWNrIGFjbAogNDQ1IGF1dG8g
-cXVpY2sgcncKIDQ0NiBhdXRvIHF1aWNrIHJ3IGRhbmdlcm91cworNDQ3IGFjbAotLSAKMi4xLjQK
-CgotLQpUbyB1bnN1YnNjcmliZSBmcm9tIHRoaXMgbGlzdDogc2VuZCB0aGUgbGluZSAidW5zdWJz
-Y3JpYmUgcmVpc2VyZnMtZGV2ZWwiIGluCnRoZSBib2R5IG9mIGEgbWVzc2FnZSB0byBtYWpvcmRv
-bW9Admdlci5rZXJuZWwub3JnCk1vcmUgbWFqb3Jkb21vIGluZm8gYXQgIGh0dHA6Ly92Z2VyLmtl
-cm5lbC5vcmcvbWFqb3Jkb21vLWluZm8uaHRtbAo=
+On Thu, Jul 13, 2017 at 06:40:04AM -0300, Ernesto A. Fern=E1ndez wrote:
+> Check that the group permission bits of a file are not altered when setfa=
+cl
+> fails. At the time of this patch the test fails for at least ext2, ext4 a=
+nd
+> jfs. It is not run against reiserfs, since xfstests claims that "attrs are
+> not supported by this filesystem type".
+
+That's odd, as common/config explicitly turns on user xattrs:
+
+        reiserfs)
+                # acls & xattrs aren't turned on by default on reiserfs
+                export MOUNT_OPTIONS=3D"-o acl,user_xattr $REISERFS_MOUNT_O=
+PTIONS"
+
+
+>=20
+> The failure to set acls is induced by filling the device, so to save time
+> this should probably be run with a small TEST_DEV.
+
+If you run it on the scratch fs instead of the test fs you can use
+_scratch_mkfs_sized to hand craft a small fs, which would be nice
+to get a decent runtime.
