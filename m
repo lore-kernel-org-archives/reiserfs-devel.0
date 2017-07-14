@@ -1,112 +1,226 @@
-From: Ernesto =?utf-8?Q?A=2E_Fern=C3=A1ndez?= 
-        <ernesto.mnd.fernandez@gmail.com>
-Subject: [xfstests PATCH v2] generic: add test of file mode when setfacl fails
-Date: Fri, 14 Jul 2017 03:59:28 -0300
-Message-ID: <20170714065925.GA6075@debian.home>
+From: Eryu Guan <eguan@redhat.com>
+Subject: Re: [xfstests PATCH v2] generic: add test of file mode when setfacl
+ fails
+Date: Fri, 14 Jul 2017 15:25:29 +0800
+Message-ID: <20170714072529.GM2478@eguan.usersys.redhat.com>
+References: <20170714065925.GA6075@debian.home>
 Mime-Version: 1.0
-Content-Transfer-Encoding: base64
-Return-path: <fstests-owner@vger.kernel.org>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:mime-version:content-disposition
-         :content-transfer-encoding;
-        bh=bkCla+pyj9WYRP5QUoZQFmpYdWqOMnE6ptFE/2QIHX4=;
-        b=T4EXrOh1k1Xpzyjp6WqP4MxR0myum8myUzkSioy1dKBG1Hg361lGqIoW4EWWYl3Rd7
-         8xYw99IpE3HbgJP1+hiVLGNxjCRW9150Rnm8Uqs2bvEGJMgZbgSDtScun004n8nYJAa4
-         eRIAWD7O7+jslX48YQUGdIaf6CW/rTKkLQAdCNeH0uKwrKknKXZjdAcq5TIy1nvoIYGK
-         GCrD2axAYs2ELAREEcsDc3k89BTdEygaW9io6XC/5gOmFOBDP9uPDl/8dFg/YHPPRl23
-         lifDy/xvng0rN3hk2vbsttpKlnq+Opg1R7DzF7EcW6fNUBn0TBfzNSx5xaebLZcjOfEf
-         cFdQ==
+Content-Transfer-Encoding: 8bit
+Return-path: <reiserfs-devel-owner@vger.kernel.org>
+DKIM-Filter: OpenDKIM Filter v2.11.0 mx1.redhat.com 56764C045767
 Content-Disposition: inline
-Sender: fstests-owner@vger.kernel.org
+In-Reply-To: <20170714065925.GA6075@debian.home>
+Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="macroman"
-To: fstests@vger.kernel.org
-Cc: Christoph Hellwig <hch@infradead.org>, linux-ext4@vger.kernel.org, jfs-discussion@lists.sourceforge.net, reiserfs-devel@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+To: Ernesto =?utf-8?Q?A=2E_Fern=C3=A1ndez?= <ernesto.mnd.fernandez@gmail.com>
+Cc: fstests@vger.kernel.org, Christoph Hellwig <hch@infradead.org>, linux-ext4@vger.kernel.org, jfs-discussion@lists.sourceforge.net, reiserfs-devel@vger.kernel.org
 
-Q2hlY2sgdGhhdCB0aGUgZ3JvdXAgcGVybWlzc2lvbiBiaXRzIG9mIGEgZmlsZSBhcmUgbm90IGFs
-dGVyZWQgd2hlbiBzZXRmYWNsCmZhaWxzLiBBdCB0aGUgdGltZSBvZiB0aGlzIHBhdGNoIHRoZSB0
-ZXN0IGZhaWxzIGZvciBhdCBsZWFzdCBleHQyLCBleHQ0IGFuZApqZnMuCgpBbHNvIGFkZCBzdXBw
-b3J0IGZvciBqZnMgaW4gX3NjcmF0Y2hfbWtmc19zaXplZCwgd2hpY2ggaXMgbmVlZGVkIGhlcmUu
-CgpOb3RlIHRoYXQgdGhpcyB0ZXN0IGlzIG5vdCBtZWFuaW5nZnVsIGZvciBhbGwgZmlsZXN5c3Rl
-bXMsIGJlY2F1c2Ugc29tZQp3aWxsIHN0aWxsIHN1Y2NlZWQgaW4gc2V0dGluZyB0aGUgYWNscy4g
-VGhpcyBkb2VzIG5vdCBtZWFuIHRoZXkgZG9uJ3QgaGF2ZQphIGJ1ZyBpbiBob3cgdGhleSB3b3Vs
-ZCBoYW5kbGUgYW4gZXJyb3IuCgpTaWduZWQtb2ZmLWJ5OiBFcm5lc3RvIEEuIEZlcm7DoW5kZXog
-PGVybmVzdG8ubW5kLmZlcm5hbmRlekBnbWFpbC5jb20+Ci0tLQpDaGFuZ2VzIGluIHYyOgogIC0g
-VXNlIHRoZSBzY3JhdGNoIGRldiBpbnN0ZWFkIG9mIHRoZSB0ZXN0IGRldiBzbyB3ZSBjYW4gbWFr
-ZSBhIHNtYWxsIGZzIGFuZAogICAgZmlsbCBpdCBmYXN0ZXIuIEFzIHN1Z2dlc3RlZCBieSBDaHJp
-c3RvcGggSGVsbHdpZy4KICAtIE1ha2UgamZzIHdvcmsgd2l0aCBfc2NyYXRjaF9ta2ZzX3NpemVk
-LCBuZWVkZWQgZm9yIHRoZSBhYm92ZS4KICAtIFJlbW92ZSB0aGUgbWVudGlvbiB0byBhbiBpc3N1
-ZSB3aXRoIHJlaXNlcmZzLCBzaW5jZSBJIG5vdyBiZWxpZXZlIHRoZQogICAgcHJvYmxlbSBpcyBv
-biB0aGVpciBzaWRlLgoKIGNvbW1vbi9yYyAgICAgICAgICAgICB8ICA1ICsrLQogdGVzdHMvZ2Vu
-ZXJpYy80NDcgICAgIHwgOTEgKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysr
-KysrKysrKysrKysrCiB0ZXN0cy9nZW5lcmljLzQ0Ny5vdXQgfCAgMiArKwogdGVzdHMvZ2VuZXJp
-Yy9ncm91cCAgIHwgIDEgKwogNCBmaWxlcyBjaGFuZ2VkLCA5OCBpbnNlcnRpb25zKCspLCAxIGRl
-bGV0aW9uKC0pCiBjcmVhdGUgbW9kZSAxMDA3NTUgdGVzdHMvZ2VuZXJpYy80NDcKIGNyZWF0ZSBt
-b2RlIDEwMDY0NCB0ZXN0cy9nZW5lcmljLzQ0Ny5vdXQKCmRpZmYgLS1naXQgYS9jb21tb24vcmMg
-Yi9jb21tb24vcmMKaW5kZXggYjUwNTM2NS4uYTIyNThiZSAxMDA2NDQKLS0tIGEvY29tbW9uL3Jj
-CisrKyBiL2NvbW1vbi9yYwpAQCAtMTAyMCw3ICsxMDIwLDcgQEAgX3NjcmF0Y2hfbWtmc19zaXpl
-ZCgpCiAgICAgeGZzKQogCWRlZl9ibGtzej1gZWNobyAkTUtGU19PUFRJT05TfHNlZCAtcm4gJ3Mv
-LiotYiA/c2l6ZT0gPysoWzAtOV0rKS4qL1wxL3AnYAogCTs7Ci0gICAgZXh0MnxleHQzfGV4dDR8
-ZXh0NGRldnx1ZGZ8YnRyZnN8cmVpc2VyNHxvY2ZzMikKKyAgICBleHQyfGV4dDN8ZXh0NHxleHQ0
-ZGV2fHVkZnxidHJmc3xyZWlzZXI0fG9jZnMyfGpmcykKIAlkZWZfYmxrc3o9YGVjaG8gJE1LRlNf
-T1BUSU9OU3wgc2VkIC1ybiAncy8uKi1iID8rKFswLTldKykuKi9cMS9wJ2AKIAk7OwogICAgIGVz
-YWMKQEAgLTEwNjgsNiArMTA2OCw5IEBAIF9zY3JhdGNoX21rZnNfc2l6ZWQoKQogCSgoIGZzc2l6
-ZSA8PSAxMDAgKiAxMDI0ICogMTAyNCApKSAmJiBtaXhlZF9vcHQ9Jy0tbWl4ZWQnCiAJJE1LRlNf
-QlRSRlNfUFJPRyAkTUtGU19PUFRJT05TICRtaXhlZF9vcHQgLWIgJGZzc2l6ZSAkU0NSQVRDSF9E
-RVYKIAk7OworICAgIGpmcykKKwkke01LRlNfUFJPR30uJEZTVFlQIC1GICRNS0ZTX09QVElPTlMg
-LWIgJGJsb2Nrc2l6ZSAkU0NSQVRDSF9ERVYgJGJsb2NrcworCTs7CiAgICAgcmVpc2VyNCkKIAkj
-IG1rZnMucmVzaWVyNCByZXF1aXJlcyBzaXplIGluIEtCIGFzIGlucHV0IGZvciBjcmVhdGluZyBm
-aWxlc3lzdGVtCiAJJE1LRlNfUkVJU0VSNF9QUk9HICRNS0ZTX09QVElPTlMgLXkgLWIgJGJsb2Nr
-c2l6ZSAkU0NSQVRDSF9ERVYgXApkaWZmIC0tZ2l0IGEvdGVzdHMvZ2VuZXJpYy80NDcgYi90ZXN0
-cy9nZW5lcmljLzQ0NwpuZXcgZmlsZSBtb2RlIDEwMDc1NQppbmRleCAwMDAwMDAwLi5mZjgxMzU1
-Ci0tLSAvZGV2L251bGwKKysrIGIvdGVzdHMvZ2VuZXJpYy80NDcKQEAgLTAsMCArMSw5MSBAQAor
-IyEgL2Jpbi9iYXNoCisjIEZTIFFBIFRlc3QgNDQ3CisjCisjIEZpbGwgdGhlIGRldmljZSBhbmQg
-c2V0IGFzIG1hbnkgZXh0ZW5kZWQgYXR0cmlidXRlcyB0byBhIGZpbGUgYXMKKyMgcG9zc2libGUu
-IFRoZW4gY2FsbCBzZXRmYWNsIG9uIGl0IGFuZCwgaWYgdGhpcyBmYWlscyBmb3IgbGFjayBvZgor
-IyBzcGFjZSwgdGVzdCB0aGF0IHRoZSBwZXJtaXNzaW9ucyByZW1haW4gdGhlIHNhbWUuCisjCisj
-LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
-LS0tLS0tLS0tLS0tLS0KKyMgQ29weXJpZ2h0IChjKSAyMDE3IEVybmVzdG8gQS4gRmVybmFuZGV6
-LiAgQWxsIFJpZ2h0cyBSZXNlcnZlZC4KKyMKKyMgVGhpcyBwcm9ncmFtIGlzIGZyZWUgc29mdHdh
-cmU7IHlvdSBjYW4gcmVkaXN0cmlidXRlIGl0IGFuZC9vcgorIyBtb2RpZnkgaXQgdW5kZXIgdGhl
-IHRlcm1zIG9mIHRoZSBHTlUgR2VuZXJhbCBQdWJsaWMgTGljZW5zZSBhcworIyBwdWJsaXNoZWQg
-YnkgdGhlIEZyZWUgU29mdHdhcmUgRm91bmRhdGlvbi4KKyMKKyMgVGhpcyBwcm9ncmFtIGlzIGRp
-c3RyaWJ1dGVkIGluIHRoZSBob3BlIHRoYXQgaXQgd291bGQgYmUgdXNlZnVsLAorIyBidXQgV0lU
-SE9VVCBBTlkgV0FSUkFOVFk7IHdpdGhvdXQgZXZlbiB0aGUgaW1wbGllZCB3YXJyYW50eSBvZgor
-IyBNRVJDSEFOVEFCSUxJVFkgb3IgRklUTkVTUyBGT1IgQSBQQVJUSUNVTEFSIFBVUlBPU0UuICBT
-ZWUgdGhlCisjIEdOVSBHZW5lcmFsIFB1YmxpYyBMaWNlbnNlIGZvciBtb3JlIGRldGFpbHMuCisj
-CisjIFlvdSBzaG91bGQgaGF2ZSByZWNlaXZlZCBhIGNvcHkgb2YgdGhlIEdOVSBHZW5lcmFsIFB1
-YmxpYyBMaWNlbnNlCisjIGFsb25nIHdpdGggdGhpcyBwcm9ncmFtOyBpZiBub3QsIHdyaXRlIHRo
-ZSBGcmVlIFNvZnR3YXJlIEZvdW5kYXRpb24sCisjIEluYy4sICA1MSBGcmFua2xpbiBTdCwgRmlm
-dGggRmxvb3IsIEJvc3RvbiwgTUEgIDAyMTEwLTEzMDEgIFVTQQorIy0tLS0tLS0tLS0tLS0tLS0t
-LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tCisj
-CisKK3NlcT1gYmFzZW5hbWUgJDBgCitzZXFyZXM9JFJFU1VMVF9ESVIvJHNlcQorZWNobyAiUUEg
-b3V0cHV0IGNyZWF0ZWQgYnkgJHNlcSIKKworaGVyZT1gcHdkYAordG1wPS90bXAvJCQKK3N0YXR1
-cz0xCSMgZmFpbHVyZSBpcyB0aGUgZGVmYXVsdCEKK3RyYXAgIl9jbGVhbnVwOyBleGl0IFwkc3Rh
-dHVzIiAwIDEgMiAzIDE1CisKK19jbGVhbnVwKCkKK3sKKwljZCAvCisJX3NjcmF0Y2hfdW5tb3Vu
-dAorCXJtIC1mICR0bXAuKgorfQorCisjIGdldCBzdGFuZGFyZCBlbnZpcm9ubWVudCwgZmlsdGVy
-cyBhbmQgY2hlY2tzCisuIC4vY29tbW9uL3JjCisuIC4vY29tbW9uL2ZpbHRlcgorLiAuL2NvbW1v
-bi9hdHRyCisKKyMgcmVtb3ZlIHByZXZpb3VzICRzZXFyZXMuZnVsbCBiZWZvcmUgdGVzdAorcm0g
-LWYgJHNlcXJlcy5mdWxsCisKKyMgcmVhbCBRQSB0ZXN0IHN0YXJ0cyBoZXJlCisKKyMgTW9kaWZ5
-IGFzIGFwcHJvcHJpYXRlLgorX3N1cHBvcnRlZF9mcyBnZW5lcmljCitfc3VwcG9ydGVkX29zIExp
-bnV4CitfcmVxdWlyZV9zY3JhdGNoCitfcmVxdWlyZV90ZXN0CitfcmVxdWlyZV9hY2xzCitfcmVx
-dWlyZV9hdHRycworCitfc2NyYXRjaF9ta2ZzX3NpemVkICQoKDUwICogMTAyNCAqIDEwMjQpKSA+
-PiAkc2VxcmVzLmZ1bGwgMj4mMQorX3NjcmF0Y2hfbW91bnQKKworY2QgJFNDUkFUQ0hfTU5UCitU
-RklMRT10ZXN0ZmlsZS4kc2VxCisKKyMgQ3JlYXRlIHRoZSB0ZXN0IGZpbGUgYW5kIGNob29zZSBp
-dHMgcGVybWlzc2lvbnMKK3JtIC1mICRURklMRQordG91Y2ggJFRGSUxFCitjaG1vZCB1K3J3eCAk
-VEZJTEUKK2NobW9kIGdvLXJ3eCAkVEZJTEUKKworIyBUcnkgdG8gcnVuIG91dCBvZiBzcGFjZSBz
-byBzZXRmYWNsIHdpbGwgZmFpbAoreWVzIHh4eHh4eHh4eHggJj4gJFRGSUxFCitpPTEKK3doaWxl
-IHNldGZhdHRyIC1uIHVzZXIuJGkgJFRGSUxFICY+IC9kZXYvbnVsbDsgZG8KKwkoKCsraSkpCitk
-b25lCisKK2lmIHNldGZhY2wgLW0gbTpyICRURklMRSAmPiAvZGV2L251bGw7IHRoZW4KKwkjIHNl
-dGZhY2wgc3VjY2VlZGVkLCBzbyB0aGUgdGVzdCB3YXMgbWVhbmluZ2xlc3MKKwkjIFRoZSBmaWxl
-c3lzdGVtIG1pZ2h0IHN0aWxsIGhhdmUgYW4gaXNzdWUKKwlzdGF0dXM9MAorCWVjaG8gIi1yd3gt
-LS0tLS0iCisJZXhpdAorZmkKKworIyBTaW5jZSBzZXRmYWNsIGZhaWxlZCwgdGhlIHBlcm1pc3Np
-b25zIHNob3VsZCBub3QgaGF2ZSBjaGFuZ2VkCitzdGF0IC1jICVBICRURklMRQorCitzdGF0dXM9
-MAorZXhpdApkaWZmIC0tZ2l0IGEvdGVzdHMvZ2VuZXJpYy80NDcub3V0IGIvdGVzdHMvZ2VuZXJp
-Yy80NDcub3V0Cm5ldyBmaWxlIG1vZGUgMTAwNjQ0CmluZGV4IDAwMDAwMDAuLmFkZWM4NzcKLS0t
-IC9kZXYvbnVsbAorKysgYi90ZXN0cy9nZW5lcmljLzQ0Ny5vdXQKQEAgLTAsMCArMSwyIEBACitR
-QSBvdXRwdXQgY3JlYXRlZCBieSA0NDcKKy1yd3gtLS0tLS0KZGlmZiAtLWdpdCBhL3Rlc3RzL2dl
-bmVyaWMvZ3JvdXAgYi90ZXN0cy9nZW5lcmljL2dyb3VwCmluZGV4IDhjMWUyMWEuLmYxMWQ3OTgg
-MTAwNjQ0Ci0tLSBhL3Rlc3RzL2dlbmVyaWMvZ3JvdXAKKysrIGIvdGVzdHMvZ2VuZXJpYy9ncm91
-cApAQCAtNDQ5LDMgKzQ0OSw0IEBACiA0NDQgYXV0byBxdWljayBhY2wKIDQ0NSBhdXRvIHF1aWNr
-IHJ3CiA0NDYgYXV0byBxdWljayBydyBkYW5nZXJvdXMKKzQ0NyBhY2wKLS0gCjIuMS40Cg==
+On Fri, Jul 14, 2017 at 03:59:28AM -0300, Ernesto A. Fernández wrote:
+> Check that the group permission bits of a file are not altered when setfacl
+> fails. At the time of this patch the test fails for at least ext2, ext4 and
+> jfs.
+> 
+> Also add support for jfs in _scratch_mkfs_sized, which is needed here.
+> 
+> Note that this test is not meaningful for all filesystems, because some
+> will still succeed in setting the acls. This does not mean they don't have
+> a bug in how they would handle an error.
+> 
+> Signed-off-by: Ernesto A. Fernández <ernesto.mnd.fernandez@gmail.com>
+> ---
+> Changes in v2:
+>   - Use the scratch dev instead of the test dev so we can make a small fs and
+>     fill it faster. As suggested by Christoph Hellwig.
+>   - Make jfs work with _scratch_mkfs_sized, needed for the above.
+>   - Remove the mention to an issue with reiserfs, since I now believe the
+>     problem is on their side.
+
+Thanks for the updated patch! Some minor comments inline.
+
+> 
+>  common/rc             |  5 ++-
+>  tests/generic/447     | 91 +++++++++++++++++++++++++++++++++++++++++++++++++++
+>  tests/generic/447.out |  2 ++
+>  tests/generic/group   |  1 +
+>  4 files changed, 98 insertions(+), 1 deletion(-)
+>  create mode 100755 tests/generic/447
+>  create mode 100644 tests/generic/447.out
+> 
+> diff --git a/common/rc b/common/rc
+> index b505365..a2258be 100644
+> --- a/common/rc
+> +++ b/common/rc
+> @@ -1020,7 +1020,7 @@ _scratch_mkfs_sized()
+>      xfs)
+>  	def_blksz=`echo $MKFS_OPTIONS|sed -rn 's/.*-b ?size= ?+([0-9]+).*/\1/p'`
+>  	;;
+> -    ext2|ext3|ext4|ext4dev|udf|btrfs|reiser4|ocfs2)
+> +    ext2|ext3|ext4|ext4dev|udf|btrfs|reiser4|ocfs2|jfs)
+>  	def_blksz=`echo $MKFS_OPTIONS| sed -rn 's/.*-b ?+([0-9]+).*/\1/p'`
+>  	;;
+>      esac
+> @@ -1068,6 +1068,9 @@ _scratch_mkfs_sized()
+>  	(( fssize <= 100 * 1024 * 1024 )) && mixed_opt='--mixed'
+>  	$MKFS_BTRFS_PROG $MKFS_OPTIONS $mixed_opt -b $fssize $SCRATCH_DEV
+>  	;;
+> +    jfs)
+> +	${MKFS_PROG}.$FSTYP -F $MKFS_OPTIONS -b $blocksize $SCRATCH_DEV $blocks
+> +	;;
+>      reiser4)
+>  	# mkfs.resier4 requires size in KB as input for creating filesystem
+>  	$MKFS_REISER4_PROG $MKFS_OPTIONS -y -b $blocksize $SCRATCH_DEV \
+
+Could you please add jfs support to _scratch_mkfs_sized in a separate
+patch?
+
+> diff --git a/tests/generic/447 b/tests/generic/447
+> new file mode 100755
+> index 0000000..ff81355
+> --- /dev/null
+> +++ b/tests/generic/447
+> @@ -0,0 +1,91 @@
+> +#! /bin/bash
+> +# FS QA Test 447
+> +#
+> +# Fill the device and set as many extended attributes to a file as
+> +# possible. Then call setfacl on it and, if this fails for lack of
+> +# space, test that the permissions remain the same.
+> +#
+> +#-----------------------------------------------------------------------
+> +# Copyright (c) 2017 Ernesto A. Fernandez.  All Rights Reserved.
+> +#
+> +# This program is free software; you can redistribute it and/or
+> +# modify it under the terms of the GNU General Public License as
+> +# published by the Free Software Foundation.
+> +#
+> +# This program is distributed in the hope that it would be useful,
+> +# but WITHOUT ANY WARRANTY; without even the implied warranty of
+> +# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+> +# GNU General Public License for more details.
+> +#
+> +# You should have received a copy of the GNU General Public License
+> +# along with this program; if not, write the Free Software Foundation,
+> +# Inc.,  51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
+> +#-----------------------------------------------------------------------
+> +#
+> +
+> +seq=`basename $0`
+> +seqres=$RESULT_DIR/$seq
+> +echo "QA output created by $seq"
+> +
+> +here=`pwd`
+> +tmp=/tmp/$$
+> +status=1	# failure is the default!
+> +trap "_cleanup; exit \$status" 0 1 2 3 15
+> +
+> +_cleanup()
+> +{
+> +	cd /
+> +	_scratch_unmount
+
+This is not needed, SCRATCH_DEV will be unmounted by next test that
+calls _require_scratch.
+
+> +	rm -f $tmp.*
+> +}
+> +
+> +# get standard environment, filters and checks
+> +. ./common/rc
+> +. ./common/filter
+> +. ./common/attr
+> +
+> +# remove previous $seqres.full before test
+> +rm -f $seqres.full
+> +
+> +# real QA test starts here
+> +
+> +# Modify as appropriate.
+> +_supported_fs generic
+> +_supported_os Linux
+> +_require_scratch
+> +_require_test
+> +_require_acls
+> +_require_attrs
+> +
+> +_scratch_mkfs_sized $((50 * 1024 * 1024)) >> $seqres.full 2>&1
+> +_scratch_mount
+
+Because this test is trying to consume all space on $SCRATCH_MNT, it'd
+be good to exit if _scratch_mount fails, otherwise it's filling rootfs.
+
+_scratch_mount || _fail "mount failed"
+
+> +
+> +cd $SCRATCH_MNT
+> +TFILE=testfile.$seq
+
+Hmm, fstests prefer:
+
+TFILE=$SCRATCH_MNT/testfile.$seq
+touch $TFILE
+chmod u_rwx $TFILE
+...
+
+instead of cd to $SCRATCH_MNT.
+
+> +
+> +# Create the test file and choose its permissions
+> +rm -f $TFILE
+
+$SCRATCH_DEV was just created, no need to remove $TFILE here.
+
+> +touch $TFILE
+> +chmod u+rwx $TFILE
+> +chmod go-rwx $TFILE
+> +
+> +# Try to run out of space so setfacl will fail
+> +yes xxxxxxxxxx &> $TFILE
+
+How about just writing 50M to $TFILE?
+
+$XFS_IO_PROG -fc "pwrite 0 50m" $TFILE >>$seqres.full 2>&1
+
+> +i=1
+> +while setfattr -n user.$i $TFILE &> /dev/null; do
+> +	((++i))
+> +done
+> +
+> +if setfacl -m m:r $TFILE &> /dev/null; then
+> +	# setfacl succeeded, so the test was meaningless
+> +	# The filesystem might still have an issue
+> +	status=0
+> +	echo "-rwx------"
+> +	exit
+> +fi
+> +
+> +# Since setfacl failed, the permissions should not have changed
+> +stat -c %A $TFILE
+> +
+> +status=0
+> +exit
+> diff --git a/tests/generic/447.out b/tests/generic/447.out
+> new file mode 100644
+> index 0000000..adec877
+> --- /dev/null
+> +++ b/tests/generic/447.out
+> @@ -0,0 +1,2 @@
+> +QA output created by 447
+> +-rwx------
+> diff --git a/tests/generic/group b/tests/generic/group
+> index 8c1e21a..f11d798 100644
+> --- a/tests/generic/group
+> +++ b/tests/generic/group
+> @@ -449,3 +449,4 @@
+>  444 auto quick acl
+>  445 auto quick rw
+>  446 auto quick rw dangerous
+> +447 acl
+
+Should be in auto and quick group too. Basically auto group means this
+test is a well defined regression test and the run time is less than
+300s, quick group is a subset of auto, and the run time is usually
+within 30s.
+
+Thanks,
+Eryu
