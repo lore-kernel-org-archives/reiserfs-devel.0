@@ -1,226 +1,118 @@
-From: Eryu Guan <eguan@redhat.com>
-Subject: Re: [xfstests PATCH v2] generic: add test of file mode when setfacl
- fails
-Date: Fri, 14 Jul 2017 15:25:29 +0800
-Message-ID: <20170714072529.GM2478@eguan.usersys.redhat.com>
-References: <20170714065925.GA6075@debian.home>
+From: <doiggl@velocitynet.com.au>
+Subject: Anyone know to fix "Exiting after unrecoverable error." using mkfs -t reiserfs /dev/sdbX
+Date: Fri, 14 Jul 2017 20:46:48 +1000
+Message-ID: <7e71024c79157640844bd4a628256909@mail.velocitynet.com.au>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
-DKIM-Filter: OpenDKIM Filter v2.11.0 mx1.redhat.com 56764C045767
-Content-Disposition: inline
-In-Reply-To: <20170714065925.GA6075@debian.home>
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="utf-8"
-To: Ernesto =?utf-8?Q?A=2E_Fern=C3=A1ndez?= <ernesto.mnd.fernandez@gmail.com>
-Cc: fstests@vger.kernel.org, Christoph Hellwig <hch@infradead.org>, linux-ext4@vger.kernel.org, jfs-discussion@lists.sourceforge.net, reiserfs-devel@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+To: reiserfs-devel@vger.kernel.org
 
-On Fri, Jul 14, 2017 at 03:59:28AM -0300, Ernesto A. Fernández wrote:
-> Check that the group permission bits of a file are not altered when setfacl
-> fails. At the time of this patch the test fails for at least ext2, ext4 and
-> jfs.
-> 
-> Also add support for jfs in _scratch_mkfs_sized, which is needed here.
-> 
-> Note that this test is not meaningful for all filesystems, because some
-> will still succeed in setting the acls. This does not mean they don't have
-> a bug in how they would handle an error.
-> 
-> Signed-off-by: Ernesto A. Fernández <ernesto.mnd.fernandez@gmail.com>
-> ---
-> Changes in v2:
->   - Use the scratch dev instead of the test dev so we can make a small fs and
->     fill it faster. As suggested by Christoph Hellwig.
->   - Make jfs work with _scratch_mkfs_sized, needed for the above.
->   - Remove the mention to an issue with reiserfs, since I now believe the
->     problem is on their side.
+Hello.
+Anyone know to fix "Exiting after unrecoverable error." using mkfs -t
+reiserfs /dev/sdb3
+using mkfs.reiserfs 3.6.25
 
-Thanks for the updated patch! Some minor comments inline.
+-error is repeatable:
 
-> 
->  common/rc             |  5 ++-
->  tests/generic/447     | 91 +++++++++++++++++++++++++++++++++++++++++++++++++++
->  tests/generic/447.out |  2 ++
->  tests/generic/group   |  1 +
->  4 files changed, 98 insertions(+), 1 deletion(-)
->  create mode 100755 tests/generic/447
->  create mode 100644 tests/generic/447.out
-> 
-> diff --git a/common/rc b/common/rc
-> index b505365..a2258be 100644
-> --- a/common/rc
-> +++ b/common/rc
-> @@ -1020,7 +1020,7 @@ _scratch_mkfs_sized()
->      xfs)
->  	def_blksz=`echo $MKFS_OPTIONS|sed -rn 's/.*-b ?size= ?+([0-9]+).*/\1/p'`
->  	;;
-> -    ext2|ext3|ext4|ext4dev|udf|btrfs|reiser4|ocfs2)
-> +    ext2|ext3|ext4|ext4dev|udf|btrfs|reiser4|ocfs2|jfs)
->  	def_blksz=`echo $MKFS_OPTIONS| sed -rn 's/.*-b ?+([0-9]+).*/\1/p'`
->  	;;
->      esac
-> @@ -1068,6 +1068,9 @@ _scratch_mkfs_sized()
->  	(( fssize <= 100 * 1024 * 1024 )) && mixed_opt='--mixed'
->  	$MKFS_BTRFS_PROG $MKFS_OPTIONS $mixed_opt -b $fssize $SCRATCH_DEV
->  	;;
-> +    jfs)
-> +	${MKFS_PROG}.$FSTYP -F $MKFS_OPTIONS -b $blocksize $SCRATCH_DEV $blocks
-> +	;;
->      reiser4)
->  	# mkfs.resier4 requires size in KB as input for creating filesystem
->  	$MKFS_REISER4_PROG $MKFS_OPTIONS -y -b $blocksize $SCRATCH_DEV \
+--Glenn
 
-Could you please add jfs support to _scratch_mkfs_sized in a separate
-patch?
 
-> diff --git a/tests/generic/447 b/tests/generic/447
-> new file mode 100755
-> index 0000000..ff81355
-> --- /dev/null
-> +++ b/tests/generic/447
-> @@ -0,0 +1,91 @@
-> +#! /bin/bash
-> +# FS QA Test 447
-> +#
-> +# Fill the device and set as many extended attributes to a file as
-> +# possible. Then call setfacl on it and, if this fails for lack of
-> +# space, test that the permissions remain the same.
-> +#
-> +#-----------------------------------------------------------------------
-> +# Copyright (c) 2017 Ernesto A. Fernandez.  All Rights Reserved.
-> +#
-> +# This program is free software; you can redistribute it and/or
-> +# modify it under the terms of the GNU General Public License as
-> +# published by the Free Software Foundation.
-> +#
-> +# This program is distributed in the hope that it would be useful,
-> +# but WITHOUT ANY WARRANTY; without even the implied warranty of
-> +# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-> +# GNU General Public License for more details.
-> +#
-> +# You should have received a copy of the GNU General Public License
-> +# along with this program; if not, write the Free Software Foundation,
-> +# Inc.,  51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
-> +#-----------------------------------------------------------------------
-> +#
-> +
-> +seq=`basename $0`
-> +seqres=$RESULT_DIR/$seq
-> +echo "QA output created by $seq"
-> +
-> +here=`pwd`
-> +tmp=/tmp/$$
-> +status=1	# failure is the default!
-> +trap "_cleanup; exit \$status" 0 1 2 3 15
-> +
-> +_cleanup()
-> +{
-> +	cd /
-> +	_scratch_unmount
+# strace -e open mkfs -V -t reiserfs /dev/sdb3
+open("/etc/ld.so.cache", O_RDONLY|O_CLOEXEC) = 3
+open("/lib64/libc.so.6", O_RDONLY|O_CLOEXEC) = 3
+open("/usr/lib/locale/locale-archive", O_RDONLY|O_CLOEXEC) = -1 ENOENT (No
+such file or directory)
+open("/usr/share/locale/locale.alias", O_RDONLY|O_CLOEXEC) = 3
+open("/usr/lib/locale/en_US.UTF-8/LC_CTYPE", O_RDONLY|O_CLOEXEC) = -1
+ENOENT (No such file or directory)
+open("/usr/lib/locale/en_US.utf8/LC_CTYPE", O_RDONLY|O_CLOEXEC) = 3
+open("/usr/lib64/gconv/gconv-modules.cache", O_RDONLY) = 3
+mkfs from util-linux 2.23.2
+mkfs.reiserfs /dev/sdb3 
+open("/etc/ld.so.cache", O_RDONLY|O_CLOEXEC) = 3
+open("/usr/lib64/libreiserfscore.so.0", O_RDONLY|O_CLOEXEC) = 3
+open("/lib64/libcom_err.so.2", O_RDONLY|O_CLOEXEC) = 3
+open("/usr/lib64/libuuid.so.1", O_RDONLY|O_CLOEXEC) = 3
+open("/lib64/libc.so.6", O_RDONLY|O_CLOEXEC) = 3
+open("/lib64/libpthread.so.0", O_RDONLY|O_CLOEXEC) = 3
+mkfs.reiserfs 3.6.25
 
-This is not needed, SCRATCH_DEV will be unmounted by next test that
-calls _require_scratch.
+open("/dev/sdb3", O_RDONLY)             = 3
+open("/proc/mounts", O_RDONLY|O_CLOEXEC) = 3
+open("/etc/mtab", O_RDONLY|O_CLOEXEC)   = 3
+Guessing about desired format.. Kernel 4.9.0-3-vanilla is running.
+open("/dev/sdb3", O_RDONLY)             = 3
+open("/dev/sdb3", O_RDWR|O_EXCL)        = 3
+open("/dev/sdb3", O_RDWR)               = 4
+open("/dev/urandom", O_RDONLY|O_CLOEXEC) = 5
+Format 3.6 with standard journal
+Count of blocks on the device: 7079168
+Number of blocks consumed by mkreiserfs formatting process: 8428
+Blocksize: 4096
+Hash function used to sort names: "r5"
+Journal Size 8193 blocks (first block 18)
+Journal Max transaction length 1024
+inode generation number: 0
+UUID: e6999e40-3421-4ddd-9033-d05a038746a6
+ATTENTION: YOU SHOULD REBOOT AFTER FDISK!
+        ALL DATA WILL BE LOST ON '/dev/sdb3'!
+Continue (y/n):y
+Initializing journal - 0%....20%....40%....60%....80%....100%
+Exiting after unrecoverable error.
++++ exited with 1 +++
 
-> +	rm -f $tmp.*
-> +}
-> +
-> +# get standard environment, filters and checks
-> +. ./common/rc
-> +. ./common/filter
-> +. ./common/attr
-> +
-> +# remove previous $seqres.full before test
-> +rm -f $seqres.full
-> +
-> +# real QA test starts here
-> +
-> +# Modify as appropriate.
-> +_supported_fs generic
-> +_supported_os Linux
-> +_require_scratch
-> +_require_test
-> +_require_acls
-> +_require_attrs
-> +
-> +_scratch_mkfs_sized $((50 * 1024 * 1024)) >> $seqres.full 2>&1
-> +_scratch_mount
+#
+# Tried ext4 -process worked.
+#
 
-Because this test is trying to consume all space on $SCRATCH_MNT, it'd
-be good to exit if _scratch_mount fails, otherwise it's filling rootfs.
+# mkfs -t ext4 /dev/sdb3
+mke2fs 1.42.8 (20-Jun-2013)
+Filesystem label=
+OS type: Linux
+Block size=4096 (log=2)
+Fragment size=4096 (log=2)
+Stride=0 blocks, Stripe width=0 blocks
+1770720 inodes, 7079168 blocks
+353958 blocks (5.00%) reserved for the super user
+First data block=0
+Maximum filesystem blocks=4294967296
+217 block groups
+32768 blocks per group, 32768 fragments per group
+8160 inodes per group
+Superblock backups stored on blocks: 
+        32768, 98304, 163840, 229376, 294912, 819200, 884736, 1605632,
+2654208, 
+        4096000
 
-_scratch_mount || _fail "mount failed"
+Allocating group tables: done                            
+Writing inode tables: done                            
+Creating journal (32768 blocks): done
+Writing superblocks and filesystem accounting information: done   
 
-> +
-> +cd $SCRATCH_MNT
-> +TFILE=testfile.$seq
+# mount /dev/sdb3   /media/disk3
+# umount /dev/sdb3
 
-Hmm, fstests prefer:
+# Tried reiserfs again -process failed.
 
-TFILE=$SCRATCH_MNT/testfile.$seq
-touch $TFILE
-chmod u_rwx $TFILE
-...
+# mkfs -t reiserfs /dev/sdb3
+mkfs.reiserfs 3.6.25
 
-instead of cd to $SCRATCH_MNT.
+Guessing about desired format.. Kernel 4.9.0-3-vanilla is running.
+Format 3.6 with standard journal
+Count of blocks on the device: 7079168
+Number of blocks consumed by mkreiserfs formatting process: 8428
+Blocksize: 4096
+Hash function used to sort names: "r5"
+Journal Size 8193 blocks (first block 18)
+Journal Max transaction length 1024
+inode generation number: 0
+UUID: d867e985-b90a-438d-ba8d-e5a2e4bf699f
+ATTENTION: YOU SHOULD REBOOT AFTER FDISK!
+        ALL DATA WILL BE LOST ON '/dev/sdb3'!
+Continue (y/n):y
+Initializing journal - 0%....20%....40%....60%....80%....100%
+Exiting after unrecoverable error.
 
-> +
-> +# Create the test file and choose its permissions
-> +rm -f $TFILE
-
-$SCRATCH_DEV was just created, no need to remove $TFILE here.
-
-> +touch $TFILE
-> +chmod u+rwx $TFILE
-> +chmod go-rwx $TFILE
-> +
-> +# Try to run out of space so setfacl will fail
-> +yes xxxxxxxxxx &> $TFILE
-
-How about just writing 50M to $TFILE?
-
-$XFS_IO_PROG -fc "pwrite 0 50m" $TFILE >>$seqres.full 2>&1
-
-> +i=1
-> +while setfattr -n user.$i $TFILE &> /dev/null; do
-> +	((++i))
-> +done
-> +
-> +if setfacl -m m:r $TFILE &> /dev/null; then
-> +	# setfacl succeeded, so the test was meaningless
-> +	# The filesystem might still have an issue
-> +	status=0
-> +	echo "-rwx------"
-> +	exit
-> +fi
-> +
-> +# Since setfacl failed, the permissions should not have changed
-> +stat -c %A $TFILE
-> +
-> +status=0
-> +exit
-> diff --git a/tests/generic/447.out b/tests/generic/447.out
-> new file mode 100644
-> index 0000000..adec877
-> --- /dev/null
-> +++ b/tests/generic/447.out
-> @@ -0,0 +1,2 @@
-> +QA output created by 447
-> +-rwx------
-> diff --git a/tests/generic/group b/tests/generic/group
-> index 8c1e21a..f11d798 100644
-> --- a/tests/generic/group
-> +++ b/tests/generic/group
-> @@ -449,3 +449,4 @@
->  444 auto quick acl
->  445 auto quick rw
->  446 auto quick rw dangerous
-> +447 acl
-
-Should be in auto and quick group too. Basically auto group means this
-test is a well defined regression test and the run time is less than
-300s, quick group is a subset of auto, and the run time is usually
-within 30s.
-
-Thanks,
-Eryu
