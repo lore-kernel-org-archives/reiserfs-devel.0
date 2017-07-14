@@ -1,74 +1,64 @@
-From: Dave Kleikamp <dave.kleikamp@oracle.com>
-Subject: Re: [PATCH 4/5] jfs: preserve i_mode if
- __jfs_set_acl() fails
-Date: Thu, 13 Jul 2017 16:01:42 -0500
-Message-ID: <9edc918e-619d-7b07-696d-c0184e42c58d@oracle.com>
+From: Ernesto =?utf-8?Q?A=2E_Fern=C3=A1ndez?= 
+        <ernesto.mnd.fernandez@gmail.com>
+Subject: Re: [xfstests PATCH] generic: add test of file mode when setfacl
+ fails
+Date: Fri, 14 Jul 2017 02:40:12 -0300
+Message-ID: <20170714054011.GA4973@debian.home>
 References: <cover.1499805484.git.ernesto.mnd.fernandez@gmail.com>
-	<fb576cd6fe08fb4dc61970442c529f1a3ab02b71.1499805488.git.ernesto.mnd.fernandez@gmail.com>
+ <20170712114719.GA14398@infradead.org>
+ <20170713094003.GA4959@debian.home>
+ <20170713115507.GA10435@infradead.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <jfs-discussion-bounces@lists.sourceforge.net>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=sourceforge.net; s=x; 
-	h=Content-Transfer-Encoding:Content-Type:In-Reply-To:MIME-Version:Date:Message-ID:From:References:To:Subject;
-	bh=DzEdNUccS0IIwUh3oIuBeQHYGb06i7pQo3lmwzfBZfk=; 
-	b=JwtyAqQjR0bmeEGb3hvZydZvFGX5oZj9HZli2aECDaoMLE3R5o8wOOkFrI5fFNF3D30CC+ZL8Cn3HSyBqCXX9uOu2MJb/4HE7m/6m13RDu/s/RQKknRtQ6Lln4KloRTfkW7hmgfy5hmC3p4Ew5dqGgtNLJn3kp3JuCHV1OhR1WM=;
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x;
-	h=Content-Transfer-Encoding:Content-Type:In-Reply-To:MIME-Version:Date:Message-ID:From:References:To:Subject;
-	bh=DzEdNUccS0IIwUh3oIuBeQHYGb06i7pQo3lmwzfBZfk=; 
-	b=XrMjeSG1GZ7INUBjlUi8ld6fEpSiiL4j4bg52gjit3btAVbcgyYFGGahTT0JQcfdLccpgHS1eReUojtHReoq8MLBfY0qKtoKKsbynm8r8pd44kbzBioynEauEibQ6ScTxQL/fnfgCpj2IpJu58R9lvYhWCnxMQ7/8aagYb2DVDU=;
-In-Reply-To: <fb576cd6fe08fb4dc61970442c529f1a3ab02b71.1499805488.git.ernesto.mnd.fernandez@gmail.com>
-Content-Language: en-US
-List-Id: <reiserfs-devel.vger.kernel.org>
-List-Unsubscribe: <https://lists.sourceforge.net/lists/options/jfs-discussion>, 
-	<mailto:jfs-discussion-request@lists.sourceforge.net?subject=unsubscribe>
-List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=jfs-discussion>
-List-Post: <mailto:jfs-discussion@lists.sourceforge.net>
-List-Help: <mailto:jfs-discussion-request@lists.sourceforge.net?subject=help>
-List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/jfs-discussion>, 
-	<mailto:jfs-discussion-request@lists.sourceforge.net?subject=subscribe>
-Errors-To: jfs-discussion-bounces@lists.sourceforge.net
-To: "=?UTF-8?Q?Ernesto_A._Fern=c3=a1ndez?=" <ernesto.mnd.fernandez@gmail.com>, Jan Kara <jack@suse.com>, Theodore Ts'o <tytso@mit.edu>, Andreas Dilger <adilger.kernel@dilger.ca>, linux-ext4@vger.kernel.org, jfs-discussion@lists.sourceforge.net, reiserfs-devel@vger.kernel.org
+Content-Transfer-Encoding: quoted-printable
+Return-path: <fstests-owner@vger.kernel.org>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:content-transfer-encoding:in-reply-to;
+        bh=VKiyVvmejzBQOjoYy9RWcKBCAZ+bCwmYQqvbzpjcujQ=;
+        b=Dt25tfxS4fpFW6VfIvjRPrjrZBvTc6VuSavlpGgP+Hc61KjAF4qt6a+kX95uh9BAS+
+         ZAvn+kVQPzqlIv1V3mW/QY8fqsw37SAai8KG+vAbYMhtXlZaEluVK3XbFo3EzgRKOzvj
+         GkTsqWylJwJdqDJUgT0fryQHaeXMGx/mLxgMMydD8QdjlSH0iUX6poKfFDKsyMBMfWJP
+         FCJXIoeZF0TN9u9AES+YI0jHiLzKEjs0zEYoO9TiF1aApr/UjIWfQgqjRAnsYh7kG6EU
+         cVbwLLRcxTOunVCTPm73TVcFZyyrru+SwCzDjr8cQYzsl67uAQ3K1+ZYsaki5YbJF0EP
+         5ruw==
+Content-Disposition: inline
+In-Reply-To: <20170713115507.GA10435@infradead.org>
+Sender: fstests-owner@vger.kernel.org
+List-ID: <reiserfs-devel.vger.kernel.org>
+Content-Type: text/plain; charset="iso-8859-1"
+To: Christoph Hellwig <hch@infradead.org>
+Cc: Ernesto =?utf-8?Q?A=2E_Fern=C3=A1ndez?= <ernesto.mnd.fernandez@gmail.com>, Jan Kara <jack@suse.com>, Theodore Ts'o <tytso@mit.edu>, Andreas Dilger <adilger.kernel@dilger.ca>, Dave Kleikamp <shaggy@kernel.org>, linux-ext4@vger.kernel.org, jfs-discussion@lists.sourceforge.net, reiserfs-devel@vger.kernel.org, fstests@vger.kernel.org
 
-T24gMDcvMTIvMjAxNyAwNDo1NSBBTSwgRXJuZXN0byBBLiBGZXJuw6FuZGV6IHdyb3RlOgo+IFdo
-ZW4gY2hhbmdpbmcgYSBmaWxlJ3MgYWNsIG1hc2ssIF9famZzX3NldF9hY2woKSB3aWxsIGZpcnN0
-IHNldCB0aGUgZ3JvdXAKPiBiaXRzIG9mIGlfbW9kZSB0byB0aGUgdmFsdWUgb2YgdGhlIG1hc2ss
-IGFuZCBvbmx5IHRoZW4gc2V0IHRoZSBhY3R1YWwKPiBleHRlbmRlZCBhdHRyaWJ1dGUgcmVwcmVz
-ZW50aW5nIHRoZSBuZXcgYWNsLgo+IAo+IElmIHRoZSBzZWNvbmQgcGFydCBmYWlscyAoZHVlIHRv
-IGxhY2sgb2Ygc3BhY2UsIGZvciBleGFtcGxlKSBhbmQgdGhlIGZpbGUKPiBoYWQgbm8gYWNsIGF0
-dHJpYnV0ZSB0byBiZWdpbiB3aXRoLCB0aGUgc3lzdGVtIHdpbGwgZnJvbSBub3cgb24gYXNzdW1l
-Cj4gdGhhdCB0aGUgbWFzayBwZXJtaXNzaW9uIGJpdHMgYXJlIGFjdHVhbCBncm91cCBwZXJtaXNz
-aW9uIGJpdHMsIHBvdGVudGlhbGx5Cj4gZ3JhbnRpbmcgYWNjZXNzIHRvIHRoZSB3cm9uZyB1c2Vy
-cy4KPiAKPiBQcmV2ZW50IHRoaXMgYnkgb25seSBjaGFuZ2luZyB0aGUgaW5vZGUgbW9kZSBhZnRl
-ciB0aGUgYWNsIGhhcyBiZWVuIHNldC4KClRoaXMgbG9va3MgZ29vZCB0byBtZS4gSSdsbCBhZGQg
-aXQgdG8gdGhlIGpmcyBxdWV1ZS4KClRoYW5rcywKU2hhZ2d5Cgo+IAo+IFNpZ25lZC1vZmYtYnk6
-IEVybmVzdG8gQS4gRmVybsOhbmRleiA8ZXJuZXN0by5tbmQuZmVybmFuZGV6QGdtYWlsLmNvbT4K
-PiAtLS0KPiAgZnMvamZzL2FjbC5jIHwgMTUgKysrKysrKysrKystLS0tCj4gIDEgZmlsZSBjaGFu
-Z2VkLCAxMSBpbnNlcnRpb25zKCspLCA0IGRlbGV0aW9ucygtKQo+IAo+IGRpZmYgLS1naXQgYS9m
-cy9qZnMvYWNsLmMgYi9mcy9qZnMvYWNsLmMKPiBpbmRleCA3YmMxODZmLi5kYjVhMzg1IDEwMDY0
-NAo+IC0tLSBhL2ZzL2pmcy9hY2wuYwo+ICsrKyBiL2ZzL2pmcy9hY2wuYwo+IEBAIC03MywxNiAr
-NzMsMTcgQEAgc3RhdGljIGludCBfX2pmc19zZXRfYWNsKHRpZF90IHRpZCwgc3RydWN0IGlub2Rl
-ICppbm9kZSwgaW50IHR5cGUsCj4gIAlpbnQgcmM7Cj4gIAlpbnQgc2l6ZSA9IDA7Cj4gIAljaGFy
-ICp2YWx1ZSA9IE5VTEw7Cj4gKwlpbnQgdXBkYXRlX21vZGUgPSAwOwo+ICsJdW1vZGVfdCBtb2Rl
-ID0gaW5vZGUtPmlfbW9kZTsKPiAgCj4gIAlzd2l0Y2ggKHR5cGUpIHsKPiAgCWNhc2UgQUNMX1RZ
-UEVfQUNDRVNTOgo+ICAJCWVhX25hbWUgPSBYQVRUUl9OQU1FX1BPU0lYX0FDTF9BQ0NFU1M7Cj4g
-IAkJaWYgKGFjbCkgewo+IC0JCQlyYyA9IHBvc2l4X2FjbF91cGRhdGVfbW9kZShpbm9kZSwgJmlu
-b2RlLT5pX21vZGUsICZhY2wpOwo+ICsJCQlyYyA9IHBvc2l4X2FjbF91cGRhdGVfbW9kZShpbm9k
-ZSwgJm1vZGUsICZhY2wpOwo+ICAJCQlpZiAocmMpCj4gIAkJCQlyZXR1cm4gcmM7Cj4gLQkJCWlu
-b2RlLT5pX2N0aW1lID0gY3VycmVudF90aW1lKGlub2RlKTsKPiAtCQkJbWFya19pbm9kZV9kaXJ0
-eShpbm9kZSk7Cj4gKwkJCXVwZGF0ZV9tb2RlID0gMTsKPiAgCQl9Cj4gIAkJYnJlYWs7Cj4gIAlj
-YXNlIEFDTF9UWVBFX0RFRkFVTFQ6Cj4gQEAgLTEwNSw4ICsxMDYsMTQgQEAgc3RhdGljIGludCBf
-X2pmc19zZXRfYWNsKHRpZF90IHRpZCwgc3RydWN0IGlub2RlICppbm9kZSwgaW50IHR5cGUsCj4g
-IG91dDoKPiAgCWtmcmVlKHZhbHVlKTsKPiAgCj4gLQlpZiAoIXJjKQo+ICsJaWYgKCFyYykgewo+
-ICAJCXNldF9jYWNoZWRfYWNsKGlub2RlLCB0eXBlLCBhY2wpOwo+ICsJCWlmICh1cGRhdGVfbW9k
-ZSkgewo+ICsJCQlpbm9kZS0+aV9tb2RlID0gbW9kZTsKPiArCQkJaW5vZGUtPmlfY3RpbWUgPSBj
-dXJyZW50X3RpbWUoaW5vZGUpOwo+ICsJCQltYXJrX2lub2RlX2RpcnR5KGlub2RlKTsKPiArCQl9
-Cj4gKwl9Cj4gIAo+ICAJcmV0dXJuIHJjOwo+ICB9Cj4gCgotLS0tLS0tLS0tLS0tLS0tLS0tLS0t
-LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0K
-Q2hlY2sgb3V0IHRoZSB2aWJyYW50IHRlY2ggY29tbXVuaXR5IG9uIG9uZSBvZiB0aGUgd29ybGQn
-cyBtb3N0CmVuZ2FnaW5nIHRlY2ggc2l0ZXMsIFNsYXNoZG90Lm9yZyEgaHR0cDovL3NkbS5saW5r
-L3NsYXNoZG90Cl9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-Ckpmcy1kaXNjdXNzaW9uIG1haWxpbmcgbGlzdApKZnMtZGlzY3Vzc2lvbkBsaXN0cy5zb3VyY2Vm
-b3JnZS5uZXQKaHR0cHM6Ly9saXN0cy5zb3VyY2Vmb3JnZS5uZXQvbGlzdHMvbGlzdGluZm8vamZz
-LWRpc2N1c3Npb24K
+On Thu, Jul 13, 2017 at 04:55:07AM -0700, Christoph Hellwig wrote:
+> On Thu, Jul 13, 2017 at 06:40:04AM -0300, Ernesto A. Fern=C3=A1ndez wrote:
+> > Check that the group permission bits of a file are not altered when set=
+facl
+> > fails. At the time of this patch the test fails for at least ext2, ext4=
+ and
+> > jfs. It is not run against reiserfs, since xfstests claims that "attrs =
+are
+> > not supported by this filesystem type".
+>=20
+> That's odd, as common/config explicitly turns on user xattrs:
+>=20
+
+xfstests decides if a filesystem supports attributes by trying to set them =
+on
+the root inode, but reiserfs does not allow this. If this is actually the
+intended behaviour of reiserfs then xfstests should use a different check, =
+but
+I'm guessing it's a bug, perhaps in mkfs.reiserfs.
+
+>=20
+> >=20
+> > The failure to set acls is induced by filling the device, so to save ti=
+me
+> > this should probably be run with a small TEST_DEV.
+>=20
+> If you run it on the scratch fs instead of the test fs you can use
+> _scratch_mkfs_sized to hand craft a small fs, which would be nice
+> to get a decent runtime.
+
+That's much better, thank you. I will send a revision soon. For some reason
+_scratch_mkfs_sized did not have support for jfs, but it was trivial to add.
