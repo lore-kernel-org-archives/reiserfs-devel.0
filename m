@@ -1,64 +1,112 @@
 From: Ernesto =?utf-8?Q?A=2E_Fern=C3=A1ndez?= 
         <ernesto.mnd.fernandez@gmail.com>
-Subject: Re: [xfstests PATCH] generic: add test of file mode when setfacl
- fails
-Date: Fri, 14 Jul 2017 02:40:12 -0300
-Message-ID: <20170714054011.GA4973@debian.home>
-References: <cover.1499805484.git.ernesto.mnd.fernandez@gmail.com>
- <20170712114719.GA14398@infradead.org>
- <20170713094003.GA4959@debian.home>
- <20170713115507.GA10435@infradead.org>
+Subject: [xfstests PATCH v2] generic: add test of file mode when setfacl fails
+Date: Fri, 14 Jul 2017 03:59:28 -0300
+Message-ID: <20170714065925.GA6075@debian.home>
 Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: base64
 Return-path: <fstests-owner@vger.kernel.org>
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to;
-        bh=VKiyVvmejzBQOjoYy9RWcKBCAZ+bCwmYQqvbzpjcujQ=;
-        b=Dt25tfxS4fpFW6VfIvjRPrjrZBvTc6VuSavlpGgP+Hc61KjAF4qt6a+kX95uh9BAS+
-         ZAvn+kVQPzqlIv1V3mW/QY8fqsw37SAai8KG+vAbYMhtXlZaEluVK3XbFo3EzgRKOzvj
-         GkTsqWylJwJdqDJUgT0fryQHaeXMGx/mLxgMMydD8QdjlSH0iUX6poKfFDKsyMBMfWJP
-         FCJXIoeZF0TN9u9AES+YI0jHiLzKEjs0zEYoO9TiF1aApr/UjIWfQgqjRAnsYh7kG6EU
-         cVbwLLRcxTOunVCTPm73TVcFZyyrru+SwCzDjr8cQYzsl67uAQ3K1+ZYsaki5YbJF0EP
-         5ruw==
+        h=date:from:to:cc:subject:message-id:mime-version:content-disposition
+         :content-transfer-encoding;
+        bh=bkCla+pyj9WYRP5QUoZQFmpYdWqOMnE6ptFE/2QIHX4=;
+        b=T4EXrOh1k1Xpzyjp6WqP4MxR0myum8myUzkSioy1dKBG1Hg361lGqIoW4EWWYl3Rd7
+         8xYw99IpE3HbgJP1+hiVLGNxjCRW9150Rnm8Uqs2bvEGJMgZbgSDtScun004n8nYJAa4
+         eRIAWD7O7+jslX48YQUGdIaf6CW/rTKkLQAdCNeH0uKwrKknKXZjdAcq5TIy1nvoIYGK
+         GCrD2axAYs2ELAREEcsDc3k89BTdEygaW9io6XC/5gOmFOBDP9uPDl/8dFg/YHPPRl23
+         lifDy/xvng0rN3hk2vbsttpKlnq+Opg1R7DzF7EcW6fNUBn0TBfzNSx5xaebLZcjOfEf
+         cFdQ==
 Content-Disposition: inline
-In-Reply-To: <20170713115507.GA10435@infradead.org>
 Sender: fstests-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="iso-8859-1"
-To: Christoph Hellwig <hch@infradead.org>
-Cc: Ernesto =?utf-8?Q?A=2E_Fern=C3=A1ndez?= <ernesto.mnd.fernandez@gmail.com>, Jan Kara <jack@suse.com>, Theodore Ts'o <tytso@mit.edu>, Andreas Dilger <adilger.kernel@dilger.ca>, Dave Kleikamp <shaggy@kernel.org>, linux-ext4@vger.kernel.org, jfs-discussion@lists.sourceforge.net, reiserfs-devel@vger.kernel.org, fstests@vger.kernel.org
+Content-Type: text/plain; charset="macroman"
+To: fstests@vger.kernel.org
+Cc: Christoph Hellwig <hch@infradead.org>, linux-ext4@vger.kernel.org, jfs-discussion@lists.sourceforge.net, reiserfs-devel@vger.kernel.org
 
-On Thu, Jul 13, 2017 at 04:55:07AM -0700, Christoph Hellwig wrote:
-> On Thu, Jul 13, 2017 at 06:40:04AM -0300, Ernesto A. Fern=C3=A1ndez wrote:
-> > Check that the group permission bits of a file are not altered when set=
-facl
-> > fails. At the time of this patch the test fails for at least ext2, ext4=
- and
-> > jfs. It is not run against reiserfs, since xfstests claims that "attrs =
-are
-> > not supported by this filesystem type".
->=20
-> That's odd, as common/config explicitly turns on user xattrs:
->=20
-
-xfstests decides if a filesystem supports attributes by trying to set them =
-on
-the root inode, but reiserfs does not allow this. If this is actually the
-intended behaviour of reiserfs then xfstests should use a different check, =
-but
-I'm guessing it's a bug, perhaps in mkfs.reiserfs.
-
->=20
-> >=20
-> > The failure to set acls is induced by filling the device, so to save ti=
-me
-> > this should probably be run with a small TEST_DEV.
->=20
-> If you run it on the scratch fs instead of the test fs you can use
-> _scratch_mkfs_sized to hand craft a small fs, which would be nice
-> to get a decent runtime.
-
-That's much better, thank you. I will send a revision soon. For some reason
-_scratch_mkfs_sized did not have support for jfs, but it was trivial to add.
+Q2hlY2sgdGhhdCB0aGUgZ3JvdXAgcGVybWlzc2lvbiBiaXRzIG9mIGEgZmlsZSBhcmUgbm90IGFs
+dGVyZWQgd2hlbiBzZXRmYWNsCmZhaWxzLiBBdCB0aGUgdGltZSBvZiB0aGlzIHBhdGNoIHRoZSB0
+ZXN0IGZhaWxzIGZvciBhdCBsZWFzdCBleHQyLCBleHQ0IGFuZApqZnMuCgpBbHNvIGFkZCBzdXBw
+b3J0IGZvciBqZnMgaW4gX3NjcmF0Y2hfbWtmc19zaXplZCwgd2hpY2ggaXMgbmVlZGVkIGhlcmUu
+CgpOb3RlIHRoYXQgdGhpcyB0ZXN0IGlzIG5vdCBtZWFuaW5nZnVsIGZvciBhbGwgZmlsZXN5c3Rl
+bXMsIGJlY2F1c2Ugc29tZQp3aWxsIHN0aWxsIHN1Y2NlZWQgaW4gc2V0dGluZyB0aGUgYWNscy4g
+VGhpcyBkb2VzIG5vdCBtZWFuIHRoZXkgZG9uJ3QgaGF2ZQphIGJ1ZyBpbiBob3cgdGhleSB3b3Vs
+ZCBoYW5kbGUgYW4gZXJyb3IuCgpTaWduZWQtb2ZmLWJ5OiBFcm5lc3RvIEEuIEZlcm7DoW5kZXog
+PGVybmVzdG8ubW5kLmZlcm5hbmRlekBnbWFpbC5jb20+Ci0tLQpDaGFuZ2VzIGluIHYyOgogIC0g
+VXNlIHRoZSBzY3JhdGNoIGRldiBpbnN0ZWFkIG9mIHRoZSB0ZXN0IGRldiBzbyB3ZSBjYW4gbWFr
+ZSBhIHNtYWxsIGZzIGFuZAogICAgZmlsbCBpdCBmYXN0ZXIuIEFzIHN1Z2dlc3RlZCBieSBDaHJp
+c3RvcGggSGVsbHdpZy4KICAtIE1ha2UgamZzIHdvcmsgd2l0aCBfc2NyYXRjaF9ta2ZzX3NpemVk
+LCBuZWVkZWQgZm9yIHRoZSBhYm92ZS4KICAtIFJlbW92ZSB0aGUgbWVudGlvbiB0byBhbiBpc3N1
+ZSB3aXRoIHJlaXNlcmZzLCBzaW5jZSBJIG5vdyBiZWxpZXZlIHRoZQogICAgcHJvYmxlbSBpcyBv
+biB0aGVpciBzaWRlLgoKIGNvbW1vbi9yYyAgICAgICAgICAgICB8ICA1ICsrLQogdGVzdHMvZ2Vu
+ZXJpYy80NDcgICAgIHwgOTEgKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysr
+KysrKysrKysrKysrCiB0ZXN0cy9nZW5lcmljLzQ0Ny5vdXQgfCAgMiArKwogdGVzdHMvZ2VuZXJp
+Yy9ncm91cCAgIHwgIDEgKwogNCBmaWxlcyBjaGFuZ2VkLCA5OCBpbnNlcnRpb25zKCspLCAxIGRl
+bGV0aW9uKC0pCiBjcmVhdGUgbW9kZSAxMDA3NTUgdGVzdHMvZ2VuZXJpYy80NDcKIGNyZWF0ZSBt
+b2RlIDEwMDY0NCB0ZXN0cy9nZW5lcmljLzQ0Ny5vdXQKCmRpZmYgLS1naXQgYS9jb21tb24vcmMg
+Yi9jb21tb24vcmMKaW5kZXggYjUwNTM2NS4uYTIyNThiZSAxMDA2NDQKLS0tIGEvY29tbW9uL3Jj
+CisrKyBiL2NvbW1vbi9yYwpAQCAtMTAyMCw3ICsxMDIwLDcgQEAgX3NjcmF0Y2hfbWtmc19zaXpl
+ZCgpCiAgICAgeGZzKQogCWRlZl9ibGtzej1gZWNobyAkTUtGU19PUFRJT05TfHNlZCAtcm4gJ3Mv
+LiotYiA/c2l6ZT0gPysoWzAtOV0rKS4qL1wxL3AnYAogCTs7Ci0gICAgZXh0MnxleHQzfGV4dDR8
+ZXh0NGRldnx1ZGZ8YnRyZnN8cmVpc2VyNHxvY2ZzMikKKyAgICBleHQyfGV4dDN8ZXh0NHxleHQ0
+ZGV2fHVkZnxidHJmc3xyZWlzZXI0fG9jZnMyfGpmcykKIAlkZWZfYmxrc3o9YGVjaG8gJE1LRlNf
+T1BUSU9OU3wgc2VkIC1ybiAncy8uKi1iID8rKFswLTldKykuKi9cMS9wJ2AKIAk7OwogICAgIGVz
+YWMKQEAgLTEwNjgsNiArMTA2OCw5IEBAIF9zY3JhdGNoX21rZnNfc2l6ZWQoKQogCSgoIGZzc2l6
+ZSA8PSAxMDAgKiAxMDI0ICogMTAyNCApKSAmJiBtaXhlZF9vcHQ9Jy0tbWl4ZWQnCiAJJE1LRlNf
+QlRSRlNfUFJPRyAkTUtGU19PUFRJT05TICRtaXhlZF9vcHQgLWIgJGZzc2l6ZSAkU0NSQVRDSF9E
+RVYKIAk7OworICAgIGpmcykKKwkke01LRlNfUFJPR30uJEZTVFlQIC1GICRNS0ZTX09QVElPTlMg
+LWIgJGJsb2Nrc2l6ZSAkU0NSQVRDSF9ERVYgJGJsb2NrcworCTs7CiAgICAgcmVpc2VyNCkKIAkj
+IG1rZnMucmVzaWVyNCByZXF1aXJlcyBzaXplIGluIEtCIGFzIGlucHV0IGZvciBjcmVhdGluZyBm
+aWxlc3lzdGVtCiAJJE1LRlNfUkVJU0VSNF9QUk9HICRNS0ZTX09QVElPTlMgLXkgLWIgJGJsb2Nr
+c2l6ZSAkU0NSQVRDSF9ERVYgXApkaWZmIC0tZ2l0IGEvdGVzdHMvZ2VuZXJpYy80NDcgYi90ZXN0
+cy9nZW5lcmljLzQ0NwpuZXcgZmlsZSBtb2RlIDEwMDc1NQppbmRleCAwMDAwMDAwLi5mZjgxMzU1
+Ci0tLSAvZGV2L251bGwKKysrIGIvdGVzdHMvZ2VuZXJpYy80NDcKQEAgLTAsMCArMSw5MSBAQAor
+IyEgL2Jpbi9iYXNoCisjIEZTIFFBIFRlc3QgNDQ3CisjCisjIEZpbGwgdGhlIGRldmljZSBhbmQg
+c2V0IGFzIG1hbnkgZXh0ZW5kZWQgYXR0cmlidXRlcyB0byBhIGZpbGUgYXMKKyMgcG9zc2libGUu
+IFRoZW4gY2FsbCBzZXRmYWNsIG9uIGl0IGFuZCwgaWYgdGhpcyBmYWlscyBmb3IgbGFjayBvZgor
+IyBzcGFjZSwgdGVzdCB0aGF0IHRoZSBwZXJtaXNzaW9ucyByZW1haW4gdGhlIHNhbWUuCisjCisj
+LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
+LS0tLS0tLS0tLS0tLS0KKyMgQ29weXJpZ2h0IChjKSAyMDE3IEVybmVzdG8gQS4gRmVybmFuZGV6
+LiAgQWxsIFJpZ2h0cyBSZXNlcnZlZC4KKyMKKyMgVGhpcyBwcm9ncmFtIGlzIGZyZWUgc29mdHdh
+cmU7IHlvdSBjYW4gcmVkaXN0cmlidXRlIGl0IGFuZC9vcgorIyBtb2RpZnkgaXQgdW5kZXIgdGhl
+IHRlcm1zIG9mIHRoZSBHTlUgR2VuZXJhbCBQdWJsaWMgTGljZW5zZSBhcworIyBwdWJsaXNoZWQg
+YnkgdGhlIEZyZWUgU29mdHdhcmUgRm91bmRhdGlvbi4KKyMKKyMgVGhpcyBwcm9ncmFtIGlzIGRp
+c3RyaWJ1dGVkIGluIHRoZSBob3BlIHRoYXQgaXQgd291bGQgYmUgdXNlZnVsLAorIyBidXQgV0lU
+SE9VVCBBTlkgV0FSUkFOVFk7IHdpdGhvdXQgZXZlbiB0aGUgaW1wbGllZCB3YXJyYW50eSBvZgor
+IyBNRVJDSEFOVEFCSUxJVFkgb3IgRklUTkVTUyBGT1IgQSBQQVJUSUNVTEFSIFBVUlBPU0UuICBT
+ZWUgdGhlCisjIEdOVSBHZW5lcmFsIFB1YmxpYyBMaWNlbnNlIGZvciBtb3JlIGRldGFpbHMuCisj
+CisjIFlvdSBzaG91bGQgaGF2ZSByZWNlaXZlZCBhIGNvcHkgb2YgdGhlIEdOVSBHZW5lcmFsIFB1
+YmxpYyBMaWNlbnNlCisjIGFsb25nIHdpdGggdGhpcyBwcm9ncmFtOyBpZiBub3QsIHdyaXRlIHRo
+ZSBGcmVlIFNvZnR3YXJlIEZvdW5kYXRpb24sCisjIEluYy4sICA1MSBGcmFua2xpbiBTdCwgRmlm
+dGggRmxvb3IsIEJvc3RvbiwgTUEgIDAyMTEwLTEzMDEgIFVTQQorIy0tLS0tLS0tLS0tLS0tLS0t
+LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tCisj
+CisKK3NlcT1gYmFzZW5hbWUgJDBgCitzZXFyZXM9JFJFU1VMVF9ESVIvJHNlcQorZWNobyAiUUEg
+b3V0cHV0IGNyZWF0ZWQgYnkgJHNlcSIKKworaGVyZT1gcHdkYAordG1wPS90bXAvJCQKK3N0YXR1
+cz0xCSMgZmFpbHVyZSBpcyB0aGUgZGVmYXVsdCEKK3RyYXAgIl9jbGVhbnVwOyBleGl0IFwkc3Rh
+dHVzIiAwIDEgMiAzIDE1CisKK19jbGVhbnVwKCkKK3sKKwljZCAvCisJX3NjcmF0Y2hfdW5tb3Vu
+dAorCXJtIC1mICR0bXAuKgorfQorCisjIGdldCBzdGFuZGFyZCBlbnZpcm9ubWVudCwgZmlsdGVy
+cyBhbmQgY2hlY2tzCisuIC4vY29tbW9uL3JjCisuIC4vY29tbW9uL2ZpbHRlcgorLiAuL2NvbW1v
+bi9hdHRyCisKKyMgcmVtb3ZlIHByZXZpb3VzICRzZXFyZXMuZnVsbCBiZWZvcmUgdGVzdAorcm0g
+LWYgJHNlcXJlcy5mdWxsCisKKyMgcmVhbCBRQSB0ZXN0IHN0YXJ0cyBoZXJlCisKKyMgTW9kaWZ5
+IGFzIGFwcHJvcHJpYXRlLgorX3N1cHBvcnRlZF9mcyBnZW5lcmljCitfc3VwcG9ydGVkX29zIExp
+bnV4CitfcmVxdWlyZV9zY3JhdGNoCitfcmVxdWlyZV90ZXN0CitfcmVxdWlyZV9hY2xzCitfcmVx
+dWlyZV9hdHRycworCitfc2NyYXRjaF9ta2ZzX3NpemVkICQoKDUwICogMTAyNCAqIDEwMjQpKSA+
+PiAkc2VxcmVzLmZ1bGwgMj4mMQorX3NjcmF0Y2hfbW91bnQKKworY2QgJFNDUkFUQ0hfTU5UCitU
+RklMRT10ZXN0ZmlsZS4kc2VxCisKKyMgQ3JlYXRlIHRoZSB0ZXN0IGZpbGUgYW5kIGNob29zZSBp
+dHMgcGVybWlzc2lvbnMKK3JtIC1mICRURklMRQordG91Y2ggJFRGSUxFCitjaG1vZCB1K3J3eCAk
+VEZJTEUKK2NobW9kIGdvLXJ3eCAkVEZJTEUKKworIyBUcnkgdG8gcnVuIG91dCBvZiBzcGFjZSBz
+byBzZXRmYWNsIHdpbGwgZmFpbAoreWVzIHh4eHh4eHh4eHggJj4gJFRGSUxFCitpPTEKK3doaWxl
+IHNldGZhdHRyIC1uIHVzZXIuJGkgJFRGSUxFICY+IC9kZXYvbnVsbDsgZG8KKwkoKCsraSkpCitk
+b25lCisKK2lmIHNldGZhY2wgLW0gbTpyICRURklMRSAmPiAvZGV2L251bGw7IHRoZW4KKwkjIHNl
+dGZhY2wgc3VjY2VlZGVkLCBzbyB0aGUgdGVzdCB3YXMgbWVhbmluZ2xlc3MKKwkjIFRoZSBmaWxl
+c3lzdGVtIG1pZ2h0IHN0aWxsIGhhdmUgYW4gaXNzdWUKKwlzdGF0dXM9MAorCWVjaG8gIi1yd3gt
+LS0tLS0iCisJZXhpdAorZmkKKworIyBTaW5jZSBzZXRmYWNsIGZhaWxlZCwgdGhlIHBlcm1pc3Np
+b25zIHNob3VsZCBub3QgaGF2ZSBjaGFuZ2VkCitzdGF0IC1jICVBICRURklMRQorCitzdGF0dXM9
+MAorZXhpdApkaWZmIC0tZ2l0IGEvdGVzdHMvZ2VuZXJpYy80NDcub3V0IGIvdGVzdHMvZ2VuZXJp
+Yy80NDcub3V0Cm5ldyBmaWxlIG1vZGUgMTAwNjQ0CmluZGV4IDAwMDAwMDAuLmFkZWM4NzcKLS0t
+IC9kZXYvbnVsbAorKysgYi90ZXN0cy9nZW5lcmljLzQ0Ny5vdXQKQEAgLTAsMCArMSwyIEBACitR
+QSBvdXRwdXQgY3JlYXRlZCBieSA0NDcKKy1yd3gtLS0tLS0KZGlmZiAtLWdpdCBhL3Rlc3RzL2dl
+bmVyaWMvZ3JvdXAgYi90ZXN0cy9nZW5lcmljL2dyb3VwCmluZGV4IDhjMWUyMWEuLmYxMWQ3OTgg
+MTAwNjQ0Ci0tLSBhL3Rlc3RzL2dlbmVyaWMvZ3JvdXAKKysrIGIvdGVzdHMvZ2VuZXJpYy9ncm91
+cApAQCAtNDQ5LDMgKzQ0OSw0IEBACiA0NDQgYXV0byBxdWljayBhY2wKIDQ0NSBhdXRvIHF1aWNr
+IHJ3CiA0NDYgYXV0byBxdWljayBydyBkYW5nZXJvdXMKKzQ0NyBhY2wKLS0gCjIuMS40Cg==
