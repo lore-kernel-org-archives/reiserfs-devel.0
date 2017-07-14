@@ -1,118 +1,105 @@
-From: <doiggl@velocitynet.com.au>
-Subject: Anyone know to fix "Exiting after unrecoverable error." using mkfs -t reiserfs /dev/sdbX
-Date: Fri, 14 Jul 2017 20:46:48 +1000
-Message-ID: <7e71024c79157640844bd4a628256909@mail.velocitynet.com.au>
+From: Ernesto =?utf-8?Q?A=2E_Fern=C3=A1ndez?= 
+        <ernesto.mnd.fernandez@gmail.com>
+Subject: [xfstests PATCH v3] generic: add test of file mode when setfacl fails
+Date: Fri, 14 Jul 2017 19:55:09 -0300
+Message-ID: <20170714225506.GA4414@debian.home>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: base64
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:mime-version:content-disposition
+         :content-transfer-encoding;
+        bh=iy7BJLr30xlf+SG0W5jaPX6rw/4EI3P+jMwocrYIuOs=;
+        b=W1zlQQyRLA0j6NP+Gkvu4mGa1/tsgxrRPWQEij+sfGGFXyO5lszfqgYpximhhVrST2
+         xeazGi04cCp7+xARLIKaYrgPVNVoMYDo8QFfDzUaH4HUbBIRsc0hrvs2Q1iXJKnqnuVa
+         p7ilZWrMLiKY1WbQHF0uD/ef0st5QF0B1vrYQt8NveINlLE8CkDo5oYtaZD8DGVJXo4U
+         AQJHt8xHz/5M0nDeF0EueKVHBub4H2jJYSpFgarIe42uT/GgnsZqzQlBi8OYqKCEnLBJ
+         nA1vMC48D6ULVNzMf6b2VojPgSTI7wYb0Pd3bnLnsntZgcZLs/kKmGmRTbSq3zyXhRDU
+         eqrA==
+Content-Disposition: inline
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-To: reiserfs-devel@vger.kernel.org
+Content-Type: text/plain; charset="macroman"
+To: fstests@vger.kernel.org
+Cc: Christoph Hellwig <hch@infradead.org>, Eryu Guan <eguan@redhat.com>, linux-ext4@vger.kernel.org, jfs-discussion@lists.sourceforge.net, reiserfs-devel@vger.kernel.org, Ernesto =?utf-8?Q?A=2E_Fern=C3=A1ndez?= <ernesto.mnd.fernandez@gmail.com>
 
-Hello.
-Anyone know to fix "Exiting after unrecoverable error." using mkfs -t
-reiserfs /dev/sdb3
-using mkfs.reiserfs 3.6.25
-
--error is repeatable:
-
---Glenn
-
-
-# strace -e open mkfs -V -t reiserfs /dev/sdb3
-open("/etc/ld.so.cache", O_RDONLY|O_CLOEXEC) = 3
-open("/lib64/libc.so.6", O_RDONLY|O_CLOEXEC) = 3
-open("/usr/lib/locale/locale-archive", O_RDONLY|O_CLOEXEC) = -1 ENOENT (No
-such file or directory)
-open("/usr/share/locale/locale.alias", O_RDONLY|O_CLOEXEC) = 3
-open("/usr/lib/locale/en_US.UTF-8/LC_CTYPE", O_RDONLY|O_CLOEXEC) = -1
-ENOENT (No such file or directory)
-open("/usr/lib/locale/en_US.utf8/LC_CTYPE", O_RDONLY|O_CLOEXEC) = 3
-open("/usr/lib64/gconv/gconv-modules.cache", O_RDONLY) = 3
-mkfs from util-linux 2.23.2
-mkfs.reiserfs /dev/sdb3 
-open("/etc/ld.so.cache", O_RDONLY|O_CLOEXEC) = 3
-open("/usr/lib64/libreiserfscore.so.0", O_RDONLY|O_CLOEXEC) = 3
-open("/lib64/libcom_err.so.2", O_RDONLY|O_CLOEXEC) = 3
-open("/usr/lib64/libuuid.so.1", O_RDONLY|O_CLOEXEC) = 3
-open("/lib64/libc.so.6", O_RDONLY|O_CLOEXEC) = 3
-open("/lib64/libpthread.so.0", O_RDONLY|O_CLOEXEC) = 3
-mkfs.reiserfs 3.6.25
-
-open("/dev/sdb3", O_RDONLY)             = 3
-open("/proc/mounts", O_RDONLY|O_CLOEXEC) = 3
-open("/etc/mtab", O_RDONLY|O_CLOEXEC)   = 3
-Guessing about desired format.. Kernel 4.9.0-3-vanilla is running.
-open("/dev/sdb3", O_RDONLY)             = 3
-open("/dev/sdb3", O_RDWR|O_EXCL)        = 3
-open("/dev/sdb3", O_RDWR)               = 4
-open("/dev/urandom", O_RDONLY|O_CLOEXEC) = 5
-Format 3.6 with standard journal
-Count of blocks on the device: 7079168
-Number of blocks consumed by mkreiserfs formatting process: 8428
-Blocksize: 4096
-Hash function used to sort names: "r5"
-Journal Size 8193 blocks (first block 18)
-Journal Max transaction length 1024
-inode generation number: 0
-UUID: e6999e40-3421-4ddd-9033-d05a038746a6
-ATTENTION: YOU SHOULD REBOOT AFTER FDISK!
-        ALL DATA WILL BE LOST ON '/dev/sdb3'!
-Continue (y/n):y
-Initializing journal - 0%....20%....40%....60%....80%....100%
-Exiting after unrecoverable error.
-+++ exited with 1 +++
-
-#
-# Tried ext4 -process worked.
-#
-
-# mkfs -t ext4 /dev/sdb3
-mke2fs 1.42.8 (20-Jun-2013)
-Filesystem label=
-OS type: Linux
-Block size=4096 (log=2)
-Fragment size=4096 (log=2)
-Stride=0 blocks, Stripe width=0 blocks
-1770720 inodes, 7079168 blocks
-353958 blocks (5.00%) reserved for the super user
-First data block=0
-Maximum filesystem blocks=4294967296
-217 block groups
-32768 blocks per group, 32768 fragments per group
-8160 inodes per group
-Superblock backups stored on blocks: 
-        32768, 98304, 163840, 229376, 294912, 819200, 884736, 1605632,
-2654208, 
-        4096000
-
-Allocating group tables: done                            
-Writing inode tables: done                            
-Creating journal (32768 blocks): done
-Writing superblocks and filesystem accounting information: done   
-
-# mount /dev/sdb3   /media/disk3
-# umount /dev/sdb3
-
-# Tried reiserfs again -process failed.
-
-# mkfs -t reiserfs /dev/sdb3
-mkfs.reiserfs 3.6.25
-
-Guessing about desired format.. Kernel 4.9.0-3-vanilla is running.
-Format 3.6 with standard journal
-Count of blocks on the device: 7079168
-Number of blocks consumed by mkreiserfs formatting process: 8428
-Blocksize: 4096
-Hash function used to sort names: "r5"
-Journal Size 8193 blocks (first block 18)
-Journal Max transaction length 1024
-inode generation number: 0
-UUID: d867e985-b90a-438d-ba8d-e5a2e4bf699f
-ATTENTION: YOU SHOULD REBOOT AFTER FDISK!
-        ALL DATA WILL BE LOST ON '/dev/sdb3'!
-Continue (y/n):y
-Initializing journal - 0%....20%....40%....60%....80%....100%
-Exiting after unrecoverable error.
-
+Q2hlY2sgdGhhdCB0aGUgZ3JvdXAgcGVybWlzc2lvbiBiaXRzIG9mIGEgZmlsZSBhcmUgbm90IGFs
+dGVyZWQgd2hlbiBzZXRmYWNsCmZhaWxzLiBBdCB0aGUgdGltZSBvZiB0aGlzIHBhdGNoIHRoZSB0
+ZXN0IGZhaWxzIGZvciBhdCBsZWFzdCBleHQyLCBleHQ0IGFuZApqZnMuCgpOb3RlIHRoYXQgdGhp
+cyB0ZXN0IGlzIG5vdCBtZWFuaW5nZnVsIGZvciBhbGwgZmlsZXN5c3RlbXMsIGJlY2F1c2Ugc29t
+ZQp3aWxsIHN0aWxsIHN1Y2NlZWQgaW4gc2V0dGluZyB0aGUgYWNscy4gVGhpcyBkb2VzIG5vdCBt
+ZWFuIHRoZXkgZG9uJ3QgaGF2ZQphIGJ1ZyBpbiBob3cgdGhleSB3b3VsZCBoYW5kbGUgYW4gZXJy
+b3IuCgpTaWduZWQtb2ZmLWJ5OiBFcm5lc3RvIEEuIEZlcm7DoW5kZXogPGVybmVzdG8ubW5kLmZl
+cm5hbmRlekBnbWFpbC5jb20+Ci0tLQpDaGFuZ2VzIGluIHYzOgogIC0gU2V2ZXJhbCBmaXhlcyBy
+ZXF1ZXN0ZWQgYnkgRXJ5dSBHdWFuICh0aGFuayB5b3UgZm9yIHlvdXIgcmV2aWV3KSwgbW9zdAog
+ICAgaW1wb3J0YW50bHk6CiAgICAtIFBsYWNlIHRoZSBqZnMgc3VwcG9ydCBpbiBhIHNlcGFyYXRl
+IHBhdGNoLCBhbHJlYWR5IHNlbnQuCiAgICAtIE1ha2UgdGhlIHRlc3QgZmFpbCB3aGVuIHRoZSBz
+Y3JhdGNoIGRldmljZSBkb2VzIG5vdCBtb3VudCwgc28gcm9vdGZzCiAgICAgIHdvbid0IGJlIGZp
+bGxlZC4KICAgIC0gQWRkIHRoZSB0ZXN0IHRvIGF1dG8gYW5kIHF1aWNrIGdyb3Vwcy4KQ2hhbmdl
+cyBpbiB2MjoKICAtIFVzZSB0aGUgc2NyYXRjaCBkZXYgaW5zdGVhZCBvZiB0aGUgdGVzdCBkZXYg
+c28gd2UgY2FuIG1ha2UgYSBzbWFsbCBmcyBhbmQKICAgIGZpbGwgaXQgZmFzdGVyLiBBcyBzdWdn
+ZXN0ZWQgYnkgQ2hyaXN0b3BoIEhlbGx3aWcuCiAgLSBNYWtlIGpmcyB3b3JrIHdpdGggX3NjcmF0
+Y2hfbWtmc19zaXplZCwgbmVlZGVkIGZvciB0aGUgYWJvdmUuCiAgLSBSZW1vdmUgdGhlIG1lbnRp
+b24gdG8gYW4gaXNzdWUgd2l0aCByZWlzZXJmcywgc2luY2UgSSBub3cgYmVsaWV2ZSB0aGUKICAg
+IHByb2JsZW0gaXMgb24gdGhlaXIgc2lkZS4KCiB0ZXN0cy9nZW5lcmljLzQ0NyAgICAgfCA4OCAr
+KysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysKIHRlc3Rz
+L2dlbmVyaWMvNDQ3Lm91dCB8ICAyICsrCiB0ZXN0cy9nZW5lcmljL2dyb3VwICAgfCAgMSArCiAz
+IGZpbGVzIGNoYW5nZWQsIDkxIGluc2VydGlvbnMoKykKIGNyZWF0ZSBtb2RlIDEwMDc1NSB0ZXN0
+cy9nZW5lcmljLzQ0NwogY3JlYXRlIG1vZGUgMTAwNjQ0IHRlc3RzL2dlbmVyaWMvNDQ3Lm91dAoK
+ZGlmZiAtLWdpdCBhL3Rlc3RzL2dlbmVyaWMvNDQ3IGIvdGVzdHMvZ2VuZXJpYy80NDcKbmV3IGZp
+bGUgbW9kZSAxMDA3NTUKaW5kZXggMDAwMDAwMC4uYzMwNjJjOAotLS0gL2Rldi9udWxsCisrKyBi
+L3Rlc3RzL2dlbmVyaWMvNDQ3CkBAIC0wLDAgKzEsODggQEAKKyMhIC9iaW4vYmFzaAorIyBGUyBR
+QSBUZXN0IDQ0NworIworIyBGaWxsIHRoZSBkZXZpY2UgYW5kIHNldCBhcyBtYW55IGV4dGVuZGVk
+IGF0dHJpYnV0ZXMgdG8gYSBmaWxlIGFzCisjIHBvc3NpYmxlLiBUaGVuIGNhbGwgc2V0ZmFjbCBv
+biBpdCBhbmQsIGlmIHRoaXMgZmFpbHMgZm9yIGxhY2sgb2YKKyMgc3BhY2UsIHRlc3QgdGhhdCB0
+aGUgcGVybWlzc2lvbnMgcmVtYWluIHRoZSBzYW1lLgorIworIy0tLS0tLS0tLS0tLS0tLS0tLS0t
+LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tCisjIENv
+cHlyaWdodCAoYykgMjAxNyBFcm5lc3RvIEEuIEZlcm5hbmRlei4gIEFsbCBSaWdodHMgUmVzZXJ2
+ZWQuCisjCisjIFRoaXMgcHJvZ3JhbSBpcyBmcmVlIHNvZnR3YXJlOyB5b3UgY2FuIHJlZGlzdHJp
+YnV0ZSBpdCBhbmQvb3IKKyMgbW9kaWZ5IGl0IHVuZGVyIHRoZSB0ZXJtcyBvZiB0aGUgR05VIEdl
+bmVyYWwgUHVibGljIExpY2Vuc2UgYXMKKyMgcHVibGlzaGVkIGJ5IHRoZSBGcmVlIFNvZnR3YXJl
+IEZvdW5kYXRpb24uCisjCisjIFRoaXMgcHJvZ3JhbSBpcyBkaXN0cmlidXRlZCBpbiB0aGUgaG9w
+ZSB0aGF0IGl0IHdvdWxkIGJlIHVzZWZ1bCwKKyMgYnV0IFdJVEhPVVQgQU5ZIFdBUlJBTlRZOyB3
+aXRob3V0IGV2ZW4gdGhlIGltcGxpZWQgd2FycmFudHkgb2YKKyMgTUVSQ0hBTlRBQklMSVRZIG9y
+IEZJVE5FU1MgRk9SIEEgUEFSVElDVUxBUiBQVVJQT1NFLiAgU2VlIHRoZQorIyBHTlUgR2VuZXJh
+bCBQdWJsaWMgTGljZW5zZSBmb3IgbW9yZSBkZXRhaWxzLgorIworIyBZb3Ugc2hvdWxkIGhhdmUg
+cmVjZWl2ZWQgYSBjb3B5IG9mIHRoZSBHTlUgR2VuZXJhbCBQdWJsaWMgTGljZW5zZQorIyBhbG9u
+ZyB3aXRoIHRoaXMgcHJvZ3JhbTsgaWYgbm90LCB3cml0ZSB0aGUgRnJlZSBTb2Z0d2FyZSBGb3Vu
+ZGF0aW9uLAorIyBJbmMuLCAgNTEgRnJhbmtsaW4gU3QsIEZpZnRoIEZsb29yLCBCb3N0b24sIE1B
+ICAwMjExMC0xMzAxICBVU0EKKyMtLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
+LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLQorIworCitzZXE9YGJhc2VuYW1lICQw
+YAorc2VxcmVzPSRSRVNVTFRfRElSLyRzZXEKK2VjaG8gIlFBIG91dHB1dCBjcmVhdGVkIGJ5ICRz
+ZXEiCisKK2hlcmU9YHB3ZGAKK3RtcD0vdG1wLyQkCitzdGF0dXM9MQkjIGZhaWx1cmUgaXMgdGhl
+IGRlZmF1bHQhCit0cmFwICJfY2xlYW51cDsgZXhpdCBcJHN0YXR1cyIgMCAxIDIgMyAxNQorCitf
+Y2xlYW51cCgpCit7CisJY2QgLworCXJtIC1mICR0bXAuKgorfQorCisjIGdldCBzdGFuZGFyZCBl
+bnZpcm9ubWVudCwgZmlsdGVycyBhbmQgY2hlY2tzCisuIC4vY29tbW9uL3JjCisuIC4vY29tbW9u
+L2ZpbHRlcgorLiAuL2NvbW1vbi9hdHRyCisKKyMgcmVtb3ZlIHByZXZpb3VzICRzZXFyZXMuZnVs
+bCBiZWZvcmUgdGVzdAorcm0gLWYgJHNlcXJlcy5mdWxsCisKKyMgcmVhbCBRQSB0ZXN0IHN0YXJ0
+cyBoZXJlCisKKyMgTW9kaWZ5IGFzIGFwcHJvcHJpYXRlLgorX3N1cHBvcnRlZF9mcyBnZW5lcmlj
+Citfc3VwcG9ydGVkX29zIExpbnV4CitfcmVxdWlyZV9zY3JhdGNoCitfcmVxdWlyZV90ZXN0Citf
+cmVxdWlyZV9hY2xzCitfcmVxdWlyZV9hdHRycworCitfc2NyYXRjaF9ta2ZzX3NpemVkICQoKDUw
+ICogMTAyNCAqIDEwMjQpKSA+PiAkc2VxcmVzLmZ1bGwgMj4mMQorX3NjcmF0Y2hfbW91bnQgfHwg
+X2ZhaWwgIm1vdW50IGZhaWxlZCIKKworVEZJTEU9JFNDUkFUQ0hfTU5UL3Rlc3RmaWxlLiRzZXEK
+KworIyBDcmVhdGUgdGhlIHRlc3QgZmlsZSBhbmQgY2hvb3NlIGl0cyBwZXJtaXNzaW9ucwordG91
+Y2ggJFRGSUxFCitjaG1vZCB1K3J3eCAkVEZJTEUKK2NobW9kIGdvLXJ3eCAkVEZJTEUKKworIyBU
+cnkgdG8gcnVuIG91dCBvZiBzcGFjZSBzbyBzZXRmYWNsIHdpbGwgZmFpbAorJFhGU19JT19QUk9H
+IC1jICJwd3JpdGUgMCA1MG0iICRURklMRSA+PiRzZXFyZXMuZnVsbCAyPiYxCitpPTEKK3doaWxl
+IHNldGZhdHRyIC1uIHVzZXIuJGkgJFRGSUxFICY+L2Rldi9udWxsOyBkbworCSgoKytpKSkKK2Rv
+bmUKKworaWYgc2V0ZmFjbCAtbSBtOnIgJFRGSUxFICY+L2Rldi9udWxsOyB0aGVuCisJIyBzZXRm
+YWNsIHN1Y2NlZWRlZCwgc28gdGhlIHRlc3Qgd2FzIG1lYW5pbmdsZXNzCisJIyBUaGUgZmlsZXN5
+c3RlbSBtaWdodCBzdGlsbCBoYXZlIGFuIGlzc3VlCisJc3RhdHVzPTAKKwllY2hvICItcnd4LS0t
+LS0tIgorCWV4aXQKK2ZpCisKKyMgU2luY2Ugc2V0ZmFjbCBmYWlsZWQsIHRoZSBwZXJtaXNzaW9u
+cyBzaG91bGQgbm90IGhhdmUgY2hhbmdlZAorc3RhdCAtYyAlQSAkVEZJTEUKKworc3RhdHVzPTAK
+K2V4aXQKZGlmZiAtLWdpdCBhL3Rlc3RzL2dlbmVyaWMvNDQ3Lm91dCBiL3Rlc3RzL2dlbmVyaWMv
+NDQ3Lm91dApuZXcgZmlsZSBtb2RlIDEwMDY0NAppbmRleCAwMDAwMDAwLi5hZGVjODc3Ci0tLSAv
+ZGV2L251bGwKKysrIGIvdGVzdHMvZ2VuZXJpYy80NDcub3V0CkBAIC0wLDAgKzEsMiBAQAorUUEg
+b3V0cHV0IGNyZWF0ZWQgYnkgNDQ3Cistcnd4LS0tLS0tCmRpZmYgLS1naXQgYS90ZXN0cy9nZW5l
+cmljL2dyb3VwIGIvdGVzdHMvZ2VuZXJpYy9ncm91cAppbmRleCA4YzFlMjFhLi5hM2VjMzkwIDEw
+MDY0NAotLS0gYS90ZXN0cy9nZW5lcmljL2dyb3VwCisrKyBiL3Rlc3RzL2dlbmVyaWMvZ3JvdXAK
+QEAgLTQ0OSwzICs0NDksNCBAQAogNDQ0IGF1dG8gcXVpY2sgYWNsCiA0NDUgYXV0byBxdWljayBy
+dwogNDQ2IGF1dG8gcXVpY2sgcncgZGFuZ2Vyb3VzCis0NDcgYXV0byBxdWljayBhY2wKLS0gCjIu
+MS40CgotLQpUbyB1bnN1YnNjcmliZSBmcm9tIHRoaXMgbGlzdDogc2VuZCB0aGUgbGluZSAidW5z
+dWJzY3JpYmUgcmVpc2VyZnMtZGV2ZWwiIGluCnRoZSBib2R5IG9mIGEgbWVzc2FnZSB0byBtYWpv
+cmRvbW9Admdlci5rZXJuZWwub3JnCk1vcmUgbWFqb3Jkb21vIGluZm8gYXQgIGh0dHA6Ly92Z2Vy
+Lmtlcm5lbC5vcmcvbWFqb3Jkb21vLWluZm8uaHRtbAo=
