@@ -1,23 +1,53 @@
-From: dimas <dimas000@ya.ru>
-Subject: Re: Anyone know to fix "Exiting after unrecoverable error." using
- mkfs -t reiserfs /dev/sdbX
-Date: Sat, 15 Jul 2017 14:12:02 +0300
-Message-ID: <20170715141202.459fa1ee@Ulf.tvoe.tv>
-References: <7e71024c79157640844bd4a628256909@mail.velocitynet.com.au>
-Reply-To: reiserfs-devel <reiserfs-devel@vger.kernel.org>, dimas000@ya.ru
+From: <doiggl@velocitynet.com.au>
+Subject: Re: Anyone know to fix "Exiting after unrecoverable error." using mkfs -t reiserfs /dev/sdbX
+Date: Tue, 18 Jul 2017 00:04:12 +1000
+Message-ID: <2afcf0014d79a210826476f443054893@mail.velocitynet.com.au>
+References: <7e71024c79157640844bd4a628256909@mail.velocitynet.com.au> <20170715141202.459fa1ee@Ulf.tvoe.tv>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ya.ru; s=mail; t=1500117124;
-        bh=We/qKrLWw9wIk6hlw55/RC4mbud45DrA5vRBC0r2drI=;
-        h=Date:From:To:Subject:Message-ID:In-Reply-To:References:Reply-To;
-        b=YN9Fh/Q0jzxgS660FUy8LIVb1c/gvRCheF2yF4BOL0/cfybditFEpMR8M88Z9E1Nq
-         44K9G8McQR+HPe1a2KlLLuG8t6Mg3pEdio/dGvIN1Rea1FGCZPaOYaL5wiDbRsESvu
-         lmX8ikaLiSgI9I9lKrfyEjdnyos09XxHRJGP5ass=
-In-Reply-To: <7e71024c79157640844bd4a628256909@mail.velocitynet.com.au>
+In-Reply-To: <20170715141202.459fa1ee@Ulf.tvoe.tv>
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: reiserfs-devel <reiserfs-devel@vger.kernel.org>
+To: reiserfs-devel <reiserfs-devel@vger.kernel.org>, dimas000@ya.ru
 
-did you try to zero-wipe the partition?
+On Sat, 15 Jul 2017 14:12:02 +0300, dimas <dimas000@ya.ru> wrote:
+> did you try to zero-wipe the partition?
+> --
+> To unsubscribe from this list: send the line "unsubscribe
+reiserfs-devel"
+> in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+
+Hello,
+Question :did you try to zero-wipe the partition?
+
+Answr: no - unknown 
+
+What is command switch to do that ? [zero-wipe the partition]?
+Tried to use but no luck:
+# mkfs -t reiserfs /dev/sdb3
+
+Thanks
+--Glenn
+
+
+# mkfs --help
+Usage:
+ mkfs [options] [-t <type>] [fs-options] <device> [<size>]
+
+Options:
+ -t, --type=<type>  filesystem type; when unspecified, ext2 is used
+     fs-options     parameters for the real filesystem builder
+     <device>       path to the device to be used
+     <size>         number of blocks to be used on the device
+ -V, --verbose      explain what is being done;
+                      specifying -V more than once will cause a dry-run
+ -V, --version      display version information and exit;
+                      -V as --version must be the only option
+ -h, --help         display this help text and exit
+
+For more information see mkfs(8).
+#
