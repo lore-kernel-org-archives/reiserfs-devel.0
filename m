@@ -1,90 +1,86 @@
 From: Jan Kara <jack@suse.cz>
-Subject: Re: [PATCH 2/5] ext2: preserve i_mode if ext2_set_acl() fails
-Date: Mon, 17 Jul 2017 18:33:04 +0200
-Message-ID: <20170717163304.GB22195@quack2.suse.cz>
+Subject: Re: [PATCH 3/5] ext2: fix line over 80 characters in ext2_set_acl()
+Date: Mon, 17 Jul 2017 18:33:28 +0200
+Message-ID: <20170717163328.GC22195@quack2.suse.cz>
 References: <cover.1499805484.git.ernesto.mnd.fernandez@gmail.com>
- <099e3ef2bf3a9ab2a1d545b65ba15fad359f2c03.1499805487.git.ernesto.mnd.fernandez@gmail.com>
+ <8c89043c298756b37fa74403b8b9d12fac9f8783.1499805487.git.ernesto.mnd.fernandez@gmail.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-Return-path: <linux-ext4-owner@vger.kernel.org>
+Return-path: <reiserfs-devel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <099e3ef2bf3a9ab2a1d545b65ba15fad359f2c03.1499805487.git.ernesto.mnd.fernandez@gmail.com>
-Sender: linux-ext4-owner@vger.kernel.org
+In-Reply-To: <8c89043c298756b37fa74403b8b9d12fac9f8783.1499805487.git.ernesto.mnd.fernandez@gmail.com>
+Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="iso-8859-1"
 To: Ernesto =?iso-8859-1?Q?A=2E_Fern=E1ndez?= <ernesto.mnd.fernandez@gmail.com>
 Cc: Jan Kara <jack@suse.com>, Theodore Ts'o <tytso@mit.edu>, Andreas Dilger <adilger.kernel@dilger.ca>, Dave Kleikamp <shaggy@kernel.org>, linux-ext4@vger.kernel.org, jfs-discussion@lists.sourceforge.net, reiserfs-devel@vger.kernel.org
 
-On Wed 12-07-17 06:54:19, Ernesto A. Fern=E1ndez wrote:
-> When changing a file's acl mask, ext2_set_acl() will first set the group
-> bits of i_mode to the value of the mask, and only then set the actual
-> extended attribute representing the new acl.
->=20
-> If the second part fails (due to lack of space, for example) and the file
-> had no acl attribute to begin with, the system will from now on assume
-> that the mask permission bits are actual group permission bits, potential=
-ly
-> granting access to the wrong users.
->=20
-> Prevent this by only changing the inode mode after the acl has been set.
+On Wed 12-07-17 06:54:50, Ernesto A. Fern=E1ndez wrote:
+> Shorten the name of the error variable to 'err' so the call to
+> posix_acl_update_mode() fits within 80 characters.
 >=20
 > Signed-off-by: Ernesto A. Fern=E1ndez <ernesto.mnd.fernandez@gmail.com>
 
-Thanks for the patch! I have rebased it on top of the fix in that area that
-is sitting in my tree and merged it to my tree.
+This is no longer a problem. Patch ignored.
 
 								Honza
 
 > ---
-> A line in acl.c is too long, and checkpatch.pl complains about it when run
-> against this patch. In case it matters, the next patch will fix that.
->=20
->  fs/ext2/acl.c | 15 +++++++++++----
->  1 file changed, 11 insertions(+), 4 deletions(-)
+>  fs/ext2/acl.c | 14 +++++++-------
+>  1 file changed, 7 insertions(+), 7 deletions(-)
 >=20
 > diff --git a/fs/ext2/acl.c b/fs/ext2/acl.c
-> index 79dafa7..4e04b7e 100644
+> index 4e04b7e..d2cca5c 100644
 > --- a/fs/ext2/acl.c
 > +++ b/fs/ext2/acl.c
-> @@ -185,16 +185,17 @@ ext2_set_acl(struct inode *inode, struct posix_acl =
-*acl, int type)
+> @@ -184,7 +184,7 @@ ext2_set_acl(struct inode *inode, struct posix_acl *a=
+cl, int type)
+>  	int name_index;
 >  	void *value =3D NULL;
 >  	size_t size =3D 0;
->  	int error;
-> +	int update_mode =3D 0;
-> +	umode_t mode =3D inode->i_mode;
+> -	int error;
+> +	int err;
+>  	int update_mode =3D 0;
+>  	umode_t mode =3D inode->i_mode;
 > =20
->  	switch(type) {
+> @@ -192,9 +192,9 @@ ext2_set_acl(struct inode *inode, struct posix_acl *a=
+cl, int type)
 >  		case ACL_TYPE_ACCESS:
 >  			name_index =3D EXT2_XATTR_INDEX_POSIX_ACL_ACCESS;
 >  			if (acl) {
-> -				error =3D posix_acl_update_mode(inode, &inode->i_mode, &acl);
-> +				error =3D posix_acl_update_mode(inode, &mode, &acl);
->  				if (error)
->  					return error;
-> -				inode->i_ctime =3D current_time(inode);
-> -				mark_inode_dirty(inode);
-> +				update_mode =3D 1;
+> -				error =3D posix_acl_update_mode(inode, &mode, &acl);
+> -				if (error)
+> -					return error;
+> +				err =3D posix_acl_update_mode(inode, &mode, &acl);
+> +				if (err)
+> +					return err;
+>  				update_mode =3D 1;
 >  			}
 >  			break;
+> @@ -214,10 +214,10 @@ ext2_set_acl(struct inode *inode, struct posix_acl =
+*acl, int type)
+>  			return (int)PTR_ERR(value);
+>  	}
 > =20
-> @@ -216,8 +217,14 @@ ext2_set_acl(struct inode *inode, struct posix_acl *=
-acl, int type)
->  	error =3D ext2_xattr_set(inode, name_index, "", value, size, 0);
+> -	error =3D ext2_xattr_set(inode, name_index, "", value, size, 0);
+> +	err =3D ext2_xattr_set(inode, name_index, "", value, size, 0);
 > =20
 >  	kfree(value);
-> -	if (!error)
-> +	if (!error) {
+> -	if (!error) {
+> +	if (!err) {
 >  		set_cached_acl(inode, type, acl);
-> +		if (update_mode) {
-> +			inode->i_mode =3D mode;
-> +			inode->i_ctime =3D current_time(inode);
-> +			mark_inode_dirty(inode);
-> +		}
-> +	}
->  	return error;
+>  		if (update_mode) {
+>  			inode->i_mode =3D mode;
+> @@ -225,7 +225,7 @@ ext2_set_acl(struct inode *inode, struct posix_acl *a=
+cl, int type)
+>  			mark_inode_dirty(inode);
+>  		}
+>  	}
+> -	return error;
+> +	return err;
 >  }
 > =20
+>  /*
 > --=20
 > 2.1.4
 >=20
