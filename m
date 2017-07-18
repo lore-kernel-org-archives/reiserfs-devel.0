@@ -1,174 +1,184 @@
-From: Jan Kara <jack@suse.cz>
-Subject: Re: [PATCH 5/5] reiserfs: preserve i_mode if __reiserfs_set_acl()
+From: Eryu Guan <eguan@redhat.com>
+Subject: Re: [xfstests PATCH v3] generic: add test of file mode when setfacl
  fails
-Date: Mon, 17 Jul 2017 18:45:54 +0200
-Message-ID: <20170717164554.GD22195@quack2.suse.cz>
-References: <cover.1499805484.git.ernesto.mnd.fernandez@gmail.com>
- <3ab632985cbf6fdd2ee5284482b9749c5893a5a1.1499805488.git.ernesto.mnd.fernandez@gmail.com>
+Date: Tue, 18 Jul 2017 12:14:38 +0800
+Message-ID: <20170718041438.GT2478@eguan.usersys.redhat.com>
+References: <20170714225506.GA4414@debian.home>
 Mime-Version: 1.0
-Content-Type: multipart/mixed; boundary="jI8keyz6grp/JLjh"
 Content-Transfer-Encoding: 8bit
-Return-path: <linux-ext4-owner@vger.kernel.org>
+Return-path: <fstests-owner@vger.kernel.org>
+DKIM-Filter: OpenDKIM Filter v2.11.0 mx1.redhat.com 57D07356F2
 Content-Disposition: inline
-In-Reply-To: <3ab632985cbf6fdd2ee5284482b9749c5893a5a1.1499805488.git.ernesto.mnd.fernandez@gmail.com>
-Sender: linux-ext4-owner@vger.kernel.org
+In-Reply-To: <20170714225506.GA4414@debian.home>
+Sender: fstests-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
-To: Ernesto =?iso-8859-1?Q?A=2E_Fern=E1ndez?= <ernesto.mnd.fernandez@gmail.com>
-Cc: Jan Kara <jack@suse.com>, Theodore Ts'o <tytso@mit.edu>, Andreas Dilger <adilger.kernel@dilger.ca>, Dave Kleikamp <shaggy@kernel.org>, linux-ext4@vger.kernel.org, jfs-discussion@lists.sourceforge.net, reiserfs-devel@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+To: Ernesto =?utf-8?Q?A=2E_Fern=C3=A1ndez?= <ernesto.mnd.fernandez@gmail.com>
+Cc: fstests@vger.kernel.org, Christoph Hellwig <hch@infradead.org>, linux-ext4@vger.kernel.org, jfs-discussion@lists.sourceforge.net, reiserfs-devel@vger.kernel.org
 
-
---jI8keyz6grp/JLjh
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-On Wed 12-07-17 06:56:04, Ernesto A. Fern=E1ndez wrote:
-> When changing a file's acl mask, __reiserfs_set_acl() will first set the
-> group bits of i_mode to the value of the mask, and only then set the
-> actual extended attribute representing the new acl.
->=20
-> If the second part fails (due to lack of space, for example) and the file
-> had no acl attribute to begin with, the system will from now on assume
-> that the mask permission bits are actual group permission bits, potential=
-ly
-> granting access to the wrong users.
->=20
-> Prevent this by only changing the inode mode after the acl has been set.
-> Also make reiserfs_xattr_set_handle() return -ENODATA only in case of
-> actual error, and return 0 when requested deletion of a nonexistent acl.
-> This is more consistent with the behaviour of other *_xattr_set()
-> functions and makes the patch simpler.
->=20
-> Signed-off-by: Ernesto A. Fern=E1ndez <ernesto.mnd.fernandez@gmail.com>
-
-Thanks for the patch!  I have rebased this onto my tree and merged the
-resulting patch (attached).
-
-								Honza
-
+On Fri, Jul 14, 2017 at 07:55:09PM -0300, Ernesto A. Fernández wrote:
+> Check that the group permission bits of a file are not altered when setfacl
+> fails. At the time of this patch the test fails for at least ext2, ext4 and
+> jfs.
+> 
+> Note that this test is not meaningful for all filesystems, because some
+> will still succeed in setting the acls. This does not mean they don't have
+> a bug in how they would handle an error.
+> 
+> Signed-off-by: Ernesto A. Fernández <ernesto.mnd.fernandez@gmail.com>
 > ---
->  fs/reiserfs/xattr.c     |  4 ++++
->  fs/reiserfs/xattr_acl.c | 25 +++++++++----------------
->  2 files changed, 13 insertions(+), 16 deletions(-)
->=20
-> diff --git a/fs/reiserfs/xattr.c b/fs/reiserfs/xattr.c
-> index e87aa21..936a57a 100644
-> --- a/fs/reiserfs/xattr.c
-> +++ b/fs/reiserfs/xattr.c
-> @@ -513,6 +513,10 @@ reiserfs_xattr_set_handle(struct reiserfs_transactio=
-n_handle *th,
-> =20
->  	if (!buffer) {
->  		err =3D lookup_and_delete_xattr(inode, name);
-> +		if (flags & XATTR_REPLACE)
-> +			return err;
-> +		if (err =3D=3D -ENODATA)
-> +			err =3D 0;
->  		return err;
->  	}
-> =20
-> diff --git a/fs/reiserfs/xattr_acl.c b/fs/reiserfs/xattr_acl.c
-> index 3d2256a..c02e5ac 100644
-> --- a/fs/reiserfs/xattr_acl.c
-> +++ b/fs/reiserfs/xattr_acl.c
-> @@ -237,14 +237,17 @@ __reiserfs_set_acl(struct reiserfs_transaction_hand=
-le *th, struct inode *inode,
->  	void *value =3D NULL;
->  	size_t size =3D 0;
->  	int error;
-> +	int update_mode =3D 0;
-> +	umode_t mode =3D inode->i_mode;
-> =20
->  	switch (type) {
->  	case ACL_TYPE_ACCESS:
->  		name =3D XATTR_NAME_POSIX_ACL_ACCESS;
->  		if (acl) {
-> -			error =3D posix_acl_update_mode(inode, &inode->i_mode, &acl);
-> +			error =3D posix_acl_update_mode(inode, &mode, &acl);
->  			if (error)
->  				return error;
-> +			update_mode =3D 1;
->  		}
->  		break;
->  	case ACL_TYPE_DEFAULT:
-> @@ -264,25 +267,15 @@ __reiserfs_set_acl(struct reiserfs_transaction_hand=
-le *th, struct inode *inode,
-> =20
->  	error =3D reiserfs_xattr_set_handle(th, inode, name, value, size, 0);
-> =20
-> -	/*
-> -	 * Ensure that the inode gets dirtied if we're only using
-> -	 * the mode bits and an old ACL didn't exist. We don't need
-> -	 * to check if the inode is hashed here since we won't get
-> -	 * called by reiserfs_inherit_default_acl().
-> -	 */
-> -	if (error =3D=3D -ENODATA) {
-> -		error =3D 0;
-> -		if (type =3D=3D ACL_TYPE_ACCESS) {
-> +	kfree(value);
-> +	if (!error) {
-> +		set_cached_acl(inode, type, acl);
-> +		if (update_mode) {
-> +			inode->i_mode =3D mode;
->  			inode->i_ctime =3D current_time(inode);
->  			mark_inode_dirty(inode);
->  		}
->  	}
-> -
-> -	kfree(value);
-> -
-> -	if (!error)
-> -		set_cached_acl(inode, type, acl);
-> -
->  	return error;
->  }
-> =20
-> --=20
+> Changes in v3:
+>   - Several fixes requested by Eryu Guan (thank you for your review), most
+>     importantly:
+>     - Place the jfs support in a separate patch, already sent.
+>     - Make the test fail when the scratch device does not mount, so rootfs
+>       won't be filled.
+>     - Add the test to auto and quick groups.
+> Changes in v2:
+>   - Use the scratch dev instead of the test dev so we can make a small fs and
+>     fill it faster. As suggested by Christoph Hellwig.
+>   - Make jfs work with _scratch_mkfs_sized, needed for the above.
+>   - Remove the mention to an issue with reiserfs, since I now believe the
+>     problem is on their side.
+
+Thanks for the update! But I had a second thought about what to do when
+setfacl succeeded, please see below.
+
+> 
+>  tests/generic/447     | 88 +++++++++++++++++++++++++++++++++++++++++++++++++++
+>  tests/generic/447.out |  2 ++
+>  tests/generic/group   |  1 +
+>  3 files changed, 91 insertions(+)
+>  create mode 100755 tests/generic/447
+>  create mode 100644 tests/generic/447.out
+> 
+> diff --git a/tests/generic/447 b/tests/generic/447
+> new file mode 100755
+> index 0000000..c3062c8
+> --- /dev/null
+> +++ b/tests/generic/447
+> @@ -0,0 +1,88 @@
+> +#! /bin/bash
+> +# FS QA Test 447
+> +#
+> +# Fill the device and set as many extended attributes to a file as
+> +# possible. Then call setfacl on it and, if this fails for lack of
+> +# space, test that the permissions remain the same.
+> +#
+> +#-----------------------------------------------------------------------
+> +# Copyright (c) 2017 Ernesto A. Fernandez.  All Rights Reserved.
+> +#
+> +# This program is free software; you can redistribute it and/or
+> +# modify it under the terms of the GNU General Public License as
+> +# published by the Free Software Foundation.
+> +#
+> +# This program is distributed in the hope that it would be useful,
+> +# but WITHOUT ANY WARRANTY; without even the implied warranty of
+> +# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+> +# GNU General Public License for more details.
+> +#
+> +# You should have received a copy of the GNU General Public License
+> +# along with this program; if not, write the Free Software Foundation,
+> +# Inc.,  51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
+> +#-----------------------------------------------------------------------
+> +#
+> +
+> +seq=`basename $0`
+> +seqres=$RESULT_DIR/$seq
+> +echo "QA output created by $seq"
+> +
+> +here=`pwd`
+> +tmp=/tmp/$$
+> +status=1	# failure is the default!
+> +trap "_cleanup; exit \$status" 0 1 2 3 15
+> +
+> +_cleanup()
+> +{
+> +	cd /
+> +	rm -f $tmp.*
+> +}
+> +
+> +# get standard environment, filters and checks
+> +. ./common/rc
+> +. ./common/filter
+> +. ./common/attr
+> +
+> +# remove previous $seqres.full before test
+> +rm -f $seqres.full
+> +
+> +# real QA test starts here
+> +
+> +# Modify as appropriate.
+> +_supported_fs generic
+> +_supported_os Linux
+> +_require_scratch
+> +_require_test
+> +_require_acls
+> +_require_attrs
+> +
+> +_scratch_mkfs_sized $((50 * 1024 * 1024)) >> $seqres.full 2>&1
+> +_scratch_mount || _fail "mount failed"
+> +
+> +TFILE=$SCRATCH_MNT/testfile.$seq
+> +
+> +# Create the test file and choose its permissions
+> +touch $TFILE
+> +chmod u+rwx $TFILE
+> +chmod go-rwx $TFILE
+> +
+> +# Try to run out of space so setfacl will fail
+> +$XFS_IO_PROG -c "pwrite 0 50m" $TFILE >>$seqres.full 2>&1
+> +i=1
+> +while setfattr -n user.$i $TFILE &>/dev/null; do
+> +	((++i))
+> +done
+> +
+> +if setfacl -m m:r $TFILE &>/dev/null; then
+> +	# setfacl succeeded, so the test was meaningless
+> +	# The filesystem might still have an issue
+> +	status=0
+> +	echo "-rwx------"
+> +	exit
+
+I think we should call _notrun here instead of making up the correct
+output. If the test is meaningless, don't run it makes more sense to me.
+e.g.
+
+if setfacl -m m:r $TFILE &>/dev/null; then
+	# setfacl succeeded, so the test was meaningless
+	# The filesystem might still have an issue
+	_notrun "<notrun reason here>"	
+fi
+
+Sorry, I didn't bring this up in my first review..
+
+Thanks,
+Eryu
+
+> +fi
+> +
+> +# Since setfacl failed, the permissions should not have changed
+> +stat -c %A $TFILE
+> +
+> +status=0
+> +exit
+> diff --git a/tests/generic/447.out b/tests/generic/447.out
+> new file mode 100644
+> index 0000000..adec877
+> --- /dev/null
+> +++ b/tests/generic/447.out
+> @@ -0,0 +1,2 @@
+> +QA output created by 447
+> +-rwx------
+> diff --git a/tests/generic/group b/tests/generic/group
+> index 8c1e21a..a3ec390 100644
+> --- a/tests/generic/group
+> +++ b/tests/generic/group
+> @@ -449,3 +449,4 @@
+>  444 auto quick acl
+>  445 auto quick rw
+>  446 auto quick rw dangerous
+> +447 auto quick acl
+> -- 
 > 2.1.4
->=20
->=20
---=20
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
-
---jI8keyz6grp/JLjh
-Content-Type: text/x-patch; charset="iso-8859-1"
-Content-Disposition: attachment; filename="0001-reiserfs-preserve-i_mode-if-__reiserfs_set_acl-fails.patch"
-Content-Transfer-Encoding: quoted-printable
-
-From 71edef97f294dbff5d84bca5721c7b30273a0786 Mon Sep 17 00:00:00 2001
-From: =3D?UTF-8?q?Ernesto=3D20A=3D2E=3D20Fern=3DC3=3DA1ndez?=3D
- <ernesto.mnd.fernandez@gmail.com>
-Date: Mon, 17 Jul 2017 18:42:41 +0200
-Subject: [PATCH] reiserfs: preserve i_mode if __reiserfs_set_acl() fails
-MIME-Version: 1.0
-Content-Type: text/plain; charset=3DUTF-8
-Content-Transfer-Encoding: 8bit
-
-When changing a file's acl mask, reiserfs_set_acl() will first set the
-group bits of i_mode to the value of the mask, and only then set the
-actual extended attribute representing the new acl.
-
-If the second part fails (due to lack of space, for example) and the
-file had no acl attribute to begin with, the system will from now on
-assume that the mask permission bits are actual group permission bits,
-potentially granting access to the wrong users.
-
-Prevent this by only changing the inode mode after the acl has been set.
-
-Signed-off-by: Ernesto A. Fern=E1ndez <ernesto.mnd.fernandez@gmail.com>
-Signed-off-by: Jan Kara <jack@suse.cz>
----
- fs/reiserfs/xattr_acl.c | 9 ++++++---
- 1 file changed, 6 insertions(+), 3 deletions(-)
-
-diff --git a/fs/reiserfs/xattr_acl.c b/fs/reiserfs/xattr_acl.c
-index d92a1dc6ee70..54415f0e3d18 100644
---- a/fs/reiserfs/xattr_acl.c
-+++ b/fs/reiserfs/xattr_acl.c
-@@ -23,7 +23,8 @@ reiserfs_set_acl(struct inode *inode, struct posix_acl *a=
-cl, int type)
- 	struct reiserfs_transaction_handle th;
- 	size_t jcreate_blocks;
- 	int size =3D acl ? posix_acl_xattr_size(acl->a_count) : 0;
---jI8keyz6grp/JLjh--
+> 
