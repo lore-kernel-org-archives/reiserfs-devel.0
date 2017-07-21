@@ -1,184 +1,102 @@
-From: Eryu Guan <eguan@redhat.com>
-Subject: Re: [xfstests PATCH v3] generic: add test of file mode when setfacl
- fails
-Date: Tue, 18 Jul 2017 12:14:38 +0800
-Message-ID: <20170718041438.GT2478@eguan.usersys.redhat.com>
-References: <20170714225506.GA4414@debian.home>
+From: Edward Shishkin <edward.shishkin@gmail.com>
+Subject: [DOC] Reiser4 Hybrid Transaction Model
+Date: Sat, 22 Jul 2017 00:19:15 +0300
+Message-ID: <59726FD3.3050903@gmail.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Return-path: <fstests-owner@vger.kernel.org>
-DKIM-Filter: OpenDKIM Filter v2.11.0 mx1.redhat.com 57D07356F2
-Content-Disposition: inline
-In-Reply-To: <20170714225506.GA4414@debian.home>
-Sender: fstests-owner@vger.kernel.org
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-devel-owner@vger.kernel.org>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=message-id:date:from:user-agent:mime-version:to:subject
+         :content-transfer-encoding;
+        bh=LpHeXUC/3NCCc5CUeD9egbalueGDzO4cE+ypAiiRjUc=;
+        b=j0aBedjYCIHhBZL9jK8fuWznXJhm0oMQcenDXfhX11y1G+BLmWbThBBedc2pIaSW2R
+         8vKiQdBmFzAx4XOT0L7YkvUj9na2lcBcPR1thRfL6nfr6jhfSDxzw8pnHUuglGDairAv
+         IrsOlIds+mmVmqOYBrQORMHNqGRM97rp61VKk2m8M62eL8fsdYKgoDe42GWXcmpyrAr/
+         OclqbJkzgsUeLkAErJvwsmWKB0iTGK6WjWVCUJlbjAqiYKu0+eHTJJ3S0e4/YHQ5P8fC
+         ORERyTdqcISB7gLF5yg+T3ysT3ngjqSx8VgGWt7iUFunVYxO8KSblQXTMPP3IvILEv+D
+         uq8w==
+Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="utf-8"
-To: Ernesto =?utf-8?Q?A=2E_Fern=C3=A1ndez?= <ernesto.mnd.fernandez@gmail.com>
-Cc: fstests@vger.kernel.org, Christoph Hellwig <hch@infradead.org>, linux-ext4@vger.kernel.org, jfs-discussion@lists.sourceforge.net, reiserfs-devel@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"; format="flowed"
+To: ReiserFS development mailing list <reiserfs-devel@vger.kernel.org>
 
-On Fri, Jul 14, 2017 at 07:55:09PM -0300, Ernesto A. Fernández wrote:
-> Check that the group permission bits of a file are not altered when setfacl
-> fails. At the time of this patch the test fails for at least ext2, ext4 and
-> jfs.
-> 
-> Note that this test is not meaningful for all filesystems, because some
-> will still succeed in setting the acls. This does not mean they don't have
-> a bug in how they would handle an error.
-> 
-> Signed-off-by: Ernesto A. Fernández <ernesto.mnd.fernandez@gmail.com>
-> ---
-> Changes in v3:
->   - Several fixes requested by Eryu Guan (thank you for your review), most
->     importantly:
->     - Place the jfs support in a separate patch, already sent.
->     - Make the test fail when the scratch device does not mount, so rootfs
->       won't be filled.
->     - Add the test to auto and quick groups.
-> Changes in v2:
->   - Use the scratch dev instead of the test dev so we can make a small fs and
->     fill it faster. As suggested by Christoph Hellwig.
->   - Make jfs work with _scratch_mkfs_sized, needed for the above.
->   - Remove the mention to an issue with reiserfs, since I now believe the
->     problem is on their side.
+Hi all,
 
-Thanks for the update! But I had a second thought about what to do when
-setfacl succeeded, please see below.
+After numerous requests I have documented the transaction model which
+works in Reiser4 by default.
 
-> 
->  tests/generic/447     | 88 +++++++++++++++++++++++++++++++++++++++++++++++++++
->  tests/generic/447.out |  2 ++
->  tests/generic/group   |  1 +
->  3 files changed, 91 insertions(+)
->  create mode 100755 tests/generic/447
->  create mode 100644 tests/generic/447.out
-> 
-> diff --git a/tests/generic/447 b/tests/generic/447
-> new file mode 100755
-> index 0000000..c3062c8
-> --- /dev/null
-> +++ b/tests/generic/447
-> @@ -0,0 +1,88 @@
-> +#! /bin/bash
-> +# FS QA Test 447
-> +#
-> +# Fill the device and set as many extended attributes to a file as
-> +# possible. Then call setfacl on it and, if this fails for lack of
-> +# space, test that the permissions remain the same.
-> +#
-> +#-----------------------------------------------------------------------
-> +# Copyright (c) 2017 Ernesto A. Fernandez.  All Rights Reserved.
-> +#
-> +# This program is free software; you can redistribute it and/or
-> +# modify it under the terms of the GNU General Public License as
-> +# published by the Free Software Foundation.
-> +#
-> +# This program is distributed in the hope that it would be useful,
-> +# but WITHOUT ANY WARRANTY; without even the implied warranty of
-> +# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-> +# GNU General Public License for more details.
-> +#
-> +# You should have received a copy of the GNU General Public License
-> +# along with this program; if not, write the Free Software Foundation,
-> +# Inc.,  51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
-> +#-----------------------------------------------------------------------
-> +#
-> +
-> +seq=`basename $0`
-> +seqres=$RESULT_DIR/$seq
-> +echo "QA output created by $seq"
-> +
-> +here=`pwd`
-> +tmp=/tmp/$$
-> +status=1	# failure is the default!
-> +trap "_cleanup; exit \$status" 0 1 2 3 15
-> +
-> +_cleanup()
-> +{
-> +	cd /
-> +	rm -f $tmp.*
-> +}
-> +
-> +# get standard environment, filters and checks
-> +. ./common/rc
-> +. ./common/filter
-> +. ./common/attr
-> +
-> +# remove previous $seqres.full before test
-> +rm -f $seqres.full
-> +
-> +# real QA test starts here
-> +
-> +# Modify as appropriate.
-> +_supported_fs generic
-> +_supported_os Linux
-> +_require_scratch
-> +_require_test
-> +_require_acls
-> +_require_attrs
-> +
-> +_scratch_mkfs_sized $((50 * 1024 * 1024)) >> $seqres.full 2>&1
-> +_scratch_mount || _fail "mount failed"
-> +
-> +TFILE=$SCRATCH_MNT/testfile.$seq
-> +
-> +# Create the test file and choose its permissions
-> +touch $TFILE
-> +chmod u+rwx $TFILE
-> +chmod go-rwx $TFILE
-> +
-> +# Try to run out of space so setfacl will fail
-> +$XFS_IO_PROG -c "pwrite 0 50m" $TFILE >>$seqres.full 2>&1
-> +i=1
-> +while setfattr -n user.$i $TFILE &>/dev/null; do
-> +	((++i))
-> +done
-> +
-> +if setfacl -m m:r $TFILE &>/dev/null; then
-> +	# setfacl succeeded, so the test was meaningless
-> +	# The filesystem might still have an issue
-> +	status=0
-> +	echo "-rwx------"
-> +	exit
 
-I think we should call _notrun here instead of making up the correct
-output. If the test is meaningless, don't run it makes more sense to me.
-e.g.
+                Reiser4 Hybrid Transaction Model
 
-if setfacl -m m:r $TFILE &>/dev/null; then
-	# setfacl succeeded, so the test was meaningless
-	# The filesystem might still have an issue
-	_notrun "<notrun reason here>"	
-fi
 
-Sorry, I didn't bring this up in my first review..
+Reiser4 transaction model is a high-level block allocator. User can
+specify (by mount option) any of 3 currently existing transaction
+models. First and second ones implement classic journaling and
+write-anywhere (Copy-on-Write) transaction models. They are
+implemented as a hard-coded models in various file systems. Here
+we describe a unique Hybrid Transaction Model suggested by
+Joshua Macdonald and Hans Reiser in 2001.
 
-Thanks,
-Eryu
 
-> +fi
-> +
-> +# Since setfacl failed, the permissions should not have changed
-> +stat -c %A $TFILE
-> +
-> +status=0
-> +exit
-> diff --git a/tests/generic/447.out b/tests/generic/447.out
-> new file mode 100644
-> index 0000000..adec877
-> --- /dev/null
-> +++ b/tests/generic/447.out
-> @@ -0,0 +1,2 @@
-> +QA output created by 447
-> +-rwx------
-> diff --git a/tests/generic/group b/tests/generic/group
-> index 8c1e21a..a3ec390 100644
-> --- a/tests/generic/group
-> +++ b/tests/generic/group
-> @@ -449,3 +449,4 @@
->  444 auto quick acl
->  445 auto quick rw
->  446 auto quick rw dangerous
-> +447 auto quick acl
-> -- 
-> 2.1.4
-> 
+          I. Relocation Decision (relocate or overwrite)
+
+
+In this transaction model a part of atom's blocks is scheduled to be
+relocated (RELOCATE_SET). Another part - to be overwritten
+(OVERWRITE_SET). All system blocks (super-block, bitmap blocks, etc)
+for obvious reasons always fall to OVERWRITE set. All new nodes (which
+haven't had block numbers yet) always fall to RELOCATE_SET. For other
+blocks of the atom the relocation decision is based on the statistics
+accumulated by a special scanning procedure. A positive decision
+(relocate) is made in the case if enough (FLUSH_RELOCATE_THRESHOLD)
+nodes were found for flushing (see comments and source code in flush.c
+for details).
+
+
+            II. Block allocation policy for RELOCATE_SET
+
+
+For the RELOCATE_SET the high level block allocator first allocates
+extents of free blocks. Moreover, the block allocator follows the
+parent-first order on the RELOCATE_SET considered as tree.
+
+Definition. Parent-first order on a tree is a linear order on tree
+nodes determined by the following recursive procedure:
+
+void parent_first(node)
+{
+     print_node (node);
+     if (node->level > leaf) {
+         for (i = 0; i < num_children; i += 1)
+             parent_first (node->child[i]);
+     }
+}
+
+Specifically, (node1 < node2) means that the procedure above prints
+node1 before node2.
+
+Comment. The definition above assumes that all tree nodes on the same
+level were ordered by some linear manner (by the array child[i]).
+In our case the mentioned order is determined by their natural
+enumeration "from left to right" in the tree.
+
+Reiser4 hybrid transaction model keeps parent-first order on the
+RELOCATE_SET in terms of block numbers (disk addresses). It means
+that the following implication is true:
+
+     (node1 < node2) => (block_nr(node1) < block_nr(node2))
+
+"<" in the second part of implication means usual linear order on the
+set of disk addresses (block numbers).
+
+It is achieved by finding and setting a "preceder" for the
+RELOCATE_SET at the very beginning of its relocation. Preceder is the
+maximal block number (disk address) with the following properties:
+
+1) it is marked "busy" in the space map;
+2) it is smaller than all old block numbers of the given RELOCATE_SET.
+
+Further, during allocation of new block numbers for RELOCATE_SET the
+variable containing the preceder gets updated and is passed as a
+"hint" to the low-level space allocator.
