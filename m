@@ -1,11 +1,11 @@
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Subject: [PATCH 4.12 187/196] reiserfs: Dont clear SGID when inheriting ACLs
-Date: Tue, 25 Jul 2017 12:23:06 -0700
-Message-ID: <20170725192055.131269642@linuxfoundation.org>
-References: <20170725192046.422343510@linuxfoundation.org>
+Subject: [PATCH 4.9 122/125] reiserfs: Dont clear SGID when inheriting ACLs
+Date: Tue, 25 Jul 2017 12:20:37 -0700
+Message-ID: <20170725192020.989072075@linuxfoundation.org>
+References: <20170725192014.314851996@linuxfoundation.org>
 Mime-Version: 1.0
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20170725192046.422343510@linuxfoundation.org>
+In-Reply-To: <20170725192014.314851996@linuxfoundation.org>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
@@ -13,7 +13,7 @@ Content-Transfer-Encoding: 7bit
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org, reiserfs-devel@vger.kernel.org, Jan Kara <jack@suse.cz>
 
-4.12-stable review patch.  If anyone has any objections, please let me know.
+4.9-stable review patch.  If anyone has any objections, please let me know.
 
 ------------------
 
