@@ -1,70 +1,79 @@
-From: Edward Shishkin <edward.shishkin@gmail.com>
-Subject: Re: Debian Linux Reiser4 -patched Kernel 4.11.12 EOL source
-Date: Mon, 7 Aug 2017 11:47:55 +0200
-Message-ID: <8df9a663-dea9-caca-0326-7aa9b0d8c95e@gmail.com>
-References: <20170807091136.942E8C7B91F@mictlantecuhtli.metztli-it.com>
+From: "Dmitry V. Levin" <ldv@altlinux.org>
+Subject: Re: [PATCH v06 22/36] uapi linux/reiserfs_xattr.h: use
+ __kernel_size_t instead of size_t
+Date: Wed, 9 Aug 2017 02:17:11 +0300
+Message-ID: <20170808231711.GJ10552@altlinux.org>
+References: <20170806164428.2273-1-mikko.rapeli@iki.fi>
+ <20170806164428.2273-23-mikko.rapeli@iki.fi>
 Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="/0U0QBNx7JIUZLHm"
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:references:from:message-id:date:user-agent:mime-version
-         :in-reply-to:content-transfer-encoding;
-        bh=0RjoTK8KHYZpYheG4fudq3tBNzKEBJq2zvOwFwaMdZg=;
-        b=BhnkIal2JWtgOViHjpxkaAg5GW0vAoms0YF7nFGbpoW0weskqfOuZN18mD6LH+3npa
-         VLqZvkybQFQWB1EHFnExTGqjRUn3VInmnyq06fM6K1L8EUfzB/uGfVckF4nQTWAgEJKm
-         R1xSOmaINZmxiffOxD+BK9kMmChBKHkreK5+oSe53aGqDxfG+5HyIdiWrrSEBqpT3D4N
-         a/UW9o0pkKOO8J/NQuEI6W1EtNBHhJ1QCKjFMdQd8IUrUP2xBWKEezwYScVc9kPjlAQk
-         PeEftBJON/6ubwQRTUiqpWueDxvdRxy8rKZ3ytsY9Z94Ay8D4U3UKo5iVKescOtipdkD
-         WhJg==
-In-Reply-To: <20170807091136.942E8C7B91F@mictlantecuhtli.metztli-it.com>
+Content-Disposition: inline
+In-Reply-To: <20170806164428.2273-23-mikko.rapeli@iki.fi>
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="windows-1252"; format="flowed"
-To: Jose R Rodriguez <jose@mictlantecuhtli.metztli-it.com>, reiserfs-devel@vger.kernel.org
+To: Mikko Rapeli <mikko.rapeli@iki.fi>
+Cc: linux-kernel@vger.kernel.org, linux-api@vger.kernel.org, reiserfs-devel@vger.kernel.org
 
-Yes, rootfs it is one of the best patterns for default mode.
 
-But the most impressive performance numbers can be observed
-on a set of well-squeezable files, if you compress files with only
-even (or only odd) object IDs (and pass management to unix-file
-plugin for other files). This phenomenon is not yet investigated.
+--/0U0QBNx7JIUZLHm
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Edward.
+On Sun, Aug 06, 2017 at 06:44:13PM +0200, Mikko Rapeli wrote:
+> Fixes userspace compilation error:
+>=20
+> error: unknown type name =E2=80=98size_t=E2=80=99
+>   size_t length;
+>=20
+> Signed-off-by: Mikko Rapeli <mikko.rapeli@iki.fi>
+> Cc: reiserfs-devel@vger.kernel.org
+> ---
+>  include/uapi/linux/reiserfs_xattr.h | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>=20
+> diff --git a/include/uapi/linux/reiserfs_xattr.h b/include/uapi/linux/rei=
+serfs_xattr.h
+> index 38fdd648be21..af52b38ef783 100644
+> --- a/include/uapi/linux/reiserfs_xattr.h
+> +++ b/include/uapi/linux/reiserfs_xattr.h
+> @@ -18,7 +18,7 @@ struct reiserfs_xattr_header {
+>  struct reiserfs_security_handle {
+>  	const char *name;
+>  	void *value;
+> -	size_t length;
+> +	__kernel_size_t length;
+>  };
+> =20
+>  #endif  /*  _LINUX_REISERFS_XATTR_H  */
 
-On 08/07/2017 11:11 AM, Jose R Rodriguez wrote:
-> Niltze, all-
->
-> Here is a link for reiser4 -patched kernel 4.11.12 end of life (EOL) sour=
-ce that I used to generate UDEB reiser4 modules, etc. for latest Metztli Re=
-iser4 debian 9.1 Stretch netboot:
-> < https://sourceforge.net/p/metztli-reiser4/code/ >
->
-> Please note that upstream 4.11.12-for-4.11.11 patch was applied to debian=
- kernel 4.11.11-1 and wrapped in its complementing version packaging =E2=80=
-=93 all hacked for smooth installation of pertinent patches.
->
-> I have local and Google cloud Metztli Reiser4 instances running with abov=
-e kernel.
->
-> For the cloud this time I decided to try creating an image with (default)=
- transparent compression reiser4 root fs. What surprised me is how fast and=
- efficient the reiser4 transparent compression image performs in the Google=
- cloud instance. I was expecting a noticeable performance penalty but so fa=
-r it's extremely fast. I am still testing:
-> < https://metztli.it/readOnlyEphemeral/gce-reiser4_transparent-compressio=
-n.png >
->
-> After local creation in VirtualBox and subsequent preparation and optimiz=
-ation for the Google Compute Engine (GCE), the image is tarred and uploaded=
- to a Google storage repository - from there the image is added (via local =
-SDK or web console) to an image debian family in one's project.
->
-> If anyone is interested in the reiser4 transparent compression tarred ima=
-ge ~500MB for their Google Compute Engine project, please let me know.
->
->
-> Best Professional Regards.
->
->
+I submitted an alternative fix for this bug some time ago, see
+http://lkml.kernel.org/r/20170228005328.GA27363@altlinux.org
 
+
+--=20
+ldv
+
+--/0U0QBNx7JIUZLHm
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIcBAEBCAAGBQJZikZ3AAoJEAVFT+BVnCUISdcQAPb2hLuWAbJoW++i7xw01QYx
+masSmEYuuf3xdgTsvZKWe73utlbsUYRgvtlVp6QjuYtA48LSwXb6YaGUstqbIxPM
+AaMkSkB07CSw9Dt0YdIpnmROx/lVGZovHxOzbyPB6+kCh0WzUOg1RReGRBvYT3Zo
+elNSaV8swzs4Eed7K9oFothjIzmhCHk4LsKsXzC94RaX/wB0wzgDkD/5jek4Vb3a
+Jk+TMErEN5GEXX6/QLWqMoLftwWN6t5AdHUz63eal61kY82xppnnwG45HdQbuDsd
+LkgIt5HIP3AFC1i+oebGXrCOgsEp5sjjp1Cj2WOi/LxtKrKZ6XGiXaa1lAjjkXhR
+pBH38lUn7H6XnCM4vP0oSz7XzYLB4KZeWcG4ABCDc/drO+uWpL0KdGLkQtRCb4x2
+jAeNnWbQaSSfOXXXHKspAX/AzTBo75G4jWriP3qzAS2ve6faHQKmwp0W/MnqEt+s
+UKoSk4qGOCoTqWH2U5V91+brcqak2zWndBDmzb46qDmv4vViHRBdqV8tyOzeXYRj
+iyyAn151eBEEhcA9lP0U1DpCPQHq4zsjNv7Y63OUnxzpKhoGPHRVCAUVYm1jkmD6
+VV6Zt9QkKRRVLaDqqBj6RG3DegoMtLa6+zg390EN47F2YjXtQIX9QQC/JUpoWim6
+/Q9J+VcAAv2Lph0UiZTm
+=lZv8
+-----END PGP SIGNATURE-----
+
+--/0U0QBNx7JIUZLHm--
