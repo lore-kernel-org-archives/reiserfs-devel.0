@@ -1,57 +1,37 @@
-From: Shankara Pailoor <sp3485@columbia.edu>
-Subject: Re: Hung Task Linux 4.13-rc7 Reiserfs
-Date: Sat, 30 Sep 2017 15:20:25 -0400
-Message-ID: <CAASgV=tjsY1tdxryj_3_TeA_N_SjbXUoUfVd8fu33+dHTx13tw@mail.gmail.com>
-References: <CAASgV=sdweCbYxZRn3RR_gEm5qzyjLRHq+Ctk1vTD0yj5VjjLw@mail.gmail.com>
+From: ANDY KENNEDY <ANDY.KENNEDY@adtran.com>
+Subject: Real status of ReiserFS4?
+Date: Tue, 3 Oct 2017 22:29:34 +0000
+Message-ID: <F9C551623D2CBB4C9488801D14F864C60154C6BE9F@ex-mb1.corp.adtran.com>
 Mime-Version: 1.0
-Return-path: <owner-linux-mm@kvack.org>
-In-Reply-To: <CAASgV=sdweCbYxZRn3RR_gEm5qzyjLRHq+Ctk1vTD0yj5VjjLw@mail.gmail.com>
-Sender: owner-linux-mm@kvack.org
+Content-Transfer-Encoding: 8BIT
+Return-path: <reiserfs-devel-owner@vger.kernel.org>
+Content-Language: en-US
+Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: LKML <linux-kernel@vger.kernel.org>, reiserfs-devel@vger.kernel.org, linux-mm@kvack.org
-Cc: Andrew Zhu Aday <andrew.aday@columbia.edu>, syzkaller <syzkaller@googlegroups.com>
+To: "'reiserfs-devel@vger.kernel.org'" <reiserfs-devel@vger.kernel.org>
 
-Hi,
+All,
 
-I have a reproducer program. It takes about 3-5 minutes to trigger the
-hang. The only calls are mmap, open, write, and readahead and the
-writes are fairly small (512 bytes).
+I've searched around on the web a bit and found various folks spouting
+off about Reiser4 here and there.  I am about to reinstall a system and
+want to choose the right filesystem.  I read some report about ReiserFS
+v3 not being multi-thread safe and that ext4 ran circles around it.  I
+was disappointed at the hanging I was getting on ext4, so switched back
+to ReiserFS and got more consistent high performance.  I have a power-
+house system built with a large HW Raid 5 drive and want to reformat
+and repartition that sucker up.  In your opinion, what is the best
+filesystem to use right now?  Keeping in mind that I do low-level
+driver work for my company and am used to hacking around in the kernel,
+so patching a kernel doesn't frighten me at all.
 
-Reproducer Program: https://pastebin.com/cx1cgABc
-Report: https://pastebin.com/uGTAw45E
-Logs: https://pastebin.com/EaiE0JLf
-Kernel Configs: https://pastebin.com/i6URdADw
+It looks like Reiser4 still isn't in the mainline kernel... which is
+disappointing to me that we developers also allow political
+bureaucracy to shadow over potentially better solutions.  So, what is
+the sate of Reiser4 and should I go with that for my 16-core system,
+stick with Reiser3, or grab hold to ext4?
 
-Regards,
-Shankara
+Thanks for your opinion in advance!
 
-On Fri, Sep 29, 2017 at 11:56 PM, Shankara Pailoor <sp3485@columbia.edu> wrote:
-> Hi,
->
-> I am fuzzing the kernel 4.13-rc7 with Syzkaller with Reiserfs. I am
-> getting the following crash:
->
-> INFO: task kworker/0:3:1103 blocked for more than 120 seconds.
->
->
-> Here is the full stack trace. I noticed that there are a few tasks
-> holding a sbi->lock. Below are a report and a log of all the programs
-> executing at the time of the incident.
->
->
-> Report: https://pastebin.com/uGTAw45E
-> Logs: https://pastebin.com/EaiE0JLf
-> Kernel Configs: https://pastebin.com/i6URdADw
->
-> I don't have a reproducer yet and any assistance would be appreciated.
->
-> Regards,
-> Shankara
+Andy
 
---
-To unsubscribe, send a message with 'unsubscribe linux-mm' in
-the body to majordomo@kvack.org.  For more info on Linux MM,
-see: http://www.linux-mm.org/ .
-Don't email: <a href=mailto:"dont@kvack.org"> email@kvack.org </a>
