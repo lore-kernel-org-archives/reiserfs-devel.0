@@ -1,84 +1,85 @@
-From: Edward Shishkin <edward.shishkin@gmail.com>
+From: jose@huitzilopochtli.metztli-it.com (Metztli Information Technology)
 Subject: Re: Real status of ReiserFS4?
-Date: Wed, 4 Oct 2017 22:27:57 +0200
-Message-ID: <4f7994bf-3210-2d98-8fee-f4ba1df873ad@gmail.com>
-References: <F9C551623D2CBB4C9488801D14F864C60154C6BE9F@ex-mb1.corp.adtran.com>
- <2027a1de-0aac-97f2-40f0-401e585e38ae@gmail.com>
- <F9C551623D2CBB4C9488801D14F864C60154C6C4FE@ex-mb1.corp.adtran.com>
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+Date: Wed,  4 Oct 2017 22:56:50 -0700 (PDT)
+Message-ID: <20171005055650.54653A9DE29@huitzilopochtli.metztli-it.com>
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:subject:to:references:message-id:date:user-agent:mime-version
-         :in-reply-to:content-transfer-encoding:content-language;
-        bh=bu3EZ494GsVAs+WNrltBzEJuzGEKgXBn7X3Rj0xtdH0=;
-        b=HBVVwTv8QeQSRCicoeSxmvD6HCG3iGW0bKMHbNQgmg8Z609BPjY9oAhM6Ro9Z26LVt
-         Tfe+y0uIN95fwzT6husvHBRyxr6tpP8tNlltf5/CFhR59qEGl8KR96lYdZrSlYkdfEdj
-         SsPM8TtDJFCR1wFTi7w5y6/XvB8JdDMQBV4BRdUue1u3mTqGOxcz+O9PqtWWdphDt8My
-         IH+Wa+GlaDfJfEzk0eJsuu4iCqe1rhf5r/gV6TsMr+thFMI7/yDxNgTEj0dpU0KpayBE
-         ldRfKp8Bz+lliJe0pUOij40CnUN1onDWDlzGOnYOmyLnE57m8IwvbMFLXVBlSvSiyJ0g
-         qLhA==
-In-Reply-To: <F9C551623D2CBB4C9488801D14F864C60154C6C4FE@ex-mb1.corp.adtran.com>
-Content-Language: en-US
+DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mixtli.metztli.it; q=dns/txt;
+ s=mx; t=1507183011; h=From: Date: Message-Id: To: Subject: Sender;
+ bh=o8CWIVCuBn7KvYJTD5GsRD134f5A5dyWxeEUvTcJkYc=; b=kWQuV35o4U8BXCNTCi6YvT0mr9Iw+cjFi8UtbS63h0uC/nWZd7m1nNB4vRnhIM3dL0D0O5s7
+ R1rps+TWE+Y0fYlY39PJQ3yK8eppyJiAlldB4oBWIzACS3xieH2s+ih5hrHzeLEppvF0Jwx8
+ cx045ifd56NgyrYCZbEodjV16dc=
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: ANDY KENNEDY <ANDY.KENNEDY@adtran.com>, "'reiserfs-devel@vger.kernel.org'" <reiserfs-devel@vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: reiserfs-devel@vger.kernel.org
 
-On 10/04/2017 05:46 PM, ANDY KENNEDY wrote:
->> Basically, it is stable (as of the latest stuff release). However,
->> I would recommend reiser4 only for personal needs, not for production
->> (corporate use). The latter requires some work to be done in active
-> Yeah, that was what I was told in the late 90's when I put an early
-> rev of ReiserFS on a production server with a whopping 75GB of storage.
->
-> Eventually, after about the 5 power loss on the system, it corrupted
-> that partition.  Reiserfs-progs was able to recover it, though.  So,
-> is this one of those cases where if I put it on a production system it
-> will work great as long as I don't improperly drop power on it?
+> All,
+> 
+> I've searched around on the web a bit and found various folks spouting
+> off about Reiser4 here and there.  I am about to reinstall a system and
+> want to choose the right filesystem.  I read some report about ReiserFS
+> v3 not being multi-thread safe and that ext4 ran circles around it.  I
+> was disappointed at the hanging I was getting on ext4,
+hmmm...
+makes me wonder why it is the default filesystem for Debian, even on cloud images
+ expanding to 2TB (Max); I thought it had to do more than being UNIX 2038 compliant:
 
-In the late 90's ReiserFS (v3.2) hadn't been possessing even a journal.
-Now Reiser4 has an advanced transaction manager allowing to choose a
-transaction model (journaling, write-anywhere, etc), which is most
-suitable for your storage media and workload.
-So, definitely not those cases :)
+< https://metztli.it/blog/index.php/amatl/reiser-nahui/reiser4-filesystem-and-the-unix >
 
-> I really like the stability of ReiserFS over everything else I've used.
->
->> collaboration with administrators of production systems. Reiser4 has a
-> I own all of these systems.  Most are built from scratch.
+> so switched back
+> to ReiserFS and got more consistent high performance.  I have a power-
+> house system built with a large HW Raid 5 drive and want to reformat
+> and repartition that sucker up.  In your opinion, what is the best
+> filesystem to use right now?  Keeping in mind that I do low-level
+> driver work for my company and am used to hacking around in the kernel,
+> so patching a kernel doesn't frighten me at all.
+> 
+> It looks like Reiser4 still isn't in the mainline kernel... which is
+> disappointing to me that we developers also allow political
+> bureaucracy
+In my experience, FOSS has a lot of moralist-bullsh!tters (bullies actually);
+both developers/maintainers and 'evangelists'
+who even masturbate on a name change for reiser[fs/4] *without* even contributing
+code to or builds of the source.
 
-I am afraid that it can be not enough. Some production-critical issues
-require substantial efforts (profiling, fixing, etc). Normally it is a
-business for paid developers, while we all are volunteers whose main time
-is occupied with other things.
+i.e., < https://twitter.com/BrideOfLinux/status/763008210856972288 >
+even referencing Mr. Shishkin GitHub repo for specific critique:
+< https://twitter.com/schestowitz/status/908782499714789377 >
 
->> number of open tickets/bugreports, but all of those problems are hard
->> reproducible. Every sophisticated file system has a list of such
->> issues, though.
-> Yeah, hence the question above.
->
->> It is really hard to corrupt a reiser4 partition in a way that fsck
->> will refuse to fix it. Nevertheless, I wouldn't recommend to use too
->> large partitions. The smaller partition, the larger chances, that I'll
->> take a look at it, if any problems with fsck.
-> I have a back-up copy (actually several back-up copies).  And, this is
-> data that doesn't change that much, so I can recover fairly easily.
->
->> Also, keep in mind that
->> intelligent compression (default mode) is not optimal for large media-
->> files (seehttps://reiser4.wiki.kernel.org/index.php/Reiser4_Howto  for
->> details).
-> With a 15TB drive, I'm not worried about compression.  That, IMO, would
-> be a performance hit anyway.
+> to shadow over potentially better solutions.  So, what is
+> the sate of Reiser4 and should I go with that for my 16-core system,
+> stick with Reiser3, or grab hold to ext4?
+> 
+> Thanks for your opinion in advance!
 
-Depending on types of data and workload, compression can dramatically
-speed up, or slow down things. The best case is working with sources
-(compilation, etc). The worst case is removing a large media-file which
-contains zeros in its head. If you are not sure about data/workload,
-then better turn compression off.
+Quirk:
+Upon rebooting in a cloud instance as well as in a laptop, there may be times when the patched kernel hangs early
+without completing the full boot procedure.
+Notwithstanding it is enough to power off the machine and power on back on again (even in cloud instances).
+Nevertheless, no data loss I have experienced.
 
-Thanks,
-Edward.
+< https://metztli.it/blog/index.php/amatl/amatl-main/install-reports/metztli-reiser4-successful-debian-stretch >
+ If you will be doing 15TB, I would
+partition with GPT and I would not format with (default) transparent compression until Ed perfects the
+technique (yet I am doing transparent compression in my daily use development 1.2TB laptop ;-)
 
+
+> 
+> Andy
+> 
+
+Best Professional Regards.
+
+-- 
+Jose R R
+http://metztli.it
+---------------------------------------------------------------------------------------------
+Download Metztli Reiser4: Debian Stretch with Linux 4.12
+---------------------------------------------------------------------------------------------
+for AMD64 https://sf.net/projects/metztli-reiser4/
+---------------------------------------------------------------------------------------------
+Try at no charge http://b2evolution.net for http://OpenShift.com PaaS
+---------------------------------------------------------------------------------------------
+from our GitHub http://Nepohualtzintzin.com repository. Cloud the easy way!
