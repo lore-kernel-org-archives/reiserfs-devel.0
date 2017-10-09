@@ -1,85 +1,126 @@
-From: jose@huitzilopochtli.metztli-it.com (Metztli Information Technology)
-Subject: Re: Real status of ReiserFS4?
-Date: Wed,  4 Oct 2017 22:56:50 -0700 (PDT)
-Message-ID: <20171005055650.54653A9DE29@huitzilopochtli.metztli-it.com>
-Return-path: <reiserfs-devel-owner@vger.kernel.org>
-DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mixtli.metztli.it; q=dns/txt;
- s=mx; t=1507183011; h=From: Date: Message-Id: To: Subject: Sender;
- bh=o8CWIVCuBn7KvYJTD5GsRD134f5A5dyWxeEUvTcJkYc=; b=kWQuV35o4U8BXCNTCi6YvT0mr9Iw+cjFi8UtbS63h0uC/nWZd7m1nNB4vRnhIM3dL0D0O5s7
- R1rps+TWE+Y0fYlY39PJQ3yK8eppyJiAlldB4oBWIzACS3xieH2s+ih5hrHzeLEppvF0Jwx8
- cx045ifd56NgyrYCZbEodjV16dc=
-Sender: reiserfs-devel-owner@vger.kernel.org
+From: Ben Hutchings <ben@decadent.org.uk>
+Subject: [PATCH 3.2 52/74] reiserfs: Don't clear SGID when inheriting ACLs
+Date: Mon, 09 Oct 2017 13:30:34 +0100
+Message-ID: <lsq.1507552234.259257642@decadent.org.uk>
+References: <lsq.1507552233.547064726@decadent.org.uk>
+Mime-Version: 1.0
+Content-Transfer-Encoding: 8bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <lsq.1507552233.547064726@decadent.org.uk>
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
-MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: reiserfs-devel@vger.kernel.org
+To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Cc: akpm@linux-foundation.org, Jan Kara <jack@suse.cz>, reiserfs-devel@vger.kernel.org
 
-> All,
-> 
-> I've searched around on the web a bit and found various folks spouting
-> off about Reiser4 here and there.  I am about to reinstall a system and
-> want to choose the right filesystem.  I read some report about ReiserFS
-> v3 not being multi-thread safe and that ext4 ran circles around it.  I
-> was disappointed at the hanging I was getting on ext4,
-hmmm...
-makes me wonder why it is the default filesystem for Debian, even on cloud images
- expanding to 2TB (Max); I thought it had to do more than being UNIX 2038 compliant:
+3.2.94-rc1 review patch.  If anyone has any objections, please let me know.
 
-< https://metztli.it/blog/index.php/amatl/reiser-nahui/reiser4-filesystem-and-the-unix >
+------------------
 
-> so switched back
-> to ReiserFS and got more consistent high performance.  I have a power-
-> house system built with a large HW Raid 5 drive and want to reformat
-> and repartition that sucker up.  In your opinion, what is the best
-> filesystem to use right now?  Keeping in mind that I do low-level
-> driver work for my company and am used to hacking around in the kernel,
-> so patching a kernel doesn't frighten me at all.
-> 
-> It looks like Reiser4 still isn't in the mainline kernel... which is
-> disappointing to me that we developers also allow political
-> bureaucracy
-In my experience, FOSS has a lot of moralist-bullsh!tters (bullies actually);
-both developers/maintainers and 'evangelists'
-who even masturbate on a name change for reiser[fs/4] *without* even contributing
-code to or builds of the source.
+From: Jan Kara <jack@suse.cz>
 
-i.e., < https://twitter.com/BrideOfLinux/status/763008210856972288 >
-even referencing Mr. Shishkin GitHub repo for specific critique:
-< https://twitter.com/schestowitz/status/908782499714789377 >
+commit 6883cd7f68245e43e91e5ee583b7550abf14523f upstream.
 
-> to shadow over potentially better solutions.  So, what is
-> the sate of Reiser4 and should I go with that for my 16-core system,
-> stick with Reiser3, or grab hold to ext4?
-> 
-> Thanks for your opinion in advance!
+When new directory 'DIR1' is created in a directory 'DIR0' with SGID bit
+set, DIR1 is expected to have SGID bit set (and owning group equal to
+the owning group of 'DIR0'). However when 'DIR0' also has some default
+ACLs that 'DIR1' inherits, setting these ACLs will result in SGID bit on
+'DIR1' to get cleared if user is not member of the owning group.
 
-Quirk:
-Upon rebooting in a cloud instance as well as in a laptop, there may be times when the patched kernel hangs early
-without completing the full boot procedure.
-Notwithstanding it is enough to power off the machine and power on back on again (even in cloud instances).
-Nevertheless, no data loss I have experienced.
+Fix the problem by moving posix_acl_update_mode() out of
+__reiserfs_set_acl() into reiserfs_set_acl(). That way the function will
+not be called when inheriting ACLs which is what we want as it prevents
+SGID bit clearing and the mode has been properly set by
+posix_acl_create() anyway.
 
-< https://metztli.it/blog/index.php/amatl/amatl-main/install-reports/metztli-reiser4-successful-debian-stretch >
- If you will be doing 15TB, I would
-partition with GPT and I would not format with (default) transparent compression until Ed perfects the
-technique (yet I am doing transparent compression in my daily use development 1.2TB laptop ;-)
+Fixes: 073931017b49d9458aa351605b43a7e34598caef
+CC: reiserfs-devel@vger.kernel.org
+Signed-off-by: Jan Kara <jack@suse.cz>
+[bwh: Backported to 3.2: the __reiserfs_set_acl() function didn't exist,
+ so added it]
+Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
+---
+ fs/reiserfs/xattr_acl.c | 12 +++++++-----
+ 1 file changed, 7 insertions(+), 5 deletions(-)
 
+--- a/fs/reiserfs/xattr_acl.c
++++ b/fs/reiserfs/xattr_acl.c
+@@ -250,15 +250,9 @@ struct posix_acl *reiserfs_get_acl(struc
+ 	return acl;
+ }
+ 
+-/*
+- * Inode operation set_posix_acl().
+- *
+- * inode->i_mutex: down
+- * BKL held [before 2.5.x]
+- */
+ static int
+-reiserfs_set_acl(struct reiserfs_transaction_handle *th, struct inode *inode,
+-		 int type, struct posix_acl *acl)
++__reiserfs_set_acl(struct reiserfs_transaction_handle *th, struct inode *inode,
++		   int type, struct posix_acl *acl)
+ {
+ 	char *name;
+ 	void *value = NULL;
+@@ -271,11 +265,6 @@ reiserfs_set_acl(struct reiserfs_transac
+ 	switch (type) {
+ 	case ACL_TYPE_ACCESS:
+ 		name = POSIX_ACL_XATTR_ACCESS;
+-		if (acl) {
+-			error = posix_acl_update_mode(inode, &inode->i_mode, &acl);
+-			if (error)
+-				return error;
+-		}
+ 		break;
+ 	case ACL_TYPE_DEFAULT:
+ 		name = POSIX_ACL_XATTR_DEFAULT;
+@@ -316,6 +305,26 @@ reiserfs_set_acl(struct reiserfs_transac
+ 	return error;
+ }
+ 
++/*
++ * Inode operation set_posix_acl().
++ *
++ * inode->i_mutex: down
++ */
++static int
++reiserfs_set_acl(struct reiserfs_transaction_handle *th, struct inode *inode,
++		 int type, struct posix_acl *acl)
++{
++	int error;
++
++	if (type == ACL_TYPE_ACCESS && acl) {
++		error = posix_acl_update_mode(inode, &inode->i_mode,
++					      &acl);
++		if (error)
++			return error;
++	}
++	return __reiserfs_set_acl(th, inode, type, acl);
++}
++
+ /* dir->i_mutex: locked,
+  * inode is new and not released into the wild yet */
+ int
+@@ -350,8 +359,8 @@ reiserfs_inherit_default_acl(struct reis
+ 	if (acl) {
+ 		/* Copy the default ACL to the default ACL of a new directory */
+ 		if (S_ISDIR(inode->i_mode)) {
+-			err = reiserfs_set_acl(th, inode, ACL_TYPE_DEFAULT,
+-					       acl);
++			err = __reiserfs_set_acl(th, inode, ACL_TYPE_DEFAULT,
++						 acl);
+ 			if (err)
+ 				goto cleanup;
+ 		}
+@@ -364,7 +373,7 @@ reiserfs_inherit_default_acl(struct reis
+ 
+ 		/* If we need an ACL.. */
+ 		if (err > 0)
+-			err = reiserfs_set_acl(th, inode, ACL_TYPE_ACCESS, acl);
++			err = __reiserfs_set_acl(th, inode, ACL_TYPE_ACCESS, acl);
+ 	      cleanup:
+ 		posix_acl_release(acl);
+ 	} else {
 
-> 
-> Andy
-> 
-
-Best Professional Regards.
-
--- 
-Jose R R
-http://metztli.it
----------------------------------------------------------------------------------------------
-Download Metztli Reiser4: Debian Stretch with Linux 4.12
----------------------------------------------------------------------------------------------
-for AMD64 https://sf.net/projects/metztli-reiser4/
----------------------------------------------------------------------------------------------
-Try at no charge http://b2evolution.net for http://OpenShift.com PaaS
----------------------------------------------------------------------------------------------
-from our GitHub http://Nepohualtzintzin.com repository. Cloud the easy way!
