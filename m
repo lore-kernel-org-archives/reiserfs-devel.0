@@ -1,75 +1,52 @@
-From: Ben Hutchings <ben@decadent.org.uk>
-Subject: [PATCH 3.16 122/192] reiserfs: Don't clear SGID when inheriting ACLs
-Date: Mon, 09 Oct 2017 13:44:24 +0100
-Message-ID: <lsq.1507553064.531390536@decadent.org.uk>
-References: <lsq.1507553063.449494954@decadent.org.uk>
-Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Return-path: <stable-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <lsq.1507553063.449494954@decadent.org.uk>
-Sender: stable-owner@vger.kernel.org
+From: jose@huitzilopochtli.metztli-it.com (Metztli Information Technology)
+Subject: Blog: Reiser4 hacking upstream linux.org 4.13.7 into a Debian packaging for Linux 4.13.4-2
+Date: Wed, 18 Oct 2017 06:26:57 -0700 (PDT)
+Message-ID: <20171018132657.CD02CCE4EC2@huitzilopochtli.metztli-it.com>
+Return-path: <reiserfs-devel-owner@vger.kernel.org>
+DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mixtli.metztli.it; q=dns/txt;
+ s=mx; t=1508333219; h=From: Date: Message-Id: To: Subject: Sender;
+ bh=30B/5qZxT4PPU7EJjdlbvo07x3aJO/pUsblq2okDahs=; b=ZLu+PIoBNhm7Ru664LhDU81mbOqurFIt2s8F6YPBbHXMexg5gMVbXqifz7Zc04kaeqAzvagW
+ 5YYE+IWc2mOVnbLwF9BVAYc8bIrWbTdXB5eutJepiNbGD8odAwYZIU7qwc6ZKVUkr+pf2jwm
+ VIYAPu2oZYbjhHZJweEYkSAdJCc=
+Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
+MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
-To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc: akpm@linux-foundation.org, reiserfs-devel@vger.kernel.org, Jan Kara <jack@suse.cz>
+Content-Transfer-Encoding: 7bit
+To: reiserfs-devel@vger.kernel.org
 
-3.16.49-rc1 review patch.  If anyone has any objections, please let me know.
+ 
 
-------------------
+Niltze all,
 
-From: Jan Kara <jack@suse.cz>
+Posted a blog entry yesterday as proof-of-concept (PoC)
+"Coyolxauhqui: Build Reiser4 -patched Linux Kernel, Headers, and Modules, for Stretch-Backports the 'Debian Way'."
+< https://metztli.it/blog/index.php/coyolxauhqui-build-reiser4-patched-linux >
 
-commit 6883cd7f68245e43e91e5ee583b7550abf14523f upstream.
+showing how to apply reiser4 patch to Linux kernel the 'Debian way'. Detailed procedure notions may be generalized to keep up with subsequent reiser4 on Debian AMD64; and perhaps other architectures.
 
-When new directory 'DIR1' is created in a directory 'DIR0' with SGID bit
-set, DIR1 is expected to have SGID bit set (and owning group equal to
-the owning group of 'DIR0'). However when 'DIR0' also has some default
-ACLs that 'DIR1' inherits, setting these ACLs will result in SGID bit on
-'DIR1' to get cleared if user is not member of the owning group.
+This is specially true since as debian debian packaging kernel maintainers modify their code and/or patches I have experienced lapses where I have to figure out why something broke my build.
 
-Fix the problem by moving posix_acl_update_mode() out of
-__reiserfs_set_acl() into reiserfs_set_acl(). That way the function will
-not be called when inheriting ACLs which is what we want as it prevents
-SGID bit clearing and the mode has been properly set by
-posix_acl_create() anyway.
+For instance it happened during the debian linux 4.11 to 4.12 minor increment -- even debian official builds were missing linux-headers-[]-common-* DEB package.
+< https://lists.debian.org/debian-kernel/2017/08/msg00146.html >
 
-Fixes: 073931017b49d9458aa351605b43a7e34598caef
-CC: reiserfs-devel@vger.kernel.org
-Signed-off-by: Jan Kara <jack@suse.cz>
-[bwh: Backported to 3.16: adjust context]
-Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
----
- fs/reiserfs/xattr_acl.c | 12 +++++++-----
- 1 file changed, 7 insertions(+), 5 deletions(-)
+To that end, I just hope creative, open/curiosity-minded hackers and/or developers may find the PoC useful so as to increase the pool of developers who may later contribute to a reiser4 community.
 
---- a/fs/reiserfs/xattr_acl.c
-+++ b/fs/reiserfs/xattr_acl.c
-@@ -37,7 +37,14 @@ reiserfs_set_acl(struct inode *inode, st
- 	error = journal_begin(&th, inode->i_sb, jcreate_blocks);
- 	reiserfs_write_unlock(inode->i_sb);
- 	if (error == 0) {
-+		if (type == ACL_TYPE_ACCESS && acl) {
-+			error = posix_acl_update_mode(inode, &inode->i_mode,
-+						      &acl);
-+			if (error)
-+				goto unlock;
-+		}
- 		error = __reiserfs_set_acl(&th, inode, type, acl);
-+unlock:
- 		reiserfs_write_lock(inode->i_sb);
- 		error2 = journal_end(&th);
- 		reiserfs_write_unlock(inode->i_sb);
-@@ -245,11 +252,6 @@ __reiserfs_set_acl(struct reiserfs_trans
- 	switch (type) {
- 	case ACL_TYPE_ACCESS:
- 		name = POSIX_ACL_XATTR_ACCESS;
--		if (acl) {
--			error = posix_acl_update_mode(inode, &inode->i_mode, &acl);
--			if (error)
--				return error;
--		}
- 		break;
- 	case ACL_TYPE_DEFAULT:
- 		name = POSIX_ACL_XATTR_DEFAULT;
+As a matter of fact, the source that I used to illustrate the reiser4 hacking procedure the 'debian way' generated DEBs that were subsequently uploaded to source forge.
+< https://sourceforge.net/projects/metztli-reiser4/files/Reiser4-Linux-4.13.7-2_for-Stretch/ >
+Currently I am using the reiser4 enabled kernel 4.13.7-2 that I built by the procedure described in the blog.
 
+Additionally, as I decommissioned an earlier Reiser4 Debian Jessie (old stable) small cloud instance web server -- which had been operating for approximately 2 years on Google Compute Engine (GCE) and only rebooted for kernel upgrade
+< https://pbs.twimg.com/media/DMFzxPwVQAAApHt.jpg:large >
+-- I migrated the data to a Metztli-Reiser4 image cloud instance on GCE, too; on both I built PHP [5/6/7].x and HTTPD 2.4.[20/27] No data loss.
+
+
+Best Professional Regards.
+
+-- 
+Jose R R
+http://metztli.it
+---------------------------------------------------------------------------------------------
+Download Metztli Reiser4: Debian Stretch with Linux 4.12
+---------------------------------------------------------------------------------------------
+for AMD64 https://sf.net/projects/metztli-reiser4/
