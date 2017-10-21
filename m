@@ -1,52 +1,63 @@
-From: jose@huitzilopochtli.metztli-it.com (Metztli Information Technology)
-Subject: Blog: Reiser4 hacking upstream linux.org 4.13.7 into a Debian packaging for Linux 4.13.4-2
-Date: Wed, 18 Oct 2017 06:26:57 -0700 (PDT)
-Message-ID: <20171018132657.CD02CCE4EC2@huitzilopochtli.metztli-it.com>
+From: Nicolas Belouin <nicolas@belouin.fr>
+Subject: [RFC PATCH 1/2] security, capabilities: create CAP_TRUSTED
+Date: Sat, 21 Oct 2017 15:45:57 +0200
+Message-ID: <20171021134558.21195-1-nicolas__49128.3762189143$1508594273$gmane$org@belouin.fr>
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
-DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mixtli.metztli.it; q=dns/txt;
- s=mx; t=1508333219; h=From: Date: Message-Id: To: Subject: Sender;
- bh=30B/5qZxT4PPU7EJjdlbvo07x3aJO/pUsblq2okDahs=; b=ZLu+PIoBNhm7Ru664LhDU81mbOqurFIt2s8F6YPBbHXMexg5gMVbXqifz7Zc04kaeqAzvagW
- 5YYE+IWc2mOVnbLwF9BVAYc8bIrWbTdXB5eutJepiNbGD8odAwYZIU7qwc6ZKVUkr+pf2jwm
- VIYAPu2oZYbjhHZJweEYkSAdJCc=
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: reiserfs-devel@vger.kernel.org
+To: Jan Kara <jack@suse.com>, Theodore Ts'o <tytso@mit.edu>, Andreas Dilger <adilger.kernel@dilger.ca>, Jaegeuk Kim <jaegeuk@kernel.org>, Chao Yu <yuchao0@huawei.com>, David Woodhouse <dwmw2@infradead.org>, Dave Kleikamp <shaggy@kernel.org>, Mark Fasheh <mfasheh@versity.com>, Joel Becker <jlbec@evilplan.org>, Miklos Szeredi <miklos@szeredi.hu>, Phillip Lougher <phillip@squashfs.org.uk>, Richard Weinberger <richard@nod.at>, Artem Bityutskiy <dedekind1@gmail.com>, Adrian Hunter <adrian.hunter@intel.com>, Alexander Viro <viro@zeniv.linux.org.uk>, Serge Hallyn <serge@hallyn.com>, Paul Moore <paul@paul-moore.com>, Stephen Smalley <sds@tycho.nsa.gov>, Eric Paris <eparis@parisplace.org>, James Morris <james.l.morris@oracle.com>, linux-ext4@vger.kernel
+Cc: Nicolas Belouin <nicolas@belouin.fr>
 
+with CAP_SYS_ADMIN being bloated, the usefulness of using it to
+flag a process to be entrusted for e.g reading and writing trusted
+xattr is near zero.
+CAP_TRUSTED aims to provide userland with a way to mark a process as
+entrusted to do specific (not specially admin-centered) actions. It
+would for example allow a process to red/write the trusted xattrs.
+
+Signed-off-by: Nicolas Belouin <nicolas@belouin.fr>
+---
+ include/uapi/linux/capability.h     | 6 +++++-
+ security/selinux/include/classmap.h | 5 +++--
+ 2 files changed, 8 insertions(+), 3 deletions(-)
+
+diff --git a/include/uapi/linux/capability.h b/include/uapi/linux/capability.h
+index ce230aa6d928..27e457b93c84 100644
+--- a/include/uapi/linux/capability.h
++++ b/include/uapi/linux/capability.h
+@@ -369,7 +369,11 @@ struct vfs_ns_cap_data {
  
-
-Niltze all,
-
-Posted a blog entry yesterday as proof-of-concept (PoC)
-"Coyolxauhqui: Build Reiser4 -patched Linux Kernel, Headers, and Modules, for Stretch-Backports the 'Debian Way'."
-< https://metztli.it/blog/index.php/coyolxauhqui-build-reiser4-patched-linux >
-
-showing how to apply reiser4 patch to Linux kernel the 'Debian way'. Detailed procedure notions may be generalized to keep up with subsequent reiser4 on Debian AMD64; and perhaps other architectures.
-
-This is specially true since as debian debian packaging kernel maintainers modify their code and/or patches I have experienced lapses where I have to figure out why something broke my build.
-
-For instance it happened during the debian linux 4.11 to 4.12 minor increment -- even debian official builds were missing linux-headers-[]-common-* DEB package.
-< https://lists.debian.org/debian-kernel/2017/08/msg00146.html >
-
-To that end, I just hope creative, open/curiosity-minded hackers and/or developers may find the PoC useful so as to increase the pool of developers who may later contribute to a reiser4 community.
-
-As a matter of fact, the source that I used to illustrate the reiser4 hacking procedure the 'debian way' generated DEBs that were subsequently uploaded to source forge.
-< https://sourceforge.net/projects/metztli-reiser4/files/Reiser4-Linux-4.13.7-2_for-Stretch/ >
-Currently I am using the reiser4 enabled kernel 4.13.7-2 that I built by the procedure described in the blog.
-
-Additionally, as I decommissioned an earlier Reiser4 Debian Jessie (old stable) small cloud instance web server -- which had been operating for approximately 2 years on Google Compute Engine (GCE) and only rebooted for kernel upgrade
-< https://pbs.twimg.com/media/DMFzxPwVQAAApHt.jpg:large >
--- I migrated the data to a Metztli-Reiser4 image cloud instance on GCE, too; on both I built PHP [5/6/7].x and HTTPD 2.4.[20/27] No data loss.
-
-
-Best Professional Regards.
-
+ #define CAP_SYS_MOUNT		38
+ 
+-#define CAP_LAST_CAP         CAP_SYS_MOUNT
++/* Allow read/write trusted xattr */
++
++#define CAP_TRUSTED		39
++
++#define CAP_LAST_CAP         CAP_TRUSTED
+ 
+ #define cap_valid(x) ((x) >= 0 && (x) <= CAP_LAST_CAP)
+ 
+diff --git a/security/selinux/include/classmap.h b/security/selinux/include/classmap.h
+index a873dce97fd5..f5dc8e109f5a 100644
+--- a/security/selinux/include/classmap.h
++++ b/security/selinux/include/classmap.h
+@@ -24,9 +24,10 @@
+ 	    "audit_control", "setfcap"
+ 
+ #define COMMON_CAP2_PERMS  "mac_override", "mac_admin", "syslog", \
+-		"wake_alarm", "block_suspend", "audit_read", "sys_mount"
++		"wake_alarm", "block_suspend", "audit_read", "sys_mount", \
++		"trusted"
+ 
+-#if CAP_LAST_CAP > CAP_SYS_MOUNT
++#if CAP_LAST_CAP > CAP_TRUSTED
+ #error New capability defined, please update COMMON_CAP2_PERMS.
+ #endif
+ 
 -- 
-Jose R R
-http://metztli.it
----------------------------------------------------------------------------------------------
-Download Metztli Reiser4: Debian Stretch with Linux 4.12
----------------------------------------------------------------------------------------------
-for AMD64 https://sf.net/projects/metztli-reiser4/
+2.14.2
+
