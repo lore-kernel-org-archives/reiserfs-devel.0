@@ -1,70 +1,103 @@
-From: Jose R R <jose.r.r@metztli.com>
-Subject: Re: [PATCH] reiser4: fixed bug in reiser4_kill_root()
-Date: Thu, 9 Nov 2017 05:14:36 -0800
-Message-ID: <CAM12Q5R=pJNgnOGBq3SRrsUJZksXGSNN6UAaXjX5cisN2fGaLA@mail.gmail.com>
-References: <f5afe7c5-fd0f-d9d1-5f44-7041858f495f@gmail.com> <CAM12Q5RvGnb6_NdddYzykpG6j=uL0qPyJXoTkDTwk9oT6Boneg@mail.gmail.com>
-Mime-Version: 1.0
+From: jose@huitzilopochtli.metztli-it.com (Metztli Information Technology)
+Subject: Reiser4 for 4.13.0/1 patches and transparent-compression
+Date: Wed, 15 Nov 2017 02:40:06 -0800 (PST)
+Message-ID: <20171115104006.DAFF9EBFEE5@huitzilopochtli.metztli-it.com>
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=metztli-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=NdfrfQ/kPuY6aP2BRIugHNs1iwYefvUjqEp20q3RDuk=;
-        b=Bw0Dq1lxHICIpye2JLc/SM1Vcl87hMPxQD0+adXAo5Rsqi1VQmnTal0pt7LlKbdyVy
-         s9wGQCFvnqZDh6M4c6pBNUDi/0AwGxvaRIWvkhTOi8lT/1+B4yIXWjjAa//j8kc6o7r1
-         z7dNfbGmFXZSgtGPVg+ceiHha3w0AMqrRsdBs/8BCh2EgKs9BKiI6WI+JfA4gLmL0kJA
-         1kdTyt51YlUaoojfujoNtnZ6uF1LPnI7bL8LQuOKSxhJ4Wuy1sGTcFxvJfiocEJA56zU
-         RrbqztoFh1J83BKZqVlgcE0MuZG01JQjxeUN4UYFDKb5GpFChdJpTocbE5JkOb5rpB48
-         uhcQ==
-In-Reply-To: <CAM12Q5RvGnb6_NdddYzykpG6j=uL0qPyJXoTkDTwk9oT6Boneg@mail.gmail.com>
+DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mixtli.metztli.it; q=dns/txt;
+ s=mx; t=1510742409; h=From: Date: Message-Id: To: Subject: Sender;
+ bh=u9QmsVwJkyZq5Y87gDrcP921/AgoDDans12ntTaP7hU=; b=QIwwyUNYeysnkk7bBWoZLvjJTYlulpqZfaYfQzaus3VuobV0n1+XmAFmFIxXnUCPbzOJfwLd
+ MUYu+xaJmViJGUamV0JNVlqGB6lbULdu4SrIIfLh1xGnSyUzBQPG6efh97VT0e89UGc3Bemu
+ fR9nIdJYDiyjOgymQez4Afx9X7g=
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
+MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Edward Shishkin <edward.shishkin@gmail.com>
-Cc: ReiserFS development mailing list <reiserfs-devel@vger.kernel.org>
+To: reiserfs-devel@vger.kernel.org
 
-On Wed, Nov 8, 2017 at 7:31 PM, Jose R R <jose.r.r@metztli.com> wrote:
-> On Wed, Nov 8, 2017 at 12:50 PM, Edward Shishkin
-> <edward.shishkin@gmail.com> wrote:
->> Hi all,
->>
->> Probably, this is the most essential "old sleeping" bug
->> found for the latest 3 years. It could lead to data corruption
->> (not proven). Details are in the changeset.
->> It will go to reiser4-for-4.13.1 and higher. For other
->> stuff please, apply (backport, etc) by yourself.
->>
->
-> Much appreciated, Edward.
->
-> I will apply patch during my build of Linux 4.13.12 for Debian --
-> later in the evening/night -- to give it a spin.
+Niltze, Ed-
 
-Done: wrapped upstream Linux 4.13.12 into (latest) Debian packaging
-for Linux 4.13.11-1 and modified version accordingly for
-stretch-backports:
-< https://sourceforge.net/projects/metztli-reiser4/files/Reiser4-Linux-4.13.12-1_for-Stretch/
->
->
-> uname -a
-> Linux huitzilopochtli 4.13.0-1+reiser4.0.1-amd64 #1 SMP Debian
-> 4.13.11-1+reiser4.0.1 (2017-11-03) x86_64 GNU/Linux
->
-Giving a spin to latest bugfix in transparent-compression environment:
-uname -a
-Linux huitzilopochtli 4.13.0-1+reiser4.0.1-amd64 #1 SMP Debian
-4.13.12-1+reiser4.0.1 (2017-11-04) x86_64 GNU/Linux
+Here is some additional feedback on reiser4 transparent-compression:
 
-Thanks again, Ed.
+
+Under Google Compute Engine (GCE) using resources: --custom-cpu=2 --custom-memory=4GB
+
+Below dmesg lapse occurred while using VBoxManage (command line utility from headless VirtualBox 5.1.30) under latest reiser4-for-4.13.1.patch kernel
+< https://sourceforge.net/projects/metztli-reiser4/files/Reiser4-Linux-4.13.12-1_for-Stretch/ >
+while converting a 2TB virtual machine into its disk.raw equivalent (11-14-2017): 
+
+[..]
+[  207.416756] reiser4: sda4: found disk format 4.0.1.
+[  207.488274] reiser4: sda4: using Hybrid Transaction Model.
+[  965.372697]  sdb: sdb1
+[ 1020.422370] reiser4: sdb1: found disk format 4.0.1.
+[ 1044.098194] reiser4: sdb1: using Hybrid Transaction Model.
+[ 2256.307429] vboxdrv: loading out-of-tree module taints kernel.
+[ 2256.314916] vboxdrv: Found 2 processor cores
+[ 2256.333498] vboxdrv: TSC mode is Invariant, tentative frequency 2199993485 Hz
+[ 2256.340792] vboxdrv: Successfully loaded version 5.1.30 (interface 0x002a0000)
+[ 2265.565041] VBoxNetFlt: Successfully started.
+[ 4898.939952] reiser4[ktxnmgrd:sdb1:r(12134)]: commit_current_atom (/usr/src/build/kernel/tekitl-4.13.12/linux/fs/reiser4/txnmgr.c:1052)[nikita-317
+6]:
+               WARNING: Flushing like mad: 16384
+
+------------------------------------------------
+
+Older:
+with previous patch reiser4-for-4.13.0.patch.gz: logged neary 5k lines snapshot
+ during heavy load (using VirtualBox 5.1.28/30, etc.) and other applications in my local machine.
+ Had to reboot machine as there was no way to stop dmesg flow (Oct 22, 2017):
+
+
+[24068.404896] reiser4[DOMCacheThread(29961)]: assign_conversion_mode (/usr/src/build/kernel/tekitl-4.13/linux/fs/reiser4/plugin/item/ctail.c:1588)[edward-1021]:
+               WARNING: convert_ctail: nothing to attach
+[24068.404938] reiser4[DOMCacheThread(29961)]: assign_conversion_mode (/usr/src/build/kernel/tekitl-4.13/linux/fs/reiser4/plugin/item/ctail.c:1588)[edward-1021]:
+               WARNING: convert_ctail: nothing to attach
+[24068.404950] reiser4[DOMCacheThread(29961)]: assign_conversion_mode (/usr/src/build/kernel/tekitl-4.13/linux/fs/reiser4/plugin/item/ctail.c:1588)[edward-1021]:
+               WARNING: convert_ctail: nothing to attach
+[24068.404962] reiser4[DOMCacheThread(29961)]: assign_conversion_mode (/usr/src/build/kernel/tekitl-4.13/linux/fs/reiser4/plugin/item/ctail.c:1588)[edward-1021]:
+               WARNING: convert_ctail: nothing to attach
+[24068.404974] reiser4[DOMCacheThread(29961)]: assign_conversion_mode (/usr/src/build/kernel/tekitl-4.13/linux/fs/reiser4/plugin/item/ctail.c:1588)[edward-1021]:
+               WARNING: convert_ctail: nothing to attach
+[24068.404986] reiser4[DOMCacheThread(29961)]: checkout_logical_cluster (/usr/src/build/kernel/tekitl-4.13/linux/fs/reiser4/plugin/file/cryptcompress.c:1980)[edward-1430]:
+               WARNING: alloc stream failed with ret=-12
+[24068.404993] reiser4[DOMCacheThread(29961)]: assign_conversion_mode (/usr/src/build/kernel/tekitl-4.13/linux/fs/reiser4/plugin/item/ctail.c:1588)[edward-1021]:
+               WARNING: convert_ctail: nothing to attach
+[24068.405005] reiser4[DOMCacheThread(29961)]: assign_conversion_mode (/usr/src/build/kernel/tekitl-4.13/linux/fs/reiser4/plugin/item/ctail.c:1588)[edward-1021]:
+               WARNING: convert_ctail: nothing to attach
+[24068.405017] reiser4[DOMCacheThread(29961)]: assign_conversion_mode (/usr/src/build/kernel/tekitl-4.13/linux/fs/reiser4/plugin/item/ctail.c:1588)[edward-1021]:
+               WARNING: convert_ctail: nothing to attach
+[24068.405028] reiser4[DOMCacheThread(29961)]: checkout_logical_cluster (/usr/src/build/kernel/tekitl-4.13/linux/fs/reiser4/plugin/file/cryptcompress.c:1980)[edward-1430]:
+               WARNING: alloc stream failed with ret=-12
+[24068.405035] reiser4[DOMCacheThread(29961)]: assign_conversion_mode (/usr/src/build/kernel/tekitl-4.13/linux/fs/reiser4/plugin/item/ctail.c:1588)[edward-1021]:
+               WARNING: convert_ctail: nothing to attach
+
+[...]
+               WARNING: convert_ctail: nothing to attach
+[24075.202165] reiser4[DOMCacheThread(29961)]: checkout_logical_cluster (/usr/src/build/kernel/tekitl-4.13/linux/fs/reiser4/plugin/file/cryptcompress.c:1980)[edward-1430]:
+               WARNING: alloc stream failed with ret=-12
+[24075.202187] reiser4[DOMCacheThread(29961)]: assign_conversion_mode (/usr/src/build/kernel/tekitl-4.13/linux/fs/reiser4/plugin/item/ctail.c:1588)[edward-1021]:
+               WARNING: convert_ctail: nothing to attach
+[24075.202216] reiser4[DOMCacheThread(29961)]: checkout_logical_cluster (/usr/src/build/kernel/tekitl-4.13/linux/fs/reiser4/plugin/file/cryptcompress.c:1980)[edward-1430]:
+               WARNING: alloc stream failed with ret=-12
+[24075.202239] reiser4[DOMCacheThread(29961)]: assign_conversion_mode (/usr/src/build/kernel/tekitl-4.13/linux/fs/reiser4/plugin/item/ctail.c:1588)[edward-1021]:
+               WARNING: convert_ctail: nothing to attach
+[24075.202258] reiser4[DOMCacheThread(29961)]: assign_conversion_mode (/usr/src/build/kernel/tekitl-4.13/linux/fs/reiser4/plugin/item/ctail.c:1588)[edward-1021]:
+               WARNING: convert_ctail: nothing to attach
+[24075.202288] reiser4[DOMCacheThread(29961)]: assign_conversion_mode (/usr/src/build/kernel/tekitl-4.13/linux/fs/reiser4/plugin/item/ctail.c:1588)[edward-1021]:
+               WARNING: convert_ctail: nothing to attach
+[24075.202309] reiser4[DOMCacheThread(29961)]: assign_conversion_mode (/usr/src/build/kernel/tekitl-4.13/linux/fs/reiser4/plugin/item/ctail.c:1588)[edward-1021]:
+               WARNING: convert_ctail: nothing to attach
+[24075.202339] reiser4[DOMCacheThread(29961)]: assign_conversion_mode (/usr/src/build/kernel/tekitl-4.13/linux/fs/reiser4/plugin/item/ctail.c:1588)[edward-1021]:
+               WARNING: convert_ctail: nothing to attach
+[24075.202360] reiser4[DOMCacheThread(29961)]: assign_conversion_mode (/usr/src/build/kernel/tekitl-4.13/linux/fs/reiser4/plugin/item/ctail.c:1588)[edward-1021]:
+               WARNING: convert_ctail: nothing to attach
+[24075.202391] reiser4[DOMCacheThread(29961)]: assign_conversion_mode (/usr/src/build/kernel/tekitl-4.13/linux/fs/reiser4/plugin/item/ctail.c:1588)[edward-1021]:
+               WARNING: convert_ctail: nothing to attach
+[24075.202412] reiser4[DOMCacheThread(29961)]: assign_conversion_mode (/usr/src/build/kernel/tekitl-4.13/linux/fs/reiser4/plugin/item/ctail.c:1588)[edward-1021]:
+               WARNING: convert_ctail: nothing to attach
+[24075.202440] reiser4[DOMCacheThread(29961)]: checkout_logical_cluster (/usr/src/build/kernel/tekitl-4.13/linux/fs/reiser4/plugin/file/cryptcompress.c:1980)[edward-1430]:
+               WARNING: alloc stream failed with ret=-12
 
 
 Best Professional Regards.
-
--- 
-Jose R R
-http://metztli.it
----------------------------------------------------------------------------------------------
-Download Metztli Reiser4: Debian Stretch with Linux 4.12
----------------------------------------------------------------------------------------------
-for AMD64 https://sf.net/projects/metztli-reiser4/
