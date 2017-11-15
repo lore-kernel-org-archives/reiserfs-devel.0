@@ -1,13 +1,13 @@
 From: jose@huitzilopochtli.metztli-it.com (Metztli Information Technology)
-Subject: Reiser4 for 4.13.0/1 patches and transparent-compression
-Date: Wed, 15 Nov 2017 02:40:06 -0800 (PST)
-Message-ID: <20171115104006.DAFF9EBFEE5@huitzilopochtli.metztli-it.com>
+Subject: Success in booting a 2TB \'maximum boot disk\' reiser4 image natively in Google Compute Engine \(GCE\)
+Date: Wed, 15 Nov 2017 04:44:40 -0800 (PST)
+Message-ID: <20171115124440.2B8BAEC11CA@huitzilopochtli.metztli-it.com>
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
 DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mixtli.metztli.it; q=dns/txt;
- s=mx; t=1510742409; h=From: Date: Message-Id: To: Subject: Sender;
- bh=u9QmsVwJkyZq5Y87gDrcP921/AgoDDans12ntTaP7hU=; b=QIwwyUNYeysnkk7bBWoZLvjJTYlulpqZfaYfQzaus3VuobV0n1+XmAFmFIxXnUCPbzOJfwLd
- MUYu+xaJmViJGUamV0JNVlqGB6lbULdu4SrIIfLh1xGnSyUzBQPG6efh97VT0e89UGc3Bemu
- fR9nIdJYDiyjOgymQez4Afx9X7g=
+ s=mx; t=1510749935; h=From: Date: Message-Id: To: Subject: Sender;
+ bh=ElkcPoDy53fYbQf8GjyaZkIeqQgJDNtm5ovLrWX13zU=; b=uBiC/8/KTWHa2SdWl/wR9Fa3ZsnwdJZuCN2kWXYR70Alq/BuZcIWbmJWfWwWidxNgLM9JvCO
+ iIL7e0joAKf82a9EcZNhFlm7KQPD93ZhRsAT2R77t8jpBbOXrrVqAkVqxZ/vKrKfF/B7umNS
+ kzDsaS15/FOjIW/s5uaMghoJl9A=
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
 MIME-Version: 1.0
@@ -15,89 +15,36 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: reiserfs-devel@vger.kernel.org
 
-Niltze, Ed-
-
-Here is some additional feedback on reiser4 transparent-compression:
+Niltze, all-
 
 
-Under Google Compute Engine (GCE) using resources: --custom-cpu=2 --custom-memory=4GB
+Yesterday I succeeded in booting a 2TB maximum 'boot disk' reiser4 image natively in Google Compute Engine (GCE), aka Google Cloud.
 
-Below dmesg lapse occurred while using VBoxManage (command line utility from headless VirtualBox 5.1.30) under latest reiser4-for-4.13.1.patch kernel
-< https://sourceforge.net/projects/metztli-reiser4/files/Reiser4-Linux-4.13.12-1_for-Stretch/ >
-while converting a 2TB virtual machine into its disk.raw equivalent (11-14-2017): 
+Fact is I had used GPT to create the ~500MB ext2 /boot initial partition, ~1GB jfs for a /tmp, and root fs / as reiser4 (non-compression),
+in VirtualBox 5.1.28.
 
-[..]
-[  207.416756] reiser4: sda4: found disk format 4.0.1.
-[  207.488274] reiser4: sda4: using Hybrid Transaction Model.
-[  965.372697]  sdb: sdb1
-[ 1020.422370] reiser4: sdb1: found disk format 4.0.1.
-[ 1044.098194] reiser4: sdb1: using Hybrid Transaction Model.
-[ 2256.307429] vboxdrv: loading out-of-tree module taints kernel.
-[ 2256.314916] vboxdrv: Found 2 processor cores
-[ 2256.333498] vboxdrv: TSC mode is Invariant, tentative frequency 2199993485 Hz
-[ 2256.340792] vboxdrv: Successfully loaded version 5.1.30 (interface 0x002a0000)
-[ 2265.565041] VBoxNetFlt: Successfully started.
-[ 4898.939952] reiser4[ktxnmgrd:sdb1:r(12134)]: commit_current_atom (/usr/src/build/kernel/tekitl-4.13.12/linux/fs/reiser4/txnmgr.c:1052)[nikita-317
-6]:
-               WARNING: Flushing like mad: 16384
+After I custom/optimized the image for GCE, converted into disk.raw (VBoxManage requires >2TB ;-), tarred it (reduced it to 2.6GB), and
+uploaded to Google cloud for subsequent processing, it would not boot; seems GPT booting is not fully supported.
 
-------------------------------------------------
+Accordingly, I had to use gdisk
+< http://www.rodsbooks.com/gdisk/hybrid.html >
+ to hybridize GPT/MBR, see
+< https://cloud.google.com/compute/docs/images/import-existing-image >
 
-Older:
-with previous patch reiser4-for-4.13.0.patch.gz: logged neary 5k lines snapshot
- during heavy load (using VirtualBox 5.1.28/30, etc.) and other applications in my local machine.
- Had to reboot machine as there was no way to stop dmesg flow (Oct 22, 2017):
+this was done by mounting the disk onto another running GCE instance and chrooting into it to accomplish ops.
+
+Anyhow, I believe this is the first hack to have a ~2TB 'boot disk' reiser4 image natively booting in a cloud instance. Lucky Google ;-)
+
+< https://metztli.it/blog/media/blogs/amatl/quick-uploads/p137/reiser4-2tb-running-date-plus-whole-screen.png >
+
+Of course, thanks to Mr. Shishkin, for the latest patch and for making reiser4 possible against all odds.
 
 
-[24068.404896] reiser4[DOMCacheThread(29961)]: assign_conversion_mode (/usr/src/build/kernel/tekitl-4.13/linux/fs/reiser4/plugin/item/ctail.c:1588)[edward-1021]:
-               WARNING: convert_ctail: nothing to attach
-[24068.404938] reiser4[DOMCacheThread(29961)]: assign_conversion_mode (/usr/src/build/kernel/tekitl-4.13/linux/fs/reiser4/plugin/item/ctail.c:1588)[edward-1021]:
-               WARNING: convert_ctail: nothing to attach
-[24068.404950] reiser4[DOMCacheThread(29961)]: assign_conversion_mode (/usr/src/build/kernel/tekitl-4.13/linux/fs/reiser4/plugin/item/ctail.c:1588)[edward-1021]:
-               WARNING: convert_ctail: nothing to attach
-[24068.404962] reiser4[DOMCacheThread(29961)]: assign_conversion_mode (/usr/src/build/kernel/tekitl-4.13/linux/fs/reiser4/plugin/item/ctail.c:1588)[edward-1021]:
-               WARNING: convert_ctail: nothing to attach
-[24068.404974] reiser4[DOMCacheThread(29961)]: assign_conversion_mode (/usr/src/build/kernel/tekitl-4.13/linux/fs/reiser4/plugin/item/ctail.c:1588)[edward-1021]:
-               WARNING: convert_ctail: nothing to attach
-[24068.404986] reiser4[DOMCacheThread(29961)]: checkout_logical_cluster (/usr/src/build/kernel/tekitl-4.13/linux/fs/reiser4/plugin/file/cryptcompress.c:1980)[edward-1430]:
-               WARNING: alloc stream failed with ret=-12
-[24068.404993] reiser4[DOMCacheThread(29961)]: assign_conversion_mode (/usr/src/build/kernel/tekitl-4.13/linux/fs/reiser4/plugin/item/ctail.c:1588)[edward-1021]:
-               WARNING: convert_ctail: nothing to attach
-[24068.405005] reiser4[DOMCacheThread(29961)]: assign_conversion_mode (/usr/src/build/kernel/tekitl-4.13/linux/fs/reiser4/plugin/item/ctail.c:1588)[edward-1021]:
-               WARNING: convert_ctail: nothing to attach
-[24068.405017] reiser4[DOMCacheThread(29961)]: assign_conversion_mode (/usr/src/build/kernel/tekitl-4.13/linux/fs/reiser4/plugin/item/ctail.c:1588)[edward-1021]:
-               WARNING: convert_ctail: nothing to attach
-[24068.405028] reiser4[DOMCacheThread(29961)]: checkout_logical_cluster (/usr/src/build/kernel/tekitl-4.13/linux/fs/reiser4/plugin/file/cryptcompress.c:1980)[edward-1430]:
-               WARNING: alloc stream failed with ret=-12
-[24068.405035] reiser4[DOMCacheThread(29961)]: assign_conversion_mode (/usr/src/build/kernel/tekitl-4.13/linux/fs/reiser4/plugin/item/ctail.c:1588)[edward-1021]:
-               WARNING: convert_ctail: nothing to attach
+Best Professional Regards.
 
-[...]
-               WARNING: convert_ctail: nothing to attach
-[24075.202165] reiser4[DOMCacheThread(29961)]: checkout_logical_cluster (/usr/src/build/kernel/tekitl-4.13/linux/fs/reiser4/plugin/file/cryptcompress.c:1980)[edward-1430]:
-               WARNING: alloc stream failed with ret=-12
-[24075.202187] reiser4[DOMCacheThread(29961)]: assign_conversion_mode (/usr/src/build/kernel/tekitl-4.13/linux/fs/reiser4/plugin/item/ctail.c:1588)[edward-1021]:
-               WARNING: convert_ctail: nothing to attach
-[24075.202216] reiser4[DOMCacheThread(29961)]: checkout_logical_cluster (/usr/src/build/kernel/tekitl-4.13/linux/fs/reiser4/plugin/file/cryptcompress.c:1980)[edward-1430]:
-               WARNING: alloc stream failed with ret=-12
-[24075.202239] reiser4[DOMCacheThread(29961)]: assign_conversion_mode (/usr/src/build/kernel/tekitl-4.13/linux/fs/reiser4/plugin/item/ctail.c:1588)[edward-1021]:
-               WARNING: convert_ctail: nothing to attach
-[24075.202258] reiser4[DOMCacheThread(29961)]: assign_conversion_mode (/usr/src/build/kernel/tekitl-4.13/linux/fs/reiser4/plugin/item/ctail.c:1588)[edward-1021]:
-               WARNING: convert_ctail: nothing to attach
-[24075.202288] reiser4[DOMCacheThread(29961)]: assign_conversion_mode (/usr/src/build/kernel/tekitl-4.13/linux/fs/reiser4/plugin/item/ctail.c:1588)[edward-1021]:
-               WARNING: convert_ctail: nothing to attach
-[24075.202309] reiser4[DOMCacheThread(29961)]: assign_conversion_mode (/usr/src/build/kernel/tekitl-4.13/linux/fs/reiser4/plugin/item/ctail.c:1588)[edward-1021]:
-               WARNING: convert_ctail: nothing to attach
-[24075.202339] reiser4[DOMCacheThread(29961)]: assign_conversion_mode (/usr/src/build/kernel/tekitl-4.13/linux/fs/reiser4/plugin/item/ctail.c:1588)[edward-1021]:
-               WARNING: convert_ctail: nothing to attach
-[24075.202360] reiser4[DOMCacheThread(29961)]: assign_conversion_mode (/usr/src/build/kernel/tekitl-4.13/linux/fs/reiser4/plugin/item/ctail.c:1588)[edward-1021]:
-               WARNING: convert_ctail: nothing to attach
-[24075.202391] reiser4[DOMCacheThread(29961)]: assign_conversion_mode (/usr/src/build/kernel/tekitl-4.13/linux/fs/reiser4/plugin/item/ctail.c:1588)[edward-1021]:
-               WARNING: convert_ctail: nothing to attach
-[24075.202412] reiser4[DOMCacheThread(29961)]: assign_conversion_mode (/usr/src/build/kernel/tekitl-4.13/linux/fs/reiser4/plugin/item/ctail.c:1588)[edward-1021]:
-               WARNING: convert_ctail: nothing to attach
-[24075.202440] reiser4[DOMCacheThread(29961)]: checkout_logical_cluster (/usr/src/build/kernel/tekitl-4.13/linux/fs/reiser4/plugin/file/cryptcompress.c:1980)[edward-1430]:
-               WARNING: alloc stream failed with ret=-12
+P.S. Posted a serial output of the very first successful boot log of the Metztli-Reiser4 2TB cloud instanciation (xiuhcohuatl5) into GCE
+ -- if anyone is interested:
+< https://metztli.it/blog/index.php/amatl/reiser-nahui/reiser4-sfrn-4-0-2 >
 
 
 Best Professional Regards.
