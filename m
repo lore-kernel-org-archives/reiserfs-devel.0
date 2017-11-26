@@ -1,145 +1,273 @@
 From: Edward Shishkin <edward.shishkin@gmail.com>
-Subject: [PATCH 1/2] reiser4: port for Linux-4.14
-Date: Sun, 26 Nov 2017 23:54:41 +0100
-Message-ID: <a80269ec-3c31-c72f-8b13-ce28aeb6b189@gmail.com>
+Subject: [PATCH 2/2] reiser4: zstd1 compression support
+Date: Sun, 26 Nov 2017 23:54:47 +0100
+Message-ID: <04191a34-8a4a-100a-01d8-cf734c6341fc@gmail.com>
 Mime-Version: 1.0
 Content-Type: multipart/mixed;
- boundary="------------3FC6983F40B090D600D0E2FE"
+ boundary="------------A5BD5DCE58B38DD32EA8FC5D"
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=to:from:subject:message-id:date:user-agent:mime-version
          :content-language;
-        bh=1JYzbAqOG+Q+DUOGQAdGMhZICf65JscUZz3R5Fa1oR8=;
-        b=jTDwplAPq2KBUNzYJQwhwnrJ0e/Ssa57zRP9cTGRr14BSvl5D9S/JUYygp16JCb01M
-         FM9KxwzStjjCiRI2neaHbcML/+RkeRDZcl+lQIBsjZnbCqAJaS7nsUo2rscdcwEkQQmt
-         NvKMN+S5D3Tqhhod83D/yha04Z9LmWxq43dhGKWu2zGfn9cfOme2v3Nn/s4kKRCwTBHL
-         GiMOj2K0UQWe0lWwFT0jUpvTEU2CQn7TOEfuJS3igmFGiRTLebZ51CdhE8USZACql8lo
-         MoT6ccIPRmp8BKxn67PSkkl20bPvRWpvuVtAjRsS3v+RvO1/PgyiCGnp07vNH+me3YF0
-         8f+Q==
+        bh=ioJQUvvWATKTreXPT1pMbTFYrL+l+3RgpcEOHOCLHs4=;
+        b=dU1SbhxIGQMnLlCZLXiizRceXplE4y49kkk9XP+Bn0wHs1efTwqqKZAT0Zv7PvqbFD
+         AN6QLETndcKr+yXDZ0dwiIGe+nQls+AyGH5p8xMlHoDQoStzNOGF188jeTDPw8fiHuGt
+         qBxktZwjhbOGWpSnw/fk5mmOe/G9vfCpocp6G46vVrDgnTTny6FYL0ibELlLe0Vo9duz
+         hJOB6cVLlWDjJw+H47degPhznJ6cHesI3IXQEaqo0cX6Hj3wvDEOlAWJLi/qbxq2trGy
+         VQWuibC8zNj7lxALfmBdVtlg+5Csiz5nY4vv9imYDZzpTPkx0pk8yIOTrI6jicvQ6pQ1
+         1iSA==
 Content-Language: en-US
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
 To: ReiserFS development mailing list <reiserfs-devel@vger.kernel.org>
 
 This is a multi-part message in MIME format.
---------------3FC6983F40B090D600D0E2FE
+--------------A5BD5DCE58B38DD32EA8FC5D
 Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
 
 
---------------3FC6983F40B090D600D0E2FE
+--------------A5BD5DCE58B38DD32EA8FC5D
 Content-Type: text/x-patch;
- name="1.diff"
+ name="2.diff"
 Content-Transfer-Encoding: 7bit
 Content-Disposition: attachment;
- filename="1.diff"
+ filename="2.diff"
 
-commit 7047eba35342544128c7dbbdf24c06943141c1ad
-Author: Edward Shishkin <edward.shishkin@gmail.com>
-Date:   Thu Oct 5 23:15:41 2017 +0200
+commit 61c212718cde654474672ec35389b18a52d6a711
+Author: BratSinot <bratsinot@gmail.com>
+Date:   Sun Nov 26 11:36:03 2017 +0100
 
-    Port for Linux-4.14
+    Reiser4: zstd1 compression support
     
     Signed-off-by: Edward Shishkin <edward.shishkin@gmail.com>
 
-diff --git a/page_cache.c b/page_cache.c
-index eadf74b33..8cca57867 100644
---- a/page_cache.c
-+++ b/page_cache.c
-@@ -437,7 +437,7 @@ static struct bio *page_bio(struct page *page, jnode * node, int rw, gfp_t gfp)
- 		assert("nikita-2275", blocknr != (reiser4_block_nr) 0);
- 		assert("nikita-2276", !reiser4_blocknr_is_fake(&blocknr));
+diff --git a/Kconfig b/Kconfig
+index a2f2b05f4..e55f8bc51 100644
+--- a/Kconfig
++++ b/Kconfig
+@@ -4,6 +4,8 @@ config REISER4_FS
+ 	select ZLIB_DEFLATE
+ 	select LZO_COMPRESS
+ 	select LZO_DECOMPRESS
++	select ZSTD_COMPRESS
++	select ZSTD_DECOMPRESS
+ 	select CRYPTO
+ 	select CRYPTO_CRC32C
+ 	help
+diff --git a/plugin/compress/compress.c b/plugin/compress/compress.c
+index 2a263eaae..ef568a099 100644
+--- a/plugin/compress/compress.c
++++ b/plugin/compress/compress.c
+@@ -6,6 +6,7 @@
+ #include "../plugin.h"
  
--		bio->bi_bdev = super->s_bdev;
-+		bio_set_dev(bio, super->s_bdev);
- 		/* fill bio->bi_iter.bi_sector before calling bio_add_page(), because
- 		 * q->merge_bvec_fn may want to inspect it (see
- 		 * drivers/md/linear.c:linear_mergeable_bvec() for example. */
-diff --git a/plugin/file/cryptcompress.c b/plugin/file/cryptcompress.c
-index 694680bc7..f58eee96e 100644
---- a/plugin/file/cryptcompress.c
-+++ b/plugin/file/cryptcompress.c
-@@ -1501,7 +1501,8 @@ static int pages_truncate_ok(struct inode *inode, pgoff_t start)
- 	int found;
- 	struct page * page;
+ #include <linux/lzo.h>
++#include <linux/zstd.h>
+ #include <linux/zlib.h>
+ #include <linux/types.h>
+ #include <linux/hardirq.h>
+@@ -295,6 +296,162 @@ lzo1_decompress(coa_t coa, __u8 * src_first, size_t src_len,
+ 	return;
+ }
  
--	found = find_get_pages(inode->i_mapping, start, 1, &page);
++/******************************************************************************/
++/*                         zstd1 compression                                  */
++/******************************************************************************/
 +
-+	found = find_get_pages(inode->i_mapping, &start, 1, &page);
- 	if (found)
- 		put_cluster_page(page);
- 	return !found;
-@@ -1887,14 +1888,14 @@ static void checkout_page_cluster(struct cluster_handle * clust,
- 	int i;
- 	int found;
- 	int to_put;
-+	pgoff_t page_index = clust_to_pg(clust->index, inode);
- 	struct tfm_cluster *tc = &clust->tc;
++typedef struct {
++	ZSTD_parameters params;
++	void* workspace;
++	ZSTD_CCtx* cctx;
++} zstd1_coa_c;
++typedef struct {
++	void* workspace;
++	ZSTD_DCtx* dctx;
++} zstd1_coa_d;
++
++static int zstd1_init(void)
++{
++	return 0;
++}
++
++static int zstd1_overrun(unsigned src_len UNUSED_ARG)
++{
++	return ZSTD_compressBound(src_len) - src_len;
++}
++
++static coa_t zstd1_alloc(tfm_action act)
++{
++	int ret = 0;
++	size_t workspace_size;
++	coa_t coa = NULL;
++
++	switch (act) {
++	case TFMA_WRITE:	/* compress */
++		coa = reiser4_vmalloc(sizeof(zstd1_coa_c));
++		if (!coa) {
++			ret = -ENOMEM;
++			break;
++		}
++		/* ZSTD benchmark use level 1 as default. Max is 22. */
++		((zstd1_coa_c*)coa)->params = ZSTD_getParams(1, 0, 0);
++		workspace_size = ZSTD_CCtxWorkspaceBound(((zstd1_coa_c*)coa)->params.cParams);
++		((zstd1_coa_c*)coa)->workspace = reiser4_vmalloc(workspace_size);
++		if (!(((zstd1_coa_c*)coa)->workspace)) {
++			ret = -ENOMEM;
++			vfree(coa);
++			break;
++		}
++		((zstd1_coa_c*)coa)->cctx = ZSTD_initCCtx(((zstd1_coa_c*)coa)->workspace, workspace_size);
++		if (!(((zstd1_coa_c*)coa)->cctx)) {
++			ret = -ENOMEM;
++			vfree(((zstd1_coa_c*)coa)->workspace);
++			vfree(coa);
++			break;
++		}
++		break;
++	case TFMA_READ:		/* decompress */
++		coa = reiser4_vmalloc(sizeof(zstd1_coa_d));
++		if (!coa) {
++			ret = -ENOMEM;
++			break;
++		}
++		workspace_size = ZSTD_DCtxWorkspaceBound();
++		((zstd1_coa_d*)coa)->workspace = reiser4_vmalloc(workspace_size);
++		if (!(((zstd1_coa_d*)coa)->workspace)) {
++			ret = -ENOMEM;
++			vfree(coa);
++			break;
++		}
++		((zstd1_coa_d*)coa)->dctx = ZSTD_initDCtx(((zstd1_coa_d*)coa)->workspace, workspace_size);
++		if (!(((zstd1_coa_d*)coa)->dctx)) {
++			ret = -ENOMEM;
++			vfree(((zstd1_coa_d*)coa)->workspace);
++			vfree(coa);
++			break;
++		}
++		break;
++	default:
++		impossible("bsinot-1",
++			   "trying to alloc workspace for unknown tfm action");
++	}
++	if (ret) {
++		warning("bsinot-2",
++			"alloc workspace for zstd (tfm action = %d) failed\n",
++			act);
++		return ERR_PTR(ret);
++	}
++	return coa;
++}
++
++static void zstd1_free(coa_t coa, tfm_action act)
++{
++	assert("bsinot-3", coa != NULL);
++
++	switch (act) {
++	case TFMA_WRITE:	/* compress */
++		vfree(((zstd1_coa_c*)coa)->workspace);
++		vfree(coa);
++		//printk(KERN_WARNING "free comp memory -- %p\n", coa);
++		break;
++	case TFMA_READ:		/* decompress */
++		vfree(((zstd1_coa_d*)coa)->workspace);
++		vfree(coa);
++		//printk(KERN_WARNING "free decomp memory -- %p\n", coa);
++		break;
++	default:
++		impossible("bsinot-4", "unknown tfm action");
++	}
++	return;
++}
++
++static int zstd1_min_size_deflate(void)
++{
++	return 256; /* I'm not sure about the correct value, so took from LZO1 */
++}
++
++static void
++zstd1_compress(coa_t coa, __u8 * src_first, size_t src_len,
++	      __u8 * dst_first, size_t *dst_len)
++{
++	unsigned int result;
++
++	assert("bsinot-5", coa != NULL);
++	assert("bsinot-6", src_len != 0);
++	result = ZSTD_compressCCtx(((zstd1_coa_c*)coa)->cctx, dst_first, *dst_len, src_first, src_len, ((zstd1_coa_c*)coa)->params);
++	if (ZSTD_isError(result)) {
++		warning("bsinot-7", "zstd1_compressCCtx failed\n");
++		goto out;
++	}
++	*dst_len = result;
++	if (*dst_len >= src_len) {
++		//warning("bsinot-8", "zstd1_compressCCtx: incompressible data\n");
++		goto out;
++	}
++	return;
++      out:
++	*dst_len = src_len;
++	return;
++}
++
++static void
++zstd1_decompress(coa_t coa, __u8 * src_first, size_t src_len,
++		__u8 * dst_first, size_t *dst_len)
++{
++	unsigned int result;
++
++	assert("bsinot-9", coa != NULL);
++	assert("bsinot-10", src_len != 0);
++
++	result = ZSTD_decompressDCtx(((zstd1_coa_d*)coa)->dctx, dst_first, *dst_len, src_first, src_len);
++	/* Same here. */
++	if (ZSTD_isError(result))
++		warning("bsinot-11", "zstd1_decompressDCtx failed\n");
++	*dst_len = result;
++	return;
++}
++
++
+ compression_plugin compression_plugins[LAST_COMPRESSION_ID] = {
+ 	[LZO1_COMPRESSION_ID] = {
+ 		.h = {
+@@ -331,6 +488,24 @@ compression_plugin compression_plugins[LAST_COMPRESSION_ID] = {
+ 		.checksum = reiser4_adler32,
+ 		.compress = gzip1_compress,
+ 		.decompress = gzip1_decompress
++	},
++	[ZSTD1_COMPRESSION_ID] = {
++		.h = {
++			.type_id = REISER4_COMPRESSION_PLUGIN_TYPE,
++			.id = ZSTD1_COMPRESSION_ID,
++			.pops = &compression_plugin_ops,
++			.label = "zstd1",
++			.desc = "zstd1 compression transform",
++			.linkage = {NULL, NULL}
++		},
++		.init = zstd1_init,
++		.overrun = zstd1_overrun,
++		.alloc = zstd1_alloc,
++		.free = zstd1_free,
++		.min_size_deflate = zstd1_min_size_deflate,
++		.checksum = reiser4_adler32,
++		.compress = zstd1_compress,
++		.decompress = zstd1_decompress
+ 	}
+ };
  
- 	/* find and put checked in pages: cluster is locked,
- 	 * so we must get expected number (to_put) of pages
- 	 */
- 	to_put = size_in_pages(lbytes(clust->index, inode));
--	found = find_get_pages(inode->i_mapping,
--			       clust_to_pg(clust->index, inode),
-+	found = find_get_pages(inode->i_mapping, &page_index,
- 			       to_put, clust->pages);
- 	BUG_ON(found != to_put);
+diff --git a/plugin/compress/compress.h b/plugin/compress/compress.h
+index cf00ce103..235273897 100644
+--- a/plugin/compress/compress.h
++++ b/plugin/compress/compress.h
+@@ -15,6 +15,7 @@ typedef enum {
+ typedef enum {
+ 	LZO1_COMPRESSION_ID,
+ 	GZIP1_COMPRESSION_ID,
++	ZSTD1_COMPRESSION_ID,
+ 	LAST_COMPRESSION_ID,
+ } reiser4_compression_id;
  
-@@ -2521,6 +2522,7 @@ void truncate_complete_page_cluster(struct inode *inode, cloff_t index,
- 	int found;
- 	int nr_pages;
- 	jnode *node;
-+	pgoff_t page_index = clust_to_pg(index, inode);
- 	struct page *pages[MAX_CLUSTER_NRPAGES];
- 
- 	node = jlookup(current_tree, get_inode_oid(inode),
-@@ -2529,8 +2531,7 @@ void truncate_complete_page_cluster(struct inode *inode, cloff_t index,
- 	assert("edward-1483", nr_pages != 0);
- 	if (!node)
- 		goto truncate;
--	found = find_get_pages(inode->i_mapping,
--			       clust_to_pg(index, inode),
-+	found = find_get_pages(inode->i_mapping, &page_index,
- 			       cluster_nrpages(inode), pages);
- 	if (!found) {
- 		assert("edward-1484", jnode_truncate_ok(inode, index));
-diff --git a/status_flags.c b/status_flags.c
-index 21e70c662..574005e06 100644
---- a/status_flags.c
-+++ b/status_flags.c
-@@ -46,7 +46,7 @@ int reiser4_status_init(reiser4_block_nr block)
- 	bio = bio_alloc(reiser4_ctx_gfp_mask_get(), 1);
- 	if (bio != NULL) {
- 		bio->bi_iter.bi_sector = block * (sb->s_blocksize >> 9);
--		bio->bi_bdev = sb->s_bdev;
-+		bio_set_dev(bio, sb->s_bdev);
- 		bio->bi_io_vec[0].bv_page = page;
- 		bio->bi_io_vec[0].bv_len = sb->s_blocksize;
- 		bio->bi_io_vec[0].bv_offset = 0;
-@@ -146,7 +146,7 @@ int reiser4_status_write(__u64 status, __u64 extended_status, char *message)
- 
- 	kunmap_atomic((char *)statuspage);
- 	bio_reset(bio);
--	bio->bi_bdev = sb->s_bdev;
-+	bio_set_dev(bio, sb->s_bdev);
- 	bio->bi_io_vec[0].bv_page = get_super_private(sb)->status_page;
- 	bio->bi_io_vec[0].bv_len = sb->s_blocksize;
- 	bio->bi_io_vec[0].bv_offset = 0;
-diff --git a/wander.c b/wander.c
-index 8595c22cb..5dfb30ae3 100644
---- a/wander.c
-+++ b/wander.c
-@@ -728,7 +728,7 @@ static int write_jnodes_to_disk_extent(
- 		if (!bio)
- 			return RETERR(-ENOMEM);
- 
--		bio->bi_bdev = super->s_bdev;
-+		bio_set_dev(bio, super->s_bdev);
- 		bio->bi_iter.bi_sector = block * (super->s_blocksize >> 9);
- 		for (nr_used = 0, i = 0; i < nr_blocks; i++) {
- 			struct page *pg;
 
---------------3FC6983F40B090D600D0E2FE--
+--------------A5BD5DCE58B38DD32EA8FC5D--
