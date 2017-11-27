@@ -1,78 +1,55 @@
-From: jose@metztli.com (Metztli Information Technology)
-Subject: Re: Reiser4 for Linux-4.14, Reiser4progs-1.2.0, Libaal-1.0.7, Format 4.0.2
-Date: Mon, 27 Nov 2017 06:37:41 -0800 (PST)
-Message-ID: <20171127143741.C5276113CF17@huitzilopochtli.metztli-it.com>
+From: Felix Zielcke <fzielcke@z-51.de>
+Subject: Re: Reiser4 for Linux-4.14, Reiser4progs-1.2.0, Libaal-1.0.7,
+ Format 4.0.2
+Date: Mon, 27 Nov 2017 16:27:01 +0100
+Message-ID: <1511796421.5344.6.camel@z-51.de>
+References: <2cf6aac6-650d-4940-359d-316dc70a183d@gmail.com>
+         <1511788205.5344.2.camel@z-51.de>
+         <8db85297-34f8-980c-dab9-c98b95fb592c@gmail.com>
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
-DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mixtli.metztli.it; q=dns/txt;
- s=mx; t=1511793638; h=From: Date: Message-Id: To: Subject: Sender;
- bh=+mCuDwFBqMhno4HriGNRzZrkVu9Q9/Fen+5PHoU70MI=; b=FiK/lb+hmpAQx1zwno5pA2kCDh+0CffUee+rKKZSJa3HEXYeKAmtAo4gVxoCC+FukNRk2vYL
- 7DkwXC7sbpaqulcahJ6HBmbIMGPf3DWaZ7xv2Wmc2y8Yrb4ErKLF6k6221MQn0GcwKLj20ur
- fltAMQl4l3gRVqUg99oI7mERGLo=
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=z-51.de;
+        s=exim; h=Subject:Content-Transfer-Encoding:Mime-Version:Date:Content-Type:
+        References:In-Reply-To:To:From:Message-ID:Sender:Reply-To:Cc:Content-ID:
+        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+        :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+        List-Post:List-Owner:List-Archive;
+        bh=19yoaXHuvTr1oe+gbETUF2c95KWmKTd0zKj9ZbBN0Jw=; b=GX47FX29Q80VuAW2+NrWdxIn/Q
+        zApM9dxPwo0XYIcDDExTLXtVYUbhPGvU9fT5Q6306OA9r/F8Y3IHcU1KKfxfVTXi2t8QVmgNxwgsi
+        5y8rimCpqwsmEkx9ZqI6Dn9Su0X32Zw0SRGver1o11zqURXxxydW49Bh5+PYuezuv5Zo=;
+In-Reply-To: <8db85297-34f8-980c-dab9-c98b95fb592c@gmail.com>
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
-MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: reiserfs-devel@vger.kernel.org, debian-kernel@lists.debian.org
+To: Edward Shishkin <edward.shishkin@gmail.com>, ReiserFS development mailing list <reiserfs-devel@vger.kernel.org>
 
-Niltze, Ed-
+Am Montag, den 27.11.2017, 14:46 +0100 schrieb Edward Shishkin:
+> Hi Felix,
+> 
+> Thank you for the report, I'll try to find out, what is wrong.
+> 
+> Edward.
+> 
 
+Hi Edward,
 
-I've built libaal-1.0.7 and Reiser4progs-1.2.0 Debian packages for AMD64 successfully and currently testing in a virtual machine.
+I got now a hint on the Debian bugtracker
+The problem seems to be the variable used in the configure.ac check for
+falign-loops
+This patch seems to fix it:
 
-I've applied reiser4-for-4.14.0 patch to upstream kernel 4.14.2; Debian packaging for 4.14.2-xyz required GCC-7 for kernel build 
+--- a/configure.ac
++++ b/configure.ac
+@@ -408,7 +408,7 @@
+ fi
+  
+ # Force no alignment to save space.
+-if test "x$falign_loop_flag" = xyes; then
++if test "x$falign_loop_flag_cv_" = xyes; then
+        ALIGN_FLAGS="-falign-jumps=1 -falign-loops=1 -falign-functions=1 \
+ -falign-labels=1 -fno-inline -fstrength-reduce"
+ else
 
- -- which I installed including relevant dependencies. Yet I have experienced (twice) the appended tail show stopper error: 
-...
-
-  CC      arch/x86/boot/compressed/pagetable.o
-  CC      arch/x86/boot/compressed/eboot.o
-  AS      arch/x86/boot/compressed/efi_stub_64.o
-  AS      arch/x86/boot/compressed/efi_thunk_64.o
-  CC      arch/x86/boot/compressed/misc.o
-  XZKERN  arch/x86/boot/compressed/vmlinux.bin.xz
-ERROR: "find_get_pages_range" [fs/reiser4/reiser4.ko] undefined!
-make[6]: *** [__modpost] Error 1
-/usr/tzinti/build/kernel/tekitl-4.14.2/linux/scripts/Makefile.modpost:92: recipe for target '__modpost' failed
-make[5]: *** [modules] Error 2
-/usr/tzinti/build/kernel/tekitl-4.14.2/linux/Makefile:1228: recipe for target 'modules' failed
-make[5]: *** Waiting for unfinished jobs....
-  MKPIGGY arch/x86/boot/compressed/piggy.S
-  AS      arch/x86/boot/compressed/piggy.o
-  DATAREL arch/x86/boot/compressed/vmlinux
-  LD      arch/x86/boot/compressed/vmlinux
-  ZOFFSET arch/x86/boot/zoffset.h
-  OBJCOPY arch/x86/boot/vmlinux.bin
-  AS      arch/x86/boot/header.o
-  LD      arch/x86/boot/setup.elf
-  OBJCOPY arch/x86/boot/setup.bin
-  BUILD   arch/x86/boot/bzImage
-Setup is 17212 bytes (padded to 17408 bytes).
-System is 4433 kB
-CRC 231e180a
-Kernel: arch/x86/boot/bzImage is ready  (#1)
-make[4]: *** [sub-make] Error 2
-Makefile:146: recipe for target 'sub-make' failed
-make[3]: *** [__sub-make] Error 2
-Makefile:24: recipe for target '__sub-make' failed
-make[3]: Leaving directory '/usr/tzinti/build/kernel/tekitl-4.14.2/linux/debian/build/build_amd64_none_amd64'
-make[2]: *** [debian/stamps/build_amd64_none_amd64] Error 2
-debian/rules.real:190: recipe for target 'debian/stamps/build_amd64_none_amd64' failed
-make[2]: Leaving directory '/usr/tzinti/build/kernel/tekitl-4.14.2/linux'
-make[1]: *** [binary-arch_amd64_none_amd64_real] Error 2
-debian/rules.gen:24: recipe for target 'binary-arch_amd64_none_amd64_real' failed
-make[1]: Leaving directory '/usr/tzinti/build/kernel/tekitl-4.14.2/linux'
-make: *** [binary-arch] Error 2
-debian/rules:50: recipe for target 'binary-arch' failed
-dpkg-buildpackage: error: fakeroot debian/rules binary-arch gave error exit status 2
-
-
-Best Professional Regards.
-
--- 
-Jose R R
-http://metztli.it
----------------------------------------------------------------------------------------------
-Download Metztli Reiser4: Debian Stretch with Linux 4.13
----------------------------------------------------------------------------------------------
-for AMD64 https://sf.net/projects/metztli-reiser4/
+Regards
+Felix
