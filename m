@@ -1,71 +1,90 @@
 From: Edward Shishkin <edward.shishkin@gmail.com>
 Subject: Re: Reiser4 for Linux-4.14, Reiser4progs-1.2.0, Libaal-1.0.7, Format
  4.0.2
-Date: Mon, 27 Nov 2017 21:05:49 +0100
-Message-ID: <8a29e976-de48-dabe-2b2f-a7149002251e@gmail.com>
-References: <2cf6aac6-650d-4940-359d-316dc70a183d@gmail.com>
- <1511788205.5344.2.camel@z-51.de>
- <8db85297-34f8-980c-dab9-c98b95fb592c@gmail.com>
- <1511796421.5344.6.camel@z-51.de>
+Date: Tue, 28 Nov 2017 00:08:22 +0100
+Message-ID: <31bf3fc5-4499-1a59-4e20-2af839c79342@gmail.com>
+References: <20171127143741.C5276113CF17@huitzilopochtli.metztli-it.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=subject:to:references:cc:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-transfer-encoding:content-language;
-        bh=o6vODa95Y4U9RlIjmTELCCb0GpoxjwRzlEX7bj8NS+Y=;
-        b=TQJl7tQEVB+SnGrkQGfR5CTzEko7Yknp+/j2zQsmBMICGjyOrXMgWDwx7NyYniOU3A
-         MoCy7Siw6AI0s0cns363l3nxV7WKzs73cVN7Ld6YW9kSSEz6VUAWS/mmCUUSgV9MJ1Qd
-         36gAM2oTJEfqWvGNYtS4wylvD7Lheq9t/PRGQAI4h2+G7Miys+hCWG2GYzIQEHp3f45X
-         GF+hhJwaMqTdzYM5FEE6ZMYGhHmFs8did+LLo9bHfHSUHqIq364udNNjmdJNpMkh2Gnk
-         mb4v/8Wvlxidzgh19kISqoUJ4cE1CSNHwXqRnJr/mFEO3a0HOotsUIaQUiEEKdt9JXVg
-         87aQ==
-In-Reply-To: <1511796421.5344.6.camel@z-51.de>
+        h=subject:to:references:from:message-id:date:user-agent:mime-version
+         :in-reply-to:content-transfer-encoding:content-language;
+        bh=fid22F5ZzuPZeU8TY6J34Tn/NjD8K9g2DP4M1VevIdM=;
+        b=Kl8JN+2AAz1f3Wev4mM4P/ddVGHDp5Ty7brv06VhP66U0utjoTtG91AtMXvm3OsoNI
+         qcW7vzgc1yLfWCA6sOZcs0pi6uLsRTWJrNrMewBDMDcM2cWwoMDBkJVHTc9C6Gqvt8QJ
+         F4aTo8nkI6eu3cHKwHIE2bfWWw2gs33G3D82wg5vg4BWmY6BhGasF3NZIYOJBZg2nMe+
+         VbbctVaKRcovh3nmm7qfbtd0lO0Xot4wR7lWhqv+AvpuQ3ceLte9ucbfxkK4I0o53RLa
+         8OU7YPaL66SY1qoJlQAKfFT1HLViICWLwcfvMYB2NlZmyNLym3Ds+QpntfcS161flycE
+         vveA==
+In-Reply-To: <20171127143741.C5276113CF17@huitzilopochtli.metztli-it.com>
 Content-Language: en-US
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: Felix Zielcke <fzielcke@z-51.de>, ReiserFS development mailing list <reiserfs-devel@vger.kernel.org>
-Cc: Christian Kujau <lists@nerdbynature.de>
+To: Metztli Information Technology <jose@metztli.com>, reiserfs-devel@vger.kernel.org, debian-kernel@lists.debian.org
 
-Hi Felix,
+Hello,
 
-Thank you for the hint!
-It seems that the following patch is incomplete (missing rename of 
-align_loop_flag):
-https://github.com/edward6/reiser4progs/commit/2b74e05bdde4f84a224bc235814d1fc51793a2c8
-I'll prepare a new release basing on your fixup.
+Please, download reiser4-for-4.14.1.patch which contains the fixup.
 
+Thanks,
 Edward.
 
-On 11/27/2017 04:27 PM, Felix Zielcke wrote:
-> Am Montag, den 27.11.2017, 14:46 +0100 schrieb Edward Shishkin:
->> Hi Felix,
->>
->> Thank you for the report, I'll try to find out, what is wrong.
->>
->> Edward.
->>
-> Hi Edward,
+On 11/27/2017 03:37 PM, Metztli Information Technology wrote:
+> Niltze, Ed-
 >
-> I got now a hint on the Debian bugtracker
-> The problem seems to be the variable used in the configure.ac check for
-> falign-loops
-> This patch seems to fix it:
 >
-> --- a/configure.ac
-> +++ b/configure.ac
-> @@ -408,7 +408,7 @@
->   fi
->    
->   # Force no alignment to save space.
-> -if test "x$falign_loop_flag" = xyes; then
-> +if test "x$falign_loop_flag_cv_" = xyes; then
->          ALIGN_FLAGS="-falign-jumps=1 -falign-loops=1 -falign-functions=1 \
->   -falign-labels=1 -fno-inline -fstrength-reduce"
->   else
+> I've built libaal-1.0.7 and Reiser4progs-1.2.0 Debian packages for AMD64 successfully and currently testing in a virtual machine.
 >
-> Regards
-> Felix
+> I've applied reiser4-for-4.14.0 patch to upstream kernel 4.14.2; Debian packaging for 4.14.2-xyz required GCC-7 for kernel build
+>
+>   -- which I installed including relevant dependencies. Yet I have experienced (twice) the appended tail show stopper error:
+> ...
+>
+>    CC      arch/x86/boot/compressed/pagetable.o
+>    CC      arch/x86/boot/compressed/eboot.o
+>    AS      arch/x86/boot/compressed/efi_stub_64.o
+>    AS      arch/x86/boot/compressed/efi_thunk_64.o
+>    CC      arch/x86/boot/compressed/misc.o
+>    XZKERN  arch/x86/boot/compressed/vmlinux.bin.xz
+> ERROR: "find_get_pages_range" [fs/reiser4/reiser4.ko] undefined!
+> make[6]: *** [__modpost] Error 1
+> /usr/tzinti/build/kernel/tekitl-4.14.2/linux/scripts/Makefile.modpost:92: recipe for target '__modpost' failed
+> make[5]: *** [modules] Error 2
+> /usr/tzinti/build/kernel/tekitl-4.14.2/linux/Makefile:1228: recipe for target 'modules' failed
+> make[5]: *** Waiting for unfinished jobs....
+>    MKPIGGY arch/x86/boot/compressed/piggy.S
+>    AS      arch/x86/boot/compressed/piggy.o
+>    DATAREL arch/x86/boot/compressed/vmlinux
+>    LD      arch/x86/boot/compressed/vmlinux
+>    ZOFFSET arch/x86/boot/zoffset.h
+>    OBJCOPY arch/x86/boot/vmlinux.bin
+>    AS      arch/x86/boot/header.o
+>    LD      arch/x86/boot/setup.elf
+>    OBJCOPY arch/x86/boot/setup.bin
+>    BUILD   arch/x86/boot/bzImage
+> Setup is 17212 bytes (padded to 17408 bytes).
+> System is 4433 kB
+> CRC 231e180a
+> Kernel: arch/x86/boot/bzImage is ready  (#1)
+> make[4]: *** [sub-make] Error 2
+> Makefile:146: recipe for target 'sub-make' failed
+> make[3]: *** [__sub-make] Error 2
+> Makefile:24: recipe for target '__sub-make' failed
+> make[3]: Leaving directory '/usr/tzinti/build/kernel/tekitl-4.14.2/linux/debian/build/build_amd64_none_amd64'
+> make[2]: *** [debian/stamps/build_amd64_none_amd64] Error 2
+> debian/rules.real:190: recipe for target 'debian/stamps/build_amd64_none_amd64' failed
+> make[2]: Leaving directory '/usr/tzinti/build/kernel/tekitl-4.14.2/linux'
+> make[1]: *** [binary-arch_amd64_none_amd64_real] Error 2
+> debian/rules.gen:24: recipe for target 'binary-arch_amd64_none_amd64_real' failed
+> make[1]: Leaving directory '/usr/tzinti/build/kernel/tekitl-4.14.2/linux'
+> make: *** [binary-arch] Error 2
+> debian/rules:50: recipe for target 'binary-arch' failed
+> dpkg-buildpackage: error: fakeroot debian/rules binary-arch gave error exit status 2
+>
+>
+> Best Professional Regards.
+>
 
