@@ -1,58 +1,48 @@
-From: =?UTF-8?B?RHXFoWFuIMSMb2xpxIc=?= <dusanc@gmail.com>
-Subject: Re: [BUG]Reiser4-for-4.12 kernel: reiser4[rsync(9841)]:
- reiser4_write_dispatch (fs/reiser4/plugin/file/file_conversion.c:582)[edward-1544]:\x0aWARNING:
- Inode 98653: file plugin conversion failed (-2)
-Date: Tue, 2 Jan 2018 18:21:32 +0100
-Message-ID: <CADW=+3kj16Pfun5RZDFBgeT6PEKS3v_hHhabNvqjFjNEPGvzFw@mail.gmail.com>
-References: <CADW=+3mv7Ly-Bd3ZTdGEGyZ0iAUmjmqxoe9C-DGNUmXtuA0hUw@mail.gmail.com>
- <762d9f56-1e76-d861-7e2f-2e042ded95ae@gmail.com>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
+From: jose.r.r@metztli.com (Metztli Information Technology)
+Subject: reiser4-for-4.14.1.patch.gz on Linux-4.14.12/13 issues
+Date: Thu, 11 Jan 2018 08:37:06 -0800 (PST)
+Message-ID: <20180111163707.0E2C5CC890A@huitzilopochtli.metztli-it.com>
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=4+XFrk6LP9VNvq4khjf0JH8yAEeIG4ImbEq/5ACFK5E=;
-        b=NTyq+8b5T+oa4+sJ/YhGAoUDBRo08U8oiYERLB9glRrzADJs8uUDq9mFWRi3GQMoKP
-         RLhv9CTgHSGhl9RCHhl9nlFx6ICCO/qzJLXqtcNXcyQ1+aXilEYDuR9SIr4V5md9ZqJh
-         jysPdle7TLT/TkNpREt5UD0DzVqgTxVV1CtDEWgEJVQd/5Ll4gtVn1U+RA9rxkLtCphr
-         BFwca9tNAcazb9ZLOFyl00BhEnyOK1iD9uQFjzr/u84bCoW5IHi301pv2jwL94jlaa02
-         VQq0H0FyFDvHoZwyDgoyOqv+v2X1NCb7scU5GFjjuxRtunz1mtxG9ds7idK6TIDg2657
-         dL2g==
-In-Reply-To: <762d9f56-1e76-d861-7e2f-2e042ded95ae@gmail.com>
+DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mixtli.metztli.it; q=dns/txt;
+ s=mx; t=1515688929; h=From: Date: Message-Id: To: Subject: Sender;
+ bh=aa5n4b253KGfxZD4Lk1iJED4pDEaC56OZiG3WV7pAj4=; b=nokjamQA5YncVhUQlM4PjqpcGYV1BmxPbvFMYsPZ3o1QwpNEYJGMbxBiTst8uUK5LWTot7o7
+ qDAvFVQxeynzneu6aAGfg3gCvk3iZmkwlAjxFsYu03vA9h5+M8Mdq2nKodE5hsxVdpMsZSle
+ ezHP5ETckwtYaqxlwUjyGQqJ1HI=
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="utf-8"
-To: Edward Shishkin <edward.shishkin@gmail.com>
-Cc: reiserfs-devel <reiserfs-devel@vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: reiserfs-devel@vger.kernel.org
 
-On Tue, Jan 2, 2018 at 3:14 PM, Edward Shishkin
-<edward.shishkin@gmail.com> wrote:
-> Hi Dushan,
->
-> Does this problem (failed plugin conversion) take place in 4.14?
->
+Niltze, Ed-
 
-No, 4.14 worked OK.
+FYI applying reiser4-for-4.14.1.patch.gz to Linux kernels referenced below, generate following during kernel build:
 
-Was it the collision around 4.0.2 filesystem and 4.0.1 R4 kernel?
+Linux-4.14.13:
+5802:fs/reiser4/carry.o: warning: objtool: fatal_carry_error.isra.5() falls through to next function print_level()
+5856:fs/reiser4/txnmgr.o: warning: objtool: commit_txnh()+0x580: stack state mismatch: cfa1=7+120 cfa2=7+136
+5874:fs/reiser4/flush.o: warning: objtool: reverse_allocate_parent() falls through to next function squalloc_right_twig_cut.isra.27()
+5883:fs/reiser4/wander.o: warning: objtool: reiser4_write_logs()+0x5a2: stack state mismatch: cfa1=7+184 cfa2=7+200
+5993:fs/reiser4/vfs_ops.o: warning: objtool: .text: unexpected end of section
 
-> Thanks,
-> Edward.
->
->
-> On 01/02/2018 08:52 AM, Du=C5=A1an =C4=8Coli=C4=87 wrote:
->>
->> Hello
->>
->> On kernel 4.12 while rsync-ing /home to newly created reiser4
->> partition I get lots of messages in logs:
->>
->> kernel: reiser4[rsync(9841)]: reiser4_write_dispatch
->> (fs/reiser4/plugin/file/file_conversion.c:582)[edward-1544]:\x0aWARNING:
->> Inode 98653: file plugin conversion failed (-2)
->>
->> Partition was created with mkfs.reiser4 /dev/md125
->
->
+
+Linux-4.14.12
+4440:fs/reiser4/carry.o: warning: objtool: fatal_carry_error.isra.5() falls through to next function print_level()
+4514:fs/reiser4/txnmgr.o: warning: objtool: commit_txnh()+0x580: stack state mismatch: cfa1=7+120 cfa2=7+136
+4531:fs/reiser4/flush.o: warning: objtool: reverse_allocate_parent() falls through to next function squalloc_right_twig_cut.isra.27()
+4549:fs/reiser4/wander.o: warning: objtool: reiser4_write_logs()+0x5a2: stack state mismatch: cfa1=7+184 cfa2=7+200
+4677:fs/reiser4/vfs_ops.o: warning: objtool: .text: unexpected end of section
+
+If you need to see the complete logs generated building the kernel 'the Debian way', let me know.
+
+
+Best Professional Regards.
+
+-- 
+Jose R R
+http://metztli.it
+---------------------------------------------------------------------------------------------
+Download Metztli Reiser4: Debian Stretch w/ Linux 4.14 AMD64
+---------------------------------------------------------------------------------------------
+feats ZSTD compression https://sf.net/projects/metztli-reiser4/
