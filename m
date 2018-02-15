@@ -1,76 +1,55 @@
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Subject: [PATCH 4.4 44/74] reiserfs: Dont clear SGID when inheriting ACLs
-Date: Mon, 29 Jan 2018 13:56:49 +0100
-Message-ID: <20180129123849.559043741@linuxfoundation.org>
-References: <20180129123847.507563674@linuxfoundation.org>
-Mime-Version: 1.0
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20180129123847.507563674@linuxfoundation.org>
-Sender: linux-kernel-owner@vger.kernel.org
+From: jose.r.r@metztli.com (Metztli Information Technology)
+Subject: Reiser4 \(SFRN\) 4.0.2 and linux 4.14.x cold boot kernel hang frequency.
+Date: Thu, 15 Feb 2018 02:17:38 -0800 (PST)
+Message-ID: <20180215101738.9C9CB11C79C0@huitzilopochtli.metztli-it.com>
+Return-path: <reiserfs-devel-owner@vger.kernel.org>
+DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mixtli.metztli.it; q=dns/txt;
+ s=mx; t=1518689860; h=From: Date: Message-Id: To: Subject: Sender;
+ bh=2h/6Mg1EpoqAD75f0abLCl/AdIfaL/ypLqAGz+B5pfU=; b=gTnGf/7kwzWp0xQhSPygjnNWG53/AqlRl82vYw1cyG+luXymxMPyqbWL1A4BBjme7gWrX3QO
+ CASpfMKdOn4pVDvnEiCasNHv7vpbioOOou037WLvI2nR96EKMnU/ElPepphKXlOMWDllh6Xc
+ dz0Mv3Epxa8NyO5d5/T7q6LpkU4=
+Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
+MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-kernel@vger.kernel.org
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org, reiserfs-devel@vger.kernel.org, Jan Kara <jack@suse.cz>
+To: reiserfs-devel@vger.kernel.org
 
-4.4-stable review patch.  If anyone has any objections, please let me know.
+Niltze, Ed-
 
-------------------
+I came across this (fixed) issue in ZFS which touches on Reiser4:
 
-From: Jan Kara <jack@suse.cz>
+'Reiser4's maintainer decided to modify the kernel VFS to export the old function' [1]
+https://github.com/zfsonlinux/zfs/pull/7021
 
-commit 6883cd7f68245e43e91e5ee583b7550abf14523f upstream.
+I am currently running:
 
-When new directory 'DIR1' is created in a directory 'DIR0' with SGID bit
-set, DIR1 is expected to have SGID bit set (and owning group equal to
-the owning group of 'DIR0'). However when 'DIR0' also has some default
-ACLs that 'DIR1' inherits, setting these ACLs will result in SGID bit on
-'DIR1' to get cleared if user is not member of the owning group.
+uname -a
+Linux huitzilopochtli 4.14.0-3+reiser4.0.2-amd64 #1 SMP Debian 4.14.17-1+reiser4.0.2 (2018-01-16) x86_64 GNU/Linux
 
-Fix the problem by moving posix_acl_update_mode() out of
-__reiserfs_set_acl() into reiserfs_set_acl(). That way the function will
-not be called when inheriting ACLs which is what we want as it prevents
-SGID bit clearing and the mode has been properly set by
-posix_acl_create() anyway.
+There are no Reiser4 related apparent operating issues as in this environment I have built GCC7 and VirtualBox 5.1.32  -- the latest that fully supports reiser4 format/create/installation as done with Metztli-Reiser4 Debian Stretch AMD64 netboot in virtual machines creation and software 'cold boots':
+< https://metztli.it/blog/index.php/ixiptli/?disp=posts#item_143 >
+< https://metztli.it/blog/index.php/ixiptli >
 
-Fixes: 073931017b49d9458aa351605b43a7e34598caef
-CC: reiserfs-devel@vger.kernel.org
-Signed-off-by: Jan Kara <jack@suse.cz>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+No virtual or physical data loss but after Linux 4.14.x reiser4-patched kernels I am experiencing more frequent cold boot kernel hangs in physical hardware (i.e., laptop scenarios) -- until finally kernel boots appropriately into userland XDM. [2]
 
+I do not know if it is due to Zstd not appropriately being loaded initially for my particular transparent compression ~ 1.2Tb reiser4 SFRN 4.0.2 partition daily development machine.
 
----
- fs/reiserfs/xattr_acl.c |   12 +++++++-----
- 1 file changed, 7 insertions(+), 5 deletions(-)
+For long running instances (including those with transparent compression) -- as in cloud and or remote hosting instances the issue is, of course, less prevalent as I only reboot kernels sporadically.
 
---- a/fs/reiserfs/xattr_acl.c
-+++ b/fs/reiserfs/xattr_acl.c
-@@ -37,7 +37,14 @@ reiserfs_set_acl(struct inode *inode, st
- 	error = journal_begin(&th, inode->i_sb, jcreate_blocks);
- 	reiserfs_write_unlock(inode->i_sb);
- 	if (error == 0) {
-+		if (type == ACL_TYPE_ACCESS && acl) {
-+			error = posix_acl_update_mode(inode, &inode->i_mode,
-+						      &acl);
-+			if (error)
-+				goto unlock;
-+		}
- 		error = __reiserfs_set_acl(&th, inode, type, acl);
-+unlock:
- 		reiserfs_write_lock(inode->i_sb);
- 		error2 = journal_end(&th);
- 		reiserfs_write_unlock(inode->i_sb);
-@@ -245,11 +252,6 @@ __reiserfs_set_acl(struct reiserfs_trans
- 	switch (type) {
- 	case ACL_TYPE_ACCESS:
- 		name = POSIX_ACL_XATTR_ACCESS;
--		if (acl) {
--			error = posix_acl_update_mode(inode, &inode->i_mode, &acl);
--			if (error)
--				return error;
--		}
- 		break;
- 	case ACL_TYPE_DEFAULT:
- 		name = POSIX_ACL_XATTR_DEFAULT;
+Just wondering if [1] might have any relevance to [2] ?
+
+Of course, FYI, Ed.
 
 
+Best professional Regards.
+
+P.S. I will provide more detailed information as I am able to capture it from booting kernel.
+
+-- 
+Jose R R
+http://metztli.it
+---------------------------------------------------------------------------------------------
+Download Metztli Reiser4: Debian Stretch w/ Linux 4.14 AMD64
+---------------------------------------------------------------------------------------------
+feats ZSTD compression https://sf.net/projects/metztli-reiser4/
