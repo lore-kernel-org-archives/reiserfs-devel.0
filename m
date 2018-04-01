@@ -1,14 +1,14 @@
-From: syzbot <syzbot+6bd77b88c1977c03f584@syzkaller.appspotmail.com>
-Subject: WARNING in format_decode
-Date: Sat, 31 Mar 2018 13:47:07 -0700
-Message-ID: <001a1148578cc1cc160568bb755b@google.com>
+From: syzbot <syzbot+008ac33be9dec51e0ca3@syzkaller.appspotmail.com>
+Subject: BUG: unable to handle kernel paging request in cleanup_bitmap_list
+Date: Sun, 01 Apr 2018 10:01:03 -0700
+Message-ID: <001a1140e9201dd16b0568cc6beb@google.com>
 Mime-Version: 1.0
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"; format="flowed"; delsp="yes"
 Content-Transfer-Encoding: 7bit
-To: dhowells@redhat.com, linux-kernel@vger.kernel.org, reiserfs-devel@vger.kernel.org, syzkaller-bugs@googlegroups.com
+To: colin.king@canonical.com, dhowells@redhat.com, gregkh@linuxfoundation.org, jack@suse.cz, linux-kernel@vger.kernel.org, mingo@kernel.org, pombredanne@nexb.com, reiserfs-devel@vger.kernel.org, syzkaller-bugs@googlegroups.com
 
 Hello,
 
@@ -17,60 +17,60 @@ syzbot hit the following crash on upstream commit
 Merge branch 'perf-urgent-for-linus' of  
 git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip
 syzbot dashboard link:  
-https://syzkaller.appspot.com/bug?extid=6bd77b88c1977c03f584
+https://syzkaller.appspot.com/bug?extid=008ac33be9dec51e0ca3
 
-C reproducer: https://syzkaller.appspot.com/x/repro.c?id=4749946259505152
 syzkaller reproducer:  
-https://syzkaller.appspot.com/x/repro.syz?id=5685328530636800
+https://syzkaller.appspot.com/x/repro.syz?id=4931687263764480
 Raw console output:  
-https://syzkaller.appspot.com/x/log.txt?id=5145264444669952
+https://syzkaller.appspot.com/x/log.txt?id=5716877078691840
 Kernel config:  
 https://syzkaller.appspot.com/x/.config?id=-2760467897697295172
 compiler: gcc (GCC) 7.1.1 20170620
 
 IMPORTANT: if you fix the bug, please add the following tag to the commit:
-Reported-by: syzbot+6bd77b88c1977c03f584@syzkaller.appspotmail.com
+Reported-by: syzbot+008ac33be9dec51e0ca3@syzkaller.appspotmail.com
 It will help syzbot understand when the bug is fixed. See footer for  
 details.
 If you forward the report, please keep this part and the footer.
 
-REISERFS (device loop0): found reiserfs format "3.5" with non-standard  
-journal
-REISERFS (device loop0): using ordered data mode
-reiserfs: using flush barriers
-------------[ cut here ]------------
-Please remove unsupported %/ in format string
-WARNING: CPU: 1 PID: 4480 at lib/vsprintf.c:2138 format_decode+0x77f/0x830  
-lib/vsprintf.c:2138
-Kernel panic - not syncing: panic_on_warn set ...
-
-CPU: 1 PID: 4480 Comm: syzkaller116131 Not tainted 4.16.0-rc7+ #9
+REISERFS warning (device loop0): sh-2022 reiserfs_fill_super: unable to  
+initialize journal space
+REISERFS warning (device loop6): sh-462 journal_init: unable to initialize  
+journal device
+REISERFS warning (device loop6): sh-2022 reiserfs_fill_super: unable to  
+initialize journal space
+REISERFS warning (device loop3): sh-458 journal_init_dev: cannot init  
+journal device 'unknown-block(11,0)': -6
+REISERFS warning (device loop3): sh-462 journal_init: unable to initialize  
+journal device
+BUG: unable to handle kernel paging request at ffffc90004d59000
+IP: cleanup_bitmap_list.isra.7.part.8+0x3dd/0x6b0 fs/reiserfs/journal.c:233
+PGD 1dad42067 P4D 1dad42067 PUD 1dad43067 PMD 1bb5df067 PTE 0
+Oops: 0000 [#1] SMP KASAN
+Dumping ftrace buffer:
+    (ftrace buffer empty)
+Modules linked in:
+CPU: 0 PID: 6581 Comm: syz-executor3 Not tainted 4.16.0-rc7+ #9
 Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
 Google 01/01/2011
+RIP: 0010:cleanup_bitmap_list.isra.7.part.8+0x3dd/0x6b0  
+fs/reiserfs/journal.c:233
+RSP: 0018:ffff8801b28770e8 EFLAGS: 00010246
+RAX: 0000000000001000 RBX: dffffc0000000000 RCX: ffffc90004d542c0
+RDX: 1ffff920009ab200 RSI: 0000000000008000 RDI: 0000000000000001
+RBP: ffff8801b28771c0 R08: 1ffff1003650edf3 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000000 R12: ffffc90004d59000
+R13: 0000000000000200 R14: ffff8801b102d6c0 R15: ffff8801b0420080
+FS:  00007fa5317af700(0000) GS:ffff8801db000000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: ffffc90004d59000 CR3: 00000001b8324005 CR4: 00000000001606f0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
 Call Trace:
-  __dump_stack lib/dump_stack.c:17 [inline]
-  dump_stack+0x194/0x24d lib/dump_stack.c:53
-  panic+0x1e4/0x41c kernel/panic.c:183
-  __warn+0x1dc/0x200 kernel/panic.c:547
-  report_bug+0x1f4/0x2b0 lib/bug.c:186
-  fixup_bug.part.10+0x37/0x80 arch/x86/kernel/traps.c:178
-  fixup_bug arch/x86/kernel/traps.c:247 [inline]
-  do_error_trap+0x2d7/0x3e0 arch/x86/kernel/traps.c:296
-  do_invalid_op+0x1b/0x20 arch/x86/kernel/traps.c:315
-  invalid_op+0x1b/0x40 arch/x86/entry/entry_64.S:986
-RIP: 0010:format_decode+0x77f/0x830 lib/vsprintf.c:2138
-RSP: 0018:ffff8801acc7ef70 EFLAGS: 00010282
-RAX: dffffc0000000008 RBX: ffffffff89e18dc1 RCX: ffffffff815b193e
-RDX: 0000000000000000 RSI: 1ffff1003598fd9e RDI: 1ffff1003598fd73
-RBP: ffff8801acc7efb0 R08: 1ffff1003598fd35 R09: 0000000000000000
-R10: 0000000000000001 R11: 0000000000000000 R12: ffff8801acc7f028
-R13: 000000000000002f R14: ffffffff89e18dc0 R15: 0000000000000000
-  vsnprintf+0x15f/0x1900 lib/vsprintf.c:2234
-  vsprintf+0x2a/0x40 lib/vsprintf.c:2462
-  prepare_error_buf+0x1ce/0x1870 fs/reiserfs/prints.c:240
-  __reiserfs_warning+0xc8/0x1a0 fs/reiserfs/prints.c:267
-  journal_init_dev fs/reiserfs/journal.c:2646 [inline]
-  journal_init+0x2c9e/0x62f0 fs/reiserfs/journal.c:2772
+  cleanup_bitmap_list fs/reiserfs/journal.c:229 [inline]
+  free_list_bitmaps+0x6f/0xf0 fs/reiserfs/journal.c:251
+  free_journal_ram+0x148/0x5a0 fs/reiserfs/journal.c:1894
+  journal_init+0x22f6/0x62f0 fs/reiserfs/journal.c:2901
   reiserfs_fill_super+0xf9f/0x33a0 fs/reiserfs/super.c:2034
   mount_bdev+0x2b7/0x370 fs/super.c:1119
   get_super_block+0x34/0x40 fs/reiserfs/super.c:2605
@@ -83,17 +83,20 @@ R13: 000000000000002f R14: ffffffff89e18dc0 R15: 0000000000000000
   SyS_mount+0xab/0x120 fs/namespace.c:3035
   do_syscall_64+0x281/0x940 arch/x86/entry/common.c:287
   entry_SYSCALL_64_after_hwframe+0x42/0xb7
-RIP: 0033:0x442dea
-RSP: 002b:00007fff69379cf8 EFLAGS: 00000202 ORIG_RAX: 00000000000000a5
-RAX: ffffffffffffffda RBX: 0000000000000003 RCX: 0000000000442dea
-RDX: 0000000020000000 RSI: 0000000020000100 RDI: 00007fff69379d00
-RBP: 0000000000000004 R08: 0000000020000500 R09: 000000000000000a
-R10: 0000000000000000 R11: 0000000000000202 R12: 0000000000401c50
-R13: 0000000000401ce0 R14: 0000000000000000 R15: 0000000000000000
-Dumping ftrace buffer:
-    (ftrace buffer empty)
-Kernel Offset: disabled
-Rebooting in 86400 seconds..
+RIP: 0033:0x4578aa
+RSP: 002b:00007fa5317aebb8 EFLAGS: 00000246 ORIG_RAX: 00000000000000a5
+RAX: ffffffffffffffda RBX: 0000000020000000 RCX: 00000000004578aa
+RDX: 0000000020000000 RSI: 0000000020000100 RDI: 00007fa5317aec00
+RBP: 0000000000000001 R08: 0000000020011400 R09: 0000000020000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000007
+R13: 000000000000066d R14: 00000000006fbad8 R15: 0000000000000001
+Code: ff ff 4d 63 e5 4a 8d 04 e5 00 00 00 00 4c 8b 21 48 89 85 68 ff ff ff  
+49 01 c4 4c 89 e2 48 c1 ea 03 80 3c 1a 00 0f 85 76 02 00 00 <4d> 8b 24 24  
+4d 85 e4 0f 84 e5 fe ff ff e8 91 6d 8c ff 49 8d 7e
+RIP: cleanup_bitmap_list.isra.7.part.8+0x3dd/0x6b0  
+fs/reiserfs/journal.c:233 RSP: ffff8801b28770e8
+CR2: ffffc90004d59000
+---[ end trace 4f9c7ebf6e463a71 ]---
 
 
 ---
