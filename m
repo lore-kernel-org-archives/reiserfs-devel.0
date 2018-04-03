@@ -1,102 +1,97 @@
-From: syzbot <syzbot+008ac33be9dec51e0ca3@syzkaller.appspotmail.com>
-Subject: BUG: unable to handle kernel paging request in cleanup_bitmap_list
-Date: Sun, 01 Apr 2018 10:01:03 -0700
-Message-ID: <001a1140e9201dd16b0568cc6beb@google.com>
+From: syzbot <syzbot+b890b3335a4d8c608963@syzkaller.appspotmail.com>
+Subject: KASAN: global-out-of-bounds Write in string
+Date: Tue, 03 Apr 2018 10:01:01 -0700
+Message-ID: <000000000000b696800568f4a6c6@google.com>
 Mime-Version: 1.0
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"; format="flowed"; delsp="yes"
 Content-Transfer-Encoding: 7bit
-To: colin.king@canonical.com, dhowells@redhat.com, gregkh@linuxfoundation.org, jack@suse.cz, linux-kernel@vger.kernel.org, mingo@kernel.org, pombredanne@nexb.com, reiserfs-devel@vger.kernel.org, syzkaller-bugs@googlegroups.com
+To: dhowells@redhat.com, linux-kernel@vger.kernel.org, reiserfs-devel@vger.kernel.org, syzkaller-bugs@googlegroups.com
 
 Hello,
 
 syzbot hit the following crash on upstream commit
-10b84daddbec72c6b440216a69de9a9605127f7a (Sat Mar 31 17:59:00 2018 +0000)
-Merge branch 'perf-urgent-for-linus' of  
-git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip
+642e7fd23353e22290e3d51719fcb658dc252342 (Tue Apr 3 04:22:12 2018 +0000)
+Merge branch 'syscalls-next' of  
+git://git.kernel.org/pub/scm/linux/kernel/git/brodo/linux
 syzbot dashboard link:  
-https://syzkaller.appspot.com/bug?extid=008ac33be9dec51e0ca3
+https://syzkaller.appspot.com/bug?extid=b890b3335a4d8c608963
 
 syzkaller reproducer:  
-https://syzkaller.appspot.com/x/repro.syz?id=4931687263764480
+https://syzkaller.appspot.com/x/repro.syz?id=4698588919627776
 Raw console output:  
-https://syzkaller.appspot.com/x/log.txt?id=5716877078691840
+https://syzkaller.appspot.com/x/log.txt?id=5456053378482176
 Kernel config:  
-https://syzkaller.appspot.com/x/.config?id=-2760467897697295172
+https://syzkaller.appspot.com/x/.config?id=-6874493495260513980
 compiler: gcc (GCC) 7.1.1 20170620
 
 IMPORTANT: if you fix the bug, please add the following tag to the commit:
-Reported-by: syzbot+008ac33be9dec51e0ca3@syzkaller.appspotmail.com
+Reported-by: syzbot+b890b3335a4d8c608963@syzkaller.appspotmail.com
 It will help syzbot understand when the bug is fixed. See footer for  
 details.
 If you forward the report, please keep this part and the footer.
 
-REISERFS warning (device loop0): sh-2022 reiserfs_fill_super: unable to  
-initialize journal space
-REISERFS warning (device loop6): sh-462 journal_init: unable to initialize  
-journal device
-REISERFS warning (device loop6): sh-2022 reiserfs_fill_super: unable to  
-initialize journal space
-REISERFS warning (device loop3): sh-458 journal_init_dev: cannot init  
-journal device 'unknown-block(11,0)': -6
-REISERFS warning (device loop3): sh-462 journal_init: unable to initialize  
-journal device
-BUG: unable to handle kernel paging request at ffffc90004d59000
-IP: cleanup_bitmap_list.isra.7.part.8+0x3dd/0x6b0 fs/reiserfs/journal.c:233
-PGD 1dad42067 P4D 1dad42067 PUD 1dad43067 PMD 1bb5df067 PTE 0
-Oops: 0000 [#1] SMP KASAN
-Dumping ftrace buffer:
-    (ftrace buffer empty)
-Modules linked in:
-CPU: 0 PID: 6581 Comm: syz-executor3 Not tainted 4.16.0-rc7+ #9
+IPVS: ftp: loaded support on port[0] = 21
+REISERFS warning (device loop0): sh-2021 reiserfs_fill_super: can not find  
+reiserfs on loop0
+syz-executor0 (4503) used greatest stack depth: 15560 bytes left
+REISERFS warning (device loop0): sh-2021 reiserfs_fill_super: can not find  
+reiserfs on loop0
+==================================================================
+BUG: KASAN: global-out-of-bounds in string+0x1cb/0x200 lib/vsprintf.c:598
+Write of size 1 at addr ffffffff89e166a0 by task syz-executor0/4522
+
+CPU: 1 PID: 4522 Comm: syz-executor0 Not tainted 4.16.0+ #12
 Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
 Google 01/01/2011
-RIP: 0010:cleanup_bitmap_list.isra.7.part.8+0x3dd/0x6b0  
-fs/reiserfs/journal.c:233
-RSP: 0018:ffff8801b28770e8 EFLAGS: 00010246
-RAX: 0000000000001000 RBX: dffffc0000000000 RCX: ffffc90004d542c0
-RDX: 1ffff920009ab200 RSI: 0000000000008000 RDI: 0000000000000001
-RBP: ffff8801b28771c0 R08: 1ffff1003650edf3 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000000 R12: ffffc90004d59000
-R13: 0000000000000200 R14: ffff8801b102d6c0 R15: ffff8801b0420080
-FS:  00007fa5317af700(0000) GS:ffff8801db000000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: ffffc90004d59000 CR3: 00000001b8324005 CR4: 00000000001606f0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
 Call Trace:
-  cleanup_bitmap_list fs/reiserfs/journal.c:229 [inline]
-  free_list_bitmaps+0x6f/0xf0 fs/reiserfs/journal.c:251
-  free_journal_ram+0x148/0x5a0 fs/reiserfs/journal.c:1894
-  journal_init+0x22f6/0x62f0 fs/reiserfs/journal.c:2901
-  reiserfs_fill_super+0xf9f/0x33a0 fs/reiserfs/super.c:2034
+  __dump_stack lib/dump_stack.c:17 [inline]
+  dump_stack+0x1a7/0x27d lib/dump_stack.c:53
+  print_address_description+0x178/0x250 mm/kasan/report.c:256
+  kasan_report_error mm/kasan/report.c:354 [inline]
+  kasan_report+0x23c/0x360 mm/kasan/report.c:412
+  __asan_report_store1_noabort+0x17/0x20 mm/kasan/report.c:435
+  string+0x1cb/0x200 lib/vsprintf.c:598
+  vsnprintf+0x863/0x1900 lib/vsprintf.c:2282
+  vsprintf+0x2a/0x40 lib/vsprintf.c:2462
+  prepare_error_buf+0x1d2/0x1820 fs/reiserfs/prints.c:240
+  __reiserfs_warning+0xc8/0x1a0 fs/reiserfs/prints.c:267
+  reiserfs_getopt fs/reiserfs/super.c:1044 [inline]
+  reiserfs_parse_options+0x11e5/0x24e0 fs/reiserfs/super.c:1194
+  reiserfs_fill_super+0x520/0x33a0 fs/reiserfs/super.c:1946
   mount_bdev+0x2b7/0x370 fs/super.c:1119
   get_super_block+0x34/0x40 fs/reiserfs/super.c:2605
   mount_fs+0x66/0x2d0 fs/super.c:1222
   vfs_kern_mount.part.26+0xc6/0x4a0 fs/namespace.c:1037
-  vfs_kern_mount fs/namespace.c:2509 [inline]
-  do_new_mount fs/namespace.c:2512 [inline]
-  do_mount+0xea4/0x2bb0 fs/namespace.c:2842
-  SYSC_mount fs/namespace.c:3058 [inline]
-  SyS_mount+0xab/0x120 fs/namespace.c:3035
+  vfs_kern_mount fs/namespace.c:2514 [inline]
+  do_new_mount fs/namespace.c:2517 [inline]
+  do_mount+0xea4/0x2b90 fs/namespace.c:2847
+  ksys_mount+0xab/0x120 fs/namespace.c:3063
+  SYSC_mount fs/namespace.c:3077 [inline]
+  SyS_mount+0x39/0x50 fs/namespace.c:3074
   do_syscall_64+0x281/0x940 arch/x86/entry/common.c:287
   entry_SYSCALL_64_after_hwframe+0x42/0xb7
-RIP: 0033:0x4578aa
-RSP: 002b:00007fa5317aebb8 EFLAGS: 00000246 ORIG_RAX: 00000000000000a5
-RAX: ffffffffffffffda RBX: 0000000020000000 RCX: 00000000004578aa
-RDX: 0000000020000000 RSI: 0000000020000100 RDI: 00007fa5317aec00
-RBP: 0000000000000001 R08: 0000000020011400 R09: 0000000020000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000007
-R13: 000000000000066d R14: 00000000006fbad8 R15: 0000000000000001
-Code: ff ff 4d 63 e5 4a 8d 04 e5 00 00 00 00 4c 8b 21 48 89 85 68 ff ff ff  
-49 01 c4 4c 89 e2 48 c1 ea 03 80 3c 1a 00 0f 85 76 02 00 00 <4d> 8b 24 24  
-4d 85 e4 0f 84 e5 fe ff ff e8 91 6d 8c ff 49 8d 7e
-RIP: cleanup_bitmap_list.isra.7.part.8+0x3dd/0x6b0  
-fs/reiserfs/journal.c:233 RSP: ffff8801b28770e8
-CR2: ffffc90004d59000
----[ end trace 4f9c7ebf6e463a71 ]---
+RIP: 0033:0x457d0a
+RSP: 002b:00007f0655cddbb8 EFLAGS: 00000246 ORIG_RAX: 00000000000000a5
+RAX: ffffffffffffffda RBX: 0000000020000000 RCX: 0000000000457d0a
+RDX: 0000000020000000 RSI: 0000000020000100 RDI: 00007f0655cddc00
+RBP: 0000000000000004 R08: 0000000020013f00 R09: 0000000020000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000005
+R13: 000000000000066d R14: 00000000006fcad8 R15: 0000000000000001
+
+The buggy address belongs to the variable:
+  error_buf+0x400/0x420
+
+Memory state around the buggy address:
+  ffffffff89e16580: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+  ffffffff89e16600: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+> ffffffff89e16680: 00 00 00 00 fa fa fa fa 04 fa fa fa fa fa fa fa
+                                ^
+  ffffffff89e16700: 00 fa fa fa fa fa fa fa 00 fa fa fa fa fa fa fa
+  ffffffff89e16780: 00 fa fa fa fa fa fa fa 00 fa fa fa fa fa fa fa
+==================================================================
 
 
 ---
