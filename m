@@ -1,58 +1,76 @@
-From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-Subject: Re: KASAN: global-out-of-bounds Write in string
-Date: Thu, 5 Apr 2018 20:02:06 +0900
-Message-ID: <f1254802-d801-41d6-72ca-33f011e63253@I-love.SAKURA.ne.jp>
-References: <000000000000b696800568f4a6c6@google.com>
+From: Rasmus Villemoes <linux@rasmusvillemoes.dk>
+Subject: Re: [PATCH?] reiserfs: prevent panic: don't allow %-char in journal
+ dev. name
+Date: Fri, 6 Apr 2018 15:45:14 +0200
+Message-ID: <f1b08095-c4dc-61f4-0c96-d98a510fb36f@rasmusvillemoes.dk>
+References: <d9b518a5-287a-72b3-05f1-ea89e25563ba@infradead.org>
+ <20180404184517.9f2b91b856a56f71464f5f7f@linux-foundation.org>
+ <6b575956-6498-43c8-dc2c-9e2a0d5564a9@rasmusvillemoes.dk>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <000000000000b696800568f4a6c6@google.com>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=rasmusvillemoes.dk; s=google;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=hCL3BVDTKGOjMi1pnqrd8YVGmtcyGXVMXL8j+J2VSTI=;
+        b=Zvd46TCvi73vEgqfLS1CCnmEtHPGzfCrNZg1z4Ba9P4duttkqpx3DjiRK5wIYbSpk5
+         +iG04X61EfRWQK4LfGT8HUhX69hXuqCa2bibMkdv9SIUO9iMCiSykmAWQkxMHZQdxU6O
+         xPcrKWbb1JRczNtAyCs6OIsp5re5V7RAquQuU=
+In-Reply-To: <6b575956-6498-43c8-dc2c-9e2a0d5564a9@rasmusvillemoes.dk>
 Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="utf-8"
-To: dhowells@redhat.com, reiserfs-devel@vger.kernel.org
-Cc: syzbot <syzbot+b890b3335a4d8c608963@syzkaller.appspotmail.com>, linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="us-ascii"
+To: Rasmus Villemoes <linux@rasmusvillemoes.dk>, Andrew Morton <akpm@linux-foundation.org>, Randy Dunlap <rdunlap@infradead.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, reiserfs-devel@vger.kernel.org, Alexander Viro <viro@zeniv.linux.org.uk>, Jeff Mahoney <jeffm@suse.com>, Jan Kara <jack@suse.com>, Frederic Weisbecker <fweisbec@gmail.com>, Artem Bityutskiy <dedekind1@gmail.com>
 
-On 2018/04/04 2:01, syzbot wrote:
-> BUG: KASAN: global-out-of-bounds in string+0x1cb/0x200 lib/vsprintf.c:598
-> Write of size 1 at addr ffffffff89e166a0 by task syz-executor0/4522
+On 2018-04-05 11:04, Rasmus Villemoes wrote:
+> On 2018-04-05 03:45, Andrew Morton wrote:
+>>
+>> Isn't the bug in journal_init_dev()?
 > 
-> CPU: 1 PID: 4522 Comm: syz-executor0 Not tainted 4.16.0+ #12
-> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
-> Call Trace:
->  __dump_stack lib/dump_stack.c:17 [inline]
->  dump_stack+0x1a7/0x27d lib/dump_stack.c:53
->  print_address_description+0x178/0x250 mm/kasan/report.c:256
->  kasan_report_error mm/kasan/report.c:354 [inline]
->  kasan_report+0x23c/0x360 mm/kasan/report.c:412
->  __asan_report_store1_noabort+0x17/0x20 mm/kasan/report.c:435
->  string+0x1cb/0x200 lib/vsprintf.c:598
->  vsnprintf+0x863/0x1900 lib/vsprintf.c:2282
->  vsprintf+0x2a/0x40 lib/vsprintf.c:2462
->  prepare_error_buf+0x1d2/0x1820 fs/reiserfs/prints.c:240
->  __reiserfs_warning+0xc8/0x1a0 fs/reiserfs/prints.c:267
->  reiserfs_getopt fs/reiserfs/super.c:1044 [inline]
->  reiserfs_parse_options+0x11e5/0x24e0 fs/reiserfs/super.c:1194
->  reiserfs_fill_super+0x520/0x33a0 fs/reiserfs/super.c:1946
-
-> The buggy address belongs to the variable:
->  error_buf+0x400/0x420
-
-I guess this is a buffer overflow bug due to
-
-  static char error_buf[1024];
-  char *p = error_buf;
-  vsprintf(p, fmt1, args);
-
-at prepare_error_buf(). Need to check available bytes.
-
+> Urgh. At first I was about to reply that the real bug was in reiserfs.h
+> for failing to annotate __reiserfs_warning with __printf(). But digging
+> into it, it turns out that it implements its own printf extensions, so
+> that's obviously a non-starter. Now, one thing is that some of those
+> extension clash with existing standard modifiers (%z and %h, so if
+> someone adds a correct %zu thing to print a size_t in reiserfs things
+> will break). But, and I hope I'm wrong about this and just hasn't had
+> enough coffee, this seems completely broken:
 > 
-> Memory state around the buggy address:
->  ffffffff89e16580: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
->  ffffffff89e16600: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
->> ffffffff89e16680: 00 00 00 00 fa fa fa fa 04 fa fa fa fa fa fa fa
->                                ^
->  ffffffff89e16700: 00 fa fa fa fa fa fa fa 00 fa fa fa fa fa fa fa
->  ffffffff89e16780: 00 fa fa fa fa fa fa fa 00 fa fa fa fa fa fa fa
-> ==================================================================
+>         while ((k = is_there_reiserfs_struct(fmt1, &what)) != NULL) {
+>                 *k = 0;
+> 
+>                 p += vsprintf(p, fmt1, args);
+> 
+>                 switch (what) {
+>                 case 'k':
+>                         sprintf_le_key(p, va_arg(args, struct
+> reiserfs_key *));
+>                         break;
+> 
+> On architectures where va_list is a typedef for a one-element array of
+> some struct (x86-64), that works ok, because the vsprintf call can and
+> does update the args metadata. But when args is just a pointer into the
+> stack (i386), we don't know how much vsprintf consumed, and end up
+> consuming the same arguments again - only this time we may interpret
+> some random integer as a struct pointer...
+
+OK, so maybe -mregparm=3 would be the thing making i386 behave like
+x86-64 wrt. varargs, but no, when calling a variadic function, gcc
+pushes all arguments on the stack, and va_list is still just a pointer
+(passed by value to vsprintf) into the stack.
+
+It is only a problem when the format string contains ordinary specifiers
+before a reiserfs-specific one, and such calls happen to be rare, but
+not non-existing. One example would be reiserfs_warning(tb->tb_sb,
+"vs-12339", "%s (%b)", which, bh);. Ok, treating which as a buffer_head
+would probably just give some garbage numbers. But
+
+  "reiserfs-16100", "STATDATA, index %d, type 0x%x, %h",		 vi->vi_index,
+vi->vi_type, vi->vi_ih
+
+ends up treating vi->vi_index as a struct item_head*, no?
+
+Rasmus
