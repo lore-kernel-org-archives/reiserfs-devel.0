@@ -1,32 +1,44 @@
-From: Rasmus Villemoes <linux@rasmusvillemoes.dk>
+From: Jeff Mahoney <jeffm@suse.com>
 Subject: Re: [PATCH?] reiserfs: prevent panic: don't allow %-char in journal
  dev. name
-Date: Fri, 6 Apr 2018 15:45:14 +0200
-Message-ID: <f1b08095-c4dc-61f4-0c96-d98a510fb36f@rasmusvillemoes.dk>
+Date: Fri, 6 Apr 2018 12:55:53 -0400
+Message-ID: <d520db9a-fd40-a3ef-7747-a5a7a51668cd@suse.com>
 References: <d9b518a5-287a-72b3-05f1-ea89e25563ba@infradead.org>
  <20180404184517.9f2b91b856a56f71464f5f7f@linux-foundation.org>
  <6b575956-6498-43c8-dc2c-9e2a0d5564a9@rasmusvillemoes.dk>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=rasmusvillemoes.dk; s=google;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=hCL3BVDTKGOjMi1pnqrd8YVGmtcyGXVMXL8j+J2VSTI=;
-        b=Zvd46TCvi73vEgqfLS1CCnmEtHPGzfCrNZg1z4Ba9P4duttkqpx3DjiRK5wIYbSpk5
-         +iG04X61EfRWQK4LfGT8HUhX69hXuqCa2bibMkdv9SIUO9iMCiSykmAWQkxMHZQdxU6O
-         xPcrKWbb1JRczNtAyCs6OIsp5re5V7RAquQuU=
 In-Reply-To: <6b575956-6498-43c8-dc2c-9e2a0d5564a9@rasmusvillemoes.dk>
 Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
 To: Rasmus Villemoes <linux@rasmusvillemoes.dk>, Andrew Morton <akpm@linux-foundation.org>, Randy Dunlap <rdunlap@infradead.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, reiserfs-devel@vger.kernel.org, Alexander Viro <viro@zeniv.linux.org.uk>, Jeff Mahoney <jeffm@suse.com>, Jan Kara <jack@suse.com>, Frederic Weisbecker <fweisbec@gmail.com>, Artem Bityutskiy <dedekind1@gmail.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, reiserfs-devel@vger.kernel.org, Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.com>, Frederic Weisbecker <fweisbec@gmail.com>, Artem Bityutskiy <dedekind1@gmail.com>, syzkaller-bugs@googlegroups.com, syzbot+6bd77b88c1977c03f584@syzkaller.appspotmail.com
 
-On 2018-04-05 11:04, Rasmus Villemoes wrote:
+On 4/5/18 5:04 AM, Rasmus Villemoes wrote:
 > On 2018-04-05 03:45, Andrew Morton wrote:
+>> On Wed, 4 Apr 2018 18:25:16 -0700 Randy Dunlap <rdunlap@infradead.org> wrote:
+>>
+>>> From: Randy Dunlap <rdunlap@infradead.org>
+>>>
+>>> If the reiserfs mount option's journal name contains a '%' character,
+>>> it can lead to a WARN_ONCE() in lib/vsprintf.c::format_decode(),
+>>> saying: "Please remove unsupported %/ in format string."
+>>> That's OK until panic_on_warn is set, at which point it's dead, Jim.
+>>>
+>>> To placate this situation, check the journal name string for a '%'
+>>> character and return an error if one is found. Also print a warning
+>>> (one that won't panic the kernel) about the invalid journal name (e.g.):
+>>>
+>>>   reiserfs: journal device name is invalid: %/file0
+>>>
+>>> (In this example, the caller app specified the journal device name as
+>>> "%/file0".)
+>>>
+>>
+>> Well, that is a valid filename and we should support it...
 >>
 >> Isn't the bug in journal_init_dev()?
 > 
@@ -38,7 +50,26 @@ On 2018-04-05 11:04, Rasmus Villemoes wrote:
 > someone adds a correct %zu thing to print a size_t in reiserfs things
 > will break). But, and I hope I'm wrong about this and just hasn't had
 > enough coffee, this seems completely broken:
-> 
+
+Yep.  There are a bunch of ways that this is broken, but it's been "good
+enough" for so long that no fix has landed.  Once upon a time, I wanted
+to fix this by adding something similar to %pV that allowed the caller
+to pass a set of handlers for additional types.  That didn't make it off
+the ground.
+
+There's another issue where we assume that % will only be followed by a
+single character.  That won't cause runtime issues, but it will end up
+putting those additional characters in the output.
+
+Lastly, again not a runtime issue, is that the spinlock only covers
+formatting the buffer.  It doesn't cover printing it.  You can end up
+with part of the error buffer containing the format of another warning.
+
+I'm working up something to fix most of the above.  I'll post it later
+today or Monday.
+
+-Jeff
+
 >         while ((k = is_there_reiserfs_struct(fmt1, &what)) != NULL) {
 >                 *k = 0;
 > 
@@ -56,21 +87,42 @@ On 2018-04-05 11:04, Rasmus Villemoes wrote:
 > stack (i386), we don't know how much vsprintf consumed, and end up
 > consuming the same arguments again - only this time we may interpret
 > some random integer as a struct pointer...
+> 
+> A minimal program showing the difference:
+> 
+> #include <stdio.h>
+> #include <stdarg.h>
+> 
+> void f(const char *dummy, ...)
+> {
+> 	va_list ap;
+> 	int i;
+> 
+> 	va_start(ap, dummy);
+> 	for (i = 0; i < 5; ++i) {
+> 		vprintf("%d\n", ap);
+> 		printf("%d\n", va_arg(ap, int));
+> 	}
+> 	va_end(ap);
+> }
+> 
+> int main(int argc, char *argv[])
+> {
+> 	f("bla", 1, 2, 3, 4, 5, 6, 7, 8, 9, 10);
+> 	return 0;
+> }
+> 
+> Compiling for native (x86-64), this produces $(seq 10). But with -m32,
+> one gets 1,1,2,2,3,3,4,4,5,5.
+> 
+> Assuming reiserfs (at least its debugging infrastructure) isn't broken
+> on a bunch of architectures, I'm obviously missing something
+> fundamental. Please enlighten me.
+> 
+> Rasmus
+> 
 
-OK, so maybe -mregparm=3 would be the thing making i386 behave like
-x86-64 wrt. varargs, but no, when calling a variadic function, gcc
-pushes all arguments on the stack, and va_list is still just a pointer
-(passed by value to vsprintf) into the stack.
 
-It is only a problem when the format string contains ordinary specifiers
-before a reiserfs-specific one, and such calls happen to be rare, but
-not non-existing. One example would be reiserfs_warning(tb->tb_sb,
-"vs-12339", "%s (%b)", which, bh);. Ok, treating which as a buffer_head
-would probably just give some garbage numbers. But
-
-  "reiserfs-16100", "STATDATA, index %d, type 0x%x, %h",		 vi->vi_index,
-vi->vi_type, vi->vi_ih
-
-ends up treating vi->vi_index as a struct item_head*, no?
-
-Rasmus
+-- 
+Jeff Mahoney
+SUSE Labs
