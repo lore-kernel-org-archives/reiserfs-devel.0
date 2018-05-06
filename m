@@ -1,47 +1,36 @@
 From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Subject: [PATCH 0/9] tree-wide: fix typo 'can by' to 'can be'
-Date: Sun,  6 May 2018 13:23:44 +0200
-Message-ID: <20180506112404.24872-1-wsa+renesas@sang-engineering.com>
-Return-path: <netdev-owner@vger.kernel.org>
-Sender: netdev-owner@vger.kernel.org
+Subject: [PATCH 7/9] reiserfs: journal: fix typo 'can by' to 'can be'
+Date: Sun,  6 May 2018 13:23:51 +0200
+Message-ID: <20180506112404.24872-8-wsa+renesas@sang-engineering.com>
+References: <20180506112404.24872-1-wsa+renesas@sang-engineering.com>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20180506112404.24872-1-wsa+renesas@sang-engineering.com>
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: trivial@kernel.org
-Cc: linux-renesas-soc@vger.kernel.org, Wolfram Sang <wsa+renesas@sang-engineering.com>, devicetree@vger.kernel.org, linux-hwmon@vger.kernel.org, linux-i2c@vger.kernel.org, linux-input@vger.kernel.org, linux-kernel@vger.kernel.org, linux-ntb@googlegroups.com, linuxppc-dev@lists.ozlabs.org, netdev@vger.kernel.org, reiserfs-devel@vger.kernel.org
+Cc: linux-renesas-soc@vger.kernel.org, Wolfram Sang <wsa+renesas@sang-engineering.com>, reiserfs-devel@vger.kernel.org, linux-kernel@vger.kernel.org
 
-I found this kind of typo when reading the documentation for device_remove().
-So, I checked the tree for it.
+Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+---
+ fs/reiserfs/journal.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-CCing all the subsystems directly, and I'd think the leftover ones could be
-picked up by the trivial tree. Or would it be more convenient if trivial would
-pick up all? I don't mind.
-
-Based on v4.17-rc3.
-
-Wolfram Sang (9):
-  dt-bindings: i2c: fix typo 'can by' to 'can be'
-  powerpc/watchdog: fix typo 'can by' to 'can be'
-  base: core: fix typo 'can by' to 'can be'
-  hwmon: fschmd: fix typo 'can by' to 'can be'
-  input: ati_remote2: fix typo 'can by' to 'can be'
-  NTB: ntb_hw_idt: fix typo 'can by' to 'can be'
-  reiserfs: journal: fix typo 'can by' to 'can be'
-  net: flow_dissector: fix typo 'can by' to 'can be'
-  objtool: fix typo 'can by' to 'can be'
-
- Documentation/devicetree/bindings/i2c/i2c-davinci.txt | 2 +-
- arch/powerpc/kernel/watchdog.c                        | 2 +-
- drivers/base/core.c                                   | 2 +-
- drivers/hwmon/fschmd.c                                | 2 +-
- drivers/input/misc/ati_remote2.c                      | 2 +-
- drivers/ntb/hw/idt/ntb_hw_idt.c                       | 2 +-
- fs/reiserfs/journal.c                                 | 2 +-
- include/net/flow_dissector.h                          | 2 +-
- tools/objtool/Documentation/stack-validation.txt      | 2 +-
- 9 files changed, 9 insertions(+), 9 deletions(-)
-
+diff --git a/fs/reiserfs/journal.c b/fs/reiserfs/journal.c
+index 23148c3ed67560..55704f57f78f82 100644
+--- a/fs/reiserfs/journal.c
++++ b/fs/reiserfs/journal.c
+@@ -968,7 +968,7 @@ static int reiserfs_async_progress_wait(struct super_block *s)
+  * if this journal list still has commit blocks unflushed, send them to disk.
+  *
+  * log areas must be flushed in order (transaction 2 can't commit before
+- * transaction 1) Before the commit block can by written, every other log
++ * transaction 1) Before the commit block can be written, every other log
+  * block must be safely on disk
+  */
+ static int flush_commit_list(struct super_block *s,
 -- 
 2.11.0
 
