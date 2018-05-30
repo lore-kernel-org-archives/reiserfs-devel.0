@@ -1,180 +1,157 @@
-From: Deepa Dinamani <deepa.kernel@gmail.com>
-Subject: [GIT PULL] Transition vfs to 64-bit timestamps
-Date: Fri, 25 May 2018 16:35:31 -0700
-Message-ID: <20180525233528.GA371@deepa-ubuntu>
+From: Arnd Bergmann <arnd@arndb.de>
+Subject: Re: [GIT PULL] Transition vfs to 64-bit timestamps
+Date: Wed, 30 May 2018 17:16:53 +0200
+Message-ID: <CAK8P3a1_qJRALkxxb1uPnEaf8T5LsL0N1LbDUqxOr4SUDhPk1g@mail.gmail.com>
+References: <20180525233528.GA371@deepa-ubuntu>
 Mime-Version: 1.0
 Return-path: <linux-kernel-owner@vger.kernel.org>
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:mime-version:content-disposition
-         :user-agent;
-        bh=BRn2cd2WGeKCL7l5XF5CifVnQ3OfT9VQChXx5wMgxjA=;
-        b=sbkEg5FqccdA8/eoRF0fLLGw1aRlVXcZJILvw8FJpzKF2iLv53yrsLgPBs//P+qDMX
-         64DsSibpR6Y6weeTPBCtmZ059HXscsRJGkZbTMnaZft5wPiMGxy4kGalSXwyMLhxXJbc
-         A/jMPRT4bbTQ9ijShYGXEl20fevVivXr85DLBclbDYHvLasXUTpG6VPVSQ8vIBJst2jl
-         w3qB4xaSXO8AQleJ87RiQauCvUuSZhHEt5cgj66OH8jqk3gkvx+E0bi8slxw0CVylMhN
-         1NBEDo1woQHyrrXSlGeuQGIkq8ZmiPw76AeMlCgy6XxIPSi8e+NKyDOa4nYAX2KSWSbO
-         oQOg==
-Content-Disposition: inline
+        h=mime-version:sender:in-reply-to:references:from:date:message-id
+         :subject:to:cc;
+        bh=JA2ntDLCI0oPHy8e4xp7dLq0lFgmk62WC+bV347mAm0=;
+        b=WH29q8P4s7yajvYOQDYn51LJunEF3suUb+ZuFMeL67uVn/RG/qS5M1+4mI8efH4duO
+         1Rf0atw1vZ2s+LcosuXmzKDvc68MDAuei65eC+sE+pnuYAwRrWVCijfr5Pt2YZfZRjIj
+         P66Zy9IfVZPLIJiSjYXzT/tUg989qqDfRfg4yH9PcDj7P0TKy25KzQgdBLMNXMNJulwH
+         BKgxgIfuSPwCU6SApF4ii4bsBgIZNAO3fn1BHbH8dv+S2zFSIu683x/siErzZ/U/0GuB
+         CdWrM+2X4+Z0WuV2uGaOjnWhFRepnyiKKwx7SyxOUId6BXz1qbkhiPn0U00fr88tuRv0
+         IBPw==
+In-Reply-To: <20180525233528.GA371@deepa-ubuntu>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: tglx@linutronix.de, linux-kernel@vger.kernel.org
-Cc: viro@zeniv.linux.org.uk, torvalds@linux-foundation.org, arnd@arndb.de, y2038@lists.linaro.org, linux-fsdevel@vger.kernel.org, andreas.dilger@intel.com, anton@tuxera.com, balbi@kernel.org, bfields@fieldses.org, ceph-devel@vger.kernel.org, darrick.wong@oracle.com, dhowells@redhat.com, dsterba@suse.com, dwmw2@infradead.org, hch@lst.de, hirofumi@mail.parknet.co.jp, hubcap@omnibond.com, jack@suse.com, jaegeuk@kernel.org, jaharkes@cs.cmu.edu, jslaby@suse.com, keescook@chromium.org, mark@fasheh.com, miklos@szeredi.hu, nico@linaro.org, reiserfs-devel@vger.kernel.org, richard@nod.at, sage@redhat.com, sfrench@samba.org, swhiteho@redhat.com, tj@kernel.org, trond.myklebust@primarydata.com, tytso@mit.edu, zyan@redhat.com
+To: Deepa Dinamani <deepa.kernel@gmail.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Al Viro <viro@zeniv.linux.org.uk>, Linus Torvalds <torvalds@linux-foundation.org>, y2038 Mailman List <y2038@lists.linaro.org>, Linux FS-devel Mailing List <linux-fsdevel@vger.kernel.org>, "Dilger, Andreas" <andreas.dilger@intel.com>, anton@tuxera.com, Felipe Balbi <balbi@kernel.org>, "J. Bruce Fields" <bfields@fieldses.org>, ceph-devel <ceph-devel@vger.kernel.org>, "Darrick J. Wong" <darrick.wong@oracle.com>, David Howells <dhowells@redhat.com>, David Sterba <dsterba@suse.com>, David Woodhouse <dwmw2@infradead.org>, Christoph Hellwig <hch@lst.de>, OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>, Mike Marshall <hubcap@omnibond.com>, Jan Kara <jack@suse.com>
 
-Hi Thomas,
+On Sat, May 26, 2018 at 1:35 AM, Deepa Dinamani <deepa.kernel@gmail.com> wrote:
 
-This is a pull request for the series that I sent earlier.
-The series aims to switch vfs timestamps to use
-struct timespec64. Currently vfs uses struct timespec,
-which is not y2038 safe.
+> The flag patch applies cleanly. I've not seen the timestamps
+> update logic change often. The series applies cleanly on 4.17-rc6
+> and linux-next tip (top commit: next-20180517).
 
-The flag patch applies cleanly. I've not seen the timestamps
-update logic change often. The series applies cleanly on 4.17-rc6
-and linux-next tip (top commit: next-20180517).
+It just stopped applying cleanly against the latest linux-next tree, due to
+a conflict against two patches from the overlayfs-next tree:
 
-I'm not sure how to merge this kind of a series with a flag patch.
-We are targeting 4.18 for this.
-Let me know if you have other suggestions.
+b2a285e1dc5d ("Revert "vfs: update ovl inode before relatime check"")
+681b186a012d ("Revert "ovl: fix relatime for directories"")
 
-The series involves the following:
-1. Add vfs helper functions for supporting struct timepec64 timestamps.
-2. Cast prints of vfs timestamps to avoid warnings after the switch.
-3. Simplify code using vfs timestamps so that the actual
-   replacement becomes easy.
-4. Convert vfs timestamps to use struct timespec64 using a script.
-   This is a flag day patch.
+After the conflict resolution below, it works fine again. Not sure what the
+best merge strategy would be, at least the bit in ovl_file_accessed()
+isn't obvious enough.
 
-I've tried to keep the conversions with the script simple, to
-aid in the reviews. I've kept all the internal filesystem data
-structures and function signatures the same.
+       Arnd
 
-Next steps:
-1. Convert APIs that can handle timespec64, instead of converting
-   timestamps at the boundaries.
-2. Update internal data structures to avoid timestamp conversions.
+diff --cc fs/inode.c
+index 6404639e2491,9fe1f941be02..195b974e7a77
+--- a/fs/inode.c
++++ b/fs/inode.c
+@@@ -1635,10 -1681,11 +1635,10 @@@ static int update_time(struct inode *in
+   *    This function automatically handles read only file systems and media,
+   *    as well as the "noatime" flag and inode specific "noatime" markers.
+   */
+ -bool __atime_needs_update(const struct path *path, struct inode *inode,
+ -                        bool rcu)
+ +bool atime_needs_update(const struct path *path, struct inode *inode)
+  {
+        struct vfsmount *mnt = path->mnt;
+-       struct timespec now;
++       struct timespec64 now;
 
--- 
-Changes from v1:
-* Fix the pointer bug in the udf patch.
-* Include Kees's patch for pstore.
-* Fix hostfs regression found by kbuild bot.
+        if (inode->i_flags & S_NOATIME)
+                return false;
+@@@ -1661,10 -1708,10 +1661,14 @@@
 
-The following changes since commit 771c577c23bac90597c685971d7297ea00f99d11:
+        now = current_time(inode);
 
-  Linux 4.17-rc6 (2018-05-20 15:31:38 -0700)
+ -      if (!relatime_need_update(mnt, inode, now))
+-       if (!relatime_need_update(path, inode,
+timespec64_to_timespec(now), rcu))
+++      if (!relatime_need_update(mnt, inode, timespec64_to_timespec(now)))
+                return false;
 
-are available in the Git repository at:
+-       if (timespec_equal(&inode->i_atime, &now))
++       if (timespec64_equal(&inode->i_atime, &now))
+                return false;
 
-  https://github.com/deepa-hub/vfs vfs_timespec64
+        return true;
+@@@ -1674,9 -1721,9 +1678,9 @@@ void touch_atime(const struct path *pat
+  {
+        struct vfsmount *mnt = path->mnt;
+        struct inode *inode = d_inode(path->dentry);
+-       struct timespec now;
++       struct timespec64 now;
 
-for you to fetch changes up to 213ae530f442029284ab6041812df0571ebd9da7:
+ -      if (!__atime_needs_update(path, inode, false))
+ +      if (!atime_needs_update(path, inode))
+                return;
 
-  vfs: change inode times to use struct timespec64 (2018-05-25 15:31:14 -0700)
+        if (!sb_start_write_trylock(inode->i_sb))
+diff --cc fs/overlayfs/inode.c
+index e31d64206a01,d7cca60f28e6..e0bb217c01e2
+--- a/fs/overlayfs/inode.c
++++ b/fs/overlayfs/inode.c
+@@ -169,8 +169,8 @@ static void ovl_file_accessed(struct file *file)
+        if (!upperinode)
+                return;
 
-----------------------------------------------------------------
-Deepa Dinamani (6):
-      fs: add timespec64_truncate()
-      lustre: Use long long type to print inode time
-      ceph: make inode time prints to be long long
-      fs: nfs: get rid of memcpys for inode times
-      udf: Simplify calls to udf_disk_stamp_to_time
-      vfs: change inode times to use struct timespec64
+ -       if ((!timespec_equal(&inode->i_mtime, &upperinode->i_mtime) ||
+ -            !timespec_equal(&inode->i_ctime, &upperinode->i_ctime))) {
+ +       if ((!timespec64_equal(&inode->i_mtime, &upperinode->i_mtime) ||
+ +            !timespec64_equal(&inode->i_ctime, &upperinode->i_ctime))) {
+                inode->i_mtime = upperinode->i_mtime;
+                inode->i_ctime = upperinode->i_ctime;
+        }
+@@@ -439,7 -384,39 +439,7 @@@ struct posix_acl *ovl_get_acl(struct in
+        return acl;
+  }
 
-Kees Cook (1):
-      pstore: Convert internal records to timespec64
-
- drivers/firmware/efi/efi-pstore.c               | 27 ++++----
- drivers/staging/lustre/lustre/llite/llite_lib.c | 12 ++--
- drivers/staging/lustre/lustre/llite/namei.c     |  5 +-
- drivers/staging/lustre/lustre/lmv/lmv_obd.c     |  7 +-
- drivers/staging/lustre/lustre/mdc/mdc_reint.c   |  6 +-
- drivers/staging/lustre/lustre/obdclass/obdo.c   |  6 +-
- drivers/tty/tty_io.c                            | 15 ++++-
- drivers/usb/gadget/function/f_fs.c              |  2 +-
- fs/adfs/inode.c                                 |  7 +-
- fs/afs/fsclient.c                               |  2 +-
- fs/attr.c                                       | 14 ++--
- fs/bad_inode.c                                  |  2 +-
- fs/btrfs/file.c                                 |  6 +-
- fs/btrfs/inode.c                                |  8 +--
- fs/btrfs/ioctl.c                                |  4 +-
- fs/btrfs/root-tree.c                            |  4 +-
- fs/btrfs/transaction.c                          |  2 +-
- fs/ceph/addr.c                                  | 12 ++--
- fs/ceph/cache.c                                 |  4 +-
- fs/ceph/caps.c                                  |  6 +-
- fs/ceph/file.c                                  |  6 +-
- fs/ceph/inode.c                                 | 86 +++++++++++++------------
- fs/ceph/mds_client.c                            |  7 +-
- fs/ceph/snap.c                                  |  6 +-
- fs/cifs/cache.c                                 |  4 +-
- fs/cifs/fscache.c                               |  8 +--
- fs/cifs/inode.c                                 | 26 ++++----
- fs/coda/coda_linux.c                            | 12 ++--
- fs/configfs/inode.c                             | 12 ++--
- fs/cramfs/inode.c                               |  2 +-
- fs/ext4/ext4.h                                  | 34 ++++++----
- fs/ext4/ialloc.c                                |  4 +-
- fs/ext4/namei.c                                 |  2 +-
- fs/f2fs/f2fs.h                                  | 10 ++-
- fs/f2fs/file.c                                  | 12 ++--
- fs/f2fs/inode.c                                 | 12 ++--
- fs/f2fs/namei.c                                 |  4 +-
- fs/fat/inode.c                                  | 20 ++++--
- fs/fat/namei_msdos.c                            | 21 +++---
- fs/fat/namei_vfat.c                             | 22 ++++---
- fs/fuse/inode.c                                 |  2 +-
- fs/gfs2/dir.c                                   |  6 +-
- fs/gfs2/glops.c                                 |  4 +-
- fs/hfs/inode.c                                  |  4 +-
- fs/hfsplus/inode.c                              | 12 ++--
- fs/hostfs/hostfs_kern.c                         | 12 ++--
- fs/inode.c                                      | 58 ++++++++++++-----
- fs/jffs2/dir.c                                  | 18 +++---
- fs/jffs2/file.c                                 |  2 +-
- fs/jffs2/fs.c                                   | 12 ++--
- fs/kernfs/dir.c                                 |  4 +-
- fs/kernfs/inode.c                               |  8 +--
- fs/locks.c                                      |  2 +-
- fs/nfs/callback_proc.c                          |  4 +-
- fs/nfs/fscache-index.c                          |  4 +-
- fs/nfs/fscache.c                                | 12 ++--
- fs/nfs/inode.c                                  | 39 ++++++-----
- fs/nfs/nfs2xdr.c                                | 25 ++++---
- fs/nfs/nfs3xdr.c                                |  8 ++-
- fs/nfs/nfs4xdr.c                                |  7 +-
- fs/nfsd/blocklayout.c                           |  8 ++-
- fs/nfsd/nfs3xdr.c                               | 14 ++--
- fs/nfsd/nfs4xdr.c                               |  7 +-
- fs/nfsd/nfsxdr.c                                |  2 +-
- fs/ntfs/inode.c                                 | 30 ++++-----
- fs/ocfs2/dlmglue.c                              | 20 ++++--
- fs/ocfs2/file.c                                 |  6 +-
- fs/orangefs/inode.c                             |  2 +-
- fs/orangefs/orangefs-kernel.h                   |  2 +-
- fs/overlayfs/inode.c                            |  2 +-
- fs/overlayfs/overlayfs.h                        |  2 +-
- fs/proc/uptime.c                                |  2 +-
- fs/pstore/platform.c                            |  2 +-
- fs/pstore/ram.c                                 | 21 ++++--
- fs/reiserfs/namei.c                             |  2 +-
- fs/reiserfs/xattr.c                             |  4 +-
- fs/ubifs/dir.c                                  |  4 +-
- fs/ubifs/file.c                                 | 23 +++----
- fs/ubifs/ubifs.h                                |  2 +-
- fs/udf/ialloc.c                                 |  4 +-
- fs/udf/inode.c                                  | 59 +++++++++--------
- fs/udf/super.c                                  | 17 +++--
- fs/udf/udfdecl.h                                |  4 +-
- fs/udf/udftime.c                                |  9 +--
- fs/xfs/xfs_inode.c                              |  2 +-
- fs/xfs/xfs_iops.c                               |  2 +-
- fs/xfs/xfs_trans_inode.c                        |  2 +-
- include/linux/fs.h                              | 24 +++----
- include/linux/pstore.h                          |  2 +-
- include/linux/stat.h                            |  8 +--
- 90 files changed, 558 insertions(+), 434 deletions(-)
---
-2.17.0
+- int ovl_update_time(struct inode *inode, struct timespec *ts, int flags)
+ -static bool ovl_open_need_copy_up(struct dentry *dentry, int flags)
+ -{
+ -      /* Copy up of disconnected dentry does not set upper alias */
+ -      if (ovl_dentry_upper(dentry) &&
+ -          (ovl_dentry_has_upper_alias(dentry) ||
+ -           (dentry->d_flags & DCACHE_DISCONNECTED)))
+ -              return false;
+ -
+ -      if (special_file(d_inode(dentry)->i_mode))
+ -              return false;
+ -
+ -      if (!(OPEN_FMODE(flags) & FMODE_WRITE) && !(flags & O_TRUNC))
+ -              return false;
+ -
+ -      return true;
+ -}
+ -
+ -int ovl_open_maybe_copy_up(struct dentry *dentry, unsigned int file_flags)
+ -{
+ -      int err = 0;
+ -
+ -      if (ovl_open_need_copy_up(dentry, file_flags)) {
+ -              err = ovl_want_write(dentry);
+ -              if (!err) {
+ -                      err = ovl_copy_up_flags(dentry, file_flags);
+ -                      ovl_drop_write(dentry);
+ -              }
+ -      }
+ -
+ -      return err;
+ -}
+ -
++ int ovl_update_time(struct inode *inode, struct timespec64 *ts, int flags)
+  {
+        if (flags & S_ATIME) {
+                struct ovl_fs *ofs = inode->i_sb->s_fs_info;
+diff --cc fs/overlayfs/overlayfs.h
+index 93c84929d422,9fe10247f9d4..8477d9e4b4fe
+--- a/fs/overlayfs/overlayfs.h
++++ b/fs/overlayfs/overlayfs.h
+@@@ -356,18 -330,10 +356,18 @@@ int ovl_xattr_get(struct dentry *dentry
+                  void *value, size_t size);
+  ssize_t ovl_listxattr(struct dentry *dentry, char *list, size_t size);
+  struct posix_acl *ovl_get_acl(struct inode *inode, int type);
+- int ovl_update_time(struct inode *inode, struct timespec *ts, int flags);
+ -int ovl_open_maybe_copy_up(struct dentry *dentry, unsigned int file_flags);
++ int ovl_update_time(struct inode *inode, struct timespec64 *ts, int flags);
+  bool ovl_is_private_xattr(const char *name);
