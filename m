@@ -1,176 +1,179 @@
-From: jose.r.r@metztli.com (Metztli Information Technology)
-Subject: MariaDB 10.x will not install in Debian Stretch if Reiser4 rootfs has a separate non-reiser4 /tmp partition
-Date: Sat,  9 Jun 2018 11:03:57 -0700 (PDT)
-Message-ID: <20180609180357.BA03B1B948FD@huitzilopochtli.metztli-it.com>
-Return-path: <bounce-debian-devel=glddg-debian-devel-5=m.gmane.org@lists.debian.org>
-DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mixtli.metztli.it; q=dns/txt;
- s=mx; t=1528567748; h=From: Date: Message-Id: To: Subject: Sender;
- bh=cFm54jXAf4QVsr6HWfFkon24xLqH6pYH3n/a22HFYwg=; b=WFqIGct4O200YcE3TxRrr6g4NKw5A2RBlFrEZBXXYm6EMC7iid2ceCEGcrLTHjS3wknvwd3U
- TjyIt65RtrOJFGtLFx8bwXxlITb02orA4vpblZV75bms2Pa51KYdF29UTnRvhtLZpC5L5YEP
- +pkV5o2lD3xSakRDehe0m0l9h5w=
-Sender: jose.r.r=metztli.com@mixtli.metztli.it
-Resent-Message-ID: <0fmKEWFwqKP.A.QbG._vBHbB@bendel>
-List-Id: <reiserfs-devel.vger.kernel.org>
-List-URL: <https://lists.debian.org/debian-devel/>
-List-Post: <mailto:debian-devel@lists.debian.org>
-List-Help: <mailto:debian-devel-request@lists.debian.org?subject=help>
-List-Subscribe: <mailto:debian-devel-request@lists.debian.org?subject=subscribe>
-List-Unsubscribe: <mailto:debian-devel-request@lists.debian.org?subject=unsubscribe>
-List-Archive: https://lists.debian.org/msgid-search/20180609180357.BA03B1B948FD@huitzilopochtli.metztli-it.com
+From: Arnd Bergmann <arnd@arndb.de>
+Subject: [PATCH 2/3] reiserfs: use monotonic time for j_trans_start_time
+Date: Tue, 19 Jun 2018 17:43:14 +0200
+Message-ID: <20180619154343.3640484-2-arnd@arndb.de>
+References: <20180619154343.3640484-1-arnd@arndb.de>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20180619154343.3640484-1-arnd@arndb.de>
+Sender: linux-kernel-owner@vger.kernel.org
+List-ID: <reiserfs-devel.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: reiserfs-devel@vger.kernel.org, debian-devel@lists.debian.org
+To: Al Viro <viro@zeniv.linux.org.uk>, Andrew Morton <akpm@linux-foundation.org>
+Cc: y2038@lists.linaro.org, Jan Kara <jack@suse.cz>, Arnd Bergmann <arnd@arndb.de>, Thomas Gleixner <tglx@linutronix.de>, reiserfs-devel@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Niltze all-
+Using CLOCK_REALTIME time_t timestamps breaks on 32-bit systems
+in 2038, and gives surprising results with a concurrent settimeofday().
 
+This changes the reiserfs journal timestamps to use ktime_get_seconds()
+instead, which makes it use a 64-bit CLOCK_MONOTONIC stamp.
 
-I have verified issue in subject of this email in a Google Compute Engine (GCE) instance running Debian Stretch.
+In the procfs output, the monotonic timestamp needs to be converted
+back to CLOCK_REALTIME to keep the existing ABI.
 
-Back when I successfully installed Metztli Reiser4 on a ServerPronto remote dedicated server:
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+---
+ fs/reiserfs/journal.c  | 22 +++++++++++-----------
+ fs/reiserfs/procfs.c   |  8 ++++++--
+ fs/reiserfs/reiserfs.h |  2 +-
+ 3 files changed, 18 insertions(+), 14 deletions(-)
 
-< https://metztli.it/blog/index.php/amatl/reiser-nahui/successful-metztli-reiser4-sfrn-4 >,
-
-I went crazy trying to figure out why neither MariaDB nor Percona installed in server on referenced link above.
-< https://www.percona.com/forums/questions-discussions/mysql-and-percona-server/50590-unable-to-install-percona-server-in-debian-stretch-kernel-4-14-13-1 >
-And I ended up incorrectly blaming the memory in the server and terminating the service. This is typical of what happens
- -- as logged in /var/log/syslog:
-
-Jun  4 06:55:44 host-june2018 mysqld_safe[21395]: 2018-06-04  6:55:44 0 [Warning] InnoDB: Failed to set O_DIRECT on file./ibdata1; CREATE: Invalid argument, continuing anyway. O_DIRECT is known to result in 'Invalid argument' on Linux on tmpfs, see MySQL Bug#26662.
-Jun  4 06:55:44 host-june2018 mysqld_safe[21395]: 2018-06-04  6:55:44 0 [ERROR] InnoDB: Operating system error number 22 in a file operation.
-Jun  4 06:55:44 host-june2018 mysqld_safe[21395]: 2018-06-04  6:55:44 0 [ERROR] InnoDB: Error number 22 means 'Invalid argument'
-Jun  4 06:55:44 host-june2018 mysqld_safe[21395]: 2018-06-04  6:55:44 0 [ERROR] InnoDB: File ./ib_logfile101: 'aio write' returned OS error 222. Cannot continue operation
-Jun  4 06:55:44 host-june2018 mysqld_safe[21395]: 180604  6:55:44 [ERROR] mysqld got signal 6 ;
-Jun  4 06:55:44 host-june2018 mysqld_safe[21395]: This could be because you hit a bug. It is also possible that this binary
-Jun  4 06:55:44 host-june2018 mysqld_safe[21395]: or one of the libraries it was linked against is corrupt, improperly built,
-Jun  4 06:55:44 host-june2018 mysqld_safe[21395]: or misconfigured. This error can also be caused by malfunctioning hardware.
-Jun  4 06:55:44 host-june2018 mysqld_safe[21395]: 
-Jun  4 06:55:44 host-june2018 mysqld_safe[21395]: To report this bug, see https://mariadb.com/kb/en/reporting-bugs
-Jun  4 06:55:44 host-june2018 mysqld_safe[21395]: 
-Jun  4 06:55:44 host-june2018 mysqld_safe[21395]: We will try our best to scrape up some info that will hopefully help
-Jun  4 06:55:44 host-june2018 mysqld_safe[21395]: diagnose the problem, but since we have already crashed,
-Jun  4 06:55:44 host-june2018 mysqld_safe[21395]: something is definitely wrong and this may fail.
-Jun  4 06:55:44 host-june2018 mysqld_safe[21395]: 
-Jun  4 06:55:44 host-june2018 mysqld_safe[21395]: Server version: 10.3.7-MariaDB-1:10.3.7+maria~stretch
-Jun  4 06:55:44 host-june2018 mysqld_safe[21395]: key_buffer_size=134217728
-Jun  4 06:55:44 host-june2018 mysqld_safe[21395]: read_buffer_size=2097152
-Jun  4 06:55:44 host-june2018 mysqld_safe[21395]: max_used_connections=0
-Jun  4 06:55:44 host-june2018 mysqld_safe[21395]: max_threads=102
-Jun  4 06:55:44 host-june2018 mysqld_safe[21395]: thread_count=0
-Jun  4 06:55:44 host-june2018 mysqld_safe[21395]: It is possible that mysqld could use up to
-Jun  4 06:55:44 host-june2018 mysqld_safe[21395]: key_buffer_size + (read_buffer_size + sort_buffer_size)*max_threads = 760011 K  bytes of memory
-Jun  4 06:55:44 host-june2018 mysqld_safe[21395]: Hope that's ok; if not, decrease some variables in the equation.
-Jun  4 06:55:44 host-june2018 mysqld_safe[21395]: 
-Jun  4 06:55:44 host-june2018 mysqld_safe[21395]: Thread pointer: 0x0
-Jun  4 06:55:44 host-june2018 mysqld_safe[21395]: Attempting backtrace. You can use the following information to find out
-Jun  4 06:55:44 host-june2018 mysqld_safe[21395]: where mysqld died. If you see no messages after this, something went
-Jun  4 06:55:44 host-june2018 mysqld_safe[21395]: terribly wrong...
-Jun  4 06:55:44 host-june2018 mysqld_safe[21395]: stack_bottom = 0x0 thread_stack 0x49000
-Jun  4 06:55:44 host-june2018 mysqld_safe[21395]: /usr/sbin/mysqld(my_print_stacktrace+0x2e)[0x56333c5b8c5e]
-Jun  4 06:55:44 host-june2018 mysqld_safe[21395]: /usr/sbin/mysqld(handle_fatal_signal+0x41f)[0x56333c069abf]
-Jun  4 06:55:44 host-june2018 mysqld_safe[21395]: /lib/x86_64-linux-gnu/libpthread.so.0(+0x110c0)[0x7f7c642c70c0]
-Jun  4 06:55:44 host-june2018 mysqld_safe[21395]: /lib/x86_64-linux-gnu/libc.so.6(gsignal+0xcf)[0x7f7c624d9fff]
-Jun  4 06:55:44 host-june2018 mysqld_safe[21395]: /lib/x86_64-linux-gnu/libc.so.6(abort+0x16a)[0x7f7c624db42a]
-Jun  4 06:55:44 host-june2018 mysqld_safe[21395]: /usr/sbin/mysqld(+0x93adf4)[0x56333c256df4]
-Jun  4 06:55:44 host-june2018 mysqld_safe[21395]: /usr/sbin/mysqld(+0x942f2b)[0x56333c25ef2b]
-Jun  4 06:55:44 host-june2018 mysqld_safe[21395]: /usr/sbin/mysqld(+0xaccbf8)[0x56333c3e8bf8]
-Jun  4 06:55:44 host-june2018 mysqld_safe[21395]: /usr/sbin/mysqld(+0x921587)[0x56333c23d587]
-Jun  4 06:55:44 host-june2018 mysqld_safe[21395]: /usr/sbin/mysqld(+0x9221c1)[0x56333c23e1c1]
-Jun  4 06:55:44 host-june2018 mysqld_safe[21395]: /usr/sbin/mysqld(+0x92288d)[0x56333c23e88d]
-Jun  4 06:55:44 host-june2018 mysqld_safe[21395]: /usr/sbin/mysqld(+0x9285ad)[0x56333c2445ad]
-Jun  4 06:55:44 host-june2018 mysqld_safe[21395]: /usr/sbin/mysqld(+0x49df68)[0x56333bdb9f68]
-Jun  4 06:55:44 host-june2018 mysqld_safe[21395]: /usr/sbin/mysqld(+0x9dd9d5)[0x56333c2f99d5]
-Jun  4 06:55:44 host-june2018 mysqld_safe[21395]: /usr/sbin/mysqld(+0x8cf431)[0x56333c1eb431]
-Jun  4 06:55:44 host-june2018 mysqld_safe[21395]: /usr/sbin/mysqld(_Z24ha_initialize_handlertonP13st_plugin_int+0x62)[0x56333c06c162]
-Jun  4 06:55:44 host-june2018 mysqld_safe[21395]: /usr/sbin/mysqld(+0x58a129)[0x56333bea6129]
-Jun  4 06:55:44 host-june2018 mysqld_safe[21395]: /usr/sbin/mysqld(_Z11plugin_initPiPPci+0x7fa)[0x56333bea71ca]
-Jun  4 06:55:44 host-june2018 mysqld_safe[21395]: /usr/sbin/mysqld(+0x4bfe1c)[0x56333bddbe1c]
-Jun  4 06:55:44 host-june2018 mysqld_safe[21395]: /usr/sbin/mysqld(_Z11mysqld_mainiPPc+0x4cb)[0x56333bde1e4b]
-Jun  4 06:55:44 host-june2018 mysqld_safe[21395]: /lib/x86_64-linux-gnu/libc.so.6(__libc_start_main+0xf1)[0x7f7c624c72e1]
-Jun  4 06:55:44 host-june2018 mysqld_safe[21395]: /usr/sbin/mysqld(_start+0x2a)[0x56333bdd4daa]
-Jun  4 06:55:44 host-june2018 mysqld_safe[21395]: The manual page at http://dev.mysql.com/doc/mysql/en/crashing.html contains
-Jun  4 06:55:44 host-june2018 mysqld_safe[21395]: information that should help you find out what is causing the crash.
-Jun  4 06:55:44 host-june2018 mysqld_safe[21395]: /usr/bin/mysql_install_db: line 461: 21424 Aborted                 "$mysqld_bootstrap" $defaults $defaults_group_suffix "$mysqld_opt" --bootstrap $silent_startup "--basedir=$basedir" "--datadir=$ldata" --log-warnings=0 --enforce-storage-engine="" $args --max_allowed_packet=8M --net_buffer_length=16K
-Jun  4 06:55:44 host-june2018 mysqld_safe[21395]: 
-Jun  4 06:55:44 host-june2018 mysqld_safe[21395]: Installation of system tables failed!  Examine the logs in
-Jun  4 06:55:44 host-june2018 mysqld_safe[21395]: /var/lib/mysql for more information.
-Jun  4 06:55:44 host-june2018 mysqld_safe[21395]: 
-Jun  4 06:55:44 host-june2018 mysqld_safe[21395]: The problem could be conflicting information in an external
-Jun  4 06:55:44 host-june2018 mysqld_safe[21395]: my.cnf files. You can ignore these by doing:
-Jun  4 06:55:44 host-june2018 mysqld_safe[21395]: 
-Jun  4 06:55:44 host-june2018 mysqld_safe[21395]:     shell> /usr/bin/mysql_install_db --defaults-file=~/.my.cnf
-Jun  4 06:55:44 host-june2018 mysqld_safe[21395]: 
-Jun  4 06:55:44 host-june2018 mysqld_safe[21395]: You can also try to start the mysqld daemon with:
-Jun  4 06:55:44 host-june2018 mysqld_safe[21395]: 
-Jun  4 06:55:44 host-june2018 mysqld_safe[21395]:     shell> /usr/sbin/mysqld --skip-grant-tables --general-log &
-Jun  4 06:55:44 host-june2018 mysqld_safe[21395]: 
-Jun  4 06:55:44 host-june2018 mysqld_safe[21395]: and use the command line tool /usr/bin/mysql
-Jun  4 06:55:44 host-june2018 mysqld_safe[21395]: to connect to the mysql database and look at the grant tables:
-Jun  4 06:55:44 host-june2018 mysqld_safe[21395]: 
-Jun  4 06:55:44 host-june2018 mysqld_safe[21395]:     shell> /usr/bin/mysql -u root mysql
-Jun  4 06:55:44 host-june2018 mysqld_safe[21395]:     mysql> show tables;
-Jun  4 06:55:44 host-june2018 mysqld_safe[21395]: 
-Jun  4 06:55:44 host-june2018 mysqld_safe[21395]: Try 'mysqld --help' if you have problems with paths.  Using
-Jun  4 06:55:44 host-june2018 mysqld_safe[21395]: --general-log gives you a log in /var/lib/mysql that may be helpful.
-Jun  4 06:55:44 host-june2018 mysqld_safe[21395]: 
-Jun  4 06:55:44 host-june2018 mysqld_safe[21395]: The latest information about mysql_install_db is available at
-Jun  4 06:55:44 host-june2018 mysqld_safe[21395]: https://mariadb.com/kb/en/installing-system-tables-mysql_install_db
-Jun  4 06:55:44 host-june2018 mysqld_safe[21395]: You can find the latest source at https://downloads.mariadb.org and
-Jun  4 06:55:44 host-june2018 mysqld_safe[21395]: the maria-discuss email list at https://launchpad.net/~maria-discuss
-Jun  4 06:55:44 host-june2018 mysqld_safe[21395]: 
-Jun  4 06:55:44 host-june2018 mysqld_safe[21395]: Please check all of the above before submitting a bug report
-Jun  4 06:55:44 host-june2018 mysqld_safe[21395]: at http://mariadb.org/jira
-Jun  4 06:55:44 host-june2018 mysqld_safe[21395]: 
-Jun  4 06:55:54 host-june2018 mysqld_safe[21477]: 2018-06-04  6:55:54 0 [Note] /usr/sbin/mysqld (mysqld 10.3.7-MariaDB-1:10.3.7+maria~stretch) starting as process 21476 ...
-Jun  4 06:55:54 host-june2018 mysqld_safe[21477]: 2018-06-04  6:55:54 0 [Note] InnoDB: Using Linux native AIO
-Jun  4 06:55:54 host-june2018 mysqld_safe[21477]: 2018-06-04  6:55:54 0 [Note] InnoDB: Mutexes and rw_locks use GCC atomic builtins
-Jun  4 06:55:54 host-june2018 mysqld_safe[21477]: 2018-06-04  6:55:54 0 [Note] InnoDB: Uses event mutexes
-Jun  4 06:55:54 host-june2018 mysqld_safe[21477]: 2018-06-04  6:55:54 0 [Note] InnoDB: Compressed tables use zlib 1.2.8
-Jun  4 06:55:54 host-june2018 mysqld_safe[21477]: 2018-06-04  6:55:54 0 [Note] InnoDB: Number of pools: 1
-Jun  4 06:55:54 host-june2018 mysqld_safe[21477]: 2018-06-04  6:55:54 0 [Note] InnoDB: Using SSE2 crc32 instructions
-Jun  4 06:55:54 host-june2018 mysqld_safe[21477]: 2018-06-04  6:55:54 0 [Note] InnoDB: Initializing buffer pool, total size = 256M, instances = 1, chunk size = 128M
-Jun  4 06:55:54 host-june2018 mysqld_safe[21477]: 2018-06-04  6:55:54 0 [Note] InnoDB: Completed initialization of buffer pool
-Jun  4 06:55:54 host-june2018 mysqld_safe[21477]: 2018-06-04  6:55:54 0 [Note] InnoDB: If the mysqld execution user is authorized, page cleaner thread priority can be changed. See the man page of setpriority().
-Jun  4 06:55:54 host-june2018 mysqld_safe[21477]: 2018-06-04  6:55:54 0 [Warning] InnoDB: Failed to set O_DIRECT on file./ibdata1; OPEN: Invalid argument, continuing anyway. O_DIRECT is known to result in 'Invalid argument' on Linux on tmpfs, see MySQL Bug#26662.
-Jun  4 06:55:54 host-june2018 mysqld_safe[21477]: 2018-06-04  6:55:54 0 [ERROR] InnoDB: Header page consists of zero bytes in datafile: ./ibdata1, Space ID:0, Flags: 0. Please refer to http://dev.mysql.com/doc/refman/5.7/en/innodb-troubleshooting-datadict.html for how to resolve the issue.
-Jun  4 06:55:54 host-june2018 mysqld_safe[21477]: 2018-06-04  6:55:54 0 [ERROR] InnoDB: Corrupted page [page id: space=0, page number=0] of datafile './ibdata1' could not be found in the doublewrite buffer.
-Jun  4 06:55:54 host-june2018 mysqld_safe[21477]: 2018-06-04  6:55:54 0 [ERROR] InnoDB: Plugin initialization aborted with error Data structure corruption
-Jun  4 06:55:55 host-june2018 mysqld_safe[21477]: 2018-06-04  6:55:55 0 [Note] InnoDB: Starting shutdown...
-Jun  4 06:55:55 host-june2018 mysqld_safe[21477]: 2018-06-04  6:55:55 0 [ERROR] Plugin 'InnoDB' init function returned error.
-Jun  4 06:55:55 host-june2018 mysqld_safe[21477]: 2018-06-04  6:55:55 0 [ERROR] Plugin 'InnoDB' registration as a STORAGE ENGINE failed.
-Jun  4 06:55:55 host-june2018 mysqld_safe[21477]: 2018-06-04  6:55:55 0 [Note] Plugin 'FEEDBACK' is disabled.
-Jun  4 06:55:55 host-june2018 mysqld_safe[21477]: ERROR: 1146  Table 'mysql.user' doesn't exist
-Jun  4 06:55:55 host-june2018 mysqld_safe[21477]: 2018-06-04  6:55:55 0 [ERROR] Aborting
-Jun  4 06:55:55 host-june2018 mysqld_safe[21477]: 
-Jun  4 06:55:55 host-june2018 systemd[1]: Reloading.
-Jun  4 06:55:56 host-june2018 systemd[1]: Reloading.
-Jun  4 06:55:56 host-june2018 systemd[1]: Reloading.
-Jun  4 06:55:56 host-june2018 systemd[1]: Starting MariaDB 10.3.7 database server...
-Jun  4 06:55:56 host-june2018 mysqld[21920]: 2018-06-04  6:55:56 0 [Note] /usr/sbin/mysqld (mysqld 10.3.7-MariaDB-1:10.3.7+maria~stretch-log) starting as process 21920 ...
-Jun  4 06:55:56 host-june2018 mysqld[21920]: 2018-06-04  6:55:56 0 [Note] InnoDB: Using Linux native AIO
-Jun  4 06:55:56 host-june2018 mysqld[21920]: 2018-06-04  6:55:56 0 [Note] InnoDB: Mutexes and rw_locks use GCC atomic builtins
-Jun  4 06:55:56 host-june2018 mysqld[21920]: 2018-06-04  6:55:56 0 [Note] InnoDB: Uses event mutexes
-Jun  4 06:55:56 host-june2018 mysqld[21920]: 2018-06-04  6:55:56 0 [Note] InnoDB: Compressed tables use zlib 1.2.8
-Jun  4 06:55:56 host-june2018 mysqld[21920]: 2018-06-04  6:55:56 0 [Note] InnoDB: Number of pools: 1
-Jun  4 06:55:56 host-june2018 mysqld[21920]: 2018-06-04  6:55:56 0 [Note] InnoDB: Using SSE2 crc32 instructions
-Jun  4 06:55:56 host-june2018 mysqld[21920]: 2018-06-04  6:55:56 0 [Note] InnoDB: Initializing buffer pool, total size = 256M, instances = 1, chunk size = 128M
-Jun  4 06:55:56 host-june2018 mysqld[21920]: 2018-06-04  6:55:56 0 [Note] InnoDB: Completed initialization of buffer pool
-Jun  4 06:55:56 host-june2018 mysqld[21920]: 2018-06-04  6:55:56 0 [Note] InnoDB: If the mysqld execution user is authorized, page cleaner thread priority can be changed. See the man page of setpriority().
-Jun  4 06:55:56 host-june2018 mysqld[21920]: 2018-06-04  6:55:56 0 [Warning] InnoDB: Failed to set O_DIRECT on file./ibdata1; OPEN: Invalid argument, continuing anyway. O_DIRECT is known to result in 'Invalid argument' on Linux on tmpfs, see MySQL Bug#26662.
-Jun  4 06:55:56 host-june2018 mysqld[21920]: 2018-06-04  6:55:56 0 [ERROR] InnoDB: Header page consists of zero bytes in datafile: ./ibdata1, Space ID:0, Flags: 0. Please refer to http://dev.mysql.com/doc/refman/5.7/en/innodb-troubleshooting-datadict.html for how to resolve the issue.
-Jun  4 06:55:56 host-june2018 mysqld[21920]: 2018-06-04  6:55:56 0 [ERROR] InnoDB: Corrupted page [page id: space=0, page number=0] of datafile './ibdata1' could not be found in the doublewrite buffer.
-Jun  4 06:55:56 host-june2018 mysqld[21920]: 2018-06-04  6:55:56 0 [ERROR] InnoDB: Plugin initialization aborted with error Data structure corruption
-Jun  4 06:55:57 host-june2018 mysqld[21920]: 2018-06-04  6:55:57 0 [Note] InnoDB: Starting shutdown...
-Jun  4 06:55:57 host-june2018 mysqld[21920]: 2018-06-04  6:55:57 0 [ERROR] Plugin 'InnoDB' init function returned error.
-Jun  4 06:55:57 host-june2018 mysqld[21920]: 2018-06-04  6:55:57 0 [ERROR] Plugin 'InnoDB' registration as a STORAGE ENGINE failed.
-Jun  4 06:55:57 host-june2018 mysqld[21920]: 2018-06-04  6:55:57 0 [Note] Plugin 'FEEDBACK' is disabled.
-Jun  4 06:55:57 host-june2018 mysqld[21920]: 2018-06-04  6:55:57 0 [ERROR] Could not open mysql.plugin table. Some plugins may be not loaded
-Jun  4 06:55:57 host-june2018 mysqld[21920]: 2018-06-04  6:55:57 0 [ERROR] Unknown/unsupported storage engine: InnoDB
-Jun  4 06:55:57 host-june2018 mysqld[21920]: 2018-06-04  6:55:57 0 [ERROR] Aborting
-Jun  4 06:55:57 host-june2018 systemd[1]: mariadb.service: Main process exited, code=exited, status=1/FAILURE
-Jun  4 06:55:57 host-june2018 systemd[1]: mariadb.service: Failed with result 'exit-code'.
-Jun  4 06:55:57 host-june2018 systemd[1]: Failed to start MariaDB 10.3.7 database server.
-
-
-Best Professional Regards.
+diff --git a/fs/reiserfs/journal.c b/fs/reiserfs/journal.c
+index 1e7f733b2a12..e809da912c00 100644
+--- a/fs/reiserfs/journal.c
++++ b/fs/reiserfs/journal.c
+@@ -2381,7 +2381,7 @@ static int journal_read(struct super_block *sb)
+ 	struct reiserfs_journal_desc *desc;
+ 	unsigned int oldest_trans_id = 0;
+ 	unsigned int oldest_invalid_trans_id = 0;
+-	time_t start;
++	time64_t start;
+ 	unsigned long oldest_start = 0;
+ 	unsigned long cur_dblock = 0;
+ 	unsigned long newest_mount_id = 9;
+@@ -2395,7 +2395,7 @@ static int journal_read(struct super_block *sb)
+ 	cur_dblock = SB_ONDISK_JOURNAL_1st_BLOCK(sb);
+ 	reiserfs_info(sb, "checking transaction log (%pg)\n",
+ 		      journal->j_dev_bd);
+-	start = get_seconds();
++	start = ktime_get_seconds();
+ 
+ 	/*
+ 	 * step 1, read in the journal header block.  Check the transaction
+@@ -2556,7 +2556,7 @@ static int journal_read(struct super_block *sb)
+ 	if (replay_count > 0) {
+ 		reiserfs_info(sb,
+ 			      "replayed %d transactions in %lu seconds\n",
+-			      replay_count, get_seconds() - start);
++			      replay_count, ktime_get_seconds() - start);
+ 	}
+ 	/* needed to satisfy the locking in _update_journal_header_block */
+ 	reiserfs_write_lock(sb);
+@@ -2914,7 +2914,7 @@ int journal_transaction_should_end(struct reiserfs_transaction_handle *th,
+ 				   int new_alloc)
+ {
+ 	struct reiserfs_journal *journal = SB_JOURNAL(th->t_super);
+-	time_t now = get_seconds();
++	time64_t now = ktime_get_seconds();
+ 	/* cannot restart while nested */
+ 	BUG_ON(!th->t_trans_id);
+ 	if (th->t_refcount > 1)
+@@ -3023,7 +3023,7 @@ static int do_journal_begin_r(struct reiserfs_transaction_handle *th,
+ 			      struct super_block *sb, unsigned long nblocks,
+ 			      int join)
+ {
+-	time_t now = get_seconds();
++	time64_t now = ktime_get_seconds();
+ 	unsigned int old_trans_id;
+ 	struct reiserfs_journal *journal = SB_JOURNAL(sb);
+ 	struct reiserfs_transaction_handle myth;
+@@ -3056,7 +3056,7 @@ static int do_journal_begin_r(struct reiserfs_transaction_handle *th,
+ 		PROC_INFO_INC(sb, journal.journal_relock_writers);
+ 		goto relock;
+ 	}
+-	now = get_seconds();
++	now = ktime_get_seconds();
+ 
+ 	/*
+ 	 * if there is no room in the journal OR
+@@ -3119,7 +3119,7 @@ static int do_journal_begin_r(struct reiserfs_transaction_handle *th,
+ 	}
+ 	/* we are the first writer, set trans_id */
+ 	if (journal->j_trans_start_time == 0) {
+-		journal->j_trans_start_time = get_seconds();
++		journal->j_trans_start_time = ktime_get_seconds();
+ 	}
+ 	atomic_inc(&journal->j_wcount);
+ 	journal->j_len_alloc += nblocks;
+@@ -3559,11 +3559,11 @@ static void flush_async_commits(struct work_struct *work)
+  */
+ void reiserfs_flush_old_commits(struct super_block *sb)
+ {
+-	time_t now;
++	time64_t now;
+ 	struct reiserfs_transaction_handle th;
+ 	struct reiserfs_journal *journal = SB_JOURNAL(sb);
+ 
+-	now = get_seconds();
++	now = ktime_get_seconds();
+ 	/*
+ 	 * safety check so we don't flush while we are replaying the log during
+ 	 * mount
+@@ -3613,7 +3613,7 @@ void reiserfs_flush_old_commits(struct super_block *sb)
+ static int check_journal_end(struct reiserfs_transaction_handle *th, int flags)
+ {
+ 
+-	time_t now;
++	time64_t now;
+ 	int flush = flags & FLUSH_ALL;
+ 	int commit_now = flags & COMMIT_NOW;
+ 	int wait_on_commit = flags & WAIT;
+@@ -3694,7 +3694,7 @@ static int check_journal_end(struct reiserfs_transaction_handle *th, int flags)
+ 	}
+ 
+ 	/* deal with old transactions where we are the last writers */
+-	now = get_seconds();
++	now = ktime_get_seconds();
+ 	if ((now - journal->j_trans_start_time) > journal->j_max_trans_age) {
+ 		commit_now = 1;
+ 		journal->j_next_async_flush = 1;
+diff --git a/fs/reiserfs/procfs.c b/fs/reiserfs/procfs.c
+index e39b3910d24d..520f9003c13a 100644
+--- a/fs/reiserfs/procfs.c
++++ b/fs/reiserfs/procfs.c
+@@ -303,6 +303,10 @@ static int show_journal(struct seq_file *m, void *unused)
+ 	struct reiserfs_sb_info *r = REISERFS_SB(sb);
+ 	struct reiserfs_super_block *rs = r->s_rs;
+ 	struct journal_params *jp = &rs->s_v1.s_journal;
++	ktime_t j_trans_start_ktime = ktime_set(JF(j_trans_start_time), 0);
++
++	/* print as CLOCK_REALTIME */
++	j_trans_start_ktime = ktime_mono_to_real(j_trans_start_ktime);
+ 
+ 	seq_printf(m,		/* on-disk fields */
+ 		   "jp_journal_1st_block: \t%i\n"
+@@ -325,7 +329,7 @@ static int show_journal(struct seq_file *m, void *unused)
+ 		   "j_bcount: \t%lu\n"
+ 		   "j_first_unflushed_offset: \t%lu\n"
+ 		   "j_last_flush_trans_id: \t%u\n"
+-		   "j_trans_start_time: \t%li\n"
++		   "j_trans_start_time: \t%lli\n"
+ 		   "j_list_bitmap_index: \t%i\n"
+ 		   "j_must_wait: \t%i\n"
+ 		   "j_next_full_flush: \t%i\n"
+@@ -366,7 +370,7 @@ static int show_journal(struct seq_file *m, void *unused)
+ 		   JF(j_bcount),
+ 		   JF(j_first_unflushed_offset),
+ 		   JF(j_last_flush_trans_id),
+-		   JF(j_trans_start_time),
++		   ktime_divns(j_trans_start_ktime, NSEC_PER_SEC),
+ 		   JF(j_list_bitmap_index),
+ 		   JF(j_must_wait),
+ 		   JF(j_next_full_flush),
+diff --git a/fs/reiserfs/reiserfs.h b/fs/reiserfs/reiserfs.h
+index 1536ebbaf6ab..d0fc829bd760 100644
+--- a/fs/reiserfs/reiserfs.h
++++ b/fs/reiserfs/reiserfs.h
+@@ -330,7 +330,7 @@ struct reiserfs_journal {
+ 
+ 	struct buffer_head *j_header_bh;
+ 
+-	time_t j_trans_start_time;	/* time this transaction started */
++	time64_t j_trans_start_time;	/* time this transaction started */
+ 	struct mutex j_mutex;
+ 	struct mutex j_flush_mutex;
+ 
+-- 
+2.9.0
 
