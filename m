@@ -1,7 +1,7 @@
 From: Arnd Bergmann <arnd@arndb.de>
-Subject: [PATCH 2/3] [v2] reiserfs: use monotonic time for j_trans_start_time
-Date: Wed, 20 Jun 2018 16:25:03 +0200
-Message-ID: <20180620142522.27639-2-arnd@arndb.de>
+Subject: [PATCH 3/3] [v2] reiserfs: remove obsolete print_time function
+Date: Wed, 20 Jun 2018 16:25:04 +0200
+Message-ID: <20180620142522.27639-3-arnd@arndb.de>
 References: <20180620142522.27639-1-arnd@arndb.de>
 Return-path: <linux-kernel-owner@vger.kernel.org>
 In-Reply-To: <20180620142522.27639-1-arnd@arndb.de>
@@ -13,178 +13,62 @@ Content-Transfer-Encoding: 7bit
 To: Andrew Morton <akpm@linux-foundation.org>
 Cc: y2038@lists.linaro.org, Al Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>, Arnd Bergmann <arnd@arndb.de>, reiserfs-devel@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Using CLOCK_REALTIME time_t timestamps breaks on 32-bit systems
-in 2038, and gives surprising results with a concurrent settimeofday().
+Before linux-2.4.6, print_time() was used to pretty-print an inode
+time when running reiserfs in user space, after that it has become
+obsolete and is still a bit incorrect: It behaves differently on 32-bit
+and 64-bit machines, and uses a static buffer to hold a string, which
+could lead to undefined behavior if we ever called this from multiple
+places simultaneously.
 
-This changes the reiserfs journal timestamps to use ktime_get_seconds()
-instead, which makes it use a 64-bit CLOCK_MONOTONIC stamp.
+Since we always want to treat the timestamps as 'unsigned' anyway,
+simply printing them as an integer is both simpler and safer while
+avoiding the deprecated time_t type.
 
-In the procfs output, the monotonic timestamp needs to be converted
-back to CLOCK_REALTIME to keep the existing ABI.
-
-Reviewed-by: Jan Kara <jack@suse.cz>
 Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 ---
-v2: I split out the conversion from monotonic to real time into
-    a separate function for readability, though I decided against
-    making it a global function. I looked at almost all uses of
-    CLOCK_REALTIME in the kernel several times and don't remember
-    any other file that would benefit from making it a generic
-    helper, and it can be slightly inaccurate because of the double
-    rounding.
+v2: after a second look, I decided to remove it instead of fixing it.
 ---
- fs/reiserfs/journal.c  | 22 +++++++++++-----------
- fs/reiserfs/procfs.c   | 11 +++++++++--
- fs/reiserfs/reiserfs.h |  2 +-
- 3 files changed, 21 insertions(+), 14 deletions(-)
+ fs/reiserfs/item_ops.c | 16 ++++------------
+ 1 file changed, 4 insertions(+), 12 deletions(-)
 
-diff --git a/fs/reiserfs/journal.c b/fs/reiserfs/journal.c
-index 1e7f733b2a12..e809da912c00 100644
---- a/fs/reiserfs/journal.c
-+++ b/fs/reiserfs/journal.c
-@@ -2381,7 +2381,7 @@ static int journal_read(struct super_block *sb)
- 	struct reiserfs_journal_desc *desc;
- 	unsigned int oldest_trans_id = 0;
- 	unsigned int oldest_invalid_trans_id = 0;
--	time_t start;
-+	time64_t start;
- 	unsigned long oldest_start = 0;
- 	unsigned long cur_dblock = 0;
- 	unsigned long newest_mount_id = 9;
-@@ -2395,7 +2395,7 @@ static int journal_read(struct super_block *sb)
- 	cur_dblock = SB_ONDISK_JOURNAL_1st_BLOCK(sb);
- 	reiserfs_info(sb, "checking transaction log (%pg)\n",
- 		      journal->j_dev_bd);
--	start = get_seconds();
-+	start = ktime_get_seconds();
- 
- 	/*
- 	 * step 1, read in the journal header block.  Check the transaction
-@@ -2556,7 +2556,7 @@ static int journal_read(struct super_block *sb)
- 	if (replay_count > 0) {
- 		reiserfs_info(sb,
- 			      "replayed %d transactions in %lu seconds\n",
--			      replay_count, get_seconds() - start);
-+			      replay_count, ktime_get_seconds() - start);
- 	}
- 	/* needed to satisfy the locking in _update_journal_header_block */
- 	reiserfs_write_lock(sb);
-@@ -2914,7 +2914,7 @@ int journal_transaction_should_end(struct reiserfs_transaction_handle *th,
- 				   int new_alloc)
- {
- 	struct reiserfs_journal *journal = SB_JOURNAL(th->t_super);
--	time_t now = get_seconds();
-+	time64_t now = ktime_get_seconds();
- 	/* cannot restart while nested */
- 	BUG_ON(!th->t_trans_id);
- 	if (th->t_refcount > 1)
-@@ -3023,7 +3023,7 @@ static int do_journal_begin_r(struct reiserfs_transaction_handle *th,
- 			      struct super_block *sb, unsigned long nblocks,
- 			      int join)
- {
--	time_t now = get_seconds();
-+	time64_t now = ktime_get_seconds();
- 	unsigned int old_trans_id;
- 	struct reiserfs_journal *journal = SB_JOURNAL(sb);
- 	struct reiserfs_transaction_handle myth;
-@@ -3056,7 +3056,7 @@ static int do_journal_begin_r(struct reiserfs_transaction_handle *th,
- 		PROC_INFO_INC(sb, journal.journal_relock_writers);
- 		goto relock;
- 	}
--	now = get_seconds();
-+	now = ktime_get_seconds();
- 
- 	/*
- 	 * if there is no room in the journal OR
-@@ -3119,7 +3119,7 @@ static int do_journal_begin_r(struct reiserfs_transaction_handle *th,
- 	}
- 	/* we are the first writer, set trans_id */
- 	if (journal->j_trans_start_time == 0) {
--		journal->j_trans_start_time = get_seconds();
-+		journal->j_trans_start_time = ktime_get_seconds();
- 	}
- 	atomic_inc(&journal->j_wcount);
- 	journal->j_len_alloc += nblocks;
-@@ -3559,11 +3559,11 @@ static void flush_async_commits(struct work_struct *work)
-  */
- void reiserfs_flush_old_commits(struct super_block *sb)
- {
--	time_t now;
-+	time64_t now;
- 	struct reiserfs_transaction_handle th;
- 	struct reiserfs_journal *journal = SB_JOURNAL(sb);
- 
--	now = get_seconds();
-+	now = ktime_get_seconds();
- 	/*
- 	 * safety check so we don't flush while we are replaying the log during
- 	 * mount
-@@ -3613,7 +3613,7 @@ void reiserfs_flush_old_commits(struct super_block *sb)
- static int check_journal_end(struct reiserfs_transaction_handle *th, int flags)
- {
- 
--	time_t now;
-+	time64_t now;
- 	int flush = flags & FLUSH_ALL;
- 	int commit_now = flags & COMMIT_NOW;
- 	int wait_on_commit = flags & WAIT;
-@@ -3694,7 +3694,7 @@ static int check_journal_end(struct reiserfs_transaction_handle *th, int flags)
- 	}
- 
- 	/* deal with old transactions where we are the last writers */
--	now = get_seconds();
-+	now = ktime_get_seconds();
- 	if ((now - journal->j_trans_start_time) > journal->j_max_trans_age) {
- 		commit_now = 1;
- 		journal->j_next_async_flush = 1;
-diff --git a/fs/reiserfs/procfs.c b/fs/reiserfs/procfs.c
-index e39b3910d24d..f2cf3441fdfc 100644
---- a/fs/reiserfs/procfs.c
-+++ b/fs/reiserfs/procfs.c
-@@ -297,6 +297,13 @@ static int show_oidmap(struct seq_file *m, void *unused)
+diff --git a/fs/reiserfs/item_ops.c b/fs/reiserfs/item_ops.c
+index e3c558d1b78c..3a5a752d96c7 100644
+--- a/fs/reiserfs/item_ops.c
++++ b/fs/reiserfs/item_ops.c
+@@ -33,30 +33,22 @@ static int sd_is_left_mergeable(struct reiserfs_key *key, unsigned long bsize)
  	return 0;
  }
  
-+static time64_t ktime_mono_to_real_seconds(time64_t mono)
-+{
-+	ktime_t kt = ktime_set(mono, NSEC_PER_SEC/2);
-+
-+	return ktime_divns(ktime_mono_to_real(kt), NSEC_PER_SEC);
-+}
-+
- static int show_journal(struct seq_file *m, void *unused)
+-static char *print_time(time_t t)
+-{
+-	static char timebuf[256];
+-
+-	sprintf(timebuf, "%ld", t);
+-	return timebuf;
+-}
+-
+ static void sd_print_item(struct item_head *ih, char *item)
  {
- 	struct super_block *sb = m->private;
-@@ -325,7 +332,7 @@ static int show_journal(struct seq_file *m, void *unused)
- 		   "j_bcount: \t%lu\n"
- 		   "j_first_unflushed_offset: \t%lu\n"
- 		   "j_last_flush_trans_id: \t%u\n"
--		   "j_trans_start_time: \t%li\n"
-+		   "j_trans_start_time: \t%lli\n"
- 		   "j_list_bitmap_index: \t%i\n"
- 		   "j_must_wait: \t%i\n"
- 		   "j_next_full_flush: \t%i\n"
-@@ -366,7 +373,7 @@ static int show_journal(struct seq_file *m, void *unused)
- 		   JF(j_bcount),
- 		   JF(j_first_unflushed_offset),
- 		   JF(j_last_flush_trans_id),
--		   JF(j_trans_start_time),
-+		   ktime_mono_to_real_seconds(JF(j_trans_start_time)),
- 		   JF(j_list_bitmap_index),
- 		   JF(j_must_wait),
- 		   JF(j_next_full_flush),
-diff --git a/fs/reiserfs/reiserfs.h b/fs/reiserfs/reiserfs.h
-index 1536ebbaf6ab..d0fc829bd760 100644
---- a/fs/reiserfs/reiserfs.h
-+++ b/fs/reiserfs/reiserfs.h
-@@ -330,7 +330,7 @@ struct reiserfs_journal {
+ 	printk("\tmode | size | nlinks | first direct | mtime\n");
+ 	if (stat_data_v1(ih)) {
+ 		struct stat_data_v1 *sd = (struct stat_data_v1 *)item;
  
- 	struct buffer_head *j_header_bh;
+-		printk("\t0%-6o | %6u | %2u | %d | %s\n", sd_v1_mode(sd),
++		printk("\t0%-6o | %6u | %2u | %d | %u\n", sd_v1_mode(sd),
+ 		       sd_v1_size(sd), sd_v1_nlink(sd),
+ 		       sd_v1_first_direct_byte(sd),
+-		       print_time(sd_v1_mtime(sd)));
++		       sd_v1_mtime(sd));
+ 	} else {
+ 		struct stat_data *sd = (struct stat_data *)item;
  
--	time_t j_trans_start_time;	/* time this transaction started */
-+	time64_t j_trans_start_time;	/* time this transaction started */
- 	struct mutex j_mutex;
- 	struct mutex j_flush_mutex;
+-		printk("\t0%-6o | %6llu | %2u | %d | %s\n", sd_v2_mode(sd),
++		printk("\t0%-6o | %6llu | %2u | %d | %u\n", sd_v2_mode(sd),
+ 		       (unsigned long long)sd_v2_size(sd), sd_v2_nlink(sd),
+-		       sd_v2_rdev(sd), print_time(sd_v2_mtime(sd)));
++		       sd_v2_rdev(sd), sd_v2_mtime(sd));
+ 	}
+ }
  
 -- 
 2.9.0
