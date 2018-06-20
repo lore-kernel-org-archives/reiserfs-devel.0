@@ -1,49 +1,52 @@
-From: Arnd Bergmann <arnd@arndb.de>
-Subject: [PATCH 1/3] reiserfs: remove unused j_timestamp
-Date: Tue, 19 Jun 2018 17:43:13 +0200
-Message-ID: <20180619154343.3640484-1-arnd@arndb.de>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-List-ID: <reiserfs-devel.vger.kernel.org>
-MIME-Version: 1.0
+From: Jan Kara <jack@suse.cz>
+Subject: Re: [PATCH 1/3] reiserfs: remove unused j_timestamp
+Date: Wed, 20 Jun 2018 10:21:18 +0200
+Message-ID: <20180620082118.gnqgk2w2snxntpzo@quack2.suse.cz>
+References: <20180619154343.3640484-1-arnd@arndb.de>
+Mime-Version: 1.0
+Content-Transfer-Encoding: base64
+Return-path: <y2038-bounces@lists.linaro.org>
+Content-Disposition: inline
+In-Reply-To: <20180619154343.3640484-1-arnd@arndb.de>
+List-Id: <reiserfs-devel.vger.kernel.org>
+List-Unsubscribe: <https://lists.linaro.org/mailman/options/y2038>,
+ <mailto:y2038-request@lists.linaro.org?subject=unsubscribe>
+List-Archive: <http://lists.linaro.org/pipermail/y2038/>
+List-Post: <mailto:y2038@lists.linaro.org>
+List-Help: <mailto:y2038-request@lists.linaro.org?subject=help>
+List-Subscribe: <https://lists.linaro.org/mailman/listinfo/y2038>,
+ <mailto:y2038-request@lists.linaro.org?subject=subscribe>
+Errors-To: y2038-bounces@lists.linaro.org
+Sender: "Y2038" <y2038-bounces@lists.linaro.org>
 Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Al Viro <viro@zeniv.linux.org.uk>, Andrew Morton <akpm@linux-foundation.org>
-Cc: y2038@lists.linaro.org, Jan Kara <jack@suse.cz>, Arnd Bergmann <arnd@arndb.de>, Thomas Gleixner <tglx@linutronix.de>, reiserfs-devel@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Arnd Bergmann <arnd@arndb.de>
+Cc: Jan Kara <jack@suse.cz>, y2038@lists.linaro.org, reiserfs-devel@vger.kernel.org, linux-kernel@vger.kernel.org, Al Viro <viro@zeniv.linux.org.uk>, Andrew Morton <akpm@linux-foundation.org>, Thomas Gleixner <tglx@linutronix.de>
 
-This uses the deprecated time_t type but is write-only, so we
-can just remove it.
-
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
----
- fs/reiserfs/journal.c  | 1 -
- fs/reiserfs/reiserfs.h | 1 -
- 2 files changed, 2 deletions(-)
-
-diff --git a/fs/reiserfs/journal.c b/fs/reiserfs/journal.c
-index 52eb5d293a34..1e7f733b2a12 100644
---- a/fs/reiserfs/journal.c
-+++ b/fs/reiserfs/journal.c
-@@ -4110,7 +4110,6 @@ static int do_journal_end(struct reiserfs_transaction_handle *th, int flags)
- 
- 	atomic_set(&jl->j_older_commits_done, 0);
- 	jl->j_trans_id = journal->j_trans_id;
--	jl->j_timestamp = journal->j_trans_start_time;
- 	jl->j_commit_bh = c_bh;
- 	jl->j_start = journal->j_start;
- 	jl->j_len = journal->j_len;
-diff --git a/fs/reiserfs/reiserfs.h b/fs/reiserfs/reiserfs.h
-index ae4811fecc1f..1536ebbaf6ab 100644
---- a/fs/reiserfs/reiserfs.h
-+++ b/fs/reiserfs/reiserfs.h
-@@ -271,7 +271,6 @@ struct reiserfs_journal_list {
- 
- 	struct mutex j_commit_mutex;
- 	unsigned int j_trans_id;
--	time_t j_timestamp;
- 	struct reiserfs_list_bitmap *j_list_bitmap;
- 	struct buffer_head *j_commit_bh;	/* commit buffer head */
- 	struct reiserfs_journal_cnode *j_realblock;
--- 
-2.9.0
-
+T24gVHVlIDE5LTA2LTE4IDE3OjQzOjEzLCBBcm5kIEJlcmdtYW5uIHdyb3RlOgo+IFRoaXMgdXNl
+cyB0aGUgZGVwcmVjYXRlZCB0aW1lX3QgdHlwZSBidXQgaXMgd3JpdGUtb25seSwgc28gd2UKPiBj
+YW4ganVzdCByZW1vdmUgaXQuCj4gCj4gU2lnbmVkLW9mZi1ieTogQXJuZCBCZXJnbWFubiA8YXJu
+ZEBhcm5kYi5kZT4KCkxvb2tzIGdvb2QgdG8gbWUuIFlvdSBjYW4gYWRkOgoKUmV2aWV3ZWQtYnk6
+IEphbiBLYXJhIDxqYWNrQHN1c2UuY3o+CgoJCQkJCQkJCUhvbnphCgo+IC0tLQo+ICBmcy9yZWlz
+ZXJmcy9qb3VybmFsLmMgIHwgMSAtCj4gIGZzL3JlaXNlcmZzL3JlaXNlcmZzLmggfCAxIC0KPiAg
+MiBmaWxlcyBjaGFuZ2VkLCAyIGRlbGV0aW9ucygtKQo+IAo+IGRpZmYgLS1naXQgYS9mcy9yZWlz
+ZXJmcy9qb3VybmFsLmMgYi9mcy9yZWlzZXJmcy9qb3VybmFsLmMKPiBpbmRleCA1MmViNWQyOTNh
+MzQuLjFlN2Y3MzNiMmExMiAxMDA2NDQKPiAtLS0gYS9mcy9yZWlzZXJmcy9qb3VybmFsLmMKPiAr
+KysgYi9mcy9yZWlzZXJmcy9qb3VybmFsLmMKPiBAQCAtNDExMCw3ICs0MTEwLDYgQEAgc3RhdGlj
+IGludCBkb19qb3VybmFsX2VuZChzdHJ1Y3QgcmVpc2VyZnNfdHJhbnNhY3Rpb25faGFuZGxlICp0
+aCwgaW50IGZsYWdzKQo+ICAKPiAgCWF0b21pY19zZXQoJmpsLT5qX29sZGVyX2NvbW1pdHNfZG9u
+ZSwgMCk7Cj4gIAlqbC0+al90cmFuc19pZCA9IGpvdXJuYWwtPmpfdHJhbnNfaWQ7Cj4gLQlqbC0+
+al90aW1lc3RhbXAgPSBqb3VybmFsLT5qX3RyYW5zX3N0YXJ0X3RpbWU7Cj4gIAlqbC0+al9jb21t
+aXRfYmggPSBjX2JoOwo+ICAJamwtPmpfc3RhcnQgPSBqb3VybmFsLT5qX3N0YXJ0Owo+ICAJamwt
+PmpfbGVuID0gam91cm5hbC0+al9sZW47Cj4gZGlmZiAtLWdpdCBhL2ZzL3JlaXNlcmZzL3JlaXNl
+cmZzLmggYi9mcy9yZWlzZXJmcy9yZWlzZXJmcy5oCj4gaW5kZXggYWU0ODExZmVjYzFmLi4xNTM2
+ZWJiYWY2YWIgMTAwNjQ0Cj4gLS0tIGEvZnMvcmVpc2VyZnMvcmVpc2VyZnMuaAo+ICsrKyBiL2Zz
+L3JlaXNlcmZzL3JlaXNlcmZzLmgKPiBAQCAtMjcxLDcgKzI3MSw2IEBAIHN0cnVjdCByZWlzZXJm
+c19qb3VybmFsX2xpc3Qgewo+ICAKPiAgCXN0cnVjdCBtdXRleCBqX2NvbW1pdF9tdXRleDsKPiAg
+CXVuc2lnbmVkIGludCBqX3RyYW5zX2lkOwo+IC0JdGltZV90IGpfdGltZXN0YW1wOwo+ICAJc3Ry
+dWN0IHJlaXNlcmZzX2xpc3RfYml0bWFwICpqX2xpc3RfYml0bWFwOwo+ICAJc3RydWN0IGJ1ZmZl
+cl9oZWFkICpqX2NvbW1pdF9iaDsJLyogY29tbWl0IGJ1ZmZlciBoZWFkICovCj4gIAlzdHJ1Y3Qg
+cmVpc2VyZnNfam91cm5hbF9jbm9kZSAqal9yZWFsYmxvY2s7Cj4gLS0gCj4gMi45LjAKPiAKLS0g
+CkphbiBLYXJhIDxqYWNrQHN1c2UuY29tPgpTVVNFIExhYnMsIENSCl9fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fClkyMDM4IG1haWxpbmcgbGlzdApZMjAzOEBs
+aXN0cy5saW5hcm8ub3JnCmh0dHBzOi8vbGlzdHMubGluYXJvLm9yZy9tYWlsbWFuL2xpc3RpbmZv
+L3kyMDM4Cg==
