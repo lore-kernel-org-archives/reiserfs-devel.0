@@ -1,67 +1,53 @@
 From: Jan Kara <jack@suse.cz>
-Subject: Re: [PATCH 2/3] reiserfs: use monotonic time for
-	j_trans_start_time
-Date: Wed, 20 Jun 2018 10:25:26 +0200
-Message-ID: <20180620082526.xic4dxre3ucpezrb@quack2.suse.cz>
+Subject: Re: [PATCH 3/3] reiserfs: use 64-bit values in print_time
+Date: Wed, 20 Jun 2018 10:28:30 +0200
+Message-ID: <20180620082830.vwpcikmpnjluqud4@quack2.suse.cz>
 References: <20180619154343.3640484-1-arnd@arndb.de>
- <20180619154343.3640484-2-arnd@arndb.de>
+ <20180619154343.3640484-3-arnd@arndb.de>
 Mime-Version: 1.0
-Content-Transfer-Encoding: base64
-Return-path: <y2038-bounces@lists.linaro.org>
+Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <20180619154343.3640484-2-arnd@arndb.de>
-List-Id: <reiserfs-devel.vger.kernel.org>
-List-Unsubscribe: <https://lists.linaro.org/mailman/options/y2038>,
- <mailto:y2038-request@lists.linaro.org?subject=unsubscribe>
-List-Archive: <http://lists.linaro.org/pipermail/y2038/>
-List-Post: <mailto:y2038@lists.linaro.org>
-List-Help: <mailto:y2038-request@lists.linaro.org?subject=help>
-List-Subscribe: <https://lists.linaro.org/mailman/listinfo/y2038>,
- <mailto:y2038-request@lists.linaro.org?subject=subscribe>
-Errors-To: y2038-bounces@lists.linaro.org
-Sender: "Y2038" <y2038-bounces@lists.linaro.org>
+In-Reply-To: <20180619154343.3640484-3-arnd@arndb.de>
+Sender: linux-kernel-owner@vger.kernel.org
+List-ID: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 To: Arnd Bergmann <arnd@arndb.de>
-Cc: Jan Kara <jack@suse.cz>, y2038@lists.linaro.org, reiserfs-devel@vger.kernel.org, linux-kernel@vger.kernel.org, Al Viro <viro@zeniv.linux.org.uk>, Andrew Morton <akpm@linux-foundation.org>, Thomas Gleixner <tglx@linutronix.de>
+Cc: Al Viro <viro@zeniv.linux.org.uk>, Andrew Morton <akpm@linux-foundation.org>, y2038@lists.linaro.org, Jan Kara <jack@suse.cz>, reiserfs-devel@vger.kernel.org, linux-kernel@vger.kernel.org
 
-T24gVHVlIDE5LTA2LTE4IDE3OjQzOjE0LCBBcm5kIEJlcmdtYW5uIHdyb3RlOgo+IFVzaW5nIENM
-T0NLX1JFQUxUSU1FIHRpbWVfdCB0aW1lc3RhbXBzIGJyZWFrcyBvbiAzMi1iaXQgc3lzdGVtcwo+
-IGluIDIwMzgsIGFuZCBnaXZlcyBzdXJwcmlzaW5nIHJlc3VsdHMgd2l0aCBhIGNvbmN1cnJlbnQg
-c2V0dGltZW9mZGF5KCkuCj4gCj4gVGhpcyBjaGFuZ2VzIHRoZSByZWlzZXJmcyBqb3VybmFsIHRp
-bWVzdGFtcHMgdG8gdXNlIGt0aW1lX2dldF9zZWNvbmRzKCkKPiBpbnN0ZWFkLCB3aGljaCBtYWtl
-cyBpdCB1c2UgYSA2NC1iaXQgQ0xPQ0tfTU9OT1RPTklDIHN0YW1wLgo+IAo+IEluIHRoZSBwcm9j
-ZnMgb3V0cHV0LCB0aGUgbW9ub3RvbmljIHRpbWVzdGFtcCBuZWVkcyB0byBiZSBjb252ZXJ0ZWQK
-PiBiYWNrIHRvIENMT0NLX1JFQUxUSU1FIHRvIGtlZXAgdGhlIGV4aXN0aW5nIEFCSS4KPiAKPiBT
-aWduZWQtb2ZmLWJ5OiBBcm5kIEJlcmdtYW5uIDxhcm5kQGFybmRiLmRlPgouLi4KPiBkaWZmIC0t
-Z2l0IGEvZnMvcmVpc2VyZnMvcHJvY2ZzLmMgYi9mcy9yZWlzZXJmcy9wcm9jZnMuYwo+IGluZGV4
-IGUzOWIzOTEwZDI0ZC4uNTIwZjkwMDNjMTNhIDEwMDY0NAo+IC0tLSBhL2ZzL3JlaXNlcmZzL3By
-b2Nmcy5jCj4gKysrIGIvZnMvcmVpc2VyZnMvcHJvY2ZzLmMKPiBAQCAtMzAzLDYgKzMwMywxMCBA
-QCBzdGF0aWMgaW50IHNob3dfam91cm5hbChzdHJ1Y3Qgc2VxX2ZpbGUgKm0sIHZvaWQgKnVudXNl
-ZCkKPiAgCXN0cnVjdCByZWlzZXJmc19zYl9pbmZvICpyID0gUkVJU0VSRlNfU0Ioc2IpOwo+ICAJ
-c3RydWN0IHJlaXNlcmZzX3N1cGVyX2Jsb2NrICpycyA9IHItPnNfcnM7Cj4gIAlzdHJ1Y3Qgam91
-cm5hbF9wYXJhbXMgKmpwID0gJnJzLT5zX3YxLnNfam91cm5hbDsKPiArCWt0aW1lX3Qgal90cmFu
-c19zdGFydF9rdGltZSA9IGt0aW1lX3NldChKRihqX3RyYW5zX3N0YXJ0X3RpbWUpLCAwKTsKPiAr
-Cj4gKwkvKiBwcmludCBhcyBDTE9DS19SRUFMVElNRSAqLwo+ICsJal90cmFuc19zdGFydF9rdGlt
-ZSA9IGt0aW1lX21vbm9fdG9fcmVhbChqX3RyYW5zX3N0YXJ0X2t0aW1lKTsKPiAgCj4gIAlzZXFf
-cHJpbnRmKG0sCQkvKiBvbi1kaXNrIGZpZWxkcyAqLwo+ICAJCSAgICJqcF9qb3VybmFsXzFzdF9i
-bG9jazogXHQlaVxuIgo+IEBAIC0zMjUsNyArMzI5LDcgQEAgc3RhdGljIGludCBzaG93X2pvdXJu
-YWwoc3RydWN0IHNlcV9maWxlICptLCB2b2lkICp1bnVzZWQpCj4gIAkJICAgImpfYmNvdW50OiBc
-dCVsdVxuIgo+ICAJCSAgICJqX2ZpcnN0X3VuZmx1c2hlZF9vZmZzZXQ6IFx0JWx1XG4iCj4gIAkJ
-ICAgImpfbGFzdF9mbHVzaF90cmFuc19pZDogXHQldVxuIgo+IC0JCSAgICJqX3RyYW5zX3N0YXJ0
-X3RpbWU6IFx0JWxpXG4iCj4gKwkJICAgImpfdHJhbnNfc3RhcnRfdGltZTogXHQlbGxpXG4iCj4g
-IAkJICAgImpfbGlzdF9iaXRtYXBfaW5kZXg6IFx0JWlcbiIKPiAgCQkgICAial9tdXN0X3dhaXQ6
-IFx0JWlcbiIKPiAgCQkgICAial9uZXh0X2Z1bGxfZmx1c2g6IFx0JWlcbiIKPiBAQCAtMzY2LDcg
-KzM3MCw3IEBAIHN0YXRpYyBpbnQgc2hvd19qb3VybmFsKHN0cnVjdCBzZXFfZmlsZSAqbSwgdm9p
-ZCAqdW51c2VkKQo+ICAJCSAgIEpGKGpfYmNvdW50KSwKPiAgCQkgICBKRihqX2ZpcnN0X3VuZmx1
-c2hlZF9vZmZzZXQpLAo+ICAJCSAgIEpGKGpfbGFzdF9mbHVzaF90cmFuc19pZCksCj4gLQkJICAg
-SkYoal90cmFuc19zdGFydF90aW1lKSwKPiArCQkgICBrdGltZV9kaXZucyhqX3RyYW5zX3N0YXJ0
-X2t0aW1lLCBOU0VDX1BFUl9TRUMpLAoKSHVtLCB0aGlzIGxvb2tzIGN1bWJlcnNvbWUgLSBtYXli
-ZSBoYXZlIGEgaGVscGVyIGZ1bmN0aW9uIGNvbnZlcnRpbmcKTU9OT1RPTklDIHRvIFJFQUxUSU1F
-IHNlY29uZHM/IFJlZ2FyZGxlc3MgdGhlIGNvZGUgbG9va3MgY29ycmVjdCBhbmQKcmVpc2VyZnMg
-aXMgb2xkIGVub3VnaCB0aGF0IEknbSBoYXBweSBzb21lb25lIGltcHJvdmVzIGFueXRoaW5nIHRo
-ZXJlIHNvCkknbSBPSyBldmVuIHdpdGggdGhlIGN1cnJlbnQgY29kZS4gRmVlbCBmcmVlIHRvIGFk
-ZDoKClJldmlld2VkLWJ5OiBKYW4gS2FyYSA8amFja0BzdXNlLmN6PgoKCQkJCQkJCQlIb256YQoK
-LS0gCkphbiBLYXJhIDxqYWNrQHN1c2UuY29tPgpTVVNFIExhYnMsIENSCl9fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fClkyMDM4IG1haWxpbmcgbGlzdApZMjAz
-OEBsaXN0cy5saW5hcm8ub3JnCmh0dHBzOi8vbGlzdHMubGluYXJvLm9yZy9tYWlsbWFuL2xpc3Rp
-bmZvL3kyMDM4Cg==
+On Tue 19-06-18 17:43:15, Arnd Bergmann wrote:
+> Inode timestamps are now 64-bit wide even on 32-bit machines, and reiserfs
+> interprets the 32-bit on-disk timestamps as unsigned when returning them
+> to user space with statx(), so for consistency we should print them
+> the same way in the emergency console logs.
+> 
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+...
+> diff --git a/fs/reiserfs/item_ops.c b/fs/reiserfs/item_ops.c
+> index e3c558d1b78c..d0ab3a763962 100644
+> --- a/fs/reiserfs/item_ops.c
+> +++ b/fs/reiserfs/item_ops.c
+> @@ -33,11 +33,11 @@ static int sd_is_left_mergeable(struct reiserfs_key *key, unsigned long bsize)
+>  	return 0;
+>  }
+>  
+> -static char *print_time(time_t t)
+> +static char *print_time(time64_t t)
+>  {
+>  	static char timebuf[256];
+>  
+> -	sprintf(timebuf, "%ld", t);
+> +	sprintf(timebuf, "%lld", t);
+>  	return timebuf;
+>  }
+
+Well, seeing how print_time() is used, more appropriate prototype would be:
+
+static char *print_time(u32 t)
+
+and then print it as %u.
+
+								Honza
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
