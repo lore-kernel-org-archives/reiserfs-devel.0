@@ -1,108 +1,287 @@
-From: syzbot <syzbot+66d2c2155ece8b6d3fc0@syzkaller.appspotmail.com>
-Subject: kernel BUG at fs/reiserfs/lock.c:LINE!
-Date: Tue, 10 Jul 2018 12:25:02 -0700
-Message-ID: <0000000000002bd65e0570aa16f2@google.com>
+From: Jan Kara <jack@suse.cz>
+Subject: Re: [PATCH] reiserfs: fix buffer overflow with long warning messages
+Date: Mon, 16 Jul 2018 17:25:06 +0200
+Message-ID: <20180716152506.mfy3cputokdgauhs@quack2.suse.cz>
+References: <001a1139d0ba06bddf056a063986@google.com>
+ <20180707203621.30922-1-ebiggers3@gmail.com>
 Mime-Version: 1.0
 Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <20180707203621.30922-1-ebiggers3@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"; format="flowed"; delsp="yes"
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: gregkh@linuxfoundation.org, kstewart@linuxfoundation.org, linux-kernel@vger.kernel.org, pombredanne@nexb.com, reiserfs-devel@vger.kernel.org, syzkaller-bugs@googlegroups.com, tglx@linutronix.de
+To: Eric Biggers <ebiggers3@gmail.com>
+Cc: reiserfs-devel@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>, linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com, Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>, Jeff Mahoney <jeffm@suse.com>, Jan Kara <jack@suse.com>, Alexander Viro <viro@zeniv.linux.org.uk>, Eric Biggers <ebiggers@google.com>
 
-Hello,
+On Sat 07-07-18 13:36:21, Eric Biggers wrote:
+> From: Eric Biggers <ebiggers@google.com>
+> 
+> ReiserFS prepares log messages into a 1024-byte buffer with no bounds
+> checks.  Long messages, such as the "unknown mount option" warning when
+> userspace passes a crafted mount options string, overflow this buffer.
+> This causes KASAN to report a global-out-of-bounds write.
+> 
+> Fix it by truncating messages to the buffer size.
+> 
+> Reported-by: syzbot+b890b3335a4d8c608963@syzkaller.appspotmail.com
+> Fixes: 1da177e4c3f4 ("Linux-2.6.12-rc2")
+> Signed-off-by: Eric Biggers <ebiggers@google.com>
 
-syzbot found the following crash on:
+Looks good to me. You can add:
 
-HEAD commit:    3951bd9fe3e2 Add linux-next specific files for 20180710
-git tree:       linux-next
-console output: https://syzkaller.appspot.com/x/log.txt?x=1495050c400000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=b6e8479ba596271a
-dashboard link: https://syzkaller.appspot.com/bug?extid=66d2c2155ece8b6d3fc0
-compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
+Reviewed-by: Jan Kara <jack@suse.cz>
 
-Unfortunately, I don't have any reproducer for this crash yet.
+I'd just note that I'd prefer some lines not to exceed 80 chars like:
 
-IMPORTANT: if you fix the bug, please add the following tag to the commit:
-Reported-by: syzbot+66d2c2155ece8b6d3fc0@syzkaller.appspotmail.com
+-			sprintf_le_key(p, va_arg(args, struct reiserfs_key *));
++			p += scnprintf_le_key(p, end - p,
++					      va_arg(args, struct reiserfs_key *));
 
-R10: 0000000000000000 R11: 0000000000000206 R12: 0000000000000014
-R13: 0000000000000000 R14: 00000000004d3fb8 R15: 0000000000000048
-REISERFS warning (device loop2):  reiserfs_fill_super: Cannot allocate  
-memory for journal device name
-loop6: rw=1, want=32877, limit=112
-------------[ cut here ]------------
-kernel BUG at fs/reiserfs/lock.c:44!
-invalid opcode: 0000 [#1] SMP KASAN
-CPU: 1 PID: 12313 Comm: syz-executor2 Not tainted 4.18.0-rc4-next-20180710+  
-#3
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
-Google 01/01/2011
-RIP: 0010:reiserfs_write_unlock+0xeb/0x110 fs/reiserfs/lock.c:44
-Code: 5d c3 e8 88 42 76 ff 48 8d 7b 28 48 c7 83 a8 00 00 00 00 00 00 00 e8  
-c4 b8 96 05 e8 6f 42 76 ff 5b 41 5c 5d c3 e8 65 42 76 ff <0f> 0b e8 fe c2  
-b4 ff eb a1 e8 17 c3 b4 ff e9 33 ff ff ff e8 0d c3
-RSP: 0018:ffff8801956e77e0 EFLAGS: 00010246
-RAX: 0000000000040000 RBX: ffff8801ba2e16c0 RCX: ffffc9000b8a9000
-RDX: 0000000000040000 RSI: ffffffff8206390b RDI: ffff8801ba2e1768
-RBP: ffff8801956e77f0 R08: ffffed0032adcf25 R09: 0000000000000000
-R10: fffffbfff11f1224 R11: ffffffff88f89123 R12: ffff8801956e7ac8
-R13: ffffed0032adcf3d R14: ffffed0032adcf2d R15: ffff8801c9f20800
-FS:  00007f1c6ce16700(0000) GS:ffff8801daf00000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00000000004c2643 CR3: 00000001cda4f000 CR4: 00000000001406e0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
-  reiserfs_fill_super+0xfac/0x3930 fs/reiserfs/super.c:2222
-  mount_bdev+0x314/0x3e0 fs/super.c:1344
-  get_super_block+0x3c/0x50 fs/reiserfs/super.c:2608
-  legacy_get_tree+0x118/0x440 fs/fs_context.c:659
-  vfs_get_tree+0x1cb/0x5c0 fs/super.c:1743
-  do_new_mount fs/namespace.c:2567 [inline]
-  do_mount+0x6c1/0x1fb0 fs/namespace.c:2889
-  ksys_mount+0x12d/0x140 fs/namespace.c:3105
-  __do_sys_mount fs/namespace.c:3119 [inline]
-  __se_sys_mount fs/namespace.c:3116 [inline]
-  __x64_sys_mount+0xbe/0x150 fs/namespace.c:3116
-  do_syscall_64+0x1b9/0x820 arch/x86/entry/common.c:290
-  entry_SYSCALL_64_after_hwframe+0x49/0xbe
-RIP: 0033:0x45885a
-Code: b8 a6 00 00 00 0f 05 48 3d 01 f0 ff ff 0f 83 dd 8f fb ff c3 66 2e 0f  
-1f 84 00 00 00 00 00 66 90 49 89 ca b8 a5 00 00 00 0f 05 <48> 3d 01 f0 ff  
-ff 0f 83 ba 8f fb ff c3 66 0f 1f 84 00 00 00 00 00
-RSP: 002b:00007f1c6ce15a88 EFLAGS: 00000206 ORIG_RAX: 00000000000000a5
-RAX: ffffffffffffffda RBX: 00007f1c6ce15b30 RCX: 000000000045885a
-RDX: 00007f1c6ce15ad0 RSI: 0000000020000140 RDI: 00007f1c6ce15af0
-RBP: 0000000020000140 R08: 00007f1c6ce15b30 R09: 00007f1c6ce15ad0
-R10: 0000000000000000 R11: 0000000000000206 R12: 0000000000000014
-R13: 0000000000000000 R14: 00000000004d3fb8 R15: 0000000000000048
-Modules linked in:
-Dumping ftrace buffer:
-    (ftrace buffer empty)
----[ end trace 3d34f3558efcb4e7 ]---
-RIP: 0010:reiserfs_write_unlock+0xeb/0x110 fs/reiserfs/lock.c:44
-Code: 5d c3 e8 88 42 76 ff 48 8d 7b 28 48 c7 83 a8 00 00 00 00 00 00 00 e8  
-c4 b8 96 05 e8 6f 42 76 ff 5b 41 5c 5d c3 e8 65 42 76 ff <0f> 0b e8 fe c2  
-b4 ff eb a1 e8 17 c3 b4 ff e9 33 ff ff ff e8 0d c3
-RSP: 0018:ffff8801956e77e0 EFLAGS: 00010246
-RAX: 0000000000040000 RBX: ffff8801ba2e16c0 RCX: ffffc9000b8a9000
-RDX: 0000000000040000 RSI: ffffffff8206390b RDI: ffff8801ba2e1768
-RBP: ffff8801956e77f0 R08: ffffed0032adcf25 R09: 0000000000000000
-R10: fffffbfff11f1224 R11: ffffffff88f89123 R12: ffff8801956e7ac8
-R13: ffffed0032adcf3d R14: ffffed0032adcf2d R15: ffff8801c9f20800
-FS:  00007f1c6ce16700(0000) GS:ffff8801daf00000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00000000004c2643 CR3: 00000001cda4f000 CR4: 00000000001406e0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+could be:
 
++			p += scnprintf_le_key(p, end - p,
++					va_arg(args, struct reiserfs_key *));
 
----
-This bug is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
+But I don't mind that much.
 
-syzbot will keep track of this bug report. See:
-https://goo.gl/tpsmEJ#bug-status-tracking for how to communicate with  
-syzbot.
+Andrew usually merges reiserfs patches. Andrew?
+
+								Honza
+> ---
+>  fs/reiserfs/prints.c | 141 +++++++++++++++++++++++++------------------
+>  1 file changed, 81 insertions(+), 60 deletions(-)
+> 
+> diff --git a/fs/reiserfs/prints.c b/fs/reiserfs/prints.c
+> index 7e288d97adcbb..9fed1c05f1f4d 100644
+> --- a/fs/reiserfs/prints.c
+> +++ b/fs/reiserfs/prints.c
+> @@ -76,83 +76,99 @@ static char *le_type(struct reiserfs_key *key)
+>  }
+>  
+>  /* %k */
+> -static void sprintf_le_key(char *buf, struct reiserfs_key *key)
+> +static int scnprintf_le_key(char *buf, size_t size, struct reiserfs_key *key)
+>  {
+>  	if (key)
+> -		sprintf(buf, "[%d %d %s %s]", le32_to_cpu(key->k_dir_id),
+> -			le32_to_cpu(key->k_objectid), le_offset(key),
+> -			le_type(key));
+> +		return scnprintf(buf, size, "[%d %d %s %s]",
+> +				 le32_to_cpu(key->k_dir_id),
+> +				 le32_to_cpu(key->k_objectid), le_offset(key),
+> +				 le_type(key));
+>  	else
+> -		sprintf(buf, "[NULL]");
+> +		return scnprintf(buf, size, "[NULL]");
+>  }
+>  
+>  /* %K */
+> -static void sprintf_cpu_key(char *buf, struct cpu_key *key)
+> +static int scnprintf_cpu_key(char *buf, size_t size, struct cpu_key *key)
+>  {
+>  	if (key)
+> -		sprintf(buf, "[%d %d %s %s]", key->on_disk_key.k_dir_id,
+> -			key->on_disk_key.k_objectid, reiserfs_cpu_offset(key),
+> -			cpu_type(key));
+> +		return scnprintf(buf, size, "[%d %d %s %s]",
+> +				 key->on_disk_key.k_dir_id,
+> +				 key->on_disk_key.k_objectid,
+> +				 reiserfs_cpu_offset(key), cpu_type(key));
+>  	else
+> -		sprintf(buf, "[NULL]");
+> +		return scnprintf(buf, size, "[NULL]");
+>  }
+>  
+> -static void sprintf_de_head(char *buf, struct reiserfs_de_head *deh)
+> +static int scnprintf_de_head(char *buf, size_t size,
+> +			     struct reiserfs_de_head *deh)
+>  {
+>  	if (deh)
+> -		sprintf(buf,
+> -			"[offset=%d dir_id=%d objectid=%d location=%d state=%04x]",
+> -			deh_offset(deh), deh_dir_id(deh), deh_objectid(deh),
+> -			deh_location(deh), deh_state(deh));
+> +		return scnprintf(buf, size,
+> +				 "[offset=%d dir_id=%d objectid=%d location=%d state=%04x]",
+> +				 deh_offset(deh), deh_dir_id(deh),
+> +				 deh_objectid(deh), deh_location(deh),
+> +				 deh_state(deh));
+>  	else
+> -		sprintf(buf, "[NULL]");
+> +		return scnprintf(buf, size, "[NULL]");
+>  
+>  }
+>  
+> -static void sprintf_item_head(char *buf, struct item_head *ih)
+> +static int scnprintf_item_head(char *buf, size_t size, struct item_head *ih)
+>  {
+>  	if (ih) {
+> -		strcpy(buf,
+> -		       (ih_version(ih) == KEY_FORMAT_3_6) ? "*3.6* " : "*3.5*");
+> -		sprintf_le_key(buf + strlen(buf), &(ih->ih_key));
+> -		sprintf(buf + strlen(buf), ", item_len %d, item_location %d, "
+> -			"free_space(entry_count) %d",
+> -			ih_item_len(ih), ih_location(ih), ih_free_space(ih));
+> +		char *p = buf;
+> +		char * const end = buf + size;
+> +
+> +		p += scnprintf(p, end - p, "%s",
+> +			       (ih_version(ih) == KEY_FORMAT_3_6) ?
+> +			       "*3.6* " : "*3.5*");
+> +
+> +		p += scnprintf_le_key(p, end - p, &ih->ih_key);
+> +
+> +		p += scnprintf(p, end - p,
+> +			       ", item_len %d, item_location %d, free_space(entry_count) %d",
+> +			       ih_item_len(ih), ih_location(ih),
+> +			       ih_free_space(ih));
+> +		return p - buf;
+>  	} else
+> -		sprintf(buf, "[NULL]");
+> +		return scnprintf(buf, size, "[NULL]");
+>  }
+>  
+> -static void sprintf_direntry(char *buf, struct reiserfs_dir_entry *de)
+> +static int scnprintf_direntry(char *buf, size_t size,
+> +			      struct reiserfs_dir_entry *de)
+>  {
+>  	char name[20];
+>  
+>  	memcpy(name, de->de_name, de->de_namelen > 19 ? 19 : de->de_namelen);
+>  	name[de->de_namelen > 19 ? 19 : de->de_namelen] = 0;
+> -	sprintf(buf, "\"%s\"==>[%d %d]", name, de->de_dir_id, de->de_objectid);
+> +	return scnprintf(buf, size, "\"%s\"==>[%d %d]",
+> +			 name, de->de_dir_id, de->de_objectid);
+>  }
+>  
+> -static void sprintf_block_head(char *buf, struct buffer_head *bh)
+> +static int scnprintf_block_head(char *buf, size_t size, struct buffer_head *bh)
+>  {
+> -	sprintf(buf, "level=%d, nr_items=%d, free_space=%d rdkey ",
+> -		B_LEVEL(bh), B_NR_ITEMS(bh), B_FREE_SPACE(bh));
+> +	return scnprintf(buf, size,
+> +			 "level=%d, nr_items=%d, free_space=%d rdkey ",
+> +			 B_LEVEL(bh), B_NR_ITEMS(bh), B_FREE_SPACE(bh));
+>  }
+>  
+> -static void sprintf_buffer_head(char *buf, struct buffer_head *bh)
+> +static int scnprintf_buffer_head(char *buf, size_t size, struct buffer_head *bh)
+>  {
+> -	sprintf(buf,
+> -		"dev %pg, size %zd, blocknr %llu, count %d, state 0x%lx, page %p, (%s, %s, %s)",
+> -		bh->b_bdev, bh->b_size,
+> -		(unsigned long long)bh->b_blocknr, atomic_read(&(bh->b_count)),
+> -		bh->b_state, bh->b_page,
+> -		buffer_uptodate(bh) ? "UPTODATE" : "!UPTODATE",
+> -		buffer_dirty(bh) ? "DIRTY" : "CLEAN",
+> -		buffer_locked(bh) ? "LOCKED" : "UNLOCKED");
+> +	return scnprintf(buf, size,
+> +			 "dev %pg, size %zd, blocknr %llu, count %d, state 0x%lx, page %p, (%s, %s, %s)",
+> +			 bh->b_bdev, bh->b_size,
+> +			 (unsigned long long)bh->b_blocknr,
+> +			 atomic_read(&(bh->b_count)),
+> +			 bh->b_state, bh->b_page,
+> +			 buffer_uptodate(bh) ? "UPTODATE" : "!UPTODATE",
+> +			 buffer_dirty(bh) ? "DIRTY" : "CLEAN",
+> +			 buffer_locked(bh) ? "LOCKED" : "UNLOCKED");
+>  }
+>  
+> -static void sprintf_disk_child(char *buf, struct disk_child *dc)
+> +static int scnprintf_disk_child(char *buf, size_t size, struct disk_child *dc)
+>  {
+> -	sprintf(buf, "[dc_number=%d, dc_size=%u]", dc_block_number(dc),
+> -		dc_size(dc));
+> +	return scnprintf(buf, size, "[dc_number=%d, dc_size=%u]",
+> +			 dc_block_number(dc), dc_size(dc));
+>  }
+>  
+>  static char *is_there_reiserfs_struct(char *fmt, int *what)
+> @@ -189,55 +205,60 @@ static void prepare_error_buf(const char *fmt, va_list args)
+>  	char *fmt1 = fmt_buf;
+>  	char *k;
+>  	char *p = error_buf;
+> +	char * const end = &error_buf[sizeof(error_buf)];
+>  	int what;
+>  
+>  	spin_lock(&error_lock);
+>  
+> -	strcpy(fmt1, fmt);
+> +	if (WARN_ON(strscpy(fmt_buf, fmt, sizeof(fmt_buf)) < 0)) {
+> +		strscpy(error_buf, "format string too long", end - error_buf);
+> +		goto out_unlock;
+> +	}
+>  
+>  	while ((k = is_there_reiserfs_struct(fmt1, &what)) != NULL) {
+>  		*k = 0;
+>  
+> -		p += vsprintf(p, fmt1, args);
+> +		p += vscnprintf(p, end - p, fmt1, args);
+>  
+>  		switch (what) {
+>  		case 'k':
+> -			sprintf_le_key(p, va_arg(args, struct reiserfs_key *));
+> +			p += scnprintf_le_key(p, end - p,
+> +					      va_arg(args, struct reiserfs_key *));
+>  			break;
+>  		case 'K':
+> -			sprintf_cpu_key(p, va_arg(args, struct cpu_key *));
+> +			p += scnprintf_cpu_key(p, end - p,
+> +					       va_arg(args, struct cpu_key *));
+>  			break;
+>  		case 'h':
+> -			sprintf_item_head(p, va_arg(args, struct item_head *));
+> +			p += scnprintf_item_head(p, end - p,
+> +						 va_arg(args, struct item_head *));
+>  			break;
+>  		case 't':
+> -			sprintf_direntry(p,
+> -					 va_arg(args,
+> -						struct reiserfs_dir_entry *));
+> +			p += scnprintf_direntry(p, end - p,
+> +						va_arg(args, struct reiserfs_dir_entry *));
+>  			break;
+>  		case 'y':
+> -			sprintf_disk_child(p,
+> -					   va_arg(args, struct disk_child *));
+> +			p += scnprintf_disk_child(p, end - p,
+> +						  va_arg(args, struct disk_child *));
+>  			break;
+>  		case 'z':
+> -			sprintf_block_head(p,
+> -					   va_arg(args, struct buffer_head *));
+> +			p += scnprintf_block_head(p, end - p,
+> +						  va_arg(args, struct buffer_head *));
+>  			break;
+>  		case 'b':
+> -			sprintf_buffer_head(p,
+> -					    va_arg(args, struct buffer_head *));
+> +			p += scnprintf_buffer_head(p, end - p,
+> +						   va_arg(args, struct buffer_head *));
+>  			break;
+>  		case 'a':
+> -			sprintf_de_head(p,
+> -					va_arg(args,
+> -					       struct reiserfs_de_head *));
+> +			p += scnprintf_de_head(p, end - p,
+> +					       va_arg(args, struct reiserfs_de_head *));
+>  			break;
+>  		}
+>  
+> -		p += strlen(p);
+>  		fmt1 = k + 2;
+>  	}
+> -	vsprintf(p, fmt1, args);
+> +	p += vscnprintf(p, end - p, fmt1, args);
+> +out_unlock:
+>  	spin_unlock(&error_lock);
+>  
+>  }
+> -- 
+> 2.18.0
+> 
+> 
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
