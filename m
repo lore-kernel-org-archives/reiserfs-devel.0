@@ -1,287 +1,119 @@
-From: Jan Kara <jack@suse.cz>
-Subject: Re: [PATCH] reiserfs: fix buffer overflow with long warning messages
-Date: Mon, 16 Jul 2018 17:25:06 +0200
-Message-ID: <20180716152506.mfy3cputokdgauhs@quack2.suse.cz>
-References: <001a1139d0ba06bddf056a063986@google.com>
- <20180707203621.30922-1-ebiggers3@gmail.com>
+From: Jann Horn <jannh@google.com>
+Subject: [PATCH] reiserfs: fix broken xattr handling (heap corruption, bad retval)
+Date: Thu,  2 Aug 2018 17:15:39 +0200
+Message-ID: <20180802151539.5373-1-jannh@google.com>
 Mime-Version: 1.0
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20180707203621.30922-1-ebiggers3@gmail.com>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=date:message-id:mime-version:subject:from:to:cc;
+        bh=6sQbQQ0iCDtdUpVAZxvEQ0oR/nl1vjCXI7dHj4pP/rE=;
+        b=Nu8NNdVBvtru4KHtYB3VYmjMcs0N0yWXF0tsNCJBLwJn6b+i1S3XKnOruOoEjZ76kq
+         ib8qYFo1Sto9bXQGsGZXZXuWFDXFwHCCV0KZ/9eTNLTY5L8Ld8NY10CTHRdmUGoyYICl
+         0xo4Qo2mtMNEHnr+Fgk2CWsJxBHY039H+a19BZb4gVboxGj3/QrIFOFc6sp0kBX+64Y3
+         M6uMfrG0pBH5ZKO/NnDGsZZK3EFdN/PC+TAvEvzKQZGK8L/k60WGZDfa30z7s/RhMAXv
+         uA7Yy//6lBntU9oio4FBQtpItqORVFN+AY0JcyKjcUj4rXRBgIwe3wRw3BG8FtACTdwU
+         UhLw==
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Eric Biggers <ebiggers3@gmail.com>
-Cc: reiserfs-devel@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>, linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com, Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>, Jeff Mahoney <jeffm@suse.com>, Jan Kara <jack@suse.com>, Alexander Viro <viro@zeniv.linux.org.uk>, Eric Biggers <ebiggers@google.com>
+To: reiserfs-devel@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>, jannh@google.com
+Cc: linux-kernel@vger.kernel.org, Jeff Mahoney <jeffm@suse.com>, Eric Biggers <ebiggers@google.com>, Al Viro <viro@zeniv.linux.org.uk>
 
-On Sat 07-07-18 13:36:21, Eric Biggers wrote:
-> From: Eric Biggers <ebiggers@google.com>
-> 
-> ReiserFS prepares log messages into a 1024-byte buffer with no bounds
-> checks.  Long messages, such as the "unknown mount option" warning when
-> userspace passes a crafted mount options string, overflow this buffer.
-> This causes KASAN to report a global-out-of-bounds write.
-> 
-> Fix it by truncating messages to the buffer size.
-> 
-> Reported-by: syzbot+b890b3335a4d8c608963@syzkaller.appspotmail.com
-> Fixes: 1da177e4c3f4 ("Linux-2.6.12-rc2")
-> Signed-off-by: Eric Biggers <ebiggers@google.com>
+This fixes the following issues:
 
-Looks good to me. You can add:
+ - When a buffer size is supplied to reiserfs_listxattr() such that each
+   individual name fits, but the concatenation of all names doesn't
+   fit, reiserfs_listxattr() overflows the supplied buffer. This leads to
+   a kernel heap overflow (verified using KASAN) followed by an
+   out-of-bounds usercopy and is therefore a security bug.
+ - When a buffer size is supplied to reiserfs_listxattr() such that a name
+   doesn't fit, -ERANGE should be returned. But reiserfs instead just
+   truncates the list of names; I have verified that if the only xattr on
+   a file has a longer name than the supplied buffer length, listxattr()
+   incorrectly returns zero.
 
-Reviewed-by: Jan Kara <jack@suse.cz>
+With my patch applied, -ERANGE is returned in both cases and the memory
+corruption doesn't happen anymore.
 
-I'd just note that I'd prefer some lines not to exceed 80 chars like:
+Credit for making me clean this code up a bit goes to Al Viro, who pointed
+out that the ->actor calling convention is suboptimal and should be
+changed.
 
--			sprintf_le_key(p, va_arg(args, struct reiserfs_key *));
-+			p += scnprintf_le_key(p, end - p,
-+					      va_arg(args, struct reiserfs_key *));
+Fixes: 48b32a3553a5 ("reiserfs: use generic xattr handlers")
+Cc: stable@vger.kernel.org
+Signed-off-by: Jann Horn <jannh@google.com>
+---
+Triggering the bug:
 
-could be:
+root@debian:/home/user# mount -o user_xattr reiserimg reisermount/
+root@debian:/home/user# cd reisermount/
+root@debian:/home/user/reisermount# touch test_file
+root@debian:/home/user/reisermount# setfattr -n user.foo1 -v A test_file
+root@debian:/home/user/reisermount# setfattr -n user.foo2 -v A test_file
+root@debian:/home/user/reisermount# setfattr -n user.foo3 -v A test_file
+root@debian:/home/user/reisermount# setfattr -n user.foo4 -v A test_file
+root@debian:/home/user/reisermount# setfattr -n user.foo5 -v A test_file
+root@debian:/home/user/reisermount# setfattr -n user.foo6 -v A test_file
+root@debian:/home/user/reisermount# cat xattr_test.c
+#include <sys/types.h>
+#include <attr/xattr.h>
+#include <err.h>
+#include <stdio.h>
+#include <string.h>
+int main(int argc, char **argv) {
+  if (argc != 2) errx(1, "bad invocation");
+  char list[10];
+  int res = listxattr(argv[1], list, sizeof(list));
+  if (res == -1)
+    err(1, "listxattr failed");
+  printf("listxattr returned %d\n", res);
+  for (char *p = list; p < list+res-1; p = p + strlen(p) + 1) {
+    printf("list entry: %s\n", p);
+  }
+}
+root@debian:/home/user/reisermount# gcc -o xattr_test xattr_test.c
+root@debian:/home/user/reisermount# ./xattr_test test_file
+Segmentation fault
+root@debian:/home/user/reisermount#
 
-+			p += scnprintf_le_key(p, end - p,
-+					va_arg(args, struct reiserfs_key *));
+Result:
 
-But I don't mind that much.
+[  122.071318] ==================================================================
+[  122.072334] BUG: KASAN: slab-out-of-bounds in listxattr_filler+0x170/0x1b0
+[  122.073173] Write of size 9 at addr ffff8801c43b474a by task xattr_test/923
+[  122.074030]
+[  122.074223] CPU: 1 PID: 923 Comm: xattr_test Not tainted 4.18.0-rc7+ #67
+[  122.075050] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.10.2-1 04/01/2014
+[  122.076107] Call Trace:
+[  122.076453]  dump_stack+0x71/0xab
+[  122.076900]  print_address_description+0x6a/0x250
+[  122.077514]  kasan_report+0x258/0x380
+[  122.077961]  ? listxattr_filler+0x170/0x1b0
+[  122.078469]  memcpy+0x34/0x50
+[  122.078894]  listxattr_filler+0x170/0x1b0
+[...]
 
-Andrew usually merges reiserfs patches. Andrew?
+ fs/reiserfs/xattr.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-								Honza
-> ---
->  fs/reiserfs/prints.c | 141 +++++++++++++++++++++++++------------------
->  1 file changed, 81 insertions(+), 60 deletions(-)
-> 
-> diff --git a/fs/reiserfs/prints.c b/fs/reiserfs/prints.c
-> index 7e288d97adcbb..9fed1c05f1f4d 100644
-> --- a/fs/reiserfs/prints.c
-> +++ b/fs/reiserfs/prints.c
-> @@ -76,83 +76,99 @@ static char *le_type(struct reiserfs_key *key)
->  }
->  
->  /* %k */
-> -static void sprintf_le_key(char *buf, struct reiserfs_key *key)
-> +static int scnprintf_le_key(char *buf, size_t size, struct reiserfs_key *key)
->  {
->  	if (key)
-> -		sprintf(buf, "[%d %d %s %s]", le32_to_cpu(key->k_dir_id),
-> -			le32_to_cpu(key->k_objectid), le_offset(key),
-> -			le_type(key));
-> +		return scnprintf(buf, size, "[%d %d %s %s]",
-> +				 le32_to_cpu(key->k_dir_id),
-> +				 le32_to_cpu(key->k_objectid), le_offset(key),
-> +				 le_type(key));
->  	else
-> -		sprintf(buf, "[NULL]");
-> +		return scnprintf(buf, size, "[NULL]");
->  }
->  
->  /* %K */
-> -static void sprintf_cpu_key(char *buf, struct cpu_key *key)
-> +static int scnprintf_cpu_key(char *buf, size_t size, struct cpu_key *key)
->  {
->  	if (key)
-> -		sprintf(buf, "[%d %d %s %s]", key->on_disk_key.k_dir_id,
-> -			key->on_disk_key.k_objectid, reiserfs_cpu_offset(key),
-> -			cpu_type(key));
-> +		return scnprintf(buf, size, "[%d %d %s %s]",
-> +				 key->on_disk_key.k_dir_id,
-> +				 key->on_disk_key.k_objectid,
-> +				 reiserfs_cpu_offset(key), cpu_type(key));
->  	else
-> -		sprintf(buf, "[NULL]");
-> +		return scnprintf(buf, size, "[NULL]");
->  }
->  
-> -static void sprintf_de_head(char *buf, struct reiserfs_de_head *deh)
-> +static int scnprintf_de_head(char *buf, size_t size,
-> +			     struct reiserfs_de_head *deh)
->  {
->  	if (deh)
-> -		sprintf(buf,
-> -			"[offset=%d dir_id=%d objectid=%d location=%d state=%04x]",
-> -			deh_offset(deh), deh_dir_id(deh), deh_objectid(deh),
-> -			deh_location(deh), deh_state(deh));
-> +		return scnprintf(buf, size,
-> +				 "[offset=%d dir_id=%d objectid=%d location=%d state=%04x]",
-> +				 deh_offset(deh), deh_dir_id(deh),
-> +				 deh_objectid(deh), deh_location(deh),
-> +				 deh_state(deh));
->  	else
-> -		sprintf(buf, "[NULL]");
-> +		return scnprintf(buf, size, "[NULL]");
->  
->  }
->  
-> -static void sprintf_item_head(char *buf, struct item_head *ih)
-> +static int scnprintf_item_head(char *buf, size_t size, struct item_head *ih)
->  {
->  	if (ih) {
-> -		strcpy(buf,
-> -		       (ih_version(ih) == KEY_FORMAT_3_6) ? "*3.6* " : "*3.5*");
-> -		sprintf_le_key(buf + strlen(buf), &(ih->ih_key));
-> -		sprintf(buf + strlen(buf), ", item_len %d, item_location %d, "
-> -			"free_space(entry_count) %d",
-> -			ih_item_len(ih), ih_location(ih), ih_free_space(ih));
-> +		char *p = buf;
-> +		char * const end = buf + size;
-> +
-> +		p += scnprintf(p, end - p, "%s",
-> +			       (ih_version(ih) == KEY_FORMAT_3_6) ?
-> +			       "*3.6* " : "*3.5*");
-> +
-> +		p += scnprintf_le_key(p, end - p, &ih->ih_key);
-> +
-> +		p += scnprintf(p, end - p,
-> +			       ", item_len %d, item_location %d, free_space(entry_count) %d",
-> +			       ih_item_len(ih), ih_location(ih),
-> +			       ih_free_space(ih));
-> +		return p - buf;
->  	} else
-> -		sprintf(buf, "[NULL]");
-> +		return scnprintf(buf, size, "[NULL]");
->  }
->  
-> -static void sprintf_direntry(char *buf, struct reiserfs_dir_entry *de)
-> +static int scnprintf_direntry(char *buf, size_t size,
-> +			      struct reiserfs_dir_entry *de)
->  {
->  	char name[20];
->  
->  	memcpy(name, de->de_name, de->de_namelen > 19 ? 19 : de->de_namelen);
->  	name[de->de_namelen > 19 ? 19 : de->de_namelen] = 0;
-> -	sprintf(buf, "\"%s\"==>[%d %d]", name, de->de_dir_id, de->de_objectid);
-> +	return scnprintf(buf, size, "\"%s\"==>[%d %d]",
-> +			 name, de->de_dir_id, de->de_objectid);
->  }
->  
-> -static void sprintf_block_head(char *buf, struct buffer_head *bh)
-> +static int scnprintf_block_head(char *buf, size_t size, struct buffer_head *bh)
->  {
-> -	sprintf(buf, "level=%d, nr_items=%d, free_space=%d rdkey ",
-> -		B_LEVEL(bh), B_NR_ITEMS(bh), B_FREE_SPACE(bh));
-> +	return scnprintf(buf, size,
-> +			 "level=%d, nr_items=%d, free_space=%d rdkey ",
-> +			 B_LEVEL(bh), B_NR_ITEMS(bh), B_FREE_SPACE(bh));
->  }
->  
-> -static void sprintf_buffer_head(char *buf, struct buffer_head *bh)
-> +static int scnprintf_buffer_head(char *buf, size_t size, struct buffer_head *bh)
->  {
-> -	sprintf(buf,
-> -		"dev %pg, size %zd, blocknr %llu, count %d, state 0x%lx, page %p, (%s, %s, %s)",
-> -		bh->b_bdev, bh->b_size,
-> -		(unsigned long long)bh->b_blocknr, atomic_read(&(bh->b_count)),
-> -		bh->b_state, bh->b_page,
-> -		buffer_uptodate(bh) ? "UPTODATE" : "!UPTODATE",
-> -		buffer_dirty(bh) ? "DIRTY" : "CLEAN",
-> -		buffer_locked(bh) ? "LOCKED" : "UNLOCKED");
-> +	return scnprintf(buf, size,
-> +			 "dev %pg, size %zd, blocknr %llu, count %d, state 0x%lx, page %p, (%s, %s, %s)",
-> +			 bh->b_bdev, bh->b_size,
-> +			 (unsigned long long)bh->b_blocknr,
-> +			 atomic_read(&(bh->b_count)),
-> +			 bh->b_state, bh->b_page,
-> +			 buffer_uptodate(bh) ? "UPTODATE" : "!UPTODATE",
-> +			 buffer_dirty(bh) ? "DIRTY" : "CLEAN",
-> +			 buffer_locked(bh) ? "LOCKED" : "UNLOCKED");
->  }
->  
-> -static void sprintf_disk_child(char *buf, struct disk_child *dc)
-> +static int scnprintf_disk_child(char *buf, size_t size, struct disk_child *dc)
->  {
-> -	sprintf(buf, "[dc_number=%d, dc_size=%u]", dc_block_number(dc),
-> -		dc_size(dc));
-> +	return scnprintf(buf, size, "[dc_number=%d, dc_size=%u]",
-> +			 dc_block_number(dc), dc_size(dc));
->  }
->  
->  static char *is_there_reiserfs_struct(char *fmt, int *what)
-> @@ -189,55 +205,60 @@ static void prepare_error_buf(const char *fmt, va_list args)
->  	char *fmt1 = fmt_buf;
->  	char *k;
->  	char *p = error_buf;
-> +	char * const end = &error_buf[sizeof(error_buf)];
->  	int what;
->  
->  	spin_lock(&error_lock);
->  
-> -	strcpy(fmt1, fmt);
-> +	if (WARN_ON(strscpy(fmt_buf, fmt, sizeof(fmt_buf)) < 0)) {
-> +		strscpy(error_buf, "format string too long", end - error_buf);
-> +		goto out_unlock;
-> +	}
->  
->  	while ((k = is_there_reiserfs_struct(fmt1, &what)) != NULL) {
->  		*k = 0;
->  
-> -		p += vsprintf(p, fmt1, args);
-> +		p += vscnprintf(p, end - p, fmt1, args);
->  
->  		switch (what) {
->  		case 'k':
-> -			sprintf_le_key(p, va_arg(args, struct reiserfs_key *));
-> +			p += scnprintf_le_key(p, end - p,
-> +					      va_arg(args, struct reiserfs_key *));
->  			break;
->  		case 'K':
-> -			sprintf_cpu_key(p, va_arg(args, struct cpu_key *));
-> +			p += scnprintf_cpu_key(p, end - p,
-> +					       va_arg(args, struct cpu_key *));
->  			break;
->  		case 'h':
-> -			sprintf_item_head(p, va_arg(args, struct item_head *));
-> +			p += scnprintf_item_head(p, end - p,
-> +						 va_arg(args, struct item_head *));
->  			break;
->  		case 't':
-> -			sprintf_direntry(p,
-> -					 va_arg(args,
-> -						struct reiserfs_dir_entry *));
-> +			p += scnprintf_direntry(p, end - p,
-> +						va_arg(args, struct reiserfs_dir_entry *));
->  			break;
->  		case 'y':
-> -			sprintf_disk_child(p,
-> -					   va_arg(args, struct disk_child *));
-> +			p += scnprintf_disk_child(p, end - p,
-> +						  va_arg(args, struct disk_child *));
->  			break;
->  		case 'z':
-> -			sprintf_block_head(p,
-> -					   va_arg(args, struct buffer_head *));
-> +			p += scnprintf_block_head(p, end - p,
-> +						  va_arg(args, struct buffer_head *));
->  			break;
->  		case 'b':
-> -			sprintf_buffer_head(p,
-> -					    va_arg(args, struct buffer_head *));
-> +			p += scnprintf_buffer_head(p, end - p,
-> +						   va_arg(args, struct buffer_head *));
->  			break;
->  		case 'a':
-> -			sprintf_de_head(p,
-> -					va_arg(args,
-> -					       struct reiserfs_de_head *));
-> +			p += scnprintf_de_head(p, end - p,
-> +					       va_arg(args, struct reiserfs_de_head *));
->  			break;
->  		}
->  
-> -		p += strlen(p);
->  		fmt1 = k + 2;
->  	}
-> -	vsprintf(p, fmt1, args);
-> +	p += vscnprintf(p, end - p, fmt1, args);
-> +out_unlock:
->  	spin_unlock(&error_lock);
->  
->  }
-> -- 
-> 2.18.0
-> 
-> 
+diff --git a/fs/reiserfs/xattr.c b/fs/reiserfs/xattr.c
+index ff94fad477e4..48cdfc81fe10 100644
+--- a/fs/reiserfs/xattr.c
++++ b/fs/reiserfs/xattr.c
+@@ -792,8 +792,10 @@ static int listxattr_filler(struct dir_context *ctx, const char *name,
+ 			return 0;
+ 		size = namelen + 1;
+ 		if (b->buf) {
+-			if (size > b->size)
++			if (b->pos + size > b->size) {
++				b->pos = -ERANGE;
+ 				return -ERANGE;
++			}
+ 			memcpy(b->buf + b->pos, name, namelen);
+ 			b->buf[b->pos + namelen] = 0;
+ 		}
 -- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+2.18.0.597.ga71716f1ad-goog
+
