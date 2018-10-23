@@ -1,53 +1,36 @@
-From: Vito Caputo <vcaputo@pengaru.com>
+From: Al Viro <viro@ZenIV.linux.org.uk>
 Subject: Re: Reiser4 Linux 4.17.19-1 hangs in Google cloud VM, too.
-Date: Mon, 22 Oct 2018 21:04:18 -0700
-Message-ID: <20181023040418.iz7gcph3qha4bkab@shells.gnugeneration.com>
+Date: Tue, 23 Oct 2018 05:14:18 +0100
+Message-ID: <20181023041418.GU32577@ZenIV.linux.org.uk>
 References: <20181022101912.3CE2E292B005@huitzilopochtli.metztli-it.com>
  <20181023033852.GR32577@ZenIV.linux.org.uk>
  <20181023034719.tqkvdj2eakh2uh2q@shells.gnugeneration.com>
  <20181023035425.GS32577@ZenIV.linux.org.uk>
+ <20181023040418.iz7gcph3qha4bkab@shells.gnugeneration.com>
 Mime-Version: 1.0
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <20181023035425.GS32577@ZenIV.linux.org.uk>
+In-Reply-To: <20181023040418.iz7gcph3qha4bkab@shells.gnugeneration.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Al Viro <viro@ZenIV.linux.org.uk>
+To: Vito Caputo <vcaputo@pengaru.com>
 Cc: linux-kernel <linux-kernel@vger.kernel.org>, reiserfs-devel@vger.kernel.org
 
-On Tue, Oct 23, 2018 at 04:54:25AM +0100, Al Viro wrote:
-> On Mon, Oct 22, 2018 at 08:47:19PM -0700, Vito Caputo wrote:
-> > On Tue, Oct 23, 2018 at 04:38:52AM +0100, Al Viro wrote:
-> > > On Mon, Oct 22, 2018 at 03:19:12AM -0700, Metztli Information Technology wrote:
-> > > > I installed reiser4 -enhanced Linux kernel 4.17.19-1 --thus replacing the prior hung reiser4 -patched kernel 4.18.15-1 in the Google Compute Engine (GCE) cloud instance. After less than 24 hours the 4.17.19-1 hung in similar way to the 4.18.15-1.
-> > > > 
-> > > > Please note that I had been running my custom Metztli Reiser4 Debian Stretch image with reiser4 linux 4.14.20-1 without issues for several months
-> > > > < https://github.com/Metztli/reiser4-debian-kernel-packaging-4.14.20 >  --until I decided to upgrade to newer kernel(s).
-> > > 
-> > > Er...  Does anybody maintain reiser4 these days?  I can't recall a single mail
-> > > along the lines of "such-and-such VFS/VM/scheduler/etc. change would break reiser4"
-> > > in quite a few years (more than a decade, most likely)...
+On Mon, Oct 22, 2018 at 09:04:18PM -0700, Vito Caputo wrote:
+> > reiser4 has never been in-tree to start with.  And name is completely irrelevant -
+> > all I'm refering to is that I have not seen any postings on l-k/fsdevel/etc.
+> > from anybody working on that particular out-of-tree codebase.
 > > 
-> > I've wondered if we should rename reiserfs to something else.  As-is,
-> > it's not likely to attract any developers since it may as well be named
-> > hitlerfs or something similarly uncomfortable to explain to a
-> > significant other as what you've been working on.
+> > Put it that way - I would expect the bitrot from (apparent) decade-long
+> > inactivity to be a much more serious problem than anything naming-related.
 > 
-> Sigh...  Godwin Law in action, at the third posting in thread ;-/
-> 
-> > That is, assuming it's going to continue to exist in-tree...
-> 
-> reiser4 has never been in-tree to start with.  And name is completely irrelevant -
-> all I'm refering to is that I have not seen any postings on l-k/fsdevel/etc.
-> from anybody working on that particular out-of-tree codebase.
-> 
-> Put it that way - I would expect the bitrot from (apparent) decade-long
-> inactivity to be a much more serious problem than anything naming-related.
+> Would you say bitrot is more or less likely if a project doesn't attract
+> fresh meat?
 
-Would you say bitrot is more or less likely if a project doesn't attract
-fresh meat?
-
-Regards,
-Vito Caputo
+I would say that by now it seems to be a purely academical question - after a while
+the bitrot itself is more than enough.  If it's maintained by somebody, take that
+question to those somebodies, whoever they are.  I hadn't seen any indications that
+it is, and that's literally all I'm trying to comment upon - *IF* it's been
+unmaintained, it's almost certainly far past the point of no return due to bitrot.
