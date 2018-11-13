@@ -1,17 +1,17 @@
 From: Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.18 13/39] reiserfs: propagate errors from fill_with_dentries() properly
-Date: Tue, 13 Nov 2018 00:50:27 -0500
-Message-ID: <20181113055053.78352-13-sashal@kernel.org>
-References: <20181113055053.78352-1-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.14 09/26] reiserfs: propagate errors from fill_with_dentries() properly
+Date: Tue, 13 Nov 2018 00:51:33 -0500
+Message-ID: <20181113055150.78773-9-sashal@kernel.org>
+References: <20181113055150.78773-1-sashal@kernel.org>
 Return-path: <linux-kernel-owner@vger.kernel.org>
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1542088276;
-        bh=R+AKyqm/KciTIua5eOwQVlXvgOdbhtob0JVo/RcL+5Q=;
+        s=default; t=1542088322;
+        bh=3LlgGimd2OCD3Msye+QS9EsoXHBQtAxsv4O7Aj2llvU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=GPT0APo6lLrnJ9Nfzw379yZ9ilRSjMf3RE4ZbHBB5z/DRvrCogKjvWUjzAy10xJmw
-         AHNxppZYppjSw0Db9iEhZS+/5W/9nZIImUDuBk7KIK3kvr9fUnpyuPQCFnMEWTYfmZ
-         yU0RvBXGpdNiNQSo02Wlb2LMpBmm3Xpiy6uWNCgY=
-In-Reply-To: <20181113055053.78352-1-sashal@kernel.org>
+        b=pGkdZIYbAvjI9TfgvEIhgK2adM7vKOUybJ7AYZ3JpQnzqpIbayCM+9EgADLkta8nF
+         6ugIdSsHqrJ2RwUoszvhFiM11h+TfzLvpbQ84VOdCAOcOLW54RM8qjj2deAtqNUcP/
+         I3F6eLao/jR4fECZwrD+iTnFLSg+LWlRTizGY1h0=
+In-Reply-To: <20181113055150.78773-1-sashal@kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
 MIME-Version: 1.0
@@ -52,7 +52,7 @@ Signed-off-by: Sasha Levin <sashal@kernel.org>
  1 file changed, 7 insertions(+)
 
 diff --git a/fs/reiserfs/xattr.c b/fs/reiserfs/xattr.c
-index 48cdfc81fe10..32d8986c26fb 100644
+index 505f87a8c724..83423192588c 100644
 --- a/fs/reiserfs/xattr.c
 +++ b/fs/reiserfs/xattr.c
 @@ -185,6 +185,7 @@ struct reiserfs_dentry_buf {
