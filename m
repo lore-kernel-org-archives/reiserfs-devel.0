@@ -1,18 +1,18 @@
 From: Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 3.18 2/9] reiserfs: propagate errors from fill_with_dentries() properly
-Date: Tue, 13 Nov 2018 00:52:45 -0500
-Message-ID: <20181113055252.79406-2-sashal@kernel.org>
-References: <20181113055252.79406-1-sashal@kernel.org>
-Return-path: <linux-kernel-owner@vger.kernel.org>
+Subject: [PATCH AUTOSEL 4.9 04/17] reiserfs: propagate errors from fill_with_dentries() properly
+Date: Tue, 13 Nov 2018 00:52:10 -0500
+Message-ID: <20181113055223.79060-4-sashal@kernel.org>
+References: <20181113055223.79060-1-sashal@kernel.org>
+Return-path: <stable-owner@vger.kernel.org>
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1542088374;
-        bh=WZqKwaCP1VHwotKtbTrRL3NyUA2P/guY5Sn7rOTRrso=;
+        s=default; t=1542088350;
+        bh=hzcItAcedX+yThxQ9ISycLrOD1SKkH1U4A2xr9DjgFQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=1QSJERvpnvktbzXjxDRr24XmkJUQWD0LwhO4xU2LIudBUuFpAz91+/wKsf893rXZ4
-         lsm+Z7YrqKknFeNsR+BUKLWMyxS7r0Qgei4yLyCqJbm7F4DyPzHAaihOCJDfDWRyRd
-         PFBRBo+ZaKXP9oGpe33HMoZLHU/tWfuNAfLcj//c=
-In-Reply-To: <20181113055252.79406-1-sashal@kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
+        b=05XtQrD+PIWhE/oT3xn392xpcqm8TBVHDT36ML/7GCp7gzbEvO8eF2NxoBc5aFPyv
+         APs4FXcoxEsOmmjPmd9vifDj7MWgvJXX02dcQAY45IIBREwERYRC0wfZI9M6J6chLU
+         1v4fno3HcOuNuDVkMBVfHS6r/c9Cxuezqf7zRyKo=
+In-Reply-To: <20181113055223.79060-1-sashal@kernel.org>
+Sender: stable-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
@@ -52,7 +52,7 @@ Signed-off-by: Sasha Levin <sashal@kernel.org>
  1 file changed, 7 insertions(+)
 
 diff --git a/fs/reiserfs/xattr.c b/fs/reiserfs/xattr.c
-index 59b29acb6419..0ec755043174 100644
+index 06a9fae202a7..9e313fc7fdc7 100644
 --- a/fs/reiserfs/xattr.c
 +++ b/fs/reiserfs/xattr.c
 @@ -184,6 +184,7 @@ struct reiserfs_dentry_buf {
@@ -63,24 +63,24 @@ index 59b29acb6419..0ec755043174 100644
  	struct dentry *dentries[8];
  };
  
-@@ -205,6 +206,7 @@ fill_with_dentries(void *buf, const char *name, int namelen, loff_t offset,
+@@ -206,6 +207,7 @@ fill_with_dentries(struct dir_context *ctx, const char *name, int namelen,
  
  	dentry = lookup_one_len(name, dbuf->xadir, namelen);
  	if (IS_ERR(dentry)) {
 +		dbuf->err = PTR_ERR(dentry);
  		return PTR_ERR(dentry);
- 	} else if (!dentry->d_inode) {
+ 	} else if (d_really_is_negative(dentry)) {
  		/* A directory entry exists, but no file? */
-@@ -213,6 +215,7 @@ fill_with_dentries(void *buf, const char *name, int namelen, loff_t offset,
- 			       "not found for file %s.\n",
- 			       dentry->d_name.name, dbuf->xadir->d_name.name);
+@@ -214,6 +216,7 @@ fill_with_dentries(struct dir_context *ctx, const char *name, int namelen,
+ 			       "not found for file %pd.\n",
+ 			       dentry, dbuf->xadir);
  		dput(dentry);
 +		dbuf->err = -EIO;
  		return -EIO;
  	}
  
-@@ -260,6 +263,10 @@ static int reiserfs_for_each_xattr(struct inode *inode,
- 		err = reiserfs_readdir_inode(dir->d_inode, &buf.ctx);
+@@ -261,6 +264,10 @@ static int reiserfs_for_each_xattr(struct inode *inode,
+ 		err = reiserfs_readdir_inode(d_inode(dir), &buf.ctx);
  		if (err)
  			break;
 +		if (buf.err) {
