@@ -1,17 +1,17 @@
 From: Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.14 09/26] reiserfs: propagate errors from fill_with_dentries() properly
-Date: Tue, 13 Nov 2018 00:51:33 -0500
-Message-ID: <20181113055150.78773-9-sashal@kernel.org>
-References: <20181113055150.78773-1-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.4 02/11] reiserfs: propagate errors from fill_with_dentries() properly
+Date: Tue, 13 Nov 2018 00:52:33 -0500
+Message-ID: <20181113055242.79261-2-sashal@kernel.org>
+References: <20181113055242.79261-1-sashal@kernel.org>
 Return-path: <linux-kernel-owner@vger.kernel.org>
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1542088322;
-        bh=3LlgGimd2OCD3Msye+QS9EsoXHBQtAxsv4O7Aj2llvU=;
+        s=default; t=1542088364;
+        bh=hc+yqm5Aej2W24jRKe+OxYn+OVfV/rVNeUMK0NXBYGc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=pGkdZIYbAvjI9TfgvEIhgK2adM7vKOUybJ7AYZ3JpQnzqpIbayCM+9EgADLkta8nF
-         6ugIdSsHqrJ2RwUoszvhFiM11h+TfzLvpbQ84VOdCAOcOLW54RM8qjj2deAtqNUcP/
-         I3F6eLao/jR4fECZwrD+iTnFLSg+LWlRTizGY1h0=
-In-Reply-To: <20181113055150.78773-1-sashal@kernel.org>
+        b=GniJ4nFKZDI3gfZy4VAWE67jJgw60RC/79eNqsv1fc3iM+RQZRBCxdalY0pwlkDex
+         6qAU3WlnS1nljlhibcvlU1chn4LmwSmFlrBijKXQBu1BIlw+3QSsovbkTyPri8UgIO
+         /IEA87aNmP7W9gcyAI16XYegt59xQYNZQ11WY62M=
+In-Reply-To: <20181113055242.79261-1-sashal@kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
 MIME-Version: 1.0
@@ -52,10 +52,10 @@ Signed-off-by: Sasha Levin <sashal@kernel.org>
  1 file changed, 7 insertions(+)
 
 diff --git a/fs/reiserfs/xattr.c b/fs/reiserfs/xattr.c
-index 505f87a8c724..83423192588c 100644
+index 8b32fdaad468..d424b3d4bf3b 100644
 --- a/fs/reiserfs/xattr.c
 +++ b/fs/reiserfs/xattr.c
-@@ -185,6 +185,7 @@ struct reiserfs_dentry_buf {
+@@ -184,6 +184,7 @@ struct reiserfs_dentry_buf {
  	struct dir_context ctx;
  	struct dentry *xadir;
  	int count;
@@ -63,7 +63,7 @@ index 505f87a8c724..83423192588c 100644
  	struct dentry *dentries[8];
  };
  
-@@ -207,6 +208,7 @@ fill_with_dentries(struct dir_context *ctx, const char *name, int namelen,
+@@ -206,6 +207,7 @@ fill_with_dentries(struct dir_context *ctx, const char *name, int namelen,
  
  	dentry = lookup_one_len(name, dbuf->xadir, namelen);
  	if (IS_ERR(dentry)) {
@@ -71,7 +71,7 @@ index 505f87a8c724..83423192588c 100644
  		return PTR_ERR(dentry);
  	} else if (d_really_is_negative(dentry)) {
  		/* A directory entry exists, but no file? */
-@@ -215,6 +217,7 @@ fill_with_dentries(struct dir_context *ctx, const char *name, int namelen,
+@@ -214,6 +216,7 @@ fill_with_dentries(struct dir_context *ctx, const char *name, int namelen,
  			       "not found for file %pd.\n",
  			       dentry, dbuf->xadir);
  		dput(dentry);
@@ -79,7 +79,7 @@ index 505f87a8c724..83423192588c 100644
  		return -EIO;
  	}
  
-@@ -262,6 +265,10 @@ static int reiserfs_for_each_xattr(struct inode *inode,
+@@ -261,6 +264,10 @@ static int reiserfs_for_each_xattr(struct inode *inode,
  		err = reiserfs_readdir_inode(d_inode(dir), &buf.ctx);
  		if (err)
  			break;
