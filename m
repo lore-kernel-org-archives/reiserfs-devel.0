@@ -1,63 +1,52 @@
-From: Bharath Vedartham <linux.bhar@gmail.com>
-Subject: Re: [PATCH] fs/reiserfs/journal.c: Make remove_journal_hash static
-Date: Mon, 15 Apr 2019 20:36:39 +0530
-Message-ID: <20190415150639.GA32075@bharath12345-Inspiron-5559>
-References: <20190414112438.GA23266@bharath12345-Inspiron-5559>
- <20190415094739.GA13684@quack2.suse.cz>
+From: Colin King <colin.king@canonical.com>
+Subject: [PATCH] reiserfs: fix spelling mistake "enrty" -> "entry"
+Date: Tue, 16 Apr 2019 12:25:49 +0100
+Message-ID: <20190416112549.25175-1-colin.king@canonical.com>
 Mime-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=F2xjfvaRh0uw5y6zFsCvkgZZ7iwHwpZ25K3+/mgN9Ms=;
-        b=fSPbFk1x6lW8wZs3qRwFLbSc+zwVJD+cvcjTmj+kuoWa+NofKoWlYRbxg3JwICo/3U
-         ZKmb3jUgJA1HQhTaXaaua5OfKNjLuaSZNc3TTjnbaCRQXDy5vrec/iqTyOzENRs8dy+J
-         /SHEHugHlctt5hDhpxAS1izERz1n0z2QwLwUYhCIKkd3OdyUiwLOpxWaIJrgf5heQ6Dv
-         fS7foeUarvjg87rMbSfItPLIW4LdW4lN9JPl/kJ7V9B8yjySLndUgahhVztmhrecXjv6
-         gxfp8OupZDC61ILLegtnNvrQDWPK167C5lFckxLnRY63Q6caS8R+xfF9HC9MPGtLjoBm
-         8n1Q==
-Content-Disposition: inline
-In-Reply-To: <20190415094739.GA13684@quack2.suse.cz>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Jan Kara <jack@suse.cz>
-Cc: keescook@chromium.org, arnd@arndb.de, akpm@linux-foundation.org, reiserfs-devel@vger.kernel.org, linux-kernel@vger.kernel.org
+To: reiserfs-devel@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Mon, Apr 15, 2019 at 11:47:39AM +0200, Jan Kara wrote:
-> On Sun 14-04-19 16:54:38, Bharath Vedartham wrote:
-> > This fixes the -WDecl sparse warning in journal.c. Function was declared
-> > as static void but the definition was void.
-> > 
-> > Signed-off-by: Bharath Vedartham <linux.bhar@gmail.com>
-> 
-> Thanks! I've added your patch into my tree.
->
-Thanks Jan!
-> 								Honza
-> 
-> > ---
-> >  fs/reiserfs/journal.c | 2 +-
-> >  1 file changed, 1 insertion(+), 1 deletion(-)
-> > 
-> > diff --git a/fs/reiserfs/journal.c b/fs/reiserfs/journal.c
-> > index 8a76f9d..36346dc 100644
-> > --- a/fs/reiserfs/journal.c
-> > +++ b/fs/reiserfs/journal.c
-> > @@ -1844,7 +1844,7 @@ static int flush_used_journal_lists(struct super_block *s,
-> >   * removes any nodes in table with name block and dev as bh.
-> >   * only touchs the hnext and hprev pointers.
-> >   */
-> > -void remove_journal_hash(struct super_block *sb,
-> > +static void remove_journal_hash(struct super_block *sb,
-> >  			 struct reiserfs_journal_cnode **table,
-> >  			 struct reiserfs_journal_list *jl,
-> >  			 unsigned long block, int remove_freed)
-> > -- 
-> > 2.7.4
-> > 
-> -- 
-> Jan Kara <jack@suse.com>
-> SUSE Labs, CR
+From: Colin Ian King <colin.king@canonical.com>
+
+There are a couple of spelling mistakes, fix these.
+
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ fs/reiserfs/lbalance.c | 2 +-
+ fs/reiserfs/namei.c    | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/fs/reiserfs/lbalance.c b/fs/reiserfs/lbalance.c
+index f5cebd70d903..e7cebd05a882 100644
+--- a/fs/reiserfs/lbalance.c
++++ b/fs/reiserfs/lbalance.c
+@@ -1164,7 +1164,7 @@ void leaf_cut_from_buffer(struct buffer_info *bi, int cut_item_num,
+ 		if (pos_in_item == 0) {
+ 			/* change key */
+ 			RFALSE(cut_item_num,
+-			       "when 0-th enrty of item is cut, that item must be first in the node, not %d-th",
++			       "when 0-th entry of item is cut, that item must be first in the node, not %d-th",
+ 			       cut_item_num);
+ 			/* change item key by key of first entry in the item */
+ 			set_le_ih_k_offset(ih, deh_offset(B_I_DEH(bh, ih)));
+diff --git a/fs/reiserfs/namei.c b/fs/reiserfs/namei.c
+index 97f3fc4fdd79..c97c36b4a31c 100644
+--- a/fs/reiserfs/namei.c
++++ b/fs/reiserfs/namei.c
+@@ -536,7 +536,7 @@ static int reiserfs_add_entry(struct reiserfs_transaction_handle *th,
+ 		pathrelse(&path);
+ 		return -EBUSY;
+ 	}
+-	/* adjust offset of directory enrty */
++	/* adjust offset of directory entry */
+ 	put_deh_offset(deh, SET_GENERATION_NUMBER(deh_offset(deh), gen_number));
+ 	set_cpu_key_k_offset(&entry_key, deh_offset(deh));
+ 
+-- 
+2.20.1
+
