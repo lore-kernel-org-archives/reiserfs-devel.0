@@ -1,75 +1,60 @@
-From: Mukesh Ojha <mojha@codeaurora.org>
-Subject: Re: [PATCH] reiserfs: fix spelling mistake "enrty" -> "entry"
-Date: Tue, 16 Apr 2019 18:47:36 +0530
-Message-ID: <240c2888-01a9-184f-7f29-eb603bdd36c4@codeaurora.org>
-References: <20190416112549.25175-1-colin.king@canonical.com>
+From: Bharath Vedartham <linux.bhar@gmail.com>
+Subject: [PATCH] reiserfs: Force type conversion in xattr_hash
+Date: Wed, 17 Apr 2019 17:22:00 +0530
+Message-ID: <20190417115200.GA10168@bharath12345-Inspiron-5559>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1555420660;
-        bh=z3ndeu30m7fA4kT+0k5LNWnkWoyl3MPtE622MvKZJZE=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=cH/4NAbMjnhImtksVWztciKFaioLgGD/ct+VKwWRYGWa8/53V6GFENjC9urHtjFzE
-         rtgsp27JKefY6wvZ6p6Ohlre1xI6wabdslsWn0AEJJnuLIg2KTWOZirqA9spwtMx7y
-         VZqyh5seBL1BX6QeV6IL0TFzNScR3Ins1bHmtnds=
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1555420660;
-        bh=z3ndeu30m7fA4kT+0k5LNWnkWoyl3MPtE622MvKZJZE=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=cH/4NAbMjnhImtksVWztciKFaioLgGD/ct+VKwWRYGWa8/53V6GFENjC9urHtjFzE
-         rtgsp27JKefY6wvZ6p6Ohlre1xI6wabdslsWn0AEJJnuLIg2KTWOZirqA9spwtMx7y
-         VZqyh5seBL1BX6QeV6IL0TFzNScR3Ins1bHmtnds=
-In-Reply-To: <20190416112549.25175-1-colin.king@canonical.com>
-Content-Language: en-US
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:mime-version:content-disposition
+         :user-agent;
+        bh=+Jy3DWbk9Qv0+8KvNBKbZ1gEm4HZaoLcJzKvfJBaD5E=;
+        b=SWYe3Yj8ETbkBw2gpbitdQ6xGaO7BY7HmyqPT6TI5waSzG52Mfd2/z7yP5BjuvOimo
+         o1obi4wwEbJwGgbrcbRkdnfTnAHtNnWr6r9DfaX5ff1Z0hmUjs5fKPqIi5uTAb2at/kF
+         0nI9i87wZfVcYnsQjKPzfO4smxxS8R/86PdjvgGVMrMbyo7dlH/58L+w+0HtRHq5okH5
+         pmQCPfOrh2vc7oHlT8OgxlrwVHbAHMJdT3r7COXZppIEm8n8YqeZa176q7sXakPrCh6g
+         cS3SG5fu00wNPYCdloDp/qJ1jfP/Zp5+Uq5DKJydwKpW5L2NxcWp4NHxjZopOHWOEKgT
+         CoRQ==
+Content-Disposition: inline
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: Colin King <colin.king@canonical.com>, reiserfs-devel@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: akpm@linux-foundation.org, jannh@google.com
+Cc: reiserfs-devel@vger.kernel.org, linux-kernel@vger.kernel.org
 
+This patch fixes the sparse warning:
 
-On 4/16/2019 4:55 PM, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
->
-> There are a couple of spelling mistakes, fix these.
->
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+fs/reiserfs//xattr.c:453:28: warning: incorrect type in return
+expression (different base types)
+fs/reiserfs//xattr.c:453:28:    expected unsigned int
+fs/reiserfs//xattr.c:453:28:    got restricted __wsum
+fs/reiserfs//xattr.c:453:28: warning: incorrect type in return
+expression (different base types)
+fs/reiserfs//xattr.c:453:28:    expected unsigned int
+fs/reiserfs//xattr.c:453:28:    got restricted __wsum
 
+csum_partial returns restricted integer __wsum whereas xattr_hash
+expects a return type of __u32.
 
-Reviewed-by: Mukesh Ojha <mojha@codeaurora.org>
+Signed-off-by: Bharath Vedartham <linux.bhar@gmail.com>
+---
+ fs/reiserfs/xattr.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Cheers,
--Mukesh
+diff --git a/fs/reiserfs/xattr.c b/fs/reiserfs/xattr.c
+index 32d8986..60b29a0 100644
+--- a/fs/reiserfs/xattr.c
++++ b/fs/reiserfs/xattr.c
+@@ -450,7 +450,7 @@ static struct page *reiserfs_get_page(struct inode *dir, size_t n)
+ 
+ static inline __u32 xattr_hash(const char *msg, int len)
+ {
+-	return csum_partial(msg, len, 0);
++	return (__force __u32)csum_partial(msg, len, 0);
+ }
+ 
+ int reiserfs_commit_write(struct file *f, struct page *page,
+-- 
+2.7.4
 
-> ---
->   fs/reiserfs/lbalance.c | 2 +-
->   fs/reiserfs/namei.c    | 2 +-
->   2 files changed, 2 insertions(+), 2 deletions(-)
->
-> diff --git a/fs/reiserfs/lbalance.c b/fs/reiserfs/lbalance.c
-> index f5cebd70d903..e7cebd05a882 100644
-> --- a/fs/reiserfs/lbalance.c
-> +++ b/fs/reiserfs/lbalance.c
-> @@ -1164,7 +1164,7 @@ void leaf_cut_from_buffer(struct buffer_info *bi, int cut_item_num,
->   		if (pos_in_item == 0) {
->   			/* change key */
->   			RFALSE(cut_item_num,
-> -			       "when 0-th enrty of item is cut, that item must be first in the node, not %d-th",
-> +			       "when 0-th entry of item is cut, that item must be first in the node, not %d-th",
->   			       cut_item_num);
->   			/* change item key by key of first entry in the item */
->   			set_le_ih_k_offset(ih, deh_offset(B_I_DEH(bh, ih)));
-> diff --git a/fs/reiserfs/namei.c b/fs/reiserfs/namei.c
-> index 97f3fc4fdd79..c97c36b4a31c 100644
-> --- a/fs/reiserfs/namei.c
-> +++ b/fs/reiserfs/namei.c
-> @@ -536,7 +536,7 @@ static int reiserfs_add_entry(struct reiserfs_transaction_handle *th,
->   		pathrelse(&path);
->   		return -EBUSY;
->   	}
-> -	/* adjust offset of directory enrty */
-> +	/* adjust offset of directory entry */
->   	put_deh_offset(deh, SET_GENERATION_NUMBER(deh_offset(deh), gen_number));
->   	set_cpu_key_k_offset(&entry_key, deh_offset(deh));
->   
