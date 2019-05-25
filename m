@@ -1,24 +1,26 @@
-From: Harry Duncan <usr.src.linux@gmail.com>
+From: Edward Shishkin <edward.shishkin@gmail.com>
 Subject: bug#22113: PATCH: Updated Reiser4 probe enabled against GNU Parted
 	git://git.sv.gnu.org/parted.git
-Date: Sat, 25 May 2019 11:33:19 +0100
-Message-ID: <CAHAPYVBWVhVjNbE17MQRfnv08tiqGUG7h+vptQFSxfqOpMfmqw@mail.gmail.com>
-References: <20190525045616.ABDC73C5C02A@huitzilopochtli.metztli-it.com>
+Date: Sat, 25 May 2019 22:25:21 +0200
+Message-ID: <d2e77dc5-87b5-fe58-ec1e-7df633d83620@gmail.com>
+References: <20190524220127.A6F013C59B12@huitzilopochtli.metztli-it.com>
 Mime-Version: 1.0
-Content-Type: multipart/alternative; boundary="000000000000a69c510589b3d818"
+Content-Transfer-Encoding: 7bit
 Return-path: <bug-parted-bounces+gnu-bug-parted-2=m.gmane.org@gnu.org>
 Sender: "Debbugs-submit" <debbugs-submit-bounces@debbugs.gnu.org>
-Resent-Message-ID: <handler.22113.B22113.155878041923404@debbugs.gnu.org>
+Resent-Message-ID: <handler.22113.B22113.15588159316532@debbugs.gnu.org>
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmail.com; s=20161025; 
-	h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-	:cc; bh=gZS63X8NPrMBUlDat3NJTm1t2Cp1fOdglDcJZfbR8MQ=;
-	b=WnDW83fxmjWBqXaquohBWmvgWe3bF0v8fNz/XXvJsT5ClXjzKSrHJ9jO7Sb7Xu6jcP
-	PRyXbuiATEqUemdXDXnLg3irxI7xQw5I2zpAx7z0kWehme7gHUBFeLIjKiXzVY6UJ6Tr
-	uaRpI+GBOt7dqQIsf2akWTLbxBqmiBQierPOfB+pkWtG24VMpqOAzu80iiQwtshaKFD8
-	6sn03tyxp9Z3Z4Qoto2eFew3o92PF8BeOgH4/DwYIkwnJQ4fGXA4QQHJroyJLEfWUtBr
-	/29isybWkeDsynxhCXKdirGZHBhbQc5QDwGQmkQbB1HqyWVAXdiS2NTCYvH6MDu5nNXd
-	4z8w==
-In-Reply-To: <20190525045616.ABDC73C5C02A@huitzilopochtli.metztli-it.com>
+	h=subject:to:references:from:message-id:date:user-agent:mime-version
+	:in-reply-to:content-transfer-encoding:content-language;
+	bh=gZa2ZFnJcb16xMzNzAeVZlEvblhFm7CLAWni5rZgatc=;
+	b=VFbbZRY8aizYuPi9VKfVfrfT+XIYV77ZXkBaS/qcB55o7ijD2gtZuTTa1BH1NiBSl3
+	3Zqjy39PmOCPVw3nZUz31MXg2ylbJH8VtUp4993YFo2qABqoatP2g3xLSLweWLcbtOmf
+	9+oFKqIxWlE4LCQvIFSr29xD/U0y4Egn+WEDKvCcA6QgqXSlC8Ck9n/2ogeRKpNB3KGg
+	PWTlG1GXNOcPbdsdQhCHG3LTGb/fLbGJGsjCyGcVlcgrGpSDBT/MvDSQsrgw9iuBVRvh
+	U9PoL3EU6ZfIj1hald5tyRAiNpTMXefcUH/tpK6NQaaCleyYiEo4QT3Cz3BtAYH/JKd+
+	t3Nw==
+In-Reply-To: <20190524220127.A6F013C59B12@huitzilopochtli.metztli-it.com>
+Content-Language: en-US
 List-Id: <reiserfs-devel.vger.kernel.org>
 List-Unsubscribe: <https://lists.gnu.org/mailman/options/bug-parted>,
 	<mailto:bug-parted-request@gnu.org?subject=unsubscribe>
@@ -29,52 +31,68 @@ List-Subscribe: <https://lists.gnu.org/mailman/listinfo/bug-parted>,
 	<mailto:bug-parted-request@gnu.org?subject=subscribe>
 Errors-To: bug-parted-bounces+gnu-bug-parted-2=m.gmane.org@gnu.org
 Sender: "bug-parted" <bug-parted-bounces+gnu-bug-parted-2=m.gmane.org@gnu.org>
-To: Metztli Information Technology <jose.r.r@metztli.com>
-Cc: edward.shishkin@gmail.com, reiserfs-devel@vger.kernel.org, 22113@debbugs.gnu.org
+Content-Type: text/plain; charset="us-ascii"; format="flowed"
+To: Metztli Information Technology <jose.r.r@metztli.com>, reiserfs-devel@vger.kernel.org, 22113@debbugs.gnu.org, bcl@redhat.com
 
---000000000000a69c510589b3d818
-Content-Type: text/plain; charset="UTF-8"
+On 05/25/2019 12:01 AM, Metztli Information Technology wrote:
+> On Fri, May 24, 2019 at 7:46 AM Edward Shishkin <edward.shishkin@gmail.com> wrote:
+>> On 05/24/2019 01:05 AM, Metztli Information Technology wrote:
+>>> Niltze [Hello]-
+>>>
+>>> Just updated Reiser for patch against GNU Parted
+>>> git clone git://git.sv.gnu.org/parted.git
+>> Uh, it is in upstream already?
+> LOL, no.
 
-On Sat, May 25, 2019 at 5:56 AM Metztli Information Technology <
-jose.r.r@metztli.com> wrote:
+Ah, no problems anyway..
+I'll put the patch to Sourceforge.
+
+Thanks,
+Edward.
 
 >
-> Accordingly, and with all due respect, I don't request sanctimonious crap
-> from mudslingers.
+> I just followed Debian maintainer's original advice on updating patch against git branch of GNU Parted.
+> < https://marc.info/?l=reiserfs-devel&m=155865303620491&w=2 >
 >
+>> Someone must have died ...
+> Well, that's the reasoning behind GNU Parted gatekeeper
+> < https://www.brianlane.com/about-brian-c-lane/ >
 >
-Ouch, I've clearly hit a nerve. My mileage with Reiser wasn't all rosy and
-sweet, lost critical data that was written after a power loss and before
-the next backup cycle. My aversion to the filesystem is purely technical.
-All other filesystems on that day recovered with their respective fsck;s.
-WIshing you continued good luck with your exploits.
+> for not merging reiser4 patch.
+>
+> I just wonder if now that 'Big Blue' acquired Red Hat, the GNU Parted gatekeeper will act in a consistent
+> manner and quit his employer on 'ethical and moral' grounds in light of Watson's complicity tainting the company.
+> < https://russia-insider.com/en/head-ibm-sympathized-hitler-conducted-census-jews-preparation-camps-russian-tv-news/ri26587 >
+> < https://youtu.be/tCBT8H47sZ0 >
+> (and/or "Democracy For The Few" by Michael Parenti).
+>
+> i.e., "...I have absolutely
+> no desire to see [IBM]'s work or name do anything but disappear into
+> obscurity."
+> < http://lists.gnu.org/archive/html/bug-parted/2015-12/msg00008.html >
+>
+> Well, maybe I quoted him too soon. Unlike Reiser, who is down and dirt-poor and thus all the West 'morally and ethically righteous' developers kick and pile
+> scorn onto, 'Big Blue's wealth quells USA technology ecosystem and their employees' ethical and moral sophistry, as is evidenced by, say no issues with JFS,
+> for instance.
+>
+>> Thanks,
+>> Edward.
+>>
+>>> apply patch
+>>>
+>>> ./bootstrap
+>>>
+>>> ./configure
+>>>
+>>> make
+>>>
+>>> make install
+>>>
+>>>
+>>> Huelmati [Enjoy]!
+>>>
+>>>
 
- BR,
-
-Harry
-
---000000000000a69c510589b3d818
-Content-Type: text/html; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-
-<div dir=3D"ltr"><div dir=3D"ltr"><br></div><br><div class=3D"gmail_quote">=
-<div dir=3D"ltr" class=3D"gmail_attr">On Sat, May 25, 2019 at 5:56 AM Metzt=
-li Information Technology &lt;<a href=3D"mailto:jose.r.r@metztli.com" targe=
-t=3D"_blank">jose.r.r@metztli.com</a>&gt; wrote:<br></div><blockquote class=
-=3D"gmail_quote" style=3D"margin:0px 0px 0px 0.8ex;border-left:1px solid rg=
-b(204,204,204);padding-left:1ex">
-<br>
-Accordingly, and with all due respect, I don&#39;t request sanctimonious cr=
-ap from mudslingers.<br>
-<br></blockquote><div><br></div>Ouch, I&#39;ve clearly hit a nerve. My mile=
-age with Reiser wasn&#39;t all rosy and sweet, lost critical data that was =
-written after a power loss and before the next backup cycle. My aversion to=
- the filesystem is purely technical. All other filesystems on that day reco=
-vered with their respective fsck;s. WIshing you continued good luck with yo=
-ur exploits.<div><br></div><div>=C2=A0BR,</div><div><br></div><div>Harry<br=
-></div></div></div>
-
---000000000000a69c510589b3d818--
 
 
 
