@@ -1,98 +1,70 @@
-From: Edward Shishkin <edward.shishkin@gmail.com>
-Subject: bug#22113: PATCH: Updated Reiser4 probe enabled against GNU Parted
-	git://git.sv.gnu.org/parted.git
-Date: Sat, 25 May 2019 22:25:21 +0200
-Message-ID: <d2e77dc5-87b5-fe58-ec1e-7df633d83620@gmail.com>
-References: <20190524220127.A6F013C59B12@huitzilopochtli.metztli-it.com>
+From: "Darrick J. Wong" <darrick.wong@oracle.com>
+Subject: [PATCH 0/4] vfs: clean up SETFLAGS and FSSETXATTR option processing
+Date: Mon, 10 Jun 2019 21:45:32 -0700
+Message-ID: <156022833285.3227089.11990489625041926920.stgit@magnolia>
 Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <bug-parted-bounces+gnu-bug-parted-2=m.gmane.org@gnu.org>
-Sender: "Debbugs-submit" <debbugs-submit-bounces@debbugs.gnu.org>
-Resent-Message-ID: <handler.22113.B22113.15588159316532@debbugs.gnu.org>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmail.com; s=20161025; 
-	h=subject:to:references:from:message-id:date:user-agent:mime-version
-	:in-reply-to:content-transfer-encoding:content-language;
-	bh=gZa2ZFnJcb16xMzNzAeVZlEvblhFm7CLAWni5rZgatc=;
-	b=VFbbZRY8aizYuPi9VKfVfrfT+XIYV77ZXkBaS/qcB55o7ijD2gtZuTTa1BH1NiBSl3
-	3Zqjy39PmOCPVw3nZUz31MXg2ylbJH8VtUp4993YFo2qABqoatP2g3xLSLweWLcbtOmf
-	9+oFKqIxWlE4LCQvIFSr29xD/U0y4Egn+WEDKvCcA6QgqXSlC8Ck9n/2ogeRKpNB3KGg
-	PWTlG1GXNOcPbdsdQhCHG3LTGb/fLbGJGsjCyGcVlcgrGpSDBT/MvDSQsrgw9iuBVRvh
-	U9PoL3EU6ZfIj1hald5tyRAiNpTMXefcUH/tpK6NQaaCleyYiEo4QT3Cz3BtAYH/JKd+
-	t3Nw==
-In-Reply-To: <20190524220127.A6F013C59B12@huitzilopochtli.metztli-it.com>
-Content-Language: en-US
+Return-path: <linux-mtd-bounces+gldm-linux-mtd-36=gmane.org@lists.infradead.org>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=lists.infradead.org; s=bombadil.20170209; h=Sender:
+	Content-Transfer-Encoding:Content-Type:Cc:List-Subscribe:List-Help:List-Post:
+	List-Archive:List-Unsubscribe:List-Id:MIME-Version:Message-ID:Date:To:From:
+	Subject:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
+	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:References:
+	List-Owner; bh=2pIp4YMXJEgwl8PHoK4X+Z1obl0f+8OzEzMaUz1gEeY=; b=Ms/c5JIY5iFP11
+	fYrPtK1CwTDUmLEVU1W+sT2LpxRvwTsYNFES0Bv1LOFctqyi3aeTiQButRvx6FKXPJndBHF3vb2A/
+	sfniPW9v/ClzDkIb+aqXCpPbOKLSqpNA4e+xOKa51xrhnzLu8mV6EcHj/e3gMtlMVruhvDBJKBTex
+	fq4fHvzFFeB9bDAE5Io4maEjVKTsX7bl532Cdp5VnhIRkTfTXYhQXNbgQVdMcOhEpXpu6HxNgx5pt
+	GHLrJloNLeN/dHml+N266pZG8ubF8/MiK+eJ0Q/kgR7IbJ2oH6JJk+0b5Wkl2oekF65nn9N1wqJab
+	lMHGL2hcH2zC9sAgyE6w==;
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com;
+ h=subject : from : to :
+ cc : date : message-id : mime-version : content-type :
+ content-transfer-encoding; s=corp-2018-07-02;
+ bh=cAdDQjLmw3paRsCYayAMtBFRH59fRNc4vYLBHuqjsSA=;
+ b=AnqW+epX9OYHOzw5sTwOrIxO7AnaE4zZ8lKJiAKmrhvGxrpd3f8wxkkZBflgbEq1sOzY
+ KV9eHWtYAaDLZEqtrf3ZJguDUBlZ5gkFNbVMpa3eMHo3FyTTFKbmVm7G73D6lbw7s1dS
+ 5J0Lk/d+rVXhiXXKr/mH872REZ1FpGGZjopVCJKDYW2v1wPRflHiayy7E/k6yaqVysXu
+ pMLLiLZptpvWSoeeq4y3wkBrabcsyoDe44zUwkjmFZpE9J0c9WugSVczTNIfBX8CJsY6
+ ZMZfEBndl9+QIq5/p+cyhxYC9prtn2PzyyKr32uqZ/hzXp9SjaAVfhiNdQ0vX/gWicFf oA== 
 List-Id: <reiserfs-devel.vger.kernel.org>
-List-Unsubscribe: <https://lists.gnu.org/mailman/options/bug-parted>,
-	<mailto:bug-parted-request@gnu.org?subject=unsubscribe>
-List-Archive: <http://lists.gnu.org/archive/html/bug-parted/>
-List-Post: <mailto:bug-parted@gnu.org>
-List-Help: <mailto:bug-parted-request@gnu.org?subject=help>
-List-Subscribe: <https://lists.gnu.org/mailman/listinfo/bug-parted>,
-	<mailto:bug-parted-request@gnu.org?subject=subscribe>
-Errors-To: bug-parted-bounces+gnu-bug-parted-2=m.gmane.org@gnu.org
-Sender: "bug-parted" <bug-parted-bounces+gnu-bug-parted-2=m.gmane.org@gnu.org>
-Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: Metztli Information Technology <jose.r.r@metztli.com>, reiserfs-devel@vger.kernel.org, 22113@debbugs.gnu.org, bcl@redhat.com
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-mtd>,
+ <mailto:linux-mtd-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-mtd/>
+List-Post: <mailto:linux-mtd@lists.infradead.org>
+List-Help: <mailto:linux-mtd-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-mtd>,
+ <mailto:linux-mtd-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-mtd" <linux-mtd-bounces@lists.infradead.org>
+Errors-To: linux-mtd-bounces+gldm-linux-mtd-36=gmane.org@lists.infradead.org
+To: matthew.garrett@nebula.com, yuchao0@huawei.com, tytso@mit.edu, darrick.wong@oracle.com, shaggy@kernel.org, ard.biesheuvel@linaro.org, josef@toxicpanda.com, clm@fb.com, adilger.kernel@dilger.ca, jk@ozlabs.org, jack@suse.com, dsterba@suse.com, jaegeuk@kernel.org, viro@zeniv.linux.org.uk
+Cc: linux-xfs@vger.kernel.org, jfs-discussion@lists.sourceforge.net, linux-efi@vger.kernel.org, linux-kernel@vger.kernel.org, reiserfs-devel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net, cluster-devel@redhat.com, linux-nilfs@vger.kernel.org, linux-mtd@lists.infradead.org, linux-btrfs@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-ext4@vger.kernel.org, ocfs2-devel@oss.oracle.com
 
-On 05/25/2019 12:01 AM, Metztli Information Technology wrote:
-> On Fri, May 24, 2019 at 7:46 AM Edward Shishkin <edward.shishkin@gmail.com> wrote:
->> On 05/24/2019 01:05 AM, Metztli Information Technology wrote:
->>> Niltze [Hello]-
->>>
->>> Just updated Reiser for patch against GNU Parted
->>> git clone git://git.sv.gnu.org/parted.git
->> Uh, it is in upstream already?
-> LOL, no.
+Hi all,
 
-Ah, no problems anyway..
-I'll put the patch to Sourceforge.
+The FS_IOC_SETFLAGS and FS_IOC_FSSETXATTR ioctls were promoted from ext4
+and XFS, respectively, into the VFS.  However, we didn't promote any of
+the parameter checking code from those filesystems, which lead to a mess
+where each filesystem open-codes whatever parameter checks they want and
+the behavior across filesystems is no longer consistent.
 
-Thanks,
-Edward.
+Therefore, create some generic checking functions in the VFS and remove
+all the open-coded pieces in each filesystem.  This preserves the
+current behavior where a filesystem can choose to ignore fields it
+doesn't understand.
 
->
-> I just followed Debian maintainer's original advice on updating patch against git branch of GNU Parted.
-> < https://marc.info/?l=reiserfs-devel&m=155865303620491&w=2 >
->
->> Someone must have died ...
-> Well, that's the reasoning behind GNU Parted gatekeeper
-> < https://www.brianlane.com/about-brian-c-lane/ >
->
-> for not merging reiser4 patch.
->
-> I just wonder if now that 'Big Blue' acquired Red Hat, the GNU Parted gatekeeper will act in a consistent
-> manner and quit his employer on 'ethical and moral' grounds in light of Watson's complicity tainting the company.
-> < https://russia-insider.com/en/head-ibm-sympathized-hitler-conducted-census-jews-preparation-camps-russian-tv-news/ri26587 >
-> < https://youtu.be/tCBT8H47sZ0 >
-> (and/or "Democracy For The Few" by Michael Parenti).
->
-> i.e., "...I have absolutely
-> no desire to see [IBM]'s work or name do anything but disappear into
-> obscurity."
-> < http://lists.gnu.org/archive/html/bug-parted/2015-12/msg00008.html >
->
-> Well, maybe I quoted him too soon. Unlike Reiser, who is down and dirt-poor and thus all the West 'morally and ethically righteous' developers kick and pile
-> scorn onto, 'Big Blue's wealth quells USA technology ecosystem and their employees' ethical and moral sophistry, as is evidenced by, say no issues with JFS,
-> for instance.
->
->> Thanks,
->> Edward.
->>
->>> apply patch
->>>
->>> ./bootstrap
->>>
->>> ./configure
->>>
->>> make
->>>
->>> make install
->>>
->>>
->>> Huelmati [Enjoy]!
->>>
->>>
+If you're going to start using this mess, you probably ought to just
+pull from my git trees, which are linked below.
 
+This has been lightly tested with fstests.  Enjoy!
+Comments and questions are, as always, welcome.
 
+--D
 
+kernel git tree:
+https://git.kernel.org/cgit/linux/kernel/git/djwong/xfs-linux.git/log/?h=file-ioctl-cleanups
 
+______________________________________________________
+Linux MTD discussion mailing list
+http://lists.infradead.org/mailman/listinfo/linux-mtd/
