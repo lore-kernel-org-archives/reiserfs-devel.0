@@ -1,70 +1,39 @@
-From: Jia-Ju Bai <baijiaju1990@gmail.com>
-Subject: [PATCH] fs: reiserfs: Fix possible null-pointer dereferences in remove_from_transaction()
-Date: Fri, 26 Jul 2019 16:38:38 +0800
-Message-ID: <20190726083838.8301-1-baijiaju1990@gmail.com>
+From: Andrew Morton <akpm@linux-foundation.org>
+Subject: Re: [PATCH] fs: reiserfs: Fix possible null-pointer dereferences in
+ remove_from_transaction()
+Date: Fri, 26 Jul 2019 15:54:16 -0700
+Message-ID: <20190726155416.86f1b96302273b91129e6dc3@linux-foundation.org>
+References: <20190726083838.8301-1-baijiaju1990@gmail.com>
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=OErtjgtck0WYHrq2s+gRLUV620lMFnBrd6HnTxIAPgU=;
-        b=UAhTdssUA4+XWhrHM2GbqjnQIy3n3cxguHpOBXBKFR5OuQj5lqh7lPgCDf4wjYe53m
-         /jD86Y6YqBz/X3y43vrb0CGz02kJeFecG2r8rINfDHOhw8oGnOJNFPGiAkuvDXLDgc+U
-         im9PeG6/7ekRqdmCeihHPpNGG0b6o1rLb/q9CwiRFuC1yrlKC84EN904QY5a97Ezn6fx
-         zA+svGsMmSk1js2bnWypOWvortNwPTv1XfwDYRT5aW91HhvTSwoEFK4WZAuDPMRsfdcR
-         rsClamSBeGWsTBlEtHgMJkoNXobLsVaLb1ixUFOQ73Q+pmDx07hWUaB4/y/fD9Dypptj
-         fwew==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1564181657;
+        bh=0I8ibO4ILGJpL8erC1yuBP5LAOpyh2rkqKPnbsCnLuY=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=pK1MW8MvICaSKOlCQqHnQ9l6nuLWH6z5U/EVYmUGTyLWaJMRR5LGPnmkHYCxsAgVO
+         blFDeY2cL9fAqNHU9VjvQ4Kfda8QxzbtCF2lQT8kJ+rUUblKp5A13I2P6xwKeiY4qq
+         zxEv6sAEkwCslSXWueRrCDWR7IN/4kpH6j9BxHnE=
+In-Reply-To: <20190726083838.8301-1-baijiaju1990@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
-MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: jack@suse.cz, akpm@linux-foundation.org, arnd@arndb.de, linux.bhar@gmail.com, hariprasad.kelam@gmail.com
-Cc: reiserfs-devel@vger.kernel.org, linux-kernel@vger.kernel.org, Jia-Ju Bai <baijiaju1990@gmail.com>
+To: Jia-Ju Bai <baijiaju1990@gmail.com>
+Cc: jack@suse.cz, arnd@arndb.de, linux.bhar@gmail.com, hariprasad.kelam@gmail.com, reiserfs-devel@vger.kernel.org, linux-kernel@vger.kernel.org
 
-In remove_from_transaction(), there is an if statement on line 3447 to
-check whether bh is NULL:
-    if (bh)
+On Fri, 26 Jul 2019 16:38:38 +0800 Jia-Ju Bai <baijiaju1990@gmail.com> wrote:
 
-When bh is NULL, it is used on line 3450:
-    clear_buffer_journaled(bh);
-and lines 3453-3456:
-    clear_buffer_journal_dirty(bh);
-    clear_buffer_dirty(bh);
-    clear_buffer_journal_test(bh);
-    put_bh(bh);
+> In remove_from_transaction(), there is an if statement on line 3447 to
+> check whether bh is NULL:
+>     if (bh)
 
-Thus, possible null-pointer dereferences may occur.
+We already know that bh != NULL here.
 
-To fix these bugs, bh is checked before being used.
+	cn = get_journal_hash_dev(sb, journal->j_hash_table, blocknr);
+	if (!cn || !cn->bh) {
+		return ret;
+	}
+	bh = cn->bh;
 
-These bugs are found by a static analysis tool STCheck written by us.
 
-Signed-off-by: Jia-Ju Bai <baijiaju1990@gmail.com>
----
- fs/reiserfs/journal.c | 7 ++++---
- 1 file changed, 4 insertions(+), 3 deletions(-)
-
-diff --git a/fs/reiserfs/journal.c b/fs/reiserfs/journal.c
-index 4517a1394c6f..d115578597b6 100644
---- a/fs/reiserfs/journal.c
-+++ b/fs/reiserfs/journal.c
-@@ -3444,12 +3444,13 @@ static int remove_from_transaction(struct super_block *sb,
- 	if (cn == journal->j_last) {
- 		journal->j_last = cn->prev;
- 	}
--	if (bh)
-+	if (bh) {
- 		remove_journal_hash(sb, journal->j_hash_table, NULL,
- 				    bh->b_blocknr, 0);
--	clear_buffer_journaled(bh);	/* don't log this one */
-+		clear_buffer_journaled(bh);	/* don't log this one */
-+	}
- 
--	if (!already_cleaned) {
-+	if (!already_cleaned && bh) {
- 		clear_buffer_journal_dirty(bh);
- 		clear_buffer_dirty(bh);
- 		clear_buffer_journal_test(bh);
--- 
-2.17.0
-
+Please prepare a patch to remove the unneeded test?
