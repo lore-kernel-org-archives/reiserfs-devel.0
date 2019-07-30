@@ -1,338 +1,818 @@
-From: Deepa Dinamani <deepa.kernel@gmail.com>
-Subject: [PATCH 06/20] fs: Fill in max and min timestamps
- in superblock
-Date: Mon, 29 Jul 2019 18:49:10 -0700
-Message-ID: <20190730014924.2193-7-deepa.kernel@gmail.com>
-References: <20190730014924.2193-1-deepa.kernel@gmail.com>
+From: Mark Salyzyn <salyzyn@android.com>
+Subject: [PATCH v12 2/5] Add flags option to get xattr method paired to
+ __vfs_getxattr
+Date: Tue, 30 Jul 2019 10:28:59 -0700
+Message-ID: <20190730172904.79146-3-salyzyn@android.com>
+References: <20190730172904.79146-1-salyzyn@android.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <jfs-discussion-bounces@lists.sourceforge.net>
+Return-path: <linux-mtd-bounces+gldm-linux-mtd-36=gmane.org@lists.infradead.org>
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=References:In-Reply-To:Message-Id:Date:Subject:Cc:
- To:From:Sender:Reply-To:MIME-Version:Content-Type:Content-Transfer-Encoding:
- Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
- Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
- List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=CJvht37EZemmcnBgtlNiz9+F+TMC9CP5JC3nxpy4VdY=; b=gp+cSrt5r9Mp1OUQJl8/hAOiq0
- 5FHC1h8HeO0qRkh09HiZwLTDC+/rXjpg18DBpcwJHZWUM6XejHlLHr+eO3uS/DdVHe3OQIOevM3gf
- 06tgzzENgpJt3FF/hD2CRFn6EIlCBVELo7ZKFSumyCO5AluHGG/KWRC42Q4f8v3NY0oU=;
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
- ;
- h=References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To
- :MIME-Version:Content-Type:Content-Transfer-Encoding:Content-ID:
- Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
- :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
- List-Post:List-Owner:List-Archive;
- bh=CJvht37EZemmcnBgtlNiz9+F+TMC9CP5JC3nxpy4VdY=; b=HhxvqstO5BEn7eJ/8ILF1eu7cj
- QbnesRd/cw45L8Yh4bRPKQo/OZrZcOULXgsZRF1YFxEpp96mFfzxPdrxaMZr7KbKPlREgIGlJbWgS
- wjslHjfL3O+oprRy9rz1kXX+5w3IndyqrvCxA8K8+3ewBUeVpfuJlIM0gL2n0e68W/N4=;
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmail.com; s=20161025;
- h=from:to:cc:subject:date:message-id:in-reply-to:references;
- bh=CJvht37EZemmcnBgtlNiz9+F+TMC9CP5JC3nxpy4VdY=;
- b=GYkm93F1cJJjois+RV8eMjig9xIYQGk+SUnlQDx43S+Uu/41dHNKq90eVf618tDeUr
- WEhiGiy+V5MiKxL76vvoq57Fv52TCb6McUeald2lUzRsAlH+djZTCx912xz1xe/0uhYF
- raBQiGP750m/gqcyG2+H2THhlCHvYbdV9cbIZ5XSHgORnKCeuL6V7rrfuzm7WbifsB/e
- G0zvOt+LVA9KtaEu6+9piTZLiIDyeuqyGnhvHXnLUfRKpsjGvo2fnsVCgoerB7LL2t1j
- DkiSzSFuxoUY16+Xnrx6oiR20x5Cq+JMCahtn/DNTqBOsUs+1/tmZeAf61XUNw7gdTOR
- tE4A==
-In-Reply-To: <20190730014924.2193-1-deepa.kernel@gmail.com>
+	d=lists.infradead.org; s=bombadil.20170209; h=Sender:
+	Content-Transfer-Encoding:Content-Type:Cc:List-Subscribe:List-Help:List-Post:
+	List-Archive:List-Unsubscribe:List-Id:MIME-Version:References:In-Reply-To:
+	Message-Id:Date:Subject:To:From:Reply-To:Content-ID:Content-Description:
+	Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:
+	List-Owner; bh=h6O0ZfTO5Ja0XUg2cNAwUHq+ZcIzjqpGH5SFx86hn8I=; b=sP93m4qdUgdUiV
+	NMCmRE+5CKEIaTRmrfXy3cV3pXM4faVjI82mD00cNSOu7xsYXgiRlY1TyPyikurUvnEYlnYXc17Hn
+	H8EzVJN96UCUrgAS6SHhG+inPWihE5Q021XHo67Caf3voqjE4H7BBQY7aQMRQ9mwNQmeKRyNlECXI
+	TAh+briVcQMfLxfWlQVBnhz5qms8GAvTeUx3ybOzIs02wtvoRemPwasYIrYEPqPaU22/4+hGo2vE1
+	ycSK567LRg3xqi6QMJaMSd0JZtpr8cPMhXYpsb1Bv1mmE0Fb0VCnhuA8nC81EJBO9wvvr2sCyClOS
+	UxClC/mXT6qyHcLHTEYg==;
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=android.com; s=20161025;
+ h=from:to:cc:subject:date:message-id:in-reply-to:references
+ :mime-version:content-transfer-encoding;
+ bh=hpXePiRxXfQ6sClI29050n6F2wnM+ayz6+4t+YYSnqM=;
+ b=HkTFuuTvBIXlQZSSPWbSBIXm6TttT1y4oMLZRV5iAhmzJo/DpBXgIG21DgnAHKbxVw
+ /mmYEeXaJIKoIdWyeKQZC/w690K7fVQdyNuFDV7znox/Y+a8YluKlraCgeg0ACAU3HZd
+ mc2CGZMsMvIl++bjoghrBiHiuASsC+T7Nj6xdAFYCC38Fu1j77X9nY1hfdFQhkiAMpeg
+ OThqyGjhNGNxD+hjQP36Nk+LIjddHBJ0o7yUIPCjj+POF45e7zPeY38BMWxO70sG3W9O
+ xvWGvG1kcPhJBZLxw0s8XQM2x+hh2GYgTZJ+6y1OmlZJ/DKuTr4V38hgGWQi+fx1PUf6
+ M4sA==
+In-Reply-To: <20190730172904.79146-1-salyzyn@android.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-List-Unsubscribe: <https://lists.sourceforge.net/lists/options/jfs-discussion>, 
- <mailto:jfs-discussion-request@lists.sourceforge.net?subject=unsubscribe>
-List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=jfs-discussion>
-List-Post: <mailto:jfs-discussion@lists.sourceforge.net>
-List-Help: <mailto:jfs-discussion-request@lists.sourceforge.net?subject=help>
-List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/jfs-discussion>, 
- <mailto:jfs-discussion-request@lists.sourceforge.net?subject=subscribe>
-Errors-To: jfs-discussion-bounces@lists.sourceforge.net
-To: viro@zeniv.linux.org.uk, linux-kernel@vger.kernel.org
-Cc: shaggy@kernel.org, jfs-discussion@lists.sourceforge.net, al@alarsen.net, linux-mtd@lists.infradead.org, darrick.wong@oracle.com, y2038@lists.linaro.org, richard@nod.at, codalist@coda.cs.cmu.edu, hch@infradead.org, coda@cs.cmu.edu, linux-ext4@vger.kernel.org, salah.triki@gmail.com, dushistov@mail.ru, arnd@arndb.de, reiserfs-devel@vger.kernel.org, aivazian.tigran@gmail.com, jaharkes@cs.cmu.edu, luisbg@kernel.org, nico@fluxnic.net, linux-xfs@vger.kernel.org, jack@suse.com, linux-fsdevel@vger.kernel.org, phillip@squashfs.org.uk, dwmw2@infradead.org
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-mtd>,
+ <mailto:linux-mtd-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-mtd/>
+List-Post: <mailto:linux-mtd@lists.infradead.org>
+List-Help: <mailto:linux-mtd-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-mtd>,
+ <mailto:linux-mtd-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-mtd" <linux-mtd-bounces@lists.infradead.org>
+Errors-To: linux-mtd-bounces+gldm-linux-mtd-36=gmane.org@lists.infradead.org
+To: linux-kernel@vger.kernel.org
+Cc: Latchesar Ionkov <lucho@ionkov.net>, Dave Kleikamp <shaggy@kernel.org>, jfs-discussion@lists.sourceforge.net, Randy Dunlap <rdunlap@infradead.org>, linux-doc@vger.kernel.org, Martin Brandenburg <martin@omnibond.com>, samba-technical@lists.samba.org, Dominique Martinet <asmadeus@codewreck.org>, Amir Goldstein <amir73il@gmail.com>, David Howells <dhowells@redhat.com>, Chris Mason <clm@fb.com>, "David S. Miller" <davem@davemloft.net>, Andreas Dilger <adilger.kernel@dilger.ca>, ocfs2-devel@oss.oracle.com, netdev@vger.kernel.org, Tyler Hicks <tyhicks@canonical.com>, linux-afs@lists.infradead.org, Mike Marshall <hubcap@omnibond.com>, linux-xfs@vger.kernel.org, Andreas Gruenbacher <agruenba@redhat.com>, Sage Weil <sage@redhat.com>, Jonathan Corbet <corbet@lwn.net>, Richard Weinberger <richard@nod.at>, Mark Fasheh <mark@fasheh.com>, devel@lists.orangefs.org, Hugh Dickins <hughd@g>
 
-Fill in the appropriate limits to avoid inconsistencies
-in the vfs cached inode times when timestamps are
-outside the permitted range.
+Add a flag option to get xattr method that could have a bit flag of
+XATTR_NOSECURITY passed to it.  XATTR_NOSECURITY is set in the
+__vfs_getxattr path.
 
-Even though some filesystems are read-only, fill in the
-timestamps to reflect the on-disk representation.
+This handles the case of a union filesystem driver that is being
+requested by the security layer to report back the data that is the
+target label or context embedded into wrapped filesystem's xattr.
 
-Signed-off-by: Deepa Dinamani <deepa.kernel@gmail.com>
-Cc: aivazian.tigran@gmail.com
-Cc: al@alarsen.net
-Cc: coda@cs.cmu.edu
-Cc: darrick.wong@oracle.com
-Cc: dushistov@mail.ru
-Cc: dwmw2@infradead.org
-Cc: hch@infradead.org
-Cc: jack@suse.com
-Cc: jaharkes@cs.cmu.edu
-Cc: luisbg@kernel.org
-Cc: nico@fluxnic.net
-Cc: phillip@squashfs.org.uk
-Cc: richard@nod.at
-Cc: salah.triki@gmail.com
-Cc: shaggy@kernel.org
-Cc: linux-xfs@vger.kernel.org
-Cc: codalist@coda.cs.cmu.edu
-Cc: linux-ext4@vger.kernel.org
-Cc: linux-mtd@lists.infradead.org
-Cc: jfs-discussion@lists.sourceforge.net
-Cc: reiserfs-devel@vger.kernel.org
+For the use case where access is to be blocked by the security layer.
+
+The path then could be security(dentry) -> __vfs_getxattr(dentry) ->
+handler->get(dentry...XATTR_NOSECURITY) ->
+__vfs_getxattr(lower_dentry) -> lower_handler->get(lower_dentry)
+which would report back through the chain data and success as
+expected, but the logging security layer at the top would have the
+data to determine the access permissions and report back the target
+context that was blocked.
+
+Without the get handler flag, the path on a union filesystem would be
+the errant security(dentry) -> __vfs_getxattr(dentry) ->
+handler->get(dentry) -> vfs_getxattr(lower_dentry) -> nested ->
+security(lower_dentry, log off) -> lower_handler->get(lower_dentry)
+which would report back through the chain no data, and -EACCES.
+
+For selinux for both cases, this would translate to a correctly
+determined blocked access. In the first corrected case a correct avc
+log would be reported, in the second legacy case an incorrect avc log
+would be reported against an uninitialized u:object_r:unlabeled:s0
+context making the logs cosmetically useless for audit2allow.
+
+Signed-off-by: Mark Salyzyn <salyzyn@android.com>
+Cc: Miklos Szeredi <miklos@szeredi.hu>
+Cc: Jonathan Corbet <corbet@lwn.net>
+Cc: Vivek Goyal <vgoyal@redhat.com>
+Cc: Eric W. Biederman <ebiederm@xmission.com>
+Cc: Amir Goldstein <amir73il@gmail.com>
+Cc: Randy Dunlap <rdunlap@infradead.org>
+Cc: Stephen Smalley <sds@tycho.nsa.gov>
+Cc: linux-unionfs@vger.kernel.org
+Cc: linux-doc@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org
+Cc: kernel-team@android.com
 ---
- fs/befs/linuxvfs.c       | 2 ++
- fs/bfs/inode.c           | 2 ++
- fs/coda/inode.c          | 3 +++
- fs/cramfs/inode.c        | 2 ++
- fs/efs/super.c           | 2 ++
- fs/ext2/super.c          | 2 ++
- fs/freevxfs/vxfs_super.c | 2 ++
- fs/jffs2/fs.c            | 3 +++
- fs/jfs/super.c           | 2 ++
- fs/minix/inode.c         | 2 ++
- fs/qnx4/inode.c          | 2 ++
- fs/qnx6/inode.c          | 2 ++
- fs/reiserfs/super.c      | 3 +++
- fs/romfs/super.c         | 2 ++
- fs/squashfs/super.c      | 2 ++
- fs/ufs/super.c           | 7 +++++++
- fs/xfs/xfs_super.c       | 2 ++
- 17 files changed, 42 insertions(+)
+v12 - Added back to patch series as get xattr with flag option.
 
-diff --git a/fs/befs/linuxvfs.c b/fs/befs/linuxvfs.c
-index 462d096ff3e9..64cdf4d8e424 100644
---- a/fs/befs/linuxvfs.c
-+++ b/fs/befs/linuxvfs.c
-@@ -893,6 +893,8 @@ befs_fill_super(struct super_block *sb, void *data, int silent)
- 	sb_set_blocksize(sb, (ulong) befs_sb->block_size);
- 	sb->s_op = &befs_sops;
- 	sb->s_export_op = &befs_export_operations;
-+	sb->s_time_min = 0;
-+	sb->s_time_max = 0xffffffffffffll;
- 	root = befs_iget(sb, iaddr2blockno(sb, &(befs_sb->root_dir)));
- 	if (IS_ERR(root)) {
- 		ret = PTR_ERR(root);
-diff --git a/fs/bfs/inode.c b/fs/bfs/inode.c
-index 5e97bed073d7..f8ce1368218b 100644
---- a/fs/bfs/inode.c
-+++ b/fs/bfs/inode.c
-@@ -324,6 +324,8 @@ static int bfs_fill_super(struct super_block *s, void *data, int silent)
- 		return -ENOMEM;
- 	mutex_init(&info->bfs_lock);
- 	s->s_fs_info = info;
-+	s->s_time_min = 0;
-+	s->s_time_max = U32_MAX;
+v11 - Squashed out of patch series and replaced with per-thread flag
+      solution.
+
+v10 - Added to patch series as __get xattr method.
+---
+ fs/9p/acl.c                  |  3 ++-
+ fs/9p/xattr.c                |  3 ++-
+ fs/afs/xattr.c               |  6 +++---
+ fs/btrfs/xattr.c             |  3 ++-
+ fs/ceph/xattr.c              |  3 ++-
+ fs/cifs/xattr.c              |  2 +-
+ fs/ecryptfs/inode.c          |  3 ++-
+ fs/ext2/xattr_trusted.c      |  2 +-
+ fs/ext2/xattr_user.c         |  2 +-
+ fs/ext4/xattr_security.c     |  2 +-
+ fs/ext4/xattr_trusted.c      |  2 +-
+ fs/ext4/xattr_user.c         |  2 +-
+ fs/f2fs/xattr.c              |  4 ++--
+ fs/fuse/xattr.c              |  4 ++--
+ fs/gfs2/xattr.c              |  3 ++-
+ fs/hfs/attr.c                |  2 +-
+ fs/hfsplus/xattr.c           |  3 ++-
+ fs/hfsplus/xattr_trusted.c   |  3 ++-
+ fs/hfsplus/xattr_user.c      |  3 ++-
+ fs/jffs2/security.c          |  3 ++-
+ fs/jffs2/xattr_trusted.c     |  3 ++-
+ fs/jffs2/xattr_user.c        |  3 ++-
+ fs/jfs/xattr.c               |  5 +++--
+ fs/kernfs/inode.c            |  1 +
+ fs/nfs/nfs4proc.c            |  6 ++++--
+ fs/ocfs2/xattr.c             |  9 ++++++---
+ fs/orangefs/xattr.c          |  3 ++-
+ fs/overlayfs/super.c         |  5 +++--
+ fs/posix_acl.c               |  2 +-
+ fs/reiserfs/xattr_security.c |  3 ++-
+ fs/reiserfs/xattr_trusted.c  |  3 ++-
+ fs/reiserfs/xattr_user.c     |  3 ++-
+ fs/squashfs/xattr.c          |  2 +-
+ fs/xattr.c                   | 19 ++++++++++++++-----
+ fs/xfs/xfs_xattr.c           |  3 ++-
+ include/linux/xattr.h        |  6 +++---
+ include/uapi/linux/xattr.h   |  5 +++--
+ mm/shmem.c                   |  3 ++-
+ net/socket.c                 |  3 ++-
+ 39 files changed, 91 insertions(+), 54 deletions(-)
+
+diff --git a/fs/9p/acl.c b/fs/9p/acl.c
+index 6261719f6f2a..cb14e8b312bc 100644
+--- a/fs/9p/acl.c
++++ b/fs/9p/acl.c
+@@ -214,7 +214,8 @@ int v9fs_acl_mode(struct inode *dir, umode_t *modep,
  
- 	sb_set_blocksize(s, BFS_BSIZE);
+ static int v9fs_xattr_get_acl(const struct xattr_handler *handler,
+ 			      struct dentry *dentry, struct inode *inode,
+-			      const char *name, void *buffer, size_t size)
++			      const char *name, void *buffer, size_t size,
++			      int flags)
+ {
+ 	struct v9fs_session_info *v9ses;
+ 	struct posix_acl *acl;
+diff --git a/fs/9p/xattr.c b/fs/9p/xattr.c
+index ac8ff8ca4c11..5cfa772452fd 100644
+--- a/fs/9p/xattr.c
++++ b/fs/9p/xattr.c
+@@ -139,7 +139,8 @@ ssize_t v9fs_listxattr(struct dentry *dentry, char *buffer, size_t buffer_size)
  
-diff --git a/fs/coda/inode.c b/fs/coda/inode.c
-index 321f56e487cb..b1c70e2b9b1e 100644
---- a/fs/coda/inode.c
-+++ b/fs/coda/inode.c
-@@ -188,6 +188,9 @@ static int coda_fill_super(struct super_block *sb, void *data, int silent)
- 	sb->s_magic = CODA_SUPER_MAGIC;
- 	sb->s_op = &coda_super_operations;
- 	sb->s_d_op = &coda_dentry_operations;
-+	sb->s_time_gran = 1;
-+	sb->s_time_min = S64_MIN;
-+	sb->s_time_max = S64_MAX;
+ static int v9fs_xattr_handler_get(const struct xattr_handler *handler,
+ 				  struct dentry *dentry, struct inode *inode,
+-				  const char *name, void *buffer, size_t size)
++				  const char *name, void *buffer, size_t size,
++				  int flags)
+ {
+ 	const char *full_name = xattr_full_name(handler, name);
  
- 	error = super_setup_bdi(sb);
+diff --git a/fs/afs/xattr.c b/fs/afs/xattr.c
+index 5552d034090a..e6509c21f08a 100644
+--- a/fs/afs/xattr.c
++++ b/fs/afs/xattr.c
+@@ -334,7 +334,7 @@ static const struct xattr_handler afs_xattr_yfs_handler = {
+ static int afs_xattr_get_cell(const struct xattr_handler *handler,
+ 			      struct dentry *dentry,
+ 			      struct inode *inode, const char *name,
+-			      void *buffer, size_t size)
++			      void *buffer, size_t size, int flags)
+ {
+ 	struct afs_vnode *vnode = AFS_FS_I(inode);
+ 	struct afs_cell *cell = vnode->volume->cell;
+@@ -361,7 +361,7 @@ static const struct xattr_handler afs_xattr_afs_cell_handler = {
+ static int afs_xattr_get_fid(const struct xattr_handler *handler,
+ 			     struct dentry *dentry,
+ 			     struct inode *inode, const char *name,
+-			     void *buffer, size_t size)
++			     void *buffer, size_t size, int flags)
+ {
+ 	struct afs_vnode *vnode = AFS_FS_I(inode);
+ 	char text[16 + 1 + 24 + 1 + 8 + 1];
+@@ -397,7 +397,7 @@ static const struct xattr_handler afs_xattr_afs_fid_handler = {
+ static int afs_xattr_get_volume(const struct xattr_handler *handler,
+ 			      struct dentry *dentry,
+ 			      struct inode *inode, const char *name,
+-			      void *buffer, size_t size)
++			      void *buffer, size_t size, int flags)
+ {
+ 	struct afs_vnode *vnode = AFS_FS_I(inode);
+ 	const char *volname = vnode->volume->name;
+diff --git a/fs/btrfs/xattr.c b/fs/btrfs/xattr.c
+index 95d9aebff2c4..1e522e145344 100644
+--- a/fs/btrfs/xattr.c
++++ b/fs/btrfs/xattr.c
+@@ -353,7 +353,8 @@ ssize_t btrfs_listxattr(struct dentry *dentry, char *buffer, size_t size)
+ 
+ static int btrfs_xattr_handler_get(const struct xattr_handler *handler,
+ 				   struct dentry *unused, struct inode *inode,
+-				   const char *name, void *buffer, size_t size)
++				   const char *name, void *buffer, size_t size,
++				   int flags)
+ {
+ 	name = xattr_full_name(handler, name);
+ 	return btrfs_getxattr(inode, name, buffer, size);
+diff --git a/fs/ceph/xattr.c b/fs/ceph/xattr.c
+index 37b458a9af3a..edb7eb9ae83e 100644
+--- a/fs/ceph/xattr.c
++++ b/fs/ceph/xattr.c
+@@ -1171,7 +1171,8 @@ int __ceph_setxattr(struct inode *inode, const char *name,
+ 
+ static int ceph_get_xattr_handler(const struct xattr_handler *handler,
+ 				  struct dentry *dentry, struct inode *inode,
+-				  const char *name, void *value, size_t size)
++				  const char *name, void *value, size_t size,
++				  int flags)
+ {
+ 	if (!ceph_is_valid_xattr(name))
+ 		return -EOPNOTSUPP;
+diff --git a/fs/cifs/xattr.c b/fs/cifs/xattr.c
+index 9076150758d8..7f71c06ce631 100644
+--- a/fs/cifs/xattr.c
++++ b/fs/cifs/xattr.c
+@@ -199,7 +199,7 @@ static int cifs_creation_time_get(struct dentry *dentry, struct inode *inode,
+ 
+ static int cifs_xattr_get(const struct xattr_handler *handler,
+ 			  struct dentry *dentry, struct inode *inode,
+-			  const char *name, void *value, size_t size)
++			  const char *name, void *value, size_t size, int flags)
+ {
+ 	ssize_t rc = -EOPNOTSUPP;
+ 	unsigned int xid;
+diff --git a/fs/ecryptfs/inode.c b/fs/ecryptfs/inode.c
+index 18426f4855f1..9306e1c53cdb 100644
+--- a/fs/ecryptfs/inode.c
++++ b/fs/ecryptfs/inode.c
+@@ -1103,7 +1103,8 @@ const struct inode_operations ecryptfs_main_iops = {
+ 
+ static int ecryptfs_xattr_get(const struct xattr_handler *handler,
+ 			      struct dentry *dentry, struct inode *inode,
+-			      const char *name, void *buffer, size_t size)
++			      const char *name, void *buffer, size_t size,
++			      int flags)
+ {
+ 	return ecryptfs_getxattr(dentry, inode, name, buffer, size);
+ }
+diff --git a/fs/ext2/xattr_trusted.c b/fs/ext2/xattr_trusted.c
+index 49add1107850..8d313664f0fa 100644
+--- a/fs/ext2/xattr_trusted.c
++++ b/fs/ext2/xattr_trusted.c
+@@ -18,7 +18,7 @@ ext2_xattr_trusted_list(struct dentry *dentry)
+ static int
+ ext2_xattr_trusted_get(const struct xattr_handler *handler,
+ 		       struct dentry *unused, struct inode *inode,
+-		       const char *name, void *buffer, size_t size)
++		       const char *name, void *buffer, size_t size, int flags)
+ {
+ 	return ext2_xattr_get(inode, EXT2_XATTR_INDEX_TRUSTED, name,
+ 			      buffer, size);
+diff --git a/fs/ext2/xattr_user.c b/fs/ext2/xattr_user.c
+index c243a3b4d69d..712b7c95cc64 100644
+--- a/fs/ext2/xattr_user.c
++++ b/fs/ext2/xattr_user.c
+@@ -20,7 +20,7 @@ ext2_xattr_user_list(struct dentry *dentry)
+ static int
+ ext2_xattr_user_get(const struct xattr_handler *handler,
+ 		    struct dentry *unused, struct inode *inode,
+-		    const char *name, void *buffer, size_t size)
++		    const char *name, void *buffer, size_t size, int flags)
+ {
+ 	if (!test_opt(inode->i_sb, XATTR_USER))
+ 		return -EOPNOTSUPP;
+diff --git a/fs/ext4/xattr_security.c b/fs/ext4/xattr_security.c
+index 197a9d8a15ef..50fb71393fb6 100644
+--- a/fs/ext4/xattr_security.c
++++ b/fs/ext4/xattr_security.c
+@@ -15,7 +15,7 @@
+ static int
+ ext4_xattr_security_get(const struct xattr_handler *handler,
+ 			struct dentry *unused, struct inode *inode,
+-			const char *name, void *buffer, size_t size)
++			const char *name, void *buffer, size_t size, int flags)
+ {
+ 	return ext4_xattr_get(inode, EXT4_XATTR_INDEX_SECURITY,
+ 			      name, buffer, size);
+diff --git a/fs/ext4/xattr_trusted.c b/fs/ext4/xattr_trusted.c
+index e9389e5d75c3..64bd8f86c1f1 100644
+--- a/fs/ext4/xattr_trusted.c
++++ b/fs/ext4/xattr_trusted.c
+@@ -22,7 +22,7 @@ ext4_xattr_trusted_list(struct dentry *dentry)
+ static int
+ ext4_xattr_trusted_get(const struct xattr_handler *handler,
+ 		       struct dentry *unused, struct inode *inode,
+-		       const char *name, void *buffer, size_t size)
++		       const char *name, void *buffer, size_t size, int flags)
+ {
+ 	return ext4_xattr_get(inode, EXT4_XATTR_INDEX_TRUSTED,
+ 			      name, buffer, size);
+diff --git a/fs/ext4/xattr_user.c b/fs/ext4/xattr_user.c
+index d4546184b34b..b7301373820e 100644
+--- a/fs/ext4/xattr_user.c
++++ b/fs/ext4/xattr_user.c
+@@ -21,7 +21,7 @@ ext4_xattr_user_list(struct dentry *dentry)
+ static int
+ ext4_xattr_user_get(const struct xattr_handler *handler,
+ 		    struct dentry *unused, struct inode *inode,
+-		    const char *name, void *buffer, size_t size)
++		    const char *name, void *buffer, size_t size, int flags)
+ {
+ 	if (!test_opt(inode->i_sb, XATTR_USER))
+ 		return -EOPNOTSUPP;
+diff --git a/fs/f2fs/xattr.c b/fs/f2fs/xattr.c
+index b32c45621679..76559da8dfba 100644
+--- a/fs/f2fs/xattr.c
++++ b/fs/f2fs/xattr.c
+@@ -24,7 +24,7 @@
+ 
+ static int f2fs_xattr_generic_get(const struct xattr_handler *handler,
+ 		struct dentry *unused, struct inode *inode,
+-		const char *name, void *buffer, size_t size)
++		const char *name, void *buffer, size_t size, int flags)
+ {
+ 	struct f2fs_sb_info *sbi = F2FS_SB(inode->i_sb);
+ 
+@@ -79,7 +79,7 @@ static bool f2fs_xattr_trusted_list(struct dentry *dentry)
+ 
+ static int f2fs_xattr_advise_get(const struct xattr_handler *handler,
+ 		struct dentry *unused, struct inode *inode,
+-		const char *name, void *buffer, size_t size)
++		const char *name, void *buffer, size_t size, int flags)
+ {
+ 	if (buffer)
+ 		*((char *)buffer) = F2FS_I(inode)->i_advise;
+diff --git a/fs/fuse/xattr.c b/fs/fuse/xattr.c
+index 433717640f78..d1ef7808304e 100644
+--- a/fs/fuse/xattr.c
++++ b/fs/fuse/xattr.c
+@@ -176,7 +176,7 @@ int fuse_removexattr(struct inode *inode, const char *name)
+ 
+ static int fuse_xattr_get(const struct xattr_handler *handler,
+ 			 struct dentry *dentry, struct inode *inode,
+-			 const char *name, void *value, size_t size)
++			 const char *name, void *value, size_t size, int flags)
+ {
+ 	return fuse_getxattr(inode, name, value, size);
+ }
+@@ -199,7 +199,7 @@ static bool no_xattr_list(struct dentry *dentry)
+ 
+ static int no_xattr_get(const struct xattr_handler *handler,
+ 			struct dentry *dentry, struct inode *inode,
+-			const char *name, void *value, size_t size)
++			const char *name, void *value, size_t size, int flags)
+ {
+ 	return -EOPNOTSUPP;
+ }
+diff --git a/fs/gfs2/xattr.c b/fs/gfs2/xattr.c
+index bbe593d16bea..a9db067a99c1 100644
+--- a/fs/gfs2/xattr.c
++++ b/fs/gfs2/xattr.c
+@@ -588,7 +588,8 @@ static int __gfs2_xattr_get(struct inode *inode, const char *name,
+ 
+ static int gfs2_xattr_get(const struct xattr_handler *handler,
+ 			  struct dentry *unused, struct inode *inode,
+-			  const char *name, void *buffer, size_t size)
++			  const char *name, void *buffer, size_t size,
++			  int flags)
+ {
+ 	struct gfs2_inode *ip = GFS2_I(inode);
+ 	struct gfs2_holder gh;
+diff --git a/fs/hfs/attr.c b/fs/hfs/attr.c
+index 74fa62643136..08222a9c5d31 100644
+--- a/fs/hfs/attr.c
++++ b/fs/hfs/attr.c
+@@ -115,7 +115,7 @@ static ssize_t __hfs_getxattr(struct inode *inode, enum hfs_xattr_type type,
+ 
+ static int hfs_xattr_get(const struct xattr_handler *handler,
+ 			 struct dentry *unused, struct inode *inode,
+-			 const char *name, void *value, size_t size)
++			 const char *name, void *value, size_t size, int flags)
+ {
+ 	return __hfs_getxattr(inode, handler->flags, value, size);
+ }
+diff --git a/fs/hfsplus/xattr.c b/fs/hfsplus/xattr.c
+index bb0b27d88e50..381c2aaedbc8 100644
+--- a/fs/hfsplus/xattr.c
++++ b/fs/hfsplus/xattr.c
+@@ -839,7 +839,8 @@ static int hfsplus_removexattr(struct inode *inode, const char *name)
+ 
+ static int hfsplus_osx_getxattr(const struct xattr_handler *handler,
+ 				struct dentry *unused, struct inode *inode,
+-				const char *name, void *buffer, size_t size)
++				const char *name, void *buffer, size_t size,
++				int flags)
+ {
+ 	/*
+ 	 * Don't allow retrieving properly prefixed attributes
+diff --git a/fs/hfsplus/xattr_trusted.c b/fs/hfsplus/xattr_trusted.c
+index fbad91e1dada..54d926314f8c 100644
+--- a/fs/hfsplus/xattr_trusted.c
++++ b/fs/hfsplus/xattr_trusted.c
+@@ -14,7 +14,8 @@
+ 
+ static int hfsplus_trusted_getxattr(const struct xattr_handler *handler,
+ 				    struct dentry *unused, struct inode *inode,
+-				    const char *name, void *buffer, size_t size)
++				    const char *name, void *buffer,
++				    size_t size, int flags)
+ {
+ 	return hfsplus_getxattr(inode, name, buffer, size,
+ 				XATTR_TRUSTED_PREFIX,
+diff --git a/fs/hfsplus/xattr_user.c b/fs/hfsplus/xattr_user.c
+index 74d19faf255e..4d2b1ffff887 100644
+--- a/fs/hfsplus/xattr_user.c
++++ b/fs/hfsplus/xattr_user.c
+@@ -14,7 +14,8 @@
+ 
+ static int hfsplus_user_getxattr(const struct xattr_handler *handler,
+ 				 struct dentry *unused, struct inode *inode,
+-				 const char *name, void *buffer, size_t size)
++				 const char *name, void *buffer, size_t size,
++				 int flags)
+ {
+ 
+ 	return hfsplus_getxattr(inode, name, buffer, size,
+diff --git a/fs/jffs2/security.c b/fs/jffs2/security.c
+index c2332e30f218..e6f42fe435af 100644
+--- a/fs/jffs2/security.c
++++ b/fs/jffs2/security.c
+@@ -50,7 +50,8 @@ int jffs2_init_security(struct inode *inode, struct inode *dir,
+ /* ---- XATTR Handler for "security.*" ----------------- */
+ static int jffs2_security_getxattr(const struct xattr_handler *handler,
+ 				   struct dentry *unused, struct inode *inode,
+-				   const char *name, void *buffer, size_t size)
++				   const char *name, void *buffer, size_t size,
++				   int flags)
+ {
+ 	return do_jffs2_getxattr(inode, JFFS2_XPREFIX_SECURITY,
+ 				 name, buffer, size);
+diff --git a/fs/jffs2/xattr_trusted.c b/fs/jffs2/xattr_trusted.c
+index 5d6030826c52..9dccaae549f5 100644
+--- a/fs/jffs2/xattr_trusted.c
++++ b/fs/jffs2/xattr_trusted.c
+@@ -18,7 +18,8 @@
+ 
+ static int jffs2_trusted_getxattr(const struct xattr_handler *handler,
+ 				  struct dentry *unused, struct inode *inode,
+-				  const char *name, void *buffer, size_t size)
++				  const char *name, void *buffer, size_t size,
++				  int flags)
+ {
+ 	return do_jffs2_getxattr(inode, JFFS2_XPREFIX_TRUSTED,
+ 				 name, buffer, size);
+diff --git a/fs/jffs2/xattr_user.c b/fs/jffs2/xattr_user.c
+index 9d027b4abcf9..c0983a3e810b 100644
+--- a/fs/jffs2/xattr_user.c
++++ b/fs/jffs2/xattr_user.c
+@@ -18,7 +18,8 @@
+ 
+ static int jffs2_user_getxattr(const struct xattr_handler *handler,
+ 			       struct dentry *unused, struct inode *inode,
+-			       const char *name, void *buffer, size_t size)
++			       const char *name, void *buffer, size_t size,
++			       int flags)
+ {
+ 	return do_jffs2_getxattr(inode, JFFS2_XPREFIX_USER,
+ 				 name, buffer, size);
+diff --git a/fs/jfs/xattr.c b/fs/jfs/xattr.c
+index db41e7803163..5c79a35bf62f 100644
+--- a/fs/jfs/xattr.c
++++ b/fs/jfs/xattr.c
+@@ -925,7 +925,7 @@ static int __jfs_xattr_set(struct inode *inode, const char *name,
+ 
+ static int jfs_xattr_get(const struct xattr_handler *handler,
+ 			 struct dentry *unused, struct inode *inode,
+-			 const char *name, void *value, size_t size)
++			 const char *name, void *value, size_t size, int flags)
+ {
+ 	name = xattr_full_name(handler, name);
+ 	return __jfs_getxattr(inode, name, value, size);
+@@ -942,7 +942,8 @@ static int jfs_xattr_set(const struct xattr_handler *handler,
+ 
+ static int jfs_xattr_get_os2(const struct xattr_handler *handler,
+ 			     struct dentry *unused, struct inode *inode,
+-			     const char *name, void *value, size_t size)
++			     const char *name, void *value, size_t size,
++			     int flags)
+ {
+ 	if (is_known_namespace(name))
+ 		return -EOPNOTSUPP;
+diff --git a/fs/kernfs/inode.c b/fs/kernfs/inode.c
+index f3f3984cce80..ebd47d549a52 100644
+--- a/fs/kernfs/inode.c
++++ b/fs/kernfs/inode.c
+@@ -310,6 +310,7 @@ int kernfs_xattr_set(struct kernfs_node *kn, const char *name,
+ static int kernfs_vfs_xattr_get(const struct xattr_handler *handler,
+ 				struct dentry *unused, struct inode *inode,
+ 				const char *suffix, void *value, size_t size)
++				int flags)
+ {
+ 	const char *name = xattr_full_name(handler, suffix);
+ 	struct kernfs_node *kn = inode->i_private;
+diff --git a/fs/nfs/nfs4proc.c b/fs/nfs/nfs4proc.c
+index 39896afc6edf..5e6a58685cd0 100644
+--- a/fs/nfs/nfs4proc.c
++++ b/fs/nfs/nfs4proc.c
+@@ -7203,7 +7203,8 @@ static int nfs4_xattr_set_nfs4_acl(const struct xattr_handler *handler,
+ 
+ static int nfs4_xattr_get_nfs4_acl(const struct xattr_handler *handler,
+ 				   struct dentry *unused, struct inode *inode,
+-				   const char *key, void *buf, size_t buflen)
++				   const char *key, void *buf, size_t buflen,
++				   int flags)
+ {
+ 	return nfs4_proc_get_acl(inode, buf, buflen);
+ }
+@@ -7228,7 +7229,8 @@ static int nfs4_xattr_set_nfs4_label(const struct xattr_handler *handler,
+ 
+ static int nfs4_xattr_get_nfs4_label(const struct xattr_handler *handler,
+ 				     struct dentry *unused, struct inode *inode,
+-				     const char *key, void *buf, size_t buflen)
++				     const char *key, void *buf, size_t buflen,
++				     int flags)
+ {
+ 	if (security_ismaclabel(key))
+ 		return nfs4_get_security_label(inode, buf, buflen);
+diff --git a/fs/ocfs2/xattr.c b/fs/ocfs2/xattr.c
+index 385f3aaa2448..06e615642422 100644
+--- a/fs/ocfs2/xattr.c
++++ b/fs/ocfs2/xattr.c
+@@ -7245,7 +7245,8 @@ int ocfs2_init_security_and_acl(struct inode *dir,
+  */
+ static int ocfs2_xattr_security_get(const struct xattr_handler *handler,
+ 				    struct dentry *unused, struct inode *inode,
+-				    const char *name, void *buffer, size_t size)
++				    const char *name, void *buffer, size_t size,
++				    int flags)
+ {
+ 	return ocfs2_xattr_get(inode, OCFS2_XATTR_INDEX_SECURITY,
+ 			       name, buffer, size);
+@@ -7317,7 +7318,8 @@ const struct xattr_handler ocfs2_xattr_security_handler = {
+  */
+ static int ocfs2_xattr_trusted_get(const struct xattr_handler *handler,
+ 				   struct dentry *unused, struct inode *inode,
+-				   const char *name, void *buffer, size_t size)
++				   const char *name, void *buffer, size_t size,
++				   int flags)
+ {
+ 	return ocfs2_xattr_get(inode, OCFS2_XATTR_INDEX_TRUSTED,
+ 			       name, buffer, size);
+@@ -7343,7 +7345,8 @@ const struct xattr_handler ocfs2_xattr_trusted_handler = {
+  */
+ static int ocfs2_xattr_user_get(const struct xattr_handler *handler,
+ 				struct dentry *unused, struct inode *inode,
+-				const char *name, void *buffer, size_t size)
++				const char *name, void *buffer, size_t size,
++				int flags)
+ {
+ 	struct ocfs2_super *osb = OCFS2_SB(inode->i_sb);
+ 
+diff --git a/fs/orangefs/xattr.c b/fs/orangefs/xattr.c
+index bdc285aea360..ef4180bff7bb 100644
+--- a/fs/orangefs/xattr.c
++++ b/fs/orangefs/xattr.c
+@@ -541,7 +541,8 @@ static int orangefs_xattr_get_default(const struct xattr_handler *handler,
+ 				      struct inode *inode,
+ 				      const char *name,
+ 				      void *buffer,
+-				      size_t size)
++				      size_t size,
++				      int flags)
+ {
+ 	return orangefs_inode_getxattr(inode, name, buffer, size);
+ 
+diff --git a/fs/overlayfs/super.c b/fs/overlayfs/super.c
+index b368e2e102fa..57df03f3259f 100644
+--- a/fs/overlayfs/super.c
++++ b/fs/overlayfs/super.c
+@@ -854,7 +854,7 @@ static unsigned int ovl_split_lowerdirs(char *str)
+ static int __maybe_unused
+ ovl_posix_acl_xattr_get(const struct xattr_handler *handler,
+ 			struct dentry *dentry, struct inode *inode,
+-			const char *name, void *buffer, size_t size)
++			const char *name, void *buffer, size_t size, int flags)
+ {
+ 	return ovl_xattr_get(dentry, inode, handler->name, buffer, size);
+ }
+@@ -934,7 +934,8 @@ static int ovl_own_xattr_set(const struct xattr_handler *handler,
+ 
+ static int ovl_other_xattr_get(const struct xattr_handler *handler,
+ 			       struct dentry *dentry, struct inode *inode,
+-			       const char *name, void *buffer, size_t size)
++			       const char *name, void *buffer, size_t size,
++			       int flags)
+ {
+ 	return ovl_xattr_get(dentry, inode, name, buffer, size);
+ }
+diff --git a/fs/posix_acl.c b/fs/posix_acl.c
+index 84ad1c90d535..cd55621e570b 100644
+--- a/fs/posix_acl.c
++++ b/fs/posix_acl.c
+@@ -832,7 +832,7 @@ EXPORT_SYMBOL (posix_acl_to_xattr);
+ static int
+ posix_acl_xattr_get(const struct xattr_handler *handler,
+ 		    struct dentry *unused, struct inode *inode,
+-		    const char *name, void *value, size_t size)
++		    const char *name, void *value, size_t size, int flags)
+ {
+ 	struct posix_acl *acl;
+ 	int error;
+diff --git a/fs/reiserfs/xattr_security.c b/fs/reiserfs/xattr_security.c
+index 20be9a0e5870..eedfa07a4fd0 100644
+--- a/fs/reiserfs/xattr_security.c
++++ b/fs/reiserfs/xattr_security.c
+@@ -11,7 +11,8 @@
+ 
+ static int
+ security_get(const struct xattr_handler *handler, struct dentry *unused,
+-	     struct inode *inode, const char *name, void *buffer, size_t size)
++	     struct inode *inode, const char *name, void *buffer, size_t size,
++	     int flags)
+ {
+ 	if (IS_PRIVATE(inode))
+ 		return -EPERM;
+diff --git a/fs/reiserfs/xattr_trusted.c b/fs/reiserfs/xattr_trusted.c
+index 5ed48da3d02b..2d11d98605dd 100644
+--- a/fs/reiserfs/xattr_trusted.c
++++ b/fs/reiserfs/xattr_trusted.c
+@@ -10,7 +10,8 @@
+ 
+ static int
+ trusted_get(const struct xattr_handler *handler, struct dentry *unused,
+-	    struct inode *inode, const char *name, void *buffer, size_t size)
++	    struct inode *inode, const char *name, void *buffer, size_t size,
++	    int flags)
+ {
+ 	if (!capable(CAP_SYS_ADMIN) || IS_PRIVATE(inode))
+ 		return -EPERM;
+diff --git a/fs/reiserfs/xattr_user.c b/fs/reiserfs/xattr_user.c
+index a573ca45bacc..2a59d85c69c9 100644
+--- a/fs/reiserfs/xattr_user.c
++++ b/fs/reiserfs/xattr_user.c
+@@ -9,7 +9,8 @@
+ 
+ static int
+ user_get(const struct xattr_handler *handler, struct dentry *unused,
+-	 struct inode *inode, const char *name, void *buffer, size_t size)
++	 struct inode *inode, const char *name, void *buffer, size_t size,
++	 int flags)
+ {
+ 	if (!reiserfs_xattrs_user(inode->i_sb))
+ 		return -EOPNOTSUPP;
+diff --git a/fs/squashfs/xattr.c b/fs/squashfs/xattr.c
+index e1e3f3dd5a06..d8d58c990652 100644
+--- a/fs/squashfs/xattr.c
++++ b/fs/squashfs/xattr.c
+@@ -204,7 +204,7 @@ static int squashfs_xattr_handler_get(const struct xattr_handler *handler,
+ 				      struct dentry *unused,
+ 				      struct inode *inode,
+ 				      const char *name,
+-				      void *buffer, size_t size)
++				      void *buffer, size_t size, int flags)
+ {
+ 	return squashfs_xattr_get(inode, handler->flags, name,
+ 		buffer, size);
+diff --git a/fs/xattr.c b/fs/xattr.c
+index 90dd78f0eb27..2b94930ede59 100644
+--- a/fs/xattr.c
++++ b/fs/xattr.c
+@@ -270,7 +270,7 @@ vfs_getxattr_alloc(struct dentry *dentry, const char *name, char **xattr_value,
+ 	const struct xattr_handler *handler;
+ 	struct inode *inode = dentry->d_inode;
+ 	char *value = *xattr_value;
+-	int error;
++	int error, xflags;
+ 
+ 	error = xattr_permission(inode, name, MAY_READ);
  	if (error)
-diff --git a/fs/cramfs/inode.c b/fs/cramfs/inode.c
-index 9352487bd0fc..4d1d8b7761ed 100644
---- a/fs/cramfs/inode.c
-+++ b/fs/cramfs/inode.c
-@@ -597,6 +597,8 @@ static int cramfs_finalize_super(struct super_block *sb,
+@@ -281,7 +281,8 @@ vfs_getxattr_alloc(struct dentry *dentry, const char *name, char **xattr_value,
+ 		return PTR_ERR(handler);
+ 	if (!handler->get)
+ 		return -EOPNOTSUPP;
+-	error = handler->get(handler, dentry, inode, name, NULL, 0);
++	xflags = flags & GFP_NOFS ? XATTR_NOSECURITY : 0;
++	error = handler->get(handler, dentry, inode, name, NULL, 0, xflags);
+ 	if (error < 0)
+ 		return error;
  
- 	/* Set it all up.. */
- 	sb->s_flags |= SB_RDONLY;
-+	sb->s_time_min = 0;
-+	sb->s_time_max = 0;
- 	sb->s_op = &cramfs_ops;
- 	root = get_cramfs_inode(sb, cramfs_root, 0);
- 	if (IS_ERR(root))
-diff --git a/fs/efs/super.c b/fs/efs/super.c
-index 867fc24dee20..4a6ebff2af76 100644
---- a/fs/efs/super.c
-+++ b/fs/efs/super.c
-@@ -257,6 +257,8 @@ static int efs_fill_super(struct super_block *s, void *d, int silent)
- 	if (!sb)
- 		return -ENOMEM;
- 	s->s_fs_info = sb;
-+	s->s_time_min = 0;
-+	s->s_time_max = U32_MAX;
-  
- 	s->s_magic		= EFS_SUPER_MAGIC;
- 	if (!sb_set_blocksize(s, EFS_BLOCKSIZE)) {
-diff --git a/fs/ext2/super.c b/fs/ext2/super.c
-index 44eb6e7eb492..baa36c6fb71e 100644
---- a/fs/ext2/super.c
-+++ b/fs/ext2/super.c
-@@ -1002,6 +1002,8 @@ static int ext2_fill_super(struct super_block *sb, void *data, int silent)
- 
- 	sb->s_maxbytes = ext2_max_size(sb->s_blocksize_bits);
- 	sb->s_max_links = EXT2_LINK_MAX;
-+	sb->s_time_min = S32_MIN;
-+	sb->s_time_max = S32_MAX;
- 
- 	if (le32_to_cpu(es->s_rev_level) == EXT2_GOOD_OLD_REV) {
- 		sbi->s_inode_size = EXT2_GOOD_OLD_INODE_SIZE;
-diff --git a/fs/freevxfs/vxfs_super.c b/fs/freevxfs/vxfs_super.c
-index a89f68c3cbed..578a5062706e 100644
---- a/fs/freevxfs/vxfs_super.c
-+++ b/fs/freevxfs/vxfs_super.c
-@@ -229,6 +229,8 @@ static int vxfs_fill_super(struct super_block *sbp, void *dp, int silent)
- 
- 	sbp->s_op = &vxfs_super_ops;
- 	sbp->s_fs_info = infp;
-+	sbp->s_time_min = 0;
-+	sbp->s_time_max = U32_MAX;
- 
- 	if (!vxfs_try_sb_magic(sbp, silent, 1,
- 			(__force __fs32)cpu_to_le32(VXFS_SUPER_MAGIC))) {
-diff --git a/fs/jffs2/fs.c b/fs/jffs2/fs.c
-index 8a20ddd25f2d..d0b59d03a7a9 100644
---- a/fs/jffs2/fs.c
-+++ b/fs/jffs2/fs.c
-@@ -590,6 +590,9 @@ int jffs2_do_fill_super(struct super_block *sb, void *data, int silent)
- 	sb->s_blocksize = PAGE_SIZE;
- 	sb->s_blocksize_bits = PAGE_SHIFT;
- 	sb->s_magic = JFFS2_SUPER_MAGIC;
-+	sb->s_time_min = 0;
-+	sb->s_time_max = U32_MAX;
-+
- 	if (!sb_rdonly(sb))
- 		jffs2_start_garbage_collect_thread(c);
- 	return 0;
-diff --git a/fs/jfs/super.c b/fs/jfs/super.c
-index f4e10cb9f734..b2dc4d1f9dcc 100644
---- a/fs/jfs/super.c
-+++ b/fs/jfs/super.c
-@@ -503,6 +503,8 @@ static int jfs_fill_super(struct super_block *sb, void *data, int silent)
- 
- 	sb->s_fs_info = sbi;
- 	sb->s_max_links = JFS_LINK_MAX;
-+	sb->s_time_min = 0;
-+	sb->s_time_max = U32_MAX;
- 	sbi->sb = sb;
- 	sbi->uid = INVALID_UID;
- 	sbi->gid = INVALID_GID;
-diff --git a/fs/minix/inode.c b/fs/minix/inode.c
-index f96073f25432..7cb5fd38eb14 100644
---- a/fs/minix/inode.c
-+++ b/fs/minix/inode.c
-@@ -277,6 +277,8 @@ static int minix_fill_super(struct super_block *s, void *data, int silent)
- 
- 	/* set up enough so that it can read an inode */
- 	s->s_op = &minix_sops;
-+	s->s_time_min = 0;
-+	s->s_time_max = U32_MAX;
- 	root_inode = minix_iget(s, MINIX_ROOT_INO);
- 	if (IS_ERR(root_inode)) {
- 		ret = PTR_ERR(root_inode);
-diff --git a/fs/qnx4/inode.c b/fs/qnx4/inode.c
-index 922d083bbc7c..e8da1cde87b9 100644
---- a/fs/qnx4/inode.c
-+++ b/fs/qnx4/inode.c
-@@ -201,6 +201,8 @@ static int qnx4_fill_super(struct super_block *s, void *data, int silent)
- 	s->s_op = &qnx4_sops;
- 	s->s_magic = QNX4_SUPER_MAGIC;
- 	s->s_flags |= SB_RDONLY;	/* Yup, read-only yet */
-+	s->s_time_min = 0;
-+	s->s_time_max = U32_MAX;
- 
- 	/* Check the superblock signature. Since the qnx4 code is
- 	   dangerous, we should leave as quickly as possible
-diff --git a/fs/qnx6/inode.c b/fs/qnx6/inode.c
-index 0f8b0ff1ba43..345db56c98fd 100644
---- a/fs/qnx6/inode.c
-+++ b/fs/qnx6/inode.c
-@@ -429,6 +429,8 @@ static int qnx6_fill_super(struct super_block *s, void *data, int silent)
- 	s->s_op = &qnx6_sops;
- 	s->s_magic = QNX6_SUPER_MAGIC;
- 	s->s_flags |= SB_RDONLY;        /* Yup, read-only yet */
-+	s->s_time_min = 0;
-+	s->s_time_max = U32_MAX;
- 
- 	/* ease the later tree level calculations */
- 	sbi = QNX6_SB(s);
-diff --git a/fs/reiserfs/super.c b/fs/reiserfs/super.c
-index ab028ea0e561..d69b4ac0ae2f 100644
---- a/fs/reiserfs/super.c
-+++ b/fs/reiserfs/super.c
-@@ -1976,6 +1976,9 @@ static int reiserfs_fill_super(struct super_block *s, void *data, int silent)
- 		goto error_unlocked;
+@@ -292,7 +293,8 @@ vfs_getxattr_alloc(struct dentry *dentry, const char *name, char **xattr_value,
+ 		memset(value, 0, error + 1);
  	}
  
-+	s->s_time_min = 0;
-+	s->s_time_max = U32_MAX;
-+
- 	rs = SB_DISK_SUPER_BLOCK(s);
- 	/*
- 	 * Let's do basic sanity check to verify that underlying device is not
-diff --git a/fs/romfs/super.c b/fs/romfs/super.c
-index 7d580f7c3f1d..a42c0e3079dc 100644
---- a/fs/romfs/super.c
-+++ b/fs/romfs/super.c
-@@ -478,6 +478,8 @@ static int romfs_fill_super(struct super_block *sb, void *data, int silent)
- 	sb->s_maxbytes = 0xFFFFFFFF;
- 	sb->s_magic = ROMFS_MAGIC;
- 	sb->s_flags |= SB_RDONLY | SB_NOATIME;
-+	sb->s_time_min = 0;
-+	sb->s_time_max = 0;
- 	sb->s_op = &romfs_super_ops;
+-	error = handler->get(handler, dentry, inode, name, value, error);
++	error = handler->get(handler, dentry, inode, name, value, error,
++			     xflags);
+ 	*xattr_value = value;
+ 	return error;
+ }
+@@ -308,7 +310,8 @@ __vfs_getxattr(struct dentry *dentry, struct inode *inode, const char *name,
+ 		return PTR_ERR(handler);
+ 	if (!handler->get)
+ 		return -EOPNOTSUPP;
+-	return handler->get(handler, dentry, inode, name, value, size);
++	return handler->get(handler, dentry, inode, name, value, size,
++			    XATTR_NOSECURITY);
+ }
+ EXPORT_SYMBOL(__vfs_getxattr);
  
- #ifdef CONFIG_ROMFS_ON_MTD
-diff --git a/fs/squashfs/super.c b/fs/squashfs/super.c
-index effa638d6d85..a9e9837617a9 100644
---- a/fs/squashfs/super.c
-+++ b/fs/squashfs/super.c
-@@ -183,6 +183,8 @@ static int squashfs_fill_super(struct super_block *sb, void *data, int silent)
- 		(u64) le64_to_cpu(sblk->id_table_start));
+@@ -317,6 +320,7 @@ vfs_getxattr(struct dentry *dentry, const char *name, void *value, size_t size)
+ {
+ 	struct inode *inode = dentry->d_inode;
+ 	int error;
++	const struct xattr_handler *handler;
  
- 	sb->s_maxbytes = MAX_LFS_FILESIZE;
-+	sb->s_time_min = 0;
-+	sb->s_time_max = U32_MAX;
- 	sb->s_flags |= SB_RDONLY;
- 	sb->s_op = &squashfs_super_ops;
+ 	error = xattr_permission(inode, name, MAY_READ);
+ 	if (error)
+@@ -339,7 +343,12 @@ vfs_getxattr(struct dentry *dentry, const char *name, void *value, size_t size)
+ 		return ret;
+ 	}
+ nolsm:
+-	return __vfs_getxattr(dentry, inode, name, value, size);
++	handler = xattr_resolve_name(inode, &name);
++	if (IS_ERR(handler))
++		return PTR_ERR(handler);
++	if (!handler->get)
++		return -EOPNOTSUPP;
++	return handler->get(handler, dentry, inode, name, value, size, 0);
+ }
+ EXPORT_SYMBOL_GPL(vfs_getxattr);
  
-diff --git a/fs/ufs/super.c b/fs/ufs/super.c
-index 4ed0dca52ec8..1da0be667409 100644
---- a/fs/ufs/super.c
-+++ b/fs/ufs/super.c
-@@ -843,6 +843,10 @@ static int ufs_fill_super(struct super_block *sb, void *data, int silent)
+diff --git a/fs/xfs/xfs_xattr.c b/fs/xfs/xfs_xattr.c
+index 3123b5aaad2a..cafc99c48e20 100644
+--- a/fs/xfs/xfs_xattr.c
++++ b/fs/xfs/xfs_xattr.c
+@@ -18,7 +18,8 @@
  
- 	sb->s_maxbytes = MAX_LFS_FILESIZE;
+ static int
+ xfs_xattr_get(const struct xattr_handler *handler, struct dentry *unused,
+-		struct inode *inode, const char *name, void *value, size_t size)
++		struct inode *inode, const char *name, void *value, size_t size,
++		int flags)
+ {
+ 	int xflags = handler->flags;
+ 	struct xfs_inode *ip = XFS_I(inode);
+diff --git a/include/linux/xattr.h b/include/linux/xattr.h
+index 6dad031be3c2..b272b6841faa 100644
+--- a/include/linux/xattr.h
++++ b/include/linux/xattr.h
+@@ -30,10 +30,10 @@ struct xattr_handler {
+ 	const char *prefix;
+ 	int flags;      /* fs private flags */
+ 	bool (*list)(struct dentry *dentry);
+-	int (*get)(const struct xattr_handler *, struct dentry *dentry,
++	int (*get)(const struct xattr_handler *handler, struct dentry *dentry,
+ 		   struct inode *inode, const char *name, void *buffer,
+-		   size_t size);
+-	int (*set)(const struct xattr_handler *, struct dentry *dentry,
++		   size_t size, int flags);
++	int (*set)(const struct xattr_handler *handler, struct dentry *dentry,
+ 		   struct inode *inode, const char *name, const void *buffer,
+ 		   size_t size, int flags);
+ };
+diff --git a/include/uapi/linux/xattr.h b/include/uapi/linux/xattr.h
+index c1395b5bd432..1216d777d210 100644
+--- a/include/uapi/linux/xattr.h
++++ b/include/uapi/linux/xattr.h
+@@ -17,8 +17,9 @@
+ #if __UAPI_DEF_XATTR
+ #define __USE_KERNEL_XATTR_DEFS
  
-+	sb->s_time_gran = NSEC_PER_SEC;
-+	sb->s_time_min = S32_MIN;
-+	sb->s_time_max = S32_MAX;
-+
- 	switch (sbi->s_mount_opt & UFS_MOUNT_UFSTYPE) {
- 	case UFS_MOUNT_UFSTYPE_44BSD:
- 		UFSD("ufstype=44bsd\n");
-@@ -861,6 +865,9 @@ static int ufs_fill_super(struct super_block *sb, void *data, int silent)
- 		uspi->s_fshift = 9;
- 		uspi->s_sbsize = super_block_size = 1536;
- 		uspi->s_sbbase =  0;
-+		sb->s_time_gran = 1;
-+		sb->s_time_min = S64_MIN;
-+		sb->s_time_max = S64_MAX;
- 		flags |= UFS_TYPE_UFS2 | UFS_DE_44BSD | UFS_UID_44BSD | UFS_ST_44BSD | UFS_CG_44BSD;
- 		break;
- 		
-diff --git a/fs/xfs/xfs_super.c b/fs/xfs/xfs_super.c
-index a14d11d78bd8..1a0daf46bae8 100644
---- a/fs/xfs/xfs_super.c
-+++ b/fs/xfs/xfs_super.c
-@@ -1685,6 +1685,8 @@ xfs_fs_fill_super(
- 	sb->s_maxbytes = xfs_max_file_offset(sb->s_blocksize_bits);
- 	sb->s_max_links = XFS_MAXLINK;
- 	sb->s_time_gran = 1;
-+	sb->s_time_min = S32_MIN;
-+	sb->s_time_max = S32_MAX;
- 	set_posix_acl_flag(sb);
+-#define XATTR_CREATE	0x1	/* set value, fail if attr already exists */
+-#define XATTR_REPLACE	0x2	/* set value, fail if attr does not exist */
++#define XATTR_CREATE	 0x1	/* set value, fail if attr already exists */
++#define XATTR_REPLACE	 0x2	/* set value, fail if attr does not exist */
++#define XATTR_NOSECURITY 0x4	/* get value, do not involve security check */
+ #endif
  
- 	/* version 5 superblocks support inode version counters. */
+ /* Namespaces */
+diff --git a/mm/shmem.c b/mm/shmem.c
+index 626d8c74b973..34d3818b4424 100644
+--- a/mm/shmem.c
++++ b/mm/shmem.c
+@@ -3206,7 +3206,8 @@ static int shmem_initxattrs(struct inode *inode,
+ 
+ static int shmem_xattr_handler_get(const struct xattr_handler *handler,
+ 				   struct dentry *unused, struct inode *inode,
+-				   const char *name, void *buffer, size_t size)
++				   const char *name, void *buffer, size_t size,
++				   int flags)
+ {
+ 	struct shmem_inode_info *info = SHMEM_I(inode);
+ 
+diff --git a/net/socket.c b/net/socket.c
+index 6a9ab7a8b1d2..6b0fea92dd02 100644
+--- a/net/socket.c
++++ b/net/socket.c
+@@ -300,7 +300,8 @@ static const struct dentry_operations sockfs_dentry_operations = {
+ 
+ static int sockfs_xattr_get(const struct xattr_handler *handler,
+ 			    struct dentry *dentry, struct inode *inode,
+-			    const char *suffix, void *value, size_t size)
++			    const char *suffix, void *value, size_t size,
++			    int flags)
+ {
+ 	if (value) {
+ 		if (dentry->d_name.len + 1 > size)
 -- 
-2.17.1
+2.22.0.770.g0f2c4a37fd-goog
+
+
+______________________________________________________
+Linux MTD discussion mailing list
+http://lists.infradead.org/mailman/listinfo/linux-mtd/
