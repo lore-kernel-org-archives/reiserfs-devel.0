@@ -1,185 +1,98 @@
-From: Mark Salyzyn <salyzyn@android.com>
-Subject: [PATCH v13 0/5] overlayfs override_creds=off
-Date: Wed, 31 Jul 2019 09:58:01 -0700
-Message-ID: <20190731165803.4755-7-salyzyn@android.com>
-References: <20190731165803.4755-1-salyzyn@android.com>
+From: syzbot <syzbot+faba5b2419543cc95f0d@syzkaller.appspotmail.com>
+Subject: divide error in read_super_block
+Date: Mon, 12 Aug 2019 05:29:06 -0700
+Message-ID: <000000000000819227058feaabe9@google.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Return-path: <cluster-devel-bounces@redhat.com>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=android.com; s=20161025;
-	h=from:to:cc:subject:date:message-id:in-reply-to:references
-	:mime-version:content-transfer-encoding;
-	bh=oqrLFoRmuV3hwqUNXQJ2VzDrgthNlMLKsczJURhiFqM=;
-	b=lbzZFspYQPlTjS9mFxnpUUD9r+UIEx5grL+av4OuQPP9/T+2OU9ueuNWZmmx0kL25k
-	h5cFZG3+lOBZ6FM+mRmt6orsCAbGiHe3PtPTc24ZDvFmF7WGaRiItz/C5sh28BlCEsev
-	GzxXAOZZ+f5AZOt3ZpP2rjRtT4keWRuY8WPfybmuCd7s1ViVRKOuvo5jOslEHHZAXiE3
-	StK/2PPcdxNitdPTPhhnXcvWDqz/ZBNn51yPMrmV0TzR+zsshmmqRgfYcIGGfn0BhJEo
-	LPEOz1Kf/FYmGXc4HHzy/9Haiw4T1QgApXZXk8B2sYhj8mHRvQd5TF4do0geCp4hTfi+
-	8L5g==
-In-Reply-To: <20190731165803.4755-1-salyzyn@android.com>
-List-Id: <reiserfs-devel.vger.kernel.org>
-List-Unsubscribe: <https://www.redhat.com/mailman/options/cluster-devel>,
-	<mailto:cluster-devel-request@redhat.com?subject=unsubscribe>
-List-Archive: <https://www.redhat.com/archives/cluster-devel>
-List-Post: <mailto:cluster-devel@redhat.com>
-List-Help: <mailto:cluster-devel-request@redhat.com?subject=help>
-List-Subscribe: <https://www.redhat.com/mailman/listinfo/cluster-devel>,
-	<mailto:cluster-devel-request@redhat.com?subject=subscribe>
-Sender: cluster-devel-bounces@redhat.com
-Errors-To: cluster-devel-bounces@redhat.com
-Content-Type: text/plain; charset="us-ascii"
-To: linux-kernel@vger.kernel.org
-Cc: Latchesar Ionkov <lucho@ionkov.net>, Dave Kleikamp <shaggy@kernel.org>, jfs-discussion@lists.sourceforge.net, Randy Dunlap <rdunlap@infradead.org>, linux-doc@vger.kernel.org, Martin Brandenburg <martin@omnibond.com>, samba-technical@lists.samba.org, Dominique Martinet <asmadeus@codewreck.org>, Amir Goldstein <amir73il@gmail.com>, David Howells <dhowells@redhat.com>, Chris Mason <clm@fb.com>, "David S . Miller" <davem@davemloft.net>, Andreas Dilger <adilger.kernel@dilger.ca>, ocfs2-devel@oss.oracle.com, netdev@vger.kernel.org, Tyler Hicks <tyhicks@canonical.com>, linux-afs@lists.infradead.org, Mike Marshall <hubcap@omnibond.com>, linux-xfs@vger.kernel.org, Sage Weil <sage@redhat.com>, Jonathan Corbet <corbet@lwn.net>, Richard Weinberger <richard@nod.at>, Mark Fasheh <mark@fasheh.com>, devel@lists.orangefs.org, Hugh Dickins <hughd@google.com>, linux-security-module@vger
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+List-ID: <reiserfs-devel.vger.kernel.org>
+Content-Type: text/plain; charset="us-ascii"; format="flowed"; delsp="yes"
+Content-Transfer-Encoding: 7bit
+To: linux-kernel@vger.kernel.org, reiserfs-devel@vger.kernel.org, syzkaller-bugs@googlegroups.com, viro@zeniv.linux.org.uk
 
-Patch series:
+Hello,
 
-overlayfs: check CAP_DAC_READ_SEARCH before issuing exportfs_decode_fh
-Add flags option to get xattr method paired to __vfs_getxattr
-overlayfs: handle XATTR_NOSECURITY flag for get xattr method
-overlayfs: internal getxattr operations without sepolicy checking
-overlayfs: override_creds=off option bypass creator_cred
+syzbot found the following crash on:
 
-The first four patches address fundamental security issues that should
-be solved regardless of the override_creds=off feature.
-on them).
+HEAD commit:    d45331b0 Linux 5.3-rc4
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=17f9879a600000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=3d7eaed8496da4da
+dashboard link: https://syzkaller.appspot.com/bug?extid=faba5b2419543cc95f0d
+compiler:       clang version 9.0.0 (/home/glider/llvm/clang  
+80fee25776c2fb61e74c1ecb1a523375c2500b69)
 
-The fifth adds the feature depends on these other fixes.
+Unfortunately, I don't have any reproducer for this crash yet.
 
-By default, all access to the upper, lower and work directories is the
-recorded mounter's MAC and DAC credentials.  The incoming accesses are
-checked against the caller's credentials.
+IMPORTANT: if you fix the bug, please add the following tag to the commit:
+Reported-by: syzbot+faba5b2419543cc95f0d@syzkaller.appspotmail.com
 
-If the principles of least privilege are applied for sepolicy, the
-mounter's credentials might not overlap the credentials of the caller's
-when accessing the overlayfs filesystem.  For example, a file that a
-lower DAC privileged caller can execute, is MAC denied to the
-generally higher DAC privileged mounter, to prevent an attack vector.
+divide error: 0000 [#1] PREEMPT SMP KASAN
+CPU: 0 PID: 21464 Comm: syz-executor.0 Not tainted 5.3.0-rc4 #73
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
+Google 01/01/2011
+RIP: 0010:read_super_block+0x57/0x7f0 fs/reiserfs/super.c:1611
+Code: 89 d8 48 c1 e8 03 48 89 45 c0 42 80 3c 30 00 74 08 48 89 df e8 0a 29  
+c5 ff 48 89 5d c8 49 8b 5f 18 4c 89 65 b8 4c 89 e0 31 d2 <48> f7 f3 49 89  
+c6 4d 8d a7 28 01 00 00 4d 89 e5 49 c1 ed 03 48 b8
+RSP: 0018:ffff88808e2dfa80 EFLAGS: 00010246
+RAX: 0000000000002000 RBX: 0000000000000000 RCX: 0000000000040000
+RDX: 0000000000000000 RSI: 0000000000003ab0 RDI: 0000000000003ab1
+RBP: ffff88808e2dfad0 R08: ffffffff81e7119b R09: ffffed1011c5bf50
+R10: 0000000000000000 R11: 0000000000000000 R12: 0000000000002000
+R13: dffffc0000000000 R14: dffffc0000000000 R15: ffff88807a5a0a80
+FS:  00007f55a9f77700(0000) GS:ffff8880aea00000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 0000000000758080 CR3: 00000000a4e4a000 CR4: 00000000001406f0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000600
+Call Trace:
+  reiserfs_fill_super+0x7b0/0x30d0 fs/reiserfs/super.c:1966
+  mount_bdev+0x27c/0x390 fs/super.c:1283
+  get_super_block+0x34/0x40 fs/reiserfs/super.c:2599
+  legacy_get_tree+0xf9/0x1a0 fs/fs_context.c:661
+  vfs_get_tree+0x8f/0x380 fs/super.c:1413
+  do_new_mount fs/namespace.c:2791 [inline]
+  do_mount+0x169d/0x2490 fs/namespace.c:3111
+  ksys_mount+0xcc/0x100 fs/namespace.c:3320
+  __do_sys_mount fs/namespace.c:3334 [inline]
+  __se_sys_mount fs/namespace.c:3331 [inline]
+  __x64_sys_mount+0xbf/0xd0 fs/namespace.c:3331
+  do_syscall_64+0xfe/0x140 arch/x86/entry/common.c:296
+  entry_SYSCALL_64_after_hwframe+0x49/0xbe
+RIP: 0033:0x459829
+Code: fd b7 fb ff c3 66 2e 0f 1f 84 00 00 00 00 00 66 90 48 89 f8 48 89 f7  
+48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff  
+ff 0f 83 cb b7 fb ff c3 66 2e 0f 1f 84 00 00 00 00
+RSP: 002b:00007f55a9f76c78 EFLAGS: 00000246 ORIG_RAX: 00000000000000a5
+RAX: ffffffffffffffda RBX: 0000000000000005 RCX: 0000000000459829
+RDX: 0000000020000080 RSI: 0000000020000100 RDI: 0000000020000040
+RBP: 000000000075bf20 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 00007f55a9f776d4
+R13: 00000000004c5e57 R14: 00000000004da858 R15: 00000000ffffffff
+Modules linked in:
+---[ end trace b618cfac8e6036db ]---
+RIP: 0010:read_super_block+0x57/0x7f0 fs/reiserfs/super.c:1611
+Code: 89 d8 48 c1 e8 03 48 89 45 c0 42 80 3c 30 00 74 08 48 89 df e8 0a 29  
+c5 ff 48 89 5d c8 49 8b 5f 18 4c 89 65 b8 4c 89 e0 31 d2 <48> f7 f3 49 89  
+c6 4d 8d a7 28 01 00 00 4d 89 e5 49 c1 ed 03 48 b8
+RSP: 0018:ffff88808e2dfa80 EFLAGS: 00010246
+RAX: 0000000000002000 RBX: 0000000000000000 RCX: 0000000000040000
+RDX: 0000000000000000 RSI: 0000000000003ab0 RDI: 0000000000003ab1
+RBP: ffff88808e2dfad0 R08: ffffffff81e7119b R09: ffffed1011c5bf50
+R10: 0000000000000000 R11: 0000000000000000 R12: 0000000000002000
+R13: dffffc0000000000 R14: dffffc0000000000 R15: ffff88807a5a0a80
+FS:  00007f55a9f77700(0000) GS:ffff8880aea00000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00007ffcdcc16f3c CR3: 00000000a4e4a000 CR4: 00000000001406f0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000600
 
-We add the option to turn off override_creds in the mount options; all
-subsequent operations after mount on the filesystem will be only the
-caller's credentials.  The module boolean parameter and mount option
-override_creds is also added as a presence check for this "feature",
-existence of /sys/module/overlay/parameters/overlay_creds
 
-Signed-off-by: Mark Salyzyn <salyzyn@android.com>
-Cc: Miklos Szeredi <miklos@szeredi.hu>
-Cc: Jonathan Corbet <corbet@lwn.net>
-Cc: Vivek Goyal <vgoyal@redhat.com>
-Cc: Eric W. Biederman <ebiederm@xmission.com>
-Cc: Amir Goldstein <amir73il@gmail.com>
-Cc: Randy Dunlap <rdunlap@infradead.org>
-Cc: Stephen Smalley <sds@tycho.nsa.gov>
-Cc: linux-unionfs@vger.kernel.org
-Cc: linux-doc@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org
-Cc: Eric Van Hensbergen <ericvh@gmail.com>
-Cc: Latchesar Ionkov <lucho@ionkov.net>
-Cc: Dominique Martinet <asmadeus@codewreck.org>
-Cc: David Howells <dhowells@redhat.com>
-Cc: Chris Mason <clm@fb.com>
-Cc: Josef Bacik <josef@toxicpanda.com>
-Cc: David Sterba <dsterba@suse.com>
-Cc: Jeff Layton <jlayton@kernel.org>
-Cc: Sage Weil <sage@redhat.com>
-Cc: Ilya Dryomov <idryomov@gmail.com>
-Cc: Steve French <sfrench@samba.org>
-Cc: Tyler Hicks <tyhicks@canonical.com>
-Cc: Jan Kara <jack@suse.com>
-Cc: Theodore Ts'o <tytso@mit.edu>
-Cc: Andreas Dilger <adilger.kernel@dilger.ca>
-Cc: Jaegeuk Kim <jaegeuk@kernel.org>
-Cc: Chao Yu <yuchao0@huawei.com>
-Cc: Bob Peterson <rpeterso@redhat.com>
-Cc: Andreas Gruenbacher <agruenba@redhat.com>
-Cc: David Woodhouse <dwmw2@infradead.org>
-Cc: Richard Weinberger <richard@nod.at>
-Cc: Dave Kleikamp <shaggy@kernel.org>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Tejun Heo <tj@kernel.org>
-Cc: Trond Myklebust <trond.myklebust@hammerspace.com>
-Cc: Anna Schumaker <anna.schumaker@netapp.com>
-Cc: Mark Fasheh <mark@fasheh.com>
-Cc: Joel Becker <jlbec@evilplan.org>
-Cc: Joseph Qi <joseph.qi@linux.alibaba.com>
-Cc: Mike Marshall <hubcap@omnibond.com>
-Cc: Martin Brandenburg <martin@omnibond.com>
-Cc: Alexander Viro <viro@zeniv.linux.org.uk>
-Cc: Phillip Lougher <phillip@squashfs.org.uk>
-Cc: Darrick J. Wong <darrick.wong@oracle.com>
-Cc: linux-xfs@vger.kernel.org
-Cc: Hugh Dickins <hughd@google.com>
-Cc: David S. Miller <davem@davemloft.net>
-Cc: Andrew Morton <akpm@linux-foundation.org>
-Cc: Mathieu Malaterre <malat@debian.org>
-Cc: Ernesto A. Fernandez <ernesto.mnd.fernandez@gmail.com>
-Cc: Vyacheslav Dubeyko <slava@dubeyko.com>
-Cc: v9fs-developer@lists.sourceforge.net
-Cc: linux-afs@lists.infradead.org
-Cc: linux-btrfs@vger.kernel.org
-Cc: ceph-devel@vger.kernel.org
-Cc: linux-cifs@vger.kernel.org
-Cc: samba-technical@lists.samba.org
-Cc: ecryptfs@vger.kernel.org
-Cc: linux-ext4@vger.kernel.org
-Cc: linux-f2fs-devel@lists.sourceforge.net
-Cc: linux-fsdevel@vger.kernel.org
-Cc: cluster-devel@redhat.com
-Cc: linux-mtd@lists.infradead.org
-Cc: jfs-discussion@lists.sourceforge.net
-Cc: linux-nfs@vger.kernel.org
-Cc: ocfs2-devel@oss.oracle.com
-Cc: devel@lists.orangefs.org
-Cc: reiserfs-devel@vger.kernel.org
-Cc: linux-mm@kvack.org
-Cc: netdev@vger.kernel.org
-Cc: linux-security-module@vger.kernel.org
-Cc: stable@vger.kernel.org # 4.4, 4.9, 4.14 & 4.19
 ---
-v13:
-- add flags argument to __vfs_getxattr
-- drop GFP_NOFS side-effect
+This bug is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-v12:
-- Restore squished out patch 2 and 3 in the series,
-  then change algorithm to add flags argument.
-  Per-thread flag is a large security surface.
-
-v11:
-- Squish out v10 introduced patch 2 and 3 in the series,
-  then and use per-thread flag instead for nesting.
-- Switch name to ovl_do_vds_getxattr for __vds_getxattr wrapper.
-- Add sb argument to ovl_revert_creds to match future work.
-
-v10:
-- Return NULL on CAP_DAC_READ_SEARCH
-- Add __get xattr method to solve sepolicy logging issue
-- Drop unnecessary sys_admin sepolicy checking for administrative
-  driver internal xattr functions.
-
-v6:
-- Drop CONFIG_OVERLAY_FS_OVERRIDE_CREDS.
-- Do better with the documentation, drop rationalizations.
-- pr_warn message adjusted to report consequences.
-
-v5:
-- beefed up the caveats in the Documentation
-- Is dependent on
-  "overlayfs: check CAP_DAC_READ_SEARCH before issuing exportfs_decode_fh"
-  "overlayfs: check CAP_MKNOD before issuing vfs_whiteout"
-- Added prwarn when override_creds=off
-
-v4:
-- spelling and grammar errors in text
-
-v3:
-- Change name from caller_credentials / creator_credentials to the
-  boolean override_creds.
-- Changed from creator to mounter credentials.
-- Updated and fortified the documentation.
-- Added CONFIG_OVERLAY_FS_OVERRIDE_CREDS
-
-v2:
-- Forward port changed attr to stat, resulting in a build error.
-- altered commit message.
-
+syzbot will keep track of this bug report. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
