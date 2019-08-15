@@ -1,89 +1,105 @@
-From: James Morris <jmorris@namei.org>
-Subject: Re: [PATCH] Add flags option to get xattr method paired to
- __vfs_getxattr
-Date: Fri, 16 Aug 2019 05:20:36 +1000 (AEST)
-Message-ID: <alpine.LRH.2.21.1908160515130.12729@namei.org>
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Subject: Re: [PATCH] Add flags option to get xattr method paired
+ to __vfs_getxattr
+Date: Thu, 15 Aug 2019 22:43:22 +0200
+Message-ID: <20190815204322.GB6782@kroah.com>
 References: <20190812193320.200472-1-salyzyn@android.com>
  <20190813084801.GA972@kroah.com>
+ <alpine.LRH.2.21.1908160515130.12729@namei.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-mtd-bounces+gldm-linux-mtd-36=gmane.org@lists.infradead.org>
+Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=lists.infradead.org; s=bombadil.20170209; h=Sender:
-	Content-Transfer-Encoding:Content-Type:Cc:List-Subscribe:List-Help:List-Post:
-	List-Archive:List-Unsubscribe:List-Id:MIME-Version:References:Message-ID:
-	In-Reply-To:Subject:To:From:Date:Reply-To:Content-ID:Content-Description:
-	Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:
-	List-Owner; bh=JPmJ6lZXozCDimPloZte0YPOUwvvzfFvlwJQ3tiRSME=; b=ahq/wGZCygfoPW
-	oMBprImeij3whRigjCjl2uS2AradutajrnplXNBhF3YRlNIaxtYlzG8gyruqqMWt0heCLAWbxeYZK
-	zSPlsP3qNIqBrqoPKx5Z0sXKMmqKoNF+afAzqMaXwo2xGklIvVoFdRzJmllXvclmgczLo368W+VJz
-	j4TFEzWAx2Th1FTXBxvZ36KLa1IuH9ikQu3ZP4GQGuiq8rWuuIH2nawBkcZf0WrYcpb69ZCy/jahC
-	S9ToGGpG9uGM9dFdlz6xPheg3yoIHiWUwjxgZSYqBn854S8PioGAt7vCpQHJ58EBFmMLQCSms6zgZ
-	d/bgrkbhPGjgjqlwbygA==;
-In-Reply-To: <20190813084801.GA972@kroah.com>
+ d=sourceforge.net; s=x; h=In-Reply-To:Content-Type:MIME-Version:References:
+ Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:
+ Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+ Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+ List-Subscribe:List-Post:List-Owner:List-Archive;
+ bh=CwQ/0EejkrmNJB3s/c5x0QrEieuuLi6e5/NeZ6sCt6E=; b=Sg9OLSrN7lGuu2SNDeytZwpCVO
+ gb98Lae6ysK2dlYgueaDNDuHLz0osPJ72ncQbtwF45GY044tflKDIuwkNQx9Hwtlmuy1fD1VWDnrT
+ nCP6EDbIVlYqfc2pCjjEaz4906nC5BOA/3WC+B3vFnSamGvQJJzJjRstJ0RUBMOXNZso=;
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
+ ;
+ h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To
+ :From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+ Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+ :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+ List-Post:List-Owner:List-Archive;
+ bh=CwQ/0EejkrmNJB3s/c5x0QrEieuuLi6e5/NeZ6sCt6E=; b=IAqYmaNBIsLazj8FsB59MTzmvq
+ YXSrhllSdbdyzMKMwJ/5NuxV5B17daQCYVfS34lCONb7zlxAqu5soCSCtILN3iHQ00vsdehOUkcYb
+ za9FWbXoPVsPsAIqaqfUmsktCLxPUpKEPLqsM0lv4hlWJCmSqi2ZN8zj5Rl6iY+yl/SI=;
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+ s=default; t=1565901805;
+ bh=4MUbuhxyjB/Z/I0+KEuHYyPv1fvr/qroc0kojX6LQUI=;
+ h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+ b=rmevilO9FFuTpF1TkeHr9rMjq0tx8UWAlZu1cW/zsMuDRMCXNIqbtamv/Bh9PWjxr
+ uMcyMcUqmrlEz/U6ipnvwnFJksubQpe8uhV+mxBP/PuZfI7m0SnpKLNF/GD9rIRrXm
+ 9i2PofIAyA1t7LZj0WwS4y+NrRc1E+LScCfI1k7c=
+Content-Disposition: inline
+In-Reply-To: <alpine.LRH.2.21.1908160515130.12729@namei.org>
 List-Id: <reiserfs-devel.vger.kernel.org>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-mtd>,
- <mailto:linux-mtd-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-mtd/>
-List-Post: <mailto:linux-mtd@lists.infradead.org>
-List-Help: <mailto:linux-mtd-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-mtd>,
- <mailto:linux-mtd-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-mtd" <linux-mtd-bounces@lists.infradead.org>
-Errors-To: linux-mtd-bounces+gldm-linux-mtd-36=gmane.org@lists.infradead.org
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Latchesar Ionkov <lucho@ionkov.net>, Dave Kleikamp <shaggy@kernel.org>, jfs-discussion@lists.sourceforge.net, linux-integrity@vger.kernel.org, Martin Brandenburg <martin@omnibond.com>, samba-technical@lists.samba.org, Dominique Martinet <asmadeus@codewreck.org>, Chao Yu <yuchao0@huawei.com>, Mimi Zohar <zohar@linux.ibm.com>, linux-unionfs@vger.kernel.org, David Howells <dhowells@redhat.com>, Chris Mason <clm@fb.com>, "David S. Miller" <davem@davemloft.net>, Andreas Dilger <adilger.kernel@dilger.ca>, Eric Paris <eparis@parisplace.org>, netdev@vger.kernel.org, Tyler Hicks <tyhicks@canonical.com>, linux-afs@lists.infradead.org, Mike Marshall <hubcap@omnibond.com>, linux-xfs@vger.kernel.org, Andreas Gruenbacher <agruenba@redhat.com>, Sage Weil <sage@redhat.com>, Miklos Szeredi <miklos@szeredi.hu>, Richard Weinberger <richard@nod.at>, Mark Fasheh <mark@fasheh.com>, Hugh
+List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>, 
+ <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
+List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
+List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
+List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
+List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
+ <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
+Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
+To: James Morris <jmorris@namei.org>
+Cc: Latchesar Ionkov <lucho@ionkov.net>, Dave Kleikamp <shaggy@kernel.org>, jfs-discussion@lists.sourceforge.net, linux-integrity@vger.kernel.org, Martin Brandenburg <martin@omnibond.com>, samba-technical@lists.samba.org, Dominique Martinet <asmadeus@codewreck.org>, Mimi Zohar <zohar@linux.ibm.com>, linux-unionfs@vger.kernel.org, David Howells <dhowells@redhat.com>, Chris Mason <clm@fb.com>, "David S. Miller" <davem@davemloft.net>, Andreas Dilger <adilger.kernel@dilger.ca>, Eric Paris <eparis@parisplace.org>, netdev@vger.kernel.org, Tyler Hicks <tyhicks@canonical.com>, linux-afs@lists.infradead.org, Mike Marshall <hubcap@omnibond.com>, linux-xfs@vger.kernel.org, Andreas Gruenbacher <agruenba@redhat.com>, Sage Weil <sage@redhat.com>, Miklos Szeredi <miklos@szeredi.hu>, Richard Weinberger <richard@nod.at>, Mark Fasheh <mark@fasheh.com>, Hugh Dickins <hughd@google.com>, Ernesto
 
-On Tue, 13 Aug 2019, Greg Kroah-Hartman wrote:
-
-> On Mon, Aug 12, 2019 at 12:32:49PM -0700, Mark Salyzyn wrote:
-> > --- a/include/linux/xattr.h
-> > +++ b/include/linux/xattr.h
-> > @@ -30,10 +30,10 @@ struct xattr_handler {
-> >  	const char *prefix;
-> >  	int flags;      /* fs private flags */
-> >  	bool (*list)(struct dentry *dentry);
-> > -	int (*get)(const struct xattr_handler *, struct dentry *dentry,
-> > +	int (*get)(const struct xattr_handler *handler, struct dentry *dentry,
-> >  		   struct inode *inode, const char *name, void *buffer,
-> > -		   size_t size);
-> > -	int (*set)(const struct xattr_handler *, struct dentry *dentry,
-> > +		   size_t size, int flags);
-> > +	int (*set)(const struct xattr_handler *handler, struct dentry *dentry,
-> >  		   struct inode *inode, const char *name, const void *buffer,
-> >  		   size_t size, int flags);
+On Fri, Aug 16, 2019 at 05:20:36AM +1000, James Morris wrote:
+> On Tue, 13 Aug 2019, Greg Kroah-Hartman wrote:
 > 
-> Wow, 7 arguments.  Isn't there some nice rule of thumb that says once
-> you get more then 5, a function becomes impossible to understand?
+> > On Mon, Aug 12, 2019 at 12:32:49PM -0700, Mark Salyzyn wrote:
+> > > --- a/include/linux/xattr.h
+> > > +++ b/include/linux/xattr.h
+> > > @@ -30,10 +30,10 @@ struct xattr_handler {
+> > >  	const char *prefix;
+> > >  	int flags;      /* fs private flags */
+> > >  	bool (*list)(struct dentry *dentry);
+> > > -	int (*get)(const struct xattr_handler *, struct dentry *dentry,
+> > > +	int (*get)(const struct xattr_handler *handler, struct dentry *dentry,
+> > >  		   struct inode *inode, const char *name, void *buffer,
+> > > -		   size_t size);
+> > > -	int (*set)(const struct xattr_handler *, struct dentry *dentry,
+> > > +		   size_t size, int flags);
+> > > +	int (*set)(const struct xattr_handler *handler, struct dentry *dentry,
+> > >  		   struct inode *inode, const char *name, const void *buffer,
+> > >  		   size_t size, int flags);
+> > 
+> > Wow, 7 arguments.  Isn't there some nice rule of thumb that says once
+> > you get more then 5, a function becomes impossible to understand?
+> > 
+> > Surely this could be a structure passed in here somehow, that way when
+> > you add the 8th argument in the future, you don't have to change
+> > everything yet again?  :)
+> > 
+> > I don't have anything concrete to offer as a replacement fix for this,
+> > but to me this just feels really wrong...
 > 
-> Surely this could be a structure passed in here somehow, that way when
-> you add the 8th argument in the future, you don't have to change
-> everything yet again?  :)
+> How about something like:
 > 
-> I don't have anything concrete to offer as a replacement fix for this,
-> but to me this just feels really wrong...
+> struct xattr_gs_args {
+> 	struct dentry *dentry;
+> 	struct inode *inode;
 
-How about something like:
+As he said in a later message, dentry and inode is redundant, only 1 is
+needed (dentry I think?)
 
-struct xattr_gs_args {
-	struct dentry *dentry;
-	struct inode *inode;
-	const char *name;
-	const void *buffer;
-	size_t size;
-	int flags;
-};
+> 	const char *name;
+> 	const void *buffer;
+> 	size_t size;
+> 	int flags;
+> };
+> 
+> int (*get)(const struct xattr_handler *handler, struct xattr_gs_args *args);
+> int (*set)(const struct xattr_handler *handler, struct xattr_gs_args *args);
 
-int (*get)(const struct xattr_handler *handler, struct xattr_gs_args *args);
-int (*set)(const struct xattr_handler *handler, struct xattr_gs_args *args);
+But yes, that would be much much better.
 
+thanks,
 
--- 
-James Morris
-<jmorris@namei.org>
-
-
-______________________________________________________
-Linux MTD discussion mailing list
-http://lists.infradead.org/mailman/listinfo/linux-mtd/
+greg k-h
