@@ -1,9 +1,11 @@
 From: Jason Yan <yanaijie@huawei.com>
-Subject: [PATCH 1/2] reiserfs: remove set but not used variable in journal.c
-Date: Tue, 27 Aug 2019 11:29:31 +0800
-Message-ID: <20190827032932.46622-1-yanaijie@huawei.com>
+Subject: [PATCH 2/2] reiserfs: remove set but not used variable in do_balan.c
+Date: Tue, 27 Aug 2019 11:29:32 +0800
+Message-ID: <20190827032932.46622-2-yanaijie@huawei.com>
+References: <20190827032932.46622-1-yanaijie@huawei.com>
 Mime-Version: 1.0
 Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20190827032932.46622-1-yanaijie@huawei.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
@@ -13,40 +15,36 @@ Cc: Jason Yan <yanaijie@huawei.com>
 
 Fix the following gcc warning:
 
-fs/reiserfs/journal.c: In function flush_used_journal_lists:
-fs/reiserfs/journal.c:1791:6: warning: variable ret set but not used
+fs/reiserfs/do_balan.c: In function balance_leaf_insert_right:
+fs/reiserfs/do_balan.c:629:6: warning: variable ret set but not used
 [-Wunused-but-set-variable]
 
 Signed-off-by: Jason Yan <yanaijie@huawei.com>
 ---
- fs/reiserfs/journal.c | 7 +++----
- 1 file changed, 3 insertions(+), 4 deletions(-)
+ fs/reiserfs/do_balan.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-diff --git a/fs/reiserfs/journal.c b/fs/reiserfs/journal.c
-index 75d9d52d489f..4b3e3e73b512 100644
---- a/fs/reiserfs/journal.c
-+++ b/fs/reiserfs/journal.c
-@@ -1788,7 +1788,6 @@ static int flush_used_journal_lists(struct super_block *s,
- {
- 	unsigned long len = 0;
- 	unsigned long cur_len;
+diff --git a/fs/reiserfs/do_balan.c b/fs/reiserfs/do_balan.c
+index ffb6d7f0da94..4075e41408b4 100644
+--- a/fs/reiserfs/do_balan.c
++++ b/fs/reiserfs/do_balan.c
+@@ -626,7 +626,6 @@ static void balance_leaf_insert_right(struct tree_balance *tb,
+ 	struct buffer_head *tbS0 = PATH_PLAST_BUFFER(tb->tb_path);
+ 	int n = B_NR_ITEMS(tbS0);
+ 	struct buffer_info bi;
 -	int ret;
- 	int i;
- 	int limit = 256;
- 	struct reiserfs_journal_list *tjl;
-@@ -1825,9 +1824,9 @@ static int flush_used_journal_lists(struct super_block *s,
- 	 * transactions, but only bother if we've actually spanned
- 	 * across multiple lists
- 	 */
--	if (flush_jl != jl) {
--		ret = kupdate_transactions(s, jl, &tjl, &trans_id, len, i);
--	}
-+	if (flush_jl != jl)
-+		kupdate_transactions(s, jl, &tjl, &trans_id, len, i);
-+
- 	flush_journal_list(s, flush_jl, 1);
- 	put_journal_list(s, flush_jl);
- 	put_journal_list(s, jl);
+ 
+ 	/* new item or part of it doesn't fall into R[0] */
+ 	if (n - tb->rnum[0] >= tb->item_pos) {
+@@ -690,7 +689,7 @@ static void balance_leaf_insert_right(struct tree_balance *tb,
+ 		/* whole new item falls into R[0] */
+ 
+ 		/* Shift rnum[0]-1 items to R[0] */
+-		ret = leaf_shift_right(tb, tb->rnum[0] - 1, tb->rbytes);
++		leaf_shift_right(tb, tb->rnum[0] - 1, tb->rbytes);
+ 
+ 		/* Insert new item into R[0] */
+ 		buffer_info_init_right(tb, &bi);
 -- 
 2.17.2
 
