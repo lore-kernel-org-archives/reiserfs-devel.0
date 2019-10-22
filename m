@@ -1,53 +1,233 @@
-From: Markus Elfring <Markus.Elfring@web.de>
-Subject: [PATCH] reiserfs: Delete an unnecessary check before brelse()
-Date: Tue, 3 Sep 2019 20:42:11 +0200
-Message-ID: <b3b79aaf-279b-4f5a-b9ee-3a38b74da98e@web.de>
+From: Metztli Information Technology <jose.r.r@metztli.com>
+Subject: PATCH for libguestfs: tools for accessing and modifying virtual machine disk images
+Date: Tue, 22 Oct 2019 08:21:54 -0700 (PDT)
+Message-ID: <20191022152158.E2D13477D0F0@huitzilopochtli.metztli-it.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
+Content-Type: multipart/mixed; boundary="1024707763-1571757714=:21309"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=web.de;
-        s=dbaedf251592; t=1567536134;
-        bh=3IcwgWfePYuRvZdhAhTPFnsEeC4pHahDVAulfsv8+/s=;
-        h=X-UI-Sender-Class:To:Cc:From:Subject:Date;
-        b=WcjriP/9xdtN+GN4rVegSIynHSBCV0p8sPR6eapV3Mlv6QC95g2fyjFtQEfYyFFWz
-         SnQxwVZqqVQui/8sW3f+ZLQjdl8SqNtheyyleZwLxyihFsddVKXAVxhxkRmwyMJEQ3
-         XNs3hvKmR8QSanJYIaXjGjI03HwwC3uER8IXFSI0=
-Content-Language: en-US
+DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mixtli.metztli.it; q=dns/txt;
+ s=mx; t=1571758027; h=From: Date: Message-Id: To: Subject:
+ Content-Type: MIME-Version: Sender;
+ bh=8p8wLHX5JA8TCBMYjh0xSrzVjRifnf/Woq1nL0/W8Po=; b=kBwndOedzOidN8Zsf8QIOuTvh/aOWx7s5eaCSKWnTFRwGDt80K6BT1eeikxjWJr3tNh9lcXU
+ H1BDhThwJPc+a+SugyCzIzRY/TLYr+sJudvb06FGPjUMIBObq2607do50OxIWmVD05n8Jw1S
+ 6dkm2yV7l4RMklxknydbGAS90ew=
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-To: reiserfs-devel@vger.kernel.org, Al Viro <viro@zeniv.linux.org.uk>, "Darrick J. Wong" <darrick.wong@oracle.com>, Deepa Dinamani <deepa.kernel@gmail.com>, Jeff Layton <jlayton@kernel.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: edward.shishkin@gmail.com, reiserfs-devel@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Tue, 3 Sep 2019 20:00:16 +0200
+--1024707763-1571757714=:21309
+Content-Type: text/plain; charset=UTF-8
+Content-Disposition: attachment
+Content-Transfer-Encoding: 8bit
+Content-ID: <20191022082154.21309.1@huitzilopochtli.metztli-it.com>
 
-The brelse() function tests whether its argument is NULL
-and then returns immediately.
-Thus the test around the call is not needed.
+Niltze all-
 
-This issue was detected by using the Coccinelle software.
+Enabled reiser4 in libguestfs 1.40.2 < http://libguestfs.org/ > since my Virtual Machines are formatted in reiser4.
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-=2D--
- fs/reiserfs/super.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+Limited testing, though, as I only made sure I could peek into a VirtualBox VDI image, i.e.,
 
-diff --git a/fs/reiserfs/super.c b/fs/reiserfs/super.c
-index d69b4ac0ae2f..b412ef9a24a6 100644
-=2D-- a/fs/reiserfs/super.c
-+++ b/fs/reiserfs/super.c
-@@ -2229,8 +2229,7 @@ static int reiserfs_fill_super(struct super_block *s=
-, void *data, int silent)
- 	reiserfs_cancel_old_flush(s);
+guestfish --ro -i -a metztli-reiser4.vdi
 
- 	reiserfs_free_bitmap_cache(s);
--	if (SB_BUFFER_WITH_SB(s))
--		brelse(SB_BUFFER_WITH_SB(s));
-+	brelse(SB_BUFFER_WITH_SB(s));
- #ifdef CONFIG_QUOTA
- 	{
- 		int j;
-=2D-
-2.23.0
+Given the fact that "man 2 statfs" did not provide a REISER4_SUPER_MAGIC 0x52345362 entry, (heck, entry is blacklisted in Debian, etc. *all* GNU / Linux's "man 2 statfs", /usr/include/linux/magic.h, coreutils' src/fs.h, libguestfs-1.40.2/gnulib/lib/fts.c, etc., WHY!?)
 
+I created my own statfs(2) for reiser4 man page in html:
+
+short link:
+https://metztli.blog/index.php/amatl/aP3
+
+long link:
+https://metztli.blog/index.php/amatl/reiser-nahui/adding-reiser4_super_magic-to-man-2-statfs
+
+It would be cool, though, if that reiser4 MAGIC string was included in
+< https://www.kernel.org/doc/man-pages/ > (thanks in advance for your consideration)
+
+
+The first patch applies against libguestfs 1.40.2 source; the second patch applies against Debian packaging for libguestfs 1.40.2 from 
+< https://packages.debian.org/bullseye/libguestfs-tools >
+
+
+Best Professional Regards.
+
+-- 
+Jose R R
+http://metztli.it
+---------------------------------------------------------------------------------------------
+Download Metztli Reiser4: Debian Buster w/ Linux 5.2.17 AMD64
+---------------------------------------------------------------------------------------------
+feats ZSTD compression https://sf.net/projects/metztli-reiser4/
+-------------------------------------------------------------------------------------------
+Official current Reiser4 resources: https://reiser4.wiki.kernel.org/
+
+--1024707763-1571757714=:21309
+Content-Type: application/octet-stream; name="metztli-libguestfs-1.40.2-for-reiser4.patch"
+Content-Disposition: attachment; filename="metztli-libguestfs-1.40.2-for-reiser4.patch"
+Content-Transfer-Encoding: base64
+Content-ID: <20191022082154.21309.1@huitzilopochtli.metztli-it.com>
+
+RnJvbSA0ZWI5MzRmMWE0M2JhYTk2ODRhMzBlZjMzMGEyYmMzNzUwNGRmMTczIE1vbiBTZXAgMTcg
+MDA6MDA6MDAgMjAwMQpGcm9tOiBNZXR6dGxpIEluZm9ybWF0aW9uIFRlY2hub2xvZ3kgPGpvc2VA
+bWV0enRsaS5pdD4KRGF0ZTogU3VuLCAyMCBPY3QgMjAxOSAyMDozNjowNSAtMDcwMApTdWJqZWN0
+OiBbUEFUQ0hdIE9tZSAoc2Vjb25kKSBjb21taXQgbGliZ3Vlc3Rmcy0xLjQwLjIsIGluY2x1ZGlu
+ZwogZ251bGliL2xpYi9mdHMuYywgZW5hYmxpbmcgcmVpc2VyNAoKLS0tCiBhcHBsaWFuY2UvcGFj
+a2FnZWxpc3QuaW4gfCAxICsKIGRhZW1vbi9ta2ZzLmMgICAgICAgICAgICB8IDUgKysrLS0KIGdu
+dWxpYi9saWIvZnRzLmMgICAgICAgICB8IDQgKysrLQogMyBmaWxlcyBjaGFuZ2VkLCA3IGluc2Vy
+dGlvbnMoKyksIDMgZGVsZXRpb25zKC0pCgpkaWZmIC0tZ2l0IGEvYXBwbGlhbmNlL3BhY2thZ2Vs
+aXN0LmluIGIvYXBwbGlhbmNlL3BhY2thZ2VsaXN0LmluCmluZGV4IDhkMmU5ZDQuLmJiM2E3YTIg
+MTAwNjQ0Ci0tLSBhL2FwcGxpYW5jZS9wYWNrYWdlbGlzdC5pbgorKysgYi9hcHBsaWFuY2UvcGFj
+a2FnZWxpc3QuaW4KQEAgLTk2LDYgKzk2LDcgQEAgZG5sIGlwcm91dGUgaGFzIGJlZW4gcmVuYW1l
+ZCB0byBpcHJvdXRlMgogICBudGZzLTNnCiAgIG9wZW5zc2gtY2xpZW50CiAgIHJlaXNlcmZzcHJv
+Z3MKKyAgcmVpc2VyNHByb2dzICAgICAgICAgICAgICBkbmwgSm9zZS9NZXR6dGxpIElUIGFkZGVk
+IHJlaXNlcjQgMTAtMjAtMjAxOQogICBzeXN2aW5pdCAgICAgICAgICAgICAgICAgIGRubCBmb3Ig
+L3NiaW4vcmVib290CiAgIHN5c3RlbWQgICAgICAgICAgICAgICAgICAgZG5sIGFsdGVybmF0aXZl
+IGZvciAvc2Jpbi9yZWJvb3QKICAgdWZzdXRpbHMKZGlmZiAtLWdpdCBhL2RhZW1vbi9ta2ZzLmMg
+Yi9kYWVtb24vbWtmcy5jCmluZGV4IGFhODMwZGQuLjAzMzVmMTcgMTAwNjQ0Ci0tLSBhL2RhZW1v
+bi9ta2ZzLmMKKysrIGIvZGFlbW9uL21rZnMuYwpAQCAtODAsOSArODAsMTAgQEAgZG9fbWtmcyAo
+Y29uc3QgY2hhciAqZnN0eXBlLCBjb25zdCBjaGFyICpkZXZpY2UsIGludCBibG9ja3NpemUsCiAg
+ICAqIG1rZnMuamZzIGlzIHRoZSBzYW1lCiAgICAqIG1rZnMueGZzIG11c3QgZm9yY2UgdG8gbWFr
+ZSB4ZnMgZmlsZXN5c3RlbSB3aGVuIHRoZSBkZXZpY2UgYWxyZWFkeQogICAgKiBoYXMgYSBmaWxl
+c3lzdGVtIG9uIGl0CisgICAqIEpvc2UvTWV0enRsaSBJVCBhZGRlZCByZWlzZXI0IDEwLTIwLTIw
+MTkKICAgICovCi0gIGlmIChTVFJFUSAoZnN0eXBlLCAicmVpc2VyZnMiKSB8fCBTVFJFUSAoZnN0
+eXBlLCAiamZzIikgfHwKLSAgICAgIFNUUkVRIChmc3R5cGUsICJ4ZnMiKSkKKyAgaWYgKFNUUkVR
+IChmc3R5cGUsICJyZWlzZXJmcyIpIHx8IFNUUkVRIChmc3R5cGUsICJyZWlzZXI0IikgfHwKKyAg
+ICAgIFNUUkVRIChmc3R5cGUsICJqZnMiKSB8fCBTVFJFUSAoZnN0eXBlLCAieGZzIikpCiAgICAg
+QUREX0FSRyAoYXJndiwgaSwgIi1mIik7CiAKICAgLyogRm9yIEdGUywgR0ZTMiwgYXNzdW1lIGEg
+c2luZ2xlIG5vZGUuICovCmRpZmYgLS1naXQgYS9nbnVsaWIvbGliL2Z0cy5jIGIvZ251bGliL2xp
+Yi9mdHMuYwppbmRleCA1ZThlODk1Li5kZjRjZTEzIDEwMDY0NAotLS0gYS9nbnVsaWIvbGliL2Z0
+cy5jCisrKyBiL2dudWxpYi9saWIvZnRzLmMKQEAgLTY1OCwxMiArNjU4LDEzIEBAIGVudW0gbGVh
+Zl9vcHRpbWl6YXRpb24KIAogIyBpbmNsdWRlIDxzeXMvdmZzLmg+CiAKLS8qIExpbnV4LXNwZWNp
+ZmljIGNvbnN0YW50cyBmcm9tIGNvcmV1dGlscycgc3JjL2ZzLmggKi8KKy8qIExpbnV4LXNwZWNp
+ZmljIGNvbnN0YW50cyBmcm9tIGNvcmV1dGlscycgc3JjL2ZzLmg7IE1ldHp0bGkgSVQgYWRkZWQg
+Y29uc3RhbnQgZm9yIHJlaXNlcjQgKi8KICMgZGVmaW5lIFNfTUFHSUNfQUZTIDB4NTM0NjQxNEYK
+ICMgZGVmaW5lIFNfTUFHSUNfQ0lGUyAweEZGNTM0RDQyCiAjIGRlZmluZSBTX01BR0lDX05GUyAw
+eDY5NjkKICMgZGVmaW5lIFNfTUFHSUNfUFJPQyAweDlGQTAKICMgZGVmaW5lIFNfTUFHSUNfUkVJ
+U0VSRlMgMHg1MjY1NDk3MworIyBkZWZpbmUgU19NQUdJQ19SRUlTRVI0IDB4NTIzNDUzNjIKICMg
+ZGVmaW5lIFNfTUFHSUNfVE1QRlMgMHgxMDIxOTk0CiAjIGRlZmluZSBTX01BR0lDX1hGUyAweDU4
+NDY1MzQyCiAKQEAgLTc5Niw2ICs3OTcsNyBAQCBsZWFmX29wdGltaXphdGlvbiAoRlRTRU5UIGNv
+bnN0ICpwLCBpbnQgZGlyX2ZkKQogICAgICAgLyogTGlzdCBoZXJlIHRoZSBmaWxlIHN5c3RlbSB0
+eXBlcyB0aGF0IG1heSBsYWNrIHVzYWJsZSBkaXJlbnQuZF90eXBlCiAgICAgICAgICBpbmZvLCB5
+ZXQgZm9yIHdoaWNoIHRoZSBvcHRpbWl6YXRpb24gZG9lcyBhcHBseS4gICovCiAgICAgY2FzZSBT
+X01BR0lDX1JFSVNFUkZTOgorICAgIGNhc2UgU19NQUdJQ19SRUlTRVI0OiAvKiBKb3NlL01ldHp0
+bGkgSVQgMTAtMjAtMjAxOSAqLwogICAgIGNhc2UgU19NQUdJQ19YRlM6IC8qIFhGUyBsYWNrZWQg
+aXQgdW50aWwgMjAxMy0wOC0yMiBjb21taXQuICAqLwogICAgICAgcmV0dXJuIE5PU1RBVF9MRUFG
+X09QVElNSVpBVElPTjsKIAotLSAKMi4yMC4xCgo=
+--1024707763-1571757714=:21309
+Content-Type: application/octet-stream; name="metztli-libguestfs-1.40.2-reiser4-enabling-debian-packaging-for-libguestfs-1.40.2.patch"
+Content-Disposition: attachment; filename="metztli-libguestfs-1.40.2-reiser4-enabling-debian-packaging-for-libguestfs-1.40.2.patch"
+Content-Transfer-Encoding: base64
+Content-ID: <20191022082154.21309.2@huitzilopochtli.metztli-it.com>
+
+RnJvbSBmNDA0Yjg2Nzk1NGY4NDRjMzc4NWMxMjQ3N2Y3ZTg4NjljNWFjZmE2IE1vbiBTZXAgMTcg
+MDA6MDA6MDAgMjAwMQpGcm9tOiBNZXR6dGxpIEluZm9ybWF0aW9uIFRlY2hub2xvZ3kgPGpvc2VA
+bWV0enRsaS5pdD4KRGF0ZTogU3VuLCAyMCBPY3QgMjAxOSAyMjowMTo0NSAtMDcwMApTdWJqZWN0
+OiBbUEFUQ0hdIE9tZSAoc2Vjb25kKSBjb21taXQgcmVpc2VyNCBlbmFibGluZyBkZWJpYW4gcGFj
+a2FnaW5nIGZvcgogbGliZ3Vlc3Rmcy0xLjQwLjIKCi0tLQogY29udHJvbCAgICAgICAgICAgICAg
+ICAgICAgICAgICAgICAgICAgICAgICAgIHwgMTUgKysrKwogZ2VuLWFwcGxpYW5jZS1kZXBlbmRz
+LnNoICAgICAgICAgICAgICAgICAgICAgIHwgIDIgKy0KIGxpYmd1ZXN0ZnMtcmVpc2VyNC5pbnN0
+YWxsICAgICAgICAgICAgICAgICAgICB8ICAxICsKIC4uLi9tZXR6dGxpL21ldHp0bGktcmVpc2Vy
+NC1lbmFibGluZy5wYXRjaCAgICB8IDcyICsrKysrKysrKysrKysrKysrKysKIHBhdGNoZXMvc2Vy
+aWVzICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICB8ICAxICsKIHNwbGl0LWFwcGxpYW5j
+ZS5zaCAgICAgICAgICAgICAgICAgICAgICAgICAgICB8ICAyICstCiA2IGZpbGVzIGNoYW5nZWQs
+IDkxIGluc2VydGlvbnMoKyksIDIgZGVsZXRpb25zKC0pCiBjcmVhdGUgbW9kZSAxMDA2NDQgbGli
+Z3Vlc3Rmcy1yZWlzZXI0Lmluc3RhbGwKIGNyZWF0ZSBtb2RlIDEwMDY0NCBwYXRjaGVzL21ldHp0
+bGkvbWV0enRsaS1yZWlzZXI0LWVuYWJsaW5nLnBhdGNoCgpkaWZmIC0tZ2l0IGEvY29udHJvbCBi
+L2NvbnRyb2wKaW5kZXggY2FjODFkMS4uNTVmMTdkNCAxMDA2NDQKLS0tIGEvY29udHJvbAorKysg
+Yi9jb250cm9sCkBAIC05NCw2ICs5NCw3IEBAIEJ1aWxkLURlcGVuZHM6IGRlYmhlbHBlciAoPj0g
+MTIpLAogICBwcm9jcHMsCiAgIHBzbWlzYywKICAgcmVpc2VyZnNwcm9ncywKKyAgcmVpc2VyNHBy
+b2dzLAogICByc3luYywKICAgc2NydWIsCiAgIHN0cmFjZSwKQEAgLTE3Myw2ICsxNzQsNyBAQCBE
+ZXBlbmRzOiAke3NobGliczpEZXBlbmRzfSwgJHttaXNjOkRlcGVuZHN9LAogICAke2FwcGxpYW5j
+ZTpEZXBlbmRzfSwKIFJlY29tbWVuZHM6IGxpYmd1ZXN0ZnMtaGZzcGx1cywKICBsaWJndWVzdGZz
+LXJlaXNlcmZzLAorIGxpYmd1ZXN0ZnMtcmVpc2VyNCwKICBsaWJndWVzdGZzLXhmcywKIFN1Z2dl
+c3RzOiBsaWJndWVzdGZzLWdmczIsCiAgbGliZ3Vlc3Rmcy1qZnMsCkBAIC0yNjYsNiArMjY4LDE5
+IEBAIERlc2NyaXB0aW9uOiBndWVzdCBkaXNrIGltYWdlIG1hbmFnZW1lbnQgc3lzdGVtIC0gUmVp
+c2VyRlMgc3VwcG9ydAogIC4KICBUaGlzIHBhY2thZ2UgY29udGFpbnMgYXBwbGlhbmNlIGZyYWdt
+ZW50cyBmb3IgUmVpc2VyRlMgc3VwcG9ydC4KIAorUGFja2FnZTogbGliZ3Vlc3Rmcy1yZWlzZXI0
+CitTZWN0aW9uOiBsaWJzCitBcmNoaXRlY3R1cmU6IGxpbnV4LWFueQorTXVsdGktQXJjaDogc2Ft
+ZQorUHJlLURlcGVuZHM6ICR7bWlzYzpQcmUtRGVwZW5kc30KK0RlcGVuZHM6IGxpYmd1ZXN0ZnMw
+ICg9ICR7YmluYXJ5OlZlcnNpb259KSwgJHtzaGxpYnM6RGVwZW5kc30sICR7bWlzYzpEZXBlbmRz
+fSwKKyAke2FwcGxpYW5jZTpEZXBlbmRzfSwKK0Rlc2NyaXB0aW9uOiBndWVzdCBkaXNrIGltYWdl
+IG1hbmFnZW1lbnQgc3lzdGVtIC0gUmVpc2VyNCBzdXBwb3J0CisgVGhlIGxpYmd1ZXN0ZnMgbGli
+cmFyeSBhbGxvd3MgYWNjZXNzaW5nIGFuZCBtb2RpZnlpbmcgZ3Vlc3QgZGlzaworIGltYWdlcy4K
+KyAuCisgVGhpcyBwYWNrYWdlIGNvbnRhaW5zIGFwcGxpYW5jZSBmcmFnbWVudHMgZm9yIFJlaXNl
+cjQgc3VwcG9ydC4KKwogUGFja2FnZTogbGliZ3Vlc3Rmcy1yZXNjdWUKIFNlY3Rpb246IGxpYnMK
+IEFyY2hpdGVjdHVyZTogbGludXgtYW55CmRpZmYgLS1naXQgYS9nZW4tYXBwbGlhbmNlLWRlcGVu
+ZHMuc2ggYi9nZW4tYXBwbGlhbmNlLWRlcGVuZHMuc2gKaW5kZXggZDc1MTQ5Ny4uMGY1ZjMzZSAx
+MDA3NTUKLS0tIGEvZ2VuLWFwcGxpYW5jZS1kZXBlbmRzLnNoCisrKyBiL2dlbi1hcHBsaWFuY2Ut
+ZGVwZW5kcy5zaApAQCAtMTUsNyArMTUsNyBAQCBwa2dsaXN0X3RvX2RlcHMoKSB7CiAgICAgZWNo
+bwogfQogCi1mb3IgcCBpbiBnZnMyIGhmc3BsdXMgamZzIG5pbGZzIHJlaXNlcmZzIHJlc2N1ZSBy
+c3luYyB4ZnMgemZzCitmb3IgcCBpbiBnZnMyIGhmc3BsdXMgamZzIG5pbGZzIHJlaXNlcmZzIHJl
+aXNlcjQgcmVzY3VlIHJzeW5jIHhmcyB6ZnMKIGRvCiAgICAgY2F0IGRlYmlhbi9saWJndWVzdGZz
+LSRwL3Vzci9saWIvKi0qL2d1ZXN0ZnMvc3VwZXJtaW4uZC9wYWNrYWdlcy0kcCBcCiAgICAgICAg
+IHwgIHBrZ2xpc3RfdG9fZGVwcyBcCmRpZmYgLS1naXQgYS9saWJndWVzdGZzLXJlaXNlcjQuaW5z
+dGFsbCBiL2xpYmd1ZXN0ZnMtcmVpc2VyNC5pbnN0YWxsCm5ldyBmaWxlIG1vZGUgMTAwNjQ0Cmlu
+ZGV4IDAwMDAwMDAuLmU1NWE2NTQKLS0tIC9kZXYvbnVsbAorKysgYi9saWJndWVzdGZzLXJlaXNl
+cjQuaW5zdGFsbApAQCAtMCwwICsxIEBACisvdXNyL2xpYi8qLSovZ3Vlc3Rmcy9zdXBlcm1pbi5k
+L3BhY2thZ2VzLXJlaXNlcjQKZGlmZiAtLWdpdCBhL3BhdGNoZXMvbWV0enRsaS9tZXR6dGxpLXJl
+aXNlcjQtZW5hYmxpbmcucGF0Y2ggYi9wYXRjaGVzL21ldHp0bGkvbWV0enRsaS1yZWlzZXI0LWVu
+YWJsaW5nLnBhdGNoCm5ldyBmaWxlIG1vZGUgMTAwNjQ0CmluZGV4IDAwMDAwMDAuLjgyM2ViODEK
+LS0tIC9kZXYvbnVsbAorKysgYi9wYXRjaGVzL21ldHp0bGkvbWV0enRsaS1yZWlzZXI0LWVuYWJs
+aW5nLnBhdGNoCkBAIC0wLDAgKzEsNzIgQEAKK0Zyb20gMWNkNTYzNDQ5NWFiOWRhM2Q3MWY0MmVi
+NGEyOTY5YTk4YjZkMWM1NSBNb24gU2VwIDE3IDAwOjAwOjAwIDIwMDEKK0Zyb206IE1ldHp0bGkg
+SW5mb3JtYXRpb24gVGVjaG5vbG9neSA8am9zZUBtZXR6dGxpLml0PgorRGF0ZTogU3VuLCAyMCBP
+Y3QgMjAxOSAyMToyNTo1MyAtMDcwMAorU3ViamVjdDogW1BBVENIXSBPbWUgKHNlY29uZCkgY29t
+bWl0IGxpYmd1ZXN0ZnMtMS40MC4yLCBpbmMuIGdudWxpYi9saWIvZnRzLmMKKyBpbiAuZ2l0aWdu
+b3JlLCBlbmFibGluZyByZWlzZXI0IHRvIGNvbXBsZW1lbnQgZGViaWFuIHBhY2thZ2luZworIHBh
+dGNoZXMvMDAwOS1GaXgtc2Jpbi1yZWJvb3QtcmVxdWlyZW1lbnRzLnBhdGNoCisKKy0tLQorIGFw
+cGxpYW5jZS9wYWNrYWdlbGlzdC5pbiB8IDEgKworIGRhZW1vbi9ta2ZzLmMgICAgICAgICAgICB8
+IDUgKysrLS0KKyBnbnVsaWIvbGliL2Z0cy5jICAgICAgICAgfCA0ICsrKy0KKyAzIGZpbGVzIGNo
+YW5nZWQsIDcgaW5zZXJ0aW9ucygrKSwgMyBkZWxldGlvbnMoLSkKKworZGlmZiAtLWdpdCBhL2Fw
+cGxpYW5jZS9wYWNrYWdlbGlzdC5pbiBiL2FwcGxpYW5jZS9wYWNrYWdlbGlzdC5pbgoraW5kZXgg
+ZDQ3ZTJkMi4uMzFkZjkzYyAxMDA2NDQKKy0tLSBhL2FwcGxpYW5jZS9wYWNrYWdlbGlzdC5pbgor
+KysrIGIvYXBwbGlhbmNlL3BhY2thZ2VsaXN0LmluCitAQCAtOTYsNiArOTYsNyBAQCBkbmwgaXBy
+b3V0ZSBoYXMgYmVlbiByZW5hbWVkIHRvIGlwcm91dGUyCisgICBudGZzLTNnCisgICBvcGVuc3No
+LWNsaWVudAorICAgcmVpc2VyZnNwcm9ncworKyAgcmVpc2VyNHByb2dzICAgICAgICAgICAgICBk
+bmwgSm9zZS9NZXR6dGxpIElUIGFkZGVkIHJlaXNlcjQgMTAtMjAtMjAxOQorICAgc3lzdmluaXQt
+Y29yZSAgICAgICAgICAgICBkbmwgZm9yIC9zYmluL3JlYm9vdAorICAgc3lzdGVtZC1zeXN2ICAg
+ICAgICAgICAgICBkbmwgYWx0ZXJuYXRpdmUgZm9yIC9zYmluL3JlYm9vdAorICAgdWZzdXRpbHMK
+K2RpZmYgLS1naXQgYS9kYWVtb24vbWtmcy5jIGIvZGFlbW9uL21rZnMuYworaW5kZXggYWE4MzBk
+ZC4uMDMzNWYxNyAxMDA2NDQKKy0tLSBhL2RhZW1vbi9ta2ZzLmMKKysrKyBiL2RhZW1vbi9ta2Zz
+LmMKK0BAIC04MCw5ICs4MCwxMCBAQCBkb19ta2ZzIChjb25zdCBjaGFyICpmc3R5cGUsIGNvbnN0
+IGNoYXIgKmRldmljZSwgaW50IGJsb2Nrc2l6ZSwKKyAgICAqIG1rZnMuamZzIGlzIHRoZSBzYW1l
+CisgICAgKiBta2ZzLnhmcyBtdXN0IGZvcmNlIHRvIG1ha2UgeGZzIGZpbGVzeXN0ZW0gd2hlbiB0
+aGUgZGV2aWNlIGFscmVhZHkKKyAgICAqIGhhcyBhIGZpbGVzeXN0ZW0gb24gaXQKKysgICAqIEpv
+c2UvTWV0enRsaSBJVCBhZGRlZCByZWlzZXI0IDEwLTIwLTIwMTkKKyAgICAqLworLSAgaWYgKFNU
+UkVRIChmc3R5cGUsICJyZWlzZXJmcyIpIHx8IFNUUkVRIChmc3R5cGUsICJqZnMiKSB8fAorLSAg
+ICAgIFNUUkVRIChmc3R5cGUsICJ4ZnMiKSkKKysgIGlmIChTVFJFUSAoZnN0eXBlLCAicmVpc2Vy
+ZnMiKSB8fCBTVFJFUSAoZnN0eXBlLCAicmVpc2VyNCIpIHx8CisrICAgICAgU1RSRVEgKGZzdHlw
+ZSwgImpmcyIpIHx8IFNUUkVRIChmc3R5cGUsICJ4ZnMiKSkKKyAgICAgQUREX0FSRyAoYXJndiwg
+aSwgIi1mIik7CisgCisgICAvKiBGb3IgR0ZTLCBHRlMyLCBhc3N1bWUgYSBzaW5nbGUgbm9kZS4g
+Ki8KK2RpZmYgLS1naXQgYS9nbnVsaWIvbGliL2Z0cy5jIGIvZ251bGliL2xpYi9mdHMuYworaW5k
+ZXggNWU4ZTg5NS4uZGY0Y2UxMyAxMDA2NDQKKy0tLSBhL2dudWxpYi9saWIvZnRzLmMKKysrKyBi
+L2dudWxpYi9saWIvZnRzLmMKK0BAIC02NTgsMTIgKzY1OCwxMyBAQCBlbnVtIGxlYWZfb3B0aW1p
+emF0aW9uCisgCisgIyBpbmNsdWRlIDxzeXMvdmZzLmg+CisgCistLyogTGludXgtc3BlY2lmaWMg
+Y29uc3RhbnRzIGZyb20gY29yZXV0aWxzJyBzcmMvZnMuaCAqLworKy8qIExpbnV4LXNwZWNpZmlj
+IGNvbnN0YW50cyBmcm9tIGNvcmV1dGlscycgc3JjL2ZzLmg7IE1ldHp0bGkgSVQgYWRkZWQgY29u
+c3RhbnQgZm9yIHJlaXNlcjQgKi8KKyAjIGRlZmluZSBTX01BR0lDX0FGUyAweDUzNDY0MTRGCisg
+IyBkZWZpbmUgU19NQUdJQ19DSUZTIDB4RkY1MzRENDIKKyAjIGRlZmluZSBTX01BR0lDX05GUyAw
+eDY5NjkKKyAjIGRlZmluZSBTX01BR0lDX1BST0MgMHg5RkEwCisgIyBkZWZpbmUgU19NQUdJQ19S
+RUlTRVJGUyAweDUyNjU0OTczCisrIyBkZWZpbmUgU19NQUdJQ19SRUlTRVI0IDB4NTIzNDUzNjIK
+KyAjIGRlZmluZSBTX01BR0lDX1RNUEZTIDB4MTAyMTk5NAorICMgZGVmaW5lIFNfTUFHSUNfWEZT
+IDB4NTg0NjUzNDIKKyAKK0BAIC03OTYsNiArNzk3LDcgQEAgbGVhZl9vcHRpbWl6YXRpb24gKEZU
+U0VOVCBjb25zdCAqcCwgaW50IGRpcl9mZCkKKyAgICAgICAvKiBMaXN0IGhlcmUgdGhlIGZpbGUg
+c3lzdGVtIHR5cGVzIHRoYXQgbWF5IGxhY2sgdXNhYmxlIGRpcmVudC5kX3R5cGUKKyAgICAgICAg
+ICBpbmZvLCB5ZXQgZm9yIHdoaWNoIHRoZSBvcHRpbWl6YXRpb24gZG9lcyBhcHBseS4gICovCisg
+ICAgIGNhc2UgU19NQUdJQ19SRUlTRVJGUzoKKysgICAgY2FzZSBTX01BR0lDX1JFSVNFUjQ6IC8q
+IEpvc2UvTWV0enRsaSBJVCAxMC0yMC0yMDE5ICovCisgICAgIGNhc2UgU19NQUdJQ19YRlM6IC8q
+IFhGUyBsYWNrZWQgaXQgdW50aWwgMjAxMy0wOC0yMiBjb21taXQuICAqLworICAgICAgIHJldHVy
+biBOT1NUQVRfTEVBRl9PUFRJTUlaQVRJT047CisgCistLSAKKzIuMjAuMQorCmRpZmYgLS1naXQg
+YS9wYXRjaGVzL3NlcmllcyBiL3BhdGNoZXMvc2VyaWVzCmluZGV4IDU5MWI2ZDIuLmRlYjYzODcg
+MTAwNjQ0Ci0tLSBhL3BhdGNoZXMvc2VyaWVzCisrKyBiL3BhdGNoZXMvc2VyaWVzCkBAIC0xMywz
+ICsxMyw0IEBACiAwMDEzLUZpeC11cC1wZXJsLXBhdGgtaW4taW5zdGFsbGVkLXNjcmlwdHMucGF0
+Y2gKIDAwMTQtRml4LS5kZXBlbmQtZ2VuZXJhdGlvbi1mb3Itb3V0LW9mLXRyZWUtYnVpbGQucGF0
+Y2gKIDAwMTUtQ2hhbmdlLWNyeXB0c2V0b3AtY3J5cHRzZXR1cC1iaW4taW4tYXBwbGlhbmNlLnBh
+dGNoCittZXR6dGxpL21ldHp0bGktcmVpc2VyNC1lbmFibGluZy5wYXRjaApkaWZmIC0tZ2l0IGEv
+c3BsaXQtYXBwbGlhbmNlLnNoIGIvc3BsaXQtYXBwbGlhbmNlLnNoCmluZGV4IDQyMTQ3NjMuLjcw
+MmQ2NDYgMTAwNzU1Ci0tLSBhL3NwbGl0LWFwcGxpYW5jZS5zaAorKysgYi9zcGxpdC1hcHBsaWFu
+Y2Uuc2gKQEAgLTUsNyArNSw3IEBAIHNldCAtZXgKIGNkIGRlYmlhbi90bXAvdXNyL2xpYi8qLSov
+Z3Vlc3Rmcy9zdXBlcm1pbi5kCiBjcCAtbiBwYWNrYWdlcyBwYWNrYWdlcy5vcmlnCiAKLWZvciBw
+IGluIGdmczIgaGZzcGx1cyBqZnMgbmlsZnMgcmVpc2VyZnMgcnN5bmMgeGZzIHpmczsgZG8KK2Zv
+ciBwIGluIGdmczIgaGZzcGx1cyBqZnMgbmlsZnMgcmVpc2VyZnMgcmVpc2VyNCByc3luYyB4ZnMg
+emZzOyBkbwogICAgIHNlZCAtaSAtZSAiLyRwL2QiIHBhY2thZ2VzCiAgICAgZ3JlcCAtRiAgIiRw
+IiA8IHBhY2thZ2VzLm9yaWcgPiBwYWNrYWdlcy0kcCB8fCB0cnVlCiBkb25lCi0tIAoyLjIwLjEK
+Cg==
+--1024707763-1571757714=:21309--
