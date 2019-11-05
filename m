@@ -1,66 +1,59 @@
 From: Jan Kara <jack@suse.cz>
-Subject: Re: [PATCH v15 1/4] Add flags option to get xattr method
- paired to __vfs_getxattr
-Date: Tue, 5 Nov 2019 10:48:30 +0100
-Message-ID: <20191105094830.GL22379@quack2.suse.cz>
-References: <20191104215253.141818-1-salyzyn@android.com>
- <20191104215253.141818-2-salyzyn@android.com>
+Subject: Re: [PATCH] reiserfs: replace open-coded atomic_dec_and_mutex_lock()
+Date: Tue, 5 Nov 2019 12:25:18 +0100
+Message-ID: <20191105112518.GM22379@quack2.suse.cz>
+References: <20191103094431.GA18576-nikitas.angelinas@gmail.com>
 Mime-Version: 1.0
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <20191103094431.GA18576-nikitas.angelinas@gmail.com>
+Sender: linux-kernel-owner@vger.kernel.org
+List-ID: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=In-Reply-To:Content-Type:MIME-Version:References:
- Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:
- Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
- Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
- List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=uOVvLIfAKaABNeenvYiWQ2HO7/bSUZZppsMPK3eSjzk=; b=JXurOXfT7KbO2DUg9GnP+lNiKD
- a9+mg9F9fToU727slsl6JuU0mz2o5rlOfLjPvjLo7+pbabbIZRFcnCItgx1VinEavZiVWSpm9iKxs
- 8SG/l+yjUk8/1j3SAnq+34xzGyMXOSHa5/n3czAHTzZsCgMj8NduciTLIHhZzPBmi1F4=;
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
- ;
- h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To
- :From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
- Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
- :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
- List-Post:List-Owner:List-Archive;
- bh=uOVvLIfAKaABNeenvYiWQ2HO7/bSUZZppsMPK3eSjzk=; b=G7hWtdEf3Hjv5SfcHdPBAcoq5E
- mMToDEfYFDlskBdJjGPSjJ0dA6GJTOyPf6OjzAxAAuylrIhVsCTXaix5tJ8caIdlb9rmf5Y0Tb/1o
- N6OFvTZx5J0nT/D1wzlqyswAnNb7ZGqufooOBoB5SFRWoHtqBU7P3QEnZSLwXrPmhPVE=;
-Content-Disposition: inline
-In-Reply-To: <20191104215253.141818-2-salyzyn@android.com>
-List-Id: <reiserfs-devel.vger.kernel.org>
-List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>, 
- <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
-List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
-List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
-List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
-List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
- <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: Mark Salyzyn <salyzyn@android.com>
-Cc: Latchesar Ionkov <lucho@ionkov.net>, Dave Kleikamp <shaggy@kernel.org>, jfs-discussion@lists.sourceforge.net, Jan Kara <jack@suse.cz>, linux-doc@vger.kernel.org, linux-integrity@vger.kernel.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Martin Brandenburg <martin@omnibond.com>, samba-technical@lists.samba.org, Dominique Martinet <asmadeus@codewreck.org>, Artem Bityutskiy <dedekind1@gmail.com>, Adrian Hunter <adrian.hunter@intel.com>, David Howells <dhowells@redhat.com>, Chris Mason <clm@fb.com>, "David S. Miller" <davem@davemloft.net>, Andreas Dilger <adilger.kernel@dilger.ca>, Eric Paris <eparis@parisplace.org>, Mauro Carvalho Chehab <mchehab+samsung@kernel.org>, netdev@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net, linux-afs@lists.infradead.org, Mike Marshall <hubcap@omnibond.com>, linux-xfs@vger.kernel.org, linux-unionfs@vger.kernel.org, Andreas
+To: Nikitas Angelinas <nikitas.angelinas@gmail.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>, zhengbin@vostro.suse.de, zhengbin13@huawei.com, Jan Kara <jack@suse.cz>, Al Viro <viro@zeniv.linux.org.uk>, reiserfs-devel@vger.kernel.org, linux-kernel@vger.kernel.org
 
-> @@ -228,11 +228,11 @@ static int afs_xattr_get_yfs(const struct xattr_handler *handler,
->  		break;
->  	case 1:
->  		data = buf;
-> -		dsize = snprintf(buf, sizeof(buf), "%u", yacl->inherit_flag);
-> +		dsize = scnprintf(buf, sizeof(buf), "%u", yacl->inherit_flag);
->  		break;
->  	case 2:
->  		data = buf;
-> -		dsize = snprintf(buf, sizeof(buf), "%u", yacl->num_cleaned);
-> +		dsize = scnprintf(buf, sizeof(buf), "%u", yacl->num_cleaned);
->  		break;
->  	case 3:
+On Sun 03-11-19 01:44:54, Nikitas Angelinas wrote:
+> Replace the open-coded logic of atomic_dec_and_mutex_lock() in
+> reiserfs_file_release().
+> 
+> Signed-off-by: Nikitas Angelinas <nikitas.angelinas@gmail.com>
 
-These scnprintf() changes (and there are more in the patch) probably
-shouldn't be here... Otherwise the patch still looks good to me :).
+Thanks! The patch looks good to me. I've added it to my tree.
 
 								Honza
 
+> ---
+>  fs/reiserfs/file.c | 10 ++--------
+>  1 file changed, 2 insertions(+), 8 deletions(-)
+> 
+> diff --git a/fs/reiserfs/file.c b/fs/reiserfs/file.c
+> index 843aadc..84cf8bd 100644
+> --- a/fs/reiserfs/file.c
+> +++ b/fs/reiserfs/file.c
+> @@ -38,16 +38,10 @@ static int reiserfs_file_release(struct inode *inode, struct file *filp)
+>  
+>  	BUG_ON(!S_ISREG(inode->i_mode));
+>  
+> -        if (atomic_add_unless(&REISERFS_I(inode)->openers, -1, 1))
+> +	if (!atomic_dec_and_mutex_lock(&REISERFS_I(inode)->openers,
+> +				       &REISERFS_I(inode)->tailpack))
+>  		return 0;
+>  
+> -	mutex_lock(&REISERFS_I(inode)->tailpack);
+> -
+> -        if (!atomic_dec_and_test(&REISERFS_I(inode)->openers)) {
+> -		mutex_unlock(&REISERFS_I(inode)->tailpack);
+> -		return 0;
+> -	}
+> -
+>  	/* fast out for when nothing needs to be done */
+>  	if ((!(REISERFS_I(inode)->i_flags & i_pack_on_close_mask) ||
+>  	     !tail_has_to_be_packed(inode)) &&
+> -- 
+> 2.10.0
+> 
 -- 
 Jan Kara <jack@suse.com>
 SUSE Labs, CR
