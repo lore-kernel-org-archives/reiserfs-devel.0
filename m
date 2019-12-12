@@ -1,99 +1,50 @@
-From: syzbot <syzbot+1c6756baf4b16b94d2a6@syzkaller.appspotmail.com>
-Subject: memory leak in reiserfs_fill_super
-Date: Wed, 11 Dec 2019 17:25:08 -0800
-Message-ID: <000000000000ab22f20599779d25@google.com>
-Mime-Version: 1.0
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
+From: Jan Kara <jack@suse.cz>
+Subject: [PATCH 1/2] reiserfs: Fix memory leak of journal device string
+Date: Thu, 12 Dec 2019 11:50:17 +0100
+Message-ID: <20191212105018.910-2-jack@suse.cz>
+References: <20191212105018.910-1-jack@suse.cz>
+Return-path: <stable-owner@vger.kernel.org>
+In-Reply-To: <20191212105018.910-1-jack@suse.cz>
+Sender: stable-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"; format="flowed"; delsp="yes"
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: deepa.kernel@gmail.com, jack@suse.cz, jeffm@suse.com, jlayton@kernel.org, linux-kernel@vger.kernel.org, reiserfs-devel@vger.kernel.org, syzkaller-bugs@googlegroups.com, viro@zeniv.linux.org.uk
+To: reiserfs-devel@vger.kernel.org
+Cc: linux-fsdevel@vger.kernel.org, Jan Kara <jack@suse.cz>, stable@vger.kernel.org
 
-Hello,
+When a filesystem is mounted with jdev mount option, we store the
+journal device name in an allocated string in superblock. However we
+fail to ever free that string. Fix it.
 
-syzbot found the following crash on:
-
-HEAD commit:    6794862a Merge tag 'for-5.5-rc1-kconfig-tag' of git://git...
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=1158c12ee00000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=bbf3a35184a3ed64
-dashboard link: https://syzkaller.appspot.com/bug?extid=1c6756baf4b16b94d2a6
-compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=165a64fae00000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=12083661e00000
-
-IMPORTANT: if you fix the bug, please add the following tag to the commit:
 Reported-by: syzbot+1c6756baf4b16b94d2a6@syzkaller.appspotmail.com
-
-BUG: memory leak
-unreferenced object 0xffff88811ff310c0 (size 32):
-   comm "syz-executor671", pid 7128, jiffies 4294943335 (age 13.580s)
-   hex dump (first 32 bytes):
-     2e 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
-     01 00 00 00 01 00 00 00 18 00 00 00 00 00 00 00  ................
-   backtrace:
-     [<000000004089eb3d>] kmemleak_alloc_recursive  
-include/linux/kmemleak.h:43 [inline]
-     [<000000004089eb3d>] slab_post_alloc_hook mm/slab.h:586 [inline]
-     [<000000004089eb3d>] slab_alloc mm/slab.c:3320 [inline]
-     [<000000004089eb3d>] __do_kmalloc mm/slab.c:3654 [inline]
-     [<000000004089eb3d>] __kmalloc_track_caller+0x165/0x300 mm/slab.c:3671
-     [<000000008421832f>] kstrdup+0x3a/0x70 mm/util.c:60
-     [<0000000043bf75e5>] reiserfs_fill_super+0x500/0x1120  
-fs/reiserfs/super.c:1946
-     [<000000009cbc0e69>] mount_bdev+0x1ce/0x210 fs/super.c:1415
-     [<00000000934dd7f3>] get_super_block+0x35/0x40 fs/reiserfs/super.c:2604
-     [<00000000cf77f9c8>] legacy_get_tree+0x27/0x80 fs/fs_context.c:647
-     [<000000000d70f443>] vfs_get_tree+0x2d/0xe0 fs/super.c:1545
-     [<00000000be5ed892>] do_new_mount fs/namespace.c:2822 [inline]
-     [<00000000be5ed892>] do_mount+0x97c/0xc80 fs/namespace.c:3142
-     [<00000000f546ac03>] ksys_mount+0xab/0x120 fs/namespace.c:3351
-     [<000000005818601f>] __do_sys_mount fs/namespace.c:3365 [inline]
-     [<000000005818601f>] __se_sys_mount fs/namespace.c:3362 [inline]
-     [<000000005818601f>] __x64_sys_mount+0x26/0x30 fs/namespace.c:3362
-     [<00000000a358ffb7>] do_syscall_64+0x73/0x220  
-arch/x86/entry/common.c:294
-     [<00000000cb1c9cc8>] entry_SYSCALL_64_after_hwframe+0x44/0xa9
-
-BUG: memory leak
-unreferenced object 0xffff8881232e08e0 (size 32):
-   comm "syz-executor671", pid 7135, jiffies 4294943878 (age 8.150s)
-   hex dump (first 32 bytes):
-     2e 00 63 75 72 69 74 79 2e 73 65 6c 69 6e 75 78  ..curity.selinux
-     00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
-   backtrace:
-     [<000000004089eb3d>] kmemleak_alloc_recursive  
-include/linux/kmemleak.h:43 [inline]
-     [<000000004089eb3d>] slab_post_alloc_hook mm/slab.h:586 [inline]
-     [<000000004089eb3d>] slab_alloc mm/slab.c:3320 [inline]
-     [<000000004089eb3d>] __do_kmalloc mm/slab.c:3654 [inline]
-     [<000000004089eb3d>] __kmalloc_track_caller+0x165/0x300 mm/slab.c:3671
-     [<000000008421832f>] kstrdup+0x3a/0x70 mm/util.c:60
-     [<0000000043bf75e5>] reiserfs_fill_super+0x500/0x1120  
-fs/reiserfs/super.c:1946
-     [<000000009cbc0e69>] mount_bdev+0x1ce/0x210 fs/super.c:1415
-     [<00000000934dd7f3>] get_super_block+0x35/0x40 fs/reiserfs/super.c:2604
-     [<00000000cf77f9c8>] legacy_get_tree+0x27/0x80 fs/fs_context.c:647
-     [<000000000d70f443>] vfs_get_tree+0x2d/0xe0 fs/super.c:1545
-     [<00000000be5ed892>] do_new_mount fs/namespace.c:2822 [inline]
-     [<00000000be5ed892>] do_mount+0x97c/0xc80 fs/namespace.c:3142
-     [<00000000f546ac03>] ksys_mount+0xab/0x120 fs/namespace.c:3351
-     [<000000005818601f>] __do_sys_mount fs/namespace.c:3365 [inline]
-     [<000000005818601f>] __se_sys_mount fs/namespace.c:3362 [inline]
-     [<000000005818601f>] __x64_sys_mount+0x26/0x30 fs/namespace.c:3362
-     [<00000000a358ffb7>] do_syscall_64+0x73/0x220  
-arch/x86/entry/common.c:294
-     [<00000000cb1c9cc8>] entry_SYSCALL_64_after_hwframe+0x44/0xa9
-
-
-
+Fixes: c3aa077648e1 ("reiserfs: Properly display mount options in /proc/mounts")
+CC: stable@vger.kernel.org
+Signed-off-by: Jan Kara <jack@suse.cz>
 ---
-This bug is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
+ fs/reiserfs/super.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-syzbot will keep track of this bug report. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-syzbot can test patches for this bug, for details see:
-https://goo.gl/tpsmEJ#testing-patches
+diff --git a/fs/reiserfs/super.c b/fs/reiserfs/super.c
+index 3244037b1286..d127af64283e 100644
+--- a/fs/reiserfs/super.c
++++ b/fs/reiserfs/super.c
+@@ -629,6 +629,7 @@ static void reiserfs_put_super(struct super_block *s)
+ 	reiserfs_write_unlock(s);
+ 	mutex_destroy(&REISERFS_SB(s)->lock);
+ 	destroy_workqueue(REISERFS_SB(s)->commit_wq);
++	kfree(REISERFS_SB(s)->s_jdev);
+ 	kfree(s->s_fs_info);
+ 	s->s_fs_info = NULL;
+ }
+@@ -2240,6 +2241,7 @@ static int reiserfs_fill_super(struct super_block *s, void *data, int silent)
+ 			kfree(qf_names[j]);
+ 	}
+ #endif
++	kfree(sbi->s_jdev);
+ 	kfree(sbi);
+ 
+ 	s->s_fs_info = NULL;
+-- 
+2.16.4
+
