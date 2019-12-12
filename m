@@ -1,41 +1,99 @@
-From: Yunfeng Ye <yeyunfeng@huawei.com>
-Subject: [PATCH] reiserfs: prevent NULL pointer dereference in
- reiserfs_insert_item()
-Date: Wed, 4 Dec 2019 22:22:51 +0800
-Message-ID: <79c5135d-ff25-1cc9-4e99-9f572b88cc00@huawei.com>
+From: syzbot <syzbot+1c6756baf4b16b94d2a6@syzkaller.appspotmail.com>
+Subject: memory leak in reiserfs_fill_super
+Date: Wed, 11 Dec 2019 17:25:08 -0800
+Message-ID: <000000000000ab22f20599779d25@google.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-To: akpm@linux-foundation.org, zhengbin13@huawei.com, reiserfs-devel@vger.kernel.org, linux-kernel@vger.kernel.org, "hushiyuan@huawei.com" <hushiyuan@huawei.com>, "linfeilong@huawei.com" <linfeilong@huawei.com>
+Content-Type: text/plain; charset="us-ascii"; format="flowed"; delsp="yes"
+Content-Transfer-Encoding: 7bit
+To: deepa.kernel@gmail.com, jack@suse.cz, jeffm@suse.com, jlayton@kernel.org, linux-kernel@vger.kernel.org, reiserfs-devel@vger.kernel.org, syzkaller-bugs@googlegroups.com, viro@zeniv.linux.org.uk
 
-The variable inode may be NULL in reiserfs_insert_item(), but there is
-no check before accessing the member of inode.
+Hello,
 
-Fix this by adding NULL pointer check before calling reiserfs_debug().
+syzbot found the following crash on:
 
-Signed-off-by: Yunfeng Ye <yeyunfeng@huawei.com>
+HEAD commit:    6794862a Merge tag 'for-5.5-rc1-kconfig-tag' of git://git...
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=1158c12ee00000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=bbf3a35184a3ed64
+dashboard link: https://syzkaller.appspot.com/bug?extid=1c6756baf4b16b94d2a6
+compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=165a64fae00000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=12083661e00000
+
+IMPORTANT: if you fix the bug, please add the following tag to the commit:
+Reported-by: syzbot+1c6756baf4b16b94d2a6@syzkaller.appspotmail.com
+
+BUG: memory leak
+unreferenced object 0xffff88811ff310c0 (size 32):
+   comm "syz-executor671", pid 7128, jiffies 4294943335 (age 13.580s)
+   hex dump (first 32 bytes):
+     2e 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
+     01 00 00 00 01 00 00 00 18 00 00 00 00 00 00 00  ................
+   backtrace:
+     [<000000004089eb3d>] kmemleak_alloc_recursive  
+include/linux/kmemleak.h:43 [inline]
+     [<000000004089eb3d>] slab_post_alloc_hook mm/slab.h:586 [inline]
+     [<000000004089eb3d>] slab_alloc mm/slab.c:3320 [inline]
+     [<000000004089eb3d>] __do_kmalloc mm/slab.c:3654 [inline]
+     [<000000004089eb3d>] __kmalloc_track_caller+0x165/0x300 mm/slab.c:3671
+     [<000000008421832f>] kstrdup+0x3a/0x70 mm/util.c:60
+     [<0000000043bf75e5>] reiserfs_fill_super+0x500/0x1120  
+fs/reiserfs/super.c:1946
+     [<000000009cbc0e69>] mount_bdev+0x1ce/0x210 fs/super.c:1415
+     [<00000000934dd7f3>] get_super_block+0x35/0x40 fs/reiserfs/super.c:2604
+     [<00000000cf77f9c8>] legacy_get_tree+0x27/0x80 fs/fs_context.c:647
+     [<000000000d70f443>] vfs_get_tree+0x2d/0xe0 fs/super.c:1545
+     [<00000000be5ed892>] do_new_mount fs/namespace.c:2822 [inline]
+     [<00000000be5ed892>] do_mount+0x97c/0xc80 fs/namespace.c:3142
+     [<00000000f546ac03>] ksys_mount+0xab/0x120 fs/namespace.c:3351
+     [<000000005818601f>] __do_sys_mount fs/namespace.c:3365 [inline]
+     [<000000005818601f>] __se_sys_mount fs/namespace.c:3362 [inline]
+     [<000000005818601f>] __x64_sys_mount+0x26/0x30 fs/namespace.c:3362
+     [<00000000a358ffb7>] do_syscall_64+0x73/0x220  
+arch/x86/entry/common.c:294
+     [<00000000cb1c9cc8>] entry_SYSCALL_64_after_hwframe+0x44/0xa9
+
+BUG: memory leak
+unreferenced object 0xffff8881232e08e0 (size 32):
+   comm "syz-executor671", pid 7135, jiffies 4294943878 (age 8.150s)
+   hex dump (first 32 bytes):
+     2e 00 63 75 72 69 74 79 2e 73 65 6c 69 6e 75 78  ..curity.selinux
+     00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
+   backtrace:
+     [<000000004089eb3d>] kmemleak_alloc_recursive  
+include/linux/kmemleak.h:43 [inline]
+     [<000000004089eb3d>] slab_post_alloc_hook mm/slab.h:586 [inline]
+     [<000000004089eb3d>] slab_alloc mm/slab.c:3320 [inline]
+     [<000000004089eb3d>] __do_kmalloc mm/slab.c:3654 [inline]
+     [<000000004089eb3d>] __kmalloc_track_caller+0x165/0x300 mm/slab.c:3671
+     [<000000008421832f>] kstrdup+0x3a/0x70 mm/util.c:60
+     [<0000000043bf75e5>] reiserfs_fill_super+0x500/0x1120  
+fs/reiserfs/super.c:1946
+     [<000000009cbc0e69>] mount_bdev+0x1ce/0x210 fs/super.c:1415
+     [<00000000934dd7f3>] get_super_block+0x35/0x40 fs/reiserfs/super.c:2604
+     [<00000000cf77f9c8>] legacy_get_tree+0x27/0x80 fs/fs_context.c:647
+     [<000000000d70f443>] vfs_get_tree+0x2d/0xe0 fs/super.c:1545
+     [<00000000be5ed892>] do_new_mount fs/namespace.c:2822 [inline]
+     [<00000000be5ed892>] do_mount+0x97c/0xc80 fs/namespace.c:3142
+     [<00000000f546ac03>] ksys_mount+0xab/0x120 fs/namespace.c:3351
+     [<000000005818601f>] __do_sys_mount fs/namespace.c:3365 [inline]
+     [<000000005818601f>] __se_sys_mount fs/namespace.c:3362 [inline]
+     [<000000005818601f>] __x64_sys_mount+0x26/0x30 fs/namespace.c:3362
+     [<00000000a358ffb7>] do_syscall_64+0x73/0x220  
+arch/x86/entry/common.c:294
+     [<00000000cb1c9cc8>] entry_SYSCALL_64_after_hwframe+0x44/0xa9
+
+
+
 ---
- fs/reiserfs/stree.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+This bug is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-diff --git a/fs/reiserfs/stree.c b/fs/reiserfs/stree.c
-index da9ebe33882b..bb4973aefbb1 100644
---- a/fs/reiserfs/stree.c
-+++ b/fs/reiserfs/stree.c
-@@ -2246,7 +2246,8 @@ int reiserfs_insert_item(struct reiserfs_transaction_handle *th,
- 	/* also releases the path */
- 	unfix_nodes(&s_ins_balance);
- #ifdef REISERQUOTA_DEBUG
--	reiserfs_debug(th->t_super, REISERFS_DEBUG_CODE,
-+	if (inode)
-+		reiserfs_debug(th->t_super, REISERFS_DEBUG_CODE,
- 		       "reiserquota insert_item(): freeing %u id=%u type=%c",
- 		       quota_bytes, inode->i_uid, head2type(ih));
- #endif
--- 
-2.7.4
-
+syzbot will keep track of this bug report. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+syzbot can test patches for this bug, for details see:
+https://goo.gl/tpsmEJ#testing-patches
