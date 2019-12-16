@@ -1,51 +1,44 @@
-From: Jan Kara <jack@suse.cz>
-Subject: Re: [PATCH] Re: memory leak in reiserfs_fill_super
-Date: Mon, 16 Dec 2019 12:57:42 +0100
-Message-ID: <20191216115741.GE22157@quack2.suse.cz>
-References: <000000000000ab22f20599779d25@google.com>
- <dbad2a8f-5a58-ecb5-eec7-1d6ef90abaed@infradead.org>
+From: Yunfeng Ye <yeyunfeng@huawei.com>
+Subject: [PATCH] reiserfs: prevent NULL pointer dereference in
+ reiserfs_insert_item()
+Date: Mon, 16 Dec 2019 20:05:32 +0800
+Message-ID: <20c04f55-aa48-d28a-f8ff-1efed8a38f3a@huawei.com>
+References: <79c5135d-ff25-1cc9-4e99-9f572b88cc00@huawei.com>
 Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <dbad2a8f-5a58-ecb5-eec7-1d6ef90abaed@infradead.org>
+In-Reply-To: <79c5135d-ff25-1cc9-4e99-9f572b88cc00@huawei.com>
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Randy Dunlap <rdunlap@infradead.org>
-Cc: syzbot <syzbot+1c6756baf4b16b94d2a6@syzkaller.appspotmail.com>, deepa.kernel@gmail.com, jack@suse.cz, jeffm@suse.com, jlayton@kernel.org, linux-kernel@vger.kernel.org, reiserfs-devel@vger.kernel.org, syzkaller-bugs@googlegroups.com, viro@zeniv.linux.org.uk
+To: akpm@linux-foundation.org, zhengbin13@huawei.com, jack@suse.cz, yanaijie@huawei.com, darrick.wong@oracle.com, linux.bhar@gmail.com, hariprasad.kelam@gmail.com, deepa.kernel@gmail.com, reiserfs-devel@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: "hushiyuan@huawei.com" <hushiyuan@huawei.com>, "linfeilong@huawei.com" <linfeilong@huawei.com>
 
-On Sat 14-12-19 15:12:57, Randy Dunlap wrote:
-> From: Randy Dunlap <rdunlap@infradead.org>
-> 
-> fill_super() conditionally allocates a jdev string if "jdev=x"
-> is specified.  put_super() should free that memory.
-> 
-> Reported-by: syzbot+1c6756baf4b16b94d2a6@syzkaller.appspotmail.com
-> Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
+The variable inode may be NULL in reiserfs_insert_item(), but there is
+no check before accessing the member of inode.
 
-Thanks Randy but I've already sent a similar (and more complete) fix to this
-bug as part of [1].
+Fix this by adding NULL pointer check before calling reiserfs_debug().
 
-								Honza
+Signed-off-by: Yunfeng Ye <yeyunfeng@huawei.com>
+---
+ fs/reiserfs/stree.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-[1] https://lore.kernel.org/linux-fsdevel/20191212105018.910-1-jack@suse.cz/
-
-> ---
->  fs/reiserfs/super.c |    1 +
->  1 file changed, 1 insertion(+)
-> 
-> --- linux-next-20191213.orig/fs/reiserfs/super.c
-> +++ linux-next-20191213/fs/reiserfs/super.c
-> @@ -629,6 +629,7 @@ static void reiserfs_put_super(struct su
->  	reiserfs_write_unlock(s);
->  	mutex_destroy(&REISERFS_SB(s)->lock);
->  	destroy_workqueue(REISERFS_SB(s)->commit_wq);
-> +	kfree(REISERFS_SB(s)->s_jdev);
->  	kfree(s->s_fs_info);
->  	s->s_fs_info = NULL;
->  }
-> 
+diff --git a/fs/reiserfs/stree.c b/fs/reiserfs/stree.c
+index da9ebe33882b..bb4973aefbb1 100644
+--- a/fs/reiserfs/stree.c
++++ b/fs/reiserfs/stree.c
+@@ -2246,7 +2246,8 @@ int reiserfs_insert_item(struct reiserfs_transaction_handle *th,
+ 	/* also releases the path */
+ 	unfix_nodes(&s_ins_balance);
+ #ifdef REISERQUOTA_DEBUG
+-	reiserfs_debug(th->t_super, REISERFS_DEBUG_CODE,
++	if (inode)
++		reiserfs_debug(th->t_super, REISERFS_DEBUG_CODE,
+ 		       "reiserquota insert_item(): freeing %u id=%u type=%c",
+ 		       quota_bytes, inode->i_uid, head2type(ih));
+ #endif
 -- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+2.7.4
+
