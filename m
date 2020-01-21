@@ -1,71 +1,77 @@
-From: Jan Kara <jack@suse.cz>
-Subject: Re: [PATCH] reiserfs: fix handling of -EOPNOTSUPP in
- reiserfs_for_each_xattr
-Date: Thu, 16 Jan 2020 16:53:09 +0100
-Message-ID: <20200116155309.GA17141@quack2.suse.cz>
-References: <20200115180059.6935-1-jeffm@suse.com>
-Mime-Version: 1.0
+From: Alex Shi <alex.shi@linux.alibaba.com>
+Subject: [PATCH] fs/reiserfs: remove unused macros
+Date: Tue, 21 Jan 2020 18:25:38 +0800
+Message-ID: <1579602338-57079-1-git-send-email-alex.shi@linux.alibaba.com>
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20200115180059.6935-1-jeffm@suse.com>
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
+MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: jeffm@suse.com
-Cc: reiserfs-devel@vger.kernel.org, jack@suse.cz, brunni@netestate.de
+To: 
+Cc: Andrew Morton <akpm@linux-foundation.org>, Jan Kara <jack@suse.cz>, Bharath Vedartham <linux.bhar@gmail.com>, Hariprasad Kelam <hariprasad.kelam@gmail.com>, Jason Yan <yanaijie@huawei.com>, zhengbin <zhengbin13@huawei.com>, Jia-Ju Bai <baijiaju1990@gmail.com>, reiserfs-devel@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Wed 15-01-20 13:00:59, jeffm@suse.com wrote:
-> From: Jeff Mahoney <jeffm@suse.com>
-> 
-> Commit 60e4cf67a58 (reiserfs: fix extended attributes on the root
-> directory) introduced a regression open_xa_root started returning
-> -EOPNOTSUPP but it was not handled properly in reiserfs_for_each_xattr.
-> 
-> When the reiserfs module is built without CONFIG_REISERFS_FS_XATTR,
-> deleting an inode would result in a warning and chowning an inode
-> would also result in a warning and then fail to complete.
-> 
-> With CONFIG_REISERFS_FS_XATTR enabled, the xattr root would always be
-> present for read-write operations.
-> 
-> This commit handles -EOPNOSUPP in the same way -ENODATA is handled.
-> 
-> Fixes: 60e4cf67a58 (reiserfs: fix extended attributes on the root directory)
-> Reported-by: Michael Brunnbauer <brunni@netestate.de>
-> Signed-off-by: Jeff Mahoney <jeffm@suse.com>
+these macros are never used from introduced. better to
+remove them.
 
-Thanks Jeff! I've queued the patch to my tree and will push it to Linus
-next week.
+Signed-off-by: Alex Shi <alex.shi@linux.alibaba.com>
+Cc: Andrew Morton <akpm@linux-foundation.org> 
+Cc: Jan Kara <jack@suse.cz> 
+Cc: Bharath Vedartham <linux.bhar@gmail.com> 
+Cc: Hariprasad Kelam <hariprasad.kelam@gmail.com> 
+Cc: Jason Yan <yanaijie@huawei.com> 
+Cc: zhengbin <zhengbin13@huawei.com> 
+Cc: Jia-Ju Bai <baijiaju1990@gmail.com> 
+Cc: reiserfs-devel@vger.kernel.org 
+Cc: linux-kernel@vger.kernel.org 
+---
+ fs/reiserfs/journal.c | 2 --
+ fs/reiserfs/procfs.c  | 1 -
+ fs/reiserfs/stree.c   | 6 ------
+ 3 files changed, 9 deletions(-)
 
-								Honza
-
-> ---
->  fs/reiserfs/xattr.c | 8 ++++++--
->  1 file changed, 6 insertions(+), 2 deletions(-)
-> 
-> diff --git a/fs/reiserfs/xattr.c b/fs/reiserfs/xattr.c
-> index 06497965f0a0..d843c4789ced 100644
-> --- a/fs/reiserfs/xattr.c
-> +++ b/fs/reiserfs/xattr.c
-> @@ -319,8 +319,12 @@ static int reiserfs_for_each_xattr(struct inode *inode,
->  out_dir:
->  	dput(dir);
->  out:
-> -	/* -ENODATA isn't an error */
-> -	if (err == -ENODATA)
-> +	/*
-> +	 * -ENODATA: this object doesn't have any xattrs
-> +	 * -EOPNOTSUPP: this file system doesn't have xattrs enabled on disk.
-> +	 * Neither are errors
-> +	 */
-> +	if (err == -ENODATA || err == -EOPNOTSUPP)
->  		err = 0;
->  	return err;
->  }
-> -- 
-> 2.16.4
-> 
+diff --git a/fs/reiserfs/journal.c b/fs/reiserfs/journal.c
+index 4b3e3e73b512..072156c4f895 100644
+--- a/fs/reiserfs/journal.c
++++ b/fs/reiserfs/journal.c
+@@ -56,8 +56,6 @@
+ /* gets a struct reiserfs_journal_list * from a list head */
+ #define JOURNAL_LIST_ENTRY(h) (list_entry((h), struct reiserfs_journal_list, \
+                                j_list))
+-#define JOURNAL_WORK_ENTRY(h) (list_entry((h), struct reiserfs_journal_list, \
+-                               j_working_list))
+ 
+ /* must be correct to keep the desc and commit structs at 4k */
+ #define JOURNAL_TRANS_HALF 1018
+diff --git a/fs/reiserfs/procfs.c b/fs/reiserfs/procfs.c
+index f2cf3441fdfc..ff336513c254 100644
+--- a/fs/reiserfs/procfs.c
++++ b/fs/reiserfs/procfs.c
+@@ -63,7 +63,6 @@ static int show_version(struct seq_file *m, void *unused)
+ #define MAP( i ) D4C( objectid_map( sb, rs )[ i ] )
+ 
+ #define DJF( x ) le32_to_cpu( rs -> x )
+-#define DJV( x ) le32_to_cpu( s_v1 -> x )
+ #define DJP( x ) le32_to_cpu( jp -> x )
+ #define JF( x ) ( r -> s_journal -> x )
+ 
+diff --git a/fs/reiserfs/stree.c b/fs/reiserfs/stree.c
+index da9ebe33882b..6051e7bbc221 100644
+--- a/fs/reiserfs/stree.c
++++ b/fs/reiserfs/stree.c
+@@ -918,12 +918,6 @@ int comp_items(const struct item_head *stored_ih, const struct treepath *path)
+ 	return memcmp(stored_ih, ih, IH_SIZE);
+ }
+ 
+-/* unformatted nodes are not logged anymore, ever.  This is safe now */
+-#define held_by_others(bh) (atomic_read(&(bh)->b_count) > 1)
+-
+-/* block can not be forgotten as it is in I/O or held by someone */
+-#define block_in_use(bh) (buffer_locked(bh) || (held_by_others(bh)))
+-
+ /* prepare for delete or cut of direct item */
+ static inline int prepare_for_direct_item(struct treepath *path,
+ 					  struct item_head *le_ih,
 -- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+1.8.3.1
+
