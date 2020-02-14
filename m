@@ -1,19 +1,19 @@
 From: Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.9 134/141] reiserfs: prevent NULL pointer dereference in reiserfs_insert_item()
-Date: Fri, 14 Feb 2020 11:21:14 -0500
-Message-ID: <20200214162122.19794-134-sashal@kernel.org>
-References: <20200214162122.19794-1-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.4 096/100] reiserfs: prevent NULL pointer dereference in reiserfs_insert_item()
+Date: Fri, 14 Feb 2020 11:24:20 -0500
+Message-ID: <20200214162425.21071-96-sashal@kernel.org>
+References: <20200214162425.21071-1-sashal@kernel.org>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581697450;
-        bh=XuVLhXNZHPeJbyGhkNR8+oC6FyGsCGr10fM/qb0PYjg=;
+        s=default; t=1581697585;
+        bh=gF0Lo1ZXucCmV5ExXcPWhYb8NldkbJ0vESAs+B/OOB0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=nGsgfDinQxVUo/Rwl3xx2TQZuNC47Yw2hl8TDWHVDwsDXVS97J7hhkWeTYJwLrBP2
-         T1bkhfBOFPkd2wvQ+EWndvbZr7NWSMPUvz7vsatY14EY8x9GEp9oo+I3b6J/OhxISw
-         07+n4OttQb3XGXmcpY76LExXYDg49FAEme1kSrpc=
-In-Reply-To: <20200214162122.19794-1-sashal@kernel.org>
+        b=CxNMs0D9ajJCT4AdQEwMalaQIy/VUbxHhR7SDwzhaY7In18ereiONeawrPRtfCTpr
+         Q/lrjTjGl+WZMMC1jLy/us0gpKKnM0ntsOagJ984YulF8ega2qKvL7+yoOpdNb7RN2
+         3BhgCFf9m5CbHy5zuc+sRDls0fNzJUofd2QTro1A=
+In-Reply-To: <20200214162425.21071-1-sashal@kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
@@ -43,7 +43,7 @@ Signed-off-by: Sasha Levin <sashal@kernel.org>
  1 file changed, 2 insertions(+), 1 deletion(-)
 
 diff --git a/fs/reiserfs/stree.c b/fs/reiserfs/stree.c
-index a97e352d05d3b..5f5fff0688776 100644
+index 24cbe013240fa..e3a4cbad9620c 100644
 --- a/fs/reiserfs/stree.c
 +++ b/fs/reiserfs/stree.c
 @@ -2249,7 +2249,8 @@ int reiserfs_insert_item(struct reiserfs_transaction_handle *th,
