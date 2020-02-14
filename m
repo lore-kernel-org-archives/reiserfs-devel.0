@@ -1,20 +1,20 @@
 From: Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.4 040/100] reiserfs: Fix spurious unlock in reiserfs_fill_super() error handling
-Date: Fri, 14 Feb 2020 11:23:24 -0500
-Message-ID: <20200214162425.21071-40-sashal@kernel.org>
-References: <20200214162425.21071-1-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.19 096/252] reiserfs: Fix spurious unlock in reiserfs_fill_super() error handling
+Date: Fri, 14 Feb 2020 11:09:11 -0500
+Message-ID: <20200214161147.15842-96-sashal@kernel.org>
+References: <20200214161147.15842-1-sashal@kernel.org>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Return-path: <stable-owner@vger.kernel.org>
+Return-path: <reiserfs-devel-owner@vger.kernel.org>
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581697514;
-        bh=rkuvV1vDKr1HQorDLFRpd239XFUJLaUI6HjBIYZknYQ=;
+        s=default; t=1581696830;
+        bh=VjGmQW4ZaEIwBplxGXhjzp+VjZggaABay/iw0AmQNss=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=eLA1HtyaFb/+CdHykUXRCxhq1bBRoSMn7RjBKiPyj2dMQ9g2H8/5RgEb7YUrCPeFA
-         F2BBpoem+x8q2of+r+aNi2Ectj5iF5ij6qnCddJW3Jel2DX3DBVXN9wDjt0KwCJj9q
-         GxWexLmZNbUn+s28B3DFSv/576AI4sj7zlFaFh2I=
-In-Reply-To: <20200214162425.21071-1-sashal@kernel.org>
-Sender: stable-owner@vger.kernel.org
+        b=0L97qoQ3Wgn674naHHVwpJYS25nh1nLNLVDHUre5Eyta1+CAUh5LeLBKFAkFi24bY
+         1Wyivz7Yc0tnO1pymsd3yL/C9q+jm9OskIrVXQk/2/dia7obTpo+fuOfphotH0n8g2
+         u0sM3+3oMsym+ETOUk101K0cZexfjed5jGvgN9wI=
+In-Reply-To: <20200214161147.15842-1-sashal@kernel.org>
+Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
 To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
@@ -36,10 +36,10 @@ Signed-off-by: Sasha Levin <sashal@kernel.org>
  1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/fs/reiserfs/super.c b/fs/reiserfs/super.c
-index 519bf410e65b2..f9796fd515315 100644
+index 6280efeceb0a2..de5eda33c92a0 100644
 --- a/fs/reiserfs/super.c
 +++ b/fs/reiserfs/super.c
-@@ -1921,7 +1921,7 @@ static int reiserfs_fill_super(struct super_block *s, void *data, int silent)
+@@ -1954,7 +1954,7 @@ static int reiserfs_fill_super(struct super_block *s, void *data, int silent)
  		if (!sbi->s_jdev) {
  			SWARN(silent, s, "", "Cannot allocate memory for "
  				"journal device name");
