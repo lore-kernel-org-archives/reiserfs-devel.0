@@ -1,61 +1,53 @@
 From: Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 5.5 508/542] reiserfs: prevent NULL pointer dereference in reiserfs_insert_item()
-Date: Fri, 14 Feb 2020 10:48:20 -0500
-Message-ID: <20200214154854.6746-508-sashal@kernel.org>
-References: <20200214154854.6746-1-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 5.4 185/459] reiserfs: Fix spurious unlock in reiserfs_fill_super() error handling
+Date: Fri, 14 Feb 2020 10:57:15 -0500
+Message-ID: <20200214160149.11681-185-sashal@kernel.org>
+References: <20200214160149.11681-1-sashal@kernel.org>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Return-path: <stable-owner@vger.kernel.org>
+Return-path: <reiserfs-devel-owner@vger.kernel.org>
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581695986;
-        bh=X+eG9iyexQDwe4U+7lu+mRy9Zg8j10lWrXnxXR+W9FU=;
+        s=default; t=1581696351;
+        bh=+y4TUkxDaRyUqP3FAdHw8MSgA1dwvEyfRjGmLs+5+nQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ozsG58Wk8lgPtlpf8NVSxmUh5UdLYM/Amk5NXM0ZI3/bx1eRlTwI8k1GvWr45DbxE
-         GPytSKKp+Q+CglC/UcCIlz14IvSsY22KMRp4bc0wT+mB6TI8ZJIq1FUDuYfC4340X7
-         tlkI1uCiEf2SipgAoPup3pCM/XYE8zIrA/O/Ilfs=
-In-Reply-To: <20200214154854.6746-1-sashal@kernel.org>
-Sender: stable-owner@vger.kernel.org
+        b=wyfq+yVuEeGYvIAlKaZ68tBtr67Tj1Pf5tpy3CPdr0i5pw1+Vx6LOPwthiFe1hcRm
+         cr+bDGhXOmVaNe/f54+3LWnBeJhEDLG5/rhy4Dn0B2tCjbFeny39ZOLmzeTa2Wx6BI
+         mV+Wmliects7MMuZVutKqwJMVybbE/C6tzUTs7xI=
+In-Reply-To: <20200214160149.11681-1-sashal@kernel.org>
+Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
 To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc: Yunfeng Ye <yeyunfeng@huawei.com>, zhengbin <zhengbin13@huawei.com>, Hu Shiyuan <hushiyuan@huawei.com>, Feilong Lin <linfeilong@huawei.com>, Jan Kara <jack@suse.cz>, Andrew Morton <akpm@linux-foundation.org>, Linus Torvalds <torvalds@linux-foundation.org>, Sasha Levin <sashal@kernel.org>, reiserfs-devel@vger.kernel.org
+Cc: Jan Kara <jack@suse.cz>, Sasha Levin <sashal@kernel.org>, reiserfs-devel@vger.kernel.org
 
-From: Yunfeng Ye <yeyunfeng@huawei.com>
+From: Jan Kara <jack@suse.cz>
 
-[ Upstream commit aacee5446a2a1aa35d0a49dab289552578657fb4 ]
+[ Upstream commit 4d5c1adaf893b8aa52525d2b81995e949bcb3239 ]
 
-The variable inode may be NULL in reiserfs_insert_item(), but there is
-no check before accessing the member of inode.
+When we fail to allocate string for journal device name we jump to
+'error' label which tries to unlock reiserfs write lock which is not
+held. Jump to 'error_unlocked' instead.
 
-Fix this by adding NULL pointer check before calling reiserfs_debug().
-
-Link: http://lkml.kernel.org/r/79c5135d-ff25-1cc9-4e99-9f572b88cc00@huawei.com
-Signed-off-by: Yunfeng Ye <yeyunfeng@huawei.com>
-Cc: zhengbin <zhengbin13@huawei.com>
-Cc: Hu Shiyuan <hushiyuan@huawei.com>
-Cc: Feilong Lin <linfeilong@huawei.com>
-Cc: Jan Kara <jack@suse.cz>
-Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+Fixes: f32485be8397 ("reiserfs: delay reiserfs lock until journal initialization")
+Signed-off-by: Jan Kara <jack@suse.cz>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- fs/reiserfs/stree.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ fs/reiserfs/super.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/fs/reiserfs/stree.c b/fs/reiserfs/stree.c
-index da9ebe33882b7..bb4973aefbb18 100644
---- a/fs/reiserfs/stree.c
-+++ b/fs/reiserfs/stree.c
-@@ -2246,7 +2246,8 @@ int reiserfs_insert_item(struct reiserfs_transaction_handle *th,
- 	/* also releases the path */
- 	unfix_nodes(&s_ins_balance);
- #ifdef REISERQUOTA_DEBUG
--	reiserfs_debug(th->t_super, REISERFS_DEBUG_CODE,
-+	if (inode)
-+		reiserfs_debug(th->t_super, REISERFS_DEBUG_CODE,
- 		       "reiserquota insert_item(): freeing %u id=%u type=%c",
- 		       quota_bytes, inode->i_uid, head2type(ih));
- #endif
+diff --git a/fs/reiserfs/super.c b/fs/reiserfs/super.c
+index d127af64283e3..a6bce5b1fb1dc 100644
+--- a/fs/reiserfs/super.c
++++ b/fs/reiserfs/super.c
+@@ -1948,7 +1948,7 @@ static int reiserfs_fill_super(struct super_block *s, void *data, int silent)
+ 		if (!sbi->s_jdev) {
+ 			SWARN(silent, s, "", "Cannot allocate memory for "
+ 				"journal device name");
+-			goto error;
++			goto error_unlocked;
+ 		}
+ 	}
+ #ifdef CONFIG_QUOTA
 -- 
 2.20.1
 
