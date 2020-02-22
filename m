@@ -1,50 +1,73 @@
-From: Edward Shishkin <edward.shishkin@gmail.com>
+From: Metztli Information Technology <jose.r.r@metztli.com>
 Subject: Re: reiser4 patch for 5.5.1 and fs/fs-writeback.c
-Date: Sat, 22 Feb 2020 12:56:16 +0100
-Message-ID: <6e90d853-593c-223a-c529-1f8724907bbe@gmail.com>
-References: <20200222045124.740D350BE086@huitzilopochtli.metztli-it.com>
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+Date: Sat, 22 Feb 2020 11:34:46 -0800 (PST)
+Message-ID: <20200222193446.C495950BFAD7@huitzilopochtli.metztli-it.com>
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:references:from:message-id:date:user-agent:mime-version
-         :in-reply-to:content-transfer-encoding:content-language;
-        bh=8gItbl0BmsMbkpCCr7qxktK9zEPjbUusLMVAYrKVXZc=;
-        b=gtd24RcCI7Y4eWjwbKgdSmRNHJJHsNQeA/89/Svj02Q9i1I9CmcUxA2xeBtMEv7ZBP
-         Y7x/yd7+NZdJo1CYFE/slofaI6APGNN+WVoLr2QJr7qKUOsIhcRG6hGlKUBYsr1+t1mr
-         a6alVC6UczsGc5W8msMneA5NOmDGJ2SdnOCqCPkudMWuTxg2ANLCPWxPgHP6A9rOJTFY
-         HaQT0UC1snmYUb23stXb0aLfZSOWNFEiWd3AdFhHEB8zprMDVkrPk9Y3cvIA67od/gse
-         fxDajWFhiEbIBL+LfZQG2fDYpdtEEhlGshvZS6IJj2vX4iqe6rNbNBdtMPzjPlTb6fiQ
-         mgCQ==
-In-Reply-To: <20200222045124.740D350BE086@huitzilopochtli.metztli-it.com>
-Content-Language: en-US
+DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mixtli.metztli.it; q=dns/txt;
+ s=mx; t=1582400106; h=From: Date: Message-Id: To: Subject: Sender;
+ bh=q0NA/K1KCpCHsdjPrBAe4WOOQYHxHzuLAH0Kv9cfn6c=; b=Ie48GBzCsDKb0nWT2b3qTbS8qD4bibm+K+dF15W5VeDvmNj6RoJuS8XWYiIQ2uPmsY0zRJUk
+ YAxxNBf/eF5Tiy1TNqsKq08ujzonbZZT4tCyd1IP9aBq+cZPhOYrBwSh8XomdXu3sJkDWe3k
+ 4V9QjZWvajiR1FjnpltIitazkMA=
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: Metztli Information Technology <jose.r.r@metztli.com>, reiserfs-devel@vger.kernel.org
+MIME-Version: 1.0
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
+To: edward.shishkin@gmail.com, reiserfs-devel@vger.kernel.org
 
-On 02/22/2020 05:51 AM, Metztli Information Technology wrote:
-> Niltze, Ed-
+On Sat, Feb 22, 2020 at 3:56 AM Edward Shishkin <edward.shishkin@gmail.com>=
+ wrote:
 >
-> Starting with kernel 5.4.19, linux/fs/fs-writeback.c , at line 2066, changes
-> from
-> set_worker_desc("flush-%s", dev_name(wb->bdi->dev));
+> On 02/22/2020 05:51 AM, Metztli Information Technology wrote:
+> > Niltze, Ed-
+> >
+> > Starting with kernel 5.4.19, linux/fs/fs-writeback.c , at line 2066, ch=
+anges
+> > from
+> > set_worker_desc("flush-%s", dev_name(wb->bdi->dev));
+> >
+> > to
+> > set_worker_desc("flush-%s", bdi_dev_name(wb->bdi));
+> >
+> > I realized that when I was hacking 5.4.19 and, subsequently, my current=
+ly running kernel --as there was no RC3:
+> >
+> > uname -a
+> > Linux huitzilopochtli 5.4.0-4+reiser4.0.2-amd64 #1 SMP Debian 5.4.20-1+=
+reiser4.0.2 (2020-02-14) x86_64 GNU/Linux
+> >
+> > < https://sourceforge.net/projects/metztli-reiser4/files/Reiser4-SFRN-4=
+.0.2_Linux-5.4.20-1-RC2_for-Debian_Buster/ >
+> >
+> >
+> > I have just built 5.5.5-1 and realized, upon applying reiser4-for-5.5.1=
+.patch.gz, that your patch should be modified
+> > =C2=A0 accordingly; else, the patch will fail and will necessitate manu=
+al intervention, i.e., similar to 5.4.18 vs 5.4.19:
+> >
+> > < https://metztli.it/readOnlyEphemeral/fs-writeback_c.png >
 >
-> to
-> set_worker_desc("flush-%s", bdi_dev_name(wb->bdi));
->
-> I realized that when I was hacking 5.4.19 and, subsequently, my currently running kernel --as there was no RC3:
->
-> uname -a
-> Linux huitzilopochtli 5.4.0-4+reiser4.0.2-amd64 #1 SMP Debian 5.4.20-1+reiser4.0.2 (2020-02-14) x86_64 GNU/Linux
->
-> < https://sourceforge.net/projects/metztli-reiser4/files/Reiser4-SFRN-4.0.2_Linux-5.4.20-1-RC2_for-Debian_Buster/ >
->
->
-> I have just built 5.5.5-1 and realized, upon applying reiser4-for-5.5.1.patch.gz, that your patch should be modified
->   accordingly; else, the patch will fail and will necessitate manual intervention, i.e., similar to 5.4.18 vs 5.4.19:
->
-> < https://metztli.it/readOnlyEphemeral/fs-writeback_c.png >
+> so, everything works fine after that "manual intervention"?
 
-so, everything works fine after that "manual intervention"?
+Indeed, Ed. No issues thus far. I upgraded my local dev environment to 5.4.=
+20-1+reiser4 on February 15, 2020; in such environment I have built several=
+ PHP-7.3 iterations and I also built kernel 5.5.5-1+reiser4 yesterday. Addi=
+tionally, replaced 5.4.20-1+reiser4 cloud flavour in a Google Compute Engin=
+e (GCE) customized Zstd transparent compression instance -- which hosts mul=
+tiple PHP and Ruby applications and functions as a media / web server, as w=
+ell -- without issues thus far.
+
+Best Professional Regards.
+
+--=20
+Jose R R
+http://metztli.it
+---------------------------------------------------------------------------=
+------------------
+Download Metztli Reiser4: Debian Buster w/ Linux 5.4.18 AMD64
+---------------------------------------------------------------------------=
+------------------
+feats ZSTD compression https://sf.net/projects/metztli-reiser4/
+---------------------------------------------------------------------------=
+----------------
+Official current Reiser4 resources: https://reiser4.wiki.kernel.org/
