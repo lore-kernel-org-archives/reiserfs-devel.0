@@ -1,53 +1,57 @@
-From: Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 5.5 211/542] reiserfs: Fix spurious unlock in reiserfs_fill_super() error handling
-Date: Fri, 14 Feb 2020 10:43:23 -0500
-Message-ID: <20200214154854.6746-211-sashal@kernel.org>
-References: <20200214154854.6746-1-sashal@kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Return-path: <stable-owner@vger.kernel.org>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581695608;
-        bh=+y4TUkxDaRyUqP3FAdHw8MSgA1dwvEyfRjGmLs+5+nQ=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=09cutlUelTHQWMuGHMjFxvlwP4HnTd+kfdDrrBAb4RGz4b49GToCwdo9vh1GODPGh
-         pfsxfZheg0gM8dm2oJXLCGoOQtjwaVwJVgtM10V7rQjKJy3kB98TeZD5Okxa4WOcAw
-         dI1AzSkN3wyWtVKb/hByacKtPTIMuWt00Uh7jiCc=
-In-Reply-To: <20200214154854.6746-1-sashal@kernel.org>
-Sender: stable-owner@vger.kernel.org
+From: Metztli Information Technology <jose.r.r@metztli.com>
+Subject: reiser4 patch for 5.5.1 and fs/fs-writeback.c
+Date: Fri, 21 Feb 2020 20:51:24 -0800 (PST)
+Message-ID: <20200222045124.740D350BE086@huitzilopochtli.metztli-it.com>
+Return-path: <reiserfs-devel-owner@vger.kernel.org>
+DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mixtli.metztli.it; q=dns/txt;
+ s=mx; t=1582347109; h=From: Date: Message-Id: To: Subject: Sender;
+ bh=ygi287Yqc0Arn9eJylrCVYq59I/LURTULqbMmA9CDlA=; b=iabcy4P/W7ponwjJVqLKLatwCBGw91CrwRdzrOFtCnWCr7wklqbzTgKntajXjdvKgH63zXUV
+ XTqNqTag6rmhyAeZIE/6759n1Ow1nCFa39CXSXSmS5852AvoWWcf78Iuhmhukv+U9PEE5Ypw
+ f3wjsrVm9D4TkaBWFDgQTk11pw8=
+Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
+MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
-To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc: Jan Kara <jack@suse.cz>, Sasha Levin <sashal@kernel.org>, reiserfs-devel@vger.kernel.org
+Content-Transfer-Encoding: 7bit
+To: edward.shishkin@gmail.com, reiserfs-devel@vger.kernel.org
 
-From: Jan Kara <jack@suse.cz>
+Niltze, Ed-
 
-[ Upstream commit 4d5c1adaf893b8aa52525d2b81995e949bcb3239 ]
+Starting with kernel 5.4.19, linux/fs/fs-writeback.c , at line 2066, changes
+from
+set_worker_desc("flush-%s", dev_name(wb->bdi->dev));
 
-When we fail to allocate string for journal device name we jump to
-'error' label which tries to unlock reiserfs write lock which is not
-held. Jump to 'error_unlocked' instead.
+to
+set_worker_desc("flush-%s", bdi_dev_name(wb->bdi));
 
-Fixes: f32485be8397 ("reiserfs: delay reiserfs lock until journal initialization")
-Signed-off-by: Jan Kara <jack@suse.cz>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
- fs/reiserfs/super.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+I realized that when I was hacking 5.4.19 and, subsequently, my currently running kernel --as there was no RC3:
 
-diff --git a/fs/reiserfs/super.c b/fs/reiserfs/super.c
-index d127af64283e3..a6bce5b1fb1dc 100644
---- a/fs/reiserfs/super.c
-+++ b/fs/reiserfs/super.c
-@@ -1948,7 +1948,7 @@ static int reiserfs_fill_super(struct super_block *s, void *data, int silent)
- 		if (!sbi->s_jdev) {
- 			SWARN(silent, s, "", "Cannot allocate memory for "
- 				"journal device name");
--			goto error;
-+			goto error_unlocked;
- 		}
- 	}
- #ifdef CONFIG_QUOTA
+uname -a
+Linux huitzilopochtli 5.4.0-4+reiser4.0.2-amd64 #1 SMP Debian 5.4.20-1+reiser4.0.2 (2020-02-14) x86_64 GNU/Linux
+
+< https://sourceforge.net/projects/metztli-reiser4/files/Reiser4-SFRN-4.0.2_Linux-5.4.20-1-RC2_for-Debian_Buster/ >
+
+
+I have just built 5.5.5-1 and realized, upon applying reiser4-for-5.5.1.patch.gz, that your patch should be modified
+ accordingly; else, the patch will fail and will necessitate manual intervention, i.e., similar to 5.4.18 vs 5.4.19:
+
+< https://metztli.it/readOnlyEphemeral/fs-writeback_c.png >
+
+Apropos, I have not had *any* kernel hanging issues in my local, nor remote, reiser4 environments during building software
+ ever since you released: [PATCH] reiser4: prevent system lockups.
+
+
+< https://metztli.blog/index.php/amatl/reiser-nahui/patch-reiser4-prevent-system-lockups >
+
+
+Best Professional Regards.
+
 -- 
-2.20.1
-
+Jose R R
+http://metztli.it
+---------------------------------------------------------------------------------------------
+Download Metztli Reiser4: Debian Buster w/ Linux 5.4.18 AMD64
+---------------------------------------------------------------------------------------------
+feats ZSTD compression https://sf.net/projects/metztli-reiser4/
+-------------------------------------------------------------------------------------------
+Official current Reiser4 resources: https://reiser4.wiki.kernel.org/
