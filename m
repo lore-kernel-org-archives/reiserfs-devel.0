@@ -1,65 +1,94 @@
-From: Edward Shishkin <edward.shishkin@gmail.com>
-Subject: Re: reiser4 patch for 5.5.1 and fs/fs-writeback.c
-Date: Sat, 22 Feb 2020 22:57:43 +0100
-Message-ID: <fb777d18-bcb6-9bd1-0b30-8e12b5643c21@gmail.com>
-References: <20200222193446.C495950BFAD7@huitzilopochtli.metztli-it.com>
+From: syzbot <syzbot+c9e294bbe0333a6b7640@syzkaller.appspotmail.com>
+Subject: memory leak in reiserfs_parse_options
+Date: Sun, 01 Mar 2020 11:13:15 -0800
+Message-ID: <000000000000d6ce19059fcfdcd4@google.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:references:from:message-id:date:user-agent:mime-version
-         :in-reply-to:content-transfer-encoding:content-language;
-        bh=fZIy+UG2ubKTI2ASXiVYeZiUBFSAAEqvhf/Qo/9NhdA=;
-        b=OEu0acpjbdtPY+l47C9KRBJhukiCiA10qvLYCEXD64k6QEwZTWJEdL9Ck+H1tUKt6G
-         qMekTwfLH9m0AfPmQhUo0tbUxQeWodU2WaAf8yTYI6ki+gkl49CsOvl39J+jjdea9XIF
-         xOqArYRJ0mj4+HWwcmyL9fvyHxGCLbDKld+MnXI0GdrzefmgHHIDu+PO1V0L1WrbKddo
-         RN/J0ICtoVhiyKmLHO6ENcPytGlGz4kvE0hKxd/NtUvlTy2r9TZgIlW41ohvclkekbQV
-         5AzZljKghlqgjLFZZfng6vzoCgBVyApTIvXya/qnCbrPdoscMkruvKMr9SjkVMOUACCw
-         5u8Q==
-In-Reply-To: <20200222193446.C495950BFAD7@huitzilopochtli.metztli-it.com>
-Content-Language: en-US
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="utf-8"; format="flowed"
-To: Metztli Information Technology <jose.r.r@metztli.com>, reiserfs-devel@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: darrick.wong@oracle.com, deepa.kernel@gmail.com, jack@suse.cz, jeffm@suse.com, jlayton@kernel.org, linux-kernel@vger.kernel.org, reiserfs-devel@vger.kernel.org, syzkaller-bugs@googlegroups.com, viro@zeniv.linux.org.uk
+
+Hello,
+
+syzbot found the following crash on:
+
+HEAD commit:    63623fd4 Merge tag 'for-linus' of git://git.kernel.org/pub..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=164d5d29e00000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=6951e37c8d613538
+dashboard link: https://syzkaller.appspot.com/bug?extid=c9e294bbe0333a6b7640
+compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1308bbede00000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=15cd8e45e00000
+
+IMPORTANT: if you fix the bug, please add the following tag to the commit:
+Reported-by: syzbot+c9e294bbe0333a6b7640@syzkaller.appspotmail.com
+
+executing program
+BUG: memory leak
+unreferenced object 0xffff88811df75f40 (size 32):
+  comm "syz-executor611", pid 7103, jiffies 4294943290 (age 13.730s)
+  hex dump (first 32 bytes):
+    73 79 7a 00 00 00 00 00 00 00 00 00 00 00 00 00  syz.............
+    00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
+  backtrace:
+    [<00000000adefbfe2>] kmemleak_alloc_recursive include/linux/kmemleak.h:43 [inline]
+    [<00000000adefbfe2>] slab_post_alloc_hook mm/slab.h:586 [inline]
+    [<00000000adefbfe2>] slab_alloc mm/slab.c:3320 [inline]
+    [<00000000adefbfe2>] __do_kmalloc mm/slab.c:3654 [inline]
+    [<00000000adefbfe2>] __kmalloc_track_caller+0x165/0x300 mm/slab.c:3671
+    [<000000006e7fd3b2>] kstrdup+0x3a/0x70 mm/util.c:60
+    [<00000000f4f9470a>] reiserfs_parse_options+0x94c/0xe80 fs/reiserfs/super.c:1277
+    [<0000000080f3e2df>] reiserfs_fill_super+0x1a1/0x10e0 fs/reiserfs/super.c:1941
+    [<00000000f75361a0>] mount_bdev+0x1ce/0x210 fs/super.c:1417
+    [<00000000b8c200cc>] get_super_block+0x35/0x40 fs/reiserfs/super.c:2606
+    [<00000000f4439f43>] legacy_get_tree+0x27/0x80 fs/fs_context.c:622
+    [<000000008eb8d222>] vfs_get_tree+0x2d/0xe0 fs/super.c:1547
+    [<00000000367f5f92>] do_new_mount fs/namespace.c:2822 [inline]
+    [<00000000367f5f92>] do_mount+0x97c/0xc80 fs/namespace.c:3107
+    [<0000000000ddb42a>] __do_sys_mount fs/namespace.c:3316 [inline]
+    [<0000000000ddb42a>] __se_sys_mount fs/namespace.c:3293 [inline]
+    [<0000000000ddb42a>] __x64_sys_mount+0xc0/0x140 fs/namespace.c:3293
+    [<00000000a60abc01>] do_syscall_64+0x73/0x220 arch/x86/entry/common.c:294
+    [<000000001bd2aaac>] entry_SYSCALL_64_after_hwframe+0x44/0xa9
+
+BUG: memory leak
+unreferenced object 0xffff88811df755c0 (size 32):
+  comm "syz-executor611", pid 7103, jiffies 4294943290 (age 13.730s)
+  hex dump (first 32 bytes):
+    73 79 7a 00 00 00 00 00 00 00 00 00 00 00 00 00  syz.............
+    00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
+  backtrace:
+    [<00000000adefbfe2>] kmemleak_alloc_recursive include/linux/kmemleak.h:43 [inline]
+    [<00000000adefbfe2>] slab_post_alloc_hook mm/slab.h:586 [inline]
+    [<00000000adefbfe2>] slab_alloc mm/slab.c:3320 [inline]
+    [<00000000adefbfe2>] __do_kmalloc mm/slab.c:3654 [inline]
+    [<00000000adefbfe2>] __kmalloc_track_caller+0x165/0x300 mm/slab.c:3671
+    [<000000006e7fd3b2>] kstrdup+0x3a/0x70 mm/util.c:60
+    [<00000000f4f9470a>] reiserfs_parse_options+0x94c/0xe80 fs/reiserfs/super.c:1277
+    [<0000000080f3e2df>] reiserfs_fill_super+0x1a1/0x10e0 fs/reiserfs/super.c:1941
+    [<00000000f75361a0>] mount_bdev+0x1ce/0x210 fs/super.c:1417
+    [<00000000b8c200cc>] get_super_block+0x35/0x40 fs/reiserfs/super.c:2606
+    [<00000000f4439f43>] legacy_get_tree+0x27/0x80 fs/fs_context.c:622
+    [<000000008eb8d222>] vfs_get_tree+0x2d/0xe0 fs/super.c:1547
+    [<00000000367f5f92>] do_new_mount fs/namespace.c:2822 [inline]
+    [<00000000367f5f92>] do_mount+0x97c/0xc80 fs/namespace.c:3107
+    [<0000000000ddb42a>] __do_sys_mount fs/namespace.c:3316 [inline]
+    [<0000000000ddb42a>] __se_sys_mount fs/namespace.c:3293 [inline]
+    [<0000000000ddb42a>] __x64_sys_mount+0xc0/0x140 fs/namespace.c:3293
+    [<00000000a60abc01>] do_syscall_64+0x73/0x220 arch/x86/entry/common.c:294
+    [<000000001bd2aaac>] entry_SYSCALL_64_after_hwframe+0x44/0xa9
 
 
 
-On 02/22/2020 08:34 PM, Metztli Information Technology wrote:
-> On Sat, Feb 22, 2020 at 3:56 AM Edward Shishkin <edward.shishkin@gmail.com> wrote:
->> On 02/22/2020 05:51 AM, Metztli Information Technology wrote:
->>> Niltze, Ed-
->>>
->>> Starting with kernel 5.4.19, linux/fs/fs-writeback.c , at line 2066, changes
->>> from
->>> set_worker_desc("flush-%s", dev_name(wb->bdi->dev));
->>>
->>> to
->>> set_worker_desc("flush-%s", bdi_dev_name(wb->bdi));
->>>
->>> I realized that when I was hacking 5.4.19 and, subsequently, my currently running kernel --as there was no RC3:
->>>
->>> uname -a
->>> Linux huitzilopochtli 5.4.0-4+reiser4.0.2-amd64 #1 SMP Debian 5.4.20-1+reiser4.0.2 (2020-02-14) x86_64 GNU/Linux
->>>
->>> < https://sourceforge.net/projects/metztli-reiser4/files/Reiser4-SFRN-4.0.2_Linux-5.4.20-1-RC2_for-Debian_Buster/ >
->>>
->>>
->>> I have just built 5.5.5-1 and realized, upon applying reiser4-for-5.5.1.patch.gz, that your patch should be modified
->>> Â  accordingly; else, the patch will fail and will necessitate manual intervention, i.e., similar to 5.4.18 vs 5.4.19:
->>>
->>> < https://metztli.it/readOnlyEphemeral/fs-writeback_c.png >
->> so, everything works fine after that "manual intervention"?
-> Indeed, Ed. No issues thus far. I upgraded my local dev environment to 5.4.20-1+reiser4 on February 15, 2020; in such environment I have built several PHP-7.3 iterations and I also built kernel 5.5.5-1+reiser4 yesterday. Additionally, replaced 5.4.20-1+reiser4 cloud flavour in a Google Compute Engine (GCE) customized Zstd transparent compression instance -- which hosts multiple PHP and Ruby applications and functions as a media / web server, as well -- without issues thus far.
+---
+This bug is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-All the problems comes from upstream. Specifically from VFS and the 
-block layer. Not from Debian.
-I'll try to prepare instructions on how to find problematic commit by 
-bisecting.
-The bad news is that the changes coming from there are clearly destructive.
-Consider, for example, this "optimization":
-https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=aa65c29ce1b6e1990cd2c7d8004bbea7ff3aff38
-
-What an idiot one need to be in order to lock up a lot of pages at once 
-at the VFS level? :((( Sigh..
+syzbot will keep track of this bug report. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+syzbot can test patches for this bug, for details see:
+https://goo.gl/tpsmEJ#testing-patches
