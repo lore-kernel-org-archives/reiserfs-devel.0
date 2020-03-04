@@ -1,94 +1,54 @@
-From: syzbot <syzbot+c9e294bbe0333a6b7640@syzkaller.appspotmail.com>
-Subject: memory leak in reiserfs_parse_options
-Date: Sun, 01 Mar 2020 11:13:15 -0800
-Message-ID: <000000000000d6ce19059fcfdcd4@google.com>
-Mime-Version: 1.0
+From: Jan Kara <jack@suse.cz>
+Subject: [PATCH] reiserfs: Fix memory leak in reiserfs_parse_options()
+Date: Wed,  4 Mar 2020 14:18:59 +0100
+Message-ID: <20200304131859.24219-1-jack@suse.cz>
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
+MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: darrick.wong@oracle.com, deepa.kernel@gmail.com, jack@suse.cz, jeffm@suse.com, jlayton@kernel.org, linux-kernel@vger.kernel.org, reiserfs-devel@vger.kernel.org, syzkaller-bugs@googlegroups.com, viro@zeniv.linux.org.uk
+To: reiserfs-devel@vger.kernel.org
+Cc: linux-fsdevel@vger.kernel.org, Jan Kara <jack@suse.cz>
 
-Hello,
+When a usrjquota or grpjquota mount option is used multiple times, we
+will leak memory allocated for the file name. Make sure the last setting
+is used and all the previous ones are properly freed.
 
-syzbot found the following crash on:
-
-HEAD commit:    63623fd4 Merge tag 'for-linus' of git://git.kernel.org/pub..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=164d5d29e00000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=6951e37c8d613538
-dashboard link: https://syzkaller.appspot.com/bug?extid=c9e294bbe0333a6b7640
-compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1308bbede00000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=15cd8e45e00000
-
-IMPORTANT: if you fix the bug, please add the following tag to the commit:
 Reported-by: syzbot+c9e294bbe0333a6b7640@syzkaller.appspotmail.com
-
-executing program
-BUG: memory leak
-unreferenced object 0xffff88811df75f40 (size 32):
-  comm "syz-executor611", pid 7103, jiffies 4294943290 (age 13.730s)
-  hex dump (first 32 bytes):
-    73 79 7a 00 00 00 00 00 00 00 00 00 00 00 00 00  syz.............
-    00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
-  backtrace:
-    [<00000000adefbfe2>] kmemleak_alloc_recursive include/linux/kmemleak.h:43 [inline]
-    [<00000000adefbfe2>] slab_post_alloc_hook mm/slab.h:586 [inline]
-    [<00000000adefbfe2>] slab_alloc mm/slab.c:3320 [inline]
-    [<00000000adefbfe2>] __do_kmalloc mm/slab.c:3654 [inline]
-    [<00000000adefbfe2>] __kmalloc_track_caller+0x165/0x300 mm/slab.c:3671
-    [<000000006e7fd3b2>] kstrdup+0x3a/0x70 mm/util.c:60
-    [<00000000f4f9470a>] reiserfs_parse_options+0x94c/0xe80 fs/reiserfs/super.c:1277
-    [<0000000080f3e2df>] reiserfs_fill_super+0x1a1/0x10e0 fs/reiserfs/super.c:1941
-    [<00000000f75361a0>] mount_bdev+0x1ce/0x210 fs/super.c:1417
-    [<00000000b8c200cc>] get_super_block+0x35/0x40 fs/reiserfs/super.c:2606
-    [<00000000f4439f43>] legacy_get_tree+0x27/0x80 fs/fs_context.c:622
-    [<000000008eb8d222>] vfs_get_tree+0x2d/0xe0 fs/super.c:1547
-    [<00000000367f5f92>] do_new_mount fs/namespace.c:2822 [inline]
-    [<00000000367f5f92>] do_mount+0x97c/0xc80 fs/namespace.c:3107
-    [<0000000000ddb42a>] __do_sys_mount fs/namespace.c:3316 [inline]
-    [<0000000000ddb42a>] __se_sys_mount fs/namespace.c:3293 [inline]
-    [<0000000000ddb42a>] __x64_sys_mount+0xc0/0x140 fs/namespace.c:3293
-    [<00000000a60abc01>] do_syscall_64+0x73/0x220 arch/x86/entry/common.c:294
-    [<000000001bd2aaac>] entry_SYSCALL_64_after_hwframe+0x44/0xa9
-
-BUG: memory leak
-unreferenced object 0xffff88811df755c0 (size 32):
-  comm "syz-executor611", pid 7103, jiffies 4294943290 (age 13.730s)
-  hex dump (first 32 bytes):
-    73 79 7a 00 00 00 00 00 00 00 00 00 00 00 00 00  syz.............
-    00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
-  backtrace:
-    [<00000000adefbfe2>] kmemleak_alloc_recursive include/linux/kmemleak.h:43 [inline]
-    [<00000000adefbfe2>] slab_post_alloc_hook mm/slab.h:586 [inline]
-    [<00000000adefbfe2>] slab_alloc mm/slab.c:3320 [inline]
-    [<00000000adefbfe2>] __do_kmalloc mm/slab.c:3654 [inline]
-    [<00000000adefbfe2>] __kmalloc_track_caller+0x165/0x300 mm/slab.c:3671
-    [<000000006e7fd3b2>] kstrdup+0x3a/0x70 mm/util.c:60
-    [<00000000f4f9470a>] reiserfs_parse_options+0x94c/0xe80 fs/reiserfs/super.c:1277
-    [<0000000080f3e2df>] reiserfs_fill_super+0x1a1/0x10e0 fs/reiserfs/super.c:1941
-    [<00000000f75361a0>] mount_bdev+0x1ce/0x210 fs/super.c:1417
-    [<00000000b8c200cc>] get_super_block+0x35/0x40 fs/reiserfs/super.c:2606
-    [<00000000f4439f43>] legacy_get_tree+0x27/0x80 fs/fs_context.c:622
-    [<000000008eb8d222>] vfs_get_tree+0x2d/0xe0 fs/super.c:1547
-    [<00000000367f5f92>] do_new_mount fs/namespace.c:2822 [inline]
-    [<00000000367f5f92>] do_mount+0x97c/0xc80 fs/namespace.c:3107
-    [<0000000000ddb42a>] __do_sys_mount fs/namespace.c:3316 [inline]
-    [<0000000000ddb42a>] __se_sys_mount fs/namespace.c:3293 [inline]
-    [<0000000000ddb42a>] __x64_sys_mount+0xc0/0x140 fs/namespace.c:3293
-    [<00000000a60abc01>] do_syscall_64+0x73/0x220 arch/x86/entry/common.c:294
-    [<000000001bd2aaac>] entry_SYSCALL_64_after_hwframe+0x44/0xa9
-
-
-
+Signed-off-by: Jan Kara <jack@suse.cz>
 ---
-This bug is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
+ fs/reiserfs/super.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
-syzbot will keep track of this bug report. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-syzbot can test patches for this bug, for details see:
-https://goo.gl/tpsmEJ#testing-patches
+I'll queue this patch to my tree if nobody objects.
+
+diff --git a/fs/reiserfs/super.c b/fs/reiserfs/super.c
+index a6bce5b1fb1d..1b9c7a387dc7 100644
+--- a/fs/reiserfs/super.c
++++ b/fs/reiserfs/super.c
+@@ -1258,6 +1258,10 @@ static int reiserfs_parse_options(struct super_block *s,
+ 						 "turned on.");
+ 				return 0;
+ 			}
++			if (qf_names[qtype] !=
++			    REISERFS_SB(s)->s_qf_names[qtype])
++				kfree(qf_names[qtype]);
++			qf_names[qtype] = NULL;
+ 			if (*arg) {	/* Some filename specified? */
+ 				if (REISERFS_SB(s)->s_qf_names[qtype]
+ 				    && strcmp(REISERFS_SB(s)->s_qf_names[qtype],
+@@ -1287,10 +1291,6 @@ static int reiserfs_parse_options(struct super_block *s,
+ 				else
+ 					*mount_options |= 1 << REISERFS_GRPQUOTA;
+ 			} else {
+-				if (qf_names[qtype] !=
+-				    REISERFS_SB(s)->s_qf_names[qtype])
+-					kfree(qf_names[qtype]);
+-				qf_names[qtype] = NULL;
+ 				if (qtype == USRQUOTA)
+ 					*mount_options &= ~(1 << REISERFS_USRQUOTA);
+ 				else
+-- 
+2.16.4
+
