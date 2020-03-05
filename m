@@ -1,54 +1,45 @@
-From: Jan Kara <jack@suse.cz>
-Subject: [PATCH] reiserfs: Fix memory leak in reiserfs_parse_options()
-Date: Wed,  4 Mar 2020 14:18:59 +0100
-Message-ID: <20200304131859.24219-1-jack@suse.cz>
+From: Metztli Information Technology <jose.r.r@metztli.com>
+Subject: Reiser4, SFRN 5.1.3 formatting root fs to install linux distribution
+Date: Thu,  5 Mar 2020 07:49:30 -0800 (PST)
+Message-ID: <20200305154933.031CA525B567@huitzilopochtli.metztli-it.com>
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
+DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mixtli.metztli.it; q=dns/txt;
+ s=mx; t=1583423384; h=From: Date: Message-Id: To: Subject: Sender;
+ bh=2cS94RDIKMBihfeXkra6iSdP+ekTuIshR7t7TsD4qVo=; b=yTpIZ6ePZDZPlvMA2XdOI6hcS58d1LvaPOh9n72C0k5jCQ4aWfKKj0IoOHVsaV3qrNG6EBKO
+ metr61xL7WG18Xl36tRFDsWsZ/sDfr0Vnu9kUOQYGYqcit1IUiGdogWjDvyeiZSEXZZz0+Nf
+ ekVwBx8T33hwJK8tSRGSWgOHBt0=
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: reiserfs-devel@vger.kernel.org
-Cc: linux-fsdevel@vger.kernel.org, Jan Kara <jack@suse.cz>
+To: edward.shishkin@gmail.com, reiserfs-devel@vger.kernel.org
 
-When a usrjquota or grpjquota mount option is used multiple times, we
-will leak memory allocated for the file name. Make sure the last setting
-is used and all the previous ones are properly freed.
+Niltze Ed-
 
-Reported-by: syzbot+c9e294bbe0333a6b7640@syzkaller.appspotmail.com
-Signed-off-by: Jan Kara <jack@suse.cz>
----
- fs/reiserfs/super.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+Regarding reiser4, software framework release number (SFRN) 5.1.3, version of reiser4progs-2.0.0 utilities, is
+ mkfs.reiser4 -yo "create=reg40"
+ still appropriate to formatting a rootfs (/) media and/or a partition prior to
+installation of a GNU/Linux distribution, i.e., Debian Buster for AMD64?
 
-I'll queue this patch to my tree if nobody objects.
+I have already built/embedded the SFRN5 kernel into preliminary metztli-reiser4-sfrn5.iso, minimal netboot installation media
+< https://metztli.it/buster-reiser5/metztli-reiser4-sfrn5.iso >
+< https://metztli.it/buster-reiser5/metztli-reiser4-sfrn5.iso.SHA256SUM >
+and, using the formatting command above, installed onto ~2TB and ~200GB VirtualBox instances with Reiser5 rootfs, i.e.,
+< https://metztli.systems/system/media_attachments/files/000/000/161/original/ca7acd7030d7565b.png?1583319334 >
+< https://metztli.systems/system/media_attachments/files/000/000/162/original/e3e043e640d5ee97.png?1583319358 >
+as well as into a ~100GB physical partition with Reise5 rootfs. But I wanted to ascertain
+the default format command for the hacked SFRN5 Debian installer (d-i) for Buster (stable) distribution prior to making the image public.
 
-diff --git a/fs/reiserfs/super.c b/fs/reiserfs/super.c
-index a6bce5b1fb1d..1b9c7a387dc7 100644
---- a/fs/reiserfs/super.c
-+++ b/fs/reiserfs/super.c
-@@ -1258,6 +1258,10 @@ static int reiserfs_parse_options(struct super_block *s,
- 						 "turned on.");
- 				return 0;
- 			}
-+			if (qf_names[qtype] !=
-+			    REISERFS_SB(s)->s_qf_names[qtype])
-+				kfree(qf_names[qtype]);
-+			qf_names[qtype] = NULL;
- 			if (*arg) {	/* Some filename specified? */
- 				if (REISERFS_SB(s)->s_qf_names[qtype]
- 				    && strcmp(REISERFS_SB(s)->s_qf_names[qtype],
-@@ -1287,10 +1291,6 @@ static int reiserfs_parse_options(struct super_block *s,
- 				else
- 					*mount_options |= 1 << REISERFS_GRPQUOTA;
- 			} else {
--				if (qf_names[qtype] !=
--				    REISERFS_SB(s)->s_qf_names[qtype])
--					kfree(qf_names[qtype]);
--				qf_names[qtype] = NULL;
- 				if (qtype == USRQUOTA)
- 					*mount_options &= ~(1 << REISERFS_USRQUOTA);
- 				else
+
+Best Professional Regards.
+
 -- 
-2.16.4
-
+Jose R R
+http://metztli.it
+---------------------------------------------------------------------------------------------
+Download Metztli Reiser4: Debian Buster w/ Linux 5.4.18 AMD64
+---------------------------------------------------------------------------------------------
+feats ZSTD compression https://sf.net/projects/metztli-reiser4/
+-------------------------------------------------------------------------------------------
+Official current Reiser4 resources: https://reiser4.wiki.kernel.org/
