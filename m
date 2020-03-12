@@ -1,7 +1,7 @@
 From: Christoph Hellwig <hch@lst.de>
-Subject: [PATCH 16/21] block: remove block/partitions/sun.h
-Date: Thu, 12 Mar 2020 16:19:34 +0100
-Message-ID: <20200312151939.645254-17-hch@lst.de>
+Subject: [PATCH 19/21] partitions/msdos: remove LINUX_SWAP_PARTITION
+Date: Thu, 12 Mar 2020 16:19:37 +0100
+Message-ID: <20200312151939.645254-20-hch@lst.de>
 References: <20200312151939.645254-1-hch@lst.de>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -10,12 +10,12 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
         MIME-Version:References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender
         :Reply-To:Content-Type:Content-ID:Content-Description;
-        bh=2LWz+IqIM5pjnYsoc6C9Se72Jf2MPu2WCdsKyWxUKKQ=; b=hvqAl2QwtsESlC0QcXbeueYJ6E
-        bFFRnDazECe5tzJ9APUzrk40tYC7iu1EmAi5O/tt0pY/Hxf6JBlEfj0ug//hJ0KrW+uG8SKqVKTRF
-        wwuutPcGZbpWPi6dh41UR81Lr32S7K4/Lp2tPsDQdtvb0wdzZIUFh4U9NrcDo8NM7ibMXmlsGlRTk
-        csJAHs/f0sJn/QFfwGWAlMws11cZSneQvN/Lj3+VNj7SoYuvstGyTme7v5EcQoAxgRKp66xkwJ4vW
-        dQk43MKhWA30pJMSFYfL/xom6dDhALyzOyK7YGZKsSBEwqBFwJ2ADgNY5Bm2oH+2KqqQLksDDFK20
-        EIctOeHA==;
+        bh=NpF8uZr5AWwGERwkFTZV59wGub6aus9grKXZcd/rsck=; b=LFVstkzJrcfaZ7bqAcQWhdpzB9
+        auAdrCTBgVHmqURa+8HFuujRXNMLozRqeenUgdhwUudYTFRA8hiJG7Hru5QlW7GoKAnIvqY0B7rYE
+        NHbqE3vBobOe7Z/se2TdRpqENtjSEZw2k/g9aHxYT/pb6v/V0QiKuuDEmeubc0f22B48Sz1F+dUhp
+        7eLyaYZZM6eZFg0s6g8ai45k9VKMWdRXoDyUHFQhTfqd27MCmp6uLChnE7PIFBLTW3b3kh9p9AlMG
+        qDlSVQ0gt0UfXzxbBfM5QB16HOL+lE5yiAr23zx7bMOab7RBetTjmuoAjiRY7IpMv/Amra3ekc5JE
+        MOUPsmMQ==;
 In-Reply-To: <20200312151939.645254-1-hch@lst.de>
 Sender: linux-raid-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
@@ -23,44 +23,63 @@ Content-Type: text/plain; charset="us-ascii"
 To: Jens Axboe <axboe@kernel.dk>
 Cc: linux-block@vger.kernel.org, linux-raid@vger.kernel.org, linux-scsi@vger.kernel.org, linux-ext4@vger.kernel.org, reiserfs-devel@vger.kernel.org
 
-Just move the two defines to block/partitions/sun.c.
+Just always use NEW_SOLARIS_X86_PARTITION and explain the situation,
+as that is less confusing than two names for a single value.
 
 Signed-off-by: Christoph Hellwig <hch@lst.de>
 ---
- block/partitions/sun.c | 4 +++-
- block/partitions/sun.h | 8 --------
- 2 files changed, 3 insertions(+), 9 deletions(-)
- delete mode 100644 block/partitions/sun.h
+ block/partitions/msdos.c        | 18 ++++++++++++------
+ include/linux/msdos_partition.h |  3 +--
+ 2 files changed, 13 insertions(+), 8 deletions(-)
 
-diff --git a/block/partitions/sun.c b/block/partitions/sun.c
-index 90f36724e796..28b44100f2b1 100644
---- a/block/partitions/sun.c
-+++ b/block/partitions/sun.c
-@@ -9,7 +9,9 @@
-  */
- 
- #include "check.h"
--#include "sun.h"
+diff --git a/block/partitions/msdos.c b/block/partitions/msdos.c
+index 88ee5ee7f442..e44e2f0a02cc 100644
+--- a/block/partitions/msdos.c
++++ b/block/partitions/msdos.c
+@@ -77,13 +77,19 @@ static int aix_magic_present(struct parsed_partitions *state, unsigned char *p)
+ 		p[2] == AIX_LABEL_MAGIC3 &&
+ 		p[3] == AIX_LABEL_MAGIC4))
+ 		return 0;
+-	/* Assume the partition table is valid if Linux partitions exists */
 +
-+#define SUN_LABEL_MAGIC          0xDABE
-+#define SUN_VTOC_SANITY          0x600DDEEE
++	/*
++	 * Assume the partition table is valid if Linux partitions exists.
++	 * Note that old Solaris/x86 partitions use the same indicator as
++	 * Linux swap partitions, so we consider that a Linux partition as
++	 * well.
++	 */
+ 	for (slot = 1; slot <= 4; slot++, pt++) {
+-		if (pt->sys_ind == LINUX_SWAP_PARTITION ||
+-			pt->sys_ind == LINUX_RAID_PARTITION ||
+-			pt->sys_ind == LINUX_DATA_PARTITION ||
+-			pt->sys_ind == LINUX_LVM_PARTITION ||
+-			is_extended_partition(pt))
++		if (pt->sys_ind == SOLARIS_X86_PARTITION ||
++		    pt->sys_ind == LINUX_RAID_PARTITION ||
++		    pt->sys_ind == LINUX_DATA_PARTITION ||
++		    pt->sys_ind == LINUX_LVM_PARTITION ||
++		    is_extended_partition(pt))
+ 			return 0;
+ 	}
+ 	d = read_part_sector(state, 7, &sect);
+diff --git a/include/linux/msdos_partition.h b/include/linux/msdos_partition.h
+index e151af072cd1..2cb82db2a43c 100644
+--- a/include/linux/msdos_partition.h
++++ b/include/linux/msdos_partition.h
+@@ -27,12 +27,11 @@ enum msdos_sys_ind {
+ 	LINUX_EXTENDED_PARTITION = 0x85,
+ 	WIN98_EXTENDED_PARTITION = 0x0f,
  
- int sun_partition(struct parsed_partitions *state)
- {
-diff --git a/block/partitions/sun.h b/block/partitions/sun.h
-deleted file mode 100644
-index 4c8877a5b52d..000000000000
---- a/block/partitions/sun.h
-+++ /dev/null
-@@ -1,8 +0,0 @@
--/* SPDX-License-Identifier: GPL-2.0 */
--/*
-- *  fs/partitions/sun.h
-- */
--
--#define SUN_LABEL_MAGIC          0xDABE
--#define SUN_VTOC_SANITY          0x600DDEEE
--
+-	LINUX_SWAP_PARTITION = 0x82,
+ 	LINUX_DATA_PARTITION = 0x83,
+ 	LINUX_LVM_PARTITION = 0x8e,
+ 	LINUX_RAID_PARTITION = 0xfd,	/* autodetect RAID partition */
+ 
+-	SOLARIS_X86_PARTITION =	LINUX_SWAP_PARTITION,
++	SOLARIS_X86_PARTITION =	0x82,	/* also Linux swap partitions */
+ 	NEW_SOLARIS_X86_PARTITION = 0xbf,
+ 
+ 	DM6_AUX1PARTITION = 0x51,	/* no DDO:  use xlated geom */
 -- 
 2.24.1
 
