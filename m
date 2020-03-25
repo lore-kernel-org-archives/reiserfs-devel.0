@@ -1,40 +1,90 @@
-From: Jens Axboe <axboe@kernel.dk>
-Subject: Re: cleanup the partitioning code v2
-Date: Tue, 24 Mar 2020 07:58:29 -0600
-Message-ID: <bafcc626-16bc-baeb-a0fe-2c2fe4cda14b@kernel.dk>
-References: <20200324072530.544483-1-hch@lst.de>
+From: Colin King <colin.king@canonical.com>
+Subject: [PATCH] reiserfs: clean up several indentation issues
+Date: Wed, 25 Mar 2020 13:50:18 +0000
+Message-ID: <20200325135018.113431-1-colin.king@canonical.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=x5fXAGIMuTapier1gsbREHE5uidSK9jkxwBjZYaSvro=;
-        b=GuHVyfLtEaQS6ua0IdE6tBWddbpDehK1t8pnI71T5sIFDkffsobUKQ4A4ckdACJlzi
-         PerQQX9Qo6BJLQXl5vXmyumu2j+Oo/6WJgUeRrWlcScm6FdOlDNkXyueSmJJW7WrQY7X
-         ZgkNC/Ym/lLm264Jbgd1w3jrXs/Sjbv+FeVrpPu8GQziZ+l2HH/bAuwdBIMts78UKzu2
-         PgLG8T99SXdT7U7Ea6n9HF/10Yfbcw3mSga8g2/gdmzOcr5YJs5Rw/kHSGUnPGIm0M3i
-         0Ft6bu+IiOn2ReSIc1tPlou6GSLa/FdCbHTrWDNLhJMPg2455K1qJihwbRXTKnklQn4e
-         Njqw==
-In-Reply-To: <20200324072530.544483-1-hch@lst.de>
-Content-Language: en-US
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: Christoph Hellwig <hch@lst.de>
-Cc: linux-block@vger.kernel.org, linux-raid@vger.kernel.org, linux-scsi@vger.kernel.org, reiserfs-devel@vger.kernel.org
+To: Andrew Morton <akpm@linux-foundation.org>, reiserfs-devel@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On 3/24/20 1:25 AM, Christoph Hellwig wrote:
-> Hi Jens,
-> 
-> this series cleans up the partitioning code.
-> 
-> Changes sinve v1:
->  - rebased to for-5.7/block
+From: Colin Ian King <colin.king@canonical.com>
 
-Applied, thanks.
+There are several places where code is indented incorrectly. Fix these.
 
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ fs/reiserfs/do_balan.c |  2 +-
+ fs/reiserfs/ioctl.c    | 11 ++++++-----
+ fs/reiserfs/namei.c    | 10 +++++-----
+ 3 files changed, 12 insertions(+), 11 deletions(-)
+
+diff --git a/fs/reiserfs/do_balan.c b/fs/reiserfs/do_balan.c
+index 4075e41408b4..5129efc6f2e6 100644
+--- a/fs/reiserfs/do_balan.c
++++ b/fs/reiserfs/do_balan.c
+@@ -842,7 +842,7 @@ static void balance_leaf_paste_right_whole(struct tree_balance *tb,
+ 	struct item_head *pasted;
+ 	struct buffer_info bi;
+ 
+-							buffer_info_init_right(tb, &bi);
++	buffer_info_init_right(tb, &bi);
+ 	leaf_shift_right(tb, tb->rnum[0], tb->rbytes);
+ 
+ 	/* append item in R[0] */
+diff --git a/fs/reiserfs/ioctl.c b/fs/reiserfs/ioctl.c
+index 45e1a5d11af3..adb21bea3d60 100644
+--- a/fs/reiserfs/ioctl.c
++++ b/fs/reiserfs/ioctl.c
+@@ -184,11 +184,12 @@ int reiserfs_unpack(struct inode *inode, struct file *filp)
+ 	}
+ 
+ 	/* we need to make sure nobody is changing the file size beneath us */
+-{
+-	int depth = reiserfs_write_unlock_nested(inode->i_sb);
+-	inode_lock(inode);
+-	reiserfs_write_lock_nested(inode->i_sb, depth);
+-}
++	{
++		int depth = reiserfs_write_unlock_nested(inode->i_sb);
++
++		inode_lock(inode);
++		reiserfs_write_lock_nested(inode->i_sb, depth);
++	}
+ 
+ 	reiserfs_write_lock(inode->i_sb);
+ 
+diff --git a/fs/reiserfs/namei.c b/fs/reiserfs/namei.c
+index 959a066b7bb0..ed433721134e 100644
+--- a/fs/reiserfs/namei.c
++++ b/fs/reiserfs/namei.c
+@@ -838,10 +838,10 @@ static int reiserfs_mkdir(struct inode *dir, struct dentry *dentry, umode_t mode
+ 	 */
+ 	INC_DIR_INODE_NLINK(dir)
+ 
+-	    retval = reiserfs_new_inode(&th, dir, mode, NULL /*symlink */ ,
+-					old_format_only(dir->i_sb) ?
+-					EMPTY_DIR_SIZE_V1 : EMPTY_DIR_SIZE,
+-					dentry, inode, &security);
++	retval = reiserfs_new_inode(&th, dir, mode, NULL /*symlink */,
++				    old_format_only(dir->i_sb) ?
++				    EMPTY_DIR_SIZE_V1 : EMPTY_DIR_SIZE,
++				    dentry, inode, &security);
+ 	if (retval) {
+ 		DEC_DIR_INODE_NLINK(dir)
+ 		goto out_failed;
+@@ -967,7 +967,7 @@ static int reiserfs_rmdir(struct inode *dir, struct dentry *dentry)
+ 	reiserfs_update_sd(&th, inode);
+ 
+ 	DEC_DIR_INODE_NLINK(dir)
+-	    dir->i_size -= (DEH_SIZE + de.de_entrylen);
++	dir->i_size -= (DEH_SIZE + de.de_entrylen);
+ 	reiserfs_update_sd(&th, dir);
+ 
+ 	/* prevent empty directory from getting lost */
 -- 
-Jens Axboe
+2.25.1
 
