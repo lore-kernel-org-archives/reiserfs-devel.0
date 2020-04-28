@@ -1,90 +1,66 @@
-From: Colin King <colin.king@canonical.com>
-Subject: [PATCH] reiserfs: clean up several indentation issues
-Date: Wed, 25 Mar 2020 13:50:18 +0000
-Message-ID: <20200325135018.113431-1-colin.king@canonical.com>
+From: "Mrs. Angella Michelle" <westernunion.benin982@gmail.com>
+Subject: Contact Bank of Africa-Benin to receive your payment funds transfer
+ amount of $14.800.000,00 Million USD,approved this morning by IMF.
+Date: Tue, 28 Apr 2020 14:15:17 +0200
+Message-ID: <CAP=nHB+FvuMaTSJ+acQt---=+1oS7Dq6uufJHqetC0daDnk+Zg@mail.gmail.com>
+Reply-To: boa.benin107@yahoo.com
 Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: quoted-printable
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:reply-to:from:date:message-id:subject:to
+         :content-transfer-encoding;
+        bh=iGDX1aUDFoNHGcRtYTr6fAY39FxP7PdiUinvDYpyj0s=;
+        b=GwRI+/5zNI75IrT5cKU1Nwv2k816UrD8M5l9INobQMf2/eovU9s5Gyw8bxhvCMrIA8
+         HeS6KTI33CfHvnCpfVFP66hOahvn3VRoD9OjxrD+5DHynHIdRqQL2mHz3JjS29E6GVnG
+         06ZJaMFRWgqKkdsb1Tl+AZu8rThC2CE+NtVkGXH763ec7Z4iAtYWwTvKo499mvr670Wy
+         zILKP3OIYC8+YwiWvTPuvjbrqRUUaIqi5PCzeNXacAVzNBgtPtN/EbBiR8I4mMjEG+zR
+         CmvGABqCPW+z0+ahwo6rDenkDdNnk7iUxCGFlp8fUASQO+XQeDECye3N0RU8GK4mwich
+         tdeg==
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-To: Andrew Morton <akpm@linux-foundation.org>, reiserfs-devel@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="iso-8859-1"
+To: 
 
-From: Colin Ian King <colin.king@canonical.com>
+Attn Dear.
 
-There are several places where code is indented incorrectly. Fix these.
+Your luck has shined, Thank Your God, IMF has approved your transfer
+this Morning.
 
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- fs/reiserfs/do_balan.c |  2 +-
- fs/reiserfs/ioctl.c    | 11 ++++++-----
- fs/reiserfs/namei.c    | 10 +++++-----
- 3 files changed, 12 insertions(+), 11 deletions(-)
+Contact Bank of Africa-Benin to receive your payment funds transfer amount =
+of
+$14.800.000,00 Million USD,approved this morning by IMF.
 
-diff --git a/fs/reiserfs/do_balan.c b/fs/reiserfs/do_balan.c
-index 4075e41408b4..5129efc6f2e6 100644
---- a/fs/reiserfs/do_balan.c
-+++ b/fs/reiserfs/do_balan.c
-@@ -842,7 +842,7 @@ static void balance_leaf_paste_right_whole(struct tree_balance *tb,
- 	struct item_head *pasted;
- 	struct buffer_info bi;
- 
--							buffer_info_init_right(tb, &bi);
-+	buffer_info_init_right(tb, &bi);
- 	leaf_shift_right(tb, tb->rnum[0], tb->rbytes);
- 
- 	/* append item in R[0] */
-diff --git a/fs/reiserfs/ioctl.c b/fs/reiserfs/ioctl.c
-index 45e1a5d11af3..adb21bea3d60 100644
---- a/fs/reiserfs/ioctl.c
-+++ b/fs/reiserfs/ioctl.c
-@@ -184,11 +184,12 @@ int reiserfs_unpack(struct inode *inode, struct file *filp)
- 	}
- 
- 	/* we need to make sure nobody is changing the file size beneath us */
--{
--	int depth = reiserfs_write_unlock_nested(inode->i_sb);
--	inode_lock(inode);
--	reiserfs_write_lock_nested(inode->i_sb, depth);
--}
-+	{
-+		int depth = reiserfs_write_unlock_nested(inode->i_sb);
-+
-+		inode_lock(inode);
-+		reiserfs_write_lock_nested(inode->i_sb, depth);
-+	}
- 
- 	reiserfs_write_lock(inode->i_sb);
- 
-diff --git a/fs/reiserfs/namei.c b/fs/reiserfs/namei.c
-index 959a066b7bb0..ed433721134e 100644
---- a/fs/reiserfs/namei.c
-+++ b/fs/reiserfs/namei.c
-@@ -838,10 +838,10 @@ static int reiserfs_mkdir(struct inode *dir, struct dentry *dentry, umode_t mode
- 	 */
- 	INC_DIR_INODE_NLINK(dir)
- 
--	    retval = reiserfs_new_inode(&th, dir, mode, NULL /*symlink */ ,
--					old_format_only(dir->i_sb) ?
--					EMPTY_DIR_SIZE_V1 : EMPTY_DIR_SIZE,
--					dentry, inode, &security);
-+	retval = reiserfs_new_inode(&th, dir, mode, NULL /*symlink */,
-+				    old_format_only(dir->i_sb) ?
-+				    EMPTY_DIR_SIZE_V1 : EMPTY_DIR_SIZE,
-+				    dentry, inode, &security);
- 	if (retval) {
- 		DEC_DIR_INODE_NLINK(dir)
- 		goto out_failed;
-@@ -967,7 +967,7 @@ static int reiserfs_rmdir(struct inode *dir, struct dentry *dentry)
- 	reiserfs_update_sd(&th, inode);
- 
- 	DEC_DIR_INODE_NLINK(dir)
--	    dir->i_size -= (DEH_SIZE + de.de_entrylen);
-+	dir->i_size -= (DEH_SIZE + de.de_entrylen);
- 	reiserfs_update_sd(&th, dir);
- 
- 	/* prevent empty directory from getting lost */
--- 
-2.25.1
+Happy to inform you, we have finally deposited your payment funds
+$14.8 million us dollars with the Paying Bank of Africa-Benin
+to transfer the payment amount of $14.800,000,00 Million Us Dollars to you
 
+Contact the bank immediately you receive this email now.
+
+Director Bank of Africa-Benin: Dr. Festus Obiara
+Email id:  boa.benin107@yahoo.com
+Tel/mobile, (229) 62819378
+BOA-BENIN | GROUPE BANK OF AFRICA, boa-benin
+Avenue Jean-Paul II - 08 BP 0879 - Cotonou - B=C3=A9nin
+Phone:(229) 62819378.
+2020 GROUPE BANK OF AFRICA
+
+Be advised to re-confirm your bank details to this bank as listed.
+
+Your account Holder's name----------------
+Bank Name----------------------------------------------------------
+Bank address----------------------------------------------
+Account Numbers---------------------------------------
+Routing-----------------------------------------------------------------
+Your direct Phone Numbers----------------------------------------------
+
+Note,I have paid the deposit and insurance fees for you
+But the only money you are to send to this bank is $150.00 us dollars,
+Been for the wire transfer fees of your funds,
+
+Contact Him now to receive your transfer deposited this morning
+I wait for your reply upon confirmation
+Mrs. Angella Michelle
+Editor, Zenith Bank- Companies Benin
+mrsa9389@gmail.com
