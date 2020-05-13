@@ -1,8 +1,8 @@
 From: bugzilla-daemon@bugzilla.kernel.org
 Subject: [Bug 207717] reiserfs: data race on inode->i_size in
  reiserfs_write_full_page()
-Date: Wed, 13 May 2020 03:28:11 +0000
-Message-ID: <bug-207717-695-sCbVu7A4Tl@https.bugzilla.kernel.org/>
+Date: Wed, 13 May 2020 03:31:07 +0000
+Message-ID: <bug-207717-695-hBjW1xSmMw@https.bugzilla.kernel.org/>
 References: <bug-207717-695@https.bugzilla.kernel.org/>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 8BIT
@@ -19,7 +19,7 @@ Jia-Ju Bai (baijiaju1990@gmail.com) changed:
 
            What    |Removed                     |Added
 ----------------------------------------------------------------------------
-                 CC|                            |baijiaju1990@gmail.com
+                 CC|                            |jeffm@suse.com
 
 -- 
 You are receiving this mail because:
