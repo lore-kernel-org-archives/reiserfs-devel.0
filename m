@@ -1,66 +1,58 @@
-From: "Mrs. Angella Michelle" <westernunion.benin982@gmail.com>
-Subject: Contact Bank of Africa-Benin to receive your payment funds transfer
- amount of $14.800.000,00 Million USD,approved this morning by IMF.
-Date: Tue, 28 Apr 2020 14:15:17 +0200
-Message-ID: <CAP=nHB+FvuMaTSJ+acQt---=+1oS7Dq6uufJHqetC0daDnk+Zg@mail.gmail.com>
-Reply-To: boa.benin107@yahoo.com
+From: bugzilla-daemon@bugzilla.kernel.org
+Subject: [Bug 207717] New: reiserfs: data race on inode->i_size in
+ reiserfs_write_full_page()
+Date: Wed, 13 May 2020 03:28:02 +0000
+Message-ID: <bug-207717-695@https.bugzilla.kernel.org/>
 Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8BIT
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:reply-to:from:date:message-id:subject:to
-         :content-transfer-encoding;
-        bh=iGDX1aUDFoNHGcRtYTr6fAY39FxP7PdiUinvDYpyj0s=;
-        b=GwRI+/5zNI75IrT5cKU1Nwv2k816UrD8M5l9INobQMf2/eovU9s5Gyw8bxhvCMrIA8
-         HeS6KTI33CfHvnCpfVFP66hOahvn3VRoD9OjxrD+5DHynHIdRqQL2mHz3JjS29E6GVnG
-         06ZJaMFRWgqKkdsb1Tl+AZu8rThC2CE+NtVkGXH763ec7Z4iAtYWwTvKo499mvr670Wy
-         zILKP3OIYC8+YwiWvTPuvjbrqRUUaIqi5PCzeNXacAVzNBgtPtN/EbBiR8I4mMjEG+zR
-         CmvGABqCPW+z0+ahwo6rDenkDdNnk7iUxCGFlp8fUASQO+XQeDECye3N0RU8GK4mwich
-         tdeg==
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="iso-8859-1"
-To: 
+Content-Type: text/plain; charset="us-ascii"
+To: reiserfs-devel@vger.kernel.org
 
-Attn Dear.
+https://bugzilla.kernel.org/show_bug.cgi?id=207717
 
-Your luck has shined, Thank Your God, IMF has approved your transfer
-this Morning.
+            Bug ID: 207717
+           Summary: reiserfs: data race on inode->i_size in
+                    reiserfs_write_full_page()
+           Product: File System
+           Version: 2.5
+    Kernel Version: 5.4
+          Hardware: All
+                OS: Linux
+              Tree: Mainline
+            Status: NEW
+          Severity: normal
+          Priority: P1
+         Component: ReiserFS
+          Assignee: reiserfs-devel@vger.kernel.org
+          Reporter: baijiaju1990@gmail.com
+        Regression: No
 
-Contact Bank of Africa-Benin to receive your payment funds transfer amount =
-of
-$14.800.000,00 Million USD,approved this morning by IMF.
+The functions reiserfs_write_full_page() and reiserfs_write_end() are
+concurrently executed at runtime in the following call contexts:
 
-Happy to inform you, we have finally deposited your payment funds
-$14.8 million us dollars with the Paying Bank of Africa-Benin
-to transfer the payment amount of $14.800,000,00 Million Us Dollars to you
+Thread 1:
+reiserfs_writepage()
+  reiserfs_write_full_page()
 
-Contact the bank immediately you receive this email now.
+Thread 2:
+reiserfs_write_end()
 
-Director Bank of Africa-Benin: Dr. Festus Obiara
-Email id:  boa.benin107@yahoo.com
-Tel/mobile, (229) 62819378
-BOA-BENIN | GROUPE BANK OF AFRICA, boa-benin
-Avenue Jean-Paul II - 08 BP 0879 - Cotonou - B=C3=A9nin
-Phone:(229) 62819378.
-2020 GROUPE BANK OF AFRICA
+In reiserfs_write_full_page():
+  unsigned long end_index = inode->i_size >> PAGE_SHIFT;
 
-Be advised to re-confirm your bank details to this bank as listed.
+In reiserfs_write_end():
+  inode->i_size = pos + copied;
 
-Your account Holder's name----------------
-Bank Name----------------------------------------------------------
-Bank address----------------------------------------------
-Account Numbers---------------------------------------
-Routing-----------------------------------------------------------------
-Your direct Phone Numbers----------------------------------------------
+Thus, a data race on inode->i_size occurs.
 
-Note,I have paid the deposit and insurance fees for you
-But the only money you are to send to this bank is $150.00 us dollars,
-Been for the wire transfer fees of your funds,
+This data race was found and actually reproduced by our concurrency fuzzer.
 
-Contact Him now to receive your transfer deposited this morning
-I wait for your reply upon confirmation
-Mrs. Angella Michelle
-Editor, Zenith Bank- Companies Benin
-mrsa9389@gmail.com
+I am not sure whether this data race is harmful and how to fix this data race
+properly, so I want to listen to your opinions, thanks :)
+
+-- 
+You are receiving this mail because:
+You are the assignee for the bug.
