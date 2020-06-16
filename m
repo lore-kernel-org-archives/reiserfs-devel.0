@@ -1,57 +1,39 @@
-From: "Gustavo A. R. Silva" <gustavoars@kernel.org>
-Subject: [PATCH][next] reiserfs: bitmap: Assign array_size() to a variable
-Date: Tue, 16 Jun 2020 13:41:18 -0500
-Message-ID: <20200616184118.GA1917@embeddedor>
+From: Kees Cook <keescook@chromium.org>
+Subject: Re: [PATCH][next] reiserfs: bitmap: Assign array_size() to a variable
+Date: Tue, 16 Jun 2020 11:39:02 -0700
+Message-ID: <202006161139.1F50D42FB@keescook>
+References: <20200616184118.GA1917@embeddedor>
 Mime-Version: 1.0
-Return-path: <linux-kernel-owner@vger.kernel.org>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1592332559;
-        bh=y5nipqECzRoU0upBSu9r4jZKgeIM1+hGBnUU069dVTU=;
-        h=Date:From:To:Cc:Subject:From;
-        b=JDmkMEOWAhQ7AopfAInYXgz4LrmM6R6SfOlUn6T5HWcnpZ5wtgnhOhzjlb+vVllTH
-         Bvp417BwY893bUo7we2fj4lA+GxtHQ4ljtYv5mMtWswzjkppH67GBT7ZUNgEtXM5kb
-         SqepgiO91quswbCdIZ+Ojr6n65t/0P1/o9uzw4wo=
+Return-path: <reiserfs-devel-owner@vger.kernel.org>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=8RJK2syfb1UPJfcE04G7USvWkMzpU9ggu2GVyOrhih8=;
+        b=mzlz8vzfLovPNfG+Ed5YF/HIguRWsjR3QNuf01Zt+vV/LN6FrwR9kRkYU4zOF2pH/K
+         zVimmlH2LI3ykQvPr7+k3xzXnVNo/jxThzz7hStN49Y8UFXZ5EW7t76l3wmrQYe24sXF
+         TGgQ8LRyLduDA4Jt1oAm5/gpCPEJ9z0DhTS+Q=
 Content-Disposition: inline
-Sender: linux-kernel-owner@vger.kernel.org
+In-Reply-To: <20200616184118.GA1917@embeddedor>
+Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Kees Cook <keescook@chromium.org>
+To: "Gustavo A. R. Silva" <gustavoars@kernel.org>
 Cc: reiserfs-devel@vger.kernel.org, linux-kernel@vger.kernel.org, "Gustavo A. R. Silva" <gustavo@embeddedor.com>
 
-Assign array_size() to variable _size_ and use it in both vmalloc()
-and memset(). These sorts of multiplication factors need to be wrapped
-in array_size().
+On Tue, Jun 16, 2020 at 01:41:18PM -0500, Gustavo A. R. Silva wrote:
+> Assign array_size() to variable _size_ and use it in both vmalloc()
+> and memset(). These sorts of multiplication factors need to be wrapped
+> in array_size().
+> 
+> This issue was found with the help of Coccinelle and, audited and fixed
+> manually.
+> 
+> Addresses-KSPP-ID: https://github.com/KSPP/linux/issues/83
+> Signed-off-by: Gustavo A. R. Silva <gustavoars@kernel.org>
 
-This issue was found with the help of Coccinelle and, audited and fixed
-manually.
+Reviewed-by: Kees Cook <keescook@chromium.org>
 
-Addresses-KSPP-ID: https://github.com/KSPP/linux/issues/83
-Signed-off-by: Gustavo A. R. Silva <gustavoars@kernel.org>
----
- fs/reiserfs/bitmap.c | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
-
-diff --git a/fs/reiserfs/bitmap.c b/fs/reiserfs/bitmap.c
-index bf708ac287b4..3ca601893d2e 100644
---- a/fs/reiserfs/bitmap.c
-+++ b/fs/reiserfs/bitmap.c
-@@ -1455,12 +1455,13 @@ int reiserfs_init_bitmap_cache(struct super_block *sb)
- {
- 	struct reiserfs_bitmap_info *bitmap;
- 	unsigned int bmap_nr = reiserfs_bmap_count(sb);
-+	size_t size = array_size(bmap_nr, sizeof(*bitmap));
- 
--	bitmap = vmalloc(array_size(bmap_nr, sizeof(*bitmap)));
-+	bitmap = vmalloc(size);
- 	if (bitmap == NULL)
- 		return -ENOMEM;
- 
--	memset(bitmap, 0xff, sizeof(*bitmap) * bmap_nr);
-+	memset(bitmap, 0xff, size);
- 
- 	SB_AP_BITMAP(sb) = bitmap;
- 
 -- 
-2.27.0
-
+Kees Cook
