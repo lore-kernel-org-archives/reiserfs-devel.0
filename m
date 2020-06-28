@@ -1,39 +1,54 @@
-From: Kees Cook <keescook@chromium.org>
-Subject: Re: [PATCH][next] reiserfs: bitmap: Assign array_size() to a variable
-Date: Tue, 16 Jun 2020 11:39:02 -0700
-Message-ID: <202006161139.1F50D42FB@keescook>
-References: <20200616184118.GA1917@embeddedor>
+From: Eric Biggers <ebiggers@kernel.org>
+Subject: [PATCH] reiserfs: only call unlock_new_inode() if I_NEW
+Date: Sun, 28 Jun 2020 00:00:57 -0700
+Message-ID: <20200628070057.820213-1-ebiggers@kernel.org>
 Mime-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=8RJK2syfb1UPJfcE04G7USvWkMzpU9ggu2GVyOrhih8=;
-        b=mzlz8vzfLovPNfG+Ed5YF/HIguRWsjR3QNuf01Zt+vV/LN6FrwR9kRkYU4zOF2pH/K
-         zVimmlH2LI3ykQvPr7+k3xzXnVNo/jxThzz7hStN49Y8UFXZ5EW7t76l3wmrQYe24sXF
-         TGgQ8LRyLduDA4Jt1oAm5/gpCPEJ9z0DhTS+Q=
-Content-Disposition: inline
-In-Reply-To: <20200616184118.GA1917@embeddedor>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1593327689;
+        bh=LYiWGqhuibBKH+a+dZQwq8XA2JNHsSqHlHrxb93HHY4=;
+        h=From:To:Cc:Subject:Date:From;
+        b=fvwVcGIpBm5O34hr2mOI48xAS5F6/Szmr5TmIqrbtgZbos1qjw+aGdKhDX4uvphjB
+         4lkcyNX4TPYDR4pa5hxYSdUfWMuWgGK13HPKF+1M4iNWK6OYmqfyKX5+a1wSDWpkAg
+         2OqIdHy1Pj2+pfWwY5GsqZy7VDCrC2FsyR5FVM+M=
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: "Gustavo A. R. Silva" <gustavoars@kernel.org>
-Cc: reiserfs-devel@vger.kernel.org, linux-kernel@vger.kernel.org, "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+To: reiserfs-devel@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org, syzbot+187510916eb6a14598f7@syzkaller.appspotmail.com
 
-On Tue, Jun 16, 2020 at 01:41:18PM -0500, Gustavo A. R. Silva wrote:
-> Assign array_size() to variable _size_ and use it in both vmalloc()
-> and memset(). These sorts of multiplication factors need to be wrapped
-> in array_size().
-> 
-> This issue was found with the help of Coccinelle and, audited and fixed
-> manually.
-> 
-> Addresses-KSPP-ID: https://github.com/KSPP/linux/issues/83
-> Signed-off-by: Gustavo A. R. Silva <gustavoars@kernel.org>
+From: Eric Biggers <ebiggers@google.com>
 
-Reviewed-by: Kees Cook <keescook@chromium.org>
+unlock_new_inode() is only meant to be called after a new inode has
+already been inserted into the hash table.  But reiserfs_new_inode() can
+call it even before it has inserted the inode, triggering the WARNING in
+unlock_new_inode().  Fix this by only calling unlock_new_inode() if the
+inode has the I_NEW flag set, indicating that it's in the table.
 
+This addresses the syzbot report "WARNING in unlock_new_inode"
+(https://syzkaller.appspot.com/bug?extid=187510916eb6a14598f7).
+
+Reported-by: syzbot+187510916eb6a14598f7@syzkaller.appspotmail.com
+Signed-off-by: Eric Biggers <ebiggers@google.com>
+---
+ fs/reiserfs/inode.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/fs/reiserfs/inode.c b/fs/reiserfs/inode.c
+index 1509775da040..e3af44c61524 100644
+--- a/fs/reiserfs/inode.c
++++ b/fs/reiserfs/inode.c
+@@ -2163,7 +2163,8 @@ int reiserfs_new_inode(struct reiserfs_transaction_handle *th,
+ out_inserted_sd:
+ 	clear_nlink(inode);
+ 	th->t_trans_id = 0;	/* so the caller can't use this handle later */
+-	unlock_new_inode(inode); /* OK to do even if we hadn't locked it */
++	if (inode->i_state & I_NEW)
++		unlock_new_inode(inode);
+ 	iput(inode);
+ 	return err;
+ }
 -- 
-Kees Cook
+2.27.0
+
