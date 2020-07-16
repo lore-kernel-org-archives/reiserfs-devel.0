@@ -1,74 +1,88 @@
-From: Jan Kara <jack@suse.cz>
+From: Tom Rix <trix@redhat.com>
 Subject: Re: [PATCH] reiserfs : fix improper free in reiserfs_get_block
-Date: Wed, 15 Jul 2020 10:04:51 +0200
-Message-ID: <20200715080451.GK23073@quack2.suse.cz>
+Date: Thu, 16 Jul 2020 06:48:39 -0700
+Message-ID: <41a5b57f-2bea-04a6-3510-6d76bd5098d5@redhat.com>
 References: <20200714130509.11791-1-trix@redhat.com>
  <20200714131043.GB12769@casper.infradead.org>
  <bc5a13bd-54c4-509d-7202-20c93f43e2f6@redhat.com>
+ <20200715080451.GK23073@quack2.suse.cz>
 Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <bc5a13bd-54c4-509d-7202-20c93f43e2f6@redhat.com>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1594907324;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=GfvtRZl6XjjqgsUho+mp1mDesIN25Q1M46CfrAHyf5E=;
+        b=SfqKe+gNMqaMKgHfybf+ieUujVXBmxQ/gBRrVTTN8McUsJqsb+7ADFiOrBJs5M6Xhfh7vu
+        /5n1z4KNRfm+UPnpkH5rJx7Yl2NtZe1Chd67Oui4ccPEJkfwC+jDpGwUbxF9uGc717vbya
+        HSsDULINrxLwQg6xK2YFH2qai5OWw8k=
+In-Reply-To: <20200715080451.GK23073@quack2.suse.cz>
+Content-Language: en-US
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Tom Rix <trix@redhat.com>
-Cc: Matthew Wilcox <willy@infradead.org>, jack@suse.cz, william.kucharski@oracle.com, jeffm@suse.com, joseph.qi@linux.alibaba.com, liao.pingfang@zte.com.cn, reiserfs-devel@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Jan Kara <jack@suse.cz>
+Cc: Matthew Wilcox <willy@infradead.org>, william.kucharski@oracle.com, jeffm@suse.com, joseph.qi@linux.alibaba.com, liao.pingfang@zte.com.cn, reiserfs-devel@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Tue 14-07-20 06:12:47, Tom Rix wrote:
-> 
-> On 7/14/20 6:10 AM, Matthew Wilcox wrote:
-> > On Tue, Jul 14, 2020 at 06:05:09AM -0700, trix@redhat.com wrote:
-> >> From: Tom Rix <trix@redhat.com>
-> >>
-> >> clang static analysis flags this error
-> >>
-> >> inode.c:1083:5: warning: Argument to kfree() is the address of the
-> >>   local variable 'unf_single', which is not memory allocated by
-> >>   malloc() [unix.Malloc]
-> >>                                 kfree(un);
-> >>                                 ^~~~~~~~~
-> >> Assignment of 'un'
-> >>
-> >> 	/*
-> >> 	 * We use this in case we need to allocate
-> >> 	 * only one block which is a fastpath
-> >> 	 */
-> >> 	unp_t unf_single = 0;
-> >>
-> >> 	...
-> >>
-> >> 	if (blocks_needed == 1) {
-> >> 		un = &unf_single;
-> >> 	} else {
-> >> 		un = kcalloc(min(blocks_needed, max_to_insert),
-> >> 			     UNFM_P_SIZE, GFP_NOFS);
-> >> 		if (!un) {
-> >> 			un = &unf_single;
-> >> 			blocks_needed = 1;
-> >> 			max_to_insert = 0;
-> >> 		}
-> >> 	}
-> >>
-> >> The logic to free 'un'
-> >>
-> >> 	if (blocks_needed != 1)
-> >> 		kfree(un);
-> >>
-> >> Because the kcalloc failure falls back to using unf_single,
-> >> the if-check for the free is wrong.
-> > I think you mean "Because clang's static analysis is limited, it
-> > warns incorrectly about this".  There's no path to get to the
-> > kfree with blocks_needed != 1 and un being equal to &unf_single.
-> 
-> Ok.
 
-I agree with Matthew the patch will make the code more obviously correct so
-it's a sensible cleanup. But the changelog needs to redone to reflect this
-is just a cleanup before the patch can be merged.
+On 7/15/20 1:04 AM, Jan Kara wrote:
+> On Tue 14-07-20 06:12:47, Tom Rix wrote:
+>> On 7/14/20 6:10 AM, Matthew Wilcox wrote:
+>>> On Tue, Jul 14, 2020 at 06:05:09AM -0700, trix@redhat.com wrote:
+>>>> From: Tom Rix <trix@redhat.com>
+>>>>
+>>>> clang static analysis flags this error
+>>>>
+>>>> inode.c:1083:5: warning: Argument to kfree() is the address of the
+>>>>   local variable 'unf_single', which is not memory allocated by
+>>>>   malloc() [unix.Malloc]
+>>>>                                 kfree(un);
+>>>>                                 ^~~~~~~~~
+>>>> Assignment of 'un'
+>>>>
+>>>> 	/*
+>>>> 	 * We use this in case we need to allocate
+>>>> 	 * only one block which is a fastpath
+>>>> 	 */
+>>>> 	unp_t unf_single = 0;
+>>>>
+>>>> 	...
+>>>>
+>>>> 	if (blocks_needed == 1) {
+>>>> 		un = &unf_single;
+>>>> 	} else {
+>>>> 		un = kcalloc(min(blocks_needed, max_to_insert),
+>>>> 			     UNFM_P_SIZE, GFP_NOFS);
+>>>> 		if (!un) {
+>>>> 			un = &unf_single;
+>>>> 			blocks_needed = 1;
+>>>> 			max_to_insert = 0;
+>>>> 		}
+>>>> 	}
+>>>>
+>>>> The logic to free 'un'
+>>>>
+>>>> 	if (blocks_needed != 1)
+>>>> 		kfree(un);
+>>>>
+>>>> Because the kcalloc failure falls back to using unf_single,
+>>>> the if-check for the free is wrong.
+>>> I think you mean "Because clang's static analysis is limited, it
+>>> warns incorrectly about this".  There's no path to get to the
+>>> kfree with blocks_needed != 1 and un being equal to &unf_single.
+>> Ok.
+> I agree with Matthew the patch will make the code more obviously correct so
+> it's a sensible cleanup. But the changelog needs to redone to reflect this
+> is just a cleanup before the patch can be merged.
+>
+> 									Honza
 
-									Honza
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+I am going to look into the problem with the analyzer because that is where the fix should go.
+
+If the problem isn't resolvable, i will loop back to this clean up.
+
+Tom
+
