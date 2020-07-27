@@ -1,46 +1,41 @@
-From: Jan Kara <jack@suse.cz>
-Subject: Re: [PATCH] reiserfs: reiserfs.h: delete a duplicated word
-Date: Mon, 27 Jul 2020 10:58:48 +0200
-Message-ID: <20200727085848.GG23179@quack2.suse.cz>
-References: <20200720001431.29718-1-rdunlap@infradead.org>
+From: Eric Biggers <ebiggers@kernel.org>
+Subject: Re: [PATCH] reiserfs: only call unlock_new_inode() if I_NEW
+Date: Mon, 27 Jul 2020 09:52:15 -0700
+Message-ID: <20200727165215.GI1138@sol.localdomain>
+References: <20200628070057.820213-1-ebiggers@kernel.org>
 Mime-Version: 1.0
-Return-path: <reiserfs-devel-owner@vger.kernel.org>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1595868737;
+        bh=Rd0yXJxM1FZV2AkKPP2w284CplJp2APSP/Ajct3yKQI=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=H6Ei18zs+qrut1A39M6wgC5rrS5mOrbqutkkGin1Snx5fZdNkwTDur3EaWxhm97jn
+         n0RtL8vd3MAwWfTuY0qCdOWljf9ED3bvuVB8/tLl5UZD8NOqbBInhlSQHd/ss2H5oq
+         jrvY7WxeP0D27Bo7cD2y6Q0TeTB12MvB2LilSQZM=
 Content-Disposition: inline
-In-Reply-To: <20200720001431.29718-1-rdunlap@infradead.org>
-Sender: reiserfs-devel-owner@vger.kernel.org
+In-Reply-To: <20200628070057.820213-1-ebiggers@kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Randy Dunlap <rdunlap@infradead.org>
-Cc: linux-kernel@vger.kernel.org, Jan Kara <jack@suse.cz>, Jeff Mahoney <jeffm@suse.com>, reiserfs-devel@vger.kernel.org
+To: reiserfs-devel@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org, syzbot+187510916eb6a14598f7@syzkaller.appspotmail.com
 
-On Sun 19-07-20 17:14:31, Randy Dunlap wrote:
-> Drop the repeated word "than" in a comment.
+On Sun, Jun 28, 2020 at 12:00:57AM -0700, Eric Biggers wrote:
+> From: Eric Biggers <ebiggers@google.com>
 > 
-> Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
-> Cc: Jan Kara <jack@suse.cz>
-> Cc: Jeff Mahoney <jeffm@suse.com>
-> Cc: reiserfs-devel@vger.kernel.org
-
-Thanks! Applied.
-
-								Honza
-
-> ---
->  fs/reiserfs/reiserfs.h |    2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+> unlock_new_inode() is only meant to be called after a new inode has
+> already been inserted into the hash table.  But reiserfs_new_inode() can
+> call it even before it has inserted the inode, triggering the WARNING in
+> unlock_new_inode().  Fix this by only calling unlock_new_inode() if the
+> inode has the I_NEW flag set, indicating that it's in the table.
 > 
-> --- linux-next-20200717.orig/fs/reiserfs/reiserfs.h
-> +++ linux-next-20200717/fs/reiserfs/reiserfs.h
-> @@ -1109,7 +1109,7 @@ int is_reiserfs_jr(struct reiserfs_super
->   * ReiserFS leaves the first 64k unused, so that partition labels have
->   * enough space.  If someone wants to write a fancy bootloader that
->   * needs more than 64k, let us know, and this will be increased in size.
-> - * This number must be larger than than the largest block size on any
-> + * This number must be larger than the largest block size on any
->   * platform, or code will break.  -Hans
->   */
->  #define REISERFS_DISK_OFFSET_IN_BYTES (64 * 1024)
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+> This addresses the syzbot report "WARNING in unlock_new_inode"
+> (https://syzkaller.appspot.com/bug?extid=187510916eb6a14598f7).
+> 
+> Reported-by: syzbot+187510916eb6a14598f7@syzkaller.appspotmail.com
+> Signed-off-by: Eric Biggers <ebiggers@google.com>
+
+Anyone interested in taking this patch?
+
+- Eric
