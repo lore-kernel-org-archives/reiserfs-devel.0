@@ -1,7 +1,7 @@
 From: bugzilla-daemon@bugzilla.kernel.org
 Subject: [Bug 208719] PROBLEM: IO lockup on reiserfs FS.
-Date: Wed, 29 Jul 2020 02:20:34 +0000
-Message-ID: <bug-208719-695-ZxMBe9Zpf1@https.bugzilla.kernel.org/>
+Date: Wed, 29 Jul 2020 02:34:16 +0000
+Message-ID: <bug-208719-695-7HjxY5Hia1@https.bugzilla.kernel.org/>
 References: <bug-208719-695@https.bugzilla.kernel.org/>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 8BIT
@@ -14,20 +14,16 @@ To: reiserfs-devel@vger.kernel.org
 
 https://bugzilla.kernel.org/show_bug.cgi?id=208719
 
---- Comment #4 from deference@null.net ---
-On the suggestion to not use reiserfs:
+--- Comment #5 from deference@null.net ---
+I should add that in chasing down this bug I have tried all the IO schedulers
+available (noop deadline and cfq).
+Cfq is the one I'm now using to reproduce this.
 
-My interest in using reiserfs was so that I would have tail packing. I've
-searched online and can't find another FS with this function for Linux.
-The reason I need tail packing is because I keep a bunch of mostly git
-repositories on my system. These contain a lot of files that are either small
-or are empty. I could try to hardlink all the empty files and small duplicate
-files, but git would complain. I could compress the source code like I do with
-normal code bases, but then I'd need to decompress and update them all.
-Writing a script to do that would be nothing, it's just the time involved
-compressing/decompressing that would be a waist (which is saying nothing
-compared to git's love for full histories instead of up-to-the-last-4-versions
-or something).
+Also, I don't know if it makes a difference, but when the system first starts
+up it takes 20m to get from the login manager to having my web browsers restart
+and get all their pages from online. It might be because there is a lot of IO
+going on or it might be that there are several stalls in the scheduling; just
+not bad enough to cause a hung task problem like above.
 
 -- 
 You are receiving this mail because:
