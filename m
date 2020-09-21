@@ -1,94 +1,75 @@
-From: syzbot <syzbot+690cb1e51970435f9775@syzkaller.appspotmail.com>
-Subject: general protection fault in reiserfs_security_init
-Date: Mon, 21 Sep 2020 02:32:20 -0700
-Message-ID: <000000000000f5be7f05afcf862a@google.com>
+From: syzbot <syzbot+d94d02749498bb7bab4b@syzkaller.appspotmail.com>
+Subject: KMSAN: uninit-value in search_by_key
+Date: Mon, 21 Sep 2020 03:02:22 -0700
+Message-ID: <00000000000056737105afcff247@google.com>
 Mime-Version: 1.0
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
 List-ID: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-kernel@vger.kernel.org, reiserfs-devel@vger.kernel.org, syzkaller-bugs@googlegroups.com
+To: akpm@linux-foundation.org, alex.shi@linux.alibaba.com, glider@google.com, jack@suse.cz, linux-kernel@vger.kernel.org, reiserfs-devel@vger.kernel.org, syzkaller-bugs@googlegroups.com, yeyunfeng@huawei.com, zhengbin13@huawei.com
 
 Hello,
 
 syzbot found the following issue on:
 
-HEAD commit:    325d0eab Merge branch 'akpm' (patches from Andrew)
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=1671c0e3900000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=b12e84189082991c
-dashboard link: https://syzkaller.appspot.com/bug?extid=690cb1e51970435f9775
-compiler:       gcc (GCC) 10.1.0-syz 20200507
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=15705a3d900000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=117b3281900000
+HEAD commit:    c5a13b33 kmsan: clang-format core
+git tree:       https://github.com/google/kmsan.git master
+console output: https://syzkaller.appspot.com/x/log.txt?x=173525ab900000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=20f149ad694ba4be
+dashboard link: https://syzkaller.appspot.com/bug?extid=d94d02749498bb7bab4b
+compiler:       clang version 10.0.0 (https://github.com/llvm/llvm-project/ c2443155a0fb245c8f17f2c1c72b6ea391e86e81)
+userspace arch: i386
+
+Unfortunately, I don't have any reproducer for this issue yet.
 
 IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+690cb1e51970435f9775@syzkaller.appspotmail.com
+Reported-by: syzbot+d94d02749498bb7bab4b@syzkaller.appspotmail.com
 
-REISERFS (device loop0): journal params: device loop0, size 15748, journal first block 18, max trans len 256, max batch 225, max commit age 30, max trans age 30
-REISERFS (device loop0): checking transaction log (loop0)
-REISERFS (device loop0): Using tea hash to sort names
-REISERFS (device loop0): using 3.5.x disk format
-general protection fault, probably for non-canonical address 0xdffffc000000000d: 0000 [#1] PREEMPT SMP KASAN
-KASAN: null-ptr-deref in range [0x0000000000000068-0x000000000000006f]
-CPU: 0 PID: 6874 Comm: syz-executor834 Not tainted 5.9.0-rc5-syzkaller #0
+=====================================================
+BUG: KMSAN: uninit-value in comp_keys fs/reiserfs/stree.c:83 [inline]
+BUG: KMSAN: uninit-value in bin_search fs/reiserfs/stree.c:173 [inline]
+BUG: KMSAN: uninit-value in search_by_key+0x2c57/0x60e0 fs/reiserfs/stree.c:743
+CPU: 1 PID: 28395 Comm: syz-executor.4 Not tainted 5.9.0-rc4-syzkaller #0
 Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
-RIP: 0010:d_really_is_negative include/linux/dcache.h:472 [inline]
-RIP: 0010:reiserfs_xattr_jcreate_nblocks fs/reiserfs/xattr.h:78 [inline]
-RIP: 0010:reiserfs_security_init+0x285/0x4d0 fs/reiserfs/xattr_security.c:70
-Code: 48 c1 ea 03 80 3c 02 00 0f 85 2b 02 00 00 4d 8b ad a0 05 00 00 48 b8 00 00 00 00 00 fc ff df 49 8d 7d 68 48 89 fa 48 c1 ea 03 <80> 3c 02 00 0f 85 23 02 00 00 49 83 7d 68 00 0f 84 62 01 00 00 48
-RSP: 0018:ffffc90005827980 EFLAGS: 00010202
-RAX: dffffc0000000000 RBX: 0000000000000036 RCX: 000000000000006c
-RDX: 000000000000000d RSI: ffffffff82009dd3 RDI: 0000000000000068
-RBP: ffff88807d8441d0 R08: ffffc90005827a10 R09: ffffc90005827a18
-R10: 0000000000000000 R11: 0000000000000000 R12: 00000000000005fa
-R13: 0000000000000000 R14: ffff888094e60000 R15: 0000000000000000
-FS:  0000000001036880(0000) GS:ffff8880ae400000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007f5a6fb90ab4 CR3: 000000009a1ab000 CR4: 00000000001506f0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
 Call Trace:
- reiserfs_mkdir+0x2c9/0x980 fs/reiserfs/namei.c:821
- create_privroot fs/reiserfs/xattr.c:882 [inline]
- reiserfs_xattr_init+0x4de/0xb52 fs/reiserfs/xattr.c:1004
- reiserfs_fill_super+0x215d/0x2df3 fs/reiserfs/super.c:2177
- mount_bdev+0x32e/0x3f0 fs/super.c:1417
- legacy_get_tree+0x105/0x220 fs/fs_context.c:592
- vfs_get_tree+0x89/0x2f0 fs/super.c:1547
+ __dump_stack lib/dump_stack.c:77 [inline]
+ dump_stack+0x21c/0x280 lib/dump_stack.c:118
+ kmsan_report+0xf7/0x1e0 mm/kmsan/kmsan_report.c:122
+ __msan_warning+0x58/0xa0 mm/kmsan/kmsan_instr.c:219
+ comp_keys fs/reiserfs/stree.c:83 [inline]
+ bin_search fs/reiserfs/stree.c:173 [inline]
+ search_by_key+0x2c57/0x60e0 fs/reiserfs/stree.c:743
+ reiserfs_read_locked_inode+0x1fc/0x3260 fs/reiserfs/inode.c:1561
+ reiserfs_fill_super+0x2c00/0x6170 fs/reiserfs/super.c:2081
+ mount_bdev+0x622/0x910 fs/super.c:1417
+ get_super_block+0xc9/0xe0 fs/reiserfs/super.c:2606
+ legacy_get_tree+0x163/0x2e0 fs/fs_context.c:592
+ vfs_get_tree+0xd8/0x5d0 fs/super.c:1547
  do_new_mount fs/namespace.c:2875 [inline]
- path_mount+0x1387/0x20a0 fs/namespace.c:3192
- do_mount fs/namespace.c:3205 [inline]
- __do_sys_mount fs/namespace.c:3413 [inline]
- __se_sys_mount fs/namespace.c:3390 [inline]
- __x64_sys_mount+0x27f/0x300 fs/namespace.c:3390
- do_syscall_64+0x2d/0x70 arch/x86/entry/common.c:46
- entry_SYSCALL_64_after_hwframe+0x44/0xa9
-RIP: 0033:0x447d9a
-Code: b8 08 00 00 00 0f 05 48 3d 01 f0 ff ff 0f 83 7d a3 fb ff c3 66 2e 0f 1f 84 00 00 00 00 00 66 90 49 89 ca b8 a5 00 00 00 0f 05 <48> 3d 01 f0 ff ff 0f 83 5a a3 fb ff c3 66 0f 1f 84 00 00 00 00 00
-RSP: 002b:00007fffe558f5c8 EFLAGS: 00000297 ORIG_RAX: 00000000000000a5
-RAX: ffffffffffffffda RBX: 00007fffe558f620 RCX: 0000000000447d9a
-RDX: 0000000020000000 RSI: 0000000020000100 RDI: 00007fffe558f5e0
-RBP: 00007fffe558f5e0 R08: 00007fffe558f620 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000297 R12: 0000000000000006
-R13: 0000000000000004 R14: 0000000000000003 R15: 0000000000000003
-Modules linked in:
----[ end trace e6a0a9f4ee2cea86 ]---
-RIP: 0010:d_really_is_negative include/linux/dcache.h:472 [inline]
-RIP: 0010:reiserfs_xattr_jcreate_nblocks fs/reiserfs/xattr.h:78 [inline]
-RIP: 0010:reiserfs_security_init+0x285/0x4d0 fs/reiserfs/xattr_security.c:70
-Code: 48 c1 ea 03 80 3c 02 00 0f 85 2b 02 00 00 4d 8b ad a0 05 00 00 48 b8 00 00 00 00 00 fc ff df 49 8d 7d 68 48 89 fa 48 c1 ea 03 <80> 3c 02 00 0f 85 23 02 00 00 49 83 7d 68 00 0f 84 62 01 00 00 48
-RSP: 0018:ffffc90005827980 EFLAGS: 00010202
-RAX: dffffc0000000000 RBX: 0000000000000036 RCX: 000000000000006c
-RDX: 000000000000000d RSI: ffffffff82009dd3 RDI: 0000000000000068
-RBP: ffff88807d8441d0 R08: ffffc90005827a10 R09: ffffc90005827a18
-R10: 0000000000000000 R11: 0000000000000000 R12: 00000000000005fa
-R13: 0000000000000000 R14: ffff888094e60000 R15: 0000000000000000
-FS:  0000000001036880(0000) GS:ffff8880ae400000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007ff7d575b000 CR3: 000000009a1ab000 CR4: 00000000001506f0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+ path_mount+0x3d1a/0x5d40 fs/namespace.c:3192
+ do_mount+0x1c6/0x220 fs/namespace.c:3205
+ __do_compat_sys_mount fs/compat.c:122 [inline]
+ __se_compat_sys_mount+0x7b5/0xaa0 fs/compat.c:89
+ __ia32_compat_sys_mount+0x62/0x80 fs/compat.c:89
+ do_syscall_32_irqs_on arch/x86/entry/common.c:80 [inline]
+ __do_fast_syscall_32+0x129/0x180 arch/x86/entry/common.c:139
+ do_fast_syscall_32+0x6a/0xc0 arch/x86/entry/common.c:162
+ do_SYSENTER_32+0x73/0x90 arch/x86/entry/common.c:205
+ entry_SYSENTER_compat_after_hwframe+0x4d/0x5c
+RIP: 0023:0xf7fea549
+Code: b8 01 10 06 03 74 b4 01 10 07 03 74 b0 01 10 08 03 74 d8 01 00 00 00 00 00 00 00 00 00 00 00 00 00 51 52 55 89 e5 0f 34 cd 80 <5d> 5a 59 c3 90 90 90 90 eb 0d 90 90 90 90 90 90 90 90 90 90 90 90
+RSP: 002b:00000000f55e3f20 EFLAGS: 00000292 ORIG_RAX: 0000000000000015
+RAX: ffffffffffffffda RBX: 00000000f55e3f7c RCX: 0000000020000100
+RDX: 0000000020000000 RSI: 0000000000000000 RDI: 00000000f55e3fbc
+RBP: 00000000f55e3f7c R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000000 R12: 0000000000000000
+R13: 0000000000000000 R14: 0000000000000000 R15: 0000000000000000
+
+Local variable ----key@reiserfs_read_locked_inode created at:
+ reiserfs_read_locked_inode+0xb4/0x3260 fs/reiserfs/inode.c:1544
+ reiserfs_read_locked_inode+0xb4/0x3260 fs/reiserfs/inode.c:1544
+=====================================================
 
 
 ---
@@ -98,5 +79,3 @@ syzbot engineers can be reached at syzkaller@googlegroups.com.
 
 syzbot will keep track of this issue. See:
 https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-syzbot can test patches for this issue, for details see:
-https://goo.gl/tpsmEJ#testing-patches
