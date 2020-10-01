@@ -1,61 +1,61 @@
-From: Jan Kara <jack@suse.cz>
-Subject: [PATCH] reiserfs: Fix oops during mount
-Date: Wed, 30 Sep 2020 17:16:16 +0200
-Message-ID: <20200930151616.13466-1-jack@suse.cz>
-Return-path: <linux-fsdevel-owner@vger.kernel.org>
+From: Anmol Karn <anmol.karan123@gmail.com>
+Subject: [Linux-kernel-mentees] [PATCH] fs: reiserfs: xattr: Fix null pointer derefernce in open_xa_root()
+Date: Thu,  1 Oct 2020 14:35:47 +0530
+Message-ID: <20201001090547.431840-1-anmol.karan123@gmail.com>
+Mime-Version: 1.0
+Content-Transfer-Encoding: 8bit
+Return-path: <reiserfs-devel-owner@vger.kernel.org>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=o+n930xyfkrF12hPhSCQSJtiGdIh1Oqz/H5hvm0xQ2E=;
+        b=a34Jtsu0JJNqL+ebJlBV+1sTp5jHO3arcKpfJkh+K55BWhKHBDp8S6SnJuYgbxiSlu
+         lp0eNiBLX4pIxo0IYgTgfhm2zuhBh8O2UmvP3uyptpYO3utovwbzTMKftqNx5K2iRNzo
+         BXLpa+WfF2X0AYr3TGL0QXZbgP3cVCn5Uo+ujromNLp9vD46zb+fhEaZUpma+evsCE0E
+         +zNHnLIvPH2lurCRUak86+bY6jblUfw7iKQbRK/+oZzRg0pFivsxwmF4jyUaAJ8IYUI4
+         iVsDC3gEPjT8tjVYZkWoS0282eVasCq3uwkps5VJGd/4aa5FjUFmL8S5LzI9VJPhwxtn
+         GzgA==
 List-ID: <reiserfs-devel.vger.kernel.org>
-MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: reiserfs-devel@vger.kernel.org
-Cc: linux-fsdevel@vger.kernel.org, Jan Kara <jack@suse.cz>, stable@vger.kernel.org
+To: jack@suse.cz, jeffm@suse.com
+Cc: linux-kernel@vger.kernel.org, reiserfs-devel@vger.kernel.org, linux-kernel-mentees@lists.linuxfoundation.org, syzkaller-bugs@googlegroups.com, anmol.karan123@gmail.com, syzbot+9b33c9b118d77ff59b6f@syzkaller.appspotmail.com
 
-With suitably crafted reiserfs image and mount command reiserfs will
-crash when trying to verify that XATTR_ROOT directory can be looked up
-in / as that recurses back to xattr code like:
+d_really_is_negative() checks for the dentry->d_inode whether it's NULL or not, 
+but in open_xa_root(), when it checks 'privroot->d_inode', it doesn't check whether
+privroot is NULL or not, this leads to a null pointer dereference while calling it 
+from open_xa_dir() while initializing xaroot.
 
- xattr_lookup+0x24/0x280 fs/reiserfs/xattr.c:395
- reiserfs_xattr_get+0x89/0x540 fs/reiserfs/xattr.c:677
- reiserfs_get_acl+0x63/0x690 fs/reiserfs/xattr_acl.c:209
- get_acl+0x152/0x2e0 fs/posix_acl.c:141
- check_acl fs/namei.c:277 [inline]
- acl_permission_check fs/namei.c:309 [inline]
- generic_permission+0x2ba/0x550 fs/namei.c:353
- do_inode_permission fs/namei.c:398 [inline]
- inode_permission+0x234/0x4a0 fs/namei.c:463
- lookup_one_len+0xa6/0x200 fs/namei.c:2557
- reiserfs_lookup_privroot+0x85/0x1e0 fs/reiserfs/xattr.c:972
- reiserfs_fill_super+0x2b51/0x3240 fs/reiserfs/super.c:2176
- mount_bdev+0x24f/0x360 fs/super.c:1417
+- fs/reiserfs/xattr.c
+The bug seems to get triggered at this line:
+	
+if (d_really_is_negative(privroot))
+		return ERR_PTR(-EOPNOTSUPP);
 
-Fix the problem by bailing from reiserfs_xattr_get() when xattrs are not
-yet initialized.
+Fix it by adding a NULL check for privroot. 
 
-CC: stable@vger.kernel.org
-Reported-by: syzbot+9b33c9b118d77ff59b6f@syzkaller.appspotmail.com
-Signed-off-by: Jan Kara <jack@suse.cz>
+Reported-and-tested-by: syzbot+9b33c9b118d77ff59b6f@syzkaller.appspotmail.com 
+Link: https://syzkaller.appspot.com/bug?extid=9b33c9b118d77ff59b6f 
+Signed-off-by: Anmol Karn <anmol.karan123@gmail.com>
 ---
- fs/reiserfs/xattr.c | 7 +++++++
- 1 file changed, 7 insertions(+)
+ fs/reiserfs/xattr.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
 diff --git a/fs/reiserfs/xattr.c b/fs/reiserfs/xattr.c
-index 28b241cd6987..fe63a7c3e0da 100644
+index 28b241cd6987..a75480d0ee7e 100644
 --- a/fs/reiserfs/xattr.c
 +++ b/fs/reiserfs/xattr.c
-@@ -674,6 +674,13 @@ reiserfs_xattr_get(struct inode *inode, const char *name, void *buffer,
- 	if (get_inode_sd_version(inode) == STAT_DATA_V1)
- 		return -EOPNOTSUPP;
+@@ -121,8 +121,9 @@ static struct dentry *open_xa_root(struct super_block *sb, int flags)
+ 	struct dentry *privroot = REISERFS_SB(sb)->priv_root;
+ 	struct dentry *xaroot;
  
-+	/*
-+	 * priv_root needn't be initialized during mount so allow initial
-+	 * lookups to succeed.
-+	 */
-+	if (!REISERFS_SB(inode->i_sb)->priv_root)
-+		return 0;
-+
- 	dentry = xattr_lookup(inode, name, XATTR_REPLACE);
- 	if (IS_ERR(dentry)) {
- 		err = PTR_ERR(dentry);
+-	if (d_really_is_negative(privroot))
++	if (!privroot || d_really_is_negative(privroot)) {
+ 		return ERR_PTR(-EOPNOTSUPP);
++	}
+ 
+ 	inode_lock_nested(d_inode(privroot), I_MUTEX_XATTR);
+ 
 -- 
-2.16.4
+2.28.0
 
