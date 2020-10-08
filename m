@@ -1,77 +1,104 @@
-From: Edward Shishkin <edward.shishkin@gmail.com>
-Subject: Re: Problems mounting a reiserfs partiton on the 5.8 kernel
-Date: Tue, 6 Oct 2020 01:56:26 +0200
-Message-ID: <923f0e85-68e9-4997-dcea-4d1970953e07@gmail.com>
-References: <20201006.002952.1265255213313398815.enometh@meer.net>
+From: syzbot <syzbot+83b6f7cf9922cae5c4d7@syzkaller.appspotmail.com>
+Subject: KASAN: use-after-free Read in search_by_entry_key
+Date: Thu, 08 Oct 2020 07:59:17 -0700
+Message-ID: <00000000000081256605b12a1311@google.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:references:from:message-id:date:user-agent:mime-version
-         :in-reply-to:content-language:content-transfer-encoding;
-        bh=1NxIQXJO0tTFu4Ykqp1w7Ajewk7sip+ivf3BQ8Otoq8=;
-        b=BgrlcUJNDFT4m9WxhNQNkQL1b2doqUPRq+XiUDZIe54cO264PLmVE6+cIH3S1eVVZe
-         6LUHiEOGG6OsWd0c1mwV+auCfCqrtwzvIpqttxOF42D9PHAbcUaKTQS9M8tgSWB3dWVs
-         UOU3V8LS7KFI7PjJJR6Fklrxcgun13/9DVYpvk25Zt+qZ4N+t9nkKQ6U9lOrlpexOd2t
-         BbidLJNfa3JQCptizuL7apTywnTANjiHXK4yVDwD/dMhc3iTvcOBtrsdKmwkY+aUz7Vu
-         dSCtRZBxosj1DdI4mK1M0Yji/+kw+qeGUkgZ6iMukCDSavj0QpgImw7DHfLwIMNwR++S
-         1gnQ==
-In-Reply-To: <20201006.002952.1265255213313398815.enometh@meer.net>
-Content-Language: en-US
 List-ID: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: Madhu <enometh@meer.net>, reiserfs-devel@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: akpm@linux-foundation.org, colin.king@canonical.com, jack@suse.cz, jeffm@suse.com, linux-kernel@vger.kernel.org, reiserfs-devel@vger.kernel.org, syzkaller-bugs@googlegroups.com
 
-On 10/05/2020 08:59 PM, Madhu wrote:
-> Hello.
-> 
-> I'm using sys-fs/reiserfsprogs-3.6.27.  The 5.8 kernel refuses to
-> mount a reiser partition:
-> 
-> $ /bin/mount /dev/mapper/5 /5
-> 
-> [  203.691395] REISERFS (device dm-1): found reiserfs format "3.6" with standard journal
-> [  203.691429] REISERFS (device dm-1): using ordered data mode
-> [  203.691431] reiserfs: using flush barriers
-> [  203.719044] REISERFS (device dm-1): journal params: device dm-1, size 8192, journal first block 18, max trans len 1024, max batch 900, max commit age 30, max trans age 30
-> [  203.719364] REISERFS (device dm-1): checking transaction log (dm-1)
-> [  203.732153] loop: Write error at byte offset 5402468352, length 4096.
-> [  203.732167] blk_update_request: I/O error, dev loop5, sector 65936 op 0x1:(WRITE) flags 0x800 phys_seg 1 prio class 0
-> [  203.732172] blk_update_request: I/O error, dev loop5, sector 65936 op 0x1:(WRITE) flags 0x800 phys_seg 1 prio class 0
-> [  203.732190] Buffer I/O error on dev dm-1, logical block 8210, lost sync page write
-> [  203.732213] REISERFS warning (device dm-1): journal-837 _update_journal_header_block: IO error during journal replay
-> [  203.732219] REISERFS warning (device dm-1): reiserfs-2006 journal_init: Replay Failure, unable to mount
-> [  203.732474] REISERFS warning (device dm-1): sh-2022 reiserfs_fill_super: unable to initialize journal space
-> 
-> This is the 5.8.12 kernel.
-> 
-> The file system is on a dmcrypt device
-> $ dmsetup  status 5
-> 0 167192565 crypt
-> 
-> which is mapped from a loopback device, which is mapped from an offset
-> from a raw partition.
-> 
-> $ losetup -a /dev/loop5
-> /dev/loop5: [0005]:6284 (/dev/sda5), offset 5368709120
-> 
-> $ fdisk | grep sda[45]
->     Device Boot      Start         End      Blocks   Id  System
-> /dev/sda4       187655265   625137344   218741040    5  Extended
-> /dev/sda5       187655328   365334164    88839418+  83  Linux
-> 
-> The reiser partition is over a decade old and has been very
-> reliable. Running fsck finds no problems.  And the partition mounts
-> fine and is usable with the 5.7 kernel.
-> 
-> Any ideas what the problem might be?  The dmesg output looks bogus and
-> suggests to me that a write is failing somewhere.  I suspect it is the
-> device layer which has changed.  If there is a bug to be filed where
-> should I file it? I'd Appreciate any clues.
+Hello,
 
-The problem goes from the block layer.
-File a bug at https://bugzilla.kernel.org/
-and provide all that description there.
+syzbot found the following issue on:
 
-Edward.
+HEAD commit:    c85fb28b Merge tag 'arm64-fixes' of git://git.kernel.org/p..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=136fa1fb900000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=de7f697da23057c7
+dashboard link: https://syzkaller.appspot.com/bug?extid=83b6f7cf9922cae5c4d7
+compiler:       clang version 10.0.0 (https://github.com/llvm/llvm-project/ c2443155a0fb245c8f17f2c1c72b6ea391e86e81)
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=17ef5d4f900000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=11396677900000
+
+Bisection is inconclusive: the issue happens on the oldest tested release.
+
+bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=13e47620500000
+final oops:     https://syzkaller.appspot.com/x/report.txt?x=10147620500000
+console output: https://syzkaller.appspot.com/x/log.txt?x=17e47620500000
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+83b6f7cf9922cae5c4d7@syzkaller.appspotmail.com
+
+REISERFS (device loop0): journal params: device loop0, size 15748, journal first block 18, max trans len 1024, max batch 900, max commit age 30, max trans age 30
+REISERFS (device loop0): checking transaction log (loop0)
+REISERFS (device loop0): Using r5 hash to sort names
+REISERFS (device loop0): using 3.5.x disk format
+==================================================================
+BUG: KASAN: use-after-free in bin_search_in_dir_item fs/reiserfs/namei.c:40 [inline]
+BUG: KASAN: use-after-free in search_by_entry_key+0x450/0xad0 fs/reiserfs/namei.c:164
+Read of size 4 at addr ffff88807cd0b7bd by task syz-executor710/6847
+
+CPU: 1 PID: 6847 Comm: syz-executor710 Not tainted 5.9.0-rc8-syzkaller #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
+Call Trace:
+ __dump_stack lib/dump_stack.c:77 [inline]
+ dump_stack+0x1d6/0x29e lib/dump_stack.c:118
+ print_address_description+0x66/0x620 mm/kasan/report.c:383
+ __kasan_report mm/kasan/report.c:513 [inline]
+ kasan_report+0x132/0x1d0 mm/kasan/report.c:530
+ bin_search_in_dir_item fs/reiserfs/namei.c:40 [inline]
+ search_by_entry_key+0x450/0xad0 fs/reiserfs/namei.c:164
+ reiserfs_find_entry+0x246/0x1260 fs/reiserfs/namei.c:321
+ reiserfs_lookup+0x156/0x3a0 fs/reiserfs/namei.c:367
+ __lookup_slow+0x240/0x370 fs/namei.c:1544
+ lookup_one_len+0x10e/0x200 fs/namei.c:2562
+ reiserfs_lookup_privroot+0x85/0x1e0 fs/reiserfs/xattr.c:972
+ reiserfs_fill_super+0x2b51/0x3240 fs/reiserfs/super.c:2176
+ mount_bdev+0x24f/0x360 fs/super.c:1417
+ legacy_get_tree+0xea/0x180 fs/fs_context.c:592
+ vfs_get_tree+0x88/0x270 fs/super.c:1547
+ do_new_mount fs/namespace.c:2875 [inline]
+ path_mount+0x179d/0x29e0 fs/namespace.c:3192
+ do_mount fs/namespace.c:3205 [inline]
+ __do_sys_mount fs/namespace.c:3413 [inline]
+ __se_sys_mount+0x126/0x180 fs/namespace.c:3390
+ do_syscall_64+0x31/0x70 arch/x86/entry/common.c:46
+ entry_SYSCALL_64_after_hwframe+0x44/0xa9
+RIP: 0033:0x447d9a
+Code: b8 08 00 00 00 0f 05 48 3d 01 f0 ff ff 0f 83 7d a3 fb ff c3 66 2e 0f 1f 84 00 00 00 00 00 66 90 49 89 ca b8 a5 00 00 00 0f 05 <48> 3d 01 f0 ff ff 0f 83 5a a3 fb ff c3 66 0f 1f 84 00 00 00 00 00
+RSP: 002b:00007ffc5d05d468 EFLAGS: 00000297 ORIG_RAX: 00000000000000a5
+RAX: ffffffffffffffda RBX: 00007ffc5d05d4c0 RCX: 0000000000447d9a
+RDX: 0000000020000000 RSI: 0000000020000100 RDI: 00007ffc5d05d480
+RBP: 00007ffc5d05d480 R08: 00007ffc5d05d4c0 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000297 R12: 0000000000000006
+R13: 0000000000000004 R14: 0000000000000003 R15: 0000000000000003
+
+The buggy address belongs to the page:
+page:0000000023b676e0 refcount:0 mapcount:0 mapping:0000000000000000 index:0x1 pfn:0x7cd0b
+flags: 0xfffe0000000000()
+raw: 00fffe0000000000 ffffea0001f34308 ffffea0001f34288 0000000000000000
+raw: 0000000000000001 0000000000000000 00000000ffffffff 0000000000000000
+page dumped because: kasan: bad access detected
+
+Memory state around the buggy address:
+ ffff88807cd0b680: ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff
+ ffff88807cd0b700: ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff
+>ffff88807cd0b780: ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff
+                                        ^
+ ffff88807cd0b800: ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff
+ ffff88807cd0b880: ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff
+==================================================================
+
+
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+For information about bisection process see: https://goo.gl/tpsmEJ#bisection
+syzbot can test patches for this issue, for details see:
+https://goo.gl/tpsmEJ#testing-patches
