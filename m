@@ -1,19 +1,19 @@
 From: Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 5.8 063/101] reiserfs: only call unlock_new_inode() if I_NEW
-Date: Sun, 18 Oct 2020 15:19:48 -0400
-Message-ID: <20201018192026.4053674-63-sashal@kernel.org>
-References: <20201018192026.4053674-1-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 5.9 067/111] reiserfs: only call unlock_new_inode() if I_NEW
+Date: Sun, 18 Oct 2020 15:17:23 -0400
+Message-ID: <20201018191807.4052726-67-sashal@kernel.org>
+References: <20201018191807.4052726-1-sashal@kernel.org>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Return-path: <stable-owner@vger.kernel.org>
+Return-path: <reiserfs-devel-owner@vger.kernel.org>
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1603048902;
+        s=default; t=1603048768;
         bh=hAYIdHO7/WDzE4XJhYurmHtjVgByz5Wp4pXVuqmlTbA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=tnbzsUndsOQK1noeLh/WFJBPg3VzwurXsVZqZqGBXoSR/votsk96+xazRzKOrwXWm
-         TioHG3x0jsPt0kHkpjc/bN9oLctBv+1t6zzkgExfvMIkKTeiPVz9wkXqMPr0Tn+7I6
-         UOC0pNim8vODaQO6DWo5YzWXmPeq/STuooQZKw0o=
-In-Reply-To: <20201018192026.4053674-1-sashal@kernel.org>
+        b=T28+U2rcC6k+NWF2O96DLRpq+ylgoonH0rrduW9zeIkYZxtLynm4D/r5gUq7bUT9H
+         qJ0TocZlKhXPMt4Kg7fLhB4mN67AIPfN4Zf6992JQ/8t0lxIRavSyJHxM2838N34Lo
+         O5tWh+ZzJBTl4zGTKa9pJzXMz0gVXHEwAjBUw48U=
+In-Reply-To: <20201018191807.4052726-1-sashal@kernel.org>
 List-ID: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
 To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
