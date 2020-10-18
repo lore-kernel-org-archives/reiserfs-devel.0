@@ -1,65 +1,60 @@
 From: Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 5.4 70/80] reiserfs: Fix memory leak in reiserfs_parse_options()
-Date: Sun, 18 Oct 2020 15:22:21 -0400
-Message-ID: <20201018192231.4054535-70-sashal@kernel.org>
-References: <20201018192231.4054535-1-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 5.8 063/101] reiserfs: only call unlock_new_inode() if I_NEW
+Date: Sun, 18 Oct 2020 15:19:48 -0400
+Message-ID: <20201018192026.4053674-63-sashal@kernel.org>
+References: <20201018192026.4053674-1-sashal@kernel.org>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Return-path: <stable-owner@vger.kernel.org>
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1603049039;
-        bh=TfWJq0F+eNJwR3zuDSJhyRJNiFATVZ7YZaKoLVaSsv4=;
+        s=default; t=1603048902;
+        bh=hAYIdHO7/WDzE4XJhYurmHtjVgByz5Wp4pXVuqmlTbA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=hKQOPEoIq0y+PEBMVAZAq2+bGjhUg2+SOJc3+HfgVJgR8DKGykq+LehnsePUUVU6j
-         5I6fNirplS/KTMhMhY2g4ML0D0kqqFy2hhdh9M+IX9qpnfneDS0a3XUaajuSwAPTv1
-         1usOiDM7tq3aAV7E894Z5Lonc+jtl1DAGkxcCY3g=
-In-Reply-To: <20201018192231.4054535-1-sashal@kernel.org>
+        b=tnbzsUndsOQK1noeLh/WFJBPg3VzwurXsVZqZqGBXoSR/votsk96+xazRzKOrwXWm
+         TioHG3x0jsPt0kHkpjc/bN9oLctBv+1t6zzkgExfvMIkKTeiPVz9wkXqMPr0Tn+7I6
+         UOC0pNim8vODaQO6DWo5YzWXmPeq/STuooQZKw0o=
+In-Reply-To: <20201018192026.4053674-1-sashal@kernel.org>
 List-ID: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
 To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc: Jan Kara <jack@suse.cz>, syzbot+c9e294bbe0333a6b7640@syzkaller.appspotmail.com, Sasha Levin <sashal@kernel.org>, reiserfs-devel@vger.kernel.org
+Cc: Eric Biggers <ebiggers@google.com>, syzbot+187510916eb6a14598f7@syzkaller.appspotmail.com, Jan Kara <jack@suse.cz>, Sasha Levin <sashal@kernel.org>, reiserfs-devel@vger.kernel.org
 
-From: Jan Kara <jack@suse.cz>
+From: Eric Biggers <ebiggers@google.com>
 
-[ Upstream commit e9d4709fcc26353df12070566970f080e651f0c9 ]
+[ Upstream commit 8859bf2b1278d064a139e3031451524a49a56bd0 ]
 
-When a usrjquota or grpjquota mount option is used multiple times, we
-will leak memory allocated for the file name. Make sure the last setting
-is used and all the previous ones are properly freed.
+unlock_new_inode() is only meant to be called after a new inode has
+already been inserted into the hash table.  But reiserfs_new_inode() can
+call it even before it has inserted the inode, triggering the WARNING in
+unlock_new_inode().  Fix this by only calling unlock_new_inode() if the
+inode has the I_NEW flag set, indicating that it's in the table.
 
-Reported-by: syzbot+c9e294bbe0333a6b7640@syzkaller.appspotmail.com
+This addresses the syzbot report "WARNING in unlock_new_inode"
+(https://syzkaller.appspot.com/bug?extid=187510916eb6a14598f7).
+
+Link: https://lore.kernel.org/r/20200628070057.820213-1-ebiggers@kernel.org
+Reported-by: syzbot+187510916eb6a14598f7@syzkaller.appspotmail.com
+Signed-off-by: Eric Biggers <ebiggers@google.com>
 Signed-off-by: Jan Kara <jack@suse.cz>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- fs/reiserfs/super.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+ fs/reiserfs/inode.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/fs/reiserfs/super.c b/fs/reiserfs/super.c
-index a6bce5b1fb1dc..1b9c7a387dc71 100644
---- a/fs/reiserfs/super.c
-+++ b/fs/reiserfs/super.c
-@@ -1258,6 +1258,10 @@ static int reiserfs_parse_options(struct super_block *s,
- 						 "turned on.");
- 				return 0;
- 			}
-+			if (qf_names[qtype] !=
-+			    REISERFS_SB(s)->s_qf_names[qtype])
-+				kfree(qf_names[qtype]);
-+			qf_names[qtype] = NULL;
- 			if (*arg) {	/* Some filename specified? */
- 				if (REISERFS_SB(s)->s_qf_names[qtype]
- 				    && strcmp(REISERFS_SB(s)->s_qf_names[qtype],
-@@ -1287,10 +1291,6 @@ static int reiserfs_parse_options(struct super_block *s,
- 				else
- 					*mount_options |= 1 << REISERFS_GRPQUOTA;
- 			} else {
--				if (qf_names[qtype] !=
--				    REISERFS_SB(s)->s_qf_names[qtype])
--					kfree(qf_names[qtype]);
--				qf_names[qtype] = NULL;
- 				if (qtype == USRQUOTA)
- 					*mount_options &= ~(1 << REISERFS_USRQUOTA);
- 				else
+diff --git a/fs/reiserfs/inode.c b/fs/reiserfs/inode.c
+index 1509775da040a..e3af44c61524d 100644
+--- a/fs/reiserfs/inode.c
++++ b/fs/reiserfs/inode.c
+@@ -2163,7 +2163,8 @@ int reiserfs_new_inode(struct reiserfs_transaction_handle *th,
+ out_inserted_sd:
+ 	clear_nlink(inode);
+ 	th->t_trans_id = 0;	/* so the caller can't use this handle later */
+-	unlock_new_inode(inode); /* OK to do even if we hadn't locked it */
++	if (inode->i_state & I_NEW)
++		unlock_new_inode(inode);
+ 	iput(inode);
+ 	return err;
+ }
 -- 
 2.25.1
 
