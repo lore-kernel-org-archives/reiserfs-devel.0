@@ -1,19 +1,19 @@
 From: Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 5.9 093/111] reiserfs: Fix memory leak in reiserfs_parse_options()
-Date: Sun, 18 Oct 2020 15:17:49 -0400
-Message-ID: <20201018191807.4052726-93-sashal@kernel.org>
-References: <20201018191807.4052726-1-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 5.8 087/101] reiserfs: Fix memory leak in reiserfs_parse_options()
+Date: Sun, 18 Oct 2020 15:20:12 -0400
+Message-ID: <20201018192026.4053674-87-sashal@kernel.org>
+References: <20201018192026.4053674-1-sashal@kernel.org>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
+Return-path: <reiserfs-devel-owner@vger.kernel.org>
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1603048800;
+        s=default; t=1603048931;
         bh=TfWJq0F+eNJwR3zuDSJhyRJNiFATVZ7YZaKoLVaSsv4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=RX6Jr2ChF0S/luSlXbRlLVNXN+5UhF54C8aGL7IwoAurZN9GJxRvOeL6JWGVQZyqf
-         e3poyO6NEp6irQRu/Qr669t5XeXZ9TF7nlbwCxkgu2rDhk5rH1k29j5pRmVxIt6Vlt
-         l+A2oLFRFBELtyErGr8J8O1T5YjKCw5JCMwf/Wew=
-In-Reply-To: <20201018191807.4052726-1-sashal@kernel.org>
+        b=cBON46RuopENSqfTStlLqgLNtUADVQxOhGMHO3W5/2XAXhUH61qrn/WzeS/xibbHS
+         rxZjVM6jVybe74OJtIHWlObE1lsAXYBYIG18/9ewD8fVAsNwoHBWu7gD/28SvxWaHe
+         /H/p4Pdyz83Xwwrvi+7kOk8fowzdt/yJW5emuuxY=
+In-Reply-To: <20201018192026.4053674-1-sashal@kernel.org>
 List-ID: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
 To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
