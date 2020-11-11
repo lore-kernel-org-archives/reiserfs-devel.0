@@ -1,56 +1,47 @@
-From: Rustam Kovhaev <rkovhaev@gmail.com>
-Subject: [PATCH] reiserfs: add check for an invalid ih_entry_count
-Date: Sun,  1 Nov 2020 06:09:58 -0800
-Message-ID: <20201101140958.3650143-1-rkovhaev@gmail.com>
+From: Metztli Information Technology <jose@metztli-it.com>
+Subject: Reiser4 \(detect only\) for GNU Parted v3.3
+Date: Tue, 10 Nov 2020 23:39:07 -0800
+Message-ID: <20201111073908.40081-1-jose@metztli-it.com>
+Reply-To: jose.r.r@metztli.com
 Mime-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=/9og09u1zo9NX9D44RRZapG5HLQMVJBUImJCPrX7E10=;
-        b=XBh/ZQG09VwZL2EiUVzXO6QoYMWPFNyQYMfhzBF87zIMxDKw/abftzYZmS6wvWLkbS
-         g7P2btAbHk+L2gY3o938IL/n3CQPr3ao8xbur4ni1agGW4PpkVC/AtOHgUgTvn13Q57A
-         OEdeSwKAUBJVOZ6jggwWuREPbU+2R8JCK4v4wHDtQtOr1aX1rSx+CHw00EY4KWF7gWJx
-         s9JrWfTd9NRMreR8tY6zF23u/nzMQFTcIGAdb+cbQOeswmQjsYiYr513w8dx7skmOWKx
-         V6yjWK6ab2pFmq1MkJG9VLBexCPbmSk+maswIuLhitqmUXIN2oBm7+0cZbYfOIF5bLN7
-         ZHDw==
+DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mixtli.metztli.it; q=dns/txt;
+ s=mx; t=1605080384; h=Content-Transfer-Encoding: MIME-Version:
+ Reply-To: Message-Id: Date: Subject: To: From: Sender;
+ bh=mrPwHCzkcZhSA0GtLpH4KYk3BkUKty7a7HHalvTbKHI=; b=Fvu1ZLMSAcuSvjckHSls1PUmDeNEgc42hW3xkQUC1R3i80SS8FY3iEl/utrDFAcVWfjgoicE
+ if9TZa+JxhbPexgnL7iX00pSDy34yJq6KV0C22F/kEVXtXfT9ttFIVfgNKRBEqlZMoe3Mgwl
+ KBerkfq6avGEijsPyZKmHiGuhoE=
+Sender: jose=metztli-it.com@mixtli.metztli.it
 List-ID: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: alex.shi@linux.alibaba.com, jack@suse.cz, akpm@linux-foundation.org, yeyunfeng@huawei.com
-Cc: reiserfs-devel@vger.kernel.org, linux-kernel@vger.kernel.org, gregkh@linuxfoundation.org, Rustam Kovhaev <rkovhaev@gmail.com>
+To: reiserfs-devel@vger.kernel.org
 
-when directory item has an invalid value set for ih_entry_count it might
-trigger use-after-free or out-of-bounds read in bin_search_in_dir_item()
 
-ih_entry_count * IH_SIZE for directory item should not be larger than
-ih_item_len
+As upcoming Debian Bullseye will use Debian packaging for GNU Parted v3.3-x
+< https://github.com/Metztli/debian-parted-reiser4 >
 
-Reported-and-tested-by: syzbot+83b6f7cf9922cae5c4d7@syzkaller.appspotmail.com
-Link: https://syzkaller.appspot.com/bug?extid=83b6f7cf9922cae5c4d7
-Signed-off-by: Rustam Kovhaev <rkovhaev@gmail.com>
----
- fs/reiserfs/stree.c | 6 ++++++
- 1 file changed, 6 insertions(+)
+I had to re-enable Reiser4 in GNU Parted first (found in the debian/patches/metztli directory in GitHub repo, as well).
 
-diff --git a/fs/reiserfs/stree.c b/fs/reiserfs/stree.c
-index 8bf88d690729..476a7ff49482 100644
---- a/fs/reiserfs/stree.c
-+++ b/fs/reiserfs/stree.c
-@@ -454,6 +454,12 @@ static int is_leaf(char *buf, int blocksize, struct buffer_head *bh)
- 					 "(second one): %h", ih);
- 			return 0;
- 		}
-+		if (is_direntry_le_ih(ih) && (ih_item_len(ih) < (ih_entry_count(ih) * IH_SIZE))) {
-+			reiserfs_warning(NULL, "reiserfs-5093",
-+					 "item entry count seems wrong %h",
-+					 ih);
-+			return 0;
-+		}
- 		prev_location = ih_location(ih);
- 	}
- 
+Otherwise the non-reiser4 aware official Debian GNU parted 
+< https://packages.debian.org/bullseye/parted >
+will take precedence during installation and my Metztli Reiser4 netboot installers will fail.
+
+Of course, this patch applies to standalone GNU Parted v3.3
+< https://www.gnu.org/software/parted/ >
+
+for those persons not on Linux Debian.
+
+
+Best Professional Regards
+
 -- 
-2.28.0
+Jose R R
+http://metztli.it
+---------------------------------------------------------------------------------------------
+Download Metztli Reiser4: Debian Buster w/ Linux 5.8.15 AMD64
+---------------------------------------------------------------------------------------------
+feats ZSTD compression https://sf.net/projects/metztli-reiser4/
+-------------------------------------------------------------------------------------------
+Official current Reiser4 resources: https://reiser4.wiki.kernel.org/
 
