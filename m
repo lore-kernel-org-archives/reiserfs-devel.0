@@ -1,177 +1,82 @@
-From: Metztli Information Technology <jose@metztli.it>
-Subject: [PATCH] Adding Reiser4 probe *only* to GNU Parted v3.3
-Date: Tue, 10 Nov 2020 23:51:41 -0800
-Message-ID: <20201111075141.42568-1-jose@metztli.it>
-Reply-To: jose.r.r@metztli.com
+From: Edward Shishkin <edward.shishkin@gmail.com>
+Subject: Re: reiser4progs - linking to libreiser4 gives "undefined reference
+ to misc_str2long"
+Date: Tue, 17 Nov 2020 22:11:10 +0100
+Message-ID: <66031259-74b7-74a7-9ec9-c57651942214@gmail.com>
+References: <20201116161230.7be6dcf0@pineapple>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
-DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mixtli.metztli.it; q=dns/txt;
- s=mx; t=1605083437; h=Content-Transfer-Encoding: MIME-Version:
- Reply-To: Message-Id: Date: Subject: Cc: To: From: Sender;
- bh=NF3OK4o7YBnT/ihLxlt8yvhTL3rIKyTTTVqb2IYY3Hk=; b=hvAB0riuURQdHBXUP8yApNbm1o/KGGjD4Mt6La+zh70CfGaangeRlHFuaWjp1j4VNAQJWElE
- jlzhcNRcBtuLzl6swijWJKRpyQKN3fYGBZ7L6qbdDc8yvcxqWY3rU0GWEIppoLnEUMxjHODi
- WM4SEb5U86Q8fc4xsngtMcuQFu0=
-Sender: jose=metztli.it@mixtli.metztli.it
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:subject:to:references:cc:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=j4IcoXzUqFMWpCk5Z9AvsqglYcjkhrwOQqL8wGeKYrM=;
+        b=T4GhzaQDElLPI+g0KtwxS2vwaYLmN60vHbq7Qf4MaCvC7fHtqKDu3PdIpc/8GUGrFT
+         VoiT6qCy/j7CPzFc8LbAFIF5FUyZ4ZBYqdZWGiEzCbyaW1D2nwvSbWdng2bcFdHnlmCI
+         98VEFlZZF3k7tKbrACgqWr0CVNsbrVT1iZNr2HQzLHloNIm7HRXnMo5HCebsGtUjzkwF
+         RxleEJj5FsDxGz+mO+oJpTw/LvYn1RSMuudVJARPFqx04QD3R0wAd5/Q31bb5dOojV2r
+         sqYguLeJ4zgrFsof/NiD1UgC1GORArh90iECeElOqJjOQPbjgLisHb6EAtJF6ssmRK34
+         mYAg==
+In-Reply-To: <20201116161230.7be6dcf0@pineapple>
+Content-Language: en-US
 List-ID: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-To: reiserfs-devel@vger.kernel.org
-Cc: Metztli Information Technology <jose@metztli.it>
+Content-Type: text/plain; charset="us-ascii"; format="flowed"
+To: Matthew White <mehw.is.me@inventati.org>
+Cc: ReiserFS development mailing list <reiserfs-devel@vger.kernel.org>
 
----
- libparted/Makefile.am          |  1 +
- libparted/fs/Makefile.am       |  3 ++
- libparted/fs/reiser4/reiser4.c | 71 ++++++++++++++++++++++++++++++++++
- libparted/libparted.c          |  4 ++
- 4 files changed, 79 insertions(+)
- create mode 100644 libparted/fs/reiser4/reiser4.c
+On 11/16/2020 04:15 PM, Matthew White wrote:
+> Hello,
 
-diff --git a/libparted/Makefile.am b/libparted/Makefile.am
-index bcdde77..0e86ca0 100644
---- a/libparted/Makefile.am
-+++ b/libparted/Makefile.am
-@@ -3,6 +3,7 @@
- #
- # This file may be modified and/or distributed without restriction.
- 
-+AUTOMAKE_OPTIONS = subdir-objects
- SUBDIRS_CHECK =
- if HAVE_CHECK
- SUBDIRS_CHECK += tests
-diff --git a/libparted/fs/Makefile.am b/libparted/fs/Makefile.am
-index 74f275a..675c01e 100644
---- a/libparted/fs/Makefile.am
-+++ b/libparted/fs/Makefile.am
-@@ -3,6 +3,8 @@
- #
- # This file may be modified and/or distributed without restriction.
- 
-+AUTOMAKE_OPTIONS = subdir-objects
-+
- partedincludedir = -I$(top_builddir)/include -I$(top_srcdir)/include
- 
- AM_CFLAGS = $(WARN_CFLAGS)
-@@ -44,6 +46,7 @@ libfs_la_SOURCES =		\
-   ntfs/ntfs.c			\
-   reiserfs/reiserfs.c		\
-   reiserfs/reiserfs.h		\
-+  reiser4/reiser4.c		\
-   udf/udf.c			\
-   ufs/ufs.c			\
-   xfs/platform_defs.h		\
-diff --git a/libparted/fs/reiser4/reiser4.c b/libparted/fs/reiser4/reiser4.c
-new file mode 100644
-index 0000000..0a86e0c
---- /dev/null
-+++ b/libparted/fs/reiser4/reiser4.c
-@@ -0,0 +1,71 @@
-+/*
-+    libparted - a library for manipulating disk partitions
-+    Copyright (C) 2000 Free Software Foundation, Inc.
-+
-+    This program is free software; you can redistribute it and/or modify
-+    it under the terms of the GNU General Public License as published by
-+    the Free Software Foundation; either version 2 of the License, or
-+    (at your option) any later version.
-+
-+    This program is distributed in the hope that it will be useful,
-+    but WITHOUT ANY WARRANTY; without even the implied warranty of
-+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-+    GNU General Public License for more details.
-+
-+    You should have received a copy of the GNU General Public License
-+    along with this program; if not, write to the Free Software
-+    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
-+*/
-+
-+#include <config.h>
-+
-+#include <parted/parted.h>
-+#include <parted/endian.h>
-+
-+#if ENABLE_NLS
-+#  include <libintl.h>
-+#  define _(String) dgettext (PACKAGE, String)
-+#else
-+#  define _(String) (String)
-+#endif /* ENABLE_NLS */
-+
-+#include <unistd.h>
-+#include <string.h>
-+
-+static PedGeometry*
-+reiser4_probe (PedGeometry* geom)
-+{
-+	char	buf[512];
-+
-+	if (!ped_geometry_read (geom, buf, 128, 1))
-+		return 0;	
-+	
-+	if ( strcmp( buf, "ReIsEr4" ) == 0 )
-+		return ped_geometry_duplicate( geom ) ;
-+
-+	else
-+		return NULL;
-+}
-+
-+static PedFileSystemOps reiser4_ops = {
-+	probe:		reiser4_probe,
-+};
-+
-+static PedFileSystemType reiser4_type = {
-+	next:	NULL,
-+	ops:	&reiser4_ops,
-+	name:	"reiser4"
-+};
-+
-+void
-+ped_file_system_reiser4_init ()
-+{
-+	ped_file_system_type_register (&reiser4_type);
-+}
-+
-+void
-+ped_file_system_reiser4_done ()
-+{
-+	ped_file_system_type_unregister (&reiser4_type);
-+}
-+
-diff --git a/libparted/libparted.c b/libparted/libparted.c
-index 00f5ff8..4cb8882 100644
---- a/libparted/libparted.c
-+++ b/libparted/libparted.c
-@@ -110,6 +110,7 @@ extern void ped_file_system_jfs_init (void);
- extern void ped_file_system_hfs_init (void);
- extern void ped_file_system_fat_init (void);
- extern void ped_file_system_ext2_init (void);
-+extern void ped_file_system_reiser4_init (void);
- extern void ped_file_system_nilfs2_init (void);
- extern void ped_file_system_btrfs_init (void);
- extern void ped_file_system_udf_init (void);
-@@ -127,6 +128,7 @@ init_file_system_types ()
- 	ped_file_system_hfs_init ();
- 	ped_file_system_fat_init ();
- 	ped_file_system_ext2_init ();
-+	ped_file_system_reiser4_init ();
- 	ped_file_system_nilfs2_init ();
- 	ped_file_system_btrfs_init ();
- 	ped_file_system_udf_init ();
-@@ -193,6 +195,7 @@ extern void ped_file_system_ntfs_done (void);
- extern void ped_file_system_reiserfs_done (void);
- extern void ped_file_system_ufs_done (void);
- extern void ped_file_system_xfs_done (void);
-+extern void ped_file_system_reiser4_done (void);
- extern void ped_file_system_amiga_done (void);
- extern void ped_file_system_btrfs_done (void);
- extern void ped_file_system_udf_done (void);
-@@ -210,6 +213,7 @@ done_file_system_types ()
- 	ped_file_system_reiserfs_done ();
- 	ped_file_system_ufs_done ();
- 	ped_file_system_xfs_done ();
-+	ped_file_system_reiser4_done ();
- 	ped_file_system_amiga_done ();
- 	ped_file_system_btrfs_done ();
- 	ped_file_system_udf_done ();
--- 
-2.27.0
+Hi Matthew,
 
+> 
+> I was having problems linking to libreiser4 once it is installed into my
+> system, even compiling a dumb program fails (see test-libreiser4.c).
+
+
+Ummm, indeed, it doesn't work. The next surprise for me is that it
+also doesn't work if we build/install reiser4progs rolled back to the
+old commits. Whereas reiser4 support in grub also includes libreiser4.h
+header:
+
+https://github.com/edward6/reiser4progs/blob/master/grub-0.97-reiser4-20060227.diff
+
+It could happen that I missed something though..
+
+> 
+> Compiler: gcc (Gentoo 9.3.0-r1 p3) 9.3.0
+> OS: Gentoo GNU/Linux
+> reiser4progs versions tested: v1.2.1, v2.0.2, v2.0.3, v2.0.4 (github)
+> 
+> $ /usr/bin/ld: /lib64/libreiser4-1.2.so.1: undefined reference to `misc_str2long'
+> $ collect2: error: ld returned 1 exit status
+> 
+> I attach the dumb program used for testing 'test-libreiser4.c' and also
+> patches to https://github.com/edward6/reiser4progs [master (v1.2.1) and
+> format41 (v2.0.4) branches].
+> 
+> Details are in the patches and also here: https://bugs.gentoo.org/754924
+> 
+> The solution I adopted is to compile libreiser4 (libreiser4/Makefile.am)
+> linking it also to the libmisc convenience library (static libtool).
+> 
+> Is there a specific reason to not making libmisc an installable library?
+
+
+I don't know such reasons. I'll merge your patches.
+Double thanks for the "format41" branch :)
+
+Edward.
+
+
+> Or, instead, why not linking libreiser4 to a static libmisc, and then to
+> use just libreiser4 when lining demo/* and progs/* (Makefile.am files)?
+> 
+> Thanks.
+> - Matthew
+> 
+> --
+> 
+> Matthew White <mehw.is.me@inventati.org>
+> 
