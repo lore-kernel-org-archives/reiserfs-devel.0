@@ -1,46 +1,119 @@
-From: "Gustavo A. R. Silva" <gustavoars@kernel.org>
-Subject: [PATCH 051/141] reiserfs: Fix fall-through warnings for Clang
-Date: Fri, 20 Nov 2020 12:32:14 -0600
-Message-ID: <6859fecccd96f79612f9650fdba7a66bbff70560.1605896059.git.gustavoars@kernel.org>
-References: <cover.1605896059.git.gustavoars@kernel.org>
+From: Edward Shishkin <edward.shishkin@gmail.com>
+Subject: Reiser5 Logical Volume Management - Updates
+Date: Sun, 22 Nov 2020 21:24:30 +0100
+Message-ID: <ccc9ded7-ab36-ca36-99a7-21138e1c7ceb@gmail.com>
 Mime-Version: 1.0
-Return-path: <reiserfs-devel-owner@vger.kernel.org>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1605897128;
-        bh=iulE+KLntbnkYHnpp3V6ms2NVYQETxkeP+5vYNfCD8w=;
-        h=Date:From:To:Subject:References:In-Reply-To:From;
-        b=sBu+qenmt30F7OoM3sUlnKTAqwsekFyc9baqj29e99o/ArUzPGx2hDEspU89Obts6
-         jbqAMbsfYcrDWsOthAfZpyjhcKGOzj8qqk9R28nmLorBvwSH3JIZHE9ee1nQEHvMh4
-         T7gp2qNgpACnhChuQFMGDOMEoD1xVahLjcugQYuU=
-Content-Disposition: inline
-In-Reply-To: <cover.1605896059.git.gustavoars@kernel.org>
-List-ID: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: reiserfs-devel@vger.kernel.org, linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org, "Gustavo A. R. Silva" <gustavoars@kernel.org>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:subject:to:cc:message-id:date:user-agent:mime-version
+         :content-language:content-transfer-encoding;
+        bh=zgf/h76dlKVPgQTcqMTxlnGXFSKKSbDb08KBHH9xoBo=;
+        b=VzltfJvyuWhCH1eHJvXEWMGlmjh+zONHmAP0UvUoy+HBVLK9EXzuz9by9iryq8/xU9
+         2HW7T9fyAFiO54d8x8Xg5Kny48Sz4MesnFQ19mKrmm2gyVlqvm6CTsWNsWTxkcY6zU99
+         jmnuZ9S7ZJzADD6EYgrVQ+RK2FC6kCAzMpTYfHMrUdIOFSgAAk8IXf4X1LWNNMCQ7bVQ
+         XvMj05jFStMLRMe3D8tMiqh6NuCF6cO5t3Ws8Aq9Ox78WUy7T5FWaOziHKWM9/e1Qy+P
+         p2oYebV9IuP009FiGNqT92ws4rFrFiVeAATRRUjU37tpvQAlnB+kFBaLjHBXDPk8b+uG
+         R4RA==
+Content-Language: en-US
+List-ID: <reiserfs-devel.vger.kernel.org>
+Content-Type: text/plain; charset="us-ascii"; format="flowed"
+To: ReiserFS development mailing list <reiserfs-devel@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>
+Cc: Pavel Machek <pavel@ucw.cz>
 
-In preparation to enable -Wimplicit-fallthrough for Clang, fix a warning
-by explicitly adding a break statement instead of letting the code fall
-through to the next case.
+           Reiser5 Logical Volume Management - Updates
 
-Link: https://github.com/KSPP/linux/issues/115
-Signed-off-by: Gustavo A. R. Silva <gustavoars@kernel.org>
----
- fs/reiserfs/namei.c | 1 +
- 1 file changed, 1 insertion(+)
 
-diff --git a/fs/reiserfs/namei.c b/fs/reiserfs/namei.c
-index 1594687582f0..90bb49bfdba0 100644
---- a/fs/reiserfs/namei.c
-+++ b/fs/reiserfs/namei.c
-@@ -132,6 +132,7 @@ int search_by_entry_key(struct super_block *sb, const struct cpu_key *key,
- 			return IO_ERROR;
- 		}
- 		PATH_LAST_POSITION(path)--;
-+		break;
- 
- 	case ITEM_FOUND:
- 		break;
--- 
-2.27.0
+I am happy to inform, that Logical Volumes stuff has become more
+stable. Also we introduce the following changes, which make logical
+volumes administration more flexible and simple:
 
+
+                  1. No balancing by default
+
+
+Now all volume operations except brick removal don't invoke balancing
+by default. Instead, they mark volume as "unbalanced". To complete any
+operation with balancing specify option -B (--with-balance), or run
+volume.reiser4(8) utility with the option -b (--balance) later.
+
+This allows to speed up more than one operations over logical volume
+being performed at once. For example, if you want to add more than one
+brick to your volume at once, first add all the bricks, then run
+balancing. There is no need to balance a volume between the addition
+operations.
+
+
+                    2. Removal completion
+
+
+Operation of brick removal always includes balancing procedure as its
+part. This procedure moves out all data block from the brick to be
+removed to remaining bricks of the volume. Thus, brick removal is
+usually a long operation, which may be interrupted for various reasons
+In such cases the volume is automatically marked with an "incomplete
+removal" flag.
+
+It is not allowed to perform essential volume operations on a volume
+marked as "with incomplete removal": first, user should complete
+removal by running volume.reiser4 utility with option
+-R (--finish-removal). Otherwise, the operation will return error
+(-EBUSY).
+
+There is no other restrictions: you are allowed to add a brick to
+unbalanced volume, and even remove a brick from an unbalanced volume
+(assuming it is not incomplete removal).
+
+Comment. "--finish-removal" is a temporary option. In the future the
+file system will detect incomplete removal and automatically perform
+removal completion by itself.
+
+
+                3. Balancing is always defined
+
+
+Operation of volume balancing (regardless of its balanced status) is
+always defined, and can be launched at any moment. If the volume is
+balanced, then the balancing procedure just scans the volume without
+any useful work.
+
+It is allowed to run more than one balancing threads on the same
+volume, however currently it will be inefficient: other threads will
+be always going after the single leader without doing useful work.
+Efficient volume balancing by many threads (true parallelism) is not a
+trivial task. We estimate its complexity as 2/5.
+
+
+          4. Restore regular distribution on the volume
+
+
+Custom (defined by user) file migration can break fairness of data
+distribution among the bricks. To restore regular (fair) distribution
+on the volume, run volume.reiser4 utility with the option -S
+(--restore-regular). It launches a balancing procedure, which performs
+mandatory data migration of all files (including the ones marked as
+"immobile") in accordance with regular distribution policy on the
+volume. Moreover, when the balancing procedure encounters a file
+marked as "immobile", its "immobile" flag is cleared up.
+
+
+                         5. How to test
+
+
+The new functionality is available starting with the kernel patch
+reiser4-for-linux-5.10-rc3 and reiser4progs-2.0.4 (Software Framework
+Release number of both is 5.1.3).
+
+Links for download:
+
+https://sourceforge.net/projects/reiser4/files/v5-unstable/kernel/
+https://sourceforge.net/projects/reiser4/files/v5-unstable/progs/
+
+Find updated documentation on getting started with logical volumes:
+
+https://reiser4.wiki.kernel.org/index.php/Logical_Volumes_Administration
+https://reiser4.wiki.kernel.org/index.php/Proxy_Device_Administration
+https://reiser4.wiki.kernel.org/index.php/Transparent_File_Migration
+
+Also see manual pages for volume.reiser4(8) utility.
