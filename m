@@ -1,119 +1,347 @@
-From: Edward Shishkin <edward.shishkin@gmail.com>
-Subject: Reiser5 Logical Volume Management - Updates
-Date: Sun, 22 Nov 2020 21:24:30 +0100
-Message-ID: <ccc9ded7-ab36-ca36-99a7-21138e1c7ceb@gmail.com>
+From: Changming Liu <liu.changm@northeastern.edu>
+Subject: [UBSAN Bug report]: signed integer overflow in UB in yura_hash of
+ fs/reiserfs/hashes.c
+Date: Tue, 24 Nov 2020 08:04:48 +0000
+Message-ID: <DM5PR06MB2570ED77EF6C579796B00E95E5FB0@DM5PR06MB2570.namprd06.prod.outlook.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:subject:to:cc:message-id:date:user-agent:mime-version
-         :content-language:content-transfer-encoding;
-        bh=zgf/h76dlKVPgQTcqMTxlnGXFSKKSbDb08KBHH9xoBo=;
-        b=VzltfJvyuWhCH1eHJvXEWMGlmjh+zONHmAP0UvUoy+HBVLK9EXzuz9by9iryq8/xU9
-         2HW7T9fyAFiO54d8x8Xg5Kny48Sz4MesnFQ19mKrmm2gyVlqvm6CTsWNsWTxkcY6zU99
-         jmnuZ9S7ZJzADD6EYgrVQ+RK2FC6kCAzMpTYfHMrUdIOFSgAAk8IXf4X1LWNNMCQ7bVQ
-         XvMj05jFStMLRMe3D8tMiqh6NuCF6cO5t3Ws8Aq9Ox78WUy7T5FWaOziHKWM9/e1Qy+P
-         p2oYebV9IuP009FiGNqT92ws4rFrFiVeAATRRUjU37tpvQAlnB+kFBaLjHBXDPk8b+uG
-         R4RA==
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
+Return-path: <reiserfs-devel-owner@vger.kernel.org>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=northeastern.edu;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=5KsqZ/3XHNUdO379dr3N9JRk4uJs7bVyodSmjdZsRL8=;
+ b=ShLHgIXPNKNiWiiuxbwR3XCOmUUBJTmVu97pI0THtLZDscD9pPWqtRl2GxdKUgGLKi0hBdwfFNpQ8U/l3K7Og8O0xMky0s/DeGlhWGfgxjp0vqW4oW0eQJ6QfBjyjj5G4ibieG1WDZ0eBBhUUNxauXqq1LKSGu6Ly4T//6OylYI=
 Content-Language: en-US
 List-ID: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: ReiserFS development mailing list <reiserfs-devel@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>
-Cc: Pavel Machek <pavel@ucw.cz>
+To: "reiserfs-devel@vger.kernel.org" <reiserfs-devel@vger.kernel.org>
+Cc: yaohway <yaohway@gmail.com>, Digest recipients <syzkaller@googlegroups.com>
 
-           Reiser5 Logical Volume Management - Updates
+Hi Folks,
 
+I'm a PhD student interested in testing kernel with UBSan,
+syzkaller reported this UBSan report on function yura_hash in fs/reiserfs/h=
+ashes.c:135.
 
-I am happy to inform, that Logical Volumes stuff has become more
-stable. Also we introduce the following changes, which make logical
-volumes administration more flexible and simple:
+From brief manual validation, the result of this signed-overflow is undefin=
+ed.
 
+If I remember correctly, it is said that all signed overflow in the kernel
+module are essentially wrap-arounds, rather than being undefined.
+I'm wondering does it apply to this case?
 
-                  1. No balancing by default
+This will help me understand linux and UB a lot, any feedback is greatly ap=
+preciated.
 
-
-Now all volume operations except brick removal don't invoke balancing
-by default. Instead, they mark volume as "unbalanced". To complete any
-operation with balancing specify option -B (--with-balance), or run
-volume.reiser4(8) utility with the option -b (--balance) later.
-
-This allows to speed up more than one operations over logical volume
-being performed at once. For example, if you want to add more than one
-brick to your volume at once, first add all the bricks, then run
-balancing. There is no need to balance a volume between the addition
-operations.
-
-
-                    2. Removal completion
-
-
-Operation of brick removal always includes balancing procedure as its
-part. This procedure moves out all data block from the brick to be
-removed to remaining bricks of the volume. Thus, brick removal is
-usually a long operation, which may be interrupted for various reasons
-In such cases the volume is automatically marked with an "incomplete
-removal" flag.
-
-It is not allowed to perform essential volume operations on a volume
-marked as "with incomplete removal": first, user should complete
-removal by running volume.reiser4 utility with option
--R (--finish-removal). Otherwise, the operation will return error
-(-EBUSY).
-
-There is no other restrictions: you are allowed to add a brick to
-unbalanced volume, and even remove a brick from an unbalanced volume
-(assuming it is not incomplete removal).
-
-Comment. "--finish-removal" is a temporary option. In the future the
-file system will detect incomplete removal and automatically perform
-removal completion by itself.
-
-
-                3. Balancing is always defined
-
-
-Operation of volume balancing (regardless of its balanced status) is
-always defined, and can be launched at any moment. If the volume is
-balanced, then the balancing procedure just scans the volume without
-any useful work.
-
-It is allowed to run more than one balancing threads on the same
-volume, however currently it will be inefficient: other threads will
-be always going after the single leader without doing useful work.
-Efficient volume balancing by many threads (true parallelism) is not a
-trivial task. We estimate its complexity as 2/5.
-
-
-          4. Restore regular distribution on the volume
-
-
-Custom (defined by user) file migration can break fairness of data
-distribution among the bricks. To restore regular (fair) distribution
-on the volume, run volume.reiser4 utility with the option -S
-(--restore-regular). It launches a balancing procedure, which performs
-mandatory data migration of all files (including the ones marked as
-"immobile") in accordance with regular distribution policy on the
-volume. Moreover, when the balancing procedure encounters a file
-marked as "immobile", its "immobile" flag is cleared up.
-
-
-                         5. How to test
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D
+REISERFS (device loop0): checking transaction log (loop0)
+REISERFS (device loop0): Using rupasov hash to sort names
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D
+UBSAN: Undefined behaviour in fs/reiserfs/hashes.c:135:7
+signed integer overflow:
+1000000000 * 10 cannot be represented in type 'int'
+CPU: 0 PID: 10804 Comm: syz-executor.0 Not tainted 5.4.0+ #27
+Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS Ubuntu-1.8.2-1u=
+buntu1 04/01/2014
+Call Trace:
+ __dump_stack lib/dump_stack.c:77 [inline]
+ dump_stack+0xc6/0x11e lib/dump_stack.c:118
+ ubsan_epilogue+0xe/0x40 lib/ubsan.c:158
+ handle_overflow+0xdf/0xf0 lib/ubsan.c:189
+ yura_hash+0x266/0x2e0 fs/reiserfs/hashes.c:135
+ get_third_component+0x97/0x1b0 fs/reiserfs/namei.c:195
+ reiserfs_find_entry.part.4+0xc9/0x13b0 fs/reiserfs/namei.c:316
+ reiserfs_find_entry fs/reiserfs/namei.c:367 [inline]
+ reiserfs_lookup+0x238/0x410 fs/reiserfs/namei.c:366
+ __lookup_slow+0x217/0x410 fs/namei.c:1663
+ lookup_one_len+0x150/0x180 fs/namei.c:2533
+ reiserfs_lookup_privroot+0x90/0x230 fs/reiserfs/xattr.c:964
+ reiserfs_fill_super+0x1dc7/0x2540 fs/reiserfs/super.c:2173
+ mount_bdev+0x2aa/0x360 fs/super.c:1415
+ legacy_get_tree+0x103/0x200 fs/fs_context.c:647
+ vfs_get_tree+0x86/0x340 fs/super.c:1545
+ do_new_mount fs/namespace.c:2822 [inline]
+ do_mount+0x109a/0x1730 fs/namespace.c:3142
+ ksys_mount+0xa8/0x120 fs/namespace.c:3351
+ __do_sys_mount fs/namespace.c:3365 [inline]
+ __se_sys_mount fs/namespace.c:3362 [inline]
+ __x64_sys_mount+0xba/0x150 fs/namespace.c:3362
+ do_syscall_64+0x9d/0x5a0 arch/x86/entry/common.c:290
+ entry_SYSCALL_64_after_hwframe+0x49/0xbe
+RIP: 0033:0x4608aa
+Code: b8 a6 00 00 00 0f 05 48 3d 01 f0 ff ff 0f 83 ad 89 fb ff c3 66 2e 0f =
+1f 84 00 00 00 00 00 66 90 49 89 ca b8 a5 00 00 00 0f 05 <48> 3d 01 f0 ff f=
+f 0f 83 8a 89 fb ff c3 66 0f 1f 84 00 00 00 00 00
+RSP: 002b:00007f167680ca88 EFLAGS: 00000202 ORIG_RAX: 00000000000000a5
+RAX: ffffffffffffffda RBX: 00007f167680cb20 RCX: 00000000004608aa
+RDX: 0000000020000000 RSI: 0000000020000100 RDI: 00007f167680cae0
+RBP: 00007f167680cae0 R08: 00007f167680cb20 R09: 0000000020000000
+R10: 0000000000000000 R11: 0000000000000202 R12: 0000000020000000
+R13: 0000000020000100 R14: 0000000020000200 R15: 0000000020011500
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D
 
 
-The new functionality is available starting with the kernel patch
-reiser4-for-linux-5.10-rc3 and reiser4progs-2.0.4 (Software Framework
-Release number of both is 5.1.3).
 
-Links for download:
 
-https://sourceforge.net/projects/reiser4/files/v5-unstable/kernel/
-https://sourceforge.net/projects/reiser4/files/v5-unstable/progs/
+C reproducer:
+// autogenerated by syzkaller (https://github.com/google/syzkaller)
 
-Find updated documentation on getting started with logical volumes:
+#define _GNU_SOURCE
 
-https://reiser4.wiki.kernel.org/index.php/Logical_Volumes_Administration
-https://reiser4.wiki.kernel.org/index.php/Proxy_Device_Administration
-https://reiser4.wiki.kernel.org/index.php/Transparent_File_Migration
+#include <endian.h>
+#include <errno.h>
+#include <fcntl.h>
+#include <stddef.h>
+#include <stdint.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <sys/ioctl.h>
+#include <sys/mount.h>
+#include <sys/stat.h>
+#include <sys/syscall.h>
+#include <sys/types.h>
+#include <unistd.h>
 
-Also see manual pages for volume.reiser4(8) utility.
+#include <linux/loop.h>
+
+static unsigned long long procid;
+
+struct fs_image_segment {
+  void* data;
+  uintptr_t size;
+  uintptr_t offset;
+};
+
+#define IMAGE_MAX_SEGMENTS 4096
+#define IMAGE_MAX_SIZE (129 << 20)
+
+#define sys_memfd_create 319
+
+static unsigned long fs_image_segment_check(unsigned long size,
+                                            unsigned long nsegs,
+                                            struct fs_image_segment* segs)
+{
+  if (nsegs > IMAGE_MAX_SEGMENTS)
+    nsegs =3D IMAGE_MAX_SEGMENTS;
+  for (size_t i =3D 0; i < nsegs; i++) {
+    if (segs[i].size > IMAGE_MAX_SIZE)
+      segs[i].size =3D IMAGE_MAX_SIZE;
+    segs[i].offset %=3D IMAGE_MAX_SIZE;
+    if (segs[i].offset > IMAGE_MAX_SIZE - segs[i].size)
+      segs[i].offset =3D IMAGE_MAX_SIZE - segs[i].size;
+    if (size < segs[i].offset + segs[i].offset)
+      size =3D segs[i].offset + segs[i].offset;
+  }
+  if (size > IMAGE_MAX_SIZE)
+    size =3D IMAGE_MAX_SIZE;
+  return size;
+}
+static int setup_loop_device(long unsigned size, long unsigned nsegs,
+                             struct fs_image_segment* segs,
+                             const char* loopname, int* memfd_p, int* loopf=
+d_p)
+{
+  int err =3D 0, loopfd =3D -1;
+  size =3D fs_image_segment_check(size, nsegs, segs);
+  int memfd =3D syscall(sys_memfd_create, "syzkaller", 0);
+  if (memfd =3D=3D -1) {
+    err =3D errno;
+    goto error;
+  }
+  if (ftruncate(memfd, size)) {
+    err =3D errno;
+    goto error_close_memfd;
+  }
+  for (size_t i =3D 0; i < nsegs; i++) {
+    if (pwrite(memfd, segs[i].data, segs[i].size, segs[i].offset) < 0) {
+    }
+  }
+  loopfd =3D open(loopname, O_RDWR);
+  if (loopfd =3D=3D -1) {
+    err =3D errno;
+    goto error_close_memfd;
+  }
+  if (ioctl(loopfd, LOOP_SET_FD, memfd)) {
+    if (errno !=3D EBUSY) {
+      err =3D errno;
+      goto error_close_loop;
+    }
+    ioctl(loopfd, LOOP_CLR_FD, 0);
+    usleep(1000);
+    if (ioctl(loopfd, LOOP_SET_FD, memfd)) {
+      err =3D errno;
+      goto error_close_loop;
+    }
+  }
+  *memfd_p =3D memfd;
+  *loopfd_p =3D loopfd;
+  return 0;
+
+error_close_loop:
+  close(loopfd);
+error_close_memfd:
+  close(memfd);
+error:
+  errno =3D err;
+  return -1;
+}
+
+static long syz_mount_image(volatile long fsarg, volatile long dir,
+                            volatile unsigned long size,
+                            volatile unsigned long nsegs,
+                            volatile long segments, volatile long flags,
+                            volatile long optsarg)
+{
+  struct fs_image_segment* segs =3D (struct fs_image_segment*)segments;
+  int res =3D -1, err =3D 0, loopfd =3D -1, memfd =3D -1, need_loop_device =
+=3D !!segs;
+  char* mount_opts =3D (char*)optsarg;
+  char* target =3D (char*)dir;
+  char* fs =3D (char*)fsarg;
+  char* source =3D NULL;
+  char loopname[64];
+  if (need_loop_device) {
+    memset(loopname, 0, sizeof(loopname));
+    snprintf(loopname, sizeof(loopname), "/dev/loop%llu", procid);
+    if (setup_loop_device(size, nsegs, segs, loopname, &memfd, &loopfd) =3D=
+=3D -1)
+      return -1;
+    source =3D loopname;
+  }
+  mkdir(target, 0777);
+  char opts[256];
+  memset(opts, 0, sizeof(opts));
+  if (strlen(mount_opts) > (sizeof(opts) - 32)) {
+  }
+  strncpy(opts, mount_opts, sizeof(opts) - 32);
+  if (strcmp(fs, "iso9660") =3D=3D 0) {
+    flags |=3D MS_RDONLY;
+  } else if (strncmp(fs, "ext", 3) =3D=3D 0) {
+    if (strstr(opts, "errors=3Dpanic") || strstr(opts, "errors=3Dremount-ro=
+") =3D=3D 0)
+      strcat(opts, ",errors=3Dcontinue");
+  } else if (strcmp(fs, "xfs") =3D=3D 0) {
+    strcat(opts, ",nouuid");
+  }
+  res =3D mount(source, target, fs, flags, opts);
+  if (res =3D=3D -1) {
+    err =3D errno;
+    goto error_clear_loop;
+  }
+  res =3D open(target, O_RDONLY | O_DIRECTORY);
+  if (res =3D=3D -1) {
+    err =3D errno;
+  }
+
+error_clear_loop:
+  if (need_loop_device) {
+    ioctl(loopfd, LOOP_CLR_FD, 0);
+    close(loopfd);
+    close(memfd);
+  }
+  errno =3D err;
+  return res;
+}
+
+int main(void)
+{
+  syscall(__NR_mmap, 0x1ffff000ul, 0x1000ul, 0ul, 0x32ul, -1, 0ul);
+  syscall(__NR_mmap, 0x20000000ul, 0x1000000ul, 7ul, 0x32ul, -1, 0ul);
+  syscall(__NR_mmap, 0x21000000ul, 0x1000ul, 0ul, 0x32ul, -1, 0ul);
+
+  memcpy((void*)0x20000000, "reiserfs\000", 9);
+  memcpy((void*)0x20000100, "./file0\000", 8);
+  *(uint64_t*)0x20000200 =3D 0x20010000;
+  memcpy((void*)0x20010000,
+         "\x00\x04\x00\x00\xec\x01\x00\x00\x13\x02\x00\x00\x12\x00\x00\x00\=
+x00"
+         "\x00\x00\x00\x00\x02\x00\x00\x00\x01\x00\x00\x61\x1c\xad\x49\xe1\=
+x00"
+         "\x00\x00\x1e\x00\x00\x00\x00\x00\x00\x00\x00\x10\xcc\x03\x02\x00\=
+x01"
+         "\x00\x52\x65\x49\x73\x45\x72\x33\x46\x73\x00\x00\x00\x02\x00\x00\=
+x00"
+         "\x02\x00\x01\x00\x02\x00\x01\x02\x00\x00\x00\x00\x01\x00\x00\x00\=
+x12"
+         "\x31\x23\x12\x12\x33\x12\x33\x12\x31\x12\x34\x13\x41\x24\x12\x73\=
+x79"
+         "\x7a\x6b\x61\x6c\x6c\x65\x72\x00\x00\x00\x00\x00\x00\x00\x01\x00\=
+x1e"
+         "\x00\x3a\xc1\x65\x5f\x00\x4e\xed\x00",
+         128);
+  *(uint64_t*)0x20000208 =3D 0x80;
+  *(uint64_t*)0x20000210 =3D 0x10000;
+  *(uint64_t*)0x20000218 =3D 0;
+  *(uint64_t*)0x20000220 =3D 0;
+  *(uint64_t*)0x20000228 =3D 0x100c0;
+  *(uint64_t*)0x20000230 =3D 0;
+  *(uint64_t*)0x20000238 =3D 0;
+  *(uint64_t*)0x20000240 =3D 0x11000;
+  *(uint64_t*)0x20000248 =3D 0x20011200;
+  memcpy((void*)0x20011200,
+         "\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x12\x00\x00\x00\=
+x00"
+         "\x00\x00\x00\x00\x02\x00\x00\x00\x01\x00\x00\x61\x1c\xad\x49\xe1\=
+x00"
+         "\x00\x00\x1e\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\=
+x00"
+         "\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00",
+         64);
+  *(uint64_t*)0x20000250 =3D 0x40;
+  *(uint64_t*)0x20000258 =3D 0x212000;
+  *(uint64_t*)0x20000260 =3D 0x20011300;
+  memcpy((void*)0x20011300,
+         "\x01\x00\x02\x00\x5c\x0f\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\=
+x00"
+         "\x00\x00\x00\x00\x00\x00\x00\x01\x00\x00\x00\x02\x00\x00\x00\x00\=
+x00"
+         "\x00\x00\x00\x00\x00\x00\x00\x00\x2c\x00\xd4\x0f\x01\x00\x01\x00\=
+x00"
+         "\x00\x02\x00\x00\x00\x01\x00\x00\x00\xf4\x01\x00\x00\x02\x00\x30\=
+x00"
+         "\xa4\x0f\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\=
+x00"
+         "\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00",
+         96);
+  *(uint64_t*)0x20000268 =3D 0x60;
+  *(uint64_t*)0x20000270 =3D 0x213000;
+  *(uint64_t*)0x20000278 =3D 0x20011400;
+  memcpy((void*)0x20011400,
+         "\x00\x00\x00\x00\x01\x00\x00\x00\x01\x00\x00\x00\x02\x00\x00\x00\=
+x28"
+         "\x00\x04\x00\x02\x00\x00\x00\x00\x00\x00\x00\x01\x00\x00\x00\x20\=
+x00"
+         "\x04\x00\x2e\x2e\x00\x00\x00\x00\x00\x00\x2e\x00\x00\x00\x00\x00\=
+x00"
+         "\x00\xed\x41\x00\x00\x03\x00\x00\x00\x30\x00\x00\x00\x00\x00\x00\=
+x00"
+         "\x5c\xf9\x01\x00\x53\x5f\x01\x00\x3a\xc1\x65\x5f\x3a\xc1\x65\x5f\=
+x3a"
+         "\xc1\x65\x5f\x01\x00\x00\x00\x00\x00\x00\x00",
+         96);
+  *(uint64_t*)0x20000280 =3D 0x60;
+  *(uint64_t*)0x20000288 =3D 0x213fa0;
+  *(uint8_t*)0x20011500 =3D 0;
+  syz_mount_image(0x20000000, 0x20000100, 0x400000, 6, 0x20000200, 0,
+                  0x20011500);
+  return 0;
+}
+
+
+
+Best,
+Changming Liu
