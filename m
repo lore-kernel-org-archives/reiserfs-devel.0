@@ -1,347 +1,130 @@
-From: Changming Liu <liu.changm@northeastern.edu>
-Subject: [UBSAN Bug report]: signed integer overflow in UB in yura_hash of
- fs/reiserfs/hashes.c
-Date: Tue, 24 Nov 2020 08:04:48 +0000
-Message-ID: <DM5PR06MB2570ED77EF6C579796B00E95E5FB0@DM5PR06MB2570.namprd06.prod.outlook.com>
+From: =?UTF-8?B?5oWV5Yas5Lqu?= <mudongliangabcd@gmail.com>
+Subject: Re: general protection fault in reiserfs_security_init
+Date: Wed, 25 Nov 2020 10:32:05 +0800
+Message-ID: <CAD-N9QVE_eYTrdp0c6q+c_kHUXk+i54BKhHR_0=qwr5xEu_k=w@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=northeastern.edu;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=5KsqZ/3XHNUdO379dr3N9JRk4uJs7bVyodSmjdZsRL8=;
- b=ShLHgIXPNKNiWiiuxbwR3XCOmUUBJTmVu97pI0THtLZDscD9pPWqtRl2GxdKUgGLKi0hBdwfFNpQ8U/l3K7Og8O0xMky0s/DeGlhWGfgxjp0vqW4oW0eQJ6QfBjyjj5G4ibieG1WDZ0eBBhUUNxauXqq1LKSGu6Ly4T//6OylYI=
-Content-Language: en-US
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:from:date:message-id:subject:to;
+        bh=JEPiuMrPJZvgNKBeeTCRwyAYWsEFmPf+TK0tbHJS5mc=;
+        b=LpIxvNuUq244Agb5jF2Kbw6O6BipshY1kd31EcrgzUTDZuopG5Qmfw5YW9vgOmXlyv
+         /Fzbp3cZNd3o0GKVjLfTdgaSu55hjdmmaYbZvChF0pV9guEzT4eJGJez6l4Kxmz2c5c4
+         5qHXXnZpooSGfR8GjdxpKVxnTNYctXYjj+yxknF1YXlmTwtHFH2AdhgcWtznjjrcX7Id
+         k3edVwZYzU6cqt6232ybCJ4D06LDCRHHY5Kctn/1pMdmkNWzcGjMjWvvXs2ZcJD/b+pH
+         XgepNSANuLJxAEXFv18Y30JrmVmgrvgFSOfxLyIqh7H6xDm1po+vU+Xy4VbSGLdpzOIN
+         TQTw==
 List-ID: <reiserfs-devel.vger.kernel.org>
-To: "reiserfs-devel@vger.kernel.org" <reiserfs-devel@vger.kernel.org>
-Cc: yaohway <yaohway@gmail.com>, Digest recipients <syzkaller@googlegroups.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: baolin.wang7@gmail.com, gregkh@linuxfoundation.org, linhua.xu@unisoc.com, linus.walleij@linaro.org, linux-kernel <linux-kernel@vger.kernel.org>, rafael@kernel.org, reiserfs-devel@vger.kernel.org, syzkaller-bugs@googlegroups.com
 
-Hi Folks,
-
-I'm a PhD student interested in testing kernel with UBSan,
-syzkaller reported this UBSan report on function yura_hash in fs/reiserfs/h=
-ashes.c:135.
-
-From brief manual validation, the result of this signed-overflow is undefin=
-ed.
-
-If I remember correctly, it is said that all signed overflow in the kernel
-module are essentially wrap-arounds, rather than being undefined.
-I'm wondering does it apply to this case?
-
-This will help me understand linux and UB a lot, any feedback is greatly ap=
-preciated.
-
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D
-REISERFS (device loop0): checking transaction log (loop0)
-REISERFS (device loop0): Using rupasov hash to sort names
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D
-UBSAN: Undefined behaviour in fs/reiserfs/hashes.c:135:7
-signed integer overflow:
-1000000000 * 10 cannot be represented in type 'int'
-CPU: 0 PID: 10804 Comm: syz-executor.0 Not tainted 5.4.0+ #27
-Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS Ubuntu-1.8.2-1u=
-buntu1 04/01/2014
-Call Trace:
- __dump_stack lib/dump_stack.c:77 [inline]
- dump_stack+0xc6/0x11e lib/dump_stack.c:118
- ubsan_epilogue+0xe/0x40 lib/ubsan.c:158
- handle_overflow+0xdf/0xf0 lib/ubsan.c:189
- yura_hash+0x266/0x2e0 fs/reiserfs/hashes.c:135
- get_third_component+0x97/0x1b0 fs/reiserfs/namei.c:195
- reiserfs_find_entry.part.4+0xc9/0x13b0 fs/reiserfs/namei.c:316
- reiserfs_find_entry fs/reiserfs/namei.c:367 [inline]
- reiserfs_lookup+0x238/0x410 fs/reiserfs/namei.c:366
- __lookup_slow+0x217/0x410 fs/namei.c:1663
- lookup_one_len+0x150/0x180 fs/namei.c:2533
- reiserfs_lookup_privroot+0x90/0x230 fs/reiserfs/xattr.c:964
- reiserfs_fill_super+0x1dc7/0x2540 fs/reiserfs/super.c:2173
- mount_bdev+0x2aa/0x360 fs/super.c:1415
- legacy_get_tree+0x103/0x200 fs/fs_context.c:647
- vfs_get_tree+0x86/0x340 fs/super.c:1545
- do_new_mount fs/namespace.c:2822 [inline]
- do_mount+0x109a/0x1730 fs/namespace.c:3142
- ksys_mount+0xa8/0x120 fs/namespace.c:3351
- __do_sys_mount fs/namespace.c:3365 [inline]
- __se_sys_mount fs/namespace.c:3362 [inline]
- __x64_sys_mount+0xba/0x150 fs/namespace.c:3362
- do_syscall_64+0x9d/0x5a0 arch/x86/entry/common.c:290
- entry_SYSCALL_64_after_hwframe+0x49/0xbe
-RIP: 0033:0x4608aa
-Code: b8 a6 00 00 00 0f 05 48 3d 01 f0 ff ff 0f 83 ad 89 fb ff c3 66 2e 0f =
-1f 84 00 00 00 00 00 66 90 49 89 ca b8 a5 00 00 00 0f 05 <48> 3d 01 f0 ff f=
-f 0f 83 8a 89 fb ff c3 66 0f 1f 84 00 00 00 00 00
-RSP: 002b:00007f167680ca88 EFLAGS: 00000202 ORIG_RAX: 00000000000000a5
-RAX: ffffffffffffffda RBX: 00007f167680cb20 RCX: 00000000004608aa
-RDX: 0000000020000000 RSI: 0000000020000100 RDI: 00007f167680cae0
-RBP: 00007f167680cae0 R08: 00007f167680cb20 R09: 0000000020000000
-R10: 0000000000000000 R11: 0000000000000202 R12: 0000000020000000
-R13: 0000000020000100 R14: 0000000020000200 R15: 0000000020011500
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D
+On Monday, September 21, 2020 at 5:32:22 PM UTC+8 syzbot wrote:
+>
+> Hello,
+>
+> syzbot found the following issue on:
+>
+> HEAD commit: 325d0eab Merge branch 'akpm' (patches from Andrew)
+> git tree: upstream
+> console output: https://syzkaller.appspot.com/x/log.txt?x=1671c0e3900000
+> kernel config: https://syzkaller.appspot.com/x/.config?x=b12e84189082991c
+> dashboard link: https://syzkaller.appspot.com/bug?extid=690cb1e51970435f9775
+> compiler: gcc (GCC) 10.1.0-syz 20200507
+> syz repro: https://syzkaller.appspot.com/x/repro.syz?x=15705a3d900000
+> C reproducer: https://syzkaller.appspot.com/x/repro.c?x=117b3281900000
+>
+> IMPORTANT: if you fix the issue, please add the following tag to the commit:
+> Reported-by: syzbot+690cb1...@syzkaller.appspotmail.com
+>
+> REISERFS (device loop0): journal params: device loop0, size 15748, journal first block 18, max trans len 256, max batch 225, max commit age 30, max trans age 30
+> REISERFS (device loop0): checking transaction log (loop0)
+> REISERFS (device loop0): Using tea hash to sort names
+> REISERFS (device loop0): using 3.5.x disk format
+> general protection fault, probably for non-canonical address 0xdffffc000000000d: 0000 [#1] PREEMPT SMP KASAN
+> KASAN: null-ptr-deref in range [0x0000000000000068-0x000000000000006f]
+> CPU: 0 PID: 6874 Comm: syz-executor834 Not tainted 5.9.0-rc5-syzkaller #0
+> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
+> RIP: 0010:d_really_is_negative include/linux/dcache.h:472 [inline]
+> RIP: 0010:reiserfs_xattr_jcreate_nblocks fs/reiserfs/xattr.h:78 [inline]
+> RIP: 0010:reiserfs_security_init+0x285/0x4d0 fs/reiserfs/xattr_security.c:70
+> Code: 48 c1 ea 03 80 3c 02 00 0f 85 2b 02 00 00 4d 8b ad a0 05 00 00 48 b8 00 00 00 00 00 fc ff df 49 8d 7d 68 48 89 fa 48 c1 ea 03 <80> 3c 02 00 0f 85 23 02 00 00 49 83 7d 68 00 0f 84 62 01 00 00 48
+> RSP: 0018:ffffc90005827980 EFLAGS: 00010202
+> RAX: dffffc0000000000 RBX: 0000000000000036 RCX: 000000000000006c
+> RDX: 000000000000000d RSI: ffffffff82009dd3 RDI: 0000000000000068
+> RBP: ffff88807d8441d0 R08: ffffc90005827a10 R09: ffffc90005827a18
+> R10: 0000000000000000 R11: 0000000000000000 R12: 00000000000005fa
+> R13: 0000000000000000 R14: ffff888094e60000 R15: 0000000000000000
+> FS: 0000000001036880(0000) GS:ffff8880ae400000(0000) knlGS:0000000000000000
+> CS: 0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> CR2: 00007f5a6fb90ab4 CR3: 000000009a1ab000 CR4: 00000000001506f0
+> DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+> DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+> Call Trace:
+> reiserfs_mkdir+0x2c9/0x980 fs/reiserfs/namei.c:821
+> create_privroot fs/reiserfs/xattr.c:882 [inline]
+> reiserfs_xattr_init+0x4de/0xb52 fs/reiserfs/xattr.c:1004
 
 
-
-
-C reproducer:
-// autogenerated by syzkaller (https://github.com/google/syzkaller)
-
-#define _GNU_SOURCE
-
-#include <endian.h>
-#include <errno.h>
-#include <fcntl.h>
-#include <stddef.h>
-#include <stdint.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <sys/ioctl.h>
-#include <sys/mount.h>
-#include <sys/stat.h>
-#include <sys/syscall.h>
-#include <sys/types.h>
-#include <unistd.h>
-
-#include <linux/loop.h>
-
-static unsigned long long procid;
-
-struct fs_image_segment {
-  void* data;
-  uintptr_t size;
-  uintptr_t offset;
-};
-
-#define IMAGE_MAX_SEGMENTS 4096
-#define IMAGE_MAX_SIZE (129 << 20)
-
-#define sys_memfd_create 319
-
-static unsigned long fs_image_segment_check(unsigned long size,
-                                            unsigned long nsegs,
-                                            struct fs_image_segment* segs)
+int reiserfs_xattr_init(struct super_block *s, int mount_flags)
 {
-  if (nsegs > IMAGE_MAX_SEGMENTS)
-    nsegs =3D IMAGE_MAX_SEGMENTS;
-  for (size_t i =3D 0; i < nsegs; i++) {
-    if (segs[i].size > IMAGE_MAX_SIZE)
-      segs[i].size =3D IMAGE_MAX_SIZE;
-    segs[i].offset %=3D IMAGE_MAX_SIZE;
-    if (segs[i].offset > IMAGE_MAX_SIZE - segs[i].size)
-      segs[i].offset =3D IMAGE_MAX_SIZE - segs[i].size;
-    if (size < segs[i].offset + segs[i].offset)
-      size =3D segs[i].offset + segs[i].offset;
-  }
-  if (size > IMAGE_MAX_SIZE)
-    size =3D IMAGE_MAX_SIZE;
-  return size;
+        int err = 0;
+        struct dentry *privroot = REISERFS_SB(s)->priv_root;
+
+        err = xattr_mount_check(s);
+        if (err)
+                goto error;
+
+        if (d_really_is_negative(privroot) && !(mount_flags & SB_RDONLY)) {
+                inode_lock(d_inode(s->s_root));
+                err = create_privroot(REISERFS_SB(s)->priv_root);
+                inode_unlock(d_inode(s->s_root));
+        }
+
+        if (d_really_is_positive(privroot)) {
+                inode_lock(d_inode(privroot));
+                if (!REISERFS_SB(s)->xattr_root) {
+                        struct dentry *dentry;
+
+                        dentry = lookup_one_len(XAROOT_NAME, privroot,
+                                                strlen(XAROOT_NAME));
+                        if (!IS_ERR(dentry)) {
+                                pr_alert("assign xattr_root with
+dentry = 0x%lx", dentry);
+                                REISERFS_SB(s)->xattr_root = dentry;
+                        }else
+                                err = PTR_ERR(dentry);
+                }
+                inode_unlock(d_inode(privroot));
+        }
+        ......
 }
-static int setup_loop_device(long unsigned size, long unsigned nsegs,
-                             struct fs_image_segment* segs,
-                             const char* loopname, int* memfd_p, int* loopf=
-d_p)
-{
-  int err =3D 0, loopfd =3D -1;
-  size =3D fs_image_segment_check(size, nsegs, segs);
-  int memfd =3D syscall(sys_memfd_create, "syzkaller", 0);
-  if (memfd =3D=3D -1) {
-    err =3D errno;
-    goto error;
-  }
-  if (ftruncate(memfd, size)) {
-    err =3D errno;
-    goto error_close_memfd;
-  }
-  for (size_t i =3D 0; i < nsegs; i++) {
-    if (pwrite(memfd, segs[i].data, segs[i].size, segs[i].offset) < 0) {
-    }
-  }
-  loopfd =3D open(loopname, O_RDWR);
-  if (loopfd =3D=3D -1) {
-    err =3D errno;
-    goto error_close_memfd;
-  }
-  if (ioctl(loopfd, LOOP_SET_FD, memfd)) {
-    if (errno !=3D EBUSY) {
-      err =3D errno;
-      goto error_close_loop;
-    }
-    ioctl(loopfd, LOOP_CLR_FD, 0);
-    usleep(1000);
-    if (ioctl(loopfd, LOOP_SET_FD, memfd)) {
-      err =3D errno;
-      goto error_close_loop;
-    }
-  }
-  *memfd_p =3D memfd;
-  *loopfd_p =3D loopfd;
-  return 0;
+From the implementation of reiserfs_xattr_init, only when
+d_really_is_positive(privroot) is true, xattr_root could be assigned
+with a dentry obtained from lookup_one_len. In other words,
+create_privroot is executed with REISERFS_SB(s)->xattr_root as NULL
+pointer. With improper implementation of mkdir operation in reiserfs
+filesystem or accessing the xattr_root in reiserfs_mkdir , it can lead
+to NULL pointer dereference. If you remove the red code in
+reiserfs_xattr_jcreate_nblocks, the crash never occurs, but it may
+affect nblocks calculation in the reiserfs filesystem.
 
-error_close_loop:
-  close(loopfd);
-error_close_memfd:
-  close(memfd);
-error:
-  errno =3D err;
-  return -1;
+static inline size_t reiserfs_xattr_jcreate_nblocks(struct inode *inode)
+{
+        size_t nblocks = JOURNAL_BLOCKS_PER_OBJECT(inode->i_sb);
+
+        pr_alert("5: inode = 0x%lx", inode);
+        if ((REISERFS_I(inode)->i_flags & i_has_xattr_dir) == 0) {
+                nblocks += JOURNAL_BLOCKS_PER_OBJECT(inode->i_sb);
+                if (d_really_is_negative(REISERFS_SB(inode->i_sb)->xattr_root))
+                      nblocks += JOURNAL_BLOCKS_PER_OBJECT(inode->i_sb);
+        }
+
+        return nblocks;
 }
 
-static long syz_mount_image(volatile long fsarg, volatile long dir,
-                            volatile unsigned long size,
-                            volatile unsigned long nsegs,
-                            volatile long segments, volatile long flags,
-                            volatile long optsarg)
-{
-  struct fs_image_segment* segs =3D (struct fs_image_segment*)segments;
-  int res =3D -1, err =3D 0, loopfd =3D -1, memfd =3D -1, need_loop_device =
-=3D !!segs;
-  char* mount_opts =3D (char*)optsarg;
-  char* target =3D (char*)dir;
-  char* fs =3D (char*)fsarg;
-  char* source =3D NULL;
-  char loopname[64];
-  if (need_loop_device) {
-    memset(loopname, 0, sizeof(loopname));
-    snprintf(loopname, sizeof(loopname), "/dev/loop%llu", procid);
-    if (setup_loop_device(size, nsegs, segs, loopname, &memfd, &loopfd) =3D=
-=3D -1)
-      return -1;
-    source =3D loopname;
-  }
-  mkdir(target, 0777);
-  char opts[256];
-  memset(opts, 0, sizeof(opts));
-  if (strlen(mount_opts) > (sizeof(opts) - 32)) {
-  }
-  strncpy(opts, mount_opts, sizeof(opts) - 32);
-  if (strcmp(fs, "iso9660") =3D=3D 0) {
-    flags |=3D MS_RDONLY;
-  } else if (strncmp(fs, "ext", 3) =3D=3D 0) {
-    if (strstr(opts, "errors=3Dpanic") || strstr(opts, "errors=3Dremount-ro=
-") =3D=3D 0)
-      strcat(opts, ",errors=3Dcontinue");
-  } else if (strcmp(fs, "xfs") =3D=3D 0) {
-    strcat(opts, ",nouuid");
-  }
-  res =3D mount(source, target, fs, flags, opts);
-  if (res =3D=3D -1) {
-    err =3D errno;
-    goto error_clear_loop;
-  }
-  res =3D open(target, O_RDONLY | O_DIRECTORY);
-  if (res =3D=3D -1) {
-    err =3D errno;
-  }
+--
+My best regards to you.
 
-error_clear_loop:
-  if (need_loop_device) {
-    ioctl(loopfd, LOOP_CLR_FD, 0);
-    close(loopfd);
-    close(memfd);
-  }
-  errno =3D err;
-  return res;
-}
-
-int main(void)
-{
-  syscall(__NR_mmap, 0x1ffff000ul, 0x1000ul, 0ul, 0x32ul, -1, 0ul);
-  syscall(__NR_mmap, 0x20000000ul, 0x1000000ul, 7ul, 0x32ul, -1, 0ul);
-  syscall(__NR_mmap, 0x21000000ul, 0x1000ul, 0ul, 0x32ul, -1, 0ul);
-
-  memcpy((void*)0x20000000, "reiserfs\000", 9);
-  memcpy((void*)0x20000100, "./file0\000", 8);
-  *(uint64_t*)0x20000200 =3D 0x20010000;
-  memcpy((void*)0x20010000,
-         "\x00\x04\x00\x00\xec\x01\x00\x00\x13\x02\x00\x00\x12\x00\x00\x00\=
-x00"
-         "\x00\x00\x00\x00\x02\x00\x00\x00\x01\x00\x00\x61\x1c\xad\x49\xe1\=
-x00"
-         "\x00\x00\x1e\x00\x00\x00\x00\x00\x00\x00\x00\x10\xcc\x03\x02\x00\=
-x01"
-         "\x00\x52\x65\x49\x73\x45\x72\x33\x46\x73\x00\x00\x00\x02\x00\x00\=
-x00"
-         "\x02\x00\x01\x00\x02\x00\x01\x02\x00\x00\x00\x00\x01\x00\x00\x00\=
-x12"
-         "\x31\x23\x12\x12\x33\x12\x33\x12\x31\x12\x34\x13\x41\x24\x12\x73\=
-x79"
-         "\x7a\x6b\x61\x6c\x6c\x65\x72\x00\x00\x00\x00\x00\x00\x00\x01\x00\=
-x1e"
-         "\x00\x3a\xc1\x65\x5f\x00\x4e\xed\x00",
-         128);
-  *(uint64_t*)0x20000208 =3D 0x80;
-  *(uint64_t*)0x20000210 =3D 0x10000;
-  *(uint64_t*)0x20000218 =3D 0;
-  *(uint64_t*)0x20000220 =3D 0;
-  *(uint64_t*)0x20000228 =3D 0x100c0;
-  *(uint64_t*)0x20000230 =3D 0;
-  *(uint64_t*)0x20000238 =3D 0;
-  *(uint64_t*)0x20000240 =3D 0x11000;
-  *(uint64_t*)0x20000248 =3D 0x20011200;
-  memcpy((void*)0x20011200,
-         "\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x12\x00\x00\x00\=
-x00"
-         "\x00\x00\x00\x00\x02\x00\x00\x00\x01\x00\x00\x61\x1c\xad\x49\xe1\=
-x00"
-         "\x00\x00\x1e\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\=
-x00"
-         "\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00",
-         64);
-  *(uint64_t*)0x20000250 =3D 0x40;
-  *(uint64_t*)0x20000258 =3D 0x212000;
-  *(uint64_t*)0x20000260 =3D 0x20011300;
-  memcpy((void*)0x20011300,
-         "\x01\x00\x02\x00\x5c\x0f\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\=
-x00"
-         "\x00\x00\x00\x00\x00\x00\x00\x01\x00\x00\x00\x02\x00\x00\x00\x00\=
-x00"
-         "\x00\x00\x00\x00\x00\x00\x00\x00\x2c\x00\xd4\x0f\x01\x00\x01\x00\=
-x00"
-         "\x00\x02\x00\x00\x00\x01\x00\x00\x00\xf4\x01\x00\x00\x02\x00\x30\=
-x00"
-         "\xa4\x0f\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\=
-x00"
-         "\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00",
-         96);
-  *(uint64_t*)0x20000268 =3D 0x60;
-  *(uint64_t*)0x20000270 =3D 0x213000;
-  *(uint64_t*)0x20000278 =3D 0x20011400;
-  memcpy((void*)0x20011400,
-         "\x00\x00\x00\x00\x01\x00\x00\x00\x01\x00\x00\x00\x02\x00\x00\x00\=
-x28"
-         "\x00\x04\x00\x02\x00\x00\x00\x00\x00\x00\x00\x01\x00\x00\x00\x20\=
-x00"
-         "\x04\x00\x2e\x2e\x00\x00\x00\x00\x00\x00\x2e\x00\x00\x00\x00\x00\=
-x00"
-         "\x00\xed\x41\x00\x00\x03\x00\x00\x00\x30\x00\x00\x00\x00\x00\x00\=
-x00"
-         "\x5c\xf9\x01\x00\x53\x5f\x01\x00\x3a\xc1\x65\x5f\x3a\xc1\x65\x5f\=
-x3a"
-         "\xc1\x65\x5f\x01\x00\x00\x00\x00\x00\x00\x00",
-         96);
-  *(uint64_t*)0x20000280 =3D 0x60;
-  *(uint64_t*)0x20000288 =3D 0x213fa0;
-  *(uint8_t*)0x20011500 =3D 0;
-  syz_mount_image(0x20000000, 0x20000100, 0x400000, 6, 0x20000200, 0,
-                  0x20011500);
-  return 0;
-}
-
-
-
-Best,
-Changming Liu
+     No System Is Safe!
+     Dongliang Mu
