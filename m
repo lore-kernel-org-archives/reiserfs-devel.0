@@ -1,57 +1,69 @@
-From: Jan Kara <jack@suse.cz>
-Subject: Re: [PATCH] reiserfs: add check for an invalid ih_entry_count
-Date: Thu, 26 Nov 2020 16:57:54 +0100
-Message-ID: <20201126155754.GK422@quack2.suse.cz>
-References: <20201101140958.3650143-1-rkovhaev@gmail.com>
+From: Edward Shishkin <edward.shishkin@gmail.com>
+Subject: Re: reiser4progs 2.0.4 SFRN5 warnings during Debian Buster AMD64
+ builds
+Date: Sat, 28 Nov 2020 13:21:28 +0100
+Message-ID: <58236ce8-d824-4d59-6fdd-1d14a393dda5@gmail.com>
+References: <20201128073904.28F7E71BAB5B@huitzilopochtli.metztli-it.com>
 Mime-Version: 1.0
-Return-path: <reiserfs-devel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20201101140958.3650143-1-rkovhaev@gmail.com>
-List-ID: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Rustam Kovhaev <rkovhaev@gmail.com>
-Cc: alex.shi@linux.alibaba.com, jack@suse.cz, akpm@linux-foundation.org, yeyunfeng@huawei.com, reiserfs-devel@vger.kernel.org, linux-kernel@vger.kernel.org, gregkh@linuxfoundation.org
+Return-path: <reiserfs-devel-owner@vger.kernel.org>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:references:from:message-id:date:user-agent:mime-version
+         :in-reply-to:content-language:content-transfer-encoding;
+        bh=KVhhWQype0NBKYxoEjuYHRsU1J5QRlkGsbFrqhs2oTc=;
+        b=MtpWM3I1Ng38YqQ5ke7JQDGUGdBITPYMoj0vufmy0CYvLhRbTEuzEGKo93H1gGo06A
+         7hCgnSdJl3hv3KGmaen9Faq2EmuQY58BShG2AFi1ZLEPxXxD2GXMR1BrU/nevASF4rHp
+         8njHtOcb/zCEJsrHe+qYJb60zYTGaaXKeChxxX80Z/f0+2Z0Z+mRGjpsWjAIXWGKxUfw
+         Ls/B+cwUjmr49GxUeiUDf1uVgpfvKynWoWVIGb+mVzT0Ink9yltMGUoR+QhIFOAGiRQV
+         a/7oCBHjoxERiIBxh2PiPFSvHVeWK3m1IdGa39lRKFlP0WopYqHTP3wH8IIY6hZDgqqv
+         53hA==
+In-Reply-To: <20201128073904.28F7E71BAB5B@huitzilopochtli.metztli-it.com>
+Content-Language: en-US
+List-ID: <reiserfs-devel.vger.kernel.org>
+Content-Type: text/plain; charset="us-ascii"; format="flowed"
+To: Metztli Information Technology <jose.r.r@metztli.com>, reiserfs-devel@vger.kernel.org
 
-On Sun 01-11-20 06:09:58, Rustam Kovhaev wrote:
-> when directory item has an invalid value set for ih_entry_count it might
-> trigger use-after-free or out-of-bounds read in bin_search_in_dir_item()
+On 11/28/2020 08:39 AM, Metztli Information Technology wrote:
+> Niltze [Hello] Ed-
+
+Hello.
+
 > 
-> ih_entry_count * IH_SIZE for directory item should not be larger than
-> ih_item_len
+> This afternoon/evening I built reiser4progs 2.0.4 SFRN 5.1.3 DEB/UDEB packages for Debian Buster backports AMD64.
 > 
-> Reported-and-tested-by: syzbot+83b6f7cf9922cae5c4d7@syzkaller.appspotmail.com
-> Link: https://syzkaller.appspot.com/bug?extid=83b6f7cf9922cae5c4d7
-> Signed-off-by: Rustam Kovhaev <rkovhaev@gmail.com>
+> I was somewhat concerned about the copious warnings -- which can be located using grep on the log attached below.
 
-Thanks! I've added the patch to my tree and will push it to Linus.
+It's all cosmetic.
+Some fixups should be ported from the master branch.
 
-								Honza
-
+> 
+> And simply wanted to confirm with you those will not introduce unintended results in the utilities built:
+> 
+> mkfs.reiser4
+> fsck.reiser4
+> volume.reiser4
+> measurefs.reiser4
+> debugfs.reiser4 >
+> Best Professional Regards.
+> 
+> P.S. There is a typo in
+> 
+> 
 > ---
->  fs/reiserfs/stree.c | 6 ++++++
->  1 file changed, 6 insertions(+)
+>   doc/volume.reiser4.8 | 2 +-
+>   1 file changed, 1 insertion(+), 1 deletion(-)
 > 
-> diff --git a/fs/reiserfs/stree.c b/fs/reiserfs/stree.c
-> index 8bf88d690729..476a7ff49482 100644
-> --- a/fs/reiserfs/stree.c
-> +++ b/fs/reiserfs/stree.c
-> @@ -454,6 +454,12 @@ static int is_leaf(char *buf, int blocksize, struct buffer_head *bh)
->  					 "(second one): %h", ih);
->  			return 0;
->  		}
-> +		if (is_direntry_le_ih(ih) && (ih_item_len(ih) < (ih_entry_count(ih) * IH_SIZE))) {
-> +			reiserfs_warning(NULL, "reiserfs-5093",
-> +					 "item entry count seems wrong %h",
-> +					 ih);
-> +			return 0;
-> +		}
->  		prev_location = ih_location(ih);
->  	}
->  
-> -- 
-> 2.28.0
-> 
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+> diff --git a/doc/volume.reiser4.8 b/doc/volume.reiser4.8
+> index f2a3485..874b7c5 100644
+> --- a/doc/volume.reiser4.8
+> +++ b/doc/volume.reiser4.8
+> @@ -63,7 +63,7 @@ Print information about a brick of serial number N in the volume mounted at MNT.
+>   Run a balancing procedure on a volume mounted at MNT.
+>   .TP
+>   .B -z, --resize DEV
+> -Change data capacity of a brick accociated with device DEV in the
+> +Change data capacity of a brick associated with device DEV in the
+
+Thanks,
+Edward.
