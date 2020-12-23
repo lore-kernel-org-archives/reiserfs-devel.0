@@ -1,91 +1,127 @@
-From: syzbot <syzbot+2b5c012223e37b7c2a88@syzkaller.appspotmail.com>
-Subject: KASAN: use-after-free Read in reiserfs_fill_super
-Date: Mon, 07 Dec 2020 01:33:10 -0800
-Message-ID: <000000000000b51b6b05b5dc833b@google.com>
+From: Edward Shishkin <edward.shishkin@gmail.com>
+Subject: [PATCH] reiser4: port for Linux-5.10
+Date: Wed, 23 Dec 2020 01:35:07 +0100
+Message-ID: <4e8963df-33e4-8c8f-5eae-afa1bdcb44ed@gmail.com>
 Mime-Version: 1.0
+Content-Type: multipart/mixed;
+ boundary="------------139F299A316E52C3DA9F5182"
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=to:from:subject:message-id:date:user-agent:mime-version
+         :content-language;
+        bh=KC1hZ/GVZw+uqoGYbe+l4o8l/kdsCISh0crtDONigD8=;
+        b=Ntd7PFL3tuCu9TO7xnVCjHXxMyXnVzrhFqYXqzCT7q6y7rco34SDU3OzgaIrcKiJ19
+         WvoAUiqcROCZGbtD0lAvErHE5DXxhyfQWhjP+BC/0r/V7qWPqWNVk8eVw5ePn+rv4McL
+         CI2POaK7FTagNvxOAIX9EF6J/pa1j6BU/CDHaCT8ZIatkTYBNiN0WDIvZKhT1LUxDL8+
+         bZ9y6cKxWAUBiECgoM4413PmvFVT46Ueu7HTiR4IToziRKsUU1G3ROcVaVCCBHVnrQfX
+         TTm7GCXz0mnxrciAu/yvU1/N+6Bfz0zyF7+PfG3zq4brKe3qSarawIy/7z9iJI6A56gO
+         ib0A==
+Content-Language: en-US
 List-ID: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
+To: ReiserFS development mailing list <reiserfs-devel@vger.kernel.org>
+
+This is a multi-part message in MIME format.
+--------------139F299A316E52C3DA9F5182
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Transfer-Encoding: 7bit
-To: ebiggers@google.com, jack@suse.cz, jhubbard@nvidia.com, junxiao.bi@oracle.com, liao.pingfang@zte.com.cn, linux-kernel@vger.kernel.org, reiserfs-devel@vger.kernel.org, syzkaller-bugs@googlegroups.com, william.kucharski@oracle.com, willy@infradead.org
 
-Hello,
+Don't add/use PF_FLUSHER per task flag.
+Instead add/use per reiser4_context flag flush_bd_task to indicate
+that it is bd flushing task.
 
-syzbot found the following issue on:
+--------------139F299A316E52C3DA9F5182
+Content-Type: text/x-patch;
+ name="reiser4-get-rid-of-pf_flusher_flag.patch"
+Content-Transfer-Encoding: 7bit
+Content-Disposition: attachment;
+ filename="reiser4-get-rid-of-pf_flusher_flag.patch"
 
-HEAD commit:    b3298500 Merge tag 'for-5.10/dm-fixes' of git://git.kernel..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=11e64345500000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=e49433cfed49b7d9
-dashboard link: https://syzkaller.appspot.com/bug?extid=2b5c012223e37b7c2a88
-compiler:       gcc (GCC) 10.1.0-syz 20200507
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=12ad719b500000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=11193117500000
+diff -urN linux-5.8.10-reiser4/fs/fs-writeback.c linux-5.8.10/fs/fs-writeback.c
+--- linux-5.8.10-reiser4/fs/fs-writeback.c	2020-10-11 21:00:01.000000000 +0200
++++ linux-5.8.10/fs/fs-writeback.c	2020-12-12 15:33:16.000000000 +0100
+@@ -2090,7 +2090,7 @@
+ 	long pages_written;
+ 
+ 	set_worker_desc("flush-%s", bdi_dev_name(wb->bdi));
+-	current->flags |= PF_FLUSHER | PF_SWAPWRITE;
++	current->flags |= PF_SWAPWRITE;
+ 
+ 	if (likely(!current_is_workqueue_rescuer() ||
+ 		   !test_bit(WB_registered, &wb->state))) {
+diff -urN linux-5.8.10-reiser4/fs/reiser4/context.c linux-5.8.10/fs/reiser4/context.c
+--- linux-5.8.10-reiser4/fs/reiser4/context.c	2020-10-11 20:55:06.000000000 +0200
++++ linux-5.8.10/fs/reiser4/context.c	2020-12-12 15:56:05.000000000 +0100
+@@ -153,7 +153,7 @@
+ 	if (sbinfo != NULL && sbinfo->fake != NULL &&
+ 	    context->nr_marked_dirty != 0 &&
+ 	    !(current->flags & PF_MEMALLOC) &&
+-	    !current_is_flush_bd_task())
++	    !context->flush_bd_task)
+  		reiser4_throttle_write(sbinfo->fake);
+ }
+ 
+diff -urN linux-5.8.10-reiser4/fs/reiser4/context.h linux-5.8.10/fs/reiser4/context.h
+--- linux-5.8.10-reiser4/fs/reiser4/context.h	2020-10-11 20:55:06.000000000 +0200
++++ linux-5.8.10/fs/reiser4/context.h	2020-12-12 16:46:39.000000000 +0100
+@@ -64,6 +64,8 @@
+ 	unsigned int on_stack:1;
+ 	/* file system is read-only */
+ 	unsigned int ro:1;
++	/* replacement of PF_FLUSHER */
++	unsigned int flush_bd_task:1;
+ 
+ 	/* count non-trivial jnode_set_dirty() calls */
+ 	unsigned long nr_marked_dirty;
+diff -urN linux-5.8.10-reiser4/fs/reiser4/super_ops.c linux-5.8.10/fs/reiser4/super_ops.c
+--- linux-5.8.10-reiser4/fs/reiser4/super_ops.c	2020-10-11 20:55:06.000000000 +0200
++++ linux-5.8.10/fs/reiser4/super_ops.c	2020-12-12 15:49:06.000000000 +0100
+@@ -383,6 +383,7 @@
+ 		spin_lock(&wb->list_lock);
+ 		goto skip;
+ 	}
++	ctx->flush_bd_task = 1;
+ 	/*
+ 	 * call reiser4_writepages for each of dirty inodes to turn
+ 	 * dirty pages into transactions if they were not yet.
+diff -urN linux-5.8.10-reiser4/fs/reiser4/txnmgr.c linux-5.8.10/fs/reiser4/txnmgr.c
+--- linux-5.8.10-reiser4/fs/reiser4/txnmgr.c	2020-10-11 20:55:06.000000000 +0200
++++ linux-5.8.10/fs/reiser4/txnmgr.c	2020-12-12 15:55:04.000000000 +0100
+@@ -1413,7 +1413,7 @@
+ 		 * Write throttling is case of no one atom can be
+ 		 * flushed/committed.
+ 		 */
+-		if (!current_is_flush_bd_task()) {
++		if (!ctx->flush_bd_task) {
+ 			list_for_each_entry(atom, &tmgr->atoms_list, atom_link) {
+ 				spin_lock_atom(atom);
+ 				/* Repeat the check from the above. */
+diff -urN linux-5.8.10-reiser4/include/linux/sched.h linux-5.8.10/include/linux/sched.h
+--- linux-5.8.10-reiser4/include/linux/sched.h	2020-10-11 20:55:06.000000000 +0200
++++ linux-5.8.10/include/linux/sched.h	2020-12-12 15:58:22.000000000 +0100
+@@ -1483,7 +1483,6 @@
+ /*
+  * Per process flags
+  */
+-#define PF_FLUSHER              0x00000001      /* responsible for disk writeback */
+ #define PF_IDLE			0x00000002	/* I am an IDLE thread */
+ #define PF_EXITING		0x00000004	/* Getting shut down */
+ #define PF_VCPU			0x00000010	/* I'm a virtual CPU */
+diff -urN linux-5.8.10-reiser4/include/linux/writeback.h linux-5.8.10/include/linux/writeback.h
+--- linux-5.8.10-reiser4/include/linux/writeback.h	2020-10-11 20:59:43.000000000 +0200
++++ linux-5.8.10/include/linux/writeback.h	2020-12-12 15:30:43.000000000 +0100
+@@ -17,12 +17,6 @@
+ 
+ DECLARE_PER_CPU(int, dirty_throttle_leaks);
+ 
+-static inline int is_flush_bd_task(struct task_struct *task)
+-{
+-       return task->flags & PF_FLUSHER;
+-}
+-#define current_is_flush_bd_task()  is_flush_bd_task(current)
+-
+ /*
+  * The 1/4 region under the global dirty thresh is for smooth dirty throttling:
+  *
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+2b5c012223e37b7c2a88@syzkaller.appspotmail.com
-
-REISERFS (device loop0): journal params: device loop0, size 8192, journal first block 18, max trans len 1024, max batch 900, max commit age 30, max trans age 30
-REISERFS (device loop0): checking transaction log (loop0)
-==================================================================
-BUG: KASAN: use-after-free in init_inode fs/reiserfs/inode.c:1325 [inline]
-BUG: KASAN: use-after-free in reiserfs_read_locked_inode+0x1f2d/0x2230 fs/reiserfs/inode.c:1574
-Read of size 4 at addr ffff888035a26000 by task syz-executor059/8481
-
-CPU: 0 PID: 8481 Comm: syz-executor059 Not tainted 5.10.0-rc6-syzkaller #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
-Call Trace:
- __dump_stack lib/dump_stack.c:77 [inline]
- dump_stack+0x107/0x163 lib/dump_stack.c:118
- print_address_description.constprop.0.cold+0xae/0x4c8 mm/kasan/report.c:385
- __kasan_report mm/kasan/report.c:545 [inline]
- kasan_report.cold+0x1f/0x37 mm/kasan/report.c:562
- init_inode fs/reiserfs/inode.c:1325 [inline]
- reiserfs_read_locked_inode+0x1f2d/0x2230 fs/reiserfs/inode.c:1574
- reiserfs_fill_super+0x18eb/0x2e00 fs/reiserfs/super.c:2081
- mount_bdev+0x32e/0x3f0 fs/super.c:1419
- legacy_get_tree+0x105/0x220 fs/fs_context.c:592
- vfs_get_tree+0x89/0x2f0 fs/super.c:1549
- do_new_mount fs/namespace.c:2875 [inline]
- path_mount+0x13ad/0x20c0 fs/namespace.c:3205
- do_mount fs/namespace.c:3218 [inline]
- __do_sys_mount fs/namespace.c:3426 [inline]
- __se_sys_mount fs/namespace.c:3403 [inline]
- __x64_sys_mount+0x27f/0x300 fs/namespace.c:3403
- do_syscall_64+0x2d/0x70 arch/x86/entry/common.c:46
- entry_SYSCALL_64_after_hwframe+0x44/0xa9
-RIP: 0033:0x447d7a
-Code: b8 08 00 00 00 0f 05 48 3d 01 f0 ff ff 0f 83 7d a3 fb ff c3 66 2e 0f 1f 84 00 00 00 00 00 66 90 49 89 ca b8 a5 00 00 00 0f 05 <48> 3d 01 f0 ff ff 0f 83 5a a3 fb ff c3 66 0f 1f 84 00 00 00 00 00
-RSP: 002b:00007ffcf7e76348 EFLAGS: 00000297 ORIG_RAX: 00000000000000a5
-RAX: ffffffffffffffda RBX: 00007ffcf7e763a0 RCX: 0000000000447d7a
-RDX: 0000000020000000 RSI: 0000000020000100 RDI: 00007ffcf7e76360
-RBP: 00007ffcf7e76360 R08: 00007ffcf7e763a0 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000297 R12: 0000000000000006
-R13: 0000000000000004 R14: 0000000000000003 R15: 0000000000000003
-
-The buggy address belongs to the page:
-page:0000000050546bce refcount:0 mapcount:0 mapping:0000000000000000 index:0x1 pfn:0x35a26
-flags: 0xfff00000000000()
-raw: 00fff00000000000 ffffea0000d689c8 ffff8880b9e39d48 0000000000000000
-raw: 0000000000000001 0000000000000000 00000000ffffffff 0000000000000000
-page dumped because: kasan: bad access detected
-
-Memory state around the buggy address:
- ffff888035a25f00: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
- ffff888035a25f80: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
->ffff888035a26000: ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff
-                   ^
- ffff888035a26080: ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff
- ffff888035a26100: ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff
-==================================================================
-
-
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-syzbot can test patches for this issue, for details see:
-https://goo.gl/tpsmEJ#testing-patches
+--------------139F299A316E52C3DA9F5182--
