@@ -1,22 +1,22 @@
 From: Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 5.10 08/31] reiserfs: add check for an invalid ih_entry_count
-Date: Wed, 30 Dec 2020 08:02:50 -0500
-Message-ID: <20201230130314.3636961-8-sashal@kernel.org>
-References: <20201230130314.3636961-1-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.4 4/5] reiserfs: add check for an invalid ih_entry_count
+Date: Wed, 30 Dec 2020 08:04:53 -0500
+Message-ID: <20201230130454.3637785-4-sashal@kernel.org>
+References: <20201230130454.3637785-1-sashal@kernel.org>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Return-path: <stable-owner@vger.kernel.org>
+Return-path: <reiserfs-devel-owner@vger.kernel.org>
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1609333405;
-        bh=WjZx0LmAyapqEa7RxcfH6tfxnAzjmH0UCNs5+WwCvM8=;
+        s=k20201202; t=1609333499;
+        bh=kvGHMIWmfjuKvN8xSDPnSkeLmX9sesgG2To3uCFy/jg=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=lyF9M3NMToG3pUD0xC/t0UzXJqotC9uaA8+gkRBTrhCRpnfgZJJBexJZJ91YQHM28
-         asJjbfTTT2UOzbjh1jVEicpBt+vDIlIAgj+thm09qoBlZyHMaGSbfKLEyfWS4rA3vS
-         E2DGTpHWl2Bgd8lmjLBWh8HnVdhDcgYmmn4k/owXkz6A24nGNDBEjU+yqZa37r52XG
-         yWik4x7uOBR+L8cmwbUW+fU9vZP3ZHscqhppSB1Tvd5fmsLFTYw5M5/WQSF21aim1C
-         xs9O7WvvcBCHLX45kG0gcG2HjYhRQ5WFPXyIndpEBI9Bs260tIRZ/nfFz4SegpbYbF
-         /I8RN9Jb+0GFA==
-In-Reply-To: <20201230130314.3636961-1-sashal@kernel.org>
+        b=JhZoXJo3FGY2xo1P3eBo5KLb3qlaq9N3Knr1iQTgC1G256Gmp/v30GlrhCMw7jZS1
+         8gTgIPYZxyhDQ2tNJRGSsybePgvyZGpYodaHwYd8QqXte9aEGHpEMteBp58TPOaH7L
+         FMAQfPUH7eKtSod1ILxjEY7L2IJ5hPUFIe+hAael3Zb7CDXZyGZnRtLyn4gSKcTiBr
+         ZDz29x4eILcKn23rDcCHEoih4LtI4A0a5RRQI06T1fbmYLfKIJxdxwZKfGHhPxaxmr
+         YzMBGXL4X667nN5nqv2NoeJ1lb3T+Yq3ra9BgImiDcqNNF8Wj9A4wYf6Bze5mHtHY6
+         RNOQ5joHvOARQ==
+In-Reply-To: <20201230130454.3637785-1-sashal@kernel.org>
 List-ID: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
 To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
@@ -43,10 +43,10 @@ Signed-off-by: Sasha Levin <sashal@kernel.org>
  1 file changed, 6 insertions(+)
 
 diff --git a/fs/reiserfs/stree.c b/fs/reiserfs/stree.c
-index 8bf88d690729e..476a7ff494822 100644
+index e3a4cbad9620c..33b78ee9fb9e2 100644
 --- a/fs/reiserfs/stree.c
 +++ b/fs/reiserfs/stree.c
-@@ -454,6 +454,12 @@ static int is_leaf(char *buf, int blocksize, struct buffer_head *bh)
+@@ -453,6 +453,12 @@ static int is_leaf(char *buf, int blocksize, struct buffer_head *bh)
  					 "(second one): %h", ih);
  			return 0;
  		}
