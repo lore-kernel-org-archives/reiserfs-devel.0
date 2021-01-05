@@ -1,64 +1,34 @@
-From: Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 5.4 08/17] reiserfs: add check for an invalid ih_entry_count
-Date: Wed, 30 Dec 2020 08:03:48 -0500
-Message-ID: <20201230130357.3637261-8-sashal@kernel.org>
-References: <20201230130357.3637261-1-sashal@kernel.org>
+From: syzbot <syzbot+2b5c012223e37b7c2a88@syzkaller.appspotmail.com>
+Subject: Re: KASAN: use-after-free Read in reiserfs_fill_super
+Date: Tue, 05 Jan 2021 00:00:05 -0800
+Message-ID: <0000000000003ad7db05b8229802@google.com>
+References: <000000000000b51b6b05b5dc833b@google.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Return-path: <reiserfs-devel-owner@vger.kernel.org>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1609333449;
-        bh=EQuTxe93qH+mzxHMm8+bihGMmglHMW2tWqNnbAsi4U4=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=kpMAo5eRvjJO02LJNfj+6vZ+9SbF9YQjPL6FMG1al1WZMB+MngHgwCpkLbLsHQE6Q
-         l3M5ojOG3IMDGcnjB4k/EQaGAxW5Fu8ZNvav5jss+9BdTqS9aGeXj54QkDovVOGLvq
-         Udlbs0AnDicUjzQRzKkppCu6qIdHchWSloChz+djHorwVWrfTQ0SRiFwVc09nX4/lm
-         rvDvKgT18Ue9RPya63GEHxNv5j9DxVF+Gaolmcx5speMa++8Er0VYM3ywZ6FwGjPV2
-         st89jVPc3Vyw6M83zHY7zs0o9SRhk14V2pzpgt4xR09PcfdxzGeCB2XnW0R5c1diEe
-         ApoCqvu0BqyTw==
-In-Reply-To: <20201230130357.3637261-1-sashal@kernel.org>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <000000000000b51b6b05b5dc833b@google.com>
 List-ID: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc: Rustam Kovhaev <rkovhaev@gmail.com>, syzbot+83b6f7cf9922cae5c4d7@syzkaller.appspotmail.com, Jan Kara <jack@suse.cz>, Sasha Levin <sashal@kernel.org>, reiserfs-devel@vger.kernel.org
+Content-Transfer-Encoding: 7bit
+To: ebiggers@google.com, jack@suse.cz, jhubbard@nvidia.com, junxiao.bi@oracle.com, liao.pingfang@zte.com.cn, linux-kernel@vger.kernel.org, reiserfs-devel@vger.kernel.org, rkovhaev@gmail.com, syzkaller-bugs@googlegroups.com, william.kucharski@oracle.com, willy@infradead.org
 
-From: Rustam Kovhaev <rkovhaev@gmail.com>
+syzbot suspects this issue was fixed by commit:
 
-[ Upstream commit d24396c5290ba8ab04ba505176874c4e04a2d53c ]
+commit d24396c5290ba8ab04ba505176874c4e04a2d53c
+Author: Rustam Kovhaev <rkovhaev@gmail.com>
+Date:   Sun Nov 1 14:09:58 2020 +0000
 
-when directory item has an invalid value set for ih_entry_count it might
-trigger use-after-free or out-of-bounds read in bin_search_in_dir_item()
+    reiserfs: add check for an invalid ih_entry_count
 
-ih_entry_count * IH_SIZE for directory item should not be larger than
-ih_item_len
+bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=113a2d57500000
+start commit:   b3298500 Merge tag 'for-5.10/dm-fixes' of git://git.kernel..
+git tree:       upstream
+kernel config:  https://syzkaller.appspot.com/x/.config?x=e49433cfed49b7d9
+dashboard link: https://syzkaller.appspot.com/bug?extid=2b5c012223e37b7c2a88
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=12ad719b500000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=11193117500000
 
-Link: https://lore.kernel.org/r/20201101140958.3650143-1-rkovhaev@gmail.com
-Reported-and-tested-by: syzbot+83b6f7cf9922cae5c4d7@syzkaller.appspotmail.com
-Link: https://syzkaller.appspot.com/bug?extid=83b6f7cf9922cae5c4d7
-Signed-off-by: Rustam Kovhaev <rkovhaev@gmail.com>
-Signed-off-by: Jan Kara <jack@suse.cz>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
- fs/reiserfs/stree.c | 6 ++++++
- 1 file changed, 6 insertions(+)
+If the result looks correct, please mark the issue as fixed by replying with:
 
-diff --git a/fs/reiserfs/stree.c b/fs/reiserfs/stree.c
-index bb4973aefbb18..9e64e23014e8e 100644
---- a/fs/reiserfs/stree.c
-+++ b/fs/reiserfs/stree.c
-@@ -454,6 +454,12 @@ static int is_leaf(char *buf, int blocksize, struct buffer_head *bh)
- 					 "(second one): %h", ih);
- 			return 0;
- 		}
-+		if (is_direntry_le_ih(ih) && (ih_item_len(ih) < (ih_entry_count(ih) * IH_SIZE))) {
-+			reiserfs_warning(NULL, "reiserfs-5093",
-+					 "item entry count seems wrong %h",
-+					 ih);
-+			return 0;
-+		}
- 		prev_location = ih_location(ih);
- 	}
- 
--- 
-2.27.0
+#syz fix: reiserfs: add check for an invalid ih_entry_count
 
+For information about bisection process see: https://goo.gl/tpsmEJ#bisection
