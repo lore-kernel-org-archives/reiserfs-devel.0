@@ -1,53 +1,124 @@
-From: Dmitry Vyukov <dvyukov@google.com>
-Subject: Re: kernel BUG at fs/reiserfs/prints.c:LINE!
-Date: Mon, 11 Jan 2021 12:15:31 +0100
-Message-ID: <CACT4Y+b0ZwjFXBe5woU+eNzkbuWNgE37i3vU2vFk0PGNjVHiZw@mail.gmail.com>
-References: <000000000000eba11705afd3d759@google.com> <000000000000ac50ae05b862040d@google.com>
+From: Joe Perches <joe@perches.com>
+Subject: Re: [PATCH 24/29] reiserfs: Avoid comma separated statements
+Date: Sat, 30 Jan 2021 11:04:43 -0800
+Message-ID: <4e90351d3b78154d451a39c1a8577b583b8467a7.camel@perches.com>
+References: <cover.1598331148.git.joe@perches.com>
+         <29b5ea94496d64e7a73af216b01f26d9ff7ac1fe.1598331149.git.joe@perches.com>
 Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
 Return-path: <linux-kernel-owner@vger.kernel.org>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=07jVVaRVyq5aozxWNXLFWFjmN6KjLrqrOzqL/0QRu9w=;
-        b=W+q+OmcQ/0EhY8lol5ozzXnDL4vttxLXTvCiOGZ0RVIXgIsKazQ9nb1lH7pg6A9Kys
-         cPbKquKsKFllOelUMfGU4wjWjlXfj30uqaR72Y8MXxNQ5cokRc9HBPhpV8TUXQh/wD3+
-         BqzFQPDhv0jcjaBngCg7gF9hR/snQp64NDE1XMoqrwgmZf/UudK3XZNFFb6csUAL+g+h
-         uaY6/mlwpItvCmpbaC6lBySHizGAzlBSUczX4rQ7wyL81V6zxxL0yo8fmqIKvkQR1o3x
-         s3O4vmgYChOGKxaMI/Mh1HcW1H7S/HdNJaO6qyw1sFoav8uOv2pVU+cau2IMAL/5X7Al
-         ln7w==
-In-Reply-To: <000000000000ac50ae05b862040d@google.com>
+In-Reply-To: <29b5ea94496d64e7a73af216b01f26d9ff7ac1fe.1598331149.git.joe@perches.com>
 List-ID: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: syzbot <syzbot+1541a3226994c0781b29@syzkaller.appspotmail.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>, Jan Kara <jack@suse.cz>, LKML <linux-kernel@vger.kernel.org>, reiserfs-devel@vger.kernel.org, rkovhaev@gmail.com, syzkaller-bugs <syzkaller-bugs@googlegroups.com>, zhengbin13@huawei.com
+Content-Type: text/plain; charset="iso-8859-1"
+To: Jiri Kosina <trivial@kernel.org>, linux-kernel@vger.kernel.org
+Cc: reiserfs-devel@vger.kernel.org
 
-On Fri, Jan 8, 2021 at 12:40 PM syzbot
-<syzbot+1541a3226994c0781b29@syzkaller.appspotmail.com> wrote:
->
-> syzbot suspects this issue was fixed by commit:
->
-> commit d24396c5290ba8ab04ba505176874c4e04a2d53c
-> Author: Rustam Kovhaev <rkovhaev@gmail.com>
-> Date:   Sun Nov 1 14:09:58 2020 +0000
->
->     reiserfs: add check for an invalid ih_entry_count
->
-> bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=1731e8f7500000
-> start commit:   521b619a Merge tag 'linux-kselftest-kunit-fixes-5.10-rc3' ..
-> git tree:       upstream
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=4e93228e2f17fb12
-> dashboard link: https://syzkaller.appspot.com/bug?extid=1541a3226994c0781b29
-> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1446e7a8500000
-> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=15c56f5c500000
->
-> If the result looks correct, please mark the issue as fixed by replying with:
->
-> #syz fix: reiserfs: add check for an invalid ih_entry_count
->
-> For information about bisection process see: https://goo.gl/tpsmEJ#bisection
+On Mon, 2020-08-24 at 21:56 -0700, Joe Perches wrote:
+> Use semicolons and braces.
 
-Looks realistic
+ping?
 
-#syz fix: reiserfs: add check for an invalid ih_entry_count
+> Signed-off-by: Joe Perches <joe@perches.com>
+> ---
+> =A0fs/reiserfs/fix_node.c | 36 ++++++++++++++++++++++++------------
+> =A01 file changed, 24 insertions(+), 12 deletions(-)
+>=20
+> diff --git a/fs/reiserfs/fix_node.c b/fs/reiserfs/fix_node.c
+> index fefe87e1c099..aea63e67a42b 100644
+> --- a/fs/reiserfs/fix_node.c
+> +++ b/fs/reiserfs/fix_node.c
+> @@ -235,8 +235,10 @@ static void check_left(struct tree_balance *tb, int =
+h, int cur_free)
+> =A0	d_size =3D 0, ih_size =3D IH_SIZE;
+> =A0
+>=20
+> =A0	/* first item may be merge with last item in left neighbor */
+> -	if (vi->vi_type & VI_TYPE_LEFT_MERGEABLE)
+> -		d_size =3D -((int)IH_SIZE), ih_size =3D 0;
+> +	if (vi->vi_type & VI_TYPE_LEFT_MERGEABLE) {
+> +		d_size =3D -((int)IH_SIZE);
+> +		ih_size =3D 0;
+> +	}
+> =A0
+>=20
+> =A0	tb->lnum[0] =3D 0;
+> =A0	for (i =3D 0; i < vn->vn_nr_item;
+> @@ -321,8 +323,10 @@ static void check_right(struct tree_balance *tb, int=
+ h, int cur_free)
+> =A0	d_size =3D 0, ih_size =3D IH_SIZE;
+> =A0
+>=20
+> =A0	/* last item may be merge with first item in right neighbor */
+> -	if (vi->vi_type & VI_TYPE_RIGHT_MERGEABLE)
+> -		d_size =3D -(int)IH_SIZE, ih_size =3D 0;
+> +	if (vi->vi_type & VI_TYPE_RIGHT_MERGEABLE) {
+> +		d_size =3D -(int)IH_SIZE;
+> +		ih_size =3D 0;
+> +	}
+> =A0
+>=20
+> =A0	tb->rnum[0] =3D 0;
+> =A0	for (i =3D vn->vn_nr_item - 1; i >=3D 0;
+> @@ -1534,8 +1538,10 @@ static int ip_check_balance(struct tree_balance *t=
+b, int h)
+> =A0			nver1 =3D get_num_ver(vn->vn_mode, tb, h,
+> =A0					    0, -1, 0, -1,
+> =A0					    snum012 + NOTHING_SHIFT_FLOW, FLOW);
+> -			if (nver > nver1)
+> -				nset =3D NOTHING_SHIFT_FLOW, nver =3D nver1;
+> +			if (nver > nver1) {
+> +				nset =3D NOTHING_SHIFT_FLOW;
+> +				nver =3D nver1;
+> +			}
+> =A0		}
+> =A0
+>=20
+> =A0		/*
+> @@ -1559,8 +1565,10 @@ static int ip_check_balance(struct tree_balance *t=
+b, int h)
+> =A0					     ((tb->lbytes !=3D -1) ? 1 : 0),
+> =A0					     tb->lbytes, 0, -1,
+> =A0					     snum012 + LEFT_SHIFT_FLOW, FLOW);
+> -			if (lnver > lnver1)
+> -				lset =3D LEFT_SHIFT_FLOW, lnver =3D lnver1;
+> +			if (lnver > lnver1) {
+> +				lset =3D LEFT_SHIFT_FLOW;
+> +				lnver =3D lnver1;
+> +			}
+> =A0		}
+> =A0
+>=20
+> =A0		/*
+> @@ -1590,8 +1598,10 @@ static int ip_check_balance(struct tree_balance *t=
+b, int h)
+> =A0					     tb->rbytes,
+> =A0					     snum012 + RIGHT_SHIFT_FLOW, FLOW);
+> =A0
+>=20
+> -			if (rnver > rnver1)
+> -				rset =3D RIGHT_SHIFT_FLOW, rnver =3D rnver1;
+> +			if (rnver > rnver1) {
+> +				rset =3D RIGHT_SHIFT_FLOW;
+> +				rnver =3D rnver1;
+> +			}
+> =A0		}
+> =A0
+>=20
+> =A0		/*
+> @@ -1622,8 +1632,10 @@ static int ip_check_balance(struct tree_balance *t=
+b, int h)
+> =A0					       ((tb->rbytes !=3D -1) ? 1 : 0)),
+> =A0					      tb->rbytes,
+> =A0					      snum012 + LR_SHIFT_FLOW, FLOW);
+> -			if (lrnver > lrnver1)
+> -				lrset =3D LR_SHIFT_FLOW, lrnver =3D lrnver1;
+> +			if (lrnver > lrnver1) {
+> +				lrset =3D LR_SHIFT_FLOW;
+> +				lrnver =3D lrnver1;
+> +			}
+> =A0		}
+> =A0
+>=20
+> =A0		/*
+
+
