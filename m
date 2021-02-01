@@ -1,124 +1,111 @@
-From: Joe Perches <joe@perches.com>
-Subject: Re: [PATCH 24/29] reiserfs: Avoid comma separated statements
-Date: Sat, 30 Jan 2021 11:04:43 -0800
-Message-ID: <4e90351d3b78154d451a39c1a8577b583b8467a7.camel@perches.com>
-References: <cover.1598331148.git.joe@perches.com>
-         <29b5ea94496d64e7a73af216b01f26d9ff7ac1fe.1598331149.git.joe@perches.com>
+From: syzbot <syzbot+2a318f14e5e6bb69b96b@syzkaller.appspotmail.com>
+Subject: KMSAN: uninit-value in reiserfs_new_inode
+Date: Mon, 01 Feb 2021 01:07:19 -0800
+Message-ID: <0000000000005f397905ba42aea8@google.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <29b5ea94496d64e7a73af216b01f26d9ff7ac1fe.1598331149.git.joe@perches.com>
+Return-path: <reiserfs-devel-owner@vger.kernel.org>
 List-ID: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="iso-8859-1"
-To: Jiri Kosina <trivial@kernel.org>, linux-kernel@vger.kernel.org
-Cc: reiserfs-devel@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: akpm@linux-foundation.org, ebiggers@google.com, glider@google.com, jack@suse.cz, joseph.qi@linux.alibaba.com, liao.pingfang@zte.com.cn, linux-kernel@vger.kernel.org, reiserfs-devel@vger.kernel.org, syzkaller-bugs@googlegroups.com, william.kucharski@oracle.com, willy@infradead.org
 
-On Mon, 2020-08-24 at 21:56 -0700, Joe Perches wrote:
-> Use semicolons and braces.
+Hello,
 
-ping?
+syzbot found the following issue on:
 
-> Signed-off-by: Joe Perches <joe@perches.com>
-> ---
-> =A0fs/reiserfs/fix_node.c | 36 ++++++++++++++++++++++++------------
-> =A01 file changed, 24 insertions(+), 12 deletions(-)
->=20
-> diff --git a/fs/reiserfs/fix_node.c b/fs/reiserfs/fix_node.c
-> index fefe87e1c099..aea63e67a42b 100644
-> --- a/fs/reiserfs/fix_node.c
-> +++ b/fs/reiserfs/fix_node.c
-> @@ -235,8 +235,10 @@ static void check_left(struct tree_balance *tb, int =
-h, int cur_free)
-> =A0	d_size =3D 0, ih_size =3D IH_SIZE;
-> =A0
->=20
-> =A0	/* first item may be merge with last item in left neighbor */
-> -	if (vi->vi_type & VI_TYPE_LEFT_MERGEABLE)
-> -		d_size =3D -((int)IH_SIZE), ih_size =3D 0;
-> +	if (vi->vi_type & VI_TYPE_LEFT_MERGEABLE) {
-> +		d_size =3D -((int)IH_SIZE);
-> +		ih_size =3D 0;
-> +	}
-> =A0
->=20
-> =A0	tb->lnum[0] =3D 0;
-> =A0	for (i =3D 0; i < vn->vn_nr_item;
-> @@ -321,8 +323,10 @@ static void check_right(struct tree_balance *tb, int=
- h, int cur_free)
-> =A0	d_size =3D 0, ih_size =3D IH_SIZE;
-> =A0
->=20
-> =A0	/* last item may be merge with first item in right neighbor */
-> -	if (vi->vi_type & VI_TYPE_RIGHT_MERGEABLE)
-> -		d_size =3D -(int)IH_SIZE, ih_size =3D 0;
-> +	if (vi->vi_type & VI_TYPE_RIGHT_MERGEABLE) {
-> +		d_size =3D -(int)IH_SIZE;
-> +		ih_size =3D 0;
-> +	}
-> =A0
->=20
-> =A0	tb->rnum[0] =3D 0;
-> =A0	for (i =3D vn->vn_nr_item - 1; i >=3D 0;
-> @@ -1534,8 +1538,10 @@ static int ip_check_balance(struct tree_balance *t=
-b, int h)
-> =A0			nver1 =3D get_num_ver(vn->vn_mode, tb, h,
-> =A0					    0, -1, 0, -1,
-> =A0					    snum012 + NOTHING_SHIFT_FLOW, FLOW);
-> -			if (nver > nver1)
-> -				nset =3D NOTHING_SHIFT_FLOW, nver =3D nver1;
-> +			if (nver > nver1) {
-> +				nset =3D NOTHING_SHIFT_FLOW;
-> +				nver =3D nver1;
-> +			}
-> =A0		}
-> =A0
->=20
-> =A0		/*
-> @@ -1559,8 +1565,10 @@ static int ip_check_balance(struct tree_balance *t=
-b, int h)
-> =A0					     ((tb->lbytes !=3D -1) ? 1 : 0),
-> =A0					     tb->lbytes, 0, -1,
-> =A0					     snum012 + LEFT_SHIFT_FLOW, FLOW);
-> -			if (lnver > lnver1)
-> -				lset =3D LEFT_SHIFT_FLOW, lnver =3D lnver1;
-> +			if (lnver > lnver1) {
-> +				lset =3D LEFT_SHIFT_FLOW;
-> +				lnver =3D lnver1;
-> +			}
-> =A0		}
-> =A0
->=20
-> =A0		/*
-> @@ -1590,8 +1598,10 @@ static int ip_check_balance(struct tree_balance *t=
-b, int h)
-> =A0					     tb->rbytes,
-> =A0					     snum012 + RIGHT_SHIFT_FLOW, FLOW);
-> =A0
->=20
-> -			if (rnver > rnver1)
-> -				rset =3D RIGHT_SHIFT_FLOW, rnver =3D rnver1;
-> +			if (rnver > rnver1) {
-> +				rset =3D RIGHT_SHIFT_FLOW;
-> +				rnver =3D rnver1;
-> +			}
-> =A0		}
-> =A0
->=20
-> =A0		/*
-> @@ -1622,8 +1632,10 @@ static int ip_check_balance(struct tree_balance *t=
-b, int h)
-> =A0					       ((tb->rbytes !=3D -1) ? 1 : 0)),
-> =A0					      tb->rbytes,
-> =A0					      snum012 + LR_SHIFT_FLOW, FLOW);
-> -			if (lrnver > lrnver1)
-> -				lrset =3D LR_SHIFT_FLOW, lrnver =3D lrnver1;
-> +			if (lrnver > lrnver1) {
-> +				lrset =3D LR_SHIFT_FLOW;
-> +				lrnver =3D lrnver1;
-> +			}
-> =A0		}
-> =A0
->=20
-> =A0		/*
+HEAD commit:    73d62e81 kmsan: random: prevent boot-time reports in _mix_..
+git tree:       https://github.com/google/kmsan.git master
+console output: https://syzkaller.appspot.com/x/log.txt?x=12a62e6f500000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=31d3b433c9628854
+dashboard link: https://syzkaller.appspot.com/bug?extid=2a318f14e5e6bb69b96b
+compiler:       clang version 11.0.1
+userspace arch: i386
+
+Unfortunately, I don't have any reproducer for this issue yet.
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+2a318f14e5e6bb69b96b@syzkaller.appspotmail.com
+
+=====================================================
+BUG: KMSAN: uninit-value in reiserfs_new_inode+0x207c/0x3c30 fs/reiserfs/inode.c:2058
+CPU: 0 PID: 8539 Comm: syz-executor.0 Not tainted 5.10.0-rc4-syzkaller #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
+Call Trace:
+ __dump_stack lib/dump_stack.c:77 [inline]
+ dump_stack+0x21c/0x280 lib/dump_stack.c:118
+ kmsan_report+0xfb/0x1e0 mm/kmsan/kmsan_report.c:118
+ __msan_warning+0x5f/0xa0 mm/kmsan/kmsan_instr.c:197
+ reiserfs_new_inode+0x207c/0x3c30 fs/reiserfs/inode.c:2058
+ reiserfs_create+0x89b/0xf00 fs/reiserfs/namei.c:667
+ xattr_create fs/reiserfs/xattr.c:69 [inline]
+ xattr_lookup+0x495/0x6a0 fs/reiserfs/xattr.c:412
+ reiserfs_xattr_set_handle+0x1eb/0x2ab0 fs/reiserfs/xattr.c:540
+ reiserfs_xattr_set+0x84d/0x9f0 fs/reiserfs/xattr.c:640
+ trusted_set+0x1ea/0x260 fs/reiserfs/xattr_trusted.c:30
+ __vfs_setxattr+0x90e/0x960 fs/xattr.c:177
+ __vfs_setxattr_noperm+0x376/0xc70 fs/xattr.c:208
+ __vfs_setxattr_locked+0x5ed/0x690 fs/xattr.c:266
+ vfs_setxattr+0x1e4/0x4d0 fs/xattr.c:283
+ setxattr+0x446/0x900 fs/xattr.c:548
+ path_setxattr+0x2cd/0x4e0 fs/xattr.c:567
+ __do_sys_setxattr fs/xattr.c:582 [inline]
+ __se_sys_setxattr+0xee/0x110 fs/xattr.c:578
+ __ia32_sys_setxattr+0x62/0x80 fs/xattr.c:578
+ do_syscall_32_irqs_on arch/x86/entry/common.c:80 [inline]
+ __do_fast_syscall_32+0x102/0x160 arch/x86/entry/common.c:139
+ do_fast_syscall_32+0x6a/0xc0 arch/x86/entry/common.c:162
+ do_SYSENTER_32+0x73/0x90 arch/x86/entry/common.c:205
+ entry_SYSENTER_compat_after_hwframe+0x4d/0x5c
+RIP: 0023:0xf7fa5549
+Code: b8 01 10 06 03 74 b4 01 10 07 03 74 b0 01 10 08 03 74 d8 01 00 00 00 00 00 00 00 00 00 00 00 00 00 51 52 55 89 e5 0f 34 cd 80 <5d> 5a 59 c3 90 90 90 90 eb 0d 90 90 90 90 90 90 90 90 90 90 90 90
+RSP: 002b:00000000f555d0cc EFLAGS: 00000296 ORIG_RAX: 00000000000000e2
+RAX: ffffffffffffffda RBX: 00000000200001c0 RCX: 0000000020000280
+RDX: 00000000200002c0 RSI: 0000000000000001 RDI: 0000000000000003
+RBP: 0000000000000000 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000000 R12: 0000000000000000
+R13: 0000000000000000 R14: 0000000000000000 R15: 0000000000000000
+
+Uninit was created at:
+ kmsan_save_stack_with_flags+0x3c/0x90 mm/kmsan/kmsan.c:121
+ kmsan_alloc_page+0xd3/0x1f0 mm/kmsan/kmsan_shadow.c:274
+ __alloc_pages_nodemask+0x827/0xf90 mm/page_alloc.c:4989
+ alloc_pages_current+0x7b6/0xb60 mm/mempolicy.c:2271
+ alloc_pages include/linux/gfp.h:547 [inline]
+ alloc_slab_page mm/slub.c:1630 [inline]
+ allocate_slab+0x346/0x11a0 mm/slub.c:1773
+ new_slab mm/slub.c:1834 [inline]
+ new_slab_objects mm/slub.c:2593 [inline]
+ ___slab_alloc+0xd42/0x1930 mm/slub.c:2756
+ __slab_alloc mm/slub.c:2796 [inline]
+ slab_alloc_node mm/slub.c:2871 [inline]
+ slab_alloc mm/slub.c:2915 [inline]
+ kmem_cache_alloc+0xb71/0x1040 mm/slub.c:2920
+ reiserfs_alloc_inode+0x5a/0x170 fs/reiserfs/super.c:642
+ alloc_inode fs/inode.c:234 [inline]
+ iget5_locked+0x1d7/0x990 fs/inode.c:1150
+ reiserfs_fill_super+0x29a5/0x6010 fs/reiserfs/super.c:2063
+ mount_bdev+0x618/0x900 fs/super.c:1419
+ get_super_block+0xc9/0xe0 fs/reiserfs/super.c:2606
+ legacy_get_tree+0x163/0x2e0 fs/fs_context.c:592
+ vfs_get_tree+0xd8/0x5e0 fs/super.c:1549
+ do_new_mount fs/namespace.c:2875 [inline]
+ path_mount+0x3df0/0x5e50 fs/namespace.c:3205
+ do_mount fs/namespace.c:3218 [inline]
+ __do_sys_mount fs/namespace.c:3426 [inline]
+ __se_sys_mount+0x921/0xa10 fs/namespace.c:3403
+ __ia32_sys_mount+0x62/0x80 fs/namespace.c:3403
+ do_syscall_32_irqs_on arch/x86/entry/common.c:80 [inline]
+ __do_fast_syscall_32+0x102/0x160 arch/x86/entry/common.c:139
+ do_fast_syscall_32+0x6a/0xc0 arch/x86/entry/common.c:162
+ do_SYSENTER_32+0x73/0x90 arch/x86/entry/common.c:205
+ entry_SYSENTER_compat_after_hwframe+0x4d/0x5c
+=====================================================
 
 
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
