@@ -1,7 +1,7 @@
 From: Edward Shishkin <edward.shishkin@gmail.com>
 Subject: Re: Occasionally mkfs.reiser4 creates a file system without a UUID
-Date: Fri, 12 Mar 2021 20:48:08 +0100
-Message-ID: <ebb4b093-3141-c4ad-d99b-c310aa7dceb4@gmail.com>
+Date: Sat, 13 Mar 2021 12:37:44 +0100
+Message-ID: <af8ab3fa-4ba1-5e62-993f-96e8d711297d@gmail.com>
 References: <CAMU1PDjpaE0g=S5iVQFY1oC8=c1ru114wwrGMUqEDu5=9N9_ZA@mail.gmail.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
@@ -10,13 +10,13 @@ DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=subject:to:references:from:message-id:date:user-agent:mime-version
          :in-reply-to:content-language:content-transfer-encoding;
-        bh=UjgTZDCt/nya/cQ7aylmMB5pjkTaS49pBVx4Qv2R+T0=;
-        b=rv7xqh4zRjQkRKuugnuafJfExHkO9kLVNi3lAwq4DhrfCnr2++emdk2VHHRgHq82+L
-         zUoPx3KrOW82nTe6i3y7gR3bT9RHtRRwV0cUPNEinT09GBc4dQZyH3RL4C5/NgwJ6Au5
-         AFVcUXcFWv5pbOYcuSOFQdzldKjSKXk9KP+TwG9iKYYC/pCO+EB6mDQIrELfeUxXEURa
-         eDRFwtYKQNHs9vhSTMLKlfJC0LL3D0QqYc23HRVtiYC7Kqaj1pszrTDSbvEY/t1L/xt3
-         2c/IEno0C1jdlauxpaILbqwALAkagn0lhrsNujyBNSmbN+qrCECS/VUYIohru3iKgIzJ
-         9FJw==
+        bh=8rI7FDuJts1MIljIxgtcS1T4PDaXvLXXm5I/06Ee08I=;
+        b=QB8u/jRYufCfiSK/yTnajBdqntl0sr/kORCpcniXvhbK8NwoP60ZFsc1PVu2m41Y0d
+         yuHYRrCQfvZy+E8qhI8ZflEVd6XoWEjAxWrS9sCFcE9GW+Acs9gTSGn7pIIulS0YwVbL
+         YNlKomRBoKUd1inGBCSaGpq1c0HQKei0Zdnu/uzpraOEb50zejdZ8Z8ftP8x3rpFoTM/
+         7HNeace/99C+RAqVkoQPIS6ubvDmTOnOFWor4JuA0YvXO6RmmzUhjrRVmKtwnx4cua6m
+         PIsyEe/5xwS0BpmyRj2/gsvIOEt75qdj7knXa4lApXeh1h7G57kv64SMgHTaIKUTicwC
+         SIOg==
 In-Reply-To: <CAMU1PDjpaE0g=S5iVQFY1oC8=c1ru114wwrGMUqEDu5=9N9_ZA@mail.gmail.com>
 Content-Language: en-US
 List-ID: <reiserfs-devel.vger.kernel.org>
@@ -30,17 +30,6 @@ On 03/12/2021 08:36 PM, Mike Fleetwood wrote:
 > debugfs.reiser4 reports UUID as '<none>'.  This is being detected in
 > GParted's file system interface CI tests [1] which exercises the resier4
 > commands.
-
-
-Yeah, I know about this problem.
-Unfortunately, haven't had a chance to find the root cause yet...
-It shouldn't be a critical problem for 4.X.Y
-For 5.X.Y - yes - it becomes sticky..
-
-Thanks,
-Edward.
-
-
 > 
 > In a Ubuntu 20.04 LTS VM with both resier4progs-1.2.1-1 package and
 > current code from GIT, the fault can easily be replicated like this:
@@ -68,6 +57,19 @@ Edward.
 > Performing the same test with resierfs and ext4 runs for many hours
 > doing 100,000s of iterations without issue.
 > 
+
+
+It seems that debugfs.reiser4 prints uuid incorrectly: it assumes that
+binary uuid can't contain '\0' symbols, which apparently is wrong.
+Thus, if the first uuid's symbol is '\0', debugfs thinks that uuid is
+not set and prints "none" ;)
+
+I'll try to prepare a fixup a bit later.
+Special thanks for the nice testing script!
+
+Edward.
+
+
 > Thanks,
 > Mike
 > 
