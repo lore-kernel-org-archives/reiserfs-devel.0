@@ -1,80 +1,65 @@
-From: Edward Shishkin <edward.shishkin@gmail.com>
-Subject: Re: Occasionally mkfs.reiser4 creates a file system without a UUID
-Date: Sat, 13 Mar 2021 15:28:51 +0100
-Message-ID: <04e926a4-dcbc-7e89-19d6-3815a572d2d0@gmail.com>
-References: <CAMU1PDjpaE0g=S5iVQFY1oC8=c1ru114wwrGMUqEDu5=9N9_ZA@mail.gmail.com>
- <af8ab3fa-4ba1-5e62-993f-96e8d711297d@gmail.com>
+From: Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
+Subject: Re: [PATCH (resend)] reiserfs: update reiserfs_xattrs_initialized()
+ condition
+Date: Mon, 15 Mar 2021 09:44:21 +0900
+Message-ID: <a05b4603-c2ee-7e11-6616-9c5f99324108@i-love.sakura.ne.jp>
+References: <000000000000f5be7f05afcf862a@google.com>
+ <20210221050957.3601-1-penguin-kernel@I-love.SAKURA.ne.jp>
+ <700fcc0a-0da7-6d70-620e-af0ed956cd85@i-love.sakura.ne.jp>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:from:to:references:message-id:date:user-agent:mime-version
-         :in-reply-to:content-language:content-transfer-encoding;
-        bh=KHzk9sOROUxF+iH0v9rfcgZod9ZJBglwqNQF6B8m6KY=;
-        b=bEDZEJs2dD4CgUr7VXqWDK48E8wu45BL1jzV4mGqdXk3wXm12lzLgC7gL9jqIx+hp/
-         MV1X98EM+z91B9KACKxYhCnzjUi2TlQ5LrN+22IMrno2ZJhYO0pA0LzBAJ9nOfU/AX02
-         jzJL3pFz5YGkpvRe8NLP3ZnQvepYkj4Hi73Y3D7VBTnN50dkmIU6f15HwsZABGcbBT2O
-         lX7aXtvRUzYQe1N8JX1SrAT7SLmRIMosR7r6SjW2Qjd1SN5N+gqLnvue5tDmN2lQ+/XO
-         cG6GUhg5Jmp89ewCj2A9DDUn5VRqmRo2foW0IJUYpO7XBCW+Uku/bvEq/rZlVLXhnZT0
-         YrOQ==
-In-Reply-To: <af8ab3fa-4ba1-5e62-993f-96e8d711297d@gmail.com>
+In-Reply-To: <700fcc0a-0da7-6d70-620e-af0ed956cd85@i-love.sakura.ne.jp>
 Content-Language: en-US
 List-ID: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="utf-8"; format="flowed"
-To: Mike Fleetwood <mike.fleetwood@googlemail.com>, reiserfs-devel@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+To: reiserfs-devel@vger.kernel.org
 
+Can somebody review and pick up this trivial patch?
+This bug is currently 6th top crasher for syzbot.
 
-
-On 03/13/2021 12:37 PM, Edward Shishkin wrote:
-> On 03/12/2021 08:36 PM, Mike Fleetwood wrote:
->> Hi,
->>
->> Occasionally mkfs.reiser4 creates a file system without a UUID,
->> debugfs.reiser4 reports UUID as '<none>'.  This is being detected in
->> GParted's file system interface CI tests [1] which exercises the resier4
->> commands.
->>
->> In a Ubuntu 20.04 LTS VM with both resier4progs-1.2.1-1 package and
->> current code from GIT, the fault can easily be replicated like this:
->>
->> truncate -s 256M test.img
->> i=1
->> while :
->> do
->>    mkfs.reiser4 --force --yes --label '' test.img
->>    line=`debugfs.reiser4 test.img 2> /dev/null | egrep '^uuid:'`
->>    echo "[$i] $line"
->>    ((i++))
->>    echo "$line" | grep -q '<none>' && break
->> done
->>
->> Output fragment:
->> [1] uuid:        17073919-e41d-4892-9b22-4294d1544c4a
->> [2] uuid:        af2821de-ea85-4f20-9621-4fbd128b3fb8
->> [3] uuid:        c0fb805b-e224-4695-a504-d87460d158ae
->> ...
->> [35] uuid:        d604794d-097f-4810-bbb3-01a1518f3ef1
->> [36] uuid:        9634100c-1f98-42b3-a684-c9df77ab54e2
->> [37] uuid:        <none>
->>
->> Performing the same test with resierfs and ext4 runs for many hours
->> doing 100,000s of iterations without issue.
->>
+On 2021/03/05 15:31, Tetsuo Handa wrote:
+> syzbot is reporting NULL pointer dereference at reiserfs_security_init()
+> [1], for commit ab17c4f02156c4f7 ("reiserfs: fixup xattr_root caching") is
+> assuming that REISERFS_SB(s)->xattr_root != NULL in
+> reiserfs_xattr_jcreate_nblocks() despite that commit made
+> REISERFS_SB(sb)->priv_root != NULL && REISERFS_SB(s)->xattr_root == NULL
+> case possible.
 > 
+> I guess that commit 6cb4aff0a77cc0e6 ("reiserfs: fix oops while creating
+> privroot with selinux enabled") wanted to check xattr_root != NULL before
+> reiserfs_xattr_jcreate_nblocks(), for the changelog is talking about the
+> xattr root.
 > 
-> It seems that debugfs.reiser4 prints uuid incorrectly: it assumes that
-> binary uuid can't contain '\0' symbols, which apparently is wrong.
-> Thus, if the first uuid's symbol is '\0', debugfs thinks that uuid is
-> not set and prints "none" ;)
+>  The issue is that while creating the privroot during mount
+>  reiserfs_security_init calls reiserfs_xattr_jcreate_nblocks which
+>  dereferences the xattr root.  The xattr root doesn't exist, so we get an
+>  oops.
 > 
-> I'll try to prepare a fixup a bit later.
-> Special thanks for the nice testing script!
+> Therefore, update reiserfs_xattrs_initialized() to check both the privroot
+> and the xattr root.
+> 
+> [1] https://syzkaller.appspot.com/bug?id=8abaedbdeb32c861dc5340544284167dd0e46cde
+> 
+> Reported-and-tested-by: syzbot <syzbot+690cb1e51970435f9775@syzkaller.appspotmail.com>
+> Signed-off-by: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+> Fixes: 6cb4aff0a77cc0e6 ("reiserfs: fix oops while creating privroot with selinux enabled")
+> ---
+>  fs/reiserfs/xattr.h | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/fs/reiserfs/xattr.h b/fs/reiserfs/xattr.h
+> index c764352447ba..81bec2c80b25 100644
+> --- a/fs/reiserfs/xattr.h
+> +++ b/fs/reiserfs/xattr.h
+> @@ -43,7 +43,7 @@ void reiserfs_security_free(struct reiserfs_security_handle *sec);
+>  
+>  static inline int reiserfs_xattrs_initialized(struct super_block *sb)
+>  {
+> -	return REISERFS_SB(sb)->priv_root != NULL;
+> +	return REISERFS_SB(sb)->priv_root && REISERFS_SB(sb)->xattr_root;
+>  }
+>  
+>  #define xattr_size(size) ((size) + sizeof(struct reiserfs_xattr_header))
 > 
 
-
-Here is the fixup:
-https://github.com/edward6/reiser4progs/commit/4802cdb18ae03031d0e51a58b6655f3b99021ec2
-
-Thanks,
-Edward.
