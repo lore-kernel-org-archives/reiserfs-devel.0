@@ -1,61 +1,40 @@
-From: Metztli Information Technology <jose.r.r@metztli.com>
-Subject: Reiser4 -enabled Linux 5.10.26
-Date: Fri, 02 Apr 2021 07:41:01 -0700
-Message-ID: <76f176ce14bb469293e15172e6522081a3539126.camel@metztli.com>
+From: Edward Shishkin <edward.shishkin@gmail.com>
+Subject: Reiser4 for Linux-5.12
+Date: Wed, 7 Apr 2021 23:15:58 +0200
+Message-ID: <e3a3910f-6ae4-833f-e6c5-f560597cb2e1@gmail.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=metztli-com.20150623.gappssmtp.com; s=20150623;
-        h=message-id:subject:from:to:cc:date:user-agent:mime-version
-         :content-transfer-encoding;
-        bh=+vgejU4/JZadtPYENjNbyRGMVCzwVSPUxWwXTslt1q4=;
-        b=XqzBy8GABaaVCHwtvbceZdyfltyfLjwIlZXmZ/QUkubphwR6CWfRdX/a1C39I4Zkfo
-         XGajLD4Fk968nQubxVGmz89TpfR6vyc7Y4+PHLMkvkowHGbMwbSuTK9K8iAbe/WqgkAU
-         GWlUWu045uerbz43w+ZUdr/QrTi+QR86kCcbIpP39UIMXvdw1ZcWdLMEZr2Q8EhfTjPF
-         WooT9wm0dXegr5gcyBcAyOZ1RbJmvEMCRPMcVOvU7puc5j9GMRQNhTdW0qtA6gd5vCfb
-         zGXoauqwnhzLvZnGKRIS00fx/1WaIGX3MynWv81gx01mc4NeouVHfWmtF1OI81+7lOLL
-         YbNg==
+        d=gmail.com; s=20161025;
+        h=from:subject:to:message-id:date:user-agent:mime-version
+         :content-language:content-transfer-encoding;
+        bh=tx47fhbhPlWUeE59U3Ur/v3UUGiiFnso4iDnaPxAMm0=;
+        b=CC2CWx3YmR4W9Bzs1AhlV5ZRJnb2iCY0EVltkmBZRu797rf7qOTZsLxU6a/pXKMPvo
+         hY4/M6lFpSG1DkYRf9zSSQD+8VOGb2Y7BuVvXeXi/1iK5ycKVu7e92u8kI4KzkGLW8DW
+         c6E4wowhI4FIiPwVlpmTANZBbPt7CeLHVBREu4/bDWef0Ck0kWH2AZtWCUezG7LTbqgE
+         LVkMPzX3rW7Lh7YmAtUJoRan+Uu35KMAgevke+2XANaG5TObWul38MoNA6iM/4b5cskw
+         vy05hCB2jOsUvys8JgaO066u3w1H5AbNg6NEIPynUd0J6UEy/pqb9Ne8QIbWCH5NmQ7o
+         YmTA==
+Content-Language: en-US
 List-ID: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-To: ReiserFS Development List <reiserfs-devel@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>
-Cc: Edward Shishkin <edward.shishkin@gmail.com>
+Content-Type: text/plain; charset="us-ascii"; format="flowed"
+To: ReiserFS development mailing list <reiserfs-devel@vger.kernel.org>
 
-Niltze [Hello], all-
+5.11 -> 5.12:
 
-We have just released a preliminary reiser4 -enabled Debian 11,
-codenamed Bullseye, minimal USB/ISO AMD64 image with Debianized kernel
-5.10.26-2. It has been tested lightly -- as Debian gives the finishing
-touches to their upcoming operating system distribution.
+. Implement ->read_iter(), get rid of deprecated ->read() file operation
+. Port for Linux-5.12
+   . Macro BIO_MAX_PAGES has gone;
+   . The following methods got a new argument struct user_namespace *:
+     . reiser4_setattr_common
+     . reiser4_getattr_common
+     . reiser4_create_common
+     . reiser4_symlink_common
+     . reiser4_mkdir_common
+     . reiser4_mknod_common
+     . reiser4_permission_common
+     . reiser4_rename2_common
 
-If anyone wants to give it a spin, here are the download link(s):
-https://metztli.it/bullseye/netboot/metztli-reiser4.iso
-https://metztli.it/bullseye/netboot/metztli-reiser4.iso.SHA256SUM
-
-If using USB device /dev/sdb,
-dd if=metztli-reiser4.iso of=/dev/sdb bs=4M; sync
-
-https://metztli.it/bullseye
-*No warranties whatsoever*
-
-
-Best Professional Regards.
-
--- 
--- 
-Jose R R
-http://metztli.it
------------------------------------------------------------------------
-----------------------
-Download Metztli Reiser4: Debian Buster w/ Linux 5.10.20 AMD64
------------------------------------------------------------------------
-----------------------
-feats ZSTD compression https://sf.net/projects/metztli-reiser4/
------------------------------------------------------------------------
-----------------------
-or SFRN 5.1.3, Metztli Reiser5 https://sf.net/projects/debian-reiser4/
------------------------------------------------------------------------
---------------------
-Official current Reiser4 resources: https://reiser4.wiki.kernel.org/
-
-
+Find at
+https://sourceforge.net/projects/reiser4/files/reiser4-for-linux-5.x/
