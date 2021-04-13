@@ -1,40 +1,50 @@
-From: Edward Shishkin <edward.shishkin@gmail.com>
-Subject: Reiser4 for Linux-5.12
-Date: Wed, 7 Apr 2021 23:15:58 +0200
-Message-ID: <e3a3910f-6ae4-833f-e6c5-f560597cb2e1@gmail.com>
+From: Tian Tao <tiantao6@hisilicon.com>
+Subject: [PATCH] fs/reiserfs/journal.c: delete useless variables
+Date: Tue, 13 Apr 2021 09:43:16 +0800
+Message-ID: <1618278196-17749-1-git-send-email-tiantao6@hisilicon.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:subject:to:message-id:date:user-agent:mime-version
-         :content-language:content-transfer-encoding;
-        bh=tx47fhbhPlWUeE59U3Ur/v3UUGiiFnso4iDnaPxAMm0=;
-        b=CC2CWx3YmR4W9Bzs1AhlV5ZRJnb2iCY0EVltkmBZRu797rf7qOTZsLxU6a/pXKMPvo
-         hY4/M6lFpSG1DkYRf9zSSQD+8VOGb2Y7BuVvXeXi/1iK5ycKVu7e92u8kI4KzkGLW8DW
-         c6E4wowhI4FIiPwVlpmTANZBbPt7CeLHVBREu4/bDWef0Ck0kWH2AZtWCUezG7LTbqgE
-         LVkMPzX3rW7Lh7YmAtUJoRan+Uu35KMAgevke+2XANaG5TObWul38MoNA6iM/4b5cskw
-         vy05hCB2jOsUvys8JgaO066u3w1H5AbNg6NEIPynUd0J6UEy/pqb9Ne8QIbWCH5NmQ7o
-         YmTA==
-Content-Language: en-US
 List-ID: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: ReiserFS development mailing list <reiserfs-devel@vger.kernel.org>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: jack@suse.cz, rdunlap@infradead.org
+Cc: reiserfs-devel@vger.kernel.org, Tian Tao <tiantao6@hisilicon.com>
 
-5.11 -> 5.12:
+The value of 'cn' is not used, so just delete it.
 
-. Implement ->read_iter(), get rid of deprecated ->read() file operation
-. Port for Linux-5.12
-   . Macro BIO_MAX_PAGES has gone;
-   . The following methods got a new argument struct user_namespace *:
-     . reiser4_setattr_common
-     . reiser4_getattr_common
-     . reiser4_create_common
-     . reiser4_symlink_common
-     . reiser4_mkdir_common
-     . reiser4_mknod_common
-     . reiser4_permission_common
-     . reiser4_rename2_common
+Signed-off-by: Tian Tao <tiantao6@hisilicon.com>
+---
+ fs/reiserfs/journal.c | 6 ++----
+ 1 file changed, 2 insertions(+), 4 deletions(-)
 
-Find at
-https://sourceforge.net/projects/reiser4/files/reiser4-for-linux-5.x/
+diff --git a/fs/reiserfs/journal.c b/fs/reiserfs/journal.c
+index e98f993..9edc8e2 100644
+--- a/fs/reiserfs/journal.c
++++ b/fs/reiserfs/journal.c
+@@ -461,7 +461,6 @@ int reiserfs_in_journal(struct super_block *sb,
+ 			b_blocknr_t * next_zero_bit)
+ {
+ 	struct reiserfs_journal *journal = SB_JOURNAL(sb);
+-	struct reiserfs_journal_cnode *cn;
+ 	struct reiserfs_list_bitmap *jb;
+ 	int i;
+ 	unsigned long bl;
+@@ -497,13 +496,12 @@ int reiserfs_in_journal(struct super_block *sb,
+ 	bl = bmap_nr * (sb->s_blocksize << 3) + bit_nr;
+ 	/* is it in any old transactions? */
+ 	if (search_all
+-	    && (cn =
+-		get_journal_hash_dev(sb, journal->j_list_hash_table, bl))) {
++	    && (get_journal_hash_dev(sb, journal->j_list_hash_table, bl))) {
+ 		return 1;
+ 	}
+ 
+ 	/* is it in the current transaction.  This should never happen */
+-	if ((cn = get_journal_hash_dev(sb, journal->j_hash_table, bl))) {
++	if ((get_journal_hash_dev(sb, journal->j_hash_table, bl))) {
+ 		BUG();
+ 		return 1;
+ 	}
+-- 
+2.7.4
+
