@@ -1,7 +1,7 @@
 From: Roberto Sassu <roberto.sassu@huawei.com>
-Subject: [PATCH 3/5] security: Pass xattrs allocated by LSMs to the inode_init_security hook
-Date: Thu, 15 Apr 2021 12:04:33 +0200
-Message-ID: <20210415100435.18619-4-roberto.sassu@huawei.com>
+Subject: [PATCH 5/5] evm: Support multiple LSMs providing an xattr
+Date: Thu, 15 Apr 2021 12:04:35 +0200
+Message-ID: <20210415100435.18619-6-roberto.sassu@huawei.com>
 References: <20210415100435.18619-1-roberto.sassu@huawei.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7BIT
@@ -12,115 +12,100 @@ Content-Type: text/plain; charset="us-ascii"
 To: zohar@linux.ibm.com, jmorris@namei.org, paul@paul-moore.com, casey@schaufler-ca.com
 Cc: linux-integrity@vger.kernel.org, linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org, selinux@vger.kernel.org, reiserfs-devel@vger.kernel.org, Roberto Sassu <roberto.sassu@huawei.com>
 
-In preparation for moving EVM to the LSM infrastructure, this patch adds
-the full array of xattrs allocated by LSMs as a new parameter of the
-inode_init_security hook. It will be used by EVM to calculate the HMAC on
-all xattrs.
+Currently, evm_inode_init_security() takes as input a single LSM xattr,
+passed by security_inode_init_security(), and calculates the HMAC on it and
+other inode metadata.
 
-This solution has been preferred to directly replacing the xattr name,
-value and len with the full array, as LSMs would have had to scan it to
-find an empty slot.
+Given that initxattrs(), called by security_inode_init_security(), expects
+that this array is terminated when the xattr name is set to NULL, this
+patch reuses the same assumption for evm_inode_init_security() to scan all
+xattrs and to calculate the HMAC on all of them.
 
 Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
 ---
- include/linux/lsm_hook_defs.h | 2 +-
- include/linux/lsm_hooks.h     | 1 +
- security/security.c           | 7 ++++---
- security/selinux/hooks.c      | 3 ++-
- security/smack/smack_lsm.c    | 4 +++-
- 5 files changed, 11 insertions(+), 6 deletions(-)
+ security/integrity/evm/evm.h        |  2 ++
+ security/integrity/evm/evm_crypto.c |  9 ++++++++-
+ security/integrity/evm/evm_main.c   | 15 +++++++++++----
+ 3 files changed, 21 insertions(+), 5 deletions(-)
 
-diff --git a/include/linux/lsm_hook_defs.h b/include/linux/lsm_hook_defs.h
-index 477a597db013..45a0b8cbb974 100644
---- a/include/linux/lsm_hook_defs.h
-+++ b/include/linux/lsm_hook_defs.h
-@@ -112,7 +112,7 @@ LSM_HOOK(int, 0, inode_alloc_security, struct inode *inode)
- LSM_HOOK(void, LSM_RET_VOID, inode_free_security, struct inode *inode)
- LSM_HOOK(int, 0, inode_init_security, struct inode *inode,
- 	 struct inode *dir, const struct qstr *qstr, const char **name,
--	 void **value, size_t *len)
-+	 void **value, size_t *len, struct xattr *lsm_xattrs)
- LSM_HOOK(int, 0, inode_init_security_anon, struct inode *inode,
- 	 const struct qstr *name, const struct inode *context_inode)
- LSM_HOOK(int, 0, inode_create, struct inode *dir, struct dentry *dentry,
-diff --git a/include/linux/lsm_hooks.h b/include/linux/lsm_hooks.h
-index c5498f5174ce..1dd79e2f02ad 100644
---- a/include/linux/lsm_hooks.h
-+++ b/include/linux/lsm_hooks.h
-@@ -230,6 +230,7 @@
-  *	@name will be set to the allocated name suffix (e.g. selinux).
-  *	@value will be set to the allocated attribute value.
-  *	@len will be set to the length of the value.
-+ *	@lsm_xattrs contains the full array of xattrs allocated by LSMs.
-  *	Returns 0 if @name and @value have been successfully set,
-  *	-EOPNOTSUPP if no security attribute is needed, or
-  *	-ENOMEM on memory allocation failure.
-diff --git a/security/security.c b/security/security.c
-index 65624357b335..8aabbc0f0dfc 100644
---- a/security/security.c
-+++ b/security/security.c
-@@ -1036,7 +1036,7 @@ int security_inode_init_security(struct inode *inode, struct inode *dir,
+diff --git a/security/integrity/evm/evm.h b/security/integrity/evm/evm.h
+index ae590f71ce7d..24eac42b9f32 100644
+--- a/security/integrity/evm/evm.h
++++ b/security/integrity/evm/evm.h
+@@ -49,6 +49,8 @@ struct evm_digest {
+ 	char digest[IMA_MAX_DIGEST_SIZE];
+ } __packed;
  
- 	if (!initxattrs)
- 		return call_int_hook(inode_init_security, -EOPNOTSUPP, inode,
--				     dir, qstr, NULL, NULL, NULL);
-+				     dir, qstr, NULL, NULL, NULL, NULL);
- 
- 	/* Determine at run-time the max number of xattr structs to allocate. */
- 	hlist_for_each_entry(P, &security_hook_heads.inode_init_security, list)
-@@ -1056,7 +1056,8 @@ int security_inode_init_security(struct inode *inode, struct inode *dir,
- 		ret = P->hook.inode_init_security(inode, dir, qstr,
- 						  &lsm_xattr->name,
- 						  &lsm_xattr->value,
--						  &lsm_xattr->value_len);
-+						  &lsm_xattr->value_len,
-+						  new_xattrs);
- 		if (ret && ret != -EOPNOTSUPP)
- 			goto out;
- 
-@@ -1112,7 +1113,7 @@ int security_old_inode_init_security(struct inode *inode, struct inode *dir,
- 	hlist_for_each_entry(P, &security_hook_heads.inode_init_security,
- 			     list) {
- 		ret = P->hook.inode_init_security(inode, dir, qstr,
--						  name, value, len);
-+						  name, value, len, NULL);
- 		if (ret && ret != -EOPNOTSUPP)
- 			return ret;
- 
-diff --git a/security/selinux/hooks.c b/security/selinux/hooks.c
-index ddd097790d47..2fe9c39414d0 100644
---- a/security/selinux/hooks.c
-+++ b/security/selinux/hooks.c
-@@ -2917,7 +2917,8 @@ static int selinux_dentry_create_files_as(struct dentry *dentry, int mode,
- static int selinux_inode_init_security(struct inode *inode, struct inode *dir,
- 				       const struct qstr *qstr,
- 				       const char **name,
--				       void **value, size_t *len)
-+				       void **value, size_t *len,
-+				       struct xattr *lsm_xattrs)
++int evm_protected_xattr(const char *req_xattr_name);
++
+ int evm_init_key(void);
+ int __init evm_init_crypto(void);
+ int evm_update_evmxattr(struct dentry *dentry,
+diff --git a/security/integrity/evm/evm_crypto.c b/security/integrity/evm/evm_crypto.c
+index b66264b53d5d..35c5eec0517d 100644
+--- a/security/integrity/evm/evm_crypto.c
++++ b/security/integrity/evm/evm_crypto.c
+@@ -358,6 +358,7 @@ int evm_init_hmac(struct inode *inode, const struct xattr *lsm_xattr,
+ 		  char *hmac_val)
  {
- 	const struct task_security_struct *tsec = selinux_cred(current_cred());
- 	struct superblock_security_struct *sbsec;
-diff --git a/security/smack/smack_lsm.c b/security/smack/smack_lsm.c
-index 12a45e61c1a5..9d562ea576ca 100644
---- a/security/smack/smack_lsm.c
-+++ b/security/smack/smack_lsm.c
-@@ -965,12 +965,14 @@ static int smack_inode_alloc_security(struct inode *inode)
-  * @name: where to put the attribute name
-  * @value: where to put the attribute value
-  * @len: where to put the length of the attribute
-+ * @lsm_xattrs: unused
-  *
-  * Returns 0 if it all works out, -ENOMEM if there's no memory
-  */
- static int smack_inode_init_security(struct inode *inode, struct inode *dir,
- 				     const struct qstr *qstr, const char **name,
--				     void **value, size_t *len)
-+				     void **value, size_t *len,
-+				     struct xattr *lsm_xattrs)
+ 	struct shash_desc *desc;
++	const struct xattr *xattr;
+ 
+ 	desc = init_desc(EVM_XATTR_HMAC, evm_hash_algo);
+ 	if (IS_ERR(desc)) {
+@@ -365,7 +366,13 @@ int evm_init_hmac(struct inode *inode, const struct xattr *lsm_xattr,
+ 		return PTR_ERR(desc);
+ 	}
+ 
+-	crypto_shash_update(desc, lsm_xattr->value, lsm_xattr->value_len);
++	for (xattr = lsm_xattr; xattr->name != NULL; xattr++) {
++		if (!evm_protected_xattr(xattr->name))
++			continue;
++
++		crypto_shash_update(desc, xattr->value, xattr->value_len);
++	}
++
+ 	hmac_add_misc(desc, inode, EVM_XATTR_HMAC, hmac_val);
+ 	kfree(desc);
+ 	return 0;
+diff --git a/security/integrity/evm/evm_main.c b/security/integrity/evm/evm_main.c
+index a5069d69a893..fde366149499 100644
+--- a/security/integrity/evm/evm_main.c
++++ b/security/integrity/evm/evm_main.c
+@@ -260,7 +260,7 @@ static enum integrity_status evm_verify_hmac(struct dentry *dentry,
+ 	return evm_status;
+ }
+ 
+-static int evm_protected_xattr(const char *req_xattr_name)
++int evm_protected_xattr(const char *req_xattr_name)
  {
- 	struct inode_smack *issp = smack_inode(inode);
- 	struct smack_known *skp = smk_of_current();
+ 	int namelen;
+ 	int found = 0;
+@@ -712,14 +712,21 @@ int evm_inode_init_security(struct inode *inode, struct inode *dir,
+ 			    void **value, size_t *len,
+ 			    struct xattr *lsm_xattrs)
+ {
++	struct xattr *xattr;
+ 	struct evm_xattr *xattr_data;
+-	int rc;
++	int rc, evm_protected_xattrs = 0;
+ 
+ 	if (!name || !value || !len || !lsm_xattrs)
+ 		return 0;
+ 
+-	if (!(evm_initialized & EVM_INIT_HMAC) ||
+-	    !evm_protected_xattr(lsm_xattrs->name))
++	if (!(evm_initialized & EVM_INIT_HMAC))
++		return -EOPNOTSUPP;
++
++	for (xattr = lsm_xattrs; xattr && xattr->name != NULL; xattr++)
++		if (evm_protected_xattr(xattr->name))
++			evm_protected_xattrs++;
++
++	if (!evm_protected_xattrs)
+ 		return -EOPNOTSUPP;
+ 
+ 	xattr_data = kzalloc(sizeof(*xattr_data), GFP_NOFS);
 -- 
 2.26.2
 
