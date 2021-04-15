@@ -1,7 +1,7 @@
 From: Roberto Sassu <roberto.sassu@huawei.com>
-Subject: [PATCH 2/5] security: Support multiple LSMs implementing the inode_init_security hook
-Date: Thu, 15 Apr 2021 12:04:32 +0200
-Message-ID: <20210415100435.18619-3-roberto.sassu@huawei.com>
+Subject: [PATCH 4/5] evm: Align evm_inode_init_security() definition with LSM infrastructure
+Date: Thu, 15 Apr 2021 12:04:34 +0200
+Message-ID: <20210415100435.18619-5-roberto.sassu@huawei.com>
 References: <20210415100435.18619-1-roberto.sassu@huawei.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7BIT
@@ -12,164 +12,124 @@ Content-Type: text/plain; charset="us-ascii"
 To: zohar@linux.ibm.com, jmorris@namei.org, paul@paul-moore.com, casey@schaufler-ca.com
 Cc: linux-integrity@vger.kernel.org, linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org, selinux@vger.kernel.org, reiserfs-devel@vger.kernel.org, Roberto Sassu <roberto.sassu@huawei.com>
 
-The current implementation of security_inode_init_security() is capable of
-handling only one LSM providing an xattr to be set at inode creation. That
-xattr is then passed to EVM to calculate the HMAC.
-
-To support multiple LSMs, each providing an xattr, this patch makes the
-following modifications:
-
-security_inode_init_security():
-- dynamically allocates new_xattrs, based on the number of
-  inode_init_security hooks registered by LSMs;
-- replaces the call_int_hook() macro with its definition, to correctly
-  handle the case of an LSM returning -EOPNOTSUPP (the loop should not be
-  stopped), and to advance in the new_xattrs array so that the correct
-  xattr name, value and len pointers are passed to LSMs.
-
-security_old_inode_init_security():
-- replaces the call_int_hook() macro with its definition, to stop the loop
-  at the first LSM providing an xattr, to avoid a memory leak (due to
-  overwriting the *value pointer).
-
-The modifications necessary for EVM to calculate the HMAC on all xattrs
-will be done in a separate patch.
+This patch changes the evm_inode_init_security() definition to align with
+the LSM infrastructure, in preparation for moving IMA and EVM to that
+infrastructure.
 
 Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
 ---
- security/security.c | 87 +++++++++++++++++++++++++++++++++++++--------
- 1 file changed, 72 insertions(+), 15 deletions(-)
+ include/linux/evm.h               | 21 ++++++++++++++-------
+ security/integrity/evm/evm_main.c | 24 +++++++++++++++---------
+ security/security.c               |  7 +++++--
+ 3 files changed, 34 insertions(+), 18 deletions(-)
 
-diff --git a/security/security.c b/security/security.c
-index 7f14e59c4f8e..65624357b335 100644
---- a/security/security.c
-+++ b/security/security.c
-@@ -30,8 +30,6 @@
- #include <linux/msg.h>
- #include <net/flow.h>
- 
--#define MAX_LSM_EVM_XATTR	2
--
- /* How many LSMs were built into the kernel? */
- #define LSM_COUNT (__end_lsm_info - __start_lsm_info)
- 
-@@ -1028,9 +1026,10 @@ int security_inode_init_security(struct inode *inode, struct inode *dir,
- 				 const struct qstr *qstr,
- 				 const initxattrs initxattrs, void *fs_data)
- {
--	struct xattr new_xattrs[MAX_LSM_EVM_XATTR + 1];
--	struct xattr *lsm_xattr, *evm_xattr, *xattr;
--	int ret;
-+	struct xattr *new_xattrs;
-+	struct xattr *lsm_xattr, *xattr;
-+	struct security_hook_list *P;
-+	int ret, max_new_xattrs = 0;
- 
- 	if (unlikely(IS_PRIVATE(inode)))
- 		return 0;
-@@ -1038,23 +1037,56 @@ int security_inode_init_security(struct inode *inode, struct inode *dir,
- 	if (!initxattrs)
- 		return call_int_hook(inode_init_security, -EOPNOTSUPP, inode,
- 				     dir, qstr, NULL, NULL, NULL);
--	memset(new_xattrs, 0, sizeof(new_xattrs));
-+
-+	/* Determine at run-time the max number of xattr structs to allocate. */
-+	hlist_for_each_entry(P, &security_hook_heads.inode_init_security, list)
-+		max_new_xattrs++;
-+
-+	if (!max_new_xattrs)
-+		return 0;
-+
-+	/* Allocate +1 for EVM and +1 as terminator. */
-+	new_xattrs = kcalloc(max_new_xattrs + 2, sizeof(*new_xattrs), GFP_NOFS);
-+	if (!new_xattrs)
-+		return -ENOMEM;
-+
- 	lsm_xattr = new_xattrs;
--	ret = call_int_hook(inode_init_security, -EOPNOTSUPP, inode, dir, qstr,
--						&lsm_xattr->name,
--						&lsm_xattr->value,
--						&lsm_xattr->value_len);
--	if (ret)
-+	hlist_for_each_entry(P, &security_hook_heads.inode_init_security,
-+			     list) {
-+		ret = P->hook.inode_init_security(inode, dir, qstr,
-+						  &lsm_xattr->name,
-+						  &lsm_xattr->value,
-+						  &lsm_xattr->value_len);
-+		if (ret && ret != -EOPNOTSUPP)
-+			goto out;
-+
-+		/* LSM implementation error. */
-+		if (!ret &&
-+		    (lsm_xattr->name == NULL || lsm_xattr->value == NULL)) {
-+			WARN_ONCE(
-+			    "LSM %s: ret = 0 but xattr name/value = NULL\n",
-+			    P->lsm);
-+			ret = -ENOENT;
-+			goto out;
-+		}
-+
-+		if (!ret && lsm_xattr < new_xattrs + max_new_xattrs)
-+			lsm_xattr++;
-+	}
-+
-+	if (lsm_xattr == new_xattrs) {
-+		ret = -EOPNOTSUPP;
- 		goto out;
-+	}
- 
--	evm_xattr = lsm_xattr + 1;
--	ret = evm_inode_init_security(inode, lsm_xattr, evm_xattr);
-+	ret = evm_inode_init_security(inode, new_xattrs, lsm_xattr);
- 	if (ret)
- 		goto out;
- 	ret = initxattrs(inode, new_xattrs, fs_data);
- out:
- 	for (xattr = new_xattrs; xattr->value != NULL; xattr++)
- 		kfree(xattr->value);
-+	kfree(new_xattrs);
- 	return (ret == -EOPNOTSUPP) ? 0 : ret;
+diff --git a/include/linux/evm.h b/include/linux/evm.h
+index 8cad46bcec9d..5d8b29d80296 100644
+--- a/include/linux/evm.h
++++ b/include/linux/evm.h
+@@ -34,9 +34,11 @@ extern int evm_inode_removexattr(struct user_namespace *mnt_userns,
+ 				 struct dentry *dentry, const char *xattr_name);
+ extern void evm_inode_post_removexattr(struct dentry *dentry,
+ 				       const char *xattr_name);
+-extern int evm_inode_init_security(struct inode *inode,
+-				   const struct xattr *xattr_array,
+-				   struct xattr *evm);
++extern int evm_inode_init_security(struct inode *inode, struct inode *dir,
++				   const struct qstr *qstr,
++				   const char **name,
++				   void **value, size_t *len,
++				   struct xattr *lsm_xattrs);
+ extern bool evm_status_revalidate(const char *xattr_name);
+ #ifdef CONFIG_FS_POSIX_ACL
+ extern int posix_xattr_acl(const char *xattrname);
+@@ -102,11 +104,16 @@ static inline void evm_inode_post_removexattr(struct dentry *dentry,
+ 	return;
  }
- EXPORT_SYMBOL(security_inode_init_security);
-@@ -1071,10 +1103,35 @@ int security_old_inode_init_security(struct inode *inode, struct inode *dir,
- 				     const struct qstr *qstr, const char **name,
- 				     void **value, size_t *len)
+ 
+-static inline int evm_inode_init_security(struct inode *inode,
+-					  const struct xattr *xattr_array,
+-					  struct xattr *evm)
++static inline int evm_inode_init_security(struct inode *inode, struct inode *dir,
++					  const struct qstr *qstr,
++					  const char **name,
++					  void **value, size_t *len,
++					  struct xattr *lsm_xattrs)
  {
-+	struct security_hook_list *P;
-+	int ret;
-+
- 	if (unlikely(IS_PRIVATE(inode)))
- 		return -EOPNOTSUPP;
--	return call_int_hook(inode_init_security, -EOPNOTSUPP, inode, dir,
--			     qstr, name, value, len);
-+
-+	hlist_for_each_entry(P, &security_hook_heads.inode_init_security,
-+			     list) {
-+		ret = P->hook.inode_init_security(inode, dir, qstr,
-+						  name, value, len);
-+		if (ret && ret != -EOPNOTSUPP)
-+			return ret;
-+
-+		/* LSM implementation error. */
-+		if (!ret &&
-+		    ((name && *name == NULL) || (value && *value == NULL))) {
-+			WARN_ONCE(
-+			    "LSM %s: ret = 0 but xattr name/value = NULL\n",
-+			    P->lsm);
-+
-+			/* Callers should do the cleanup. */
-+			return -ENOENT;
-+		}
-+
-+		if (!ret)
-+			return ret;
-+	}
+-	return 0;
++	if (!name || !value || !len || !lsm_xattrs)
++		return 0;
 +
 +	return -EOPNOTSUPP;
  }
- EXPORT_SYMBOL(security_old_inode_init_security);
  
+ static inline bool evm_status_revalidate(const char *xattr_name)
+diff --git a/security/integrity/evm/evm_main.c b/security/integrity/evm/evm_main.c
+index 84a9b7a69b1f..a5069d69a893 100644
+--- a/security/integrity/evm/evm_main.c
++++ b/security/integrity/evm/evm_main.c
+@@ -706,29 +706,35 @@ void evm_inode_post_setattr(struct dentry *dentry, int ia_valid)
+ /*
+  * evm_inode_init_security - initializes security.evm HMAC value
+  */
+-int evm_inode_init_security(struct inode *inode,
+-				 const struct xattr *lsm_xattr,
+-				 struct xattr *evm_xattr)
++int evm_inode_init_security(struct inode *inode, struct inode *dir,
++			    const struct qstr *qstr,
++			    const char **name,
++			    void **value, size_t *len,
++			    struct xattr *lsm_xattrs)
+ {
+ 	struct evm_xattr *xattr_data;
+ 	int rc;
+ 
+-	if (!(evm_initialized & EVM_INIT_HMAC) ||
+-	    !evm_protected_xattr(lsm_xattr->name))
++	if (!name || !value || !len || !lsm_xattrs)
+ 		return 0;
+ 
++	if (!(evm_initialized & EVM_INIT_HMAC) ||
++	    !evm_protected_xattr(lsm_xattrs->name))
++		return -EOPNOTSUPP;
++
+ 	xattr_data = kzalloc(sizeof(*xattr_data), GFP_NOFS);
+ 	if (!xattr_data)
+ 		return -ENOMEM;
+ 
+ 	xattr_data->data.type = EVM_XATTR_HMAC;
+-	rc = evm_init_hmac(inode, lsm_xattr, xattr_data->digest);
++	rc = evm_init_hmac(inode, lsm_xattrs, xattr_data->digest);
+ 	if (rc < 0)
+ 		goto out;
+ 
+-	evm_xattr->value = xattr_data;
+-	evm_xattr->value_len = hash_digest_size[evm_hash_algo] + 1;
+-	evm_xattr->name = XATTR_EVM_SUFFIX;
++	*name = XATTR_EVM_SUFFIX;
++	*value = xattr_data;
++	*len = hash_digest_size[evm_hash_algo] + 1;
++
+ 	return 0;
+ out:
+ 	kfree(xattr_data);
+diff --git a/security/security.c b/security/security.c
+index 8aabbc0f0dfc..e16ce150b111 100644
+--- a/security/security.c
++++ b/security/security.c
+@@ -1080,8 +1080,11 @@ int security_inode_init_security(struct inode *inode, struct inode *dir,
+ 		goto out;
+ 	}
+ 
+-	ret = evm_inode_init_security(inode, new_xattrs, lsm_xattr);
+-	if (ret)
++	ret = evm_inode_init_security(inode, dir, qstr,
++				      &lsm_xattr->name,
++				      &lsm_xattr->value,
++				      &lsm_xattr->value_len, new_xattrs);
++	if (ret && ret != -EOPNOTSUPP)
+ 		goto out;
+ 	ret = initxattrs(inode, new_xattrs, fs_data);
+ out:
 -- 
 2.26.2
 
