@@ -1,104 +1,61 @@
 From: Roberto Sassu <roberto.sassu@huawei.com>
-Subject: [PATCH 0/5] evm: Prepare for moving to the LSM infrastructure
-Date: Thu, 15 Apr 2021 12:04:30 +0200
-Message-ID: <20210415100435.18619-1-roberto.sassu@huawei.com>
+Subject: [PATCH 1/5] xattr: Complete constify ->name member of "struct xattr"
+Date: Thu, 15 Apr 2021 12:04:31 +0200
+Message-ID: <20210415100435.18619-2-roberto.sassu@huawei.com>
+References: <20210415100435.18619-1-roberto.sassu@huawei.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7BIT
-Return-path: <reiserfs-devel-owner@vger.kernel.org>
+Return-path: <linux-security-module-owner@vger.kernel.org>
+In-Reply-To: <20210415100435.18619-1-roberto.sassu@huawei.com>
 List-ID: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
 To: zohar@linux.ibm.com, jmorris@namei.org, paul@paul-moore.com, casey@schaufler-ca.com
-Cc: linux-integrity@vger.kernel.org, linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org, selinux@vger.kernel.org, reiserfs-devel@vger.kernel.org, Roberto Sassu <roberto.sassu@huawei.com>
+Cc: linux-integrity@vger.kernel.org, linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org, selinux@vger.kernel.org, reiserfs-devel@vger.kernel.org, Roberto Sassu <roberto.sassu@huawei.com>, stable@vger.kernel.org, Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
 
-This patch set depends on:
+This patch completes commit 9548906b2bb7 ('xattr: Constify ->name member of
+"struct xattr"'). It fixes the documentation of the inode_init_security
+hook, by removing the xattr name from the objects that are expected to be
+allocated by LSMs (only the value is allocated). Also, it removes the
+kfree() of name and setting it to NULL in the reiserfs code.
 
-https://lore.kernel.org/linux-integrity/20210409114313.4073-1-roberto.sassu@huawei.com/
-https://lore.kernel.org/linux-integrity/20210407105252.30721-1-roberto.sassu@huawei.com/
+Fixes: 9548906b2bb7 ('xattr: Constify ->name member of "struct xattr"')
+Cc: stable@vger.kernel.org
+Cc: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
+---
+ fs/reiserfs/xattr_security.c | 2 --
+ include/linux/lsm_hooks.h    | 4 ++--
+ 2 files changed, 2 insertions(+), 4 deletions(-)
 
-One of the challenges that must be tackled to move IMA and EVM to the LSM
-infrastructure is to ensure that EVM is capable to correctly handle
-multiple stacked LSMs providing an xattr at file creation. At the moment,
-there are few issues that would prevent a correct integration. This patch
-set aims at solving them.
-
-From the LSM infrastructure side, the LSM stacking feature added the
-possibility of registering multiple implementations of the security hooks,
-that are called sequentially whenever someone calls the corresponding
-security hook. However, security_inode_init_security() and
-security_old_inode_init_security() are currently limited to support one
-xattr provided by LSM and one by EVM.
-
-In addition, using the call_int_hook() macro causes some issues. According
-to the documentation in include/linux/lsm_hooks.h, it is a legitimate case
-that an LSM returns -EOPNOTSUPP when it does not want to provide an xattr.
-However, the loop defined in the macro would stop calling subsequent LSMs
-if that happens. In the case of security_old_inode_init_security(), using
-the macro would also cause a memory leak due to replacing the *value
-pointer, if multiple LSMs provide an xattr.
-
-From EVM side, the first operation to be done is to change the definition
-of evm_inode_init_security() to be compatible with the security hook
-definition. Unfortunately, the current definition does not provide enough
-information for EVM, as it must have visibility of all xattrs provided by
-LSMs to correctly calculate the HMAC. This patch set changes the security
-hook definition by adding the full array of xattr as a parameter.
-
-Secondly, EVM must know how many elements are in the xattr array. It seems
-that it is not necessary to add another parameter, as all filesystems that
-define an initxattr function, expect that the last element of the array is
-one with the name field set to NULL. EVM reuses the same assumption.
-
-This patch set has been tested by introducing several instances of a
-TestLSM (some providing an xattr, some not, one with a wrong implementation
-to see how the LSM infrastructure handles it). The patch is not included
-in this set but it is available here:
-
-https://github.com/robertosassu/linux/commit/0370ff0fbc16e5d63489836a958e65d697f956db
-
-The test, added to ima-evm-utils, is available here:
-
-https://github.com/robertosassu/ima-evm-utils/blob/evm-multiple-lsms-v1-devel-v1/tests/evm_multiple_lsms.test
-
-The test takes a UML kernel built by Travis and launches it several times,
-each time with a different combination of LSMs. After boot, it first checks
-that there is an xattr for each LSM providing it, and then calculates the
-HMAC in user space and compares it with the HMAC calculated by EVM in
-kernel space.
-
-A test report can be obtained here:
-
-https://www.travis-ci.com/github/robertosassu/ima-evm-utils/jobs/498699540
-
-Lastly, running the test on reiserfs to check
-security_old_inode_init_security(), some issues have been discovered: a
-free of xattr->name which is not correct after commit 9548906b2bb7 ('xattr:
-Constify ->name member of "struct xattr"'), and a misalignment with
-security_inode_init_security() (the old version expects the full xattr name
-with the security. prefix, the new version just the suffix). The last issue
-has not been fixed yet.
-
-Roberto Sassu (5):
-  xattr: Complete constify ->name member of "struct xattr"
-  security: Support multiple LSMs implementing the inode_init_security
-    hook
-  security: Pass xattrs allocated by LSMs to the inode_init_security
-    hook
-  evm: Align evm_inode_init_security() definition with LSM
-    infrastructure
-  evm: Support multiple LSMs providing an xattr
-
- fs/reiserfs/xattr_security.c        |  2 -
- include/linux/evm.h                 | 21 ++++---
- include/linux/lsm_hook_defs.h       |  2 +-
- include/linux/lsm_hooks.h           |  5 +-
- security/integrity/evm/evm.h        |  2 +
- security/integrity/evm/evm_crypto.c |  9 ++-
- security/integrity/evm/evm_main.c   | 35 +++++++----
- security/security.c                 | 95 +++++++++++++++++++++++------
- security/selinux/hooks.c            |  3 +-
- security/smack/smack_lsm.c          |  4 +-
- 10 files changed, 135 insertions(+), 43 deletions(-)
-
+diff --git a/fs/reiserfs/xattr_security.c b/fs/reiserfs/xattr_security.c
+index 8965c8e5e172..bb2a0062e0e5 100644
+--- a/fs/reiserfs/xattr_security.c
++++ b/fs/reiserfs/xattr_security.c
+@@ -95,9 +95,7 @@ int reiserfs_security_write(struct reiserfs_transaction_handle *th,
+ 
+ void reiserfs_security_free(struct reiserfs_security_handle *sec)
+ {
+-	kfree(sec->name);
+ 	kfree(sec->value);
+-	sec->name = NULL;
+ 	sec->value = NULL;
+ }
+ 
+diff --git a/include/linux/lsm_hooks.h b/include/linux/lsm_hooks.h
+index fb7f3193753d..c5498f5174ce 100644
+--- a/include/linux/lsm_hooks.h
++++ b/include/linux/lsm_hooks.h
+@@ -219,8 +219,8 @@
+  *	This hook is called by the fs code as part of the inode creation
+  *	transaction and provides for atomic labeling of the inode, unlike
+  *	the post_create/mkdir/... hooks called by the VFS.  The hook function
+- *	is expected to allocate the name and value via kmalloc, with the caller
+- *	being responsible for calling kfree after using them.
++ *	is expected to allocate the value via kmalloc, with the caller
++ *	being responsible for calling kfree after using it.
+  *	If the security module does not use security attributes or does
+  *	not wish to put a security attribute on this particular inode,
+  *	then it should return -EOPNOTSUPP to skip this processing.
 -- 
 2.26.2
 
