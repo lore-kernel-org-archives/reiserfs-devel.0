@@ -1,183 +1,87 @@
 From: Roberto Sassu <roberto.sassu@huawei.com>
-Subject: [PATCH v2 4/6] security: Support multiple LSMs implementing the inode_init_security hook
-Date: Wed, 21 Apr 2021 18:19:23 +0200
-Message-ID: <20210421161925.968825-5-roberto.sassu@huawei.com>
+Subject: [PATCH v2 2/6] reiserfs: Add missing calls to reiserfs_security_free()
+Date: Wed, 21 Apr 2021 18:19:21 +0200
+Message-ID: <20210421161925.968825-3-roberto.sassu@huawei.com>
 References: <20210421161925.968825-1-roberto.sassu@huawei.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7BIT
-Return-path: <reiserfs-devel-owner@vger.kernel.org>
+Return-path: <stable-owner@vger.kernel.org>
 In-Reply-To: <20210421161925.968825-1-roberto.sassu@huawei.com>
 List-ID: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
 To: zohar@linux.ibm.com, jmorris@namei.org, paul@paul-moore.com, casey@schaufler-ca.com
-Cc: linux-integrity@vger.kernel.org, linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org, selinux@vger.kernel.org, reiserfs-devel@vger.kernel.org, Roberto Sassu <roberto.sassu@huawei.com>
+Cc: linux-integrity@vger.kernel.org, linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org, selinux@vger.kernel.org, reiserfs-devel@vger.kernel.org, Roberto Sassu <roberto.sassu@huawei.com>, stable@vger.kernel.org, Jeff Mahoney <jeffm@suse.com>, Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
 
-The current implementation of security_inode_init_security() is capable of
-handling only one LSM providing an xattr to be set at inode creation. That
-xattr is then passed to EVM to calculate the HMAC.
+Commit 57fe60df6241 ("reiserfs: add atomic addition of selinux attributes
+during inode creation") defined reiserfs_security_free() to free the name
+and value of a security xattr allocated by the active LSM through
+security_old_inode_init_security(). However, this function is not called
+in the reiserfs code.
 
-To support multiple LSMs, each providing an xattr, this patch makes the
-following modifications:
+Thus, this patch adds a call to reiserfs_security_free() whenever
+reiserfs_security_init() is called, and initializes value to NULL, to avoid
+to call kfree() on an uninitialized pointer.
 
-security_inode_init_security():
-- dynamically allocates new_xattrs, based on the number of
-  inode_init_security hooks registered by LSMs;
-- replaces the call_int_hook() macro with its definition, to correctly
-  handle the case of an LSM returning -EOPNOTSUPP (the loop should not be
-  stopped).
-
-security_old_inode_init_security():
-- replaces the call_int_hook() macro with its definition, to stop the loop
-  at the first LSM providing an xattr, to avoid a memory leak (due to
-  overwriting the *value pointer).
-
-The modifications necessary for EVM to calculate the HMAC on all xattrs
-will be done in a separate patch.
-
+Fixes: 57fe60df6241 ("reiserfs: add atomic addition of selinux attributes during inode creation")
+Cc: stable@vger.kernel.org
+Cc: Jeff Mahoney <jeffm@suse.com>
+Cc: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+Reported-by: Mimi Zohar <zohar@linux.ibm.com>
+Reported-by: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
 Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
 ---
- security/security.c | 93 +++++++++++++++++++++++++++++++++++++++------
- 1 file changed, 82 insertions(+), 11 deletions(-)
+ fs/reiserfs/namei.c          | 4 ++++
+ fs/reiserfs/xattr_security.c | 1 +
+ 2 files changed, 5 insertions(+)
 
-diff --git a/security/security.c b/security/security.c
-index 2c1fe1496069..2ab67fa4422e 100644
---- a/security/security.c
-+++ b/security/security.c
-@@ -30,8 +30,6 @@
- #include <linux/msg.h>
- #include <net/flow.h>
+diff --git a/fs/reiserfs/namei.c b/fs/reiserfs/namei.c
+index e6eb05e2b2f1..6b5c51a77fae 100644
+--- a/fs/reiserfs/namei.c
++++ b/fs/reiserfs/namei.c
+@@ -695,6 +695,7 @@ static int reiserfs_create(struct user_namespace *mnt_userns, struct inode *dir,
  
--#define MAX_LSM_EVM_XATTR	2
--
- /* How many LSMs were built into the kernel? */
- #define LSM_COUNT (__end_lsm_info - __start_lsm_info)
- 
-@@ -1028,9 +1026,10 @@ int security_inode_init_security(struct inode *inode, struct inode *dir,
- 				 const struct qstr *qstr,
- 				 const initxattrs initxattrs, void *fs_data)
- {
--	struct xattr new_xattrs[MAX_LSM_EVM_XATTR + 1];
-+	struct xattr *new_xattrs;
- 	struct xattr *lsm_xattr, *evm_xattr, *xattr;
--	int ret;
-+	struct security_hook_list *P;
-+	int ret, max_new_xattrs = 0;
- 
- 	if (unlikely(IS_PRIVATE(inode)))
- 		return 0;
-@@ -1038,14 +1037,52 @@ int security_inode_init_security(struct inode *inode, struct inode *dir,
- 	if (!initxattrs)
- 		return call_int_hook(inode_init_security, -EOPNOTSUPP, inode,
- 				     dir, qstr, NULL, fs_data);
--	memset(new_xattrs, 0, sizeof(new_xattrs));
-+
-+	/* Determine at run-time the max number of xattr structs to allocate. */
-+	hlist_for_each_entry(P, &security_hook_heads.inode_init_security, list)
-+		max_new_xattrs++;
-+
-+	if (!max_new_xattrs)
-+		return 0;
-+
-+	/* Allocate +1 for EVM and +1 as terminator. */
-+	new_xattrs = kcalloc(max_new_xattrs + 2, sizeof(*new_xattrs), GFP_NOFS);
-+	if (!new_xattrs)
-+		return -ENOMEM;
-+
- 	lsm_xattr = new_xattrs;
--	ret = call_int_hook(inode_init_security, -EOPNOTSUPP, inode, dir, qstr,
--			    lsm_xattr, fs_data);
--	if (ret)
-+	hlist_for_each_entry(P, &security_hook_heads.inode_init_security,
-+			     list) {
-+		ret = P->hook.inode_init_security(inode, dir, qstr, new_xattrs,
-+						  fs_data);
-+		if (ret) {
-+			if (ret != -EOPNOTSUPP)
-+				goto out;
-+
-+			continue;
-+		}
-+
-+		/* LSM implementation error. */
-+		if (lsm_xattr->name == NULL || lsm_xattr->value == NULL) {
-+			WARN_ONCE(
-+				"LSM %s: ret = 0 but xattr name/value = NULL\n",
-+				P->lsm);
-+			ret = -ENOENT;
-+			goto out;
-+		}
-+
-+		lsm_xattr++;
-+
-+		if (!--max_new_xattrs)
-+			break;
-+	}
-+
-+	if (!new_xattrs->name) {
-+		ret = -EOPNOTSUPP;
- 		goto out;
-+	}
- 
--	evm_xattr = lsm_xattr + 1;
-+	evm_xattr = lsm_xattr;
- 	ret = evm_inode_init_security(inode, new_xattrs, evm_xattr);
- 	if (ret)
- 		goto out;
-@@ -1053,6 +1090,7 @@ int security_inode_init_security(struct inode *inode, struct inode *dir,
- out:
- 	for (xattr = new_xattrs; xattr->value != NULL; xattr++)
- 		kfree(xattr->value);
-+	kfree(new_xattrs);
- 	return (ret == -EOPNOTSUPP) ? 0 : ret;
+ out_failed:
+ 	reiserfs_write_unlock(dir->i_sb);
++	reiserfs_security_free(&security);
+ 	return retval;
  }
- EXPORT_SYMBOL(security_inode_init_security);
-@@ -1071,11 +1109,44 @@ int security_old_inode_init_security(struct inode *inode, struct inode *dir,
- {
- 	struct xattr xattr = { .name = NULL, .value = NULL, .value_len = 0 };
- 	struct xattr *lsm_xattr = (name && value && len) ? &xattr : NULL;
-+	struct security_hook_list *P;
-+	int ret;
  
- 	if (unlikely(IS_PRIVATE(inode)))
- 		return -EOPNOTSUPP;
--	return call_int_hook(inode_init_security, -EOPNOTSUPP, inode, dir,
--			     qstr, lsm_xattr, NULL);
-+
-+	hlist_for_each_entry(P, &security_hook_heads.inode_init_security,
-+			     list) {
-+		ret = P->hook.inode_init_security(inode, dir, qstr, lsm_xattr,
-+						  NULL);
-+		if (ret) {
-+			if (ret != -EOPNOTSUPP)
-+				return ret;
-+
-+			continue;
-+		}
-+
-+		if (!lsm_xattr)
-+			continue;
-+
-+		/* LSM implementation error. */
-+		if (lsm_xattr->name == NULL || lsm_xattr->value == NULL) {
-+			WARN_ONCE(
-+				"LSM %s: ret = 0 but xattr name/value = NULL\n",
-+				P->lsm);
-+
-+			/* Callers should do the cleanup. */
-+			return -ENOENT;
-+		}
-+
-+		*name = lsm_xattr->name;
-+		*value = lsm_xattr->value;
-+		*len = lsm_xattr->value_len;
-+
-+		return ret;
-+	}
-+
-+	return -EOPNOTSUPP;
+@@ -778,6 +779,7 @@ static int reiserfs_mknod(struct user_namespace *mnt_userns, struct inode *dir,
+ 
+ out_failed:
+ 	reiserfs_write_unlock(dir->i_sb);
++	reiserfs_security_free(&security);
+ 	return retval;
  }
- EXPORT_SYMBOL(security_old_inode_init_security);
  
+@@ -877,6 +879,7 @@ static int reiserfs_mkdir(struct user_namespace *mnt_userns, struct inode *dir,
+ 	retval = journal_end(&th);
+ out_failed:
+ 	reiserfs_write_unlock(dir->i_sb);
++	reiserfs_security_free(&security);
+ 	return retval;
+ }
+ 
+@@ -1193,6 +1196,7 @@ static int reiserfs_symlink(struct user_namespace *mnt_userns,
+ 	retval = journal_end(&th);
+ out_failed:
+ 	reiserfs_write_unlock(parent_dir->i_sb);
++	reiserfs_security_free(&security);
+ 	return retval;
+ }
+ 
+diff --git a/fs/reiserfs/xattr_security.c b/fs/reiserfs/xattr_security.c
+index bb2a0062e0e5..b1ad93b60475 100644
+--- a/fs/reiserfs/xattr_security.c
++++ b/fs/reiserfs/xattr_security.c
+@@ -50,6 +50,7 @@ int reiserfs_security_init(struct inode *dir, struct inode *inode,
+ 	int error;
+ 
+ 	sec->name = NULL;
++	sec->value = NULL;
+ 
+ 	/* Don't add selinux attributes on xattrs - they'll never get used */
+ 	if (IS_PRIVATE(dir))
 -- 
 2.25.1
 
