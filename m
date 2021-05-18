@@ -1,75 +1,71 @@
-From: Jan Kara <jack@suse.cz>
-Subject: Re: [PATCH v2] reiserfs: add check for invalid 1st journal block
-Date: Mon, 17 May 2021 15:08:18 +0200
-Message-ID: <20210517130818.GB25760@quack2.suse.cz>
-References: <20210517101523.GB31755@quack2.suse.cz>
- <20210517121545.29645-1-paskripkin@gmail.com>
+From: "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+Subject: Re: [PATCH 051/141] reiserfs: Fix fall-through warnings for Clang
+Date: Mon, 17 May 2021 19:03:07 -0500
+Message-ID: <cb6bd498-9864-c884-f844-838796443531@embeddedor.com>
+References: <cover.1605896059.git.gustavoars@kernel.org>
+ <6859fecccd96f79612f9650fdba7a66bbff70560.1605896059.git.gustavoars@kernel.org>
+ <7229aa6e-9943-9568-faf2-7c8cd81e6890@embeddedor.com>
 Mime-Version: 1.0
-Return-path: <reiserfs-devel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20210517121545.29645-1-paskripkin@gmail.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=embeddedor.com; s=default; h=Content-Transfer-Encoding:Content-Type:
+        In-Reply-To:MIME-Version:Date:Message-ID:References:To:From:Subject:Sender:
+        Reply-To:Cc:Content-ID:Content-Description:Resent-Date:Resent-From:
+        Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
+        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+        bh=rGr6+qMMJocwMXuMLsw5MiXm4TZdt9GYUPCcl+Bo3Sg=; b=YZr3b7rSqOBpWX0yMK9DXiPpGQ
+        3E+JvH/qrCKrT8hJGrxJhIfU96peRVHG3ZK8avDiXVXy0XnhBS4QoYS0xy4dZDKDa23PMy8uVBijP
+        XqdcS8FgAGh38r7xsD/aRym4Jehq0pDqi7efLTxWXM/AJNdNjZvV75xo5syxaxiXp8tZ22zkW5zdh
+        qrtad2cw2EODRM1kse5M3wpCMm1A2wk8hB2y/yzFPdeHnNIP+MwUPsBh94Oi/dYI24zHm1z3vKrX0
+        gnxE2lrYkuU7wACMbkfESxItjHeXGdIzYt3ITV8lT4xgnlNh3zYUu2HXeW05NA1fKjbPn9Ux9IAqx
+        BmXJ 
+In-Reply-To: <7229aa6e-9943-9568-faf2-7c8cd81e6890@embeddedor.com>
+Content-Language: en-US
 List-ID: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Pavel Skripkin <paskripkin@gmail.com>
-Cc: jack@suse.cz, tiantao6@hisilicon.com, rdunlap@infradead.org, reiserfs-devel@vger.kernel.org, linux-kernel@vger.kernel.org, syzbot+0ba9909df31c6a36974d@syzkaller.appspotmail.com
+To: "Gustavo A. R. Silva" <gustavoars@kernel.org>, reiserfs-devel@vger.kernel.org, linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>
 
-On Mon 17-05-21 15:15:45, Pavel Skripkin wrote:
-> syzbot reported divide error in reiserfs.
-> The problem was in incorrect journal 1st block.
-> 
-> Syzbot's reproducer manualy generated wrong superblock
-> with incorrect 1st block. In journal_init() wasn't
-> any checks about this particular case.
-> 
-> For example, if 1st journal block is before superblock
-> 1st block, it can cause zeroing important superblock members
-> in do_journal_end().
-> 
-> Reported-by: syzbot+0ba9909df31c6a36974d@syzkaller.appspotmail.com
-> Signed-off-by: Pavel Skripkin <paskripkin@gmail.com>
+Hi,
 
-Thanks! I've added the patch to my tree.
+I'm taking this in my -next[1] branch for v5.14.
 
-								Honza
+Thanks
+--
+Gustavo
 
-> ---
+[1] https://git.kernel.org/pub/scm/linux/kernel/git/gustavoars/linux.git/log/?h=for-next/kspp
+
+On 4/20/21 15:23, Gustavo A. R. Silva wrote:
+> Hi all,
 > 
-> Changes in v2:
->   Added necessary !SB_ONDISK_JOURNAL_DEVICE(sb) in "if"
+> Friendly ping: who can take this, please?
 > 
-> ---
->  fs/reiserfs/journal.c | 14 ++++++++++++++
->  1 file changed, 14 insertions(+)
+> Thanks
+> --
+> Gustavo
 > 
-> diff --git a/fs/reiserfs/journal.c b/fs/reiserfs/journal.c
-> index 9edc8e2b154e..0834b101c316 100644
-> --- a/fs/reiserfs/journal.c
-> +++ b/fs/reiserfs/journal.c
-> @@ -2758,6 +2758,20 @@ int journal_init(struct super_block *sb, const char *j_dev_name,
->  		goto free_and_return;
->  	}
->  
-> +	/*
-> +	 * Sanity check to see if journal first block is correct.
-> +	 * If journal first block is invalid it can cause
-> +	 * zeroing important superblock members.
-> +	 */
-> +	if (!SB_ONDISK_JOURNAL_DEVICE(sb) &&
-> +	    SB_ONDISK_JOURNAL_1st_BLOCK(sb) < SB_JOURNAL_1st_RESERVED_BLOCK(sb)) {
-> +		reiserfs_warning(sb, "journal-1393",
-> +				 "journal 1st super block is invalid: 1st reserved block %d, but actual 1st block is %d",
-> +				 SB_JOURNAL_1st_RESERVED_BLOCK(sb),
-> +				 SB_ONDISK_JOURNAL_1st_BLOCK(sb));
-> +		goto free_and_return;
-> +	}
-> +
->  	if (journal_init_dev(sb, journal, j_dev_name) != 0) {
->  		reiserfs_warning(sb, "sh-462",
->  				 "unable to initialize journal device");
-> -- 
-> 2.31.1
-> 
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+> On 11/20/20 12:32, Gustavo A. R. Silva wrote:
+>> In preparation to enable -Wimplicit-fallthrough for Clang, fix a warning
+>> by explicitly adding a break statement instead of letting the code fall
+>> through to the next case.
+>>
+>> Link: https://github.com/KSPP/linux/issues/115
+>> Signed-off-by: Gustavo A. R. Silva <gustavoars@kernel.org>
+>> ---
+>>  fs/reiserfs/namei.c | 1 +
+>>  1 file changed, 1 insertion(+)
+>>
+>> diff --git a/fs/reiserfs/namei.c b/fs/reiserfs/namei.c
+>> index 1594687582f0..90bb49bfdba0 100644
+>> --- a/fs/reiserfs/namei.c
+>> +++ b/fs/reiserfs/namei.c
+>> @@ -132,6 +132,7 @@ int search_by_entry_key(struct super_block *sb, const struct cpu_key *key,
+>>  			return IO_ERROR;
+>>  		}
+>>  		PATH_LAST_POSITION(path)--;
+>> +		break;
+>>  
+>>  	case ITEM_FOUND:
+>>  		break;
+>>
