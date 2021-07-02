@@ -1,112 +1,98 @@
-From: Edward Shishkin <edward.shishkin@gmail.com>
-Subject: Re: [reiser4 SFRN 5.1.3] kernel [5.10.x] read not supported for file
- /test-exec \(pid: 10094 comm: debootstrap\)
-Date: Sun, 20 Jun 2021 19:45:23 +0200
-Message-ID: <1f342fdd-0c30-06df-012c-4425d94d942f@gmail.com>
-References: <20210208125427.CFC7C75EED90@huitzilopochtli.metztli-it.com>
- <e37d5585-318e-3130-82c9-7a740b9af8af@gmail.com>
+From: Yu Kuai <yukuai3@huawei.com>
+Subject: [PATCH] reiserfs: add check for root_inode in reiserfs_fill_super
+Date: Fri, 2 Jul 2021 12:07:43 +0800
+Message-ID: <20210702040743.1918552-1-yukuai3@huawei.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7BIT
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:subject:to:references:message-id:date:user-agent:mime-version
-         :in-reply-to:content-language:content-transfer-encoding;
-        bh=/0JkYZFOFTiVQwfdqrwqNFO1ekacGZPU/6iRM/c6W0g=;
-        b=L+q4GdHoMfaZdklCBgtr/Pk3a2ZNn9QlLuvtvmjM9NY3NSUV8Aawdjqblxy0jqGNzc
-         2/e76SARJroXZXgA3rSWNiVxAwrWffBY7yEwjTgI5A/lyR2W0IsEtB1BT99IM37hRpa8
-         lt+KmryfnlrSP6k9LOAXhMXxSClxrpVRwdoJAC5ImRtBNuXZuqlnrEVgEEnrSU2fRMx0
-         oEJ6OrALB2NSwyPgKo2AEPbClUJ7FdZEJnn43yUqIkMRf69rawYSW9emzGUWZtJ0ed8r
-         OxH6U6DLZHBI/HaDz8/lo7VQmnCAvNCQ39KivjSNPhYInKeT8CVtxhOgezS0n8NmH5Ui
-         xLAA==
-In-Reply-To: <e37d5585-318e-3130-82c9-7a740b9af8af@gmail.com>
-Content-Language: en-US
 List-ID: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="utf-8"; format="flowed"
-To: Metztli Information Technology <jose.r.r@metztli.com>, reiserfs-devel@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+To: mszeredi@redhat.com, jack@suse.cz, yukuai3@huawei.com
+Cc: reiserfs-devel@vger.kernel.org, linux-kernel@vger.kernel.org, yi.zhang@huawei.com
 
-On 02/08/2021 05:03 PM, Edward Shishkin wrote:
-> On 02/08/2021 01:54 PM, Metztli Information Technology wrote:
->> On Wed, Dec 23, 2020 at 3:40 PM Edward Shishkin 
-[...]
+Our syzcaller report a NULL pointer dereference:
 
->>>
->>>
->>> Hello.
->>>
->>> This is because of VFS changes in Linux-5.10.X.
->>> Specifically, because of the following patch:
->>> https://lkml.org/lkml/2020/8/17/174
->>> In the upstream git repository it is commit 4d03e3cc59828c82ee89ea6e2
->>>
->>> So, Christoph, what to do now for file systems which implement
->>> ->read() method of file operations?
->>
->> *deafening silence* it appears that -- in the best of cases -- 
->> Christoph engaged in an act of _iter masturbation [1];
->> and in the worst of cases, the gentleman was aiming straight at reiser4.
->>
->>> ... It seems that chroot doesn't work
->>> for them. And people are not able to release distros with upgraded
->>> kernels..
->>
->> Not only 'chroot doesn't work' for us, but even after replacing the 
->> kernel in a reiser4 (proper SFRN ;) instance and
->>   upon an initial Linux 5.10.x kernel boot:
->> ...
->> kernel read not supported for file usr/lib/systemd/systemd (pid: 1 
->> comm: run-init)
->> kernel panic -- not syncing: Attempted to kill init! exitcod=0x00000100
->> ...
->>
->> Fact is some of us have commercial interests when deploying reiser4, 
->> both in cloud instances, baremetal, and on-premises.
->>
->> In the future if -- and only if -- our reiser4 efforts come to 
->> successful fruition, quite likely in due time we will be
->>   able to financially commit to the Penguin's Linux Foundation temple, 
->> just like large corporations do
->>   in exchange for indulgences[2] which virtue-wash their past and/or 
->> current corp. officers' *substantially darker deeds*;
->>   heck, 'indulgence trafficking' seems to assuage->numb->arg(STFU) 
->> that 'virtuous' cult of GNU/Linux
->>   developers/gatekeepers/maintainers' frivolous, *narcissist*, ethics 
->> and/or moralities so often piled up against
->>   Reiser's work --which, paradoxically(!?), actually was largely 
->> implemented by Russian developers ;)
->>
->> In the meantime, I hacked a reverse patch that undoes some(all) of the 
->> surreptitious lethal attack on reiser4 fs
->>   -- at least on AMD64 architectures (I did away with other 
->> arch/Kconfigs).
->> And no, I am not a git pro-, undoing what I could of commit 
->> 4d03e3cc59828c82ee89ea6e27a2f3cdf95aaadf (as your hinted, Ed)
->>   does not fix the 'kernel read' issue.
->>
->> Notwithstanding, I would appreciate if you can take a look at the 
->> attached patch. Probably it can be streamlined and/or improved
->>   further to minimize pain on subsequent Linux kernel upgrades.
-> 
-> 
-> That patch is an attempt to swim against the current ;)
-> 
-> I no longer remember, why they want to get rid of set_fs for already 15
-> years, but ->read() and ->write() methods seem to be deprecated, and the
-> correct way would be to implement the new ->read_iter() and write_iter()
-> methods, where reiser4 works with "chunked" streams, represented by
-> iov_iter structure, rather than with "continuous" streams, represented
-> by char __user *buf. The task is not that difficult, but rather time
-> consuming - I don't have a time for this right now..
+BUG: kernel NULL pointer dereference, address: 0000000000000000
+PGD 116e95067 P4D 116e95067 PUD 1080b5067 PMD 0
+Oops: 0010 [#1] SMP KASAN
+CPU: 7 PID: 592 Comm: a.out Not tainted 5.13.0-next-20210629-dirty #67
+Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS ?-20190727_073836-buildvm-p4
+RIP: 0010:0x0
+Code: Unable to access opcode bytes at RIP 0xffffffffffffffd6.
+RSP: 0018:ffff888114e779b8 EFLAGS: 00010246
+RAX: 0000000000000000 RBX: 1ffff110229cef39 RCX: ffffffffaa67e1aa
+RDX: 0000000000000000 RSI: ffff88810a58ee00 RDI: ffff8881233180b0
+RBP: ffffffffac38e9c0 R08: ffffffffaa67e17e R09: 0000000000000001
+R10: ffffffffb91c5557 R11: fffffbfff7238aaa R12: ffff88810a58ee00
+R13: ffff888114e77aa0 R14: 0000000000000000 R15: ffff8881233180b0
+FS:  00007f946163c480(0000) GS:ffff88839f1c0000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: ffffffffffffffd6 CR3: 00000001099c1000 CR4: 00000000000006e0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+ __lookup_slow+0x116/0x2d0
+ ? page_put_link+0x120/0x120
+ ? __d_lookup+0xfc/0x320
+ ? d_lookup+0x49/0x90
+ lookup_one_len+0x13c/0x170
+ ? __lookup_slow+0x2d0/0x2d0
+ ? reiserfs_schedule_old_flush+0x31/0x130
+ reiserfs_lookup_privroot+0x64/0x150
+ reiserfs_fill_super+0x158c/0x1b90
+ ? finish_unfinished+0xb10/0xb10
+ ? bprintf+0xe0/0xe0
+ ? __mutex_lock_slowpath+0x30/0x30
+ ? __kasan_check_write+0x20/0x30
+ ? up_write+0x51/0xb0
+ ? set_blocksize+0x9f/0x1f0
+ mount_bdev+0x27c/0x2d0
+ ? finish_unfinished+0xb10/0xb10
+ ? reiserfs_kill_sb+0x120/0x120
+ get_super_block+0x19/0x30
+ legacy_get_tree+0x76/0xf0
+ vfs_get_tree+0x49/0x160
+ ? capable+0x1d/0x30
+ path_mount+0xacc/0x1380
+ ? putname+0x97/0xd0
+ ? finish_automount+0x450/0x450
+ ? kmem_cache_free+0xf8/0x5a0
+ ? putname+0x97/0xd0
+ do_mount+0xe2/0x110
+ ? path_mount+0x1380/0x1380
+ ? copy_mount_options+0x69/0x140
+ __x64_sys_mount+0xf0/0x190
+ do_syscall_64+0x35/0x80
+ entry_SYSCALL_64_after_hwframe+0x44/0xae
 
+This is because 'root_inode' is initialized with wrong mode, and
+it's i_op is set to 'reiserfs_special_inode_operations'. Thus add
+check for 'root_inode' to fix the problem.
 
-So, I have implemented ->read_iter() for all plugins (*). It is included
-to reiser4-for-5.12 stuff. Not sure if it is enough to make distro with
-root over reiser4 though: ->write_iter() is not yet implemented (not so
-trivial because of transactions).
+Signed-off-by: Yu Kuai <yukuai3@huawei.com>
+---
+ fs/reiserfs/super.c | 8 ++++++++
+ 1 file changed, 8 insertions(+)
 
-(*)
-https://github.com/edward6/reiser4/commit/ac72aba7e8bb16a28755c1b2b762971927d17c3c
+diff --git a/fs/reiserfs/super.c b/fs/reiserfs/super.c
+index 3ffafc73acf0..bcf5123ed43b 100644
+--- a/fs/reiserfs/super.c
++++ b/fs/reiserfs/super.c
+@@ -2082,6 +2082,14 @@ static int reiserfs_fill_super(struct super_block *s, void *data, int silent)
+ 		unlock_new_inode(root_inode);
+ 	}
+ 
++	if (!S_ISDIR(root_inode->i_mode) || !root_inode->i_blocks ||
++	    !root_inode->i_size) {
++		SWARN(silent, s, "", "corrupt root inode, run fsck");
++		iput(root_inode);
++		errval = -EUCLEAN;
++		goto error;
++	}
++
+ 	s->s_root = d_make_root(root_inode);
+ 	if (!s->s_root)
+ 		goto error;
+-- 
+2.31.1
 
-https://github.com/edward6/reiser4/commit/4d3200fbcb2003c680cdb822e3f616d3fa83c391
-
-Edward.
