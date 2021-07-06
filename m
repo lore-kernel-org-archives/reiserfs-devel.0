@@ -1,22 +1,22 @@
 From: Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 5.4 14/74] reiserfs: add check for invalid 1st journal block
-Date: Tue,  6 Jul 2021 07:24:02 -0400
-Message-ID: <20210706112502.2064236-14-sashal@kernel.org>
-References: <20210706112502.2064236-1-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 5.10 020/137] reiserfs: add check for invalid 1st journal block
+Date: Tue,  6 Jul 2021 07:20:06 -0400
+Message-ID: <20210706112203.2062605-20-sashal@kernel.org>
+References: <20210706112203.2062605-1-sashal@kernel.org>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Return-path: <reiserfs-devel-owner@vger.kernel.org>
+Return-path: <stable-owner@vger.kernel.org>
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1625570721;
-        bh=QPgQE2G1/gCeuN/4WN1kwXiMfVifxrdMfmmLcWoYOf8=;
+        s=k20201202; t=1625570550;
+        bh=TAJ0SnSUpJfc+Cqj1aFA6K5OlqU8tHyKbd/ynWD3xIA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=DRWqc8bbvOxzVj9IzbXjPTJD8/9AqXkU5IAhz+Es6FbBXOuoeVJESdB6al4BH9Cih
-         G5on2aKtzwPdHp8gerKKzt+BMu/e+3sVg6a/21EGNjSGz0Ew3fuNuFWh5BeLzZLOoM
-         5D4JEIYV7+EA4VYIbW9cEUWFpIeFkF14Iq1zHXRA82NXXyx9zCNck5IilHmQtdK62b
-         89ztS3zCYck1y/Rx6TeSFmBttwlgkY9xtZyWO1VNxqZWzGbtXuLnihArf5LR2i7M87
-         GxfMqX3FCAsbyRiM6vVywy9YwjPWif9ZQ2jvDMOZxaOKTKTQ2HsWA8KXY+Yw8NFiAX
-         v45Nit+3bhVgQ==
-In-Reply-To: <20210706112502.2064236-1-sashal@kernel.org>
+        b=lhJ1DOB+w3uhSbHBiWUp9gQOq87CarQgpcXlKaRv5YoxTLj1ffjjyzv83zVI9CyMq
+         E560Atd8OIsSReBs5RXSxMg2W1bePiNxEGzzE81wupbXi9/+ietDYm4YxF30WBY2q/
+         V92BWePexrAmPcONORjLA2U1s1RIlsYq7xXDIzwmPsWsAkPzeD+1aKlEo8rY/DWX/P
+         5SlQMXJ9C8XHI2pYx5Y5K+jfuxLW6qXFsJlbq0loa3VRkpjxYfiqWMLkBYmA6apzeP
+         kedmtabBFPtRpfEtiveDL031XJJWTS54+1u3pIe4gU2972FJeGSN/uRNW3BBwO4Lhl
+         wA0qBBW9RLcgA==
+In-Reply-To: <20210706112203.2062605-1-sashal@kernel.org>
 List-ID: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
 To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
@@ -47,10 +47,10 @@ Signed-off-by: Sasha Levin <sashal@kernel.org>
  1 file changed, 14 insertions(+)
 
 diff --git a/fs/reiserfs/journal.c b/fs/reiserfs/journal.c
-index 4b3e3e73b512..09ad022a78a5 100644
+index e98f99338f8f..df5fc12a6cee 100644
 --- a/fs/reiserfs/journal.c
 +++ b/fs/reiserfs/journal.c
-@@ -2763,6 +2763,20 @@ int journal_init(struct super_block *sb, const char *j_dev_name,
+@@ -2760,6 +2760,20 @@ int journal_init(struct super_block *sb, const char *j_dev_name,
  		goto free_and_return;
  	}
  
