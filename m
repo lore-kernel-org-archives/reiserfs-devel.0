@@ -1,76 +1,90 @@
-From: Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 5.10 020/137] reiserfs: add check for invalid 1st journal block
-Date: Tue,  6 Jul 2021 07:20:06 -0400
-Message-ID: <20210706112203.2062605-20-sashal@kernel.org>
-References: <20210706112203.2062605-1-sashal@kernel.org>
+From: Shreyansh Chouhan <chouhan.shreyansh630@gmail.com>
+Subject: [PATCH] reiserfs: check directry items on read from disk
+Date: Fri,  9 Jul 2021 20:59:29 +0530
+Message-ID: <20210709152929.766363-1-chouhan.shreyansh630@gmail.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Return-path: <stable-owner@vger.kernel.org>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1625570550;
-        bh=TAJ0SnSUpJfc+Cqj1aFA6K5OlqU8tHyKbd/ynWD3xIA=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=lhJ1DOB+w3uhSbHBiWUp9gQOq87CarQgpcXlKaRv5YoxTLj1ffjjyzv83zVI9CyMq
-         E560Atd8OIsSReBs5RXSxMg2W1bePiNxEGzzE81wupbXi9/+ietDYm4YxF30WBY2q/
-         V92BWePexrAmPcONORjLA2U1s1RIlsYq7xXDIzwmPsWsAkPzeD+1aKlEo8rY/DWX/P
-         5SlQMXJ9C8XHI2pYx5Y5K+jfuxLW6qXFsJlbq0loa3VRkpjxYfiqWMLkBYmA6apzeP
-         kedmtabBFPtRpfEtiveDL031XJJWTS54+1u3pIe4gU2972FJeGSN/uRNW3BBwO4Lhl
-         wA0qBBW9RLcgA==
-In-Reply-To: <20210706112203.2062605-1-sashal@kernel.org>
+Return-path: <reiserfs-devel-owner@vger.kernel.org>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=SRhuB7O2XAu8vSzkSuT1X9orJzyM3E85HIUuYc+MjD8=;
+        b=MJpLLBp0fbGOpmRl2rVK73sAPES2FcW6KJYkCdu1iGorFBt3iU5UQlr2cdKLpMOgZ9
+         mVMFaZvRa3mcP2lq7cPHx037SF/FjFYLylRl9p6CAXoFFekMAyyoxxNW/cXDcIXsh9Jd
+         Ep9SEYu7GpE/KcYjXcXpxa9Xeq35IOU2+8ugiN9MYf+5REZRkvYuAjfTYyEcFPWqi+Ls
+         DXPA+slQ77hUa1i9suhAwQBGVdav8tH7hkOZ/JBU07JbOOLVCiK94awMSSxns4rPU+/b
+         XhBHGfP5s6/90nVEs5bQvo8aXvKvM0fWq3wakTcm97IEAhw6kwISanmI3D+FYvLCN+s+
+         yqAQ==
 List-ID: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc: Pavel Skripkin <paskripkin@gmail.com>, syzbot+0ba9909df31c6a36974d@syzkaller.appspotmail.com, Jan Kara <jack@suse.cz>, Sasha Levin <sashal@kernel.org>, reiserfs-devel@vger.kernel.org
+To: rkovhaev@gmail.com, jack@suse.cz
+Cc: Shreyansh Chouhan <chouhan.shreyansh630@gmail.com>, reiserfs-devel@vger.kernel.org, linux-kernel@vger.kernel.org, syzbot+c31a48e6702ccb3d64c9@syzkaller.appspotmail.com
 
-From: Pavel Skripkin <paskripkin@gmail.com>
+While verifying the leaf item that we read from the disk, reiserfs
+doesn't check the directory items, this could cause a crash when we
+read a directory item from the disk that has an invalid deh_location.
 
-[ Upstream commit a149127be52fa7eaf5b3681a0317a2bbb772d5a9 ]
+This patch adds a check to the directory items read from the disk that
+does a bounds check on deh_location for the directory entries. Any
+directory entry header with a directory entry offset greater than the
+item length is considered invalid.
 
-syzbot reported divide error in reiserfs.
-The problem was in incorrect journal 1st block.
-
-Syzbot's reproducer manualy generated wrong superblock
-with incorrect 1st block. In journal_init() wasn't
-any checks about this particular case.
-
-For example, if 1st journal block is before superblock
-1st block, it can cause zeroing important superblock members
-in do_journal_end().
-
-Link: https://lore.kernel.org/r/20210517121545.29645-1-paskripkin@gmail.com
-Reported-by: syzbot+0ba9909df31c6a36974d@syzkaller.appspotmail.com
-Signed-off-by: Pavel Skripkin <paskripkin@gmail.com>
-Signed-off-by: Jan Kara <jack@suse.cz>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+Reported-by: syzbot+c31a48e6702ccb3d64c9@syzkaller.appspotmail.com
+Signed-off-by: Shreyansh Chouhan <chouhan.shreyansh630@gmail.com>
 ---
- fs/reiserfs/journal.c | 14 ++++++++++++++
- 1 file changed, 14 insertions(+)
+ fs/reiserfs/stree.c | 31 ++++++++++++++++++++++++++-----
+ 1 file changed, 26 insertions(+), 5 deletions(-)
 
-diff --git a/fs/reiserfs/journal.c b/fs/reiserfs/journal.c
-index e98f99338f8f..df5fc12a6cee 100644
---- a/fs/reiserfs/journal.c
-+++ b/fs/reiserfs/journal.c
-@@ -2760,6 +2760,20 @@ int journal_init(struct super_block *sb, const char *j_dev_name,
- 		goto free_and_return;
- 	}
+diff --git a/fs/reiserfs/stree.c b/fs/reiserfs/stree.c
+index 476a7ff49482..ef42729216d1 100644
+--- a/fs/reiserfs/stree.c
++++ b/fs/reiserfs/stree.c
+@@ -387,6 +387,24 @@ void pathrelse(struct treepath *search_path)
+ 	search_path->path_length = ILLEGAL_PATH_ELEMENT_OFFSET;
+ }
  
-+	/*
-+	 * Sanity check to see if journal first block is correct.
-+	 * If journal first block is invalid it can cause
-+	 * zeroing important superblock members.
-+	 */
-+	if (!SB_ONDISK_JOURNAL_DEVICE(sb) &&
-+	    SB_ONDISK_JOURNAL_1st_BLOCK(sb) < SB_JOURNAL_1st_RESERVED_BLOCK(sb)) {
-+		reiserfs_warning(sb, "journal-1393",
-+				 "journal 1st super block is invalid: 1st reserved block %d, but actual 1st block is %d",
-+				 SB_JOURNAL_1st_RESERVED_BLOCK(sb),
-+				 SB_ONDISK_JOURNAL_1st_BLOCK(sb));
-+		goto free_and_return;
++static int has_valid_deh_location(struct buffer_head *bh, struct item_head *ih)
++{
++	struct reiserfs_de_head *deh;
++	int i;
++
++	deh = B_I_DEH(bh, ih);
++	for (i = 0; i < ih_entry_count(ih); i++) {
++		if (deh_location(&deh[i]) > ih_item_len(ih)) {
++			reiserfs_warning(NULL, "reiserfs-5094",
++					 "directory entry location seems wrong %h",
++					 &deh[i]);
++			return 0;
++		}
 +	}
 +
- 	if (journal_init_dev(sb, journal, j_dev_name) != 0) {
- 		reiserfs_warning(sb, "sh-462",
- 				 "unable to initialize journal device");
++	return 1;
++}
++
+ static int is_leaf(char *buf, int blocksize, struct buffer_head *bh)
+ {
+ 	struct block_head *blkh;
+@@ -454,11 +472,14 @@ static int is_leaf(char *buf, int blocksize, struct buffer_head *bh)
+ 					 "(second one): %h", ih);
+ 			return 0;
+ 		}
+-		if (is_direntry_le_ih(ih) && (ih_item_len(ih) < (ih_entry_count(ih) * IH_SIZE))) {
+-			reiserfs_warning(NULL, "reiserfs-5093",
+-					 "item entry count seems wrong %h",
+-					 ih);
+-			return 0;
++		if (is_direntry_le_ih(ih)) {
++			if (ih_item_len(ih) < (ih_entry_count(ih) * IH_SIZE)) {
++				reiserfs_warning(NULL, "reiserfs-5093",
++						 "item entry count seems wrong %h",
++						 ih);
++				return 0;
++			}
++			return has_valid_deh_location(bh, ih);
+ 		}
+ 		prev_location = ih_location(ih);
+ 	}
 -- 
-2.30.2
+2.31.1
 
