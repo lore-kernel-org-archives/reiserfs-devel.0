@@ -1,90 +1,32 @@
 From: Shreyansh Chouhan <chouhan.shreyansh630@gmail.com>
-Subject: [PATCH] reiserfs: check directry items on read from disk
-Date: Fri,  9 Jul 2021 20:59:29 +0530
-Message-ID: <20210709152929.766363-1-chouhan.shreyansh630@gmail.com>
+Subject: Re: Verify the items that we read from blocks
+Date: Fri, 9 Jul 2021 21:04:32 +0530
+Message-ID: <YOhsiA2XnhQ8BX+U@fedora>
+Reply-To: 20210705113329.GE15373@quack2.suse.cz
 Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=SRhuB7O2XAu8vSzkSuT1X9orJzyM3E85HIUuYc+MjD8=;
-        b=MJpLLBp0fbGOpmRl2rVK73sAPES2FcW6KJYkCdu1iGorFBt3iU5UQlr2cdKLpMOgZ9
-         mVMFaZvRa3mcP2lq7cPHx037SF/FjFYLylRl9p6CAXoFFekMAyyoxxNW/cXDcIXsh9Jd
-         Ep9SEYu7GpE/KcYjXcXpxa9Xeq35IOU2+8ugiN9MYf+5REZRkvYuAjfTYyEcFPWqi+Ls
-         DXPA+slQ77hUa1i9suhAwQBGVdav8tH7hkOZ/JBU07JbOOLVCiK94awMSSxns4rPU+/b
-         XhBHGfP5s6/90nVEs5bQvo8aXvKvM0fWq3wakTcm97IEAhw6kwISanmI3D+FYvLCN+s+
-         yqAQ==
+        h=date:from:to:cc:subject:message-id:reply-to:mime-version
+         :content-disposition;
+        bh=U9h1S56hNKKk2cU+ZFfbrBy2KFpOOYwxQwTzjnZy34Q=;
+        b=UFSzO2N3dVir/1+6/YHEPkmvSMQj7F6tUiY8f5FhcL7/gWw2uojL3E3hF7Vtr72B2G
+         rzGEdzCZ+b3qPI1AYxTT3XAPH5dZ/PazedW2d97kA3B6YtSobEA59BrLStiJy2hSgSA7
+         SEV5DdLvwnbJK/3DMbHKVGAXbaAAljGA1bOI1EIkKyAY/3UOUcpeMjAUWUKPxe3Ilgdn
+         ib/R82tUfArGjfDhjHzSIbk4TfnoGc/bzIbA6LbT6SA8lYmATzixHssbX2505GjkWK+9
+         Rpscl6XFH9JFb801bhUH/fTUOjzygWO73z4NSJvMlws0SjymAEjGN+z6NF+Mb8GZsnpT
+         SkLA==
+Content-Disposition: inline
 List-ID: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: rkovhaev@gmail.com, jack@suse.cz
-Cc: Shreyansh Chouhan <chouhan.shreyansh630@gmail.com>, reiserfs-devel@vger.kernel.org, linux-kernel@vger.kernel.org, syzbot+c31a48e6702ccb3d64c9@syzkaller.appspotmail.com
+Content-Transfer-Encoding: 7bit
+To: jack@suse.cz
+Cc: rkovhaev@gmail.com, reiserfs-devel@vger.kernel.org, linux-kernel@vger.kernel.org
 
-While verifying the leaf item that we read from the disk, reiserfs
-doesn't check the directory items, this could cause a crash when we
-read a directory item from the disk that has an invalid deh_location.
+Hi,
 
-This patch adds a check to the directory items read from the disk that
-does a bounds check on deh_location for the directory entries. Any
-directory entry header with a directory entry offset greater than the
-item length is considered invalid.
+Thanks a lot for your input. After investing this much time on the bug, I
+thought I'd just send a patch. Hope that won't be a problem.
 
-Reported-by: syzbot+c31a48e6702ccb3d64c9@syzkaller.appspotmail.com
-Signed-off-by: Shreyansh Chouhan <chouhan.shreyansh630@gmail.com>
----
- fs/reiserfs/stree.c | 31 ++++++++++++++++++++++++++-----
- 1 file changed, 26 insertions(+), 5 deletions(-)
-
-diff --git a/fs/reiserfs/stree.c b/fs/reiserfs/stree.c
-index 476a7ff49482..ef42729216d1 100644
---- a/fs/reiserfs/stree.c
-+++ b/fs/reiserfs/stree.c
-@@ -387,6 +387,24 @@ void pathrelse(struct treepath *search_path)
- 	search_path->path_length = ILLEGAL_PATH_ELEMENT_OFFSET;
- }
- 
-+static int has_valid_deh_location(struct buffer_head *bh, struct item_head *ih)
-+{
-+	struct reiserfs_de_head *deh;
-+	int i;
-+
-+	deh = B_I_DEH(bh, ih);
-+	for (i = 0; i < ih_entry_count(ih); i++) {
-+		if (deh_location(&deh[i]) > ih_item_len(ih)) {
-+			reiserfs_warning(NULL, "reiserfs-5094",
-+					 "directory entry location seems wrong %h",
-+					 &deh[i]);
-+			return 0;
-+		}
-+	}
-+
-+	return 1;
-+}
-+
- static int is_leaf(char *buf, int blocksize, struct buffer_head *bh)
- {
- 	struct block_head *blkh;
-@@ -454,11 +472,14 @@ static int is_leaf(char *buf, int blocksize, struct buffer_head *bh)
- 					 "(second one): %h", ih);
- 			return 0;
- 		}
--		if (is_direntry_le_ih(ih) && (ih_item_len(ih) < (ih_entry_count(ih) * IH_SIZE))) {
--			reiserfs_warning(NULL, "reiserfs-5093",
--					 "item entry count seems wrong %h",
--					 ih);
--			return 0;
-+		if (is_direntry_le_ih(ih)) {
-+			if (ih_item_len(ih) < (ih_entry_count(ih) * IH_SIZE)) {
-+				reiserfs_warning(NULL, "reiserfs-5093",
-+						 "item entry count seems wrong %h",
-+						 ih);
-+				return 0;
-+			}
-+			return has_valid_deh_location(bh, ih);
- 		}
- 		prev_location = ih_location(ih);
- 	}
--- 
-2.31.1
-
+Thank you,
+Shreyansh Chouhan
