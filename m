@@ -1,102 +1,69 @@
-From: Shreyansh Chouhan <chouhan.shreyansh630@gmail.com>
-Subject: Re: [PATCH] reiserfs: check directry items on read from disk
-Date: Tue, 20 Jul 2021 13:01:25 +0530
-Message-ID: <YPZ7zUVAedCkx3IQ@fedora>
-References: <20210709152929.766363-1-chouhan.shreyansh630@gmail.com>
+From: syzbot <syzbot+fcdd69a8426baab36109@syzkaller.appspotmail.com>
+Subject: Re: [syzbot] WARNING in reiserfs_put_super
+Date: Sun, 25 Jul 2021 06:44:24 -0700
+Message-ID: <000000000000b3bdbc05c7f2d56f@google.com>
+References: <000000000000ebd6da05b00bcea6@google.com>
 Mime-Version: 1.0
-Return-path: <reiserfs-devel-owner@vger.kernel.org>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=gUHafvxPwffprBDYSwA9wJOKwLPsSD3F5l3zpE9j23w=;
-        b=TLIfURQuaAwET7qHx0eINAHcT6VgTFPGuK1mPbLHdOkC6Ub8DYvVNHLxW8LYhsoyEI
-         JK9+c/b6pbiHiphOWE58UgnCm5isMU3X2OtkTIvHpl12n0I+UQLkIb3L7GOKEfqfG2Wg
-         5zW+tcfWcNBmzaQUSSLvJfuxNaADOaux4+oWc/h49SMk1HSynpe6pYTICvcr20oRwCBl
-         hx/Pq79rvGmWyK7ePuppPX/0nbECiiXYgipeDYdy5PKj/Bw5xMMcx19DWncN6UlpoJ0n
-         rU4C7Eue5gN9anBxKIIZs1aPaB7cd6DqcUKRO2uiNAagaTyzbnVI/ro9rmr7Ctjux/4i
-         97VA==
-Content-Disposition: inline
-In-Reply-To: <20210709152929.766363-1-chouhan.shreyansh630@gmail.com>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <000000000000ebd6da05b00bcea6@google.com>
 List-ID: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: rkovhaev@gmail.com, jack@suse.cz
-Cc: reiserfs-devel@vger.kernel.org, linux-kernel@vger.kernel.org, syzbot+c31a48e6702ccb3d64c9@syzkaller.appspotmail.com
+To: ground_handling@unex-aviation.co.id, jack@suse.cz, jeffm@suse.com, linux-kernel@vger.kernel.org, mszeredi@redhat.com, reiserfs-devel@vger.kernel.org, syzkaller-bugs@googlegroups.com, yukuai3@huawei.com
 
-Hi,
+syzbot has found a reproducer for the following issue on:
 
-Just a ping for reviews/merge since there has been no activity on this patch.
+HEAD commit:    90d856e71443 Add linux-next specific files for 20210723
+git tree:       linux-next
+console output: https://syzkaller.appspot.com/x/log.txt?x=140c92b6300000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=298516715f6ad5cd
+dashboard link: https://syzkaller.appspot.com/bug?extid=fcdd69a8426baab36109
+compiler:       gcc (Debian 10.2.1-6) 10.2.1 20210110, GNU ld (GNU Binutils for Debian) 2.35.1
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=146b2066300000
 
-Thank you,
-Shreyansh Chouhan
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+fcdd69a8426baab36109@syzkaller.appspotmail.com
 
-On Fri, Jul 09, 2021 at 08:59:29PM +0530, Shreyansh Chouhan wrote:
-> 
-> While verifying the leaf item that we read from the disk, reiserfs
-> doesn't check the directory items, this could cause a crash when we
-> read a directory item from the disk that has an invalid deh_location.
-> 
-> This patch adds a check to the directory items read from the disk that
-> does a bounds check on deh_location for the directory entries. Any
-> directory entry header with a directory entry offset greater than the
-> item length is considered invalid.
-> 
-> Reported-by: syzbot+c31a48e6702ccb3d64c9@syzkaller.appspotmail.com
-> Signed-off-by: Shreyansh Chouhan <chouhan.shreyansh630@gmail.com>
-> ---
->  fs/reiserfs/stree.c | 31 ++++++++++++++++++++++++++-----
->  1 file changed, 26 insertions(+), 5 deletions(-)
-> 
-> diff --git a/fs/reiserfs/stree.c b/fs/reiserfs/stree.c
-> index 476a7ff49482..ef42729216d1 100644
-> --- a/fs/reiserfs/stree.c
-> +++ b/fs/reiserfs/stree.c
-> @@ -387,6 +387,24 @@ void pathrelse(struct treepath *search_path)
->  	search_path->path_length = ILLEGAL_PATH_ELEMENT_OFFSET;
->  }
->  
-> +static int has_valid_deh_location(struct buffer_head *bh, struct item_head *ih)
-> +{
-> +	struct reiserfs_de_head *deh;
-> +	int i;
-> +
-> +	deh = B_I_DEH(bh, ih);
-> +	for (i = 0; i < ih_entry_count(ih); i++) {
-> +		if (deh_location(&deh[i]) > ih_item_len(ih)) {
-> +			reiserfs_warning(NULL, "reiserfs-5094",
-> +					 "directory entry location seems wrong %h",
-> +					 &deh[i]);
-> +			return 0;
-> +		}
-> +	}
-> +
-> +	return 1;
-> +}
-> +
->  static int is_leaf(char *buf, int blocksize, struct buffer_head *bh)
->  {
->  	struct block_head *blkh;
-> @@ -454,11 +472,14 @@ static int is_leaf(char *buf, int blocksize, struct buffer_head *bh)
->  					 "(second one): %h", ih);
->  			return 0;
->  		}
-> -		if (is_direntry_le_ih(ih) && (ih_item_len(ih) < (ih_entry_count(ih) * IH_SIZE))) {
-> -			reiserfs_warning(NULL, "reiserfs-5093",
-> -					 "item entry count seems wrong %h",
-> -					 ih);
-> -			return 0;
-> +		if (is_direntry_le_ih(ih)) {
-> +			if (ih_item_len(ih) < (ih_entry_count(ih) * IH_SIZE)) {
-> +				reiserfs_warning(NULL, "reiserfs-5093",
-> +						 "item entry count seems wrong %h",
-> +						 ih);
-> +				return 0;
-> +			}
-> +			return has_valid_deh_location(bh, ih);
->  		}
->  		prev_location = ih_location(ih);
->  	}
-> -- 
-> 2.31.1
-> 
+------------[ cut here ]------------
+WARNING: CPU: 1 PID: 8499 at kernel/workqueue.c:4413 destroy_workqueue.cold+0x5/0x71 kernel/workqueue.c:4413
+Modules linked in:
+CPU: 1 PID: 8499 Comm: syz-executor.5 Not tainted 5.14.0-rc2-next-20210723-syzkaller #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
+RIP: 0010:destroy_workqueue.cold+0x5/0x71 kernel/workqueue.c:4413
+Code: c5 3d 7a f8 b9 e8 03 00 00 31 d2 48 c7 c7 e0 ff 8a 89 f7 f1 89 c6 e8 fc 87 00 00 c6 44 24 2f 01 e9 e7 56 62 f8 e8 6f c4 8b f8 <0f> 0b 48 c7 c6 e0 04 8b 89 48 c7 c7 20 00 8b 89 49 8d 96 60 01 00
+RSP: 0018:ffffc90001b3fcd0 EFLAGS: 00010093
+RAX: 0000000000000000 RBX: 0000000000000002 RCX: 0000000000000000
+RDX: ffff88801bedd580 RSI: ffffffff88e9fd31 RDI: 0000000000000003
+RBP: 000000000000000f R08: 0000000000000001 R09: 0000000000000003
+R10: ffffffff814c5ab3 R11: 0000000000000000 R12: dffffc0000000000
+R13: ffffe8ffffd91a00 R14: ffff88802a9d2400 R15: 0000000000000000
+FS:  000000000290e400(0000) GS:ffff8880b9d00000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00007ffef18ce720 CR3: 00000000370a3000 CR4: 00000000001506e0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+ reiserfs_put_super+0x234/0x5c0 fs/reiserfs/super.c:631
+ generic_shutdown_super+0x14c/0x370 fs/super.c:465
+ kill_block_super+0x97/0xf0 fs/super.c:1395
+ deactivate_locked_super+0x94/0x160 fs/super.c:335
+ deactivate_super+0xad/0xd0 fs/super.c:366
+ cleanup_mnt+0x3a2/0x540 fs/namespace.c:1136
+ task_work_run+0xdd/0x1a0 kernel/task_work.c:164
+ tracehook_notify_resume include/linux/tracehook.h:189 [inline]
+ exit_to_user_mode_loop kernel/entry/common.c:175 [inline]
+ exit_to_user_mode_prepare+0x27e/0x290 kernel/entry/common.c:209
+ __syscall_exit_to_user_mode_work kernel/entry/common.c:291 [inline]
+ syscall_exit_to_user_mode+0x19/0x60 kernel/entry/common.c:302
+ do_syscall_64+0x42/0xb0 arch/x86/entry/common.c:86
+ entry_SYSCALL_64_after_hwframe+0x44/0xae
+RIP: 0033:0x467a47
+Code: ff d0 48 89 c7 b8 3c 00 00 00 0f 05 48 c7 c1 bc ff ff ff f7 d8 64 89 01 48 83 c8 ff c3 66 0f 1f 44 00 00 b8 a6 00 00 00 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 bc ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007ffca786e4d8 EFLAGS: 00000246
+ ORIG_RAX: 00000000000000a6
+RAX: 0000000000000000 RBX: 0000000000000000 RCX: 0000000000467a47
+RDX: 00007ffca786e5a9 RSI: 0000000000000002 RDI: 00007ffca786e5a0
+RBP: 00007ffca786e5a0 R08: 00000000ffffffff R09: 00007ffca786e370
+R10: 000000000290f8e3 R11: 0000000000000246 R12: 00000000004bee90
+R13: 00007ffca786f670 R14: 000000000290f810 R15: 00007ffca786f6b0
+
