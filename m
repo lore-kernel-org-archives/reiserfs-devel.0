@@ -1,22 +1,22 @@
 From: Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 5.10 3/9] reiserfs: check directory items on read from disk
-Date: Tue,  3 Aug 2021 07:44:02 -0400
-Message-ID: <20210803114408.2252713-3-sashal@kernel.org>
-References: <20210803114408.2252713-1-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 5.4 3/6] reiserfs: check directory items on read from disk
+Date: Tue,  3 Aug 2021 07:44:18 -0400
+Message-ID: <20210803114421.2252840-3-sashal@kernel.org>
+References: <20210803114421.2252840-1-sashal@kernel.org>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Return-path: <stable-owner@vger.kernel.org>
+Return-path: <reiserfs-devel-owner@vger.kernel.org>
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1627991052;
-        bh=juMD/gwYa8eKOqbZs0IYqt0t+hpwfZ8KU6t6B3GM0Iw=;
+        s=k20201202; t=1627991065;
+        bh=dTVsgaI0Ijz/iBriwJNSMb7CCOp1qtmBVnOwQDSdRcg=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=eiJ0dlFselZOMCw328y+qCOmMjsRgaQuDr9Xp5lkk+c3qwc4tUqPScHKwQqeL4HuD
-         Zy59vLTVfK+0zqVACqXJ2qidzN5yDaYh2g9Ih50JijgnpmNGWd/wYDsMTMitY8sIPN
-         tmltCehCVlsgAXgJ5+ps9RHuVeqPZhPQ1BVOqwjwEkLmfUu8OnoCwqa9OwbQ8CJ950
-         ccCPpzi0e0ctpmryeNjjFeiGbJEn4vpxkvCamxeTNoZulOEWbAyNQRWhqj20poNC7O
-         o7+ngb1b3qGzmxIp4gwdwI/T7lW94mU9QZF0H8ZmUWDbtYYvydA+5ItqtDFF11cqD0
-         77PZc6OkKzpGw==
-In-Reply-To: <20210803114408.2252713-1-sashal@kernel.org>
+        b=pgevFu2Tcs5uvmr9I8Kz4wkBcb35EEmMgg8A9WIyo5KJH5y8fqAFYUPSQSgRvHpic
+         AZw7qGnodOO29KREHLty5gTheqn9p1KtwArk0IzX7TOyAVNL6W50/sidfA+b+y/zv2
+         sJlp0VpD6rcUD6PYiIq7iRO2tICru+i2zxUgVy0bSRKMW7EOOJ2EjFRk8RLY6MxpDp
+         9j2+jCE5KtnEWWkw2+BUlUonvUOK1QjFX1VTHsl+Ll3QW835EemrQAVjYSq8UpitgT
+         zYrPPGB03i4fcvCVMhKFLi9OvqYYlFyRT0Tgis6AKWD0LitXEdGGO9WPhw+e0OE1p5
+         XOzLL6k8O9h0A==
+In-Reply-To: <20210803114421.2252840-1-sashal@kernel.org>
 List-ID: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
 To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
@@ -45,7 +45,7 @@ Signed-off-by: Sasha Levin <sashal@kernel.org>
  1 file changed, 26 insertions(+), 5 deletions(-)
 
 diff --git a/fs/reiserfs/stree.c b/fs/reiserfs/stree.c
-index 476a7ff49482..ef42729216d1 100644
+index 9e64e23014e8..07d787145cc3 100644
 --- a/fs/reiserfs/stree.c
 +++ b/fs/reiserfs/stree.c
 @@ -387,6 +387,24 @@ void pathrelse(struct treepath *search_path)
