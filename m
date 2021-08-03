@@ -1,22 +1,22 @@
 From: Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.19 3/5] reiserfs: check directory items on read from disk
-Date: Tue,  3 Aug 2021 07:44:27 -0400
-Message-ID: <20210803114429.2252944-3-sashal@kernel.org>
-References: <20210803114429.2252944-1-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.14 3/5] reiserfs: check directory items on read from disk
+Date: Tue,  3 Aug 2021 07:44:35 -0400
+Message-ID: <20210803114437.2253079-3-sashal@kernel.org>
+References: <20210803114437.2253079-1-sashal@kernel.org>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Return-path: <reiserfs-devel-owner@vger.kernel.org>
+Return-path: <stable-owner@vger.kernel.org>
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1627991074;
+        s=k20201202; t=1627991081;
         bh=hVRjeIKeqGzKqDwszUGsi+lUR5UdWKTKaBB8H9mmTzY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=H5wrMw+hyXkZ07gbY37QFJ60CQkCc8KVvBnLv4lXsRvQeNyWNBr28BV0A30KdENhh
-         Ol6sSjcbgwDuybO9h0v5XPywzTxCGXrKYZJJoP5sUstsPPho0ANmkEXIKO3vrD5lpU
-         Kv2WDv+rod6iZLAOcmM331qr2cKlxSitZEtzAzZW+QjaBLL0vPNdihYupsgPWs0dhp
-         LEpVI/bjwAwVBQFTc/esQN3WG3+enjVhjxq9ArntxYy8CihDMA17hAuT28jptAUtuH
-         Q8yaDPnQ1rNUaY0PK2ASPu1XNlLoAHSfiYUI7oVKpJGcwQvtowsBJIYkAJ2zrhjQa2
-         fYXklQ0OBgFwA==
-In-Reply-To: <20210803114429.2252944-1-sashal@kernel.org>
+        b=N30AnxPprEMVwt0zW6OcK8VcbzMVxg3weRSXNb5UCWtg5YMeeBDiepWTusqZBG5P7
+         mE26Kh1fk+QK3xCbtv47SBd3VxfihTbwn9iPE6EiWHgsUGAfcoVijPsVRLYmGUYPZx
+         JVkIPm7zP+6QuZCiy26hfJOyJ4uGxMezEZHor/XKfyVRrLQYkB5TRK7tBLnbUc7gh1
+         zweatqrODveRhzBhlvfIR65SLd0nN5wZiLtyrb41rBfB3X347xHMT4jVZqV+4/Wiro
+         ZnW2oUw1hzVP9xsUsK62v0u4kjb/hcjIto4W3C2T8eOZz1SkINpUhszkr9aI74MCOZ
+         +JIacpDMYZ0AQ==
+In-Reply-To: <20210803114437.2253079-1-sashal@kernel.org>
 List-ID: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
 To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
