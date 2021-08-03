@@ -1,22 +1,22 @@
 From: Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 5.13 02/11] reiserfs: add check for root_inode in reiserfs_fill_super
-Date: Tue,  3 Aug 2021 07:43:43 -0400
-Message-ID: <20210803114352.2252544-2-sashal@kernel.org>
-References: <20210803114352.2252544-1-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.19 2/5] reiserfs: add check for root_inode in reiserfs_fill_super
+Date: Tue,  3 Aug 2021 07:44:26 -0400
+Message-ID: <20210803114429.2252944-2-sashal@kernel.org>
+References: <20210803114429.2252944-1-sashal@kernel.org>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Return-path: <stable-owner@vger.kernel.org>
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1627991036;
-        bh=gnz4CiLlUyQkncGQMYsXl6QUpkMks0VPyrG6Dtkw5TA=;
+        s=k20201202; t=1627991073;
+        bh=tPzkEkvjSFr0zA/73+SPlLNE/7l1MF7egMhoqkolLD4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=RYrSqkIcqJwLV93Xw+x1EXKLQ73PYmtHxIk6GckwRnDxuTT3/CmCEuaUb6TrjnZLG
-         ROsI6j7VBfqI7eBCEjadExetJwUcGeIOx/PZoBngOnxj4x7daHF5fqZKvmlx9YWcMb
-         IUR0sSq04I/KpcqVaQrtJ9XBatjvs0zOjx60ZKycfvgnIlMgAmPYjiCDvv0OkaeMFZ
-         TNPlh7ED7vtz4jY7Ylz5BlaVECPlMPdDDj8m/lrym7X6rzr2ztAwBJWpHBP4mYuWgD
-         rmjO1HnC2G6yX+Crr1ttJZnkqcEARuFcQ4NogAuku+u+vtzEixs5o5PuUP9bQySRkY
-         e1jyhVgUUdBZQ==
-In-Reply-To: <20210803114352.2252544-1-sashal@kernel.org>
+        b=s6mt6JafZhc4lXQ1YpJ9lgZCkCA0WW0kGnRdrUcicijiokz13E/MWtCoQSAZZt+Zs
+         37Oosxag4q9HsP1vTxbIN6yQtVjA0jLHWAVtZDOoH46citjadDBZy2TYfynyc12w5q
+         CEyxQP6tcd0Ll44MKtD9nT1VtOXl2Ir90vXbW8Wf9iysCzv9KTQFVMWAhQb47uwyIw
+         W0PMK/JWIhwK9flqN75hFgpo9fObeCtf7J+wCAJmTpYP4xpmG2Sf3lVlaHpWpooydr
+         cgYOT8eyqdNFInfmeSiy8P+57/fSgLJyWgcO2+DvgoX6KlHBvrZi0OjM5NV6BjNMIG
+         +239WKY40ejdg==
+In-Reply-To: <20210803114429.2252944-1-sashal@kernel.org>
 List-ID: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
 To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
@@ -94,10 +94,10 @@ Signed-off-by: Sasha Levin <sashal@kernel.org>
  1 file changed, 8 insertions(+)
 
 diff --git a/fs/reiserfs/super.c b/fs/reiserfs/super.c
-index 3ffafc73acf0..58481f8d63d5 100644
+index ec5716dd58c2..831a542c22c6 100644
 --- a/fs/reiserfs/super.c
 +++ b/fs/reiserfs/super.c
-@@ -2082,6 +2082,14 @@ static int reiserfs_fill_super(struct super_block *s, void *data, int silent)
+@@ -2085,6 +2085,14 @@ static int reiserfs_fill_super(struct super_block *s, void *data, int silent)
  		unlock_new_inode(root_inode);
  	}
  
