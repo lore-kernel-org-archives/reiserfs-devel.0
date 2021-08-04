@@ -1,117 +1,266 @@
-From: Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.19 2/5] reiserfs: add check for root_inode in reiserfs_fill_super
-Date: Tue,  3 Aug 2021 07:44:26 -0400
-Message-ID: <20210803114429.2252944-2-sashal@kernel.org>
-References: <20210803114429.2252944-1-sashal@kernel.org>
+From: Metztli Information Technology <jose.r.r@metztli.com>
+Subject: Re: [reiser4 SFRN 5.1.3] kernel [5.10.x] read not supported for
+ file /test-exec \(pid: 10094 comm: debootstrap\)
+Date: Wed, 04 Aug 2021 03:17:18 -0700
+Message-ID: <ef36436b5889fd1b7b545a56f196400f16e2e4d3.camel@metztli.com>
+References: <20210208125427.CFC7C75EED90@huitzilopochtli.metztli-it.com>
+         <e37d5585-318e-3130-82c9-7a740b9af8af@gmail.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Return-path: <stable-owner@vger.kernel.org>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1627991073;
-        bh=tPzkEkvjSFr0zA/73+SPlLNE/7l1MF7egMhoqkolLD4=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=s6mt6JafZhc4lXQ1YpJ9lgZCkCA0WW0kGnRdrUcicijiokz13E/MWtCoQSAZZt+Zs
-         37Oosxag4q9HsP1vTxbIN6yQtVjA0jLHWAVtZDOoH46citjadDBZy2TYfynyc12w5q
-         CEyxQP6tcd0Ll44MKtD9nT1VtOXl2Ir90vXbW8Wf9iysCzv9KTQFVMWAhQb47uwyIw
-         W0PMK/JWIhwK9flqN75hFgpo9fObeCtf7J+wCAJmTpYP4xpmG2Sf3lVlaHpWpooydr
-         cgYOT8eyqdNFInfmeSiy8P+57/fSgLJyWgcO2+DvgoX6KlHBvrZi0OjM5NV6BjNMIG
-         +239WKY40ejdg==
-In-Reply-To: <20210803114429.2252944-1-sashal@kernel.org>
+Return-path: <reiserfs-devel-owner@vger.kernel.org>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=metztli-com.20150623.gappssmtp.com; s=20150623;
+        h=message-id:subject:from:to:cc:date:in-reply-to:references
+         :user-agent:mime-version:content-transfer-encoding;
+        bh=BU4gaEXMUC4dk3AbuhMq06nooKvFSA+rLb2MZ4hroZo=;
+        b=JHt41geswPE+Gq38BYwP8Wost4DpJFkPEZ5784KofcHmCIRdsk3kDFoRz8rFVc6Dcd
+         VFxU9HSR6OYN6b0lbqKUasVMy4/Sdw5ij9PlOdATAl5+g3RwkFFo1pVl7/RSRXDUDbAt
+         4Yt50YdQgjqfJe/sa2guBwVDd1vUXzrSq28PiSsqBbiewJWW5OIbMsHzv+ZglMcORSJV
+         AeCoNHkdGBM83262X/Zw08ljsBlO65cqYKhyKaF/f+BppiNf6gPyNqFagHd7hHnYiDk8
+         Mo49qxLRV+GsIUlWU1UxH3IOgOlI28WynlBoSJ2zuvMOMRUGHkYt6bEwsRbwOAXY/QqH
+         jWmg==
+In-Reply-To: <e37d5585-318e-3130-82c9-7a740b9af8af@gmail.com>
 List-ID: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc: Yu Kuai <yukuai3@huawei.com>, Jan Kara <jack@suse.cz>, Sasha Levin <sashal@kernel.org>, reiserfs-devel@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+To: Edward Shishkin <edward.shishkin@gmail.com>
+Cc: reiserfs-devel@vger.kernel.org, linux-kernel@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>
 
-From: Yu Kuai <yukuai3@huawei.com>
+On Mon, 2021-02-08 at 17:03 +0100, Edward Shishkin wrote:
+> On 02/08/2021 01:54 PM, Metztli Information Technology wrote:
+> > On Wed, Dec 23, 2020 at 3:40 PM Edward Shishkin
+> > <edward.shishkin@gmail.com> wrote:
+> > > 
+> > > On 12/23/2020 05:01 PM, Metztli Information Technology wrote:
+> > > > Niltze [Ð—Ð´Ñ€Ð°Ð²Ñ Ñ‚Ð²ÑƒÐ¹Ñ‚Ðµ : Hello], Ed-
+> > > > 
+> > > > I built Linux kernel 5.10.1-1 within the 'Debian way' -- as
+> > > > usual -- to generate a kernel component for my Debian-Installer
+> > > > (d-i).
+> > > > The patch I applied is reiser4-for-5.10-rc3.patch.gz from v5-
+> > > > unstable.
+> > > > 
+> > > > Once I built the proper reiser4progs-2.0.4.tar.gz and generated
+> > > > one set of components for d-i I built the d-i image.
+> > > > 
+> > > > Fact is, the installer throws an error in *both* bare metal and
+> > > > VirtualBox 6.1.16:
+> > > > ...
+> > > > Dec 22 20:19:56 main-menu[330]: INFO: Menu item 'bootstrap-
+> > > > base' selected
+> > > > Dec 22 20:19:56 debootstrap: /usr/sbin/debootstrap --
+> > > > components=main --debian-installer --resolve-deps --
+> > > > keyring=/usr/share/keyrings/archive.gpg buster /target
+> > > > http://deb.debian.org/debian/
+> > > > Dec 22 20:19:56 debootstrap: /usr/sbin/debootstrap: line 1596:
+> > > > /target/test-exec: Invalid argument
+> > > > Dec 22 20:19:56 kernel: [ 1018.632648] kernel read not
+> > > > supported for file /test-exec (pid: 10077 comm: debootstrap)
+> > > > Dec 22 20:19:56 debootstrap: E: NOEXEC
+> > > > Dec 22 20:19:56 debootstrap: EF: Cannot install into target
+> > > > '/target' mounted with noexec or nodev
+> > > > Dec 22 20:20:12 base-installer: error: exiting on error base-
+> > > > installer/debootstrap-failed
+> > > > Dec 22 20:20:14 main-menu[330]: WARNING **: Configuring
+> > > > 'bootstrap-base' failed with error code 1
+> > > > Dec 22 20:20:14 main-menu[330]: WARNING **: Menu item
+> > > > 'bootstrap-base' failed.
+> > > > Dec 22 20:20:15 main-menu[330]: INFO: Falling back to the
+> > > > package description for brltty-udeb
+> > > > 
+> > > 
+> > > [...]
+> > > 
+> > > > 
+> > > > Apparently, d-i [Debian-installer] complains about being unable
+> > > > to set the test file executable and causes the error when 1 is
+> > > > returned.
+> > > > Notwithstanding, I manually verified that I am able to touch a
+> > > > file and set it +x executable.
+> > > > 
+> > > > Furthermore, tricking the function return value to 0 I am able
+> > > > to make d-i continue with the latest SFRN5 installation (see
+> > > > [*trick*] below); yet, subsequently halts again with
+> > > > an apparently related error --can not proceed any further.
+> > > > 
+> > > > Digging deeper with dmesg, we can see that apparently it is the
+> > > > kernel which cannot 'read' properly. Please find a partial
+> > > > dmesg log with relevant output
+> > > > from an attempt on my physical development machine.
+> > > > ...
+> > > > [  508.614488] Loading Reiser4 (Software Framework Release:
+> > > > 5.1.3). See reiser4.wiki.kernel.org for a description of
+> > > > Reiser4.
+> > > > [  508.661951] SGI XFS with ACLs, security attributes,
+> > > > realtime, quota, no debug enabled
+> > > > [  509.326270] device-mapper: uevent: version 1.0.3
+> > > > [  509.326505] device-mapper: ioctl: 4.43.0-ioctl (2020-10-01)
+> > > > initialised: dm-devel@redhat.com
+> > > > [  509.902828]  sda: sda1 sda2 sda3 sda4 sda5 sda6
+> > > > [  509.915300]  sdb: sdb1 sdb2 sdb3
+> > > > [  511.973360]  sdb: sdb1 sdb2 sdb3
+> > > > [  627.525371] Adding 9765884k swap on /dev/sda3.  Priority:-2
+> > > > extents:1 across:9765884k FS
+> > > > [  636.240812] reiser4[mount(9430)]: reiser4_register_subvol
+> > > > (fs/reiser4/init_volume.c:222)[edward-1932]:
+> > > > [  636.240812] NOTICE: brick /dev/sda6 has been registered
+> > > > [  636.243003] reiser4 (sda6): found disk format 5.1.3.
+> > > > [  643.759971] reiser4 (/dev/sda6): using Hybrid Transaction
+> > > > Model.
+> > > > [  643.759980] reiser4: brick /dev/sda6 activated
+> > > > [  643.788537] EXT4-fs (sda1): mounting ext2 file system using
+> > > > the ext4 subsystem
+> > > > [  643.813474] EXT4-fs (sda1): mounted filesystem without
+> > > > journal. Opts: (null)
+> > > > [  643.813488] ext2 filesystem being mounted at /target/boot
+> > > > supports timestamps until 2038 (0x7fffffff)
+> > > > [  648.168730] kernel read not supported for file /test-exec
+> > > > (pid: 9876 comm: debootstrap) [*trick*]
+> > > > [  898.761385] reiser4: brick /dev/sda6 deactivated
+> > > > [  991.001332] reiser4 (sda6): found disk format 5.1.3.
+> > > > [  999.093471] reiser4 (/dev/sda6): using Hybrid Transaction
+> > > > Model.
+> > > > [  999.093480] reiser4: brick /dev/sda6 activated
+> > > > [ 1009.340117] EXT4-fs (sda1): mounting ext2 file system using
+> > > > the ext4 subsystem
+> > > > [ 1009.362722] EXT4-fs (sda1): mounted filesystem without
+> > > > journal. Opts: (null)
+> > > > [ 1009.362737] ext2 filesystem being mounted at /target/boot
+> > > > supports timestamps until 2038 (0x7fffffff)
+> > > > [ 6373.748413] kernel read not supported for file /test-exec
+> > > > (pid: 10094 comm: debootstrap)
+> > > > [ 6413.169920] kernel read not supported for file /usr/bin/true
+> > > > (pid: 15960 comm: chroot)
+> > > 
+> > > 
+> > > Hello.
+> > > 
+> > > This is because of VFS changes in Linux-5.10.X.
+> > > Specifically, because of the following patch:
+> > > https://lkml.org/lkml/2020/8/17/174
+> > > In the upstream git repository it is commit
+> > > 4d03e3cc59828c82ee89ea6e2
+> > > 
+> > > So, Christoph, what to do now for file systems which implement
+> > > ->read() method of file operations?
+> > 
+> > *deafening silence* it appears that -- in the best of cases --
+> > Christoph engaged in an act of _iter masturbation [1];
+> > and in the worst of cases, the gentleman was aiming straight at
+> > reiser4.
+> > 
+> > > ... It seems that chroot doesn't work
+> > > for them. And people are not able to release distros with
+> > > upgraded
+> > > kernels..
+> > 
+> > Not only 'chroot doesn't work' for us, but even after replacing the
+> > kernel in a reiser4 (proper SFRN ;) instance and
+> >   upon an initial Linux 5.10.x kernel boot:
+> > ...
+> > kernel read not supported for file usr/lib/systemd/systemd (pid: 1
+> > comm: run-init)
+> > kernel panic -- not syncing: Attempted to kill init!
+> > exitcod=0x00000100
+> > ...
+> > 
+> > Fact is some of us have commercial interests when deploying
+> > reiser4, both in cloud instances, baremetal, and on-premises.
+> > 
+> > In the future if -- and only if -- our reiser4 efforts come to
+> > successful fruition, quite likely in due time we will be
+> >   able to financially commit to the Penguin's Linux Foundation
+> > temple, just like large corporations do
+> >   in exchange for indulgences[2] which virtue-wash their past
+> > and/or current corp. officers' *substantially darker deeds*;
+> >   heck, 'indulgence trafficking' seems to assuage->numb->arg(STFU)
+> > that 'virtuous' cult of GNU/Linux
+> >   developers/gatekeepers/maintainers' frivolous, *narcissist*,
+> > ethics and/or moralities so often piled up against
+> >   Reiser's work --which, paradoxically(!?), actually was largely
+> > implemented by Russian developers ;)
+> > 
+> > In the meantime, I hacked a reverse patch that undoes some(all) of
+> > the surreptitious lethal attack on reiser4 fs
+> >   -- at least on AMD64 architectures (I did away with other
+> > arch/Kconfigs).
+> > And no, I am not a git pro-, undoing what I could of commit
+> > 4d03e3cc59828c82ee89ea6e27a2f3cdf95aaadf (as your hinted, Ed)
+> >   does not fix the 'kernel read' issue.
+> > 
+> > Notwithstanding, I would appreciate if you can take a look at the
+> > attached patch. Probably it can be streamlined and/or improved
+> >   further to minimize pain on subsequent Linux kernel upgrades.
+> 
+> 
+> That patch is an attempt to swim against the current ;)
+> 
+> I no longer remember, why they want to get rid of set_fs for already
+> 15
+> years, but ->read() and ->write() methods seem to be deprecated, and
+> the
+> correct way would be to implement the new ->read_iter() and
+> write_iter()
+> methods, where reiser4 works with "chunked" streams, represented by
+> iov_iter structure, rather than with "continuous" streams,
+> represented
+> by char __user *buf. The task is not that difficult, but rather time
+> consuming - I don't have a time for this right now..
 
-[ Upstream commit 2acf15b94d5b8ea8392c4b6753a6ffac3135cd78 ]
+On Sun, Jun 20, 2021 at 10:45 AM Edward Shishkin
+<edward.shishkin@gmail.com> wrote:
+   So, I have implemented ->read_iter() for all plugins (*). It is
+   included
+   to reiser4-for-5.12 stuff. Not sure if it is enough to make distro with
+   root over reiser4 though: ->write_iter() is not yet implemented (not so
+   trivial because of transactions).
+   
+   (*)
+   https://github.com/edward6/reiser4/commit/ac72aba7e8bb16a28755c1b2b762971927d17c3c
+   
+   https://github.com/edward6/reiser4/commit/4d3200fbcb2003c680cdb822e3f616d3fa83c391
+   
+   Edward.
+   
+You updated reiser4 patch implementation enables the reiser4 Debian
+Installer (d-i) to proceed with the installation into a reiser4 root fs
+disk media, Sir, much appreciated.
 
-Our syzcaller report a NULL pointer dereference:
+< https://metztli.it/bullseye/netboot-ng/metztli-reiser4.iso >
+< https://metztli.it/bullseye/netboot-ng/metztli-reiser4.iso.SHA256SUM
+>
 
-BUG: kernel NULL pointer dereference, address: 0000000000000000
-PGD 116e95067 P4D 116e95067 PUD 1080b5067 PMD 0
-Oops: 0010 [#1] SMP KASAN
-CPU: 7 PID: 592 Comm: a.out Not tainted 5.13.0-next-20210629-dirty #67
-Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS ?-20190727_073836-buildvm-p4
-RIP: 0010:0x0
-Code: Unable to access opcode bytes at RIP 0xffffffffffffffd6.
-RSP: 0018:ffff888114e779b8 EFLAGS: 00010246
-RAX: 0000000000000000 RBX: 1ffff110229cef39 RCX: ffffffffaa67e1aa
-RDX: 0000000000000000 RSI: ffff88810a58ee00 RDI: ffff8881233180b0
-RBP: ffffffffac38e9c0 R08: ffffffffaa67e17e R09: 0000000000000001
-R10: ffffffffb91c5557 R11: fffffbfff7238aaa R12: ffff88810a58ee00
-R13: ffff888114e77aa0 R14: 0000000000000000 R15: ffff8881233180b0
-FS:  00007f946163c480(0000) GS:ffff88839f1c0000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: ffffffffffffffd6 CR3: 00000001099c1000 CR4: 00000000000006e0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
- __lookup_slow+0x116/0x2d0
- ? page_put_link+0x120/0x120
- ? __d_lookup+0xfc/0x320
- ? d_lookup+0x49/0x90
- lookup_one_len+0x13c/0x170
- ? __lookup_slow+0x2d0/0x2d0
- ? reiserfs_schedule_old_flush+0x31/0x130
- reiserfs_lookup_privroot+0x64/0x150
- reiserfs_fill_super+0x158c/0x1b90
- ? finish_unfinished+0xb10/0xb10
- ? bprintf+0xe0/0xe0
- ? __mutex_lock_slowpath+0x30/0x30
- ? __kasan_check_write+0x20/0x30
- ? up_write+0x51/0xb0
- ? set_blocksize+0x9f/0x1f0
- mount_bdev+0x27c/0x2d0
- ? finish_unfinished+0xb10/0xb10
- ? reiserfs_kill_sb+0x120/0x120
- get_super_block+0x19/0x30
- legacy_get_tree+0x76/0xf0
- vfs_get_tree+0x49/0x160
- ? capable+0x1d/0x30
- path_mount+0xacc/0x1380
- ? putname+0x97/0xd0
- ? finish_automount+0x450/0x450
- ? kmem_cache_free+0xf8/0x5a0
- ? putname+0x97/0xd0
- do_mount+0xe2/0x110
- ? path_mount+0x1380/0x1380
- ? copy_mount_options+0x69/0x140
- __x64_sys_mount+0xf0/0x190
- do_syscall_64+0x35/0x80
- entry_SYSCALL_64_after_hwframe+0x44/0xae
+Took me a while because there is no Debian packaging for the Linux
+kernel 5.12, i.e., the Debian kernel package maintainers/developers'
+last package is for 5.10.46-zt and then they skipped 5.11 and 5.12 to
+begin experimenting with packaging for 5.13.xy-zt. I had to come up
+with a crude hack -- based on inductive reasoning -- to combine patches
+from those two packaging extremes and thus test if your patch actually
+solved the installation issue.
 
-This is because 'root_inode' is initialized with wrong mode, and
-it's i_op is set to 'reiserfs_special_inode_operations'. Thus add
-check for 'root_inode' to fix the problem.
+Apropos, I have been running that reiser4 linux 5.12.19 EOL build
+locally, as well, for a couple of days without apparent issues thus
+far.
+< https://metztli.it/bullseye/tezcatlipoca.jpg >
 
-Link: https://lore.kernel.org/r/20210702040743.1918552-1-yukuai3@huawei.com
-Signed-off-by: Yu Kuai <yukuai3@huawei.com>
-Signed-off-by: Jan Kara <jack@suse.cz>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
- fs/reiserfs/super.c | 8 ++++++++
- 1 file changed, 8 insertions(+)
 
-diff --git a/fs/reiserfs/super.c b/fs/reiserfs/super.c
-index ec5716dd58c2..831a542c22c6 100644
---- a/fs/reiserfs/super.c
-+++ b/fs/reiserfs/super.c
-@@ -2085,6 +2085,14 @@ static int reiserfs_fill_super(struct super_block *s, void *data, int silent)
- 		unlock_new_inode(root_inode);
- 	}
- 
-+	if (!S_ISDIR(root_inode->i_mode) || !inode_get_bytes(root_inode) ||
-+	    !root_inode->i_size) {
-+		SWARN(silent, s, "", "corrupt root inode, run fsck");
-+		iput(root_inode);
-+		errval = -EUCLEAN;
-+		goto error;
-+	}
-+
- 	s->s_root = d_make_root(root_inode);
- 	if (!s->s_root)
- 		goto error;
+Best Professional Regards.
+
+
 -- 
-2.30.2
+-- 
+Jose R R
+http://metztli.it
+-----------------------------------------------------------------------
+----------------------
+Download Metztli Reiser4: Debian Buster w/ Linux 5.10.26 AMD64
+-----------------------------------------------------------------------
+----------------------
+feats ZSTD compression https://sf.net/projects/metztli-reiser4/
+-----------------------------------------------------------------------
+----------------------
+or SFRN 5.1.3, Metztli Reiser5 https://sf.net/projects/debian-reiser4/
+-----------------------------------------------------------------------
+--------------------
+Official current Reiser4 resources: https://reiser4.wiki.kernel.org/
+
 
