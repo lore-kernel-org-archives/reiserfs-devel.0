@@ -1,8 +1,8 @@
 From: Metztli Information Technology <jose.r.r@metztli.com>
 Subject: Re: [reiser4 SFRN 5.1.3] kernel [5.10.x] read not supported for
  file /test-exec \(pid: 10094 comm: debootstrap\)
-Date: Wed, 04 Aug 2021 03:17:18 -0700
-Message-ID: <ef36436b5889fd1b7b545a56f196400f16e2e4d3.camel@metztli.com>
+Date: Fri, 13 Aug 2021 08:20:04 -0700
+Message-ID: <d85555853f76b7f46ce3b7514d2890091b304c12.camel@metztli.com>
 References: <20210208125427.CFC7C75EED90@huitzilopochtli.metztli-it.com>
          <e37d5585-318e-3130-82c9-7a740b9af8af@gmail.com>
 Mime-Version: 1.0
@@ -12,13 +12,13 @@ DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=metztli-com.20150623.gappssmtp.com; s=20150623;
         h=message-id:subject:from:to:cc:date:in-reply-to:references
          :user-agent:mime-version:content-transfer-encoding;
-        bh=BU4gaEXMUC4dk3AbuhMq06nooKvFSA+rLb2MZ4hroZo=;
-        b=JHt41geswPE+Gq38BYwP8Wost4DpJFkPEZ5784KofcHmCIRdsk3kDFoRz8rFVc6Dcd
-         VFxU9HSR6OYN6b0lbqKUasVMy4/Sdw5ij9PlOdATAl5+g3RwkFFo1pVl7/RSRXDUDbAt
-         4Yt50YdQgjqfJe/sa2guBwVDd1vUXzrSq28PiSsqBbiewJWW5OIbMsHzv+ZglMcORSJV
-         AeCoNHkdGBM83262X/Zw08ljsBlO65cqYKhyKaF/f+BppiNf6gPyNqFagHd7hHnYiDk8
-         Mo49qxLRV+GsIUlWU1UxH3IOgOlI28WynlBoSJ2zuvMOMRUGHkYt6bEwsRbwOAXY/QqH
-         jWmg==
+        bh=gJTQPe82ol2Y2TFU2cBPWUy+VdEbYpoVUQKUyB1Hzq8=;
+        b=woW/vHNHHNJ79tr32hXJugdwUbdUtMUQLjgy8lpO+8EpabQofYFHWxui3lv442GlAe
+         BnEDksye9hb3YLdk0VCewpeYNFSfMX9YvUVQ0+xP/RFBI4o2mdZ7UFgfifrhZrlH/thy
+         45xzTgG9se/HdGrSeoFDh3IOxnnZR203ebV6+Cwm1JZ1gY7hXQlsHhQ/cmF38heiokuw
+         0vFI6rBMyf5sNOpypOxlVVDeUVYpR+8/T6aUQjqXg5U2VTUbhHVlGD+hJfDpnuCfRSMv
+         sLBC7ogl+3XH3wc70MLs3qiRz840ktRANWaCVPkgCi7yRpA2+wwmTn9LseNctTJgri7e
+         3Rsg==
 In-Reply-To: <e37d5585-318e-3130-82c9-7a740b9af8af@gmail.com>
 List-ID: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="utf-8"
@@ -208,43 +208,80 @@ On Mon, 2021-02-08 at 17:03 +0100, Edward Shishkin wrote:
 
 On Sun, Jun 20, 2021 at 10:45 AM Edward Shishkin
 <edward.shishkin@gmail.com> wrote:
-   So, I have implemented ->read_iter() for all plugins (*). It is
-   included
-   to reiser4-for-5.12 stuff. Not sure if it is enough to make distro with
-   root over reiser4 though: ->write_iter() is not yet implemented (not so
-   trivial because of transactions).
+      So, I have implemented ->read_iter() for all plugins (*). It is
+      included
+      to reiser4-for-5.12 stuff. Not sure if it is enough to make distro with
+      root over reiser4 though: ->write_iter() is not yet implemented (not so
+      trivial because of transactions).
+      
+      (*)
+      https://github.com/edward6/reiser4/commit/ac72aba7e8bb16a28755c1b2b762971927d17c3c
+      
+      https://github.com/edward6/reiser4/commit/4d3200fbcb2003c680cdb822e3f616d3fa83c391
+      
+      Edward.
+      
+   Your updated reiser4 patch implementation enables the reiser4 Debian
+   Installer (d-i) to proceed with the installation into a reiser4 root fs
+   disk media, Sir, much appreciated.
    
-   (*)
-   https://github.com/edward6/reiser4/commit/ac72aba7e8bb16a28755c1b2b762971927d17c3c
+   < https://metztli.it/bullseye/netboot-ng/metztli-reiser4.iso >
+   < https://metztli.it/bullseye/netboot-ng/metztli-reiser4.iso.SHA256SUM
+   >
    
-   https://github.com/edward6/reiser4/commit/4d3200fbcb2003c680cdb822e3f616d3fa83c391
+   Took me a while because there is no Debian packaging for the Linux
+   kernel 5.12, i.e., the Debian kernel package maintainers/developers'
+   last package is for 5.10.46-zt and then they skipped 5.11 and 5.12 to
+   begin experimenting with packaging for 5.13.xy-zt. I had to come up
+   with a crude hack -- based on inductive reasoning -- to combine patches
+   from those two packaging extremes and thus test if your patch actually
+   solved the installation issue.
    
-   Edward.
+   Apropos, I have been running that reiser4 linux 5.12.19 EOL build
+   locally, as well, for a couple of days without apparent issues thus
+   far.
+   < https://metztli.it/bullseye/tezcatlipoca.jpg >
    
-You updated reiser4 patch implementation enables the reiser4 Debian
-Installer (d-i) to proceed with the installation into a reiser4 root fs
-disk media, Sir, much appreciated.
+   Best Professional Regards.
+   
+   
+Niltze, Ed-
 
-< https://metztli.it/bullseye/netboot-ng/metztli-reiser4.iso >
-< https://metztli.it/bullseye/netboot-ng/metztli-reiser4.iso.SHA256SUM
->
+I finally got around to creating an SFRN 5.1.3 -enabled Debian
+Installer (d-i) for upcoming Debian 11 (codenamed Bullseye). Applied
+your unstable reiser4 for 5.12 patch onto my debianized hack packaging
+for Linux kernel 5.12.19 EOL.
 
-Took me a while because there is no Debian packaging for the Linux
-kernel 5.12, i.e., the Debian kernel package maintainers/developers'
-last package is for 5.10.46-zt and then they skipped 5.11 and 5.12 to
-begin experimenting with packaging for 5.13.xy-zt. I had to come up
-with a crude hack -- based on inductive reasoning -- to combine patches
-from those two packaging extremes and thus test if your patch actually
-solved the installation issue.
+I gave the d-i a spin in VirtualBox 6.1.26 and it choked on the
+following code fragment:
+---------------------------------------------------------------------
+setup_dev_linux () {
+        # Ensure static device nodes created during install are
+preserved
+        # Tests in MAKEDEV require this is done in the D-I environment
+        mkdir -p /dev/.static/dev
+        chmod 700 /dev/.static/
+        mount --bind /target/dev /dev/.static/dev
+        # Mirror device nodes in D-I environment to target
+        mount --bind /dev /target/dev/
+}
+-----------------------------------------------------------------------
 
-Apropos, I have been running that reiser4 linux 5.12.19 EOL build
-locally, as well, for a couple of days without apparent issues thus
-far.
-< https://metztli.it/bullseye/tezcatlipoca.jpg >
+specifically:
+mount --bind /target/dev /dev/.static/dev
+
+See relevant code fragment next to VirtualBox VM, where I manually
+entered the above directive:
+< https://metztli.it/bullseye-reiser5/d-i-sfrn5-fail.jpg >
+
+i.e., '--bind' is causing the SFRN5 -enabled installer to bail out
+*only* for this reiser4 unstable SFRN 5.1.3 -patched kernel. On the
+other hand, as reported previously, no such issue occurs with your
+reiser4 stable SFRN 4.0.2 patch applied to the *same* debianized kernel
+source tree, Ed.
 
 
 Best Professional Regards.
-
 
 -- 
 -- 
@@ -252,7 +289,7 @@ Jose R R
 http://metztli.it
 -----------------------------------------------------------------------
 ----------------------
-Download Metztli Reiser4: Debian Buster w/ Linux 5.10.26 AMD64
+Download Metztli Reiser4: Debian Buster w/ Linux 5.9.26 AMD64
 -----------------------------------------------------------------------
 ----------------------
 feats ZSTD compression https://sf.net/projects/metztli-reiser4/
