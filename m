@@ -1,138 +1,213 @@
-From: Edward Shishkin <edward.shishkin@gmail.com>
+From: Metztli Information Technology <jose.r.r@metztli.com>
 Subject: Re: [reiser4 SFRN 5.1.3] kernel [5.10.x] read not supported for file
  /test-exec \(pid: 10094 comm: debootstrap\)
-Date: Sat, 14 Aug 2021 13:00:05 +0200
-Message-ID: <12924b25-baa4-2965-65de-bc64ed43069f@gmail.com>
+Date: Mon, 16 Aug 2021 12:22:03 -0700
+Message-ID: <1fb139b8-7c96-54c6-5bb7-2ee88399395c@metztli.com>
 References: <20210208125427.CFC7C75EED90@huitzilopochtli.metztli-it.com>
  <e37d5585-318e-3130-82c9-7a740b9af8af@gmail.com>
  <d85555853f76b7f46ce3b7514d2890091b304c12.camel@metztli.com>
+ <12924b25-baa4-2965-65de-bc64ed43069f@gmail.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
+        d=metztli-com.20150623.gappssmtp.com; s=20150623;
         h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=fB1jBEy4ZcpTnTunznV8ts4UnCGebxmPq6yYD+jKJUo=;
-        b=Qo09iwekaKeyYOa8ONz+iP+5H0pyNiefTPidHb5JOvmXfc5C6ZChP3fyDrZkwgBhpo
-         Wcb7S4IHMFYXx/29vZd/Wy35kqWQFBxXTwYHVzudkptPVJshUkotYWbjMU65og+kUWC/
-         z9uxxyzXcRr7TMPeOGqG/g0vA1Z3AxmnG3y6ltmKzl4ustvlkQt7F1zn5RfAmSWUovfg
-         Wn2ipdgDQFuXNvMalTnw17e3yU+9q4NbbioQr9B+iKDGam3aXx1phP1+jbhsYdNCOA99
-         SbJKJvJQwkC/La34XFB9SzKfVBBHZWwuo78vQk8W/QlDO00G6MIJFmkMjGjudknouhfV
-         tDzQ==
-In-Reply-To: <d85555853f76b7f46ce3b7514d2890091b304c12.camel@metztli.com>
+         :mime-version:in-reply-to:content-transfer-encoding:content-language;
+        bh=AQDl3/h6ZmlJMTNQ0/Ak5TGO+G6HIuh2vcGomLmr81I=;
+        b=bbgelVpbhdXzWfJZobqv1dAbjsjTDqet0r3c3kAzn7X3Lij5To+GkCJ3Sa9iWfQWBt
+         PpNbUCfxNX63ygcJGzMSujz438Ou1Jyv2JwaBQ0wfQ6adfVXgd7EyXmOKHZ1ColvO25u
+         6RbHywaRZJweDLUwyiZLe0/HIezaPJOHJwEbhJiXV8b9RSz+YDrXc1QxREZSuLmuhYPu
+         rykPZN7egCjZZW/Kj44Emo51mrMQoSG51HQE1+1/Je8Qp8DsnvAjOLFjJXt6+hYp2wEi
+         IZJw2kcn7d/K/DBjHGVN6KX/cvAdq8tYhEz+bjmK74x2W9Bf9ngW0Eyfn5dxIUXj7RJe
+         kS4Q==
+In-Reply-To: <12924b25-baa4-2965-65de-bc64ed43069f@gmail.com>
 Content-Language: en-US
 List-ID: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="utf-8"; format="flowed"
-To: Metztli Information Technology <jose.r.r@metztli.com>
+To: Edward Shishkin <edward.shishkin@gmail.com>
 Cc: reiserfs-devel@vger.kernel.org, linux-kernel@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>
 
-On 08/13/2021 05:20 PM, Metztli Information Technology wrote:
 
-[...]
-
+On 8/14/21 4:00 AM, Edward Shishkin wrote:
+> On 08/13/2021 05:20 PM, Metztli Information Technology wrote:
+>
+> [...]
+>
+>>>>
+>>>> Notwithstanding, I would appreciate if you can take a look at the
+>>>> attached patch. Probably it can be streamlined and/or improved
+>>>>    further to minimize pain on subsequent Linux kernel upgrades.
 >>>
->>> Notwithstanding, I would appreciate if you can take a look at the
->>> attached patch. Probably it can be streamlined and/or improved
->>>    further to minimize pain on subsequent Linux kernel upgrades.
+>>>
+>>> That patch is an attempt to swim against the current ;)
+>>>
+>>> I no longer remember, why they want to get rid of set_fs for already
+>>> 15
+>>> years, but ->read() and ->write() methods seem to be deprecated, and
+>>> the
+>>> correct way would be to implement the new ->read_iter() and
+>>> write_iter()
+>>> methods, where reiser4 works with "chunked" streams, represented by
+>>> iov_iter structure, rather than with "continuous" streams,
+>>> represented
+>>> by char __user *buf. The task is not that difficult, but rather time
+>>> consuming - I don't have a time for this right now..
 >>
+>> On Sun, Jun 20, 2021 at 10:45 AM Edward Shishkin
+>> <edward.shishkin@gmail.com> wrote:
+>>        So, I have implemented ->read_iter() for all plugins (*). It is
+>>        included
+>>        to reiser4-for-5.12 stuff. Not sure if it is enough to make 
+>> distro with
+>>        root over reiser4 though: ->write_iter() is not yet 
+>> implemented (not so
+>>        trivial because of transactions).
+>>               (*)
+>> https://github.com/edward6/reiser4/commit/ac72aba7e8bb16a28755c1b2b762971927d17c3c
+>> https://github.com/edward6/reiser4/commit/4d3200fbcb2003c680cdb822e3f616d3fa83c391
+>>               Edward.
+>
+> Hello,
+>
+> Now the new striped file plugin implements ->write_iter():
+> https://github.com/edward6/reiser4/commit/a3795ffffbb841bfaa66bfb18c12fb317533d1ff 
+>
+
+Wow! That must have been a lot of extra work on your part, Sir, Спасибо!
+
+Debian Installer (d-i) makes use of BusyBox. Notwithstanding, for 
+whatever reason, BusyBox barebones (link) mount utility failed with 
+similar message -- even though I took care to build the latest from source:
+
+< https://www.busybox.net/ >
+
+I had to hack a mount-udeb small package, wrapping mount and umount within:
+
+< https://metztli.it/readOnlyEphemeral/mount-udeb_2.37.1-1_amd64.udeb >
+
+by utilizing debian packaging for previous version of util-linux
+< https://packages.debian.org/sid/util-linux >
+
+and a more recent util linux source
+< https://mirrors.edge.kernel.org/pub/linux/utils/util-linux/v2.37/ >
+
+That solved the d-i 'mount -o bind' and/or 'mount --bind' issue on /dev 
+resources (i.e., red underlined)
+
+< https://metztli.it/bullseye-reiser5/non-busybox-mount-d-i.png >
+
+> [...]
+>
+>> I finally got around to creating an SFRN 5.1.3 -enabled Debian
+>> Installer (d-i) for upcoming Debian 11 (codenamed Bullseye). Applied
+>> your unstable reiser4 for 5.12 patch onto my debianized hack packaging
+>> for Linux kernel 5.12.19 EOL.
 >>
->> That patch is an attempt to swim against the current ;)
+>> I gave the d-i a spin in VirtualBox 6.1.26 and it choked on the
+>> following code fragment:
+>> ---------------------------------------------------------------------
+>> setup_dev_linux () {
+>>          # Ensure static device nodes created during install are
+>> preserved
+>>          # Tests in MAKEDEV require this is done in the D-I environment
+>>          mkdir -p /dev/.static/dev
+>>          chmod 700 /dev/.static/
+>>          mount --bind /target/dev /dev/.static/dev
+>>          # Mirror device nodes in D-I environment to target
+>>          mount --bind /dev /target/dev/
+>> }
+>> -----------------------------------------------------------------------
 >>
->> I no longer remember, why they want to get rid of set_fs for already
->> 15
->> years, but ->read() and ->write() methods seem to be deprecated, and
->> the
->> correct way would be to implement the new ->read_iter() and
->> write_iter()
->> methods, where reiser4 works with "chunked" streams, represented by
->> iov_iter structure, rather than with "continuous" streams,
->> represented
->> by char __user *buf. The task is not that difficult, but rather time
->> consuming - I don't have a time for this right now..
-> 
-> On Sun, Jun 20, 2021 at 10:45 AM Edward Shishkin
-> <edward.shishkin@gmail.com> wrote:
->        So, I have implemented ->read_iter() for all plugins (*). It is
->        included
->        to reiser4-for-5.12 stuff. Not sure if it is enough to make distro with
->        root over reiser4 though: ->write_iter() is not yet implemented (not so
->        trivial because of transactions).
->        
->        (*)
->        https://github.com/edward6/reiser4/commit/ac72aba7e8bb16a28755c1b2b762971927d17c3c
->        
->        https://github.com/edward6/reiser4/commit/4d3200fbcb2003c680cdb822e3f616d3fa83c391
->        
->        Edward.
->        
+>> specifically:
+>> mount --bind /target/dev /dev/.static/dev
+>>
+>> See relevant code fragment next to VirtualBox VM, where I manually
+>> entered the above directive:
+>> < https://metztli.it/bullseye-reiser5/d-i-sfrn5-fail.jpg >
+>>
+>> i.e., '--bind' is causing the SFRN5 -enabled installer to bail out
+>> *only* for this reiser4 unstable SFRN 5.1.3 -patched kernel. On the
+>> other hand, as reported previously, no such issue occurs with your
+>> reiser4 stable SFRN 4.0.2 patch applied to the *same* debianized kernel
+>> source tree, Ed.
+>
+> I have checked - everything works for me (Linux-5.12).
+>
+> # mount /dev/vdd1 /mnt/test
+> # volume.reiser4 /mnt/test
+>
+> Logical Volume Info:
+> ID:             03ac5995-bf77-4851-a302-e875a6fd752f
+> volume:         0x1 (asym)
+> distribution:   0x1 (fsx32m)
+> stripe:         262144
+> segments:       1024
+> bricks total:   3
+> bricks in DSA:  3
+> slots:          3
+> map blocks:     2
+> balanced:       Yes
+> health:         OK
+>
+> # mkdir bindmnt
+> # mount --bind /mnt/test bindmnt
+> # mount
+> [...]
+> /dev/vdd1 on /mnt/test type reiser4 
+> (rw,relatime,atom_max_size=0x3d88e,atom_max_age=0x927c0,atom_min_size=0x100,atom_max_flushers=0x1,cbk_cache_slots=0x10)
+> /dev/vdd1 on /root/bindmnt type reiser4 
+> (rw,relatime,atom_max_size=0x3d88e,atom_max_age=0x927c0,atom_min_size=0x100,atom_max_flushers=0x1,cbk_cache_slots=0x10)
 
-Hello,
+Summarizing...
 
-Now the new striped file plugin implements ->write_iter():
-https://github.com/edward6/reiser4/commit/a3795ffffbb841bfaa66bfb18c12fb317533d1ff
+Your modified reiser4 SFRN 4.0.2 patch implementing '->read_iter() for 
+all plugins (*)' successfully enabled Debian Installer netboot for 
+bullseye to install upcoming Debian 11 Bullseye for AMD64 with hacked 
+Linux kernel 5.12.19-2 EOL
 
-[...]
+< https://metztli.it/bullseye-reiser5/guided-install-sfrn4.jpg >
 
-> I finally got around to creating an SFRN 5.1.3 -enabled Debian
-> Installer (d-i) for upcoming Debian 11 (codenamed Bullseye). Applied
-> your unstable reiser4 for 5.12 patch onto my debianized hack packaging
-> for Linux kernel 5.12.19 EOL.
-> 
-> I gave the d-i a spin in VirtualBox 6.1.26 and it choked on the
-> following code fragment:
-> ---------------------------------------------------------------------
-> setup_dev_linux () {
->          # Ensure static device nodes created during install are
-> preserved
->          # Tests in MAKEDEV require this is done in the D-I environment
->          mkdir -p /dev/.static/dev
->          chmod 700 /dev/.static/
->          mount --bind /target/dev /dev/.static/dev
->          # Mirror device nodes in D-I environment to target
->          mount --bind /dev /target/dev/
-> }
-> -----------------------------------------------------------------------
-> 
-> specifically:
-> mount --bind /target/dev /dev/.static/dev
-> 
-> See relevant code fragment next to VirtualBox VM, where I manually
-> entered the above directive:
-> < https://metztli.it/bullseye-reiser5/d-i-sfrn5-fail.jpg >
-> 
-> i.e., '--bind' is causing the SFRN5 -enabled installer to bail out
-> *only* for this reiser4 unstable SFRN 5.1.3 -patched kernel. On the
-> other hand, as reported previously, no such issue occurs with your
-> reiser4 stable SFRN 4.0.2 patch applied to the *same* debianized kernel
-> source tree, Ed.
 
-I have checked - everything works for me (Linux-5.12).
+Analogously, your modified reiser4 SFRN 5.1.3 patch implementing 
+'->read_iter() for all plugins (*)' and ' ->write_iter()' successfully 
+enabled Debian Installer netboot for bullseye to install upcoming Debian 
+11 Bullseye for AMD64 with hacked Linux kernel 5.12.19-2 EOL
 
-# mount /dev/vdd1 /mnt/test
-# volume.reiser4 /mnt/test
+guided installation (which defaults to MSDOS partitioning) with sample 
+from one of three options: /home and / root reiser4 but /boot JFS
 
-Logical Volume Info:
-ID:             03ac5995-bf77-4851-a302-e875a6fd752f
-volume:         0x1 (asym)
-distribution:   0x1 (fsx32m)
-stripe:         262144
-segments:       1024
-bricks total:   3
-bricks in DSA:  3
-slots:          3
-map blocks:     2
-balanced:       Yes
-health:         OK
+< https://metztli.it/bullseye-reiser5/guided-install-sfrn5.jpg >
 
-# mkdir bindmnt
-# mount --bind /mnt/test bindmnt
-# mount
-[...]
-/dev/vdd1 on /mnt/test type reiser4 
-(rw,relatime,atom_max_size=0x3d88e,atom_max_age=0x927c0,atom_min_size=0x100,atom_max_flushers=0x1,cbk_cache_slots=0x10)
-/dev/vdd1 on /root/bindmnt type reiser4 
-(rw,relatime,atom_max_size=0x3d88e,atom_max_age=0x927c0,atom_min_size=0x100,atom_max_flushers=0x1,cbk_cache_slots=0x10)
 
-Thanks,
-Edward.
+Or expert, which enables GPT partitioning; here is a / reiser4 and /boot 
+JFS VirtualBox 6.1.26 VM JPG snapshot:
+
+< https://metztli.it/bullseye-reiser5/expert-install-sfrn5.jpg >
+
+and the PoC reiser4 SFRN 5.1.3 -enabled Debian Installer (d-i):
+
+< https://metztli.it/bullseye-reiser5/netboot-ng/metztli-reiser4-sfrn5.iso >
+
+< 
+https://metztli.it/bullseye-reiser5/netboot-ng/metztli-reiser4-sfrn5.iso.SHA256SUM 
+ >
+
+I have not tested the bricks feature for which you specifically created 
+the SFRN 5.1.3 enhancement. Other Linux users are welcomed to test that 
+feature and provide feedback to you, Sir. The entry into reiser4 is 
+substantially lowered with a native reiser4 installer, which is what I 
+have done with the above ISO images freely made available but with *NO 
+IMPLICIT NOR EXPLICIT WARRANTIES*
+
+
+Best Professional Regards.
+
+
+P.S. Reiser4 quirk: If during expert installation of reiser4 -enhanced 
+Debian /tmp is formatted in other than reiser4, after a reboot 
+attempting a MySQL/MariaDB installation will fail. I experienced that in 
+a remote bare metal server.
+
+
+
