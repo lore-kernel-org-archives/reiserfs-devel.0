@@ -1,103 +1,294 @@
-From: Christian Brauner <christian.brauner@ubuntu.com>
-Subject: Re: [PATCH] fs: reiserfs: fix NULL pointer dereference in
-Date: Wed, 18 Aug 2021 10:39:02 +0200
-Message-ID: <20210818083902.cggbknm3o2e75ewe@wittgenstein>
-References: <1629273667-7687-1-git-send-email-tcs_kernel@tencent.com>
+From: Metztli Information Technology <jose.r.r@metztli.com>
+Subject: Re: partman, growlight, discoverable partitions, and fun
+Date: Mon, 27 Sep 2021 08:10:39 -0700
+Message-ID: <4801b78b-a934-f105-3238-e35cb3109745@metztli.com>
+References: <YUzqHtJYGb0I0ZC3@schwarzgerat.orthanc>
+ <eae892df-cfb6-20f0-5de9-17e4cdde49ab@physik.fu-berlin.de>
+ <CANPPEmRV+1+yijo_dB=jtL+vnaD_8kVDeCDfL=ZcE6PzRZZuRw@mail.gmail.com>
+ <48da69b9-7ded-19d5-c62e-b4ccc901e466@physik.fu-berlin.de>
+ <YVCDuHu75/b64isw@schwarzgerat.orthanc>
+ <a217aa68-644f-b80e-2a9d-e0dee6d5187a@physik.fu-berlin.de>
 Mime-Version: 1.0
-Return-path: <reiserfs-devel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <1629273667-7687-1-git-send-email-tcs_kernel@tencent.com>
-List-ID: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: multipart/alternative;
+ boundary="------------730B58C4006216C438D90B06"
+Return-path: <bounce-debian-boot=debian-boot=m.gmane-mx.org@lists.debian.org>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=metztli-com.20210112.gappssmtp.com; s=20210112;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language;
+        bh=tO37ydNM4DzwwSF+MPic1ewPwTRuD2BDGvy0wHFlN5M=;
+        b=noIlv2m0zesYSf+1gUmrgenNIQeb3KrpD7Uy0JhQwZ40vNJGbbfDqktFmF1vlXyC8q
+         GYKkdJR5idCXrTLuv2FXB2muilJ6fqLAtadPKWZv0Es5JcPYABkwZexa7KmR4/C6Pxfp
+         3wIOUEbi2sj0IKLmFZfsC4wEqh8luYrBuxewNfnrXkzEGRZFHwm4ERziaCZXU7r7Qru4
+         3Ink/lsYoIRisEQURSIE9k3MGJQlUsC0wvxAeo9ZjLj8rD+B/dsMYFFCCYb0FXdxFW7A
+         WUL57MFv6hUeJCPxgzYGODAVFprdV/eCf4ySrQ0pQBDVV3PQnmJ72lSM6KLIBlPLG4Id
+         m9FQ==
+In-Reply-To: <a217aa68-644f-b80e-2a9d-e0dee6d5187a@physik.fu-berlin.de>
+Content-Language: en-US
+Resent-Message-ID: <BQZiuXNivwE.A.mVF.RLeUhB@bendel>
+List-Id: <reiserfs-devel.vger.kernel.org>
+List-URL: <https://lists.debian.org/debian-boot/>
+List-Post: <mailto:debian-boot@lists.debian.org>
+List-Help: <mailto:debian-boot-request@lists.debian.org?subject=help>
+List-Subscribe: <mailto:debian-boot-request@lists.debian.org?subject=subscribe>
+List-Unsubscribe: <mailto:debian-boot-request@lists.debian.org?subject=unsubscribe>
+List-Archive: https://lists.debian.org/msgid-search/4801b78b-a934-f105-3238-e35cb3109745@metztli.com
+To: John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>, Nick Black <dankamongmen@gmail.com>
+Cc: debian-boot@lists.debian.org, debian-devel@lists.debian.org, edward.shishkin@gmail.com, reiserfs-devel@vger.kernel.org
+
+This is a multi-part message in MIME format.
+--------------730B58C4006216C438D90B06
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Transfer-Encoding: 7bit
-To: tcs.kernel@gmail.com
-Cc: mszeredi@redhat.com, jamorris@linux.microsoft.com, gustavoars@kernel.org, reiserfs-devel@vger.kernel.org, Haimin Zhang <tcs_kernel@tencent.com>
 
-On Wed, Aug 18, 2021 at 04:01:07PM +0800, tcs.kernel@gmail.com wrote:
-> From: Haimin Zhang <tcs_kernel@tencent.com> 
-> 
-> If root_inode->i_op is reiserfs_special_inode_operations
-> reiserfs_special_inode_operations doesn't implement the lookup callback
-> function,resulting an NULL pointer when the reiserfs_lookup_privroot() 
-> function was called.
-> 
-> Call Trace:
->  __lookup_slow+0x267/0x490 build/../fs/namei.c:1646
->  lookup_one_len+0x163/0x190 build/../fs/namei.c:2663
->  reiserfs_lookup_privroot+0x92/0x290 build/../fs/reiserfs/xattr.c:980
->  reiserfs_fill_super+0x1f2a/0x2d80 build/../fs/reiserfs/super.c:2176
->  mount_bdev+0x33d/0x410 build/../fs/super.c:1368
->  legacy_get_tree+0x103/0x210 build/../fs/fs_context.c:610
->  vfs_get_tree+0x86/0x2f0 build/../fs/super.c:1498
->  do_new_mount build/../fs/namespace.c:2905 [inline]
->  path_mount+0x688/0x1d10 build/../fs/namespace.c:3235
->  do_mount+0xf1/0x110 build/../fs/namespace.c:3248
->  __do_sys_mount build/../fs/namespace.c:3456 [inline]
->  __se_sys_mount build/../fs/namespace.c:3433 [inline]
->  __x64_sys_mount+0x1d5/0x220 build/../fs/namespace.c:3433
->  do_syscall_x64 build/../arch/x86/entry/common.c:50 [inline]
->  do_syscall_64+0x34/0xb0 build/../arch/x86/entry/common.c:80
->  entry_SYSCALL_64_after_hwframe+0x44/0xae
-> 
 
-Hey Haimin,
+On 9/27/21 4:01 AM, John Paul Adrian Glaubitz wrote:
+> Hello Nick!
+>
+> On 9/26/21 16:29, Nick Black wrote:
+>> I'd be delighted to support them -- as in, I am honestly eager
+>> to add ATARI support; that sounds awesome -- I just need some
+>> way to test the implementations, either via someone running it
+>> on the environment, or getting access to such a machine.
+> There are emulators available for Atari such as Aranym. And emulators
+> available for Amiga such as fs-uae. FWIW, parted should contain everything
+> needed to be able to implement your own support for these partition tables.
+>
+>>> I think it makes little sense to not use libparted as it already supports
+>>> all common and less common partition types and reimplementing everything
+>>> that libparted makes little sense to me.
+>> parted did not have ZFS support when I embarked on this project
+>> (it appears to have it now). i would not be opposed to
+>> leveraging libparted if it presents a definite advantage;
+>> supporting more partition types, so long as it exposes an API i
+>> can easily work with, would be such an advantage.
+> Well, using a missing feature in the past against parted that is present
+> there is not such a good argument against using it, to be honest.
+>
+>> i do note that libparted2 is 621K in the archive, whereas
+>> growlight itself is only 555K. it is of course possible that
+>> all that weight is desirable functionality.
+> I think 70k more disk space is not really a concern.
+>
+>> with that said, i would *still want to test on the target
+>> environment*, to make sure i'm using libparted correctly there.
+>> so that necessity remains.
+> I thought you didn't depend on libparted?
+>
+>> would this allay your concerns?
+> No, not really. I consider a partitioning tool to be too important
+> to be replaced by an unproven solution.
+>
+Growlight seems like an adequate tool for Debian expert option as it has 
+potential to enable additional flexibility and extensibility for file 
+system options which may not offered in the current set of Parted 
+utilities. For instance, the current Growlight string/option 'enter 
+filesystem name' could be re-implemented, with a couple lines of code, 
+into something like 'enter plugin override'
 
-This is rather suspicious. I'd really like to see the syzbot reproducer
-for this. Which brings us to:
+< https://metztli.it/bullseye/gl/gl-reiser4-plugin-override.png >
 
-> Reported-by: syzbot+11c49c...@syzkaller.appspotmail.com
+etc., for other filesystems.
 
-what's the full syzbot link? This is hacked off.
 
-> Signed-off-by: Haimin Zhang <tcs_kernel@tencent.com>
-> ---
->  fs/reiserfs/namei.c | 7 +++++++
->  1 file changed, 7 insertions(+)
-> 
-> diff --git a/fs/reiserfs/namei.c b/fs/reiserfs/namei.c
-> index 3d7a35d..947b51b 100644
-> --- a/fs/reiserfs/namei.c
-> +++ b/fs/reiserfs/namei.c
-> @@ -350,6 +350,12 @@ static int reiserfs_find_entry(struct inode *dir, const char *name, int namelen,
->  	}			/* while (1) */
->  }
->  
-> +static struct dentry *reiserfs_noop_lookup(struct inode *dir, struct dentry *dentry,
-> +				      unsigned int flags)
-> +{
-> +	return ERR_PTR(-ENOENT);
-> +}
-> +
->  static struct dentry *reiserfs_lookup(struct inode *dir, struct dentry *dentry,
->  				      unsigned int flags)
->  {
-> @@ -1680,6 +1686,7 @@ static int reiserfs_rename(struct user_namespace *mnt_userns,
->   * special file operations.. just xattr/acl stuff
->   */
->  const struct inode_operations reiserfs_special_inode_operations = {
-> +	.lookup = reiserfs_noop_lookup,
->  	.setattr = reiserfs_setattr,
->  	.listxattr = reiserfs_listxattr,
->  	.permission = reiserfs_permission,
+Also Growlight may reduce at least a subset of UDEB modules needed for 
+each file system supported by Debian, thus reducing complexity. For 
+instance, it was relatively straightforward to add support for reiser4 
+-- as compared to initial efforts developing substantial code for a 
+partman-[filesystem] UDEB module.
 
-In any case, this seems like the wrong fix tapering over the real issue.
-The issue here seems to me some sort of corruption going on. The root
-inode should not be a special file. So reiserfs should do it like xfs,
-ext4, btrfs etc. and verify one way or the other that the root inode is
-a directory and return an error when it isn't. Sm like this (completely
-untested and produced with marginal knowledge about reiserfs):
+< https://metztli.it/bullseye/gl/growlight-reiser4.png >
 
-diff --git a/fs/reiserfs/super.c b/fs/reiserfs/super.c
-index 3ffafc73acf0..be4c301f5c94 100644
---- a/fs/reiserfs/super.c
-+++ b/fs/reiserfs/super.c
-@@ -2062,7 +2062,7 @@ static int reiserfs_fill_super(struct super_block *s, void *data, int silent)
-        root_inode =
-            iget5_locked(s, REISERFS_ROOT_OBJECTID, reiserfs_find_actor,
-                         reiserfs_init_locked_inode, (void *)&args);
--       if (!root_inode) {
-+       if (!root_inode || !S_ISDIR(root_inode)) {
-                SWARN(silent, s, "jmacd-10", "get root inode failed");
-                goto error_unlocked;
-        }
+In other words, even if there is no compelling reason to update d-i at 
+the moment, Growlight has potential to decrease complexity in the long run.
+
+Just a point of view from an outsider, of course, I do not want anyone 
+'to have a cow' for refusing to potentially move away from their place 
+of comfort and/or entertaining a perspective that may be considered 'taboo.'
+
+
+Best Professional Regards.
+
+-- 
+
+Jose R R
+http://metztli.it <http://metztli.it>
+---------------------------------------------------------------------------------------------
+Download Metztli Reiser4: Debian Buster w/ Linux 5.13.14 AMD64
+---------------------------------------------------------------------------------------------
+feats ZSTD compression https://sf.net/projects/metztli-reiser4/ 
+<https://sf.net/projects/metztli-reiser4/>
+---------------------------------------------------------------------------------------------
+or SFRN 5.1.3, Metztli Reiser5 https://sf.net/projects/debian-reiser4/ 
+<https://sf.net/projects/debian-reiser4/>
+-------------------------------------------------------------------------------------------
+Official current Reiser4 resources: https://reiser4.wiki.kernel.org/ 
+<https://reiser4.wiki.kernel.org/>
+
+--------------730B58C4006216C438D90B06
+Content-Type: text/html; charset=utf-8
+Content-Transfer-Encoding: 7bit
+
+<html>
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  </head>
+  <body>
+    <p><br>
+    </p>
+    <div class="moz-cite-prefix">On 9/27/21 4:01 AM, John Paul Adrian
+      Glaubitz wrote:<br>
+    </div>
+    <blockquote type="cite"
+      cite="mid:a217aa68-644f-b80e-2a9d-e0dee6d5187a@physik.fu-berlin.de">
+      <pre class="moz-quote-pre" wrap="">Hello Nick!
+
+On 9/26/21 16:29, Nick Black wrote:
+</pre>
+      <blockquote type="cite">
+        <pre class="moz-quote-pre" wrap="">I'd be delighted to support them -- as in, I am honestly eager
+to add ATARI support; that sounds awesome -- I just need some
+way to test the implementations, either via someone running it
+on the environment, or getting access to such a machine.
+</pre>
+      </blockquote>
+      <pre class="moz-quote-pre" wrap="">
+There are emulators available for Atari such as Aranym. And emulators
+available for Amiga such as fs-uae. FWIW, parted should contain everything
+needed to be able to implement your own support for these partition tables.
+
+</pre>
+      <blockquote type="cite">
+        <blockquote type="cite">
+          <pre class="moz-quote-pre" wrap="">I think it makes little sense to not use libparted as it already supports
+all common and less common partition types and reimplementing everything
+that libparted makes little sense to me.
+</pre>
+        </blockquote>
+        <pre class="moz-quote-pre" wrap="">
+parted did not have ZFS support when I embarked on this project
+(it appears to have it now). i would not be opposed to
+leveraging libparted if it presents a definite advantage;
+supporting more partition types, so long as it exposes an API i
+can easily work with, would be such an advantage.
+</pre>
+      </blockquote>
+      <pre class="moz-quote-pre" wrap="">
+Well, using a missing feature in the past against parted that is present
+there is not such a good argument against using it, to be honest.
+
+</pre>
+      <blockquote type="cite">
+        <pre class="moz-quote-pre" wrap="">i do note that libparted2 is 621K in the archive, whereas
+growlight itself is only 555K. it is of course possible that
+all that weight is desirable functionality.
+</pre>
+      </blockquote>
+      <pre class="moz-quote-pre" wrap="">
+I think 70k more disk space is not really a concern.
+
+</pre>
+      <blockquote type="cite">
+        <pre class="moz-quote-pre" wrap="">with that said, i would *still want to test on the target
+environment*, to make sure i'm using libparted correctly there.
+so that necessity remains.
+</pre>
+      </blockquote>
+      <pre class="moz-quote-pre" wrap="">
+I thought you didn't depend on libparted?
+
+</pre>
+      <blockquote type="cite">
+        <pre class="moz-quote-pre" wrap="">would this allay your concerns?
+</pre>
+      </blockquote>
+      <pre class="moz-quote-pre" wrap="">
+No, not really. I consider a partitioning tool to be too important
+to be replaced by an unproven solution.
+
+</pre>
+    </blockquote>
+    <p>Growlight seems like an adequate tool for Debian expert option as
+      it has potential to enable additional flexibility and
+      extensibility for file system options which may not offered in the
+      current set of Parted utilities. For instance, the current
+      Growlight string/option 'enter filesystem name' could be
+      re-implemented, with a couple lines of code, into something like
+      'enter plugin override'</p>
+    <p><a class="moz-txt-link-rfc2396E" href="https://metztli.it/bullseye/gl/gl-reiser4-plugin-override.png">&lt;
+      https://metztli.it/bullseye/gl/gl-reiser4-plugin-override.png &gt;</a></p>
+    <p>etc., for other filesystems.<br>
+    </p>
+    <p><br>
+    </p>
+    <p> Also Growlight may reduce at least a subset of UDEB modules
+      needed for each file system supported by Debian, thus reducing
+      complexity. For instance, it was relatively straightforward to add
+      support for reiser4 -- as compared to initial efforts developing
+      substantial code for a partman-[filesystem] UDEB module.<br>
+    </p>
+    <p><a class="moz-txt-link-rfc2396E" href="https://metztli.it/bullseye/gl/growlight-reiser4.png">&lt; https://metztli.it/bullseye/gl/growlight-reiser4.png &gt;</a><br>
+    </p>
+    <p>In other words, even if there is no compelling reason to update
+      d-i at the moment, Growlight has potential to decrease complexity
+      in the long run.</p>
+    <p>Just a point of view from an outsider, of course, I do not want
+      anyone 'to have a cow' for refusing to potentially move away from
+      their place of comfort and/or entertaining a perspective that may
+      be considered 'taboo.'</p>
+    <p><br>
+    </p>
+    <p>Best Professional Regards.</p>
+    <p>-- <br>
+    </p>
+    <div dir="ltr" class="gmail_signature"
+      data-smartmail="gmail_signature">
+      <div dir="ltr">
+        <div>
+          <div dir="ltr">
+            <div>
+              <div dir="ltr">
+                <div>
+                  <div dir="ltr">
+                    <div>
+                      <div dir="ltr">
+                        <div>
+                          <div dir="ltr">
+                            <div>
+                              <div dir="ltr">
+                                <div>Jose R R<br>
+                                  <a href="http://metztli.it"
+                                    target="_blank">http://metztli.it</a><br>
+---------------------------------------------------------------------------------------------<br>
+                                  Download Metztli Reiser4: Debian
+                                  Buster w/ Linux 5.13.14 AMD64<br>
+---------------------------------------------------------------------------------------------<br>
+                                  feats ZSTD compression <a
+                                    href="https://sf.net/projects/metztli-reiser4/"
+                                    target="_blank">https://sf.net/projects/metztli-reiser4/</a><br>
+                                  <font color="#888888">---------------------------------------------------------------------------------------------<br>
+                                    or SFRN 5.1.3, Metztli Reiser5 <a
+                                      href="https://sf.net/projects/debian-reiser4/"
+                                      rel="noreferrer" target="_blank">https://sf.net/projects/debian-reiser4/</a></font><br>
+-------------------------------------------------------------------------------------------<br>
+                                  Official current Reiser4 resources: <a
+href="https://reiser4.wiki.kernel.org/" target="_blank">https://reiser4.wiki.kernel.org/</a></div>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>
+
+--------------730B58C4006216C438D90B06--
 
