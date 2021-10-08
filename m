@@ -1,37 +1,38 @@
-From: Marco Felettigh <marco@nucleus.it>
-Subject: reiserfs acl and cp wrong permissions
-Date: Thu, 7 Oct 2021 09:50:19 +0200
-Message-ID: <20211007095019.78aec97e@lobo.lobo.dom>
+From: bugzilla-daemon@bugzilla.kernel.org
+Subject: [Bug 207971] Wrong permissions with cp -a and reiserfs mounted with
+ acl
+Date: Fri, 08 Oct 2021 15:41:26 +0000
+Message-ID: <bug-207971-695-sJHJUuieM5@https.bugzilla.kernel.org/>
+References: <bug-207971-695@https.bugzilla.kernel.org/>
 Mime-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/NJ/ldtgkNKGNTnq9y0PQblx";
- protocol="application/pgp-signature"; micalg=pgp-sha1
+Content-Transfer-Encoding: quoted-printable
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1633707687;
+        bh=uyfImF8k27iVyXyiJjcEeVa6Op+B3tyE5j4ZLQdQLaw=;
+        h=From:To:Subject:Date:In-Reply-To:References:From;
+        b=WXCsUGp90hozhvAkHX5E6SXaX8NNn3OEDCMrG7UwrUTWmu9Uqy+N6KQMPYKBx5RiM
+         r90P8lAackmo/BwvR8MiEWVkTCsT1hMw/XPJ6apt/7JG6kzv5mnVXwJF9hufFHb/Au
+         Jq06wsnaDI5WwrDSBFdEbh88qz/6JTJ7YQKBc1E092PI6pn8jEbEhxoWmg79vA7fJt
+         R6xfYUpEdgx8vWyl2EhuuL2OqOtXk5cpGL+gEGSn/MXWQds6K/eHwWR6xsTRbK99wL
+         0+LauDpAli3P7pKEAkdLb1HeOAJiv3yJRs0SIBVTYARjxJQ3daldP+h7Z95CN5j1VY
+         CxFLe9d3E2GtA==
+In-Reply-To: <bug-207971-695@https.bugzilla.kernel.org/>
 List-ID: <reiserfs-devel.vger.kernel.org>
+Content-Type: text/plain; charset="us-ascii"
 To: reiserfs-devel@vger.kernel.org
 
---Sig_/NJ/ldtgkNKGNTnq9y0PQblx
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
-
-Hi all,
-there is some a remote possibility to solve this issue with reiserfs +
-acl and cp permissions ?
-
-Here the bug reported more then 1 year ago:
 https://bugzilla.kernel.org/show_bug.cgi?id=3D207971
 
-Thanks
-Marco
+--- Comment #1 from Marco (marco@nucleus.it) ---
+I also tried with kernel:
+5.14.10
+5.15-rc4
 
---Sig_/NJ/ldtgkNKGNTnq9y0PQblx
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
+but the problem persists.
 
------BEGIN PGP SIGNATURE-----
+--=20
+You may reply to this email to add a comment.
 
-iF0EARECAB0WIQRgs4moDz/kAc8JPxco+KAxdHlzYQUCYV6mvAAKCRAo+KAxdHlz
-YUWgAKCifFYq33MC5v94m+hnx5/Oi1+IVQCgvklfbdWYBxX6UvF7S1AuHHNDxIw=
-=NXk7
------END PGP SIGNATURE-----
-
---Sig_/NJ/ldtgkNKGNTnq9y0PQblx--
+You are receiving this mail because:
+You are the assignee for the bug.=
