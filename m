@@ -1,64 +1,71 @@
 From: Dongliang Mu <mudongliangabcd@gmail.com>
-Subject: Re: [PATCH] fs: reiserfs: free new_opts in reiserfs_remount
-Date: Wed, 27 Oct 2021 20:29:19 +0800
-Message-ID: <CAD-N9QX01gVnRdntN=pcTgAW7wCXtZj5o_9YctvOSHaf694cxQ@mail.gmail.com>
-References: <20211027033947.3992059-1-mudongliangabcd@gmail.com>
- <20211027094644.GA28650@quack2.suse.cz> <CAD-N9QW48LDX7++chFjeZwr0Q1HX+D0+e=6BcXKxPx=i+DgmUA@mail.gmail.com>
- <20211027111527.GD28650@quack2.suse.cz>
+Subject: [PATCH] fs: reiserfs: remove useless new_opts in reiserfs_remount
+Date: Wed, 27 Oct 2021 22:34:41 +0800
+Message-ID: <20211027143445.4156459-1-mudongliangabcd@gmail.com>
 Mime-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=RmJV7y4H0T7dh+JR8cakBOomZHH6oytwp4hKK/hZKRg=;
-        b=f2bAYZi8bkhaxUekZ1UbLZCe0hFL7njRAVf+CnNlFRWOTum5/g5Jhqo8NhlA6rByT5
-         kKZj+3QeFARk+aLW4mS5X1H623yUQ4o1mcUt2CSXuyohGpe4Lds+tU1wutcHqgNjwWnf
-         20tEFdjfi12LKf41bJJyu3ZmMp/FjT4EPBnNKPa4Ouu4BHhfpxKPk7jvylp3hiXVt5hN
-         kRFIPtatIRWxiOKgtJ5rq5UCFQpjKf9RUpgIk9H/7l359gQi1RmfTAI1VRAiKN33VnNm
-         UpJgpQcOfNEsQJrNvpCt8+/EVqMFKtHVIOp4a8kbp/vPb5AfctTBq5rKVxaxo1/TLd7C
-         eXRA==
-In-Reply-To: <20211027111527.GD28650@quack2.suse.cz>
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=thGbGpMmDBLVFCgnHjtOHQz7SQaxdSW9d+9l+tEtUqc=;
+        b=ldKmAOyUDN64FyhAHEjvFrdt6dBfRGeA7ig2+ULovFnlu9zQDtg5/RdNkjY5+o1gww
+         Qzu7x0ToRdIuf7fotbHgkKtG0j0lKjJaTacuWipZCwwNynjegtF3KrkkjrnhRHNg3S6M
+         0Ef4VWYFM1KE+8mH8JsbkYEnn0blhU4p04hDpXawndaMLprISgHBAszpqujvhLAsivkN
+         GQ2nFpe1noGxMD6hmOIu/FkkD4xQ/CRCyERLdOZFuB/0WSC/DX0PZK2c80uCGo9cBcD6
+         EJzDuZaJMIZ4YulniDBNLJ5N5XRxd+G6yHPL24IMXgIo7XryV6CPBxLQjmIDE3W4Sj8/
+         /Buw==
 List-ID: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Jan Kara <jack@suse.cz>
-Cc: Yu Kuai <yukuai3@huawei.com>, Miklos Szeredi <mszeredi@redhat.com>, Al Viro <viro@zeniv.linux.org.uk>, David Howells <dhowells@redhat.com>, reiserfs-devel@vger.kernel.org, linux-kernel <linux-kernel@vger.kernel.org>
+To: Jan Kara <jack@suse.cz>, Dongliang Mu <mudongliangabcd@gmail.com>, Miklos Szeredi <mszeredi@redhat.com>, Yu Kuai <yukuai3@huawei.com>, Al Viro <viro@zeniv.linux.org.uk>, David Howells <dhowells@redhat.com>
+Cc: reiserfs-devel@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Wed, Oct 27, 2021 at 7:15 PM Jan Kara <jack@suse.cz> wrote:
->
-> On Wed 27-10-21 18:19:00, Dongliang Mu wrote:
-> > On Wed, Oct 27, 2021 at 5:46 PM Jan Kara <jack@suse.cz> wrote:
-> > >
-> > > On Wed 27-10-21 11:39:25, Dongliang Mu wrote:
-> > > > Since the commit c3d98ea08291 ("VFS: Don't use save/replace_mount_options
-> > > > if not using generic_show_options") eliminates replace_mount_options
-> > > > in reiserfs, but did not handle the allocated new_opts,
-> > > > it will cause memory leak in the reiserfs_remount.
-> > > >
-> > > > Fix this by freeing new_opts in the reiserfs_remount temporarily.
-> > > >
-> > > > Fixes: c3d98ea08291 ("VFS: Don't use save/replace_mount_options if not using generic_show_options")
-> > > > Signed-off-by: Dongliang Mu <mudongliangabcd@gmail.com>
-> > >
-> > > Thanks for the patch but I can see that new_opts is not actually used at
-> > > all in reiserfs_remount() so we should perhaps just remove them (including
-> > > kstrdup() et al).
-> >
-> > That's also a plan. Since I am not sure if maintainers will use
-> > new_opts anymore, So I propose a temporary patch to fix this memory
-> > leak.
-> >
-> > If you think new_opts is not used anymore, let's remove all the code
-> > related to new_opts.
->
-> If it is ever needed again, we can always add it. Please just remove it.
+Since the commit c3d98ea08291 ("VFS: Don't use save/replace_mount_options
+if not using generic_show_options") eliminates replace_mount_options
+in reiserfs_remount, but does not handle the allocated new_opts,
+it will cause memory leak in the reiserfs_remount.
 
-Sure. I will send a patch v2.
+Because new_opts is useless in reiserfs_mount, so we fix this bug by
+removing the useless new_opts in reiserfs_remount.
 
-> Thanks!
->
->                                                                 Honza
-> --
-> Jan Kara <jack@suse.com>
-> SUSE Labs, CR
+Fixes: c3d98ea08291 ("VFS: Don't use save/replace_mount_options if not using generic_show_options")
+Signed-off-by: Dongliang Mu <mudongliangabcd@gmail.com>
+---
+ fs/reiserfs/super.c | 6 ------
+ 1 file changed, 6 deletions(-)
+
+diff --git a/fs/reiserfs/super.c b/fs/reiserfs/super.c
+index 58481f8d63d5..f7b05c6b3dcf 100644
+--- a/fs/reiserfs/super.c
++++ b/fs/reiserfs/super.c
+@@ -1437,7 +1437,6 @@ static int reiserfs_remount(struct super_block *s, int *mount_flags, char *arg)
+ 	unsigned long safe_mask = 0;
+ 	unsigned int commit_max_age = (unsigned int)-1;
+ 	struct reiserfs_journal *journal = SB_JOURNAL(s);
+-	char *new_opts;
+ 	int err;
+ 	char *qf_names[REISERFS_MAXQUOTAS];
+ 	unsigned int qfmt = 0;
+@@ -1445,10 +1444,6 @@ static int reiserfs_remount(struct super_block *s, int *mount_flags, char *arg)
+ 	int i;
+ #endif
+ 
+-	new_opts = kstrdup(arg, GFP_KERNEL);
+-	if (arg && !new_opts)
+-		return -ENOMEM;
+-
+ 	sync_filesystem(s);
+ 	reiserfs_write_lock(s);
+ 
+@@ -1599,7 +1594,6 @@ static int reiserfs_remount(struct super_block *s, int *mount_flags, char *arg)
+ out_err_unlock:
+ 	reiserfs_write_unlock(s);
+ out_err:
+-	kfree(new_opts);
+ 	return err;
+ }
+ 
+-- 
+2.25.1
+
