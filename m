@@ -1,74 +1,65 @@
-From: Dongliang Mu <mudongliangabcd@gmail.com>
+From: Jan Kara <jack@suse.cz>
 Subject: Re: [PATCH] fs: reiserfs: free new_opts in reiserfs_remount
-Date: Wed, 27 Oct 2021 18:19:00 +0800
-Message-ID: <CAD-N9QW48LDX7++chFjeZwr0Q1HX+D0+e=6BcXKxPx=i+DgmUA@mail.gmail.com>
-References: <20211027033947.3992059-1-mudongliangabcd@gmail.com> <20211027094644.GA28650@quack2.suse.cz>
+Date: Wed, 27 Oct 2021 13:15:27 +0200
+Message-ID: <20211027111527.GD28650@quack2.suse.cz>
+References: <20211027033947.3992059-1-mudongliangabcd@gmail.com>
+ <20211027094644.GA28650@quack2.suse.cz>
+ <CAD-N9QW48LDX7++chFjeZwr0Q1HX+D0+e=6BcXKxPx=i+DgmUA@mail.gmail.com>
 Mime-Version: 1.0
-Return-path: <reiserfs-devel-owner@vger.kernel.org>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=+MBYUw2LCYdJgQSO4IIftsLZmWxQDGxMV7ore9xHzcU=;
-        b=qfqCn8fapA7itXpZwM2OcOoqMp47AjxptJyG5bWkxa14z6uAAGXNf/T7BkR8ec2h+H
-         4Lzh6B/GGCRy3uyrpUl9y6le9pPich1WklwGJdr660cyizw5Dsgkg2nZi8mBpBARz7Ow
-         ZD1ajIqyG0GwJOmLjoDzwSyOAst03PWwVdQVwSV2YmQ0izDnmAXnuX6hUnBE6fzux92t
-         drAesQwqAWfqHIRR2ujP0cUSwedBytWdx2drhhRfemoJ2lzAl71kDDCmoFKOO1dMrcNZ
-         sQGV0Ycl/K89z/ImB/4A5pZf/b7hZH9TAHzi8yxa2UUmGrP6ellC9mHhg+p1bdEwS3kE
-         BeYw==
-In-Reply-To: <20211027094644.GA28650@quack2.suse.cz>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+        t=1635333327; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=ZkxJPQN9liKoaICizGCBGi8W3K8sU2vxUXZo9t/rlgg=;
+        b=oBdLTDqTh8rLJ32djlyxuwri6hdSouIAD1FOFvKp/KH1J0xXOpIvQslk2qgpyiBq9I+MX0
+        5vguduZMMvjudda7RTHit5bUHY/0/tbJQZH3x7bc/hNKOcQrMZyszpXsT4FKoUZhtcGUB8
+        MBNSdRfLj90KHU5Ip7s6In/CdyBWCxI=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+        s=susede2_ed25519; t=1635333327;
+        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=ZkxJPQN9liKoaICizGCBGi8W3K8sU2vxUXZo9t/rlgg=;
+        b=lYXZL+DalL8MYbrH1mJXZN1j6xevEn6Qk9KcXbxXj8eTQhwTkrYl4BiMWLuyxuZyfHIpd2
+        irJhEz5VkAXHYBDg==
+Content-Disposition: inline
+In-Reply-To: <CAD-N9QW48LDX7++chFjeZwr0Q1HX+D0+e=6BcXKxPx=i+DgmUA@mail.gmail.com>
 List-ID: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Jan Kara <jack@suse.cz>
-Cc: Yu Kuai <yukuai3@huawei.com>, Miklos Szeredi <mszeredi@redhat.com>, Al Viro <viro@zeniv.linux.org.uk>, David Howells <dhowells@redhat.com>, reiserfs-devel@vger.kernel.org, linux-kernel <linux-kernel@vger.kernel.org>
+To: Dongliang Mu <mudongliangabcd@gmail.com>
+Cc: Jan Kara <jack@suse.cz>, Yu Kuai <yukuai3@huawei.com>, Miklos Szeredi <mszeredi@redhat.com>, Al Viro <viro@zeniv.linux.org.uk>, David Howells <dhowells@redhat.com>, reiserfs-devel@vger.kernel.org, linux-kernel <linux-kernel@vger.kernel.org>
 
-On Wed, Oct 27, 2021 at 5:46 PM Jan Kara <jack@suse.cz> wrote:
->
-> On Wed 27-10-21 11:39:25, Dongliang Mu wrote:
-> > Since the commit c3d98ea08291 ("VFS: Don't use save/replace_mount_options
-> > if not using generic_show_options") eliminates replace_mount_options
-> > in reiserfs, but did not handle the allocated new_opts,
-> > it will cause memory leak in the reiserfs_remount.
+On Wed 27-10-21 18:19:00, Dongliang Mu wrote:
+> On Wed, Oct 27, 2021 at 5:46 PM Jan Kara <jack@suse.cz> wrote:
 > >
-> > Fix this by freeing new_opts in the reiserfs_remount temporarily.
+> > On Wed 27-10-21 11:39:25, Dongliang Mu wrote:
+> > > Since the commit c3d98ea08291 ("VFS: Don't use save/replace_mount_options
+> > > if not using generic_show_options") eliminates replace_mount_options
+> > > in reiserfs, but did not handle the allocated new_opts,
+> > > it will cause memory leak in the reiserfs_remount.
+> > >
+> > > Fix this by freeing new_opts in the reiserfs_remount temporarily.
+> > >
+> > > Fixes: c3d98ea08291 ("VFS: Don't use save/replace_mount_options if not using generic_show_options")
+> > > Signed-off-by: Dongliang Mu <mudongliangabcd@gmail.com>
 > >
-> > Fixes: c3d98ea08291 ("VFS: Don't use save/replace_mount_options if not using generic_show_options")
-> > Signed-off-by: Dongliang Mu <mudongliangabcd@gmail.com>
->
-> Thanks for the patch but I can see that new_opts is not actually used at
-> all in reiserfs_remount() so we should perhaps just remove them (including
-> kstrdup() et al).
+> > Thanks for the patch but I can see that new_opts is not actually used at
+> > all in reiserfs_remount() so we should perhaps just remove them (including
+> > kstrdup() et al).
+> 
+> That's also a plan. Since I am not sure if maintainers will use
+> new_opts anymore, So I propose a temporary patch to fix this memory
+> leak.
+> 
+> If you think new_opts is not used anymore, let's remove all the code
+> related to new_opts.
 
-That's also a plan. Since I am not sure if maintainers will use
-new_opts anymore, So I propose a temporary patch to fix this memory
-leak.
+If it is ever needed again, we can always add it. Please just remove it.
+Thanks!
 
-If you think new_opts is not used anymore, let's remove all the code
-related to new_opts.
-
->
->                                                                 Honza
->
-> > ---
-> >  fs/reiserfs/super.c | 1 +
-> >  1 file changed, 1 insertion(+)
-> >
-> > diff --git a/fs/reiserfs/super.c b/fs/reiserfs/super.c
-> > index 58481f8d63d5..b36865c8b66a 100644
-> > --- a/fs/reiserfs/super.c
-> > +++ b/fs/reiserfs/super.c
-> > @@ -1594,6 +1594,7 @@ static int reiserfs_remount(struct super_block *s, int *mount_flags, char *arg)
-> >       }
-> >
-> >  out_ok_unlocked:
-> > +     kfree(new_opts);
-> >       return 0;
-> >
-> >  out_err_unlock:
-> > --
-> > 2.25.1
-> >
-> --
-> Jan Kara <jack@suse.com>
-> SUSE Labs, CR
+								Honza
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
