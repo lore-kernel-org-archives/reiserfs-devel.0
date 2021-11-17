@@ -1,82 +1,80 @@
-From: syzbot <syzbot+f0a07c0d7dae72a221d5@syzkaller.appspotmail.com>
-Subject: [syzbot] KASAN: null-ptr-deref Read in do_journal_end
-Date: Wed, 27 Oct 2021 23:50:20 -0700
-Message-ID: <000000000000c9b4c805cf641f0c@google.com>
+From: "NeilBrown" <neilb@suse.de>
+Subject: [PATCH] reiserfs: don't use congestion_wait()
+Date: Wed, 17 Nov 2021 15:34:42 +1100
+Message-ID: <163712368225.13692.3419908086400748349@noble.neil.brown.name>
 Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+        t=1637123686; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding;
+        bh=Vm8JBp7sP6WtAAmJStkzdnz/sawLE2jCkHB8Ojd5L/A=;
+        b=eZpHCda9NuCjoxUGmTxiuJxjS3VxByuKXyrdy+cpVIsK5whls1Rsst9E0G2eoIpsc1OmXO
+        mp+veGGLnmMndg6en3pwSzub8fvu63zawG6nStFduUfWZQZntB28lpylZTtBLtOY/A/lmp
+        JSIHupPgTZLrzCK8MOUZsVIHInKsOJg=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+        s=susede2_ed25519; t=1637123686;
+        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding;
+        bh=Vm8JBp7sP6WtAAmJStkzdnz/sawLE2jCkHB8Ojd5L/A=;
+        b=+nakQQ+EbqBUsv14dgbSkyN/kCCGNSv0+h+BdaVAwB06FWnyE4/v4T1dQQGu22o3dRObzd
+        c3yzTOuu8dj36HCA==
 List-ID: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: jack@suse.cz, linux-kernel@vger.kernel.org, paskripkin@gmail.com, reiserfs-devel@vger.kernel.org, syzkaller-bugs@googlegroups.com, tiantao6@hisilicon.com
-
-Hello,
-
-syzbot found the following issue on:
-
-HEAD commit:    9c0c4d24ac00 Merge tag 'block-5.15-2021-10-22' of git://gi..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=130d1b0cb00000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=be398dd7862f4b36
-dashboard link: https://syzkaller.appspot.com/bug?extid=f0a07c0d7dae72a221d5
-compiler:       gcc (Debian 10.2.1-6) 10.2.1 20210110, GNU ld (GNU Binutils for Debian) 2.35.2
-
-Unfortunately, I don't have any reproducer for this issue yet.
-
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+f0a07c0d7dae72a221d5@syzkaller.appspotmail.com
-
-==================================================================
-BUG: KASAN: null-ptr-deref in instrument_atomic_read include/linux/instrumented.h:71 [inline]
-BUG: KASAN: null-ptr-deref in test_bit include/asm-generic/bitops/instrumented-non-atomic.h:134 [inline]
-BUG: KASAN: null-ptr-deref in set_buffer_uptodate include/linux/buffer_head.h:120 [inline]
-BUG: KASAN: null-ptr-deref in do_journal_end+0x12da/0x4950 fs/reiserfs/journal.c:4077
-Read of size 8 at addr 0000000000000000 by task syz-executor.0/3707
-
-CPU: 1 PID: 3707 Comm: syz-executor.0 Not tainted 5.15.0-rc6-syzkaller #0
-Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.14.0-2 04/01/2014
-Call Trace:
- __dump_stack lib/dump_stack.c:88 [inline]
- dump_stack_lvl+0xcd/0x134 lib/dump_stack.c:106
- __kasan_report mm/kasan/report.c:446 [inline]
- kasan_report.cold+0x66/0xdf mm/kasan/report.c:459
- check_region_inline mm/kasan/generic.c:183 [inline]
- kasan_check_range+0x13d/0x180 mm/kasan/generic.c:189
- instrument_atomic_read include/linux/instrumented.h:71 [inline]
- test_bit include/asm-generic/bitops/instrumented-non-atomic.h:134 [inline]
- set_buffer_uptodate include/linux/buffer_head.h:120 [inline]
- do_journal_end+0x12da/0x4950 fs/reiserfs/journal.c:4077
- reiserfs_sync_fs+0xf8/0x120 fs/reiserfs/super.c:78
- __sync_filesystem fs/sync.c:39 [inline]
- sync_filesystem fs/sync.c:64 [inline]
- sync_filesystem+0x105/0x260 fs/sync.c:48
- generic_shutdown_super+0x70/0x370 fs/super.c:448
- kill_block_super+0x97/0xf0 fs/super.c:1395
- deactivate_locked_super+0x94/0x160 fs/super.c:335
- deactivate_super+0xad/0xd0 fs/super.c:366
- cleanup_mnt+0x3a2/0x540 fs/namespace.c:1137
- task_work_run+0xdd/0x1a0 kernel/task_work.c:164
- tracehook_notify_resume include/linux/tracehook.h:189 [inline]
- exit_to_user_mode_loop kernel/entry/common.c:175 [inline]
- exit_to_user_mode_prepare+0x27e/0x290 kernel/entry/common.c:207
- __syscall_exit_to_user_mode_work kernel/entry/common.c:289 [inline]
- syscall_exit_to_user_mode+0x19/0x60 kernel/entry/common.c:300
- do_syscall_64+0x42/0xb0 arch/x86/entry/common.c:86
- entry_SYSCALL_64_after_hwframe+0x44/0xae
-RIP: 0033:0x7f0ba0b36ea7
-Code: ff ff ff f7 d8 64 89 01 48 83 c8 ff c3 66 0f 1f 44 00 00 31 f6 e9 09 00 00 00 66 0f 1f 84 00 00 00 00 00 b8 a6 00 00 00 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 bc ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007fff63b1eb68 EFLAGS: 00000246 ORIG_RAX: 00000000000000a6
-RAX: 0000000000000000 RBX: 0000000000000000 RCX: 00007f0ba0b36ea7
-RDX: 00007fff63b1ec3b RSI: 0000000000000002 RDI: 00007fff63b1ec30
-RBP: 00007fff63b1ec30 R08: 00000000ffffffff R09: 00007fff63b1ea00
-R10: 0000555556184893 R11: 0000000000000246 R12: 00007f0ba0b8f035
-R13: 00007fff63b1fcf0 R14: 0000555556184810 R15: 00007fff63b1fd30
-==================================================================
+To: Jan Kara <jack@suse.cz>, Jens Axboe <axboe@kernel.dk>
+Cc: reiserfs-devel@vger.kernel.org, linux-kernel@vger.kernel.org
 
 
+Block devices do not, in general, report congestion any more, so this
+congestion_wait() is effectively just a sleep.
+
+It isn't entirely clear what is being waited for, but as we only wait
+when j_async_throttle is elevated, it seems reasonable to stop waiting
+when j_async_throttle becomes zero - or after the same timeout.
+
+So change to use wait_event_event_timeout() for waiting, and
+wake_up_var() to signal an end to waiting.
+
+Signed-off-by: NeilBrown <neilb@suse.de>
 ---
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+I have no idea who might take this.... Jens and Jan have both landed
+reiserfs patches recently...
+
+Thanks,
+NeilBrown
+
+ fs/reiserfs/journal.c | 7 +++++--
+ 1 file changed, 5 insertions(+), 2 deletions(-)
+
+diff --git a/fs/reiserfs/journal.c b/fs/reiserfs/journal.c
+index 0834b101c316..a3e21160b634 100644
+--- a/fs/reiserfs/journal.c
++++ b/fs/reiserfs/journal.c
+@@ -951,7 +951,9 @@ static int reiserfs_async_progress_wait(struct super_bloc=
+k *s)
+ 		int depth;
+=20
+ 		depth =3D reiserfs_write_unlock_nested(s);
+-		congestion_wait(BLK_RW_ASYNC, HZ / 10);
++		wait_var_event_timeout(&j->j_async_throttle,
++				       atomic_read(&j->j_async_throttle) =3D=3D 0,
++				       HZ / 10);
+ 		reiserfs_write_lock_nested(s, depth);
+ 	}
+=20
+@@ -1058,7 +1060,8 @@ static int flush_commit_list(struct super_block *s,
+ 			put_bh(tbh) ;
+ 		}
+ 	}
+-	atomic_dec(&journal->j_async_throttle);
++	if (atomic_dec_and_test(&journal->j_async_throttle))
++		wake_up_var(&journal->j_async_throttle);
+=20
+ 	for (i =3D 0; i < (jl->j_len + 1); i++) {
+ 		bn =3D SB_ONDISK_JOURNAL_1st_BLOCK(s) +
+--=20
+2.33.1
+
