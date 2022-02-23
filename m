@@ -1,77 +1,82 @@
 From: Jan Kara <jack@suse.cz>
-Subject: Re: [PATCH] reiserfs: get rid of AOP_FLAG_CONT_EXPAND flag
-Date: Wed, 23 Feb 2022 13:17:37 +0100
-Message-ID: <20220223121737.bsyoih6rt63pev54@quack3.lan>
-References: <fbc744c9-e22f-138c-2da3-f76c3edfcc3d@gmail.com>
- <20220220232219.1235-1-edward.shishkin@gmail.com>
- <20220222102727.2sqf4wfdtjaxrqat@quack3.lan>
- <YhTnSwmHVRe5AzJQ@casper.infradead.org>
+Subject: [PATCH] reiserfs: Deprecate reiserfs
+Date: Wed, 23 Feb 2022 15:26:53 +0100
+Message-ID: <20220223142653.22388-1-jack@suse.cz>
 Mime-Version: 1.0
-Return-path: <reiserfs-devel-owner@vger.kernel.org>
+Content-Transfer-Encoding: 8bit
+Return-path: <linux-fsdevel-owner@vger.kernel.org>
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-        t=1645618663; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=z25zmfa1BH9FbZAkPcAjAOIvBZxhio/HEtOcbGxkK2s=;
-        b=iBLlmwQKBfdGXCAAeg3wvlnrV4J7/udoMQQsDdu2Cee3a60Gai9m9bpGPUSAITEkoMaU8s
-        1//GkQuJVdkXZW2F3rLTgCANQjuKMwtQWqcfgugd/zWATYwJ3OL5tTae/rSTpI2MgrUQn2
-        85bOgy9hMuJpJjjUpIHA/9zHbWWnRZ4=
+        t=1645626418; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
+        bh=pR07zPggnhMWs7XNN5OSmOsV4p9ufjmxXD7Z/qh4kZI=;
+        b=rN2v4SgVCwDKqgM/XnW7NzZOfMm9JjlVY9dPHBlp4QpsuYZcYZp+7rFQxp8gkbWDlzUTuv
+        1KcYGXAzb+lMVq9QUoCZzb/bK8Hgg1UXeLQ1AwaPuT8yxz6CierjQYFpgyhP+qe91Y6aJc
+        VzFkAYF+QdpKmYU75p3G8TUDUlH+m+8=
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-        s=susede2_ed25519; t=1645618663;
+        s=susede2_ed25519; t=1645626418;
         h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=z25zmfa1BH9FbZAkPcAjAOIvBZxhio/HEtOcbGxkK2s=;
-        b=XIUgtLKy3brznIghNde4scldLLjKyFNVYfgKgSPS1OgKLfn3fJyCKSDJsMuABr1N7A2HJi
-        gggIq5wSLuuz1jCw==
-Content-Disposition: inline
-In-Reply-To: <YhTnSwmHVRe5AzJQ@casper.infradead.org>
+         mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
+        bh=pR07zPggnhMWs7XNN5OSmOsV4p9ufjmxXD7Z/qh4kZI=;
+        b=v5vNwpkCJDIF2jIj75K2OQkEN3ebk8jbXjWlKR2xTITqqhqR/cWY5+BGIMCy2e1HhfD1ew
+        5VI6YZOxogmhC8Bw==
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2005; h=from:subject; bh=FP0CgiLVUL8DHi7DJ11ofsrTMuHPGmOsdQMd1JKiYB4=; b=owGbwMvMwME4Z+4qdvsUh5uMp9WSGJLEXNT+nZ6oZKYdzGV5+oaBhVj+zMlc7fdCLrPfFU/6cs9r guuZTkZjFgZGDgZZMUWW1ZEXta/NM+raGqohAzOIlQlkCgMXpwBMpHMGB8NyhfnuRqaZ3WxXP4jycS b8CLNmbl5Xu/iWWwUXi0+fDO+0Cv110ifWzX20Z0qMzu6TB9PYD6jvb8pf4PfBp0dqcoVcT+L7namR yyJ1mpK96h+d976V2NDQ6i016YdmiedkiyPC/xu+9wVEf3XWObS+cynD3bs2mdJWKR0mpbfOO+q8tr hgfivl/JUPDr1PhbccsHbhSHx6e+YRviOxST/q9/VoLD6TlOLLdGtFiNsBx517566zamx/Fm27obSL WXCFzgSRPymd2+dOSrn4IWbOA0VWp1WPShprxIXKU6bIydi4dss7irisYGlh+zJ3rg9b9adZXhFKRk qeTBGb5UULjjw7LXn2c13r3xBJAA==
+X-Developer-Key: i=jack@suse.cz; a=openpgp; fpr=93C6099A142276A28BBE35D815BC833443038D8C
 List-ID: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Matthew Wilcox <willy@infradead.org>
-Cc: Jan Kara <jack@suse.cz>, Edward Shishkin <edward.shishkin@gmail.com>, linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, reiserfs-devel@vger.kernel.org
+To: reiserfs-devel@vger.kernel.org
+Cc: linux-fsdevel@vger.kernel.org, Dave Chinner <david@fromorbit.com>, Matthew Wilcox <willy@infradead.org>, Edward Shishkin <edward.shishkin@gmail.com>, Jan Kara <jack@suse.cz>
 
-On Tue 22-02-22 13:38:19, Matthew Wilcox wrote:
-> On Tue, Feb 22, 2022 at 11:27:27AM +0100, Jan Kara wrote:
-> > On Mon 21-02-22 00:22:19, Edward Shishkin wrote:
-> > > Signed-off-by: Edward Shishkin <edward.shishkin@gmail.com>
-> > > ---
-> > >  fs/reiserfs/inode.c | 16 +++++-----------
-> > >  1 file changed, 5 insertions(+), 11 deletions(-)
-> > 
-> > Thanks! I have queued this patch into my tree.
-> 
-> I added the following commit message to it for my tree:
-> 
-> Author: Edward Shishkin <edward.shishkin@gmail.com>
-> Date:   Mon Feb 21 00:22:19 2022 +0100
-> 
->     reiserfs: Stop using AOP_FLAG_CONT_EXPAND flag
-> 
->     We can simplify write_begin() and write_end() by handling the
->     cont_expand case in reiserfs_setattr().
-> 
->     Signed-off-by: Edward Shishkin <edward.shishkin@gmail.com>
->     Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
+Reiserfs is relatively old filesystem and its development has ceased
+quite some years ago. Linux distributions moved away from it towards
+other filesystems such as btrfs, xfs, or ext4. To reduce maintenance
+burden on cross filesystem changes (such as new mount API, iomap, folios
+...) let's add a deprecation notice when the filesystem is mounted and
+schedule its removal to 2024.
 
-Yeah, I have written some changelog as well :) Something like:
+Signed-off-by: Jan Kara <jack@suse.cz>
+---
+ fs/reiserfs/Kconfig | 10 +++++++---
+ fs/reiserfs/super.c |  2 ++
+ 2 files changed, 9 insertions(+), 3 deletions(-)
 
-    reiserfs: get rid of AOP_FLAG_CONT_EXPAND flag
-    
-    Remove usage of AOP_FLAG_CONT_EXPAND flag. Reiserfs is the only user of
-    it and it is easy to avoid.
-    
-    Link: https://lore.kernel.org/r/20220220232219.1235-1-edward.shishkin@gmail.com
-    Signed-off-by: Edward Shishkin <edward.shishkin@gmail.com>
-    Signed-off-by: Jan Kara <jack@suse.cz>
+Here's my suggestion for deprecating reiserfs. If nobody has reasons against
+this, I'll send the patch to Linus during the next merge window.
 
-> I don't object if it goes via your tree; I doubt I'll get the AOP_FLAG
-> removal finished in time for the next merge window.
-
-OK, I'll keep it in my tree then and push it to Linus for the merge window.
-
-								Honza
+diff --git a/fs/reiserfs/Kconfig b/fs/reiserfs/Kconfig
+index 8fd54ed8f844..eafee53ddabc 100644
+--- a/fs/reiserfs/Kconfig
++++ b/fs/reiserfs/Kconfig
+@@ -1,10 +1,14 @@
+ # SPDX-License-Identifier: GPL-2.0-only
+ config REISERFS_FS
+-	tristate "Reiserfs support"
++	tristate "Reiserfs support (deprecated)"
+ 	select CRC32
+ 	help
+-	  Stores not just filenames but the files themselves in a balanced
+-	  tree.  Uses journalling.
++	  Reiserfs is deprecated and scheduled to be removed from the kernel
++	  in 2024. If you are still using it, please migrate to another
++	  filesystem or tell us your usecase for reiserfs.
++
++	  Reiserfs stores not just filenames but the files themselves in a
++	  balanced tree.  Uses journalling.
+ 
+ 	  Balanced trees are more efficient than traditional file system
+ 	  architectural foundations.
+diff --git a/fs/reiserfs/super.c b/fs/reiserfs/super.c
+index 82e09901462e..74c1cda3bc3e 100644
+--- a/fs/reiserfs/super.c
++++ b/fs/reiserfs/super.c
+@@ -1652,6 +1652,8 @@ static int read_super_block(struct super_block *s, int offset)
+ 		return 1;
+ 	}
+ 
++	reiserfs_warning(NULL, "", "reiserfs filesystem is deprecated and "
++		"scheduled to be removed from the kernel in 2024");
+ 	SB_BUFFER_WITH_SB(s) = bh;
+ 	SB_DISK_SUPER_BLOCK(s) = rs;
+ 
 -- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+2.31.1
+
