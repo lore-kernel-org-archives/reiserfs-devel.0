@@ -1,85 +1,44 @@
-From: Jan Kara <jack@suse.cz>
-Subject: [PATCH v2] reiserfs: Deprecate reiserfs
-Date: Fri, 25 Feb 2022 13:54:45 +0100
-Message-ID: <20220225125445.29942-1-jack@suse.cz>
+From: Byron Stanoszek <gandalf@winds.org>
+Subject: Re: Is it time to remove reiserfs?
+Date: Fri, 25 Feb 2022 08:10:22 -0500 (EST)
+Message-ID: <257dc4a9-dfa0-327e-f05a-71c0d9742e98@winds.org>
+References: <YhIwUEpymVzmytdp@casper.infradead.org> <20220222100408.cyrdjsv5eun5pzij@quack3.lan> <20220222221614.GC3061737@dread.disaster.area> <3ce45c23-2721-af6e-6cd7-648dc399597@winds.org> <YhfzUc8afuoQkx/U@casper.infradead.org>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Return-path: <linux-fsdevel-owner@vger.kernel.org>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-        t=1645793689; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
-        bh=K7v2cNhEfZttrym4TA/C4zAe3x6GtkUapRVJt+XXFK4=;
-        b=CSrV+17MDK+t6ZvsPjS64C1wSAmbw4HwDvNdX8n74K+jS57XlGlfnn5pziXhONkAY17txA
-        DHpFuzgyNxFnLDxTgPm3uvBUB9wPtyobeQvD4ihjnLr3J4d0gYINj5Y3OFmyqlsWq21Xhc
-        K41m+1JRX0PuMztAXopKanOoARDHNHk=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-        s=susede2_ed25519; t=1645793689;
-        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
-        bh=K7v2cNhEfZttrym4TA/C4zAe3x6GtkUapRVJt+XXFK4=;
-        b=WQMDDJUn9uMBHuB59gDJll6gI+tPddGlRGlt2pYHmJ6jLgZty6aTcgyYprqRh8AzJIdMNn
-        +D+IEq+9Mu/rzvAA==
-X-Developer-Signature: v=1; a=openpgp-sha256; l=2010; h=from:subject; bh=Gdd2dSmEmqLtoBu6wjiQ4Z7A5UpuySTnjTAtDhIu8qY=; b=owGbwMvMwME4Z+4qdvsUh5uMp9WSGJIkLrYUfLKOuN1aMGdraNS6zdGqM9VU2JwU9knv2DDLiL/R I/VqJ6MxCwMjB4OsmCLL6siL2tfmGXVtDdWQgRnEygQyhYGLUwAmYm/IwfD60pO4GbxFP0uz2O9wKN QeTXxc8P6hnTvnmRsPE1/EuodoSgRa+Hzcas+oGJUze58+i1nK0WebRH6vOF/21iKQO050ccTJS+bd 06fueCN4J+P2zHA9w7VuB+ZtjZb79rZNQdmo5s3y0/8Zv2xzr34SL7KLQ2oR1w4F7vtN/jHS4k8Ybb YGaV31aFy39yVXboI/0yYrqdjlmi9Dsps362q+uOKac0C4v49xl/aCbR1+Ot+e928MXnYgfsrFrzLh Ap2OEalhWXl58zssb2mccJLJ3OChfeJUbLXmuzWtk+J9K6adZTgQJNTs/JKnbbeZ8tOL4U9V5pq97L IN/iJfV6Fl6MTjGVvVVNloKXkCAA==
-X-Developer-Key: i=jack@suse.cz; a=openpgp; fpr=93C6099A142276A28BBE35D815BC833443038D8C
+Return-path: <reiserfs-devel-owner@vger.kernel.org>
+In-Reply-To: <YhfzUc8afuoQkx/U@casper.infradead.org>
 List-ID: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-To: reiserfs-devel@vger.kernel.org
-Cc: linux-fsdevel@vger.kernel.org, Dave Chinner <david@fromorbit.com>, Edward Shishkin <edward.shishkin@gmail.com>, Matthew Wilcox <willy@infradead.org>, Byron Stanoszek <gandalf@winds.org>, Jan Kara <jack@suse.cz>
+Content-Type: text/plain; charset="us-ascii"; format="flowed"
+Content-Transfer-Encoding: 7bit
+To: Matthew Wilcox <willy@infradead.org>
+Cc: Dave Chinner <david@fromorbit.com>, Jan Kara <jack@suse.cz>, linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, reiserfs-devel@vger.kernel.org
 
-Reiserfs is relatively old filesystem and its development has ceased
-quite some years ago. Linux distributions moved away from it towards
-other filesystems such as btrfs, xfs, or ext4. To reduce maintenance
-burden on cross filesystem changes (such as new mount API, iomap, folios
-...) let's add a deprecation notice when the filesystem is mounted and
-schedule its removal to 2025.
+On Thu, 24 Feb 2022, Matthew Wilcox wrote:
+> On Wed, Feb 23, 2022 at 09:48:26AM -0500, Byron Stanoszek wrote:
+>> For what it's worth, I have a number of production servers still using
+>> Reiserfs, which I regularly maintain by upgrading to the latest Linux kernel
+>> annually (mostly to apply security patches). I figured this filesystem would
+>> still be available for several more years, since it's not quite y2038k yet.
+>
+> Hey Byron, thanks for sharing your usage.
+>
+> It's not entirely clear to me from your message whether you're aware
+> that our annual LTS release actually puts out new kernels every week (or
+> sometimes twice a week), and upgrades to the latest version are always
+> recommended.  Those LTS kernels typically get five years of support in
+> total; indeed we just retired the v4.4 series earlier this month which
+> was originally released in January 2016, so it got six years of support.
+>
+> If we dropped reiserfs from the kernel today (and thanks to Edward, we
+> don't have to), you'd still be able to use a v5.15 based kernel with
+> regular updates until 2028.  If we drop it in two years, that should
+> take you through to 2030.  Is that enough for your usage?
 
-Signed-off-by: Jan Kara <jack@suse.cz>
----
- fs/reiserfs/Kconfig | 10 +++++++---
- fs/reiserfs/super.c |  2 ++
- 2 files changed, 9 insertions(+), 3 deletions(-)
+I'm aware of the LTS releases, but I hadn't thought about them in relation to
+this issue. That's a good point, and so it sounds like I have nothing to worry
+about.
 
-Changes since v1:
-* Changed target year to 2025
+Thanks for the recommendation.
 
-If nobody has reasons against this, I'll send the patch to Linus during the
-next merge window.
-
-diff --git a/fs/reiserfs/Kconfig b/fs/reiserfs/Kconfig
-index 8fd54ed8f844..33c8b0dd07a2 100644
---- a/fs/reiserfs/Kconfig
-+++ b/fs/reiserfs/Kconfig
-@@ -1,10 +1,14 @@
- # SPDX-License-Identifier: GPL-2.0-only
- config REISERFS_FS
--	tristate "Reiserfs support"
-+	tristate "Reiserfs support (deprecated)"
- 	select CRC32
- 	help
--	  Stores not just filenames but the files themselves in a balanced
--	  tree.  Uses journalling.
-+	  Reiserfs is deprecated and scheduled to be removed from the kernel
-+	  in 2025. If you are still using it, please migrate to another
-+	  filesystem or tell us your usecase for reiserfs.
-+
-+	  Reiserfs stores not just filenames but the files themselves in a
-+	  balanced tree.  Uses journalling.
- 
- 	  Balanced trees are more efficient than traditional file system
- 	  architectural foundations.
-diff --git a/fs/reiserfs/super.c b/fs/reiserfs/super.c
-index 82e09901462e..a18be1a18f84 100644
---- a/fs/reiserfs/super.c
-+++ b/fs/reiserfs/super.c
-@@ -1652,6 +1652,8 @@ static int read_super_block(struct super_block *s, int offset)
- 		return 1;
- 	}
- 
-+	reiserfs_warning(NULL, "", "reiserfs filesystem is deprecated and "
-+		"scheduled to be removed from the kernel in 2025");
- 	SB_BUFFER_WITH_SB(s) = bh;
- 	SB_DISK_SUPER_BLOCK(s) = rs;
- 
--- 
-2.31.1
+Regards,
+  -Byron
 
