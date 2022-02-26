@@ -1,7 +1,7 @@
-From: Dave Chinner <david@fromorbit.com>
+From: "Theodore Ts'o" <tytso@mit.edu>
 Subject: Re: Is it time to remove reiserfs?
-Date: Sat, 26 Feb 2022 09:56:00 +1100
-Message-ID: <20220225225600.GO3061737@dread.disaster.area>
+Date: Fri, 25 Feb 2022 19:00:09 -0500
+Message-ID: <YhltiUy/WtA0Dz5g@mit.edu>
 References: <YhIwUEpymVzmytdp@casper.infradead.org>
  <20220222100408.cyrdjsv5eun5pzij@quack3.lan>
  <20220222221614.GC3061737@dread.disaster.area>
@@ -9,99 +9,49 @@ References: <YhIwUEpymVzmytdp@casper.infradead.org>
  <YhfzUc8afuoQkx/U@casper.infradead.org>
  <257dc4a9-dfa0-327e-f05a-71c0d9742e98@winds.org>
  <20220225132300.GC18720@1wt.eu>
+ <20220225225600.GO3061737@dread.disaster.area>
 Mime-Version: 1.0
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <20220225132300.GC18720@1wt.eu>
+In-Reply-To: <20220225225600.GO3061737@dread.disaster.area>
 List-ID: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Willy Tarreau <w@1wt.eu>
-Cc: Byron Stanoszek <gandalf@winds.org>, Matthew Wilcox <willy@infradead.org>, Jan Kara <jack@suse.cz>, linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, reiserfs-devel@vger.kernel.org
+To: Dave Chinner <david@fromorbit.com>
+Cc: Willy Tarreau <w@1wt.eu>, Byron Stanoszek <gandalf@winds.org>, Matthew Wilcox <willy@infradead.org>, Jan Kara <jack@suse.cz>, linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, reiserfs-devel@vger.kernel.org
 
-On Fri, Feb 25, 2022 at 02:23:00PM +0100, Willy Tarreau wrote:
-> On Fri, Feb 25, 2022 at 08:10:22AM -0500, Byron Stanoszek wrote:
-> > On Thu, 24 Feb 2022, Matthew Wilcox wrote:
-> > > On Wed, Feb 23, 2022 at 09:48:26AM -0500, Byron Stanoszek wrote:
-> > > > For what it's worth, I have a number of production servers still using
-> > > > Reiserfs, which I regularly maintain by upgrading to the latest Linux kernel
-> > > > annually (mostly to apply security patches). I figured this filesystem would
-> > > > still be available for several more years, since it's not quite y2038k yet.
-> > > 
-> > > Hey Byron, thanks for sharing your usage.
-> > > 
-> > > It's not entirely clear to me from your message whether you're aware
-> > > that our annual LTS release actually puts out new kernels every week (or
-> > > sometimes twice a week), and upgrades to the latest version are always
-> > > recommended.  Those LTS kernels typically get five years of support in
-> > > total; indeed we just retired the v4.4 series earlier this month which
-> > > was originally released in January 2016, so it got six years of support.
-> > > 
-> > > If we dropped reiserfs from the kernel today (and thanks to Edward, we
-> > > don't have to), you'd still be able to use a v5.15 based kernel with
-> > > regular updates until 2028.  If we drop it in two years, that should
-> > > take you through to 2030.  Is that enough for your usage?
-> > 
-> > I'm aware of the LTS releases, but I hadn't thought about them in relation to
-> > this issue. That's a good point, and so it sounds like I have nothing to worry
-> > about.
+On Sat, Feb 26, 2022 at 09:56:00AM +1100, Dave Chinner wrote:
 > 
-> This just makes me think that instead of speaking about deprecation in
-> terms of version, speaking in terms of dates might be more suitable, as
-> it should help discouraging distros or products shipping LTS kernels
-> from enabling such deprecated features: when you're told the features
-> will disappear after, say, 5.20, some might think "OK 5.20 is the last
-> one and it happens to be LTS so I get the feature for 6 extra years
-> after it's EOL".
+> Hence we have to acknowledge that fact that once upstream has
+> deprecated a feature, it's up to distros to decide how they want to
+> handle long term support for that feature. The upstream LTS kernel
+> maintainers are going to have to decide on their own policy, too,
+> because we cannot bind upstream maintenance decisions on random
+> individual downstream support constraints. Downstream has to choose
+> for itself how it handles upstream deprecation notices but, that
+> said, upstream developers also need to listen to downstream distro
+> support and deprecation requirements...
 
-This is exactly why the XFS deprecation schedules are dated while
-the actual removals record kernel releases. If it gets released in
-a kernel, then it technically is supported for the life of that
-kernel, even if it is a LTS kernel and the functionality no long
-exists upstream.
+This is as it should be.  It might not make a difference for reiserfs,
+where the development efforts is largely dead already, but once
+upstream deprecates a feature, the distributions can no longer rely on
+upstream developers to fix a critical stability or security bug in
+upstream, so it can be backported into an LTS or stable distro kernel.
+They are on their own.
 
-That is, we know that once we've removed something from upstream,
-it's still going to be actively used in LTS kernels based on kernels
-that still have that functionality. Same goes for enterprise
-kernels. Hence deprecation policies need to first acknowledge the
-typical "no regressions" policies for LTS kernels...
+The bug might even be fixed in one enterprise distro's kernel product,
+but an isolated patch might not be available; only a megapatch of all
+of the distro's changes afgainst an upstrema kernel as a single
+un-broken-out-and-GPL-compliant patch.  So a critical bugfix present
+in one distro release might not be so easily carried over to another
+distro.
 
-With that in mind, this is why we've already deprecated non-y2038k
-compliant functionality in XFS so that enterprise kernels can mark
-it deprecated in their next major (N + 1) release which will be
-supported for 10 years. They can then remove that support it in the
-N+2 major release after that (which is probably at least 5 years
-down the track) so that the support window for non-compliant
-functionality does not run past y2038k.
+So that's an important thing to remember; an LTS kernel as a whole
+might be "supported" by a stable kernel team from a backports
+perspective for years, but that doesn't mean that a deprecated feature
+or subsystem is going to be receiving upstream support, and it's fair
+that this be advertised so that users and distributions can make their
+own decisions about how long they want to use or support a deprecated
+feature or subsystem on a downstream basis.
 
-We chose this specifically because most of the XFS developers are
-also responsible for maintaining enterprise distro kernels, and so
-we always thinking about how we are going to maintain the upstream
-code we release today because it will have a 10-15 year active
-support life.  This is also why the deprecation notice in
-Documentation/admin-guide/xfs.rst has this caveat:
-
-	Note: Distributors may choose to withdraw V4 format support earlier than
-	the dates listed above.
-
-Distros might chose to remove deprecated functionality immediately
-rather than rely on, say, LTS kernel support for functionality that
-upstream developers are clearly not focussing their efforts on
-developing further.
-
-Hence we have to acknowledge that fact that once upstream has
-deprecated a feature, it's up to distros to decide how they want to
-handle long term support for that feature. The upstream LTS kernel
-maintainers are going to have to decide on their own policy, too,
-because we cannot bind upstream maintenance decisions on random
-individual downstream support constraints. Downstream has to choose
-for itself how it handles upstream deprecation notices but, that
-said, upstream developers also need to listen to downstream distro
-support and deprecation requirements...
-
-Cheers,
-
-Dave.
--- 
-Dave Chinner
-david@fromorbit.com
+						- Ted
