@@ -1,60 +1,84 @@
-From: Jan Kara <jack@suse.cz>
+From: Pavel Machek <pavel@ucw.cz>
 Subject: Re: Is it time to remove reiserfs?
-Date: Thu, 17 Mar 2022 10:43:44 +0100
-Message-ID: <20220317094344.5s3shqk54qfpumey@quack3.lan>
-References: <1a5cd8ce-e7c7-5aa8-e475-ad7810e2f057@winds.org>
- <842c582a-ecb6-31a1-fad1-54a4e9c05b94@simula.no>
+Date: Sat, 2 Apr 2022 12:54:55 +0200
+Message-ID: <20220402105454.GA16346@amd>
+References: <YhIwUEpymVzmytdp@casper.infradead.org>
+ <20220222100408.cyrdjsv5eun5pzij@quack3.lan>
 Mime-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="qDbXVdCdHGoSgWSk"
 Return-path: <linux-fsdevel-owner@vger.kernel.org>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-        t=1647510226; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=DFWUSkd4grL19DFDB5+w67woVPRC/6JXoVuQx8Tt1BE=;
-        b=UgY4MmIo/99tez4EdWkQdmC30OGtPfhCa7QDm+cGJhcCGJeMGCHvovlsnBgfDHWem+ELuF
-        glYTZ2nBNQNdURK8PnccbBbGq+cNZF2WOdnF3EtCcvcQ5Uj7A3dQ1f0OzsTFgzm6viJ0rf
-        zKTT05afs/HmaXfUC5a7nETQ6ZAqTMM=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-        s=susede2_ed25519; t=1647510226;
-        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=DFWUSkd4grL19DFDB5+w67woVPRC/6JXoVuQx8Tt1BE=;
-        b=2pw/H3XZRxrPCe7n/gPiLACwOASm1Xr54f79xLwFNzAZTE/qyULNihLSzsGDSjrgeQX5O+
-        2PjKV+ND4zvyO4Dw==
 Content-Disposition: inline
-In-Reply-To: <842c582a-ecb6-31a1-fad1-54a4e9c05b94@simula.no>
+In-Reply-To: <20220222100408.cyrdjsv5eun5pzij@quack3.lan>
 List-ID: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Thomas Dreibholz <dreibh@simula.no>
-Cc: gandalf@winds.org, david@fromorbit.com, jack@suse.cz, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, reiserfs-devel@vger.kernel.org, willy@infradead.org
+To: Jan Kara <jack@suse.cz>
+Cc: Matthew Wilcox <willy@infradead.org>, linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, reiserfs-devel@vger.kernel.org
+
+
+--qDbXVdCdHGoSgWSk
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
 Hi!
 
-On Thu 17-03-22 09:53:22, Thomas Dreibholz wrote:
-> I just noticed the thread about ReiserFS deprecation. We are currently still
-> using ReiserFS on ca. 50 production machines of the NorNet Core
-> infrastructure (https://www.nntb.no/). While newer machines use BTRFS
-> instead, the older machines had ReiserFS used, due to its stability and
-> better performance in comparison to ext4. At their installation time, we did
-> not consider BTRFS being mature enough. A deprecation period of ca. 5 years
-> from now seems to be reasonable, although it would be nice to have at least
-> a read-only capability available for some longer time, for the case it
-> becomes necessary to read an old ReiserFS file system on a newer system.
+> > Keeping reiserfs in the tree has certain costs.  For example, I would
+> > very much like to remove the 'flags' argument to ->write_begin.  We have
+> > the infrastructure in place to handle AOP_FLAG_NOFS differently, but
+> > AOP_FLAG_CONT_EXPAND is still around, used only by reiserfs.
+> >=20
+> > Looking over the patches to reiserfs over the past couple of years, the=
+re
+> > are fixes for a few syzbot reports and treewide changes.  There don't
+> > seem to be any fixes for user-spotted bugs since 2019.  Does reiserfs
+> > still have a large install base that is just very happy with an old
+> > stable filesystem?  Or have all its users migrated to new and exciting
+> > filesystems with active feature development?
+> >=20
+> > We've removed support for senescent filesystems before (ext, xiafs), so
+> > it's not unprecedented.  But while I have a clear idea of the benefits =
+to
+> > other developers of removing reiserfs, I don't have enough information =
+to
+> > weigh the costs to users.  Maybe they're happy with having 5.15 support
+> > for their reiserfs filesystems and can migrate to another filesystem
+> > before they upgrade their kernel after 5.15.
+> >=20
+> > Another possibility beyond outright removal would be to trim the kernel
+> > code down to read-only support for reiserfs.  Most of the quirks of
+> > reiserfs have to do with write support, so this could be a useful way
+> > forward.  Again, I don't have a clear picture of how people actually
+> > use reiserfs, so I don't know whether it is useful or not.
+> >=20
+> > NB: Please don't discuss the personalities involved.  This is purely a
+> > "we have old code using old APIs" discussion.
+>=20
+> So from my distro experience installed userbase of reiserfs is pretty sma=
+ll
+> and shrinking. We still do build reiserfs in openSUSE / SLES kernels but
+> for enterprise offerings it is unsupported (for like 3-4 years) and the m=
+odule
+> is not in the default kernel rpm anymore.
 
-Thanks for your feedback! So the current plan is to remove the support from
-current upstream kernel in ~3 years, as people noted, you can still use
-upstream -stable kernels branched at the end of the deprecation period for
-another two years which gives you around 5 years to migrate if you are
-using upstream stable kernels. 
+I believe I've seen reiserfs in recent Arch Linux ARM installation on
+PinePhone. I don't really think you can remove a feature people are
+using.
 
-You can still use sufficiently old kernel (VM?) or FUSE (although someone
-motivated would probably need to write proper support module but e.g. grub2
-has reiserfs support in userspace implemented) to get data out of
-Reiserfs partitions after that... At least that's the current plan.
+Best regards,
+								Pavel
+--=20
+People of Russia, stop Putin before his war on Ukraine escalates.
 
-								Honza
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+--qDbXVdCdHGoSgWSk
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iEYEARECAAYFAmJIK34ACgkQMOfwapXb+vInUwCgiuujgobhudaYxKoul558NwQE
+kRcAn1O5/sGxjKK3dKK6b6zT6ydXw++J
+=S16w
+-----END PGP SIGNATURE-----
+
+--qDbXVdCdHGoSgWSk--
