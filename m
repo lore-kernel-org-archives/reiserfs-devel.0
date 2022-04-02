@@ -1,84 +1,78 @@
 From: Pavel Machek <pavel@ucw.cz>
 Subject: Re: Is it time to remove reiserfs?
-Date: Sat, 2 Apr 2022 12:54:55 +0200
-Message-ID: <20220402105454.GA16346@amd>
+Date: Sat, 2 Apr 2022 12:57:49 +0200
+Message-ID: <20220402105749.GB16346@amd>
 References: <YhIwUEpymVzmytdp@casper.infradead.org>
  <20220222100408.cyrdjsv5eun5pzij@quack3.lan>
+ <20220222221614.GC3061737@dread.disaster.area>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="qDbXVdCdHGoSgWSk"
-Return-path: <linux-fsdevel-owner@vger.kernel.org>
+        protocol="application/pgp-signature"; boundary="gj572EiMnwbLXET9"
+Return-path: <reiserfs-devel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <20220222100408.cyrdjsv5eun5pzij@quack3.lan>
+In-Reply-To: <20220222221614.GC3061737@dread.disaster.area>
 List-ID: <reiserfs-devel.vger.kernel.org>
-To: Jan Kara <jack@suse.cz>
-Cc: Matthew Wilcox <willy@infradead.org>, linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, reiserfs-devel@vger.kernel.org
+To: Dave Chinner <david@fromorbit.com>
+Cc: Jan Kara <jack@suse.cz>, Matthew Wilcox <willy@infradead.org>, linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, reiserfs-devel@vger.kernel.org
 
 
---qDbXVdCdHGoSgWSk
+--gj572EiMnwbLXET9
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi!
-
-> > Keeping reiserfs in the tree has certain costs.  For example, I would
-> > very much like to remove the 'flags' argument to ->write_begin.  We have
-> > the infrastructure in place to handle AOP_FLAG_NOFS differently, but
-> > AOP_FLAG_CONT_EXPAND is still around, used only by reiserfs.
+> > So from my distro experience installed userbase of reiserfs is pretty s=
+mall
+> > and shrinking. We still do build reiserfs in openSUSE / SLES kernels but
+> > for enterprise offerings it is unsupported (for like 3-4 years) and the=
+ module
+> > is not in the default kernel rpm anymore.
 > >=20
-> > Looking over the patches to reiserfs over the past couple of years, the=
-re
-> > are fixes for a few syzbot reports and treewide changes.  There don't
-> > seem to be any fixes for user-spotted bugs since 2019.  Does reiserfs
-> > still have a large install base that is just very happy with an old
-> > stable filesystem?  Or have all its users migrated to new and exciting
-> > filesystems with active feature development?
-> >=20
-> > We've removed support for senescent filesystems before (ext, xiafs), so
-> > it's not unprecedented.  But while I have a clear idea of the benefits =
-to
-> > other developers of removing reiserfs, I don't have enough information =
-to
-> > weigh the costs to users.  Maybe they're happy with having 5.15 support
-> > for their reiserfs filesystems and can migrate to another filesystem
-> > before they upgrade their kernel after 5.15.
-> >=20
-> > Another possibility beyond outright removal would be to trim the kernel
-> > code down to read-only support for reiserfs.  Most of the quirks of
-> > reiserfs have to do with write support, so this could be a useful way
-> > forward.  Again, I don't have a clear picture of how people actually
-> > use reiserfs, so I don't know whether it is useful or not.
-> >=20
-> > NB: Please don't discuss the personalities involved.  This is purely a
-> > "we have old code using old APIs" discussion.
+> > So clearly the filesystem is on the deprecation path, the question is
+> > whether it is far enough to remove it from the kernel completely. Maybe
+> > time to start deprecation by printing warnings when reiserfs gets mount=
+ed
+> > and then if nobody yells for year or two, we'll go ahead and remove it?
 >=20
-> So from my distro experience installed userbase of reiserfs is pretty sma=
-ll
-> and shrinking. We still do build reiserfs in openSUSE / SLES kernels but
-> for enterprise offerings it is unsupported (for like 3-4 years) and the m=
-odule
-> is not in the default kernel rpm anymore.
+> Yup, I'd say we should deprecate it and add it to the removal
+> schedule. The less poorly tested legacy filesystem code we have to
+> maintain the better.
+>=20
+> Along those lines, I think we really need to be more aggressive
+> about deprecating and removing filesystems that cannot (or will not)
+> be made y2038k compliant in the new future. We're getting to close
+> to the point where long term distro and/or product development life
+> cycles will overlap with y2038k, so we should be thinking of
+> deprecating and removing such filesystems before they end up in
+> products that will still be in use in 15 years time.
+>=20
+> And just so everyone in the discussion is aware: XFS already has a
+> deprecation and removal schedule for the non-y2038k-compliant v4
+> filesystem format. It's officially deprecated right now, we'll stop
+> building kernels with v4 support enabled by default in 2025, and
+> we're removing the code that supports the v4 format entirely in
+> 2030.
 
-I believe I've seen reiserfs in recent Arch Linux ARM installation on
-PinePhone. I don't really think you can remove a feature people are
-using.
+Haha.
+
+It is not up to you. You can't remove feature people are
+using. Sorry. Talk to Linus about that.
 
 Best regards,
 								Pavel
 --=20
 People of Russia, stop Putin before his war on Ukraine escalates.
 
---qDbXVdCdHGoSgWSk
+--gj572EiMnwbLXET9
 Content-Type: application/pgp-signature; name="signature.asc"
 Content-Description: Digital signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1
 
-iEYEARECAAYFAmJIK34ACgkQMOfwapXb+vInUwCgiuujgobhudaYxKoul558NwQE
-kRcAn1O5/sGxjKK3dKK6b6zT6ydXw++J
-=S16w
+iEYEARECAAYFAmJILCwACgkQMOfwapXb+vL+cwCeKoWjLgQyQtZxSVPyZ3fSK+va
+2y4AnRvT6XFyi/Bb7fAtHmBi382Irkrc
+=Kv/y
 -----END PGP SIGNATURE-----
 
---qDbXVdCdHGoSgWSk--
+--gj572EiMnwbLXET9--
