@@ -1,122 +1,236 @@
-From: Dave Chinner <david@fromorbit.com>
-Subject: Re: Is it time to remove reiserfs?
-Date: Wed, 6 Apr 2022 09:04:20 +1000
-Message-ID: <20220405230420.GX1609613@dread.disaster.area>
-References: <YhIwUEpymVzmytdp@casper.infradead.org>
- <20220222100408.cyrdjsv5eun5pzij@quack3.lan>
- <20220222221614.GC3061737@dread.disaster.area>
- <20220402105749.GB16346@amd>
+From: Edward Shishkin <edward.shishkin@gmail.com>
+Subject: Reiser5: Parallel scaling out on local hosts. Numbers!
+Date: Sun, 10 Apr 2022 18:12:34 +0200
+Message-ID: <488ed272-d2ee-d311-aa0c-23eb212b21bf@gmail.com>
 Mime-Version: 1.0
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20220402105749.GB16346@amd>
-List-ID: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Pavel Machek <pavel@ucw.cz>
-Cc: Jan Kara <jack@suse.cz>, Matthew Wilcox <willy@infradead.org>, linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, reiserfs-devel@vger.kernel.org
+Return-path: <reiserfs-devel-owner@vger.kernel.org>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=from:subject:to:cc:message-id:date:user-agent:mime-version
+         :content-language:content-transfer-encoding;
+        bh=n3XGAdzzz/+5bT8q+RENXVS4bI+kwN6cAFNKDEuZ0CM=;
+        b=fvJKrQJTDmhHz0iOM8fM0KwsGjkIykaNWD1jdY+C9TWjGFr+d6dYicINChuFgTeoAA
+         jNK+GFEKcCY3Rcjm2pYFIkGxSGF3LavBhM3mzAKr/4AvCAVoEleq/jbxVcgwXaPhkJfk
+         QHAnb2/pscghhG1kaQtwNiYqr7lLAEgwornR2G0tvnUHL/Ip0MUqElhw/RcK+LWpAJdu
+         wi9HMrUhzloQnkUoU21IW3cv0WTOGA27tnZmRFKJ+c654Hs5qAQbTEcThr8Mwb/AGHJ6
+         Udkv38Pgi04b1HXI1hjJJZzMyws9j45MDIntOEAgp2/wBQyBrw8ikvQbrmK6anfnCslv
+         Q2Wg==
+Content-Language: en-US
+List-ID: <reiserfs-devel.vger.kernel.org>
+Content-Type: text/plain; charset="us-ascii"; format="flowed"
+To: ReiserFS development mailing list <reiserfs-devel@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Cc: Andy Lavr <andy.lavr@gmail.com>
 
-On Sat, Apr 02, 2022 at 12:57:49PM +0200, Pavel Machek wrote:
-> > > So from my distro experience installed userbase of reiserfs is pretty small
-> > > and shrinking. We still do build reiserfs in openSUSE / SLES kernels but
-> > > for enterprise offerings it is unsupported (for like 3-4 years) and the module
-> > > is not in the default kernel rpm anymore.
-> > > 
-> > > So clearly the filesystem is on the deprecation path, the question is
-> > > whether it is far enough to remove it from the kernel completely. Maybe
-> > > time to start deprecation by printing warnings when reiserfs gets mounted
-> > > and then if nobody yells for year or two, we'll go ahead and remove it?
-> > 
-> > Yup, I'd say we should deprecate it and add it to the removal
-> > schedule. The less poorly tested legacy filesystem code we have to
-> > maintain the better.
-> > 
-> > Along those lines, I think we really need to be more aggressive
-> > about deprecating and removing filesystems that cannot (or will not)
-> > be made y2038k compliant in the new future. We're getting to close
-> > to the point where long term distro and/or product development life
-> > cycles will overlap with y2038k, so we should be thinking of
-> > deprecating and removing such filesystems before they end up in
-> > products that will still be in use in 15 years time.
-> > 
-> > And just so everyone in the discussion is aware: XFS already has a
-> > deprecation and removal schedule for the non-y2038k-compliant v4
-> > filesystem format. It's officially deprecated right now, we'll stop
-> > building kernels with v4 support enabled by default in 2025, and
-> > we're removing the code that supports the v4 format entirely in
-> > 2030.
-> 
-> Haha.
-> 
-> It is not up to you. You can't remove feature people are
-> using. Sorry. Talk to Linus about that.
+Hi all,
 
-I think you have the wrong end of the stick. We're not removing
-stuff that people use, we're removing support for functionality that
-will be *fundamentally broken* and *unfixable* come 2038. Hence we
-need a process for ensuring that nobody is still requiring us to
-support it by the scheduled removal date.
+Earlier we announced a logical volume manager with parallel scaling out
+on local hosts, which is different from the traditional RAID arrays and
+is more like volume managers of networking file systems:
+https://reiser4.wiki.kernel.org/index.php/Logical_Volumes_Background
 
-Every long term project needs to have a deprecation process so that
-they can clean out unmaintained, broken, unfixable and/or unused
-code without putting users at risk. If we can't/won't/don't clear
-out unmaintained or unfixable code, the risk of data loss, security
-breaches, etc in that code is a real and present danger to
-any kernel that includes that code. We learnt this lesson the hard
-way recently, and we simply removed the legacy code responsible in
-response. Even Linus agreed that prompt removal of the functionality
-was the right thing to do.
+Here we provide some numbers for the latest Reiser5 software release.
 
-This occurred despite the fact we had a feature deprecation policy
-for XFS long before that incident occurred - we just had not been
-applying it to dusty corners of the user API we inherited from Irix.
-It has been used for things like proc/sysfs knobs and mount options
-that are no longer supported, and the lesson we learn is that is
-should be applied to user APIs as well. We'd already extended that
-process for deprecation and removal of support for on-disk formats
-(i.e. the V4 format) but not legacy user APIS.
+Note that performance of volume operations have different topicality.
+E.g. performance of device removal is more topical than performance of
+adding a device. Indeed, user usually wants the deleted device to go to
+other needs immediately, whereas, when adding a device he gets more disk
+space immediately after issuing the command (there is no need to wait
+for rebalancing completion).
 
-W.r.t to the V4 format deprecation, the kernel issues warnings
-at mount time right now to say that the v4 format is deprecated and
-will be going away.
 
-XFS (dm-0): Deprecated V4 format (crc=0) will not be supported after September 2030.
-XFS (dm-0): Mounting V4 Filesystem
-XFS (dm-0): Ending clean mount
-xfs filesystem being mounted at /mnt/scratch supports timestamps until 2038 (0x7fffffff)
 
-mkfs.xfs warns if you explicitly make a v4 fielsystem:
+Hardware:
 
-# mkfs.xfs -N -m crc=0 /dev/mapper/fast
-V4 filesystems are deprecated and will not be supported by future versions.
-....
-#
+Dell OptiPlex 7050 6C2XR, Intel Core i7-7700, 16GB RAM
+(4 Cores / 8 Threads)
 
-The timeframe for support is documented in both the mkfs.xfs man
-page and the XFS section of the kernel admin guide published here:
+Storage media:
 
-https://docs.kernel.org/admin-guide/xfs.html#deprecation-of-v4-format
+DEV1: Lite-On LCS-256M6S, SSD 256GB, SATAIII, 2.5"
+DEV2: Intenso 2.5" SSD TOP, 256G, SATAIII, 2.5"
+DEV3: Intenso 2.5" SSD TOP, 256G, SATAIII, 2.5"
+DEV4: Intenso M.2  SSD TOP, 256G, SATAIII, m.2 2280
+RAM0: Block device in RAM
 
-Indeed, if you keep reading down that link, you'll see all the
-deprecated mount options, sysctls, etc and their removal schedule,
-as well as all the removed options and when they were removed.
 
-Deprecation and removal of old features is something that all long
-term projects need to be able to perform, and the Linux kernel is no
-different.  Just because the Linux kernel project as a whole
-doesn't have full software lifecycle management processes, it
-doesn't mean that every kernel subsystems have no full software
-lifecycle management processes.
+Software:
 
-Rather than saying "you cannot do X", it is better to learn why "we
-*need* to do X" and then come up with a sane process for allowing X
-to occur. The recent a.out removal and the reverted /dev/urandom
-changes are good examples of how having a well thought out feature
-deprecation and removal process is a really good thing to have.
+Reiser4-for-5.16.patch (software release 5.1.3), download at:
+https://sourceforge.net/projects/reiser4/files/v5-unstable/kernel/reiser4-for-5.16.patch.gz/download
 
-Cheers,
 
-Dave.
--- 
-Dave Chinner
-david@fromorbit.com
+Reiser4progs-2.0.5 (software release 5.1.3), download at:
+https://sourceforge.net/projects/reiser4/files/v5-unstable/progs/reiser4progs-2.0.5.tar.gz/download
+
+
+
+
+                Sequential RAW operations
+
+
+Data set: 10G at zero offset
+
+
+1. Read from RAW device
+
+Device     Speed, M/s
+
+   DEV1         470
+   DEV2         530
+
+
+2. Write to RAW device
+
+Device     Speed, M/s
+
+
+   DEV1        390
+   DEV2        420
+
+
+
+              Sequential file operations
+
+
+Stripe size: 128K
+Data set: one 10G file
+
+
+
+            1. Read/Write a large file, Speed (M/s)
+
+
+
+Nr of Disks in the Volume       Write               Read
+
+  1 (DEV1)                        380                 460
+  1 (DEV2)                        410                 518
+  2 (DEV1+DEV2)                   695                 744
+  3 (DEV1+DEV2+DEV3)              890                 970
+  4 (DEV1+DEV2+DEV3+DEV4)         950                1100
+
+
+
+             2. Copy data from/to formatted device
+
+
+
+  From device                  To device           Speed (M/s)
+
+      DEV1                        DEV2                260
+      DEV2                        DEV1                255
+
+
+                         Volume operations
+
+
+Stripe size: 128K
+Data set: one 10G file
+
+
+Speed of any volume operation is defined as D/T, where
+D - total amount of data stored on the volume
+T - operation time (including full data rebalancing/migration and sync)
+Caches are dropped before each operation.
+
+More details about logical volumes management can be found here:
+https://reiser4.wiki.kernel.org/index.php/Logical_Volumes_Administration
+
+
+
+              1. Adding a device to a logical volume
+
+
+
+      Volume             Device to add              Speed M/s
+
+  DEV1                        DEV2                     284
+  DEV1+DEV2                   DEV3                     457
+  DEV1+DEV2+DEV3              DEV4                     574
+
+
+               2. Removing a device from a logical volume
+
+
+
+     Volume              Device to remove           Speed M/s
+
+  DEV1+DEV2+DEV3+DEV4         DEV4                     890
+  DEV1+DEV2+DEV3              DEV3                     606
+  DEV1+DEV2                   DEV2                     336
+
+
+
+                    3. Flushing a proxy device
+
+
+
+More details about proxy device management can be found here:
+https://reiser4.wiki.kernel.org/index.php/Proxy_Device_Administration
+
+Before each operation all data of the logical volume are on the proxy
+device. After the operation all the data are on the permanent storage
+denoted as "Volume".
+
+
+     Volume                Proxy device             Speed M/s
+
+
+  DEV1                         DEV4                    228
+  DEV1+DEV2                    DEV4                    244
+  DEV1+DEV2+DEV3               DEV4                    290
+
+
+  DEV1                         RAM0                    283
+  DEV1+DEV2                    RAM0                    301
+  DEV1+DEV2+DEV3               RAM0                    374
+  DEV1+DEV2+DEV3+DEV4          RAM0                    427
+
+
+
+                     4. Migrating a file
+
+
+
+More details about file migration in Reiser5 volumes can be found here:
+https://reiser4.wiki.kernel.org/index.php/Transparent_File_Migration
+
+Before each operation all data of the file are fairly distributed among
+all devices-components of the logical Volume. After the operation all
+file's data are stored on the Target device.
+
+
+     Volume                Target Device            Speed M/s
+
+
+DEV1+DEV2+DEV3+DEV4           DEV1                     387
+DEV1+DEV2+DEV3                DEV1                     403
+DEV1+DEV2                     DEV1                     427
+
+
+Comment. With increasing number of components, the speed of file
+migration approaches (from top) the write speed to the formatted device
+DEV1 (380 M/s).
+
+
+
+                            Comments
+
+
+
+Parallel O(1)-defragmentor of compound Reiser5 volumes is in plans!
+Proxy devices are also a subject of defragmentation.
+
+All file and volume operations are a subject of further performance
+improvements. Currently IO requests against devices-components of a
+logical volume are submitted by the same thread. This serialization
+factor leads to performance drop. Once the software stability reaches
+beta level, the things should be parallelized. Also currently for
+simplicity _all_ data are read from the volume during its re-balancing.
+It would be more reasonable to read only those data which are a subject
+of migration.
+
+Theoretical limit for the speed of adding(removing) a second device is a
+double copy speed from DEV1 to DEV2 (respectively from DEV2 to DEV1).
+Currently we have respectively 1.1 and 1.3 of the copy speed.
