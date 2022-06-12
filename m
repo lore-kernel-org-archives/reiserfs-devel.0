@@ -1,76 +1,135 @@
-From: =?UTF-8?Q?Micha=c5=82_Dec?= <moog621@gmail.com>
-Subject: Re: Alternatives after removal of ReiserFS
-Date: Thu, 19 May 2022 17:43:39 +0200
-Message-ID: <f6bb01be-d55d-a2b1-2d21-9abb48f3c445@gmail.com>
-References: <54db8933-f2f3-d31a-c71f-860285e25abf@gmail.com>
- <2631780.mvXUDI8C0e@natalenko.name>
- <20220519101652.iu5jbol2cjwr4y5c@quack3.lan>
+From: syzbot <syzbot+ffe24b1afbc4cb5ae8fb@syzkaller.appspotmail.com>
+Subject: [syzbot] KASAN: use-after-free Read in search_by_entry_key (2)
+Date: Sun, 12 Jun 2022 03:38:30 -0700
+Message-ID: <000000000000bcbb0205e13dc53a@google.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=message-id:date:mime-version:user-agent:subject:content-language:to
-         :cc:references:from:in-reply-to:content-transfer-encoding;
-        bh=m5kPAYHdYcAvP0y9XTgXwmB1ZQjwIlMax/gKQxOCPRk=;
-        b=apT9tlxkaVfwr0nABaNIlf22EWq8+BlMG0XXnj6qRjSNqV1RxMYsV2cKb9qJxWV09r
-         rimoXcrswkwegkBW96uy9gdqvVq5PPWifgSPvatfAukoulgHYI0XDQGimO2qjAYMhHkp
-         jg8uvcr6GfYh0n8gTDq+GgnwNEvShlHYoXuvMEwj2cMnzSZOpjH6FufVMfNNKA72/P7h
-         Ao8oJKQcvfFCoqMSJe2yrw68j3iANY3qdYY2bghLZzdsOfJP2mvNV9EytanGnWaa2HXV
-         cqSFtXZujLThv3k081hxKCrsq04ULtXY9VsQOas/+LCWMVrk9JMFswryhiJqSGQd5fwq
-         4YTg==
-Content-Language: en-US
-In-Reply-To: <20220519101652.iu5jbol2cjwr4y5c@quack3.lan>
 List-ID: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="utf-8"; format="flowed"
-To: Jan Kara <jack@suse.cz>, Oleksandr Natalenko <oleksandr@natalenko.name>
-Cc: linux-kernel@vger.kernel.org, reiserfs-devel@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: linux-kernel@vger.kernel.org, reiserfs-devel@vger.kernel.org, syzkaller-bugs@googlegroups.com
 
-Hello Jan and Oleksandr,
+Hello,
 
-I would prefer to avoid btrfs if possible. It ate my Gentoo root 
-filesystem in 2017. This incident has been resolved by reinstalling the 
-system because each attempt to fsck only made it even worse. I 
-appreciate it for excellent transparent compression and for generally 
-good support for Docker, but I can live without it.
+syzbot found the following issue on:
 
- >But given how cheap the storage is these days, people don't care as much.
+HEAD commit:    1c27f1fc1549 iov_iter: fix build issue due to possible typ..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=16c41c0ff00000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=20ac3e0ebf0db3bd
+dashboard link: https://syzkaller.appspot.com/bug?extid=ffe24b1afbc4cb5ae8fb
+compiler:       gcc (Debian 10.2.1-6) 10.2.1 20210110, GNU ld (GNU Binutils for Debian) 2.35.2
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=114e04bbf00000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=14cec6e7f00000
 
-I don't like this kind of attitude because it encourages a decline in 
-quality in general. We'll learn to appreciate what we have once it 
-becomes scarce again.
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+ffe24b1afbc4cb5ae8fb@syzkaller.appspotmail.com
 
-Thank you Jan and Oleksandr very much for your knowledge on xfs and 
-ext4. I'll make sure to put it to good use.
+REISERFS (device loop0): journal params: device loop0, size 15748, journal first block 18, max trans len 1024, max batch 900, max commit age 0, max trans age 30
+REISERFS (device loop0): checking transaction log (loop0)
+REISERFS (device loop0): Using r5 hash to sort names
+REISERFS (device loop0): using 3.5.x disk format
+==================================================================
+BUG: KASAN: use-after-free in bin_search_in_dir_item fs/reiserfs/namei.c:40 [inline]
+BUG: KASAN: use-after-free in search_by_entry_key+0x81f/0x960 fs/reiserfs/namei.c:165
+Read of size 4 at addr ffff8880715ee014 by task syz-executor352/3611
 
-Bestest regards,
+CPU: 0 PID: 3611 Comm: syz-executor352 Not tainted 5.19.0-rc1-syzkaller-00263-g1c27f1fc1549 #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
+Call Trace:
+ <TASK>
+ __dump_stack lib/dump_stack.c:88 [inline]
+ dump_stack_lvl+0xcd/0x134 lib/dump_stack.c:106
+ print_address_description.constprop.0.cold+0xeb/0x495 mm/kasan/report.c:313
+ print_report mm/kasan/report.c:429 [inline]
+ kasan_report.cold+0xf4/0x1c6 mm/kasan/report.c:491
+ bin_search_in_dir_item fs/reiserfs/namei.c:40 [inline]
+ search_by_entry_key+0x81f/0x960 fs/reiserfs/namei.c:165
+ reiserfs_find_entry.part.0+0x139/0xdf0 fs/reiserfs/namei.c:322
+ reiserfs_find_entry fs/reiserfs/namei.c:368 [inline]
+ reiserfs_lookup+0x24a/0x490 fs/reiserfs/namei.c:368
+ __lookup_slow+0x24c/0x480 fs/namei.c:1701
+ lookup_one_len+0x16a/0x1a0 fs/namei.c:2730
+ reiserfs_lookup_privroot+0x92/0x280 fs/reiserfs/xattr.c:980
+ reiserfs_fill_super+0x21bb/0x2fb0 fs/reiserfs/super.c:2176
+ mount_bdev+0x34d/0x410 fs/super.c:1367
+ legacy_get_tree+0x105/0x220 fs/fs_context.c:610
+ vfs_get_tree+0x89/0x2f0 fs/super.c:1497
+ do_new_mount fs/namespace.c:3040 [inline]
+ path_mount+0x1320/0x1fa0 fs/namespace.c:3370
+ do_mount fs/namespace.c:3383 [inline]
+ __do_sys_mount fs/namespace.c:3591 [inline]
+ __se_sys_mount fs/namespace.c:3568 [inline]
+ __x64_sys_mount+0x27f/0x300 fs/namespace.c:3568
+ do_syscall_x64 arch/x86/entry/common.c:50 [inline]
+ do_syscall_64+0x35/0xb0 arch/x86/entry/common.c:80
+ entry_SYSCALL_64_after_hwframe+0x46/0xb0
+RIP: 0033:0x7f33c6185c8a
+Code: 48 c7 c2 c0 ff ff ff f7 d8 64 89 02 b8 ff ff ff ff eb d2 e8 a8 00 00 00 0f 1f 84 00 00 00 00 00 49 89 ca b8 a5 00 00 00 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 c0 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007ffcd4af74c8 EFLAGS: 00000286 ORIG_RAX: 00000000000000a5
+RAX: ffffffffffffffda RBX: 00007ffcd4af7520 RCX: 00007f33c6185c8a
+RDX: 0000000020000000 RSI: 0000000020000100 RDI: 00007ffcd4af74e0
+RBP: 00007ffcd4af74e0 R08: 00007ffcd4af7520 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000286 R12: 00000000200000a0
+R13: 0000000000000003 R14: 0000000000000004 R15: 0000000000000004
+ </TASK>
 
-Michał Dec
+The buggy address belongs to the physical page:
+page:ffffea0001c57b80 refcount:0 mapcount:0 mapping:0000000000000000 index:0x1 pfn:0x715ee
+flags: 0xfff00000000000(node=0|zone=1|lastcpupid=0x7ff)
+raw: 00fff00000000000 ffffea0001c57bc8 ffff8880b9a403c0 0000000000000000
+raw: 0000000000000001 0000000000000000 00000000ffffffff 0000000000000000
+page dumped because: kasan: bad access detected
+page_owner tracks the page as freed
+page last allocated via order 0, migratetype Movable, gfp_mask 0x8(__GFP_MOVABLE), pid 1, tgid 1 (swapper/0), ts 8666191765, free_ts 9438327718
+ split_map_pages+0x1ef/0x520 mm/compaction.c:99
+ isolate_freepages_range+0x30f/0x350 mm/compaction.c:739
+ alloc_contig_range+0x2f6/0x490 mm/page_alloc.c:9192
+ __alloc_contig_pages mm/page_alloc.c:9215 [inline]
+ alloc_contig_pages+0x35a/0x4c0 mm/page_alloc.c:9292
+ debug_vm_pgtable_alloc_huge_page mm/debug_vm_pgtable.c:1098 [inline]
+ init_args mm/debug_vm_pgtable.c:1221 [inline]
+ debug_vm_pgtable+0x88f/0x2a94 mm/debug_vm_pgtable.c:1259
+ do_one_initcall+0x103/0x650 init/main.c:1295
+ do_initcall_level init/main.c:1368 [inline]
+ do_initcalls init/main.c:1384 [inline]
+ do_basic_setup init/main.c:1403 [inline]
+ kernel_init_freeable+0x6b1/0x73a init/main.c:1610
+ kernel_init+0x1a/0x1d0 init/main.c:1499
+ ret_from_fork+0x1f/0x30 arch/x86/entry/entry_64.S:302
+page last free stack trace:
+ reset_page_owner include/linux/page_owner.h:24 [inline]
+ free_pages_prepare mm/page_alloc.c:1371 [inline]
+ free_pcp_prepare+0x549/0xd20 mm/page_alloc.c:1421
+ free_unref_page_prepare mm/page_alloc.c:3343 [inline]
+ free_unref_page+0x19/0x6a0 mm/page_alloc.c:3438
+ free_contig_range+0xb1/0x180 mm/page_alloc.c:9314
+ destroy_args+0xa8/0x646 mm/debug_vm_pgtable.c:1031
+ debug_vm_pgtable+0x2a03/0x2a94 mm/debug_vm_pgtable.c:1354
+ do_one_initcall+0x103/0x650 init/main.c:1295
+ do_initcall_level init/main.c:1368 [inline]
+ do_initcalls init/main.c:1384 [inline]
+ do_basic_setup init/main.c:1403 [inline]
+ kernel_init_freeable+0x6b1/0x73a init/main.c:1610
+ kernel_init+0x1a/0x1d0 init/main.c:1499
+ ret_from_fork+0x1f/0x30 arch/x86/entry/entry_64.S:302
 
-W dniu 19.05.2022 o 12:16, Jan Kara pisze:
-> On Thu 19-05-22 11:20:24, Oleksandr Natalenko wrote:
->> Hello.
->>
->> On středa 18. května 2022 14:10:25 CEST Michał Dec wrote:
->>> Does the Linux kernel actually offer any alternatives to users whose use
->>> cases are satisfied by ReiserFS? These users will probably be stuck with
->>> a much older kernel once ReiserFS is completely removed. I'm one of
->>> those users and I use ReiserFS to keep around large quantities of small
->>> files and quite ironically these are copies of the Linux kernel. I keep
->>> around 2, maybe 3 separate kernel trees to make sure the kernels I have
->>> on my devices can be rebuilt at any time.
->> I think the advantage of using reiserfs for small files faded away over
->> time and became an old tale that is being passed from one generation to
->> another without any modern adequate testing.
->>
->> XFS should serve you well.
-> Yes, so the space savings of tail packing e.g. for the kernel tree are
-> likely still noticeable (my tree here has around half of the files with
-> size below 4k). But given how cheap the storage is these days, people don't
-> care as much. If space efficiency is important, it could be improved by using
-> 1k blocksize for xfs or ext4. Also btrfs does packing of small files so
-> for lots of small files it may be more space-efficient. And btrfs also
-> supports transparent compression so that can reduce space usage for larger
-> files even further.
->
-> 								Honza
+Memory state around the buggy address:
+ ffff8880715edf00: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+ ffff8880715edf80: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+>ffff8880715ee000: ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff
+                         ^
+ ffff8880715ee080: ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff
+ ffff8880715ee100: ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff
+==================================================================
+
+
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+syzbot can test patches for this issue, for details see:
+https://goo.gl/tpsmEJ#testing-patches
