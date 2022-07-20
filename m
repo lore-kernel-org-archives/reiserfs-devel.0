@@ -1,81 +1,108 @@
-From: zengjx95@gmail.com
-Subject: [PATCH] fs/reiserfs/inode: remove dead code in _get_block_create_0()
-Date: Wed, 20 Jul 2022 14:33:10 +0800
-Message-ID: <20220720063310.992149-1-zengjx95@gmail.com>
+From: Al Viro <viro@zeniv.linux.org.uk>
+Subject: Re: [PATCH] fs/reiserfs/inode: remove dead code in
+ _get_block_create_0()
+Date: Wed, 20 Jul 2022 07:57:45 +0100
+Message-ID: <YtenaY4hDx7J746Y@ZenIV>
+References: <20220720063310.992149-1-zengjx95@gmail.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=Ip8sfT3MomUNm29brPu+2k5VsrDURTEoCZs6KvoAjCg=;
-        b=mPCN2m2YAamRuXjOWWlyImJNiFeyt9Ei44tMgjZzOD0xokfqaWnWh0tbE50km4Eq9u
-         gaRLkV6Wbul9wu4a6BAlyq1P6IAJe11QlDd5TJGgVQft0yuno8FMpFEOe9OMGhbQQiXF
-         ovmm3I8q+Vtmunej3wNf5sPEVr7GUPp0uSN9lDzGqtV/8Ll1xU4+P2+7KefkLjQyxztT
-         5Dno5OwJ1iWi3FF1bV6r/RvY/g5k32Zoi5RXelQJNeIz5K19w7BDpIWXnWlyiPR7CmE9
-         WPFM50xagworbq55Zia6FJgqN+QYxveWfeDg/afGny+xCu0hqZ5aA4XfDfODXCY1KMvP
-         543g==
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
+        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=ezIIZCU4EFhKuDAwp8CxrD6gg3vQSd6pReh1trZRbPE=; b=TX7uWhY7SglTlzuqrHNvq/dWkt
+        JKDrshvsS3Q/z8E1BQdM2SVJKalWOWtNHp/PLQb8+uya3kd4r4wyzNpeJKIHHYz1iV5g8RIXMu+ik
+        l3Vdw69yGW0yCcv0Q8LSQCEmV3SS9VB0QHgs/6kZvj2VTXTb6Dchn/af3J8MsITG71gWz6QHuhEE1
+        UJ5Obha3EVORASfMcghE4ABfuCdRDPwAEBiFCW3+d2ZfaUzHTgWyeX4TTQQRVwqtF2Ip6UkhgSuUP
+        qkEFhI/dyKELtTnx0Im0HgHP6+osLqtxisU5Pf8otKHYK13zsl4ksxhpn2Lp9CpE68lnu2lIZFa5Q
+        JWTmfIIA==;
+Content-Disposition: inline
+In-Reply-To: <20220720063310.992149-1-zengjx95@gmail.com>
+Sender: Al Viro <viro@ftp.linux.org.uk>
 List-ID: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: reiserfs-devel@vger.kernel.org
-Cc: willy@infradead.org, jlayton@kernel.org, damien.lemoal@opensource.wdc.com, jack@suse.cz, edward.shishkin@gmail.com, linux-kernel@vger.kernel.org, Zeng Jingxiang <linuszeng@tencent.com>
+Content-Transfer-Encoding: 7bit
+To: zengjx95@gmail.com
+Cc: reiserfs-devel@vger.kernel.org, willy@infradead.org, jlayton@kernel.org, damien.lemoal@opensource.wdc.com, jack@suse.cz, edward.shishkin@gmail.com, linux-kernel@vger.kernel.org, Zeng Jingxiang <linuszeng@tencent.com>
 
-From: Zeng Jingxiang <linuszeng@tencent.com>
+On Wed, Jul 20, 2022 at 02:33:10PM +0800, zengjx95@gmail.com wrote:
+> From: Zeng Jingxiang <linuszeng@tencent.com>
+> 
+> Fix "control flow" issues found by Coverity
+> Logically dead code (DEADCODE)
+> Execution cannot reach this statement.
+> 
+> Assigned_value: Assigning value NULL to p here
+> 293	char *p = NULL;
+> In the following conditional expression, the value of p is always NULL,
+> as a result, the kunmap() cannot be executed.
+> 308	if (p)
+> 309		kunmap(bh_result->b_page);
+> 
+> 355	if (p)
+> 356		kunmap(bh_result->b_page);
+> 
+> 366	if (p)
+> 367		kunmap(bh_result->b_page);
+> 
+> Signed-off-by: Zeng Jingxiang <linuszeng@tencent.com>
 
-Fix "control flow" issues found by Coverity
-Logically dead code (DEADCODE)
-Execution cannot reach this statement.
+First of all, if you find something like that, it might be a good idea to
+find _when_ had that appeared.  If nothing else, transformation might
+very well turn out to be obfuscating a preexisting bug.
 
-Assigned_value: Assigning value NULL to p here
-293	char *p = NULL;
-In the following conditional expression, the value of p is always NULL,
-as a result, the kunmap() cannot be executed.
-308	if (p)
-309		kunmap(bh_result->b_page);
+In this case, it's not hard to find: 27b3a5c51b50 "kill-the-bkl/reiserfs:
+drop the fs race watchdog from _get_block_create_0()", which had
+removed a label upstream of these tests and a branch to it from
+downstream of assignment to p.
 
-355	if (p)
-356		kunmap(bh_result->b_page);
+Assignment survives, BTW, in the following form:
+        if (!p)
+		p = (char *)kmap(bh_result->b_page);
+and this test is just as constant as the ones you'd removed.  Unlike
+them it's constantly true, of course, but just as inexplicable by
+the current form of function.
 
-366	if (p)
-367		kunmap(bh_result->b_page);
+If anything, I would suggest losing initialization of p to NULL
+and making the assignment quoted above unconditional.
 
-Signed-off-by: Zeng Jingxiang <linuszeng@tencent.com>
----
- fs/reiserfs/inode.c | 6 ------
- 1 file changed, 6 deletions(-)
 
-diff --git a/fs/reiserfs/inode.c b/fs/reiserfs/inode.c
-index 0cffe054b78e..d1b0c7645fcb 100644
---- a/fs/reiserfs/inode.c
-+++ b/fs/reiserfs/inode.c
-@@ -305,8 +305,6 @@ static int _get_block_create_0(struct inode *inode, sector_t block,
- 	result = search_for_position_by_key(inode->i_sb, &key, &path);
- 	if (result != POSITION_FOUND) {
- 		pathrelse(&path);
--		if (p)
--			kunmap(bh_result->b_page);
- 		if (result == IO_ERROR)
- 			return -EIO;
- 		/*
-@@ -352,8 +350,6 @@ static int _get_block_create_0(struct inode *inode, sector_t block,
- 		}
- 
- 		pathrelse(&path);
--		if (p)
--			kunmap(bh_result->b_page);
- 		return ret;
- 	}
- 	/* requested data are in direct item(s) */
-@@ -363,8 +359,6 @@ static int _get_block_create_0(struct inode *inode, sector_t block,
- 		 * when it is stored in direct item(s)
- 		 */
- 		pathrelse(&path);
--		if (p)
--			kunmap(bh_result->b_page);
- 		return -ENOENT;
- 	}
- 
--- 
-2.27.0
 
+> ---
+>  fs/reiserfs/inode.c | 6 ------
+>  1 file changed, 6 deletions(-)
+> 
+> diff --git a/fs/reiserfs/inode.c b/fs/reiserfs/inode.c
+> index 0cffe054b78e..d1b0c7645fcb 100644
+> --- a/fs/reiserfs/inode.c
+> +++ b/fs/reiserfs/inode.c
+> @@ -305,8 +305,6 @@ static int _get_block_create_0(struct inode *inode, sector_t block,
+>  	result = search_for_position_by_key(inode->i_sb, &key, &path);
+>  	if (result != POSITION_FOUND) {
+>  		pathrelse(&path);
+> -		if (p)
+> -			kunmap(bh_result->b_page);
+>  		if (result == IO_ERROR)
+>  			return -EIO;
+>  		/*
+> @@ -352,8 +350,6 @@ static int _get_block_create_0(struct inode *inode, sector_t block,
+>  		}
+>  
+>  		pathrelse(&path);
+> -		if (p)
+> -			kunmap(bh_result->b_page);
+>  		return ret;
+>  	}
+>  	/* requested data are in direct item(s) */
+> @@ -363,8 +359,6 @@ static int _get_block_create_0(struct inode *inode, sector_t block,
+>  		 * when it is stored in direct item(s)
+>  		 */
+>  		pathrelse(&path);
+> -		if (p)
+> -			kunmap(bh_result->b_page);
+>  		return -ENOENT;
+>  	}
+>  
+> -- 
+> 2.27.0
+> 
