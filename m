@@ -1,83 +1,55 @@
-From: syzbot <syzbot+845cd8e5c47f2a125683@syzkaller.appspotmail.com>
-Subject: [syzbot] KASAN: null-ptr-deref Read in do_journal_end (2)
-Date: Sat, 30 Jul 2022 12:30:21 -0700
-Message-ID: <00000000000034d16305e50acc8d@google.com>
+From: Edward Shishkin <edward.shishkin@gmail.com>
+Subject: Re: 5.17.0-3+reiser4.0.2-amd64 SFRN 4.0.2 crash in local development
+ machine part.
+Date: Sat, 6 Aug 2022 12:34:53 +0200
+Message-ID: <2689ffc5-b0a8-6199-4df5-55b462792d8a@gmail.com>
+References: <20220805043523.E6E96A86C50@tezcatlipoca.metztli.it>
 Mime-Version: 1.0
-Return-path: <reiserfs-devel-owner@vger.kernel.org>
-List-ID: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: damien.lemoal@opensource.wdc.com, jack@suse.cz, jlayton@kernel.org, linux-kernel@vger.kernel.org, neilb@suse.de, reiserfs-devel@vger.kernel.org, syzkaller-bugs@googlegroups.com, willy@infradead.org
+Return-path: <reiserfs-devel-owner@vger.kernel.org>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=message-id:date:mime-version:user-agent:subject:content-language:to
+         :references:from:cc:in-reply-to:content-transfer-encoding;
+        bh=akdRVEUH241zFUlARmehFKlEyxn9+IeT+nWUi+XvxtQ=;
+        b=bqCG/Pwu8G8evXcnUycSUPkGYR8n/IBYr89vfi/2s7d1QgbQYOK6FqjV8jRajoIp1h
+         Gr/h0q6QB97YFJzsnEDocfI0JydFkr3QzxX5FKlhGSXvGVBlt16uP7PAPPQ2hU8bK0hu
+         sKogleec1UnPj8gOPa5HfMQOxATYGz2wmwJPQD/7PH2KygXaK+YiaigOinuNHFZIfufH
+         GqkQNKDuc69zjYeO+ESgoc/RmgLLykjeK0i7IqezHwLY9wIPDGCV9EWdoynAbA2sfYEr
+         H3EVGEbShLt8axUFLjcJuSs/5tFkRK2jSAUyW43YLiYQdZqn7BPEbUlTMKy5DF6W70i4
+         Yi+g==
+Content-Language: en-US
+In-Reply-To: <20220805043523.E6E96A86C50@tezcatlipoca.metztli.it>
+List-ID: <reiserfs-devel.vger.kernel.org>
+Content-Type: text/plain; charset="us-ascii"; format="flowed"
+To: Metztli Information Technology <jose.r.r@metztli.com>
+Cc: reiserfs-devel@vger.kernel.org
 
-Hello,
+Hello.
 
-syzbot found the following issue on:
+This flood of warnings is because of no memory to perform compression
+at transaction commit time, when the file system can not fail.
+A possible solution is to fall back and commit uncompressed data.
+Still in todo (AKA never-do :) list.
 
-HEAD commit:    620725263f42 Merge tag 'mm-hotfixes-stable-2022-07-29' of ..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=13ee9c82080000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=26034e6fe0075dad
-dashboard link: https://syzkaller.appspot.com/bug?extid=845cd8e5c47f2a125683
-compiler:       gcc (Debian 10.2.1-6) 10.2.1 20210110, GNU ld (GNU Binutils for Debian) 2.35.2
+Edward.
 
-Unfortunately, I don't have any reproducer for this issue yet.
-
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+845cd8e5c47f2a125683@syzkaller.appspotmail.com
-
-==================================================================
-BUG: KASAN: null-ptr-deref in instrument_atomic_read include/linux/instrumented.h:71 [inline]
-BUG: KASAN: null-ptr-deref in test_bit include/asm-generic/bitops/instrumented-non-atomic.h:134 [inline]
-BUG: KASAN: null-ptr-deref in set_buffer_uptodate include/linux/buffer_head.h:120 [inline]
-BUG: KASAN: null-ptr-deref in do_journal_end+0x135f/0x4b00 fs/reiserfs/journal.c:4080
-Read of size 8 at addr 0000000000000000 by task syz-executor.4/7438
-
-CPU: 0 PID: 7438 Comm: syz-executor.4 Not tainted 5.19.0-rc8-syzkaller-00152-g620725263f42 #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 07/22/2022
-Call Trace:
- <TASK>
- __dump_stack lib/dump_stack.c:88 [inline]
- dump_stack_lvl+0xcd/0x134 lib/dump_stack.c:106
- print_report mm/kasan/report.c:432 [inline]
- kasan_report.cold+0x61/0x1c6 mm/kasan/report.c:491
- check_region_inline mm/kasan/generic.c:183 [inline]
- kasan_check_range+0x13d/0x180 mm/kasan/generic.c:189
- instrument_atomic_read include/linux/instrumented.h:71 [inline]
- test_bit include/asm-generic/bitops/instrumented-non-atomic.h:134 [inline]
- set_buffer_uptodate include/linux/buffer_head.h:120 [inline]
- do_journal_end+0x135f/0x4b00 fs/reiserfs/journal.c:4080
- reiserfs_sync_fs+0xf8/0x120 fs/reiserfs/super.c:78
- sync_filesystem.part.0+0x75/0x1d0 fs/sync.c:56
- sync_filesystem+0x8b/0xc0 fs/sync.c:43
- generic_shutdown_super+0x70/0x400 fs/super.c:445
- kill_block_super+0x97/0xf0 fs/super.c:1394
- deactivate_locked_super+0x94/0x160 fs/super.c:332
- deactivate_super+0xad/0xd0 fs/super.c:363
- cleanup_mnt+0x3a2/0x540 fs/namespace.c:1186
- task_work_run+0xdd/0x1a0 kernel/task_work.c:177
- resume_user_mode_work include/linux/resume_user_mode.h:49 [inline]
- exit_to_user_mode_loop kernel/entry/common.c:169 [inline]
- exit_to_user_mode_prepare+0x23c/0x250 kernel/entry/common.c:201
- __syscall_exit_to_user_mode_work kernel/entry/common.c:283 [inline]
- syscall_exit_to_user_mode+0x19/0x50 kernel/entry/common.c:294
- do_syscall_64+0x42/0xb0 arch/x86/entry/common.c:86
- entry_SYSCALL_64_after_hwframe+0x63/0xcd
-RIP: 0033:0x7f5f3988a677
-Code: ff ff ff f7 d8 64 89 01 48 83 c8 ff c3 66 0f 1f 44 00 00 31 f6 e9 09 00 00 00 66 0f 1f 84 00 00 00 00 00 b8 a6 00 00 00 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b8 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007ffcab38a818 EFLAGS: 00000246 ORIG_RAX: 00000000000000a6
-RAX: 0000000000000000 RBX: 0000000000000000 RCX: 00007f5f3988a677
-RDX: 00007ffcab38a8eb RSI: 000000000000000a RDI: 00007ffcab38a8e0
-RBP: 00007ffcab38a8e0 R08: 00000000ffffffff R09: 00007ffcab38a6b0
-R10: 000055555635d8b3 R11: 0000000000000246 R12: 00007f5f398e22a6
-R13: 00007ffcab38b9a0 R14: 000055555635d810 R15: 00007ffcab38b9e0
- </TASK>
-==================================================================
+On 8/5/22 06:35, Metztli Information Technology wrote:
+> Niltze [Hello], Ed-
+>
+> Linux tezcatlipoca 5.17.0-3+reiser4.0.2-amd64 #1 SMP PREEMPT Debian 5.17.12-2+reiser4.0.2 (2022-06-10) x86_64 GNU/Linux
+>
+> Another (ugly) failure with the modified reiser4 SFRN 4.0.2 dealt with in my last email
+> < https://marc.info/?l=reiserfs-devel&m=165861866731480&w=2 > to the list. I am just recovering from an local umount op which left
+> another reiser4 SFRN 4.0.2 partition in an inconsistent state and while the recovery operation is ongoing I get this
+> via dmesg:
+> ...
+>
+> [355209.443969] reiser4[DOMCacheThread(23260)]: checkout_logical_cluster (fs/reiser4/plugin/file/cryptcompress.c:1992)[edward-1430]:
+>                  WARNING: alloc stream failed with ret=-12
+> [355209.443975] reiser4[DOMCacheThread(23260)]: assign_conversion_mode (fs/reiser4/plugin/item/ctail.c:1577)[edward-1021]:
+>                  WARNING: convert_ctail: nothing to attach
+> [355209.444008] reiser4[DOMCacheThread(23260)]: checkout_logical_cluster (fs/reiser4/plugin/file/cryptcompress.c:1992)[edward-1430]:
+>                  WARNING: alloc stream failed with ret=-12
 
 
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
