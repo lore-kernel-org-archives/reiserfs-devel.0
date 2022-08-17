@@ -1,7 +1,7 @@
 From: Hawkins Jiawei <yin31149@gmail.com>
-Subject: [PATCH] reiserfs: add check in search_by_entry_key()
-Date: Wed, 17 Aug 2022 16:55:11 +0800
-Message-ID: <20220817085512.75936-1-yin31149@gmail.com>
+Subject: [PATCH v2] reiserfs: add check in bin_search_in_dir_item()
+Date: Thu, 18 Aug 2022 00:10:28 +0800
+Message-ID: <20220817161028.8027-1-yin31149@gmail.com>
 References: <000000000000bcbb0205e13dc53a@google.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -10,18 +10,18 @@ DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc;
-        bh=QMW64EnUhAM3fb/FOLJApJo2idS3sY65uejC0k2Z3qs=;
-        b=LQ2AFKVyFma74B+9htyjmznvbfRPRnZLlV/vJ/foDCuBbipC/NLRNHJ23ZQTSer6X4
-         o9M4ZYKS6kwdvQ86BhGBEWIluCEEK21Z4UPzw/qDfRApKMBKiZ8eSCrAKvrmfH8GSA9t
-         tOJDTIuXcFqUS9yFM57ySvdGjzCpIAXXFZJVj2yPeyLNDcEZiwFY8tvvflUnL1AzhvX6
-         TGd+BRvon3Dnn8Yawepllh+7mhuRvHlB1l+O3WC7H5gJsgSkpuSAfFa7jYVlx1iUDNsD
-         bjGOchBVY1pbO9+e+gmYhjPvCazqKIHx/ArtUwzge1aG3UnZ9+qPKv6+yLNeYvWbTg1m
-         xpZA==
+        bh=0w5leDnB9oITFRG2hBeGs/cY0LqF9F4f5ngXhRmBvoA=;
+        b=b1IeAz0squDe+6l615WdkACq4EioqEHcrmbzFC8D4MNW5e68Ip3Dy8d05YiN/kUeTB
+         kinEPW2ff5WzBQV39M2JOikWSmSBxOQNUB4Dabzc5h3d3dCFfsEejtCTE1Fr/IVALdDh
+         xoMbF/J9Egn0X3Ew/hueK/z8Qvu2wrwI2rTmgGlXSdGupbwgwBK+Hzd+6SvPFgry3Iy3
+         rA9G7Xl9K7i1llEA0b/2hcFvwrAHpFnB9enms3gdIDJSTvaIYnep8nZuZnNcb6wLlyQ3
+         Ul1wjpN3Uz6zW9IUtvgcwTFHbPRd0doMQMyedsaY/NVohq5dk5+VBSI6w5ZVxMAnh4q6
+         cazg==
 In-Reply-To: <000000000000bcbb0205e13dc53a@google.com>
 List-ID: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
 To: syzbot+ffe24b1afbc4cb5ae8fb@syzkaller.appspotmail.com
-Cc: linux-kernel@vger.kernel.org, reiserfs-devel@vger.kernel.org, syzkaller-bugs@googlegroups.com, linux-kernel-mentees@lists.linuxfoundation.org, yin31149@gmail.com, 18801353760@163.com, paskripkin@gmail.com, skhan@linuxfoundation.org
+Cc: linux-kernel@vger.kernel.org, reiserfs-devel@vger.kernel.org, syzkaller-bugs@googlegroups.com, 18801353760@163.com, linux-kernel-mentees@lists.linuxfoundation.org, paskripkin@gmail.com, skhan@linuxfoundation.org, Hawkins Jiawei <yin31149@gmail.com>
 
 Syzkaller reports use-after-free Read as follows:
 ------------[ cut here ]------------
@@ -78,18 +78,21 @@ Memory state around the buggy address:
  ffff8880715ee100: ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff
 ==================================================================
 
-The root cause is that the value of rbound in bin_search_in_dir_item()
+The cause is that the value of rbound in bin_search_in_dir_item()
 is out of bounds.
 
 To be more specific, struct buffer_head's b_data field
-contains the directory entry headers array, according to
+contains the entry headers array, according to
 set_de_item_location(). So the array's length should be less
-than the size of b_data, or it may access the invalid memory.  
-This patch solves it by comparing the array's size with b_data's size.
+than the size of b_data, or it may access the invalid memory.
 
-Reported-by: syzbot+ffe24b1afbc4cb5ae8fb@syzkaller.appspotmail.com
+This patch solves it by checking the array's size with b_data's size.
+
 Signed-off-by: Hawkins Jiawei <yin31149@gmail.com>
 ---
+v2:
+  - rename subject from search_by_entry_key() to bin_search_in_dir_item()
+
  fs/reiserfs/namei.c | 6 +++++-
  1 file changed, 5 insertions(+), 1 deletion(-)
 
