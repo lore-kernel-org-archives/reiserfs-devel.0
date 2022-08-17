@@ -1,55 +1,115 @@
-From: Edward Shishkin <edward.shishkin@gmail.com>
-Subject: Re: 5.17.0-3+reiser4.0.2-amd64 SFRN 4.0.2 crash in local development
- machine part.
-Date: Sat, 6 Aug 2022 12:34:53 +0200
-Message-ID: <2689ffc5-b0a8-6199-4df5-55b462792d8a@gmail.com>
-References: <20220805043523.E6E96A86C50@tezcatlipoca.metztli.it>
+From: Hawkins Jiawei <yin31149@gmail.com>
+Subject: [PATCH] reiserfs: add check in search_by_entry_key()
+Date: Wed, 17 Aug 2022 16:55:11 +0800
+Message-ID: <20220817085512.75936-1-yin31149@gmail.com>
+References: <000000000000bcbb0205e13dc53a@google.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
-        h=message-id:date:mime-version:user-agent:subject:content-language:to
-         :references:from:cc:in-reply-to:content-transfer-encoding;
-        bh=akdRVEUH241zFUlARmehFKlEyxn9+IeT+nWUi+XvxtQ=;
-        b=bqCG/Pwu8G8evXcnUycSUPkGYR8n/IBYr89vfi/2s7d1QgbQYOK6FqjV8jRajoIp1h
-         Gr/h0q6QB97YFJzsnEDocfI0JydFkr3QzxX5FKlhGSXvGVBlt16uP7PAPPQ2hU8bK0hu
-         sKogleec1UnPj8gOPa5HfMQOxATYGz2wmwJPQD/7PH2KygXaK+YiaigOinuNHFZIfufH
-         GqkQNKDuc69zjYeO+ESgoc/RmgLLykjeK0i7IqezHwLY9wIPDGCV9EWdoynAbA2sfYEr
-         H3EVGEbShLt8axUFLjcJuSs/5tFkRK2jSAUyW43YLiYQdZqn7BPEbUlTMKy5DF6W70i4
-         Yi+g==
-Content-Language: en-US
-In-Reply-To: <20220805043523.E6E96A86C50@tezcatlipoca.metztli.it>
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc;
+        bh=QMW64EnUhAM3fb/FOLJApJo2idS3sY65uejC0k2Z3qs=;
+        b=LQ2AFKVyFma74B+9htyjmznvbfRPRnZLlV/vJ/foDCuBbipC/NLRNHJ23ZQTSer6X4
+         o9M4ZYKS6kwdvQ86BhGBEWIluCEEK21Z4UPzw/qDfRApKMBKiZ8eSCrAKvrmfH8GSA9t
+         tOJDTIuXcFqUS9yFM57ySvdGjzCpIAXXFZJVj2yPeyLNDcEZiwFY8tvvflUnL1AzhvX6
+         TGd+BRvon3Dnn8Yawepllh+7mhuRvHlB1l+O3WC7H5gJsgSkpuSAfFa7jYVlx1iUDNsD
+         bjGOchBVY1pbO9+e+gmYhjPvCazqKIHx/ArtUwzge1aG3UnZ9+qPKv6+yLNeYvWbTg1m
+         xpZA==
+In-Reply-To: <000000000000bcbb0205e13dc53a@google.com>
 List-ID: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: Metztli Information Technology <jose.r.r@metztli.com>
-Cc: reiserfs-devel@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+To: syzbot+ffe24b1afbc4cb5ae8fb@syzkaller.appspotmail.com
+Cc: linux-kernel@vger.kernel.org, reiserfs-devel@vger.kernel.org, syzkaller-bugs@googlegroups.com, linux-kernel-mentees@lists.linuxfoundation.org, yin31149@gmail.com, 18801353760@163.com, paskripkin@gmail.com, skhan@linuxfoundation.org
 
-Hello.
+Syzkaller reports use-after-free Read as follows:
+------------[ cut here ]------------
+BUG: KASAN: use-after-free in bin_search_in_dir_item fs/reiserfs/namei.c:40 [inline]
+BUG: KASAN: use-after-free in search_by_entry_key+0x81f/0x960 fs/reiserfs/namei.c:165
+Read of size 4 at addr ffff8880715ee014 by task syz-executor352/3611
 
-This flood of warnings is because of no memory to perform compression
-at transaction commit time, when the file system can not fail.
-A possible solution is to fall back and commit uncompressed data.
-Still in todo (AKA never-do :) list.
+CPU: 0 PID: 3611 Comm: syz-executor352 Not tainted 5.19.0-rc1-syzkaller-00263-g1c27f1fc1549 #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
+Call Trace:
+ <TASK>
+ __dump_stack lib/dump_stack.c:88 [inline]
+ dump_stack_lvl+0xcd/0x134 lib/dump_stack.c:106
+ print_address_description.constprop.0.cold+0xeb/0x495 mm/kasan/report.c:313
+ print_report mm/kasan/report.c:429 [inline]
+ kasan_report.cold+0xf4/0x1c6 mm/kasan/report.c:491
+ bin_search_in_dir_item fs/reiserfs/namei.c:40 [inline]
+ search_by_entry_key+0x81f/0x960 fs/reiserfs/namei.c:165
+ reiserfs_find_entry.part.0+0x139/0xdf0 fs/reiserfs/namei.c:322
+ reiserfs_find_entry fs/reiserfs/namei.c:368 [inline]
+ reiserfs_lookup+0x24a/0x490 fs/reiserfs/namei.c:368
+ __lookup_slow+0x24c/0x480 fs/namei.c:1701
+ lookup_one_len+0x16a/0x1a0 fs/namei.c:2730
+ reiserfs_lookup_privroot+0x92/0x280 fs/reiserfs/xattr.c:980
+ reiserfs_fill_super+0x21bb/0x2fb0 fs/reiserfs/super.c:2176
+ mount_bdev+0x34d/0x410 fs/super.c:1367
+ legacy_get_tree+0x105/0x220 fs/fs_context.c:610
+ vfs_get_tree+0x89/0x2f0 fs/super.c:1497
+ do_new_mount fs/namespace.c:3040 [inline]
+ path_mount+0x1320/0x1fa0 fs/namespace.c:3370
+ do_mount fs/namespace.c:3383 [inline]
+ __do_sys_mount fs/namespace.c:3591 [inline]
+ __se_sys_mount fs/namespace.c:3568 [inline]
+ __x64_sys_mount+0x27f/0x300 fs/namespace.c:3568
+ do_syscall_x64 arch/x86/entry/common.c:50 [inline]
+ do_syscall_64+0x35/0xb0 arch/x86/entry/common.c:80
+ entry_SYSCALL_64_after_hwframe+0x46/0xb0
+ </TASK>
 
-Edward.
+The buggy address belongs to the physical page:
+page:ffffea0001c57b80 refcount:0 mapcount:0 mapping:0000000000000000 index:0x1 pfn:0x715ee
+flags: 0xfff00000000000(node=0|zone=1|lastcpupid=0x7ff)
+raw: 00fff00000000000 ffffea0001c57bc8 ffff8880b9a403c0 0000000000000000
+raw: 0000000000000001 0000000000000000 00000000ffffffff 0000000000000000
+page dumped because: kasan: bad access detected
+page_owner tracks the page as freed
 
-On 8/5/22 06:35, Metztli Information Technology wrote:
-> Niltze [Hello], Ed-
->
-> Linux tezcatlipoca 5.17.0-3+reiser4.0.2-amd64 #1 SMP PREEMPT Debian 5.17.12-2+reiser4.0.2 (2022-06-10) x86_64 GNU/Linux
->
-> Another (ugly) failure with the modified reiser4 SFRN 4.0.2 dealt with in my last email
-> < https://marc.info/?l=reiserfs-devel&m=165861866731480&w=2 > to the list. I am just recovering from an local umount op which left
-> another reiser4 SFRN 4.0.2 partition in an inconsistent state and while the recovery operation is ongoing I get this
-> via dmesg:
-> ...
->
-> [355209.443969] reiser4[DOMCacheThread(23260)]: checkout_logical_cluster (fs/reiser4/plugin/file/cryptcompress.c:1992)[edward-1430]:
->                  WARNING: alloc stream failed with ret=-12
-> [355209.443975] reiser4[DOMCacheThread(23260)]: assign_conversion_mode (fs/reiser4/plugin/item/ctail.c:1577)[edward-1021]:
->                  WARNING: convert_ctail: nothing to attach
-> [355209.444008] reiser4[DOMCacheThread(23260)]: checkout_logical_cluster (fs/reiser4/plugin/file/cryptcompress.c:1992)[edward-1430]:
->                  WARNING: alloc stream failed with ret=-12
+Memory state around the buggy address:
+ ffff8880715edf00: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+ ffff8880715edf80: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+>ffff8880715ee000: ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff
+                         ^
+ ffff8880715ee080: ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff
+ ffff8880715ee100: ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff
+==================================================================
 
+The root cause is that the value of rbound in bin_search_in_dir_item()
+is out of bounds.
+
+To be more specific, struct buffer_head's b_data field
+contains the directory entry headers array, according to
+set_de_item_location(). So the array's length should be less
+than the size of b_data, or it may access the invalid memory.  
+This patch solves it by comparing the array's size with b_data's size.
+
+Reported-by: syzbot+ffe24b1afbc4cb5ae8fb@syzkaller.appspotmail.com
+Signed-off-by: Hawkins Jiawei <yin31149@gmail.com>
+---
+ fs/reiserfs/namei.c | 6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
+
+diff --git a/fs/reiserfs/namei.c b/fs/reiserfs/namei.c
+index 3d7a35d6a18b..c4c056ffafde 100644
+--- a/fs/reiserfs/namei.c
++++ b/fs/reiserfs/namei.c
+@@ -33,7 +33,11 @@ static int bin_search_in_dir_item(struct reiserfs_dir_entry *de, loff_t off)
+ 	int rbound, lbound, j;
+ 
+ 	lbound = 0;
+-	rbound = ih_entry_count(ih) - 1;
++	if (ih_location(ih) + ih_entry_count(ih) * IH_SIZE >=
++	    de->de_bh->b_size)
++		rbound = (de->de_bh->b_size - ih_location(ih)) / IH_SIZE - 1;
++	else
++		rbound = ih_entry_count(ih) - 1;
+ 
+ 	for (j = (rbound + lbound) / 2; lbound <= rbound;
+ 	     j = (rbound + lbound) / 2) {
+-- 
+2.25.1
 
