@@ -1,19 +1,17 @@
 From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Subject: [PATCH 02/14] reiserfs: move from strlcpy with unused retval to strscpy
-Date: Thu, 18 Aug 2022 23:01:11 +0200
-Message-ID: <20220818210123.7637-2-wsa+renesas@sang-engineering.com>
-References: <20220818210123.7637-1-wsa+renesas@sang-engineering.com>
+Subject: [PATCH] reiserfs: move from strlcpy with unused retval to strscpy
+Date: Thu, 18 Aug 2022 23:01:53 +0200
+Message-ID: <20220818210153.8095-1-wsa+renesas@sang-engineering.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
 DKIM-Signature: v=1; a=rsa-sha256; c=simple; d=sang-engineering.com; h=
-        from:to:cc:subject:date:message-id:in-reply-to:references
-        :mime-version:content-transfer-encoding; s=k1; bh=aMYZBNOjf/WHCs
-        UrAFZm+J4XfZ3nHNhtn8XZSCDyD7A=; b=rUhDLmCtm3lbAOu6xAIzZtzekToZY2
-        Ms3YtoIq2vSLre2gta1npOsXwUsawPpeGzMCvak3bSaqauyyUFysNUbuOLSCAAhK
-        apgO3xhwVawADATXFLhyJAhp1vdKLRRUMn8l/m0envct8/pq+8m65p9Ggmm0N+MY
-        AvKq2Yb0RSyng=
-In-Reply-To: <20220818210123.7637-1-wsa+renesas@sang-engineering.com>
+        from:to:cc:subject:date:message-id:mime-version
+        :content-transfer-encoding; s=k1; bh=aMYZBNOjf/WHCsUrAFZm+J4XfZ3
+        nHNhtn8XZSCDyD7A=; b=cupEXsUWUPygzUgZqGDHcyBpObnmrjTayHuAd+/oN22
+        X2SHKhXTVBSvAYnhhAJtcVN4SfJS28BrdOPHia2MyV0gZRa6L4MvAPuQniwERmXD
+        Scrjgo5Y43ev8Xy+bCC1SLqnOuF6FQPTNN4btAfslQyJskmdzWroeYEmSIj6B7nI
+        =
 List-ID: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
 To: linux-kernel@vger.kernel.org
