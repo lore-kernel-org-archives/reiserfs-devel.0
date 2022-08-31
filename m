@@ -1,171 +1,67 @@
 From: Zhang Yi <yi.zhang@huawei.com>
-Subject: [PATCH 02/14] fs/buffer: add some new buffer read helpers
-Date: Wed, 31 Aug 2022 15:20:59 +0800
-Message-ID: <20220831072111.3569680-3-yi.zhang@huawei.com>
+Subject: [PATCH 04/14] gfs2: replace ll_rw_block()
+Date: Wed, 31 Aug 2022 15:21:01 +0800
+Message-ID: <20220831072111.3569680-5-yi.zhang@huawei.com>
 References: <20220831072111.3569680-1-yi.zhang@huawei.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7BIT
-Return-path: <linux-fsdevel-owner@vger.kernel.org>
+Return-path: <reiserfs-devel-owner@vger.kernel.org>
 In-Reply-To: <20220831072111.3569680-1-yi.zhang@huawei.com>
 List-ID: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
 To: linux-ext4@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, cluster-devel@redhat.com, ntfs3@lists.linux.dev, ocfs2-devel@oss.oracle.com, reiserfs-devel@vger.kernel.org
 Cc: jack@suse.cz, tytso@mit.edu, akpm@linux-foundation.org, axboe@kernel.dk, viro@zeniv.linux.org.uk, rpeterso@redhat.com, agruenba@redhat.com, almaz.alexandrovich@paragon-software.com, mark@fasheh.com, dushistov@mail.ru, hch@infradead.org, yi.zhang@huawei.com, chengzhihao1@huawei.com, yukuai3@huawei.com
 
-Current ll_rw_block() helper is fragile because it assumes that locked
-buffer means it's under IO which is submitted by some other who hold
-the lock, it skip buffer if it failed to get the lock, so it's only
-safe on the readahead path. Unfortunately, now that most filesystems
-still use this helper mistakenly on the sync metadata read path. There
-is no guarantee that the one who hold the buffer lock always submit IO
-(e.g. buffer_migrate_folio_norefs() after commit 88dbcbb3a484 ("blkdev:
-avoid migration stalls for blkdev pages"), it could lead to false
-positive -EIO when submitting reading IO.
-
-This patch add some friendly buffer read helpers to prepare replace
-ll_rw_block() and similar calls. We can only call bh_readahead_[]
-helpers for the readahead paths.
+ll_rw_block() is not safe for the sync read path because it cannot
+guarantee that always submitting read IO if the buffer has been locked,
+so stop using it. We also switch to new bh_readahead() helper for the
+readahead path.
 
 Signed-off-by: Zhang Yi <yi.zhang@huawei.com>
 ---
- fs/buffer.c                 | 68 +++++++++++++++++++++++++++++++++++++
- include/linux/buffer_head.h | 37 ++++++++++++++++++++
- 2 files changed, 105 insertions(+)
+ fs/gfs2/meta_io.c | 6 ++----
+ fs/gfs2/quota.c   | 4 +---
+ 2 files changed, 3 insertions(+), 7 deletions(-)
 
-diff --git a/fs/buffer.c b/fs/buffer.c
-index a0b70b3239f3..a663191903ed 100644
---- a/fs/buffer.c
-+++ b/fs/buffer.c
-@@ -3017,6 +3017,74 @@ int bh_uptodate_or_lock(struct buffer_head *bh)
- }
- EXPORT_SYMBOL(bh_uptodate_or_lock);
+diff --git a/fs/gfs2/meta_io.c b/fs/gfs2/meta_io.c
+index 7e70e0ba5a6c..07e882aa7ebd 100644
+--- a/fs/gfs2/meta_io.c
++++ b/fs/gfs2/meta_io.c
+@@ -525,8 +525,7 @@ struct buffer_head *gfs2_meta_ra(struct gfs2_glock *gl, u64 dblock, u32 extlen)
  
-+/**
-+ * __bh_read - Submit read for a locked buffer
-+ * @bh: struct buffer_head
-+ * @op_flags: appending REQ_OP_* flags besides REQ_OP_READ
-+ * @wait: wait until reading finish
-+ *
-+ * Returns zero on success or don't wait, and -EIO on error.
-+ */
-+int __bh_read(struct buffer_head *bh, blk_opf_t op_flags, bool wait)
-+{
-+	int ret = 0;
-+
-+	BUG_ON(!buffer_locked(bh));
-+
-+	if (buffer_uptodate(bh)) {
-+		unlock_buffer(bh);
-+		return ret;
-+	}
-+
-+	get_bh(bh);
-+	bh->b_end_io = end_buffer_read_sync;
-+	submit_bh(REQ_OP_READ | op_flags, bh);
-+	if (wait) {
-+		wait_on_buffer(bh);
-+		if (!buffer_uptodate(bh))
-+			ret = -EIO;
-+	}
-+	return ret;
-+}
-+EXPORT_SYMBOL(__bh_read);
-+
-+/**
-+ * __bh_read_batch - Submit read for a batch of unlocked buffers
-+ * @bhs: a batch of struct buffer_head
-+ * @nr: number of this batch
-+ * @op_flags: appending REQ_OP_* flags besides REQ_OP_READ
-+ * @force_lock: force to get a lock on the buffer if set, otherwise drops any
-+ *              buffer that cannot lock.
-+ *
-+ * Returns zero on success or don't wait, and -EIO on error.
-+ */
-+void __bh_read_batch(struct buffer_head *bhs[],
-+		     int nr, blk_opf_t op_flags, bool force_lock)
-+{
-+	int i;
-+
-+	for (i = 0; i < nr; i++) {
-+		struct buffer_head *bh = bhs[i];
-+
-+		if (buffer_uptodate(bh))
-+			continue;
-+		if (!trylock_buffer(bh)) {
-+			if (!force_lock)
-+				continue;
-+			lock_buffer(bh);
-+		}
-+		if (buffer_uptodate(bh)) {
-+			unlock_buffer(bh);
-+			continue;
-+		}
-+
-+		bh->b_end_io = end_buffer_read_sync;
-+		get_bh(bh);
-+		submit_bh(REQ_OP_READ | op_flags, bh);
-+	}
-+}
-+EXPORT_SYMBOL(__bh_read_batch);
-+
- /**
-  * bh_submit_read - Submit a locked buffer for reading
-  * @bh: struct buffer_head
-diff --git a/include/linux/buffer_head.h b/include/linux/buffer_head.h
-index c3863c417b00..8a01c07c0418 100644
---- a/include/linux/buffer_head.h
-+++ b/include/linux/buffer_head.h
-@@ -232,6 +232,9 @@ void write_boundary_block(struct block_device *bdev,
- 			sector_t bblock, unsigned blocksize);
- int bh_uptodate_or_lock(struct buffer_head *bh);
- int bh_submit_read(struct buffer_head *bh);
-+int __bh_read(struct buffer_head *bh, blk_opf_t op_flags, bool wait);
-+void __bh_read_batch(struct buffer_head *bhs[],
-+		     int nr, blk_opf_t op_flags, bool force_lock);
+ 	if (buffer_uptodate(first_bh))
+ 		goto out;
+-	if (!buffer_locked(first_bh))
+-		ll_rw_block(REQ_OP_READ | REQ_META | REQ_PRIO, 1, &first_bh);
++	bh_read_nowait(first_bh, REQ_META | REQ_PRIO);
  
- extern int buffer_heads_over_limit;
+ 	dblock++;
+ 	extlen--;
+@@ -535,8 +534,7 @@ struct buffer_head *gfs2_meta_ra(struct gfs2_glock *gl, u64 dblock, u32 extlen)
+ 		bh = gfs2_getbuf(gl, dblock, CREATE);
  
-@@ -399,6 +402,40 @@ static inline struct buffer_head *__getblk(struct block_device *bdev,
- 	return __getblk_gfp(bdev, block, size, __GFP_MOVABLE);
- }
- 
-+static inline void bh_readahead(struct buffer_head *bh, blk_opf_t op_flags)
-+{
-+	if (trylock_buffer(bh))
-+		__bh_read(bh, op_flags, false);
-+}
-+
-+static inline void bh_read_nowait(struct buffer_head *bh, blk_opf_t op_flags)
-+{
-+	lock_buffer(bh);
-+	__bh_read(bh, op_flags, false);
-+}
-+
-+static inline int bh_read(struct buffer_head *bh, blk_opf_t op_flags)
-+{
-+	lock_buffer(bh);
-+	return __bh_read(bh, op_flags, true);
-+}
-+
-+static inline int bh_read_locked(struct buffer_head *bh, blk_opf_t op_flags)
-+{
-+	return __bh_read(bh, op_flags, true);
-+}
-+
-+static inline void bh_read_batch(struct buffer_head *bhs[], int nr)
-+{
-+	__bh_read_batch(bhs, nr, 0, true);
-+}
-+
-+static inline void bh_readahead_batch(struct buffer_head *bhs[], int nr,
-+				      blk_opf_t op_flags)
-+{
-+	__bh_read_batch(bhs, nr, op_flags, false);
-+}
-+
- /**
-  *  __bread() - reads a specified block and returns the bh
-  *  @bdev: the block_device to read from
+ 		if (!buffer_uptodate(bh) && !buffer_locked(bh))
+-			ll_rw_block(REQ_OP_READ | REQ_RAHEAD | REQ_META |
+-				    REQ_PRIO, 1, &bh);
++			bh_readahead(bh, REQ_RAHEAD | REQ_META | REQ_PRIO);
+ 		brelse(bh);
+ 		dblock++;
+ 		extlen--;
+diff --git a/fs/gfs2/quota.c b/fs/gfs2/quota.c
+index f201eaf59d0d..0c2ef4226aba 100644
+--- a/fs/gfs2/quota.c
++++ b/fs/gfs2/quota.c
+@@ -746,9 +746,7 @@ static int gfs2_write_buf_to_page(struct gfs2_inode *ip, unsigned long index,
+ 		if (PageUptodate(page))
+ 			set_buffer_uptodate(bh);
+ 		if (!buffer_uptodate(bh)) {
+-			ll_rw_block(REQ_OP_READ | REQ_META | REQ_PRIO, 1, &bh);
+-			wait_on_buffer(bh);
+-			if (!buffer_uptodate(bh))
++			if (bh_read(bh, REQ_META | REQ_PRIO))
+ 				goto unlock_out;
+ 		}
+ 		if (gfs2_is_jdata(ip))
 -- 
 2.31.1
 
