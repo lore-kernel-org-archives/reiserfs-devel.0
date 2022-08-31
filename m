@@ -1,7 +1,7 @@
 From: Zhang Yi <yi.zhang@huawei.com>
-Subject: [PATCH 06/14] jbd2: replace ll_rw_block()
-Date: Wed, 31 Aug 2022 15:21:03 +0800
-Message-ID: <20220831072111.3569680-7-yi.zhang@huawei.com>
+Subject: [PATCH 08/14] ocfs2: replace ll_rw_block()
+Date: Wed, 31 Aug 2022 15:21:05 +0800
+Message-ID: <20220831072111.3569680-9-yi.zhang@huawei.com>
 References: <20220831072111.3569680-1-yi.zhang@huawei.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7BIT
@@ -15,87 +15,43 @@ Cc: jack@suse.cz, tytso@mit.edu, akpm@linux-foundation.org, axboe@kernel.dk, vir
 ll_rw_block() is not safe for the sync read path because it cannot
 guarantee that submitting read IO if the buffer has been locked. We
 could get false positive EIO after wait_on_buffer() if the buffer has
-been locked by others. So stop using ll_rw_block() in
-journal_get_superblock(). We also switch to new bh_readahead_batch()
-for the buffer array readahead path.
+been locked by others. So stop using ll_rw_block() in ocfs2.
 
 Signed-off-by: Zhang Yi <yi.zhang@huawei.com>
 ---
- fs/jbd2/journal.c  |  7 +++----
- fs/jbd2/recovery.c | 16 ++++++++++------
- 2 files changed, 13 insertions(+), 10 deletions(-)
+ fs/ocfs2/aops.c  | 2 +-
+ fs/ocfs2/super.c | 5 +----
+ 2 files changed, 2 insertions(+), 5 deletions(-)
 
-diff --git a/fs/jbd2/journal.c b/fs/jbd2/journal.c
-index 6350d3857c89..5a903aae6aad 100644
---- a/fs/jbd2/journal.c
-+++ b/fs/jbd2/journal.c
-@@ -1893,15 +1893,14 @@ static int journal_get_superblock(journal_t *journal)
- {
- 	struct buffer_head *bh;
- 	journal_superblock_t *sb;
--	int err = -EIO;
-+	int err;
+diff --git a/fs/ocfs2/aops.c b/fs/ocfs2/aops.c
+index af4157f61927..1d65f6ef00ca 100644
+--- a/fs/ocfs2/aops.c
++++ b/fs/ocfs2/aops.c
+@@ -636,7 +636,7 @@ int ocfs2_map_page_blocks(struct page *page, u64 *p_blkno,
+ 			   !buffer_new(bh) &&
+ 			   ocfs2_should_read_blk(inode, page, block_start) &&
+ 			   (block_start < from || block_end > to)) {
+-			ll_rw_block(REQ_OP_READ, 1, &bh);
++			bh_read_nowait(bh, 0);
+ 			*wait_bh++=bh;
+ 		}
  
- 	bh = journal->j_sb_buffer;
- 
- 	J_ASSERT(bh != NULL);
- 	if (!buffer_uptodate(bh)) {
--		ll_rw_block(REQ_OP_READ, 1, &bh);
--		wait_on_buffer(bh);
--		if (!buffer_uptodate(bh)) {
-+		err = bh_read(bh, 0);
-+		if (err) {
- 			printk(KERN_ERR
- 				"JBD2: IO error reading journal superblock\n");
- 			goto out;
-diff --git a/fs/jbd2/recovery.c b/fs/jbd2/recovery.c
-index f548479615c6..ee56a30b71cf 100644
---- a/fs/jbd2/recovery.c
-+++ b/fs/jbd2/recovery.c
-@@ -100,7 +100,7 @@ static int do_readahead(journal_t *journal, unsigned int start)
- 		if (!buffer_uptodate(bh) && !buffer_locked(bh)) {
- 			bufs[nbufs++] = bh;
- 			if (nbufs == MAXBUF) {
--				ll_rw_block(REQ_OP_READ, nbufs, bufs);
-+				bh_readahead_batch(bufs, nbufs, 0);
- 				journal_brelse_array(bufs, nbufs);
- 				nbufs = 0;
- 			}
-@@ -109,7 +109,7 @@ static int do_readahead(journal_t *journal, unsigned int start)
- 	}
- 
- 	if (nbufs)
--		ll_rw_block(REQ_OP_READ, nbufs, bufs);
-+		bh_readahead_batch(bufs, nbufs, 0);
- 	err = 0;
- 
- failed:
-@@ -152,9 +152,14 @@ static int jread(struct buffer_head **bhp, journal_t *journal,
- 		return -ENOMEM;
- 
- 	if (!buffer_uptodate(bh)) {
--		/* If this is a brand new buffer, start readahead.
--                   Otherwise, we assume we are already reading it.  */
--		if (!buffer_req(bh))
-+		/*
-+		 * If this is a brand new buffer, start readahead.
-+		 * Otherwise, we assume we are already reading it.
-+		 */
-+		bool need_readahead = !buffer_req(bh);
-+
-+		bh_read_nowait(bh, 0);
-+		if (need_readahead)
- 			do_readahead(journal, offset);
- 		wait_on_buffer(bh);
- 	}
-@@ -687,7 +692,6 @@ static int do_one_pass(journal_t *journal,
- 					mark_buffer_dirty(nbh);
- 					BUFFER_TRACE(nbh, "marking uptodate");
- 					++info->nr_replays;
--					/* ll_rw_block(WRITE, 1, &nbh); */
- 					unlock_buffer(nbh);
- 					brelse(obh);
- 					brelse(nbh);
+diff --git a/fs/ocfs2/super.c b/fs/ocfs2/super.c
+index e2cc9eec287c..4050f35bbd0c 100644
+--- a/fs/ocfs2/super.c
++++ b/fs/ocfs2/super.c
+@@ -1763,10 +1763,7 @@ static int ocfs2_get_sector(struct super_block *sb,
+ 	lock_buffer(*bh);
+ 	if (!buffer_dirty(*bh))
+ 		clear_buffer_uptodate(*bh);
+-	unlock_buffer(*bh);
+-	ll_rw_block(REQ_OP_READ, 1, bh);
+-	wait_on_buffer(*bh);
+-	if (!buffer_uptodate(*bh)) {
++	if (bh_read_locked(*bh, 0)) {
+ 		mlog_errno(-EIO);
+ 		brelse(*bh);
+ 		*bh = NULL;
 -- 
 2.31.1
 
