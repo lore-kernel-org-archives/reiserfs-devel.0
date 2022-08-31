@@ -1,40 +1,41 @@
 From: Jan Kara <jack@suse.cz>
-Subject: Re: [PATCH 04/14] gfs2: replace ll_rw_block()
-Date: Wed, 31 Aug 2022 12:52:34 +0200
-Message-ID: <20220831105234.suazqjzqnb2r65ow@quack3>
+Subject: Re: [PATCH 05/14] isofs: replace ll_rw_block()
+Date: Wed, 31 Aug 2022 12:53:09 +0200
+Message-ID: <20220831105309.hbsyydkusk2w5hob@quack3>
 References: <20220831072111.3569680-1-yi.zhang@huawei.com>
- <20220831072111.3569680-5-yi.zhang@huawei.com>
+ <20220831072111.3569680-6-yi.zhang@huawei.com>
 Mime-Version: 1.0
-Return-path: <reiserfs-devel-owner@vger.kernel.org>
+Return-path: <linux-fsdevel-owner@vger.kernel.org>
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-        t=1661943155; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+        t=1661943189; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
          mime-version:mime-version:content-type:content-type:
          in-reply-to:in-reply-to:references:references;
-        bh=aV4GbEJHv4GUiycGvXX9VQqqdKb3fSgUfwxaOPsIBF4=;
-        b=PRYWzd/0V29rFD/lWsz52Lt0OuT2f9LO3aKmg3FNGDjcIWECgNVeiUKviDDEgU9FQ1f0S7
-        tBcH5xPN5Vvsv1CHdQ36ejgJV00plIjLpXu5HEytDKcazrypMPm2bWt2i+N17xwihsoTDp
-        Kftx+Qdml/EOZW5sbd0MeaeVIcopkCw=
+        bh=/2pG6/a9zSBeRGL1WuKMWpcsrfg2/SfPKOsUMFRSTMc=;
+        b=WpBBNGvW05bAioDBgYLss3gyUrn8Cs9nfEQNB9M1LclJIIzDofmZcTGrUV6jf6FYB2ppKx
+        JvXiSyv18HY57ebkPeUtX1RJLCSIejNAVkkVc0KmE6bhjjvUvM4U7QZPU5AB44Y2Y5DfzV
+        5RBtyUMS6ABlZKCCP6qqwjcs/BMPuHM=
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-        s=susede2_ed25519; t=1661943155;
+        s=susede2_ed25519; t=1661943189;
         h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
          mime-version:mime-version:content-type:content-type:
          in-reply-to:in-reply-to:references:references;
-        bh=aV4GbEJHv4GUiycGvXX9VQqqdKb3fSgUfwxaOPsIBF4=;
-        b=awjqDxapgMdgRxiPhamh5PF4pAsLYLJcaoyapMEqNq4rUetRfMnPJj7syOzPUqu5raEHle
-        Vplg3xbSnI95jNDw==
+        bh=/2pG6/a9zSBeRGL1WuKMWpcsrfg2/SfPKOsUMFRSTMc=;
+        b=BKm/rmA15SUC2af3CeYD8OSCnxEJjrIo9ju9hbO97uiUZqoIEY5Osl8V3pT3S9jb7fEd58
+        Qp4AnD/tvpyD2tDw==
 Content-Disposition: inline
-In-Reply-To: <20220831072111.3569680-5-yi.zhang@huawei.com>
+In-Reply-To: <20220831072111.3569680-6-yi.zhang@huawei.com>
 List-ID: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: Zhang Yi <yi.zhang@huawei.com>
 Cc: linux-ext4@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, cluster-devel@redhat.com, ntfs3@lists.linux.dev, ocfs2-devel@oss.oracle.com, reiserfs-devel@vger.kernel.org, jack@suse.cz, tytso@mit.edu, akpm@linux-foundation.org, axboe@kernel.dk, viro@zeniv.linux.org.uk, rpeterso@redhat.com, agruenba@redhat.com, almaz.alexandrovich@paragon-software.com, mark@fasheh.com, dushistov@mail.ru, hch@infradead.org, chengzhihao1@huawei.com, yukuai3@huawei.com
 
-On Wed 31-08-22 15:21:01, Zhang Yi wrote:
+On Wed 31-08-22 15:21:02, Zhang Yi wrote:
 > ll_rw_block() is not safe for the sync read path because it cannot
-> guarantee that always submitting read IO if the buffer has been locked,
-> so stop using it. We also switch to new bh_readahead() helper for the
-> readahead path.
+> guarantee that submitting read IO if the buffer has been locked. We
+> could get false positive EIO return from zisofs_uncompress_block() if
+> he buffer has been locked by others. So stop using ll_rw_block(),
+> switch to sync helper instead.
 > 
 > Signed-off-by: Zhang Yi <yi.zhang@huawei.com>
 
@@ -45,49 +46,22 @@ Reviewed-by: Jan Kara <jack@suse.cz>
 								Honza
 
 > ---
->  fs/gfs2/meta_io.c | 6 ++----
->  fs/gfs2/quota.c   | 4 +---
->  2 files changed, 3 insertions(+), 7 deletions(-)
+>  fs/isofs/compress.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 > 
-> diff --git a/fs/gfs2/meta_io.c b/fs/gfs2/meta_io.c
-> index 7e70e0ba5a6c..07e882aa7ebd 100644
-> --- a/fs/gfs2/meta_io.c
-> +++ b/fs/gfs2/meta_io.c
-> @@ -525,8 +525,7 @@ struct buffer_head *gfs2_meta_ra(struct gfs2_glock *gl, u64 dblock, u32 extlen)
+> diff --git a/fs/isofs/compress.c b/fs/isofs/compress.c
+> index b466172eec25..ac35eddff29c 100644
+> --- a/fs/isofs/compress.c
+> +++ b/fs/isofs/compress.c
+> @@ -82,7 +82,7 @@ static loff_t zisofs_uncompress_block(struct inode *inode, loff_t block_start,
+>  		return 0;
+>  	}
+>  	haveblocks = isofs_get_blocks(inode, blocknum, bhs, needblocks);
+> -	ll_rw_block(REQ_OP_READ, haveblocks, bhs);
+> +	bh_read_batch(bhs, haveblocks);
 >  
->  	if (buffer_uptodate(first_bh))
->  		goto out;
-> -	if (!buffer_locked(first_bh))
-> -		ll_rw_block(REQ_OP_READ | REQ_META | REQ_PRIO, 1, &first_bh);
-> +	bh_read_nowait(first_bh, REQ_META | REQ_PRIO);
->  
->  	dblock++;
->  	extlen--;
-> @@ -535,8 +534,7 @@ struct buffer_head *gfs2_meta_ra(struct gfs2_glock *gl, u64 dblock, u32 extlen)
->  		bh = gfs2_getbuf(gl, dblock, CREATE);
->  
->  		if (!buffer_uptodate(bh) && !buffer_locked(bh))
-> -			ll_rw_block(REQ_OP_READ | REQ_RAHEAD | REQ_META |
-> -				    REQ_PRIO, 1, &bh);
-> +			bh_readahead(bh, REQ_RAHEAD | REQ_META | REQ_PRIO);
->  		brelse(bh);
->  		dblock++;
->  		extlen--;
-> diff --git a/fs/gfs2/quota.c b/fs/gfs2/quota.c
-> index f201eaf59d0d..0c2ef4226aba 100644
-> --- a/fs/gfs2/quota.c
-> +++ b/fs/gfs2/quota.c
-> @@ -746,9 +746,7 @@ static int gfs2_write_buf_to_page(struct gfs2_inode *ip, unsigned long index,
->  		if (PageUptodate(page))
->  			set_buffer_uptodate(bh);
->  		if (!buffer_uptodate(bh)) {
-> -			ll_rw_block(REQ_OP_READ | REQ_META | REQ_PRIO, 1, &bh);
-> -			wait_on_buffer(bh);
-> -			if (!buffer_uptodate(bh))
-> +			if (bh_read(bh, REQ_META | REQ_PRIO))
->  				goto unlock_out;
->  		}
->  		if (gfs2_is_jdata(ip))
+>  	curbh = 0;
+>  	curpage = 0;
 > -- 
 > 2.31.1
 > 
