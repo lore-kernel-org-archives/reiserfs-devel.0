@@ -1,113 +1,103 @@
-From: Zhang Yi <yi.zhang@huawei.com>
-Subject: [PATCH 09/14] reiserfs: replace ll_rw_block()
-Date: Wed, 31 Aug 2022 15:21:06 +0800
-Message-ID: <20220831072111.3569680-10-yi.zhang@huawei.com>
+From: Jan Kara <jack@suse.cz>
+Subject: Re: [PATCH 01/14] fs/buffer: remove __breadahead_gfp()
+Date: Wed, 31 Aug 2022 12:39:11 +0200
+Message-ID: <20220831103911.ubrkxc3yf46bdme3@quack3>
 References: <20220831072111.3569680-1-yi.zhang@huawei.com>
+ <20220831072111.3569680-2-yi.zhang@huawei.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7BIT
-Return-path: <reiserfs-devel-owner@vger.kernel.org>
-In-Reply-To: <20220831072111.3569680-1-yi.zhang@huawei.com>
+Return-path: <linux-ext4-owner@vger.kernel.org>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+        t=1661942352; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=D/VhxrZABrIw51+gKZ04o+QPEhbTuW7VzunFJgXY7yw=;
+        b=a2l6ug+zy4ZO2ZBVuqwRZaCOsD/JBDgWm4vBtnS2p4VqXzNejQqdVXaA/ST/D8KXLkez6H
+        QOwXmD2rKYG9+RchfM74zflc74h5E6tozat9dxBD/V6GGio2IrhB4UuYlHiBQA8GuKpc6B
+        IX9BBGsSV8qYc3kxPvDVJkw1V7ApYT4=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+        s=susede2_ed25519; t=1661942352;
+        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=D/VhxrZABrIw51+gKZ04o+QPEhbTuW7VzunFJgXY7yw=;
+        b=DvvoP4FgqltN7TSp0W4JepFamZL4CCI+xGGNoE56kVvT+VDjiBB8cQOdGEfQEqyIWhezcr
+        evs/qv/17UFQOJAg==
+Content-Disposition: inline
+In-Reply-To: <20220831072111.3569680-2-yi.zhang@huawei.com>
 List-ID: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: linux-ext4@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, cluster-devel@redhat.com, ntfs3@lists.linux.dev, ocfs2-devel@oss.oracle.com, reiserfs-devel@vger.kernel.org
-Cc: jack@suse.cz, tytso@mit.edu, akpm@linux-foundation.org, axboe@kernel.dk, viro@zeniv.linux.org.uk, rpeterso@redhat.com, agruenba@redhat.com, almaz.alexandrovich@paragon-software.com, mark@fasheh.com, dushistov@mail.ru, hch@infradead.org, yi.zhang@huawei.com, chengzhihao1@huawei.com, yukuai3@huawei.com
+Content-Transfer-Encoding: 7bit
+To: Zhang Yi <yi.zhang@huawei.com>
+Cc: linux-ext4@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, cluster-devel@redhat.com, ntfs3@lists.linux.dev, ocfs2-devel@oss.oracle.com, reiserfs-devel@vger.kernel.org, jack@suse.cz, tytso@mit.edu, akpm@linux-foundation.org, axboe@kernel.dk, viro@zeniv.linux.org.uk, rpeterso@redhat.com, agruenba@redhat.com, almaz.alexandrovich@paragon-software.com, mark@fasheh.com, dushistov@mail.ru, hch@infradead.org, chengzhihao1@huawei.com, yukuai3@huawei.com
 
-ll_rw_block() is not safe for the sync read/write path because it cannot
-guarantee that submitting read/write IO if the buffer has been locked.
-We could get false positive EIO after wait_on_buffer() in read path if
-the buffer has been locked by others. So stop using ll_rw_block() in
-reiserfs. We also switch to new bh_readahead_batch() helper for the
-buffer array readahead path.
+On Wed 31-08-22 15:20:58, Zhang Yi wrote:
+> No one use __breadahead_gfp() and sb_breadahead_unmovable() any more,
+> remove them.
+> 
+> Signed-off-by: Zhang Yi <yi.zhang@huawei.com>
 
-Signed-off-by: Zhang Yi <yi.zhang@huawei.com>
----
- fs/reiserfs/journal.c | 11 ++++++-----
- fs/reiserfs/stree.c   |  4 ++--
- fs/reiserfs/super.c   |  4 +---
- 3 files changed, 9 insertions(+), 10 deletions(-)
+Looks good. Feel free to add:
 
-diff --git a/fs/reiserfs/journal.c b/fs/reiserfs/journal.c
-index 94addfcefede..699b1b8d5b73 100644
---- a/fs/reiserfs/journal.c
-+++ b/fs/reiserfs/journal.c
-@@ -868,7 +868,7 @@ static int write_ordered_buffers(spinlock_t * lock,
- 		 */
- 		if (buffer_dirty(bh) && unlikely(bh->b_page->mapping == NULL)) {
- 			spin_unlock(lock);
--			ll_rw_block(REQ_OP_WRITE, 1, &bh);
-+			write_dirty_buffer(bh, 0);
- 			spin_lock(lock);
- 		}
- 		put_bh(bh);
-@@ -1054,7 +1054,7 @@ static int flush_commit_list(struct super_block *s,
- 		if (tbh) {
- 			if (buffer_dirty(tbh)) {
- 		            depth = reiserfs_write_unlock_nested(s);
--			    ll_rw_block(REQ_OP_WRITE, 1, &tbh);
-+			    write_dirty_buffer(tbh, 0);
- 			    reiserfs_write_lock_nested(s, depth);
- 			}
- 			put_bh(tbh) ;
-@@ -2240,7 +2240,7 @@ static int journal_read_transaction(struct super_block *sb,
- 		}
- 	}
- 	/* read in the log blocks, memcpy to the corresponding real block */
--	ll_rw_block(REQ_OP_READ, get_desc_trans_len(desc), log_blocks);
-+	bh_read_batch(log_blocks, get_desc_trans_len(desc));
- 	for (i = 0; i < get_desc_trans_len(desc); i++) {
- 
- 		wait_on_buffer(log_blocks[i]);
-@@ -2342,10 +2342,11 @@ static struct buffer_head *reiserfs_breada(struct block_device *dev,
- 		} else
- 			bhlist[j++] = bh;
- 	}
--	ll_rw_block(REQ_OP_READ, j, bhlist);
-+	bh = bhlist[0];
-+	bh_read_nowait(bh, 0);
-+	bh_readahead_batch(&bhlist[1], j - 1, 0);
- 	for (i = 1; i < j; i++)
- 		brelse(bhlist[i]);
--	bh = bhlist[0];
- 	wait_on_buffer(bh);
- 	if (buffer_uptodate(bh))
- 		return bh;
-diff --git a/fs/reiserfs/stree.c b/fs/reiserfs/stree.c
-index 9a293609a022..84c12a1947b2 100644
---- a/fs/reiserfs/stree.c
-+++ b/fs/reiserfs/stree.c
-@@ -579,7 +579,7 @@ static int search_by_key_reada(struct super_block *s,
- 		if (!buffer_uptodate(bh[j])) {
- 			if (depth == -1)
- 				depth = reiserfs_write_unlock_nested(s);
--			ll_rw_block(REQ_OP_READ | REQ_RAHEAD, 1, bh + j);
-+			bh_readahead(bh[j], REQ_RAHEAD);
- 		}
- 		brelse(bh[j]);
- 	}
-@@ -685,7 +685,7 @@ int search_by_key(struct super_block *sb, const struct cpu_key *key,
- 			if (!buffer_uptodate(bh) && depth == -1)
- 				depth = reiserfs_write_unlock_nested(sb);
- 
--			ll_rw_block(REQ_OP_READ, 1, &bh);
-+			bh_read_nowait(bh, 0);
- 			wait_on_buffer(bh);
- 
- 			if (depth != -1)
-diff --git a/fs/reiserfs/super.c b/fs/reiserfs/super.c
-index c88cd2ce0665..8b1db82b6949 100644
---- a/fs/reiserfs/super.c
-+++ b/fs/reiserfs/super.c
-@@ -1702,9 +1702,7 @@ static int read_super_block(struct super_block *s, int offset)
- /* after journal replay, reread all bitmap and super blocks */
- static int reread_meta_blocks(struct super_block *s)
- {
--	ll_rw_block(REQ_OP_READ, 1, &SB_BUFFER_WITH_SB(s));
--	wait_on_buffer(SB_BUFFER_WITH_SB(s));
--	if (!buffer_uptodate(SB_BUFFER_WITH_SB(s))) {
-+	if (bh_read(SB_BUFFER_WITH_SB(s), 0)) {
- 		reiserfs_warning(s, "reiserfs-2504", "error reading the super");
- 		return 1;
- 	}
+Reviewed-by: Jan Kara <jack@suse.cz>
+
+								Honza
+
+> ---
+>  fs/buffer.c                 | 11 -----------
+>  include/linux/buffer_head.h |  8 --------
+>  2 files changed, 19 deletions(-)
+> 
+> diff --git a/fs/buffer.c b/fs/buffer.c
+> index 55e762a58eb6..a0b70b3239f3 100644
+> --- a/fs/buffer.c
+> +++ b/fs/buffer.c
+> @@ -1348,17 +1348,6 @@ void __breadahead(struct block_device *bdev, sector_t block, unsigned size)
+>  }
+>  EXPORT_SYMBOL(__breadahead);
+>  
+> -void __breadahead_gfp(struct block_device *bdev, sector_t block, unsigned size,
+> -		      gfp_t gfp)
+> -{
+> -	struct buffer_head *bh = __getblk_gfp(bdev, block, size, gfp);
+> -	if (likely(bh)) {
+> -		ll_rw_block(REQ_OP_READ | REQ_RAHEAD, 1, &bh);
+> -		brelse(bh);
+> -	}
+> -}
+> -EXPORT_SYMBOL(__breadahead_gfp);
+> -
+>  /**
+>   *  __bread_gfp() - reads a specified block and returns the bh
+>   *  @bdev: the block_device to read from
+> diff --git a/include/linux/buffer_head.h b/include/linux/buffer_head.h
+> index 089c9ade4325..c3863c417b00 100644
+> --- a/include/linux/buffer_head.h
+> +++ b/include/linux/buffer_head.h
+> @@ -214,8 +214,6 @@ struct buffer_head *__getblk_gfp(struct block_device *bdev, sector_t block,
+>  void __brelse(struct buffer_head *);
+>  void __bforget(struct buffer_head *);
+>  void __breadahead(struct block_device *, sector_t block, unsigned int size);
+> -void __breadahead_gfp(struct block_device *, sector_t block, unsigned int size,
+> -		  gfp_t gfp);
+>  struct buffer_head *__bread_gfp(struct block_device *,
+>  				sector_t block, unsigned size, gfp_t gfp);
+>  void invalidate_bh_lrus(void);
+> @@ -340,12 +338,6 @@ sb_breadahead(struct super_block *sb, sector_t block)
+>  	__breadahead(sb->s_bdev, block, sb->s_blocksize);
+>  }
+>  
+> -static inline void
+> -sb_breadahead_unmovable(struct super_block *sb, sector_t block)
+> -{
+> -	__breadahead_gfp(sb->s_bdev, block, sb->s_blocksize, 0);
+> -}
+> -
+>  static inline struct buffer_head *
+>  sb_getblk(struct super_block *sb, sector_t block)
+>  {
+> -- 
+> 2.31.1
+> 
 -- 
-2.31.1
-
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
