@@ -1,64 +1,75 @@
 From: Zhang Yi <yi.zhang@huawei.com>
-Subject: [PATCH v2 05/14] isofs: replace ll_rw_block()
-Date: Thu, 1 Sep 2022 21:34:56 +0800
-Message-ID: <20220901133505.2510834-6-yi.zhang@huawei.com>
+Subject: [PATCH v2 01/14] fs/buffer: remove __breadahead_gfp()
+Date: Thu, 1 Sep 2022 21:34:52 +0800
+Message-ID: <20220901133505.2510834-2-yi.zhang@huawei.com>
 References: <20220901133505.2510834-1-yi.zhang@huawei.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Return-path: <cluster-devel-bounces@redhat.com>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1662038677;
-	h=from:from:sender:sender:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:list-id:list-help:
-	 list-unsubscribe:list-subscribe:list-post;
-	bh=6b52LrbeOpVUxp042jrr0ZMV8eVNLfD7Uy5GIKcLctQ=;
-	b=R+XRypo8gCps3Nhx8Mfyrf9iCV1tdT+/F58x8Sa2y1/YgK4t0H6Vb4oWL2QyqV5lRcKPPp
-	2OFD58hhqsai0OE0wBmiqCRF5/pihvkklfRibQQ4UAx54W54G2FGlxZy8FvBCHzshDN99e
-	FVJYcrEpXMUjjuj3yB+/v0TmYHeD8eo=
+Content-Transfer-Encoding: 7BIT
+Return-path: <reiserfs-devel-owner@vger.kernel.org>
 In-Reply-To: <20220901133505.2510834-1-yi.zhang@huawei.com>
-List-Id: <reiserfs-devel.vger.kernel.org>
-List-Unsubscribe: <https://listman.redhat.com/mailman/options/cluster-devel>, 
- <mailto:cluster-devel-request@redhat.com?subject=unsubscribe>
-List-Archive: <http://listman.redhat.com/archives/cluster-devel/>
-List-Post: <mailto:cluster-devel@redhat.com>
-List-Help: <mailto:cluster-devel-request@redhat.com?subject=help>
-List-Subscribe: <https://listman.redhat.com/mailman/listinfo/cluster-devel>,
- <mailto:cluster-devel-request@redhat.com?subject=subscribe>
-Errors-To: cluster-devel-bounces@redhat.com
-Sender: "Cluster-devel" <cluster-devel-bounces@redhat.com>
+List-ID: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
 To: linux-ext4@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, cluster-devel@redhat.com, ntfs3@lists.linux.dev, ocfs2-devel@oss.oracle.com, reiserfs-devel@vger.kernel.org, jack@suse.cz
-Cc: axboe@kernel.dk, tytso@mit.edu, yi.zhang@huawei.com, mark@fasheh.com, almaz.alexandrovich@paragon-software.com, viro@zeniv.linux.org.uk, yukuai3@huawei.com, dushistov@mail.ru, akpm@linux-foundation.org, chengzhihao1@huawei.com
+Cc: tytso@mit.edu, akpm@linux-foundation.org, axboe@kernel.dk, viro@zeniv.linux.org.uk, rpeterso@redhat.com, agruenba@redhat.com, almaz.alexandrovich@paragon-software.com, mark@fasheh.com, dushistov@mail.ru, hch@infradead.org, yi.zhang@huawei.com, chengzhihao1@huawei.com, yukuai3@huawei.com
 
-ll_rw_block() is not safe for the sync read path because it cannot
-guarantee that submitting read IO if the buffer has been locked. We
-could get false positive EIO return from zisofs_uncompress_block() if
-he buffer has been locked by others. So stop using ll_rw_block(),
-switch to sync helper instead.
+No one use __breadahead_gfp() and sb_breadahead_unmovable() any more,
+remove them.
 
 Signed-off-by: Zhang Yi <yi.zhang@huawei.com>
 Reviewed-by: Jan Kara <jack@suse.cz>
 ---
- fs/isofs/compress.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ fs/buffer.c                 | 11 -----------
+ include/linux/buffer_head.h |  8 --------
+ 2 files changed, 19 deletions(-)
 
-diff --git a/fs/isofs/compress.c b/fs/isofs/compress.c
-index b466172eec25..59b03d74ecbe 100644
---- a/fs/isofs/compress.c
-+++ b/fs/isofs/compress.c
-@@ -82,7 +82,7 @@ static loff_t zisofs_uncompress_block(struct inode *inode=
-, loff_t block_start,
- =09=09return 0;
- =09}
- =09haveblocks =3D isofs_get_blocks(inode, blocknum, bhs, needblocks);
--=09ll_rw_block(REQ_OP_READ, haveblocks, bhs);
-+=09bh_read_batch(haveblocks, bhs);
-=20
- =09curbh =3D 0;
- =09curpage =3D 0;
---=20
+diff --git a/fs/buffer.c b/fs/buffer.c
+index 55e762a58eb6..a0b70b3239f3 100644
+--- a/fs/buffer.c
++++ b/fs/buffer.c
+@@ -1348,17 +1348,6 @@ void __breadahead(struct block_device *bdev, sector_t block, unsigned size)
+ }
+ EXPORT_SYMBOL(__breadahead);
+ 
+-void __breadahead_gfp(struct block_device *bdev, sector_t block, unsigned size,
+-		      gfp_t gfp)
+-{
+-	struct buffer_head *bh = __getblk_gfp(bdev, block, size, gfp);
+-	if (likely(bh)) {
+-		ll_rw_block(REQ_OP_READ | REQ_RAHEAD, 1, &bh);
+-		brelse(bh);
+-	}
+-}
+-EXPORT_SYMBOL(__breadahead_gfp);
+-
+ /**
+  *  __bread_gfp() - reads a specified block and returns the bh
+  *  @bdev: the block_device to read from
+diff --git a/include/linux/buffer_head.h b/include/linux/buffer_head.h
+index 089c9ade4325..c3863c417b00 100644
+--- a/include/linux/buffer_head.h
++++ b/include/linux/buffer_head.h
+@@ -214,8 +214,6 @@ struct buffer_head *__getblk_gfp(struct block_device *bdev, sector_t block,
+ void __brelse(struct buffer_head *);
+ void __bforget(struct buffer_head *);
+ void __breadahead(struct block_device *, sector_t block, unsigned int size);
+-void __breadahead_gfp(struct block_device *, sector_t block, unsigned int size,
+-		  gfp_t gfp);
+ struct buffer_head *__bread_gfp(struct block_device *,
+ 				sector_t block, unsigned size, gfp_t gfp);
+ void invalidate_bh_lrus(void);
+@@ -340,12 +338,6 @@ sb_breadahead(struct super_block *sb, sector_t block)
+ 	__breadahead(sb->s_bdev, block, sb->s_blocksize);
+ }
+ 
+-static inline void
+-sb_breadahead_unmovable(struct super_block *sb, sector_t block)
+-{
+-	__breadahead_gfp(sb->s_bdev, block, sb->s_blocksize, 0);
+-}
+-
+ static inline struct buffer_head *
+ sb_getblk(struct super_block *sb, sector_t block)
+ {
+-- 
 2.31.1
 
