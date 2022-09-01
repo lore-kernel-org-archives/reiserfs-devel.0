@@ -1,7 +1,7 @@
 From: Zhang Yi <yi.zhang@huawei.com>
-Subject: [PATCH v2 07/14] ntfs3: replace ll_rw_block()
-Date: Thu, 1 Sep 2022 21:34:58 +0800
-Message-ID: <20220901133505.2510834-8-yi.zhang@huawei.com>
+Subject: [PATCH v2 08/14] ocfs2: replace ll_rw_block()
+Date: Thu, 1 Sep 2022 21:34:59 +0800
+Message-ID: <20220901133505.2510834-9-yi.zhang@huawei.com>
 References: <20220901133505.2510834-1-yi.zhang@huawei.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7BIT
@@ -15,33 +15,42 @@ Cc: tytso@mit.edu, akpm@linux-foundation.org, axboe@kernel.dk, viro@zeniv.linux.
 ll_rw_block() is not safe for the sync read path because it cannot
 guarantee that submitting read IO if the buffer has been locked. We
 could get false positive EIO after wait_on_buffer() if the buffer has
-been locked by others. So stop using ll_rw_block() in
-ntfs_get_block_vbo().
+been locked by others. So stop using ll_rw_block() in ocfs2.
 
 Signed-off-by: Zhang Yi <yi.zhang@huawei.com>
 ---
- fs/ntfs3/inode.c | 7 ++-----
- 1 file changed, 2 insertions(+), 5 deletions(-)
+ fs/ocfs2/aops.c  | 2 +-
+ fs/ocfs2/super.c | 4 +---
+ 2 files changed, 2 insertions(+), 4 deletions(-)
 
-diff --git a/fs/ntfs3/inode.c b/fs/ntfs3/inode.c
-index 51363d4e8636..cadbfa111539 100644
---- a/fs/ntfs3/inode.c
-+++ b/fs/ntfs3/inode.c
-@@ -630,12 +630,9 @@ static noinline int ntfs_get_block_vbo(struct inode *inode, u64 vbo,
- 			bh->b_size = block_size;
- 			off = vbo & (PAGE_SIZE - 1);
- 			set_bh_page(bh, page, off);
+diff --git a/fs/ocfs2/aops.c b/fs/ocfs2/aops.c
+index af4157f61927..1d65f6ef00ca 100644
+--- a/fs/ocfs2/aops.c
++++ b/fs/ocfs2/aops.c
+@@ -636,7 +636,7 @@ int ocfs2_map_page_blocks(struct page *page, u64 *p_blkno,
+ 			   !buffer_new(bh) &&
+ 			   ocfs2_should_read_blk(inode, page, block_start) &&
+ 			   (block_start < from || block_end > to)) {
 -			ll_rw_block(REQ_OP_READ, 1, &bh);
--			wait_on_buffer(bh);
--			if (!buffer_uptodate(bh)) {
--				err = -EIO;
-+			err = bh_read(bh, 0);
-+			if (err < 0)
- 				goto out;
--			}
- 			zero_user_segment(page, off + voff, off + block_size);
++			bh_read_nowait(bh, 0);
+ 			*wait_bh++=bh;
  		}
- 	}
+ 
+diff --git a/fs/ocfs2/super.c b/fs/ocfs2/super.c
+index e2cc9eec287c..26b4c2bfee49 100644
+--- a/fs/ocfs2/super.c
++++ b/fs/ocfs2/super.c
+@@ -1764,9 +1764,7 @@ static int ocfs2_get_sector(struct super_block *sb,
+ 	if (!buffer_dirty(*bh))
+ 		clear_buffer_uptodate(*bh);
+ 	unlock_buffer(*bh);
+-	ll_rw_block(REQ_OP_READ, 1, bh);
+-	wait_on_buffer(*bh);
+-	if (!buffer_uptodate(*bh)) {
++	if (bh_read(*bh, 0) < 0) {
+ 		mlog_errno(-EIO);
+ 		brelse(*bh);
+ 		*bh = NULL;
 -- 
 2.31.1
 
