@@ -1,51 +1,198 @@
-From: Zhang Yi <yi.zhang@huawei.com>
-Subject: [PATCH v2 13/14] ext2: replace bh_submit_read() helper with bh_read_locked()
-Date: Thu, 1 Sep 2022 21:35:04 +0800
-Message-ID: <20220901133505.2510834-14-yi.zhang@huawei.com>
+From: Jan Kara <jack@suse.cz>
+Subject: Re: [PATCH v2 02/14] fs/buffer: add some new buffer read helpers
+Date: Thu, 1 Sep 2022 17:44:09 +0200
+Message-ID: <20220901154409.dcyvtknzzdjhuzas@quack3>
 References: <20220901133505.2510834-1-yi.zhang@huawei.com>
+ <20220901133505.2510834-3-yi.zhang@huawei.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7BIT
-Return-path: <reiserfs-devel-owner@vger.kernel.org>
-In-Reply-To: <20220901133505.2510834-1-yi.zhang@huawei.com>
+Return-path: <linux-ext4-owner@vger.kernel.org>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+        t=1662047050; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=TGEgeznG1OoqVsgqPHcmjmzJchioOiRQWcLMKbDIADU=;
+        b=GzQ+klQQDOdWcjHI5r+lAUp2Ag3z01KKum2xL7StbzBok+bSdye/U7ssW9yNFC3aqdTx1m
+        oiQ7Fh+lKd3DjRk9w4CsCVJ8en5rkUeSNrxAXN2HmE3SL7nDTKv4P205h0fOgjvkWOmw8E
+        x5EG13mtEAubS2BecOAbcG3KfvFBL+s=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+        s=susede2_ed25519; t=1662047050;
+        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=TGEgeznG1OoqVsgqPHcmjmzJchioOiRQWcLMKbDIADU=;
+        b=QU8vQex5JACf7t/hD5Hxjs9xjgVbBQa/3Nu6SioXWo1GISEc1O7xoaa3poqXvqNX/1sA0G
+        m57O89aZVG+xSPBw==
+Content-Disposition: inline
+In-Reply-To: <20220901133505.2510834-3-yi.zhang@huawei.com>
 List-ID: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: linux-ext4@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, cluster-devel@redhat.com, ntfs3@lists.linux.dev, ocfs2-devel@oss.oracle.com, reiserfs-devel@vger.kernel.org, jack@suse.cz
-Cc: tytso@mit.edu, akpm@linux-foundation.org, axboe@kernel.dk, viro@zeniv.linux.org.uk, rpeterso@redhat.com, agruenba@redhat.com, almaz.alexandrovich@paragon-software.com, mark@fasheh.com, dushistov@mail.ru, hch@infradead.org, yi.zhang@huawei.com, chengzhihao1@huawei.com, yukuai3@huawei.com
+Content-Transfer-Encoding: 7bit
+To: Zhang Yi <yi.zhang@huawei.com>
+Cc: linux-ext4@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, cluster-devel@redhat.com, ntfs3@lists.linux.dev, ocfs2-devel@oss.oracle.com, reiserfs-devel@vger.kernel.org, jack@suse.cz, tytso@mit.edu, akpm@linux-foundation.org, axboe@kernel.dk, viro@zeniv.linux.org.uk, rpeterso@redhat.com, agruenba@redhat.com, almaz.alexandrovich@paragon-software.com, mark@fasheh.com, dushistov@mail.ru, hch@infradead.org, chengzhihao1@huawei.com, yukuai3@huawei.com
 
-bh_submit_read() and the uptodate check logic in bh_uptodate_or_lock()
-has been integrated in bh_read() helper, so switch to use it directly.
+On Thu 01-09-22 21:34:53, Zhang Yi wrote:
+> Current ll_rw_block() helper is fragile because it assumes that locked
+> buffer means it's under IO which is submitted by some other who holds
+> the lock, it skip buffer if it failed to get the lock, so it's only
+> safe on the readahead path. Unfortunately, now that most filesystems
+> still use this helper mistakenly on the sync metadata read path. There
+> is no guarantee that the one who holds the buffer lock always submit IO
+> (e.g. buffer_migrate_folio_norefs() after commit 88dbcbb3a484 ("blkdev:
+> avoid migration stalls for blkdev pages"), it could lead to false
+> positive -EIO when submitting reading IO.
+> 
+> This patch add some friendly buffer read helpers to prepare replacing
+> ll_rw_block() and similar calls. We can only call bh_readahead_[]
+> helpers for the readahead paths.
+> 
+> Signed-off-by: Zhang Yi <yi.zhang@huawei.com>
 
-Signed-off-by: Zhang Yi <yi.zhang@huawei.com>
----
- fs/ext2/balloc.c | 7 ++++---
- 1 file changed, 4 insertions(+), 3 deletions(-)
+Looks good to me. Feel free to add:
 
-diff --git a/fs/ext2/balloc.c b/fs/ext2/balloc.c
-index c17ccc19b938..5dc0a31f4a08 100644
---- a/fs/ext2/balloc.c
-+++ b/fs/ext2/balloc.c
-@@ -126,6 +126,7 @@ read_block_bitmap(struct super_block *sb, unsigned int block_group)
- 	struct ext2_group_desc * desc;
- 	struct buffer_head * bh = NULL;
- 	ext2_fsblk_t bitmap_blk;
-+	int ret;
- 
- 	desc = ext2_get_group_desc(sb, block_group, NULL);
- 	if (!desc)
-@@ -139,10 +140,10 @@ read_block_bitmap(struct super_block *sb, unsigned int block_group)
- 			    block_group, le32_to_cpu(desc->bg_block_bitmap));
- 		return NULL;
- 	}
--	if (likely(bh_uptodate_or_lock(bh)))
-+	ret = bh_read(bh, 0);
-+	if (ret > 0)
- 		return bh;
--
--	if (bh_submit_read(bh) < 0) {
-+	if (ret < 0) {
- 		brelse(bh);
- 		ext2_error(sb, __func__,
- 			    "Cannot read block bitmap - "
+Reviewed-by: Jan Kara <jack@suse.cz>
+
+								Honza
+
+> ---
+>  fs/buffer.c                 | 65 +++++++++++++++++++++++++++++++++++++
+>  include/linux/buffer_head.h | 38 ++++++++++++++++++++++
+>  2 files changed, 103 insertions(+)
+> 
+> diff --git a/fs/buffer.c b/fs/buffer.c
+> index a0b70b3239f3..a6bc769e665d 100644
+> --- a/fs/buffer.c
+> +++ b/fs/buffer.c
+> @@ -3017,6 +3017,71 @@ int bh_uptodate_or_lock(struct buffer_head *bh)
+>  }
+>  EXPORT_SYMBOL(bh_uptodate_or_lock);
+>  
+> +/**
+> + * __bh_read - Submit read for a locked buffer
+> + * @bh: struct buffer_head
+> + * @op_flags: appending REQ_OP_* flags besides REQ_OP_READ
+> + * @wait: wait until reading finish
+> + *
+> + * Returns zero on success or don't wait, and -EIO on error.
+> + */
+> +int __bh_read(struct buffer_head *bh, blk_opf_t op_flags, bool wait)
+> +{
+> +	int ret = 0;
+> +
+> +	BUG_ON(!buffer_locked(bh));
+> +
+> +	get_bh(bh);
+> +	bh->b_end_io = end_buffer_read_sync;
+> +	submit_bh(REQ_OP_READ | op_flags, bh);
+> +	if (wait) {
+> +		wait_on_buffer(bh);
+> +		if (!buffer_uptodate(bh))
+> +			ret = -EIO;
+> +	}
+> +	return ret;
+> +}
+> +EXPORT_SYMBOL(__bh_read);
+> +
+> +/**
+> + * __bh_read_batch - Submit read for a batch of unlocked buffers
+> + * @nr: entry number of the buffer batch
+> + * @bhs: a batch of struct buffer_head
+> + * @op_flags: appending REQ_OP_* flags besides REQ_OP_READ
+> + * @force_lock: force to get a lock on the buffer if set, otherwise drops any
+> + *              buffer that cannot lock.
+> + *
+> + * Returns zero on success or don't wait, and -EIO on error.
+> + */
+> +void __bh_read_batch(int nr, struct buffer_head *bhs[],
+> +		     blk_opf_t op_flags, bool force_lock)
+> +{
+> +	int i;
+> +
+> +	for (i = 0; i < nr; i++) {
+> +		struct buffer_head *bh = bhs[i];
+> +
+> +		if (buffer_uptodate(bh))
+> +			continue;
+> +
+> +		if (force_lock)
+> +			lock_buffer(bh);
+> +		else
+> +			if (!trylock_buffer(bh))
+> +				continue;
+> +
+> +		if (buffer_uptodate(bh)) {
+> +			unlock_buffer(bh);
+> +			continue;
+> +		}
+> +
+> +		bh->b_end_io = end_buffer_read_sync;
+> +		get_bh(bh);
+> +		submit_bh(REQ_OP_READ | op_flags, bh);
+> +	}
+> +}
+> +EXPORT_SYMBOL(__bh_read_batch);
+> +
+>  /**
+>   * bh_submit_read - Submit a locked buffer for reading
+>   * @bh: struct buffer_head
+> diff --git a/include/linux/buffer_head.h b/include/linux/buffer_head.h
+> index c3863c417b00..6d09785bed9f 100644
+> --- a/include/linux/buffer_head.h
+> +++ b/include/linux/buffer_head.h
+> @@ -232,6 +232,9 @@ void write_boundary_block(struct block_device *bdev,
+>  			sector_t bblock, unsigned blocksize);
+>  int bh_uptodate_or_lock(struct buffer_head *bh);
+>  int bh_submit_read(struct buffer_head *bh);
+> +int __bh_read(struct buffer_head *bh, blk_opf_t op_flags, bool wait);
+> +void __bh_read_batch(int nr, struct buffer_head *bhs[],
+> +		     blk_opf_t op_flags, bool force_lock);
+>  
+>  extern int buffer_heads_over_limit;
+>  
+> @@ -399,6 +402,41 @@ static inline struct buffer_head *__getblk(struct block_device *bdev,
+>  	return __getblk_gfp(bdev, block, size, __GFP_MOVABLE);
+>  }
+>  
+> +static inline void bh_readahead(struct buffer_head *bh, blk_opf_t op_flags)
+> +{
+> +	if (!buffer_uptodate(bh) && trylock_buffer(bh)) {
+> +		if (!buffer_uptodate(bh))
+> +			__bh_read(bh, op_flags, false);
+> +		else
+> +			unlock_buffer(bh);
+> +	}
+> +}
+> +
+> +static inline void bh_read_nowait(struct buffer_head *bh, blk_opf_t op_flags)
+> +{
+> +	if (!bh_uptodate_or_lock(bh))
+> +		__bh_read(bh, op_flags, false);
+> +}
+> +
+> +/* Returns 1 if buffer uptodated, 0 on success, and -EIO on error. */
+> +static inline int bh_read(struct buffer_head *bh, blk_opf_t op_flags)
+> +{
+> +	if (bh_uptodate_or_lock(bh))
+> +		return 1;
+> +	return __bh_read(bh, op_flags, true);
+> +}
+> +
+> +static inline void bh_read_batch(int nr, struct buffer_head *bhs[])
+> +{
+> +	__bh_read_batch(nr, bhs, 0, true);
+> +}
+> +
+> +static inline void bh_readahead_batch(int nr, struct buffer_head *bhs[],
+> +				      blk_opf_t op_flags)
+> +{
+> +	__bh_read_batch(nr, bhs, op_flags, false);
+> +}
+> +
+>  /**
+>   *  __bread() - reads a specified block and returns the bh
+>   *  @bdev: the block_device to read from
+> -- 
+> 2.31.1
+> 
 -- 
-2.31.1
-
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
