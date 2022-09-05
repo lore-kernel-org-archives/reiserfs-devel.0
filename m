@@ -1,40 +1,29 @@
-From: Zhang Yi <yi.zhang@huawei.com>
-Subject: Re: [PATCH v2 13/14] ext2: replace bh_submit_read() helper with
- bh_read_locked()
-Date: Fri, 2 Sep 2022 09:58:36 +0800
-Message-ID: <e1dbafd4-4696-3c3f-ac0d-6fc7d06c9b58@huawei.com>
+From: Christoph Hellwig <hch@infradead.org>
+Subject: Re: [PATCH v2 01/14] fs/buffer: remove __breadahead_gfp()
+Date: Sun, 4 Sep 2022 22:52:16 -0700
+Message-ID: <YxWOkPZ8eggVKbg4@infradead.org>
 References: <20220901133505.2510834-1-yi.zhang@huawei.com>
- <20220901133505.2510834-14-yi.zhang@huawei.com> <YxFOqimAyJNxuPM9@ZenIV>
- <3fdab5fd-1efa-9668-da5c-889e9bfa1524@huawei.com> <YxFhi1iJ2cFfKi04@ZenIV>
+ <20220901133505.2510834-2-yi.zhang@huawei.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-devel-owner@vger.kernel.org>
-In-Reply-To: <YxFhi1iJ2cFfKi04@ZenIV>
-Content-Language: en-US
+Return-path: <linux-ext4-owner@vger.kernel.org>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=M7NmYC/Iylm9myghHwqILim55SAUt9QrM+UZYk0eJlw=; b=rcrKA4ZssVM5s2966RXlKJk/CQ
+        GRHxMdQOOWGNnWCPNxp3yrIYlRUxMmh1vCxvMOFQbdAx8hhmZJjgH9p+16vhAgxAH83ESL/Ao1t3A
+        UB+1TLy7rXttE8fUFQjY97gGFOoP8fR3iaw5Rg16PZ0LvgchkLApV7iiSxM9JvlkuA1YHmQLPwQgE
+        Iq4ruVUotF3jVrifwEm8OmhChA/PzqUAqbi18zhesNRmQI6eoSqoZhf49Ip0hsalei1VB1/s+2tsI
+        o167o9FKkKXdM8Ih8UNbX8eeQJCDE7WkOo2VfIOmVJ8rSW6OBzyPGMKa60dgjvV3wpJvuLO37UB5X
+        TNhO0hxg==;
+Content-Disposition: inline
+In-Reply-To: <20220901133505.2510834-2-yi.zhang@huawei.com>
 List-ID: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: Al Viro <viro@zeniv.linux.org.uk>
-Cc: linux-ext4@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, cluster-devel@redhat.com, ntfs3@lists.linux.dev, ocfs2-devel@oss.oracle.com, reiserfs-devel@vger.kernel.org, jack@suse.cz, tytso@mit.edu, akpm@linux-foundation.org, axboe@kernel.dk, rpeterso@redhat.com, agruenba@redhat.com, almaz.alexandrovich@paragon-software.com, mark@fasheh.com, dushistov@mail.ru, hch@infradead.org, chengzhihao1@huawei.com, yukuai3@huawei.com
+Content-Transfer-Encoding: 7bit
+To: Zhang Yi <yi.zhang@huawei.com>
+Cc: linux-ext4@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, cluster-devel@redhat.com, ntfs3@lists.linux.dev, ocfs2-devel@oss.oracle.com, reiserfs-devel@vger.kernel.org, jack@suse.cz, tytso@mit.edu, akpm@linux-foundation.org, axboe@kernel.dk, viro@zeniv.linux.org.uk, rpeterso@redhat.com, agruenba@redhat.com, almaz.alexandrovich@paragon-software.com, mark@fasheh.com, dushistov@mail.ru, hch@infradead.org, chengzhihao1@huawei.com, yukuai3@huawei.com
 
+Looks good:
 
-
-On 2022/9/2 9:51, Al Viro wrote:
-> On Fri, Sep 02, 2022 at 09:32:53AM +0800, Zhang Yi wrote:
->> On 2022/9/2 8:30, Al Viro wrote:
->>> On Thu, Sep 01, 2022 at 09:35:04PM +0800, Zhang Yi wrote:
->>>> bh_submit_read() and the uptodate check logic in bh_uptodate_or_lock()
->>>> has been integrated in bh_read() helper, so switch to use it directly.
->>>
->>> s/bh_read_locked/bh_read/ in the summary?
->>>
->>
->> Sorry, I don't get your question, I have already replace bh_read_locked()
->> with bh_read() in the commit message, there is no bh_read_locked in the whole
->> patch. Am I missing something?
-> 
-> Take a look at the subject ;-)
-
-Oh, yes, I forgot to update the subject, will do.
-
-Thanks,
-Yi.
+Reviewed-by: Christoph Hellwig <hch@lst.de>
