@@ -1,108 +1,89 @@
-From: syzbot <syzbot+3c530d01065fbfab6070@syzkaller.appspotmail.com>
-Subject: [syzbot] BUG: unable to handle kernel paging request in open_xa_dir
-Date: Mon, 05 Sep 2022 01:53:29 -0700
-Message-ID: <000000000000b04b4705e7ea36fb@google.com>
+From: Andreas Gruenbacher <agruenba@redhat.com>
+Subject: Re: [PATCH v2 04/14] gfs2: replace ll_rw_block()
+Date: Mon, 5 Sep 2022 16:10:01 +0200
+Message-ID: <CAHc6FU4XqSxUr3CS8zxu=Fh_kHytJbzezim0ie_cxdioW5R=FA@mail.gmail.com>
+References: <20220901133505.2510834-1-yi.zhang@huawei.com> <20220901133505.2510834-5-yi.zhang@huawei.com>
 Mime-Version: 1.0
-Return-path: <reiserfs-devel-owner@vger.kernel.org>
+Return-path: <linux-ext4-owner@vger.kernel.org>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1662387015;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=/aM9Hz/CxTU/5IZIiOb0wSytjLDU1CYz4f/uZlzEYfY=;
+        b=WXhE9tE+lWskXL7dnxRIFOx82M1hrtyWC1zMSjoHGv+JpsLFoAduU4XWYEOByeCoMYIC7/
+        7XBDNz8gfqUeOXwJPLKEcM3HTA63IHoRDKgCWlxianshklmZW4oqlVRJIhc2w4xvaOWG/v
+        scfBuFAyCrPa1mN5TgQrb6ClPeB9J3U=
+In-Reply-To: <20220901133505.2510834-5-yi.zhang@huawei.com>
 List-ID: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-kernel@vger.kernel.org, reiserfs-devel@vger.kernel.org, syzkaller-bugs@googlegroups.com, willy@infradead.org
+To: Zhang Yi <yi.zhang@huawei.com>
+Cc: linux-ext4@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, cluster-devel@redhat.com, ntfs3@lists.linux.dev, ocfs2-devel@oss.oracle.com, reiserfs-devel@vger.kernel.org, jack@suse.cz, tytso@mit.edu, akpm@linux-foundation.org, axboe@kernel.dk, viro@zeniv.linux.org.uk, rpeterso@redhat.com, almaz.alexandrovich@paragon-software.com, mark@fasheh.com, dushistov@mail.ru, hch@infradead.org, chengzhihao1@huawei.com, yukuai3@huawei.com
 
-Hello,
+On Thu, Sep 1, 2022 at 3:24 PM Zhang Yi <yi.zhang@huawei.com> wrote:
+> ll_rw_block() is not safe for the sync read path because it cannot
+> guarantee that always submitting read IO if the buffer has been locked,
+> so stop using it. We also switch to new bh_readahead() helper for the
+> readahead path.
+>
+> Signed-off-by: Zhang Yi <yi.zhang@huawei.com>
+> ---
+>  fs/gfs2/meta_io.c | 7 ++-----
+>  fs/gfs2/quota.c   | 8 ++------
+>  2 files changed, 4 insertions(+), 11 deletions(-)
+>
+> diff --git a/fs/gfs2/meta_io.c b/fs/gfs2/meta_io.c
+> index 7e70e0ba5a6c..6ed728aae9a5 100644
+> --- a/fs/gfs2/meta_io.c
+> +++ b/fs/gfs2/meta_io.c
+> @@ -525,8 +525,7 @@ struct buffer_head *gfs2_meta_ra(struct gfs2_glock *gl, u64 dblock, u32 extlen)
+>
+>         if (buffer_uptodate(first_bh))
+>                 goto out;
+> -       if (!buffer_locked(first_bh))
+> -               ll_rw_block(REQ_OP_READ | REQ_META | REQ_PRIO, 1, &first_bh);
+> +       bh_read_nowait(first_bh, REQ_META | REQ_PRIO);
+>
+>         dblock++;
+>         extlen--;
+> @@ -534,9 +533,7 @@ struct buffer_head *gfs2_meta_ra(struct gfs2_glock *gl, u64 dblock, u32 extlen)
+>         while (extlen) {
+>                 bh = gfs2_getbuf(gl, dblock, CREATE);
+>
+> -               if (!buffer_uptodate(bh) && !buffer_locked(bh))
+> -                       ll_rw_block(REQ_OP_READ | REQ_RAHEAD | REQ_META |
+> -                                   REQ_PRIO, 1, &bh);
+> +               bh_readahead(bh, REQ_RAHEAD | REQ_META | REQ_PRIO);
+>                 brelse(bh);
+>                 dblock++;
+>                 extlen--;
+> diff --git a/fs/gfs2/quota.c b/fs/gfs2/quota.c
+> index f201eaf59d0d..1ed17226d9ed 100644
+> --- a/fs/gfs2/quota.c
+> +++ b/fs/gfs2/quota.c
+> @@ -745,12 +745,8 @@ static int gfs2_write_buf_to_page(struct gfs2_inode *ip, unsigned long index,
+>                 }
+>                 if (PageUptodate(page))
+>                         set_buffer_uptodate(bh);
+> -               if (!buffer_uptodate(bh)) {
+> -                       ll_rw_block(REQ_OP_READ | REQ_META | REQ_PRIO, 1, &bh);
+> -                       wait_on_buffer(bh);
+> -                       if (!buffer_uptodate(bh))
+> -                               goto unlock_out;
+> -               }
+> +               if (bh_read(bh, REQ_META | REQ_PRIO) < 0)
+> +                       goto unlock_out;
+>                 if (gfs2_is_jdata(ip))
+>                         gfs2_trans_add_data(ip->i_gl, bh);
+>                 else
+> --
+> 2.31.1
+>
 
-syzbot found the following issue on:
+Thanks for this fix; looking good.
 
-HEAD commit:    85413d1e802e Merge branch 'for-next/fixes' into for-kernelci
-git tree:       git://git.kernel.org/pub/scm/linux/kernel/git/arm64/linux.git for-kernelci
-console output: https://syzkaller.appspot.com/x/log.txt?x=113a1bc7080000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=57b9bfeca947ab90
-dashboard link: https://syzkaller.appspot.com/bug?extid=3c530d01065fbfab6070
-compiler:       Debian clang version 13.0.1-++20220126092033+75e33f71c2da-1~exp1~20220126212112.63, GNU ld (GNU Binutils for Debian) 2.35.2
-userspace arch: arm64
+Reviewed-by: Andreas Gruenbacher <agruenba@redhat.com>
 
-Unfortunately, I don't have any reproducer for this issue yet.
+Andreas
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+3c530d01065fbfab6070@syzkaller.appspotmail.com
-
-loop1: detected capacity change from 0 to 65534
-Unable to handle kernel paging request at virtual address 0000000081a401ba
-Mem abort info:
-  ESR = 0x0000000096000005
-  EC = 0x25: DABT (current EL), IL = 32 bits
-  SET = 0, FnV = 0
-  EA = 0, S1PTW = 0
-  FSC = 0x05: level 1 translation fault
-Data abort info:
-  ISV = 0, ISS = 0x00000005
-  CM = 0, WnR = 0
-user pgtable: 4k pages, 48-bit VAs, pgdp=0000000138114000
-[0000000081a401ba] pgd=080000013d972003, p4d=080000013d972003, pud=0000000000000000
-Internal error: Oops: 96000005 [#1] PREEMPT SMP
-Modules linked in:
-CPU: 1 PID: 15506 Comm: syz-executor.1 Not tainted 6.0.0-rc3-syzkaller-16800-g85413d1e802e #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 07/22/2022
-pstate: 80400005 (Nzcv daif +PAN -UAO -TCO -DIT -SSBS BTYPE=--)
-pc : d_really_is_negative include/linux/dcache.h:465 [inline]
-pc : open_xa_root fs/reiserfs/xattr.c:124 [inline]
-pc : open_xa_dir+0x48/0x2a8 fs/reiserfs/xattr.c:152
-lr : open_xa_dir+0x34/0x2a8 fs/reiserfs/xattr.c:148
-sp : ffff80002214b850
-x29: ffff80002214b870 x28: 0000000000000030 x27: ffff0000e44c7d68
-x26: 0000000000000000 x25: 0000000000000000 x24: 0000000081a40152
-x23: 0000000000000000 x22: 0000000000000002 x21: ffff0000e4530190
-x20: 0000000000000002 x19: ffff0000c3f35000 x18: 0000000000000000
-x17: 0000000000000000 x16: 0000000000000000 x15: 0000000000000000
-x14: 0000000000000002 x13: 0000000000008000 x12: 0000000000040000
-x11: 000000000001f773 x10: ffff80001a24a000 x9 : ffff800008795070
-x8 : ffff0000fae34b00 x7 : ffff8000086ace88 x6 : 0000000000000000
-x5 : 0000000000000000 x4 : 0000000000000000 x3 : 0000000000000000
-x2 : 0000000000000002 x1 : 0000000000000002 x0 : ffff0000e4530190
-Call trace:
- open_xa_root fs/reiserfs/xattr.c:121 [inline]
- open_xa_dir+0x48/0x2a8 fs/reiserfs/xattr.c:152
- xattr_lookup+0x34/0x198 fs/reiserfs/xattr.c:395
- reiserfs_xattr_get+0x8c/0x680 fs/reiserfs/xattr.c:677
- reiserfs_get_acl+0x84/0x1ac fs/reiserfs/xattr_acl.c:214
- get_acl+0x104/0x330 fs/posix_acl.c:152
- check_acl+0x40/0x168 fs/namei.c:306
- acl_permission_check fs/namei.c:351 [inline]
- generic_permission+0x270/0x32c fs/namei.c:404
- reiserfs_permission+0x4c/0x6c fs/reiserfs/xattr.c:954
- do_inode_permission fs/namei.c:458 [inline]
- inode_permission+0x128/0x244 fs/namei.c:525
- may_open+0x1e4/0x2bc fs/namei.c:3185
- do_open fs/namei.c:3555 [inline]
- path_openat+0xdd0/0x11c4 fs/namei.c:3691
- do_filp_open+0xdc/0x1b8 fs/namei.c:3718
- do_sys_openat2+0xb8/0x22c fs/open.c:1311
- do_sys_open fs/open.c:1327 [inline]
- __do_sys_openat fs/open.c:1343 [inline]
- __se_sys_openat fs/open.c:1338 [inline]
- __arm64_sys_openat+0xb0/0xe0 fs/open.c:1338
- __invoke_syscall arch/arm64/kernel/syscall.c:38 [inline]
- invoke_syscall arch/arm64/kernel/syscall.c:52 [inline]
- el0_svc_common+0x138/0x220 arch/arm64/kernel/syscall.c:142
- do_el0_svc+0x48/0x154 arch/arm64/kernel/syscall.c:206
- el0_svc+0x58/0x150 arch/arm64/kernel/entry-common.c:624
- el0t_64_sync_handler+0x84/0xf0 arch/arm64/kernel/entry-common.c:642
- el0t_64_sync+0x18c/0x190
-Code: 390043ff a9007fff f9433e68 f942cd18 (f9403708) 
----[ end trace 0000000000000000 ]---
-----------------
-Code disassembly (best guess):
-   0:	390043ff 	strb	wzr, [sp, #16]
-   4:	a9007fff 	stp	xzr, xzr, [sp]
-   8:	f9433e68 	ldr	x8, [x19, #1656]
-   c:	f942cd18 	ldr	x24, [x8, #1432]
-* 10:	f9403708 	ldr	x8, [x24, #104] <-- trapping instruction
-
-
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
