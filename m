@@ -1,40 +1,41 @@
-From: Christoph Hellwig <hch@infradead.org>
-Subject: Re: [PATCH v2 14/14] fs/buffer: remove
- bh_submit_read() helper
-Date: Sun, 4 Sep 2022 22:57:20 -0700
-Message-ID: <YxWPwDCWx4gYephr@infradead.org>
+From: "Theodore Ts'o" <tytso@mit.edu>
+Subject: Re: [PATCH v2 06/14] jbd2: replace ll_rw_block()
+Date: Mon, 5 Sep 2022 04:23:24 -0400
+Message-ID: <YxWx/E0TIhBMhaq6@mit.edu>
 References: <20220901133505.2510834-1-yi.zhang@huawei.com>
- <20220901133505.2510834-15-yi.zhang@huawei.com>
+ <20220901133505.2510834-7-yi.zhang@huawei.com>
 Mime-Version: 1.0
-Return-path: <cluster-devel-bounces@redhat.com>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1662357456;
-	h=from:from:sender:sender:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:in-reply-to:in-reply-to:
-	 references:references:list-id:list-help:list-unsubscribe:
-	 list-subscribe:list-post; bh=M7NmYC/Iylm9myghHwqILim55SAUt9QrM+UZYk0eJlw=;
-	b=SpNMqbZCDKPRKBiHH2C6P0dcP80MY7oYifTvwUcoucsDNYShlhBNu4/Ck+ELLPEo1NM/zp
-	9jUqTCgVQY8CqIX1dCYM+22g2zOGPF0VdqiPbF2psl0PzJPvCNeA6S4l6hvS3QOT0Ely6N
-	jaWiH9Nm2wDBj3XKw1ztRim0LriZBGg=
-In-Reply-To: <20220901133505.2510834-15-yi.zhang@huawei.com>
-List-Id: <reiserfs-devel.vger.kernel.org>
-List-Unsubscribe: <https://listman.redhat.com/mailman/options/cluster-devel>, 
- <mailto:cluster-devel-request@redhat.com?subject=unsubscribe>
-List-Archive: <http://listman.redhat.com/archives/cluster-devel/>
-List-Post: <mailto:cluster-devel@redhat.com>
-List-Help: <mailto:cluster-devel-request@redhat.com?subject=help>
-List-Subscribe: <https://listman.redhat.com/mailman/listinfo/cluster-devel>,
- <mailto:cluster-devel-request@redhat.com?subject=subscribe>
-Errors-To: cluster-devel-bounces@redhat.com
-Sender: "Cluster-devel" <cluster-devel-bounces@redhat.com>
+Return-path: <reiserfs-devel-owner@vger.kernel.org>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mit.edu; s=outgoing;
+        t=1662366211; bh=Opykd4NroLOvUVAS6DC0mH5AVipCgMT0W9fOrq2cA5g=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To;
+        b=kQY2cNMKCxqeSaFySEG9If6ZtQ8BhheeiKQJIw2xRYU0mwh5KEc4n5fb1xfvPk4CZ
+         mBNdt31pMRPo3WHANZ5/Ldd6KIRnX21xck+7Bwn1Fcrsc5FcAOy78knWuHYTLXAl4g
+         DxocwCUAw/g0qM3+vyInmt7rzH9XEt3Rw96cWfFdL1E5K22280Elx75++itsnVc6Gr
+         BQtWa317FaLTf8L+CdQ4p6Ae6qIlTOrneZoG/Z4wofU62NxWKd3WMtYF7anpMD6LxL
+         vXTuclZkTdheNbZQoIMugvCv3ZQ/q2LRDpdTb2u/xsaul3tZnLnf3enunBF8CgAtMV
+         Liep1iIsFATVw==
 Content-Disposition: inline
+In-Reply-To: <20220901133505.2510834-7-yi.zhang@huawei.com>
+List-ID: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: Zhang Yi <yi.zhang@huawei.com>
-Cc: axboe@kernel.dk, almaz.alexandrovich@paragon-software.com, ntfs3@lists.linux.dev, jack@suse.cz, chengzhihao1@huawei.com, mark@fasheh.com, linux-kernel@vger.kernel.org, reiserfs-devel@vger.kernel.org, cluster-devel@redhat.com, viro@zeniv.linux.org.uk, yukuai3@huawei.com, linux-fsdevel@vger.kernel.org, tytso@mit.edu, akpm@linux-foundation.org, linux-ext4@vger.kernel.org, dushistov@mail.ru, ocfs2-devel@oss.oracle.com
+Cc: linux-ext4@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, cluster-devel@redhat.com, ntfs3@lists.linux.dev, ocfs2-devel@oss.oracle.com, reiserfs-devel@vger.kernel.org, jack@suse.cz, akpm@linux-foundation.org, axboe@kernel.dk, viro@zeniv.linux.org.uk, rpeterso@redhat.com, agruenba@redhat.com, almaz.alexandrovich@paragon-software.com, mark@fasheh.com, dushistov@mail.ru, hch@infradead.org, chengzhihao1@huawei.com, yukuai3@huawei.com
 
-Looks good:
+On Thu, Sep 01, 2022 at 09:34:57PM +0800, Zhang Yi wrote:
+> ll_rw_block() is not safe for the sync read path because it cannot
+> guarantee that submitting read IO if the buffer has been locked. We
+> could get false positive EIO after wait_on_buffer() if the buffer has
+> been locked by others. So stop using ll_rw_block() in
+> journal_get_superblock(). We also switch to new bh_readahead_batch()
+> for the buffer array readahead path.
+> 
+> Signed-off-by: Zhang Yi <yi.zhang@huawei.com>
 
-Reviewed-by: Christoph Hellwig <hch@lst.de>
+Thanks, looks good.
 
+Reviewed-by: Theodore Ts'o <tytso@mit.edu>
+
+
+					- Ted
