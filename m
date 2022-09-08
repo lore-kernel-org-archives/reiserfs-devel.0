@@ -1,7 +1,7 @@
-From: syzbot <syzbot+65fa614434c3a3ae70ae@syzkaller.appspotmail.com>
-Subject: [syzbot] INFO: trying to register non-static key in open_xa_dir
-Date: Tue, 06 Sep 2022 03:38:29 -0700
-Message-ID: <0000000000000b262905e7ffcc05@google.com>
+From: syzbot <syzbot+ca91a9d7f091db185abe@syzkaller.appspotmail.com>
+Subject: [syzbot] WARNING: locking bug in open_xa_dir
+Date: Wed, 07 Sep 2022 23:01:39 -0700
+Message-ID: <000000000000b2491b05e8242991@google.com>
 Mime-Version: 1.0
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
 List-ID: <reiserfs-devel.vger.kernel.org>
@@ -15,102 +15,48 @@ syzbot found the following issue on:
 
 HEAD commit:    85413d1e802e Merge branch 'for-next/fixes' into for-kernelci
 git tree:       git://git.kernel.org/pub/scm/linux/kernel/git/arm64/linux.git for-kernelci
-console output: https://syzkaller.appspot.com/x/log.txt?x=13aeb7bd080000
+console output: https://syzkaller.appspot.com/x/log.txt?x=128a2817080000
 kernel config:  https://syzkaller.appspot.com/x/.config?x=57b9bfeca947ab90
-dashboard link: https://syzkaller.appspot.com/bug?extid=65fa614434c3a3ae70ae
+dashboard link: https://syzkaller.appspot.com/bug?extid=ca91a9d7f091db185abe
 compiler:       Debian clang version 13.0.1-++20220126092033+75e33f71c2da-1~exp1~20220126212112.63, GNU ld (GNU Binutils for Debian) 2.35.2
 userspace arch: arm64
 
 Unfortunately, I don't have any reproducer for this issue yet.
 
 IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+65fa614434c3a3ae70ae@syzkaller.appspotmail.com
+Reported-by: syzbot+ca91a9d7f091db185abe@syzkaller.appspotmail.com
 
-EXT4-fs (loop3): Cannot turn on quotas: error -22
-EXT4-fs error (device loop3): ext4_orphan_get:1419: comm syz-executor.3: bad orphan inode 2147483648
-EXT4-fs (loop3): mounted filesystem without journal. Quota mode: writeback.
-INFO: trying to register non-static key.
-The code is fine but needs lockdep annotation, or maybe
-you didn't initialize this object before use?
-turning off the locking correctness validator.
-CPU: 1 PID: 12538 Comm: syz-executor.3 Not tainted 6.0.0-rc3-syzkaller-16800-g85413d1e802e #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 07/22/2022
-Call trace:
- dump_backtrace+0x1b0/0x1dc arch/arm64/kernel/stacktrace.c:182
- show_stack+0x2c/0x64 arch/arm64/kernel/stacktrace.c:189
- __dump_stack lib/dump_stack.c:88 [inline]
- dump_stack_lvl+0x104/0x16c lib/dump_stack.c:106
- dump_stack+0x1c/0x58 lib/dump_stack.c:113
- assign_lock_key+0x134/0x140 kernel/locking/lockdep.c:979
- register_lock_class+0xc4/0x2f8 kernel/locking/lockdep.c:1292
- __lock_acquire+0xa8/0x30a4 kernel/locking/lockdep.c:4932
- lock_acquire+0x100/0x1f8 kernel/locking/lockdep.c:5666
- down_write_nested+0x64/0xc4 kernel/locking/rwsem.c:1662
- inode_lock_nested include/linux/fs.h:791 [inline]
- open_xa_root fs/reiserfs/xattr.c:127 [inline]
- open_xa_dir+0x5c/0x2a8 fs/reiserfs/xattr.c:152
- xattr_lookup+0x34/0x198 fs/reiserfs/xattr.c:395
- reiserfs_xattr_get+0x8c/0x680 fs/reiserfs/xattr.c:677
- reiserfs_get_acl+0x84/0x1ac fs/reiserfs/xattr_acl.c:214
- get_acl+0x104/0x330 fs/posix_acl.c:152
- check_acl+0x40/0x168 fs/namei.c:306
- acl_permission_check fs/namei.c:351 [inline]
- generic_permission+0x270/0x32c fs/namei.c:404
- reiserfs_permission+0x4c/0x6c fs/reiserfs/xattr.c:954
- do_inode_permission fs/namei.c:458 [inline]
- inode_permission+0x128/0x244 fs/namei.c:525
- may_open+0x1e4/0x2bc fs/namei.c:3185
- do_open fs/namei.c:3555 [inline]
- path_openat+0xdd0/0x11c4 fs/namei.c:3691
- do_filp_open+0xdc/0x1b8 fs/namei.c:3718
- do_sys_openat2+0xb8/0x22c fs/open.c:1311
- do_sys_open fs/open.c:1327 [inline]
- __do_sys_openat fs/open.c:1343 [inline]
- __se_sys_openat fs/open.c:1338 [inline]
- __arm64_sys_openat+0xb0/0xe0 fs/open.c:1338
- __invoke_syscall arch/arm64/kernel/syscall.c:38 [inline]
- invoke_syscall arch/arm64/kernel/syscall.c:52 [inline]
- el0_svc_common+0x138/0x220 arch/arm64/kernel/syscall.c:142
- do_el0_svc+0x48/0x154 arch/arm64/kernel/syscall.c:206
- el0_svc+0x58/0x150 arch/arm64/kernel/entry-common.c:624
- el0t_64_sync_handler+0x84/0xf0 arch/arm64/kernel/entry-common.c:642
- el0t_64_sync+0x18c/0x190
-Unable to handle kernel paging request at virtual address ffff7fff437161a0
-Mem abort info:
-  ESR = 0x0000000096000004
-  EC = 0x25: DABT (current EL), IL = 32 bits
-  SET = 0, FnV = 0
-  EA = 0, S1PTW = 0
-  FSC = 0x04: level 0 translation fault
-Data abort info:
-  ISV = 0, ISS = 0x00000004
-  CM = 0, WnR = 0
-swapper pgtable: 4k pages, 48-bit VAs, pgdp=00000001c5736000
-[ffff7fff437161a0] pgd=0000000000000000, p4d=0000000000000000
-Internal error: Oops: 96000004 [#1] PREEMPT SMP
+------------[ cut here ]------------
+DEBUG_LOCKS_WARN_ON(1)
+WARNING: CPU: 1 PID: 10629 at kernel/locking/lockdep.c:231 check_wait_context kernel/locking/lockdep.c:4727 [inline]
+WARNING: CPU: 1 PID: 10629 at kernel/locking/lockdep.c:231 __lock_acquire+0x2b0/0x30a4 kernel/locking/lockdep.c:5003
 Modules linked in:
-CPU: 1 PID: 12538 Comm: syz-executor.3 Not tainted 6.0.0-rc3-syzkaller-16800-g85413d1e802e #0
+CPU: 1 PID: 10629 Comm: syz-executor.1 Not tainted 6.0.0-rc3-syzkaller-16800-g85413d1e802e #0
 Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 07/22/2022
-pstate: 80400005 (Nzcv daif +PAN -UAO -TCO -DIT -SSBS BTYPE=--)
-pc : decode_cpu kernel/locking/osq_lock.c:34 [inline]
-pc : osq_lock+0x60/0x1cc kernel/locking/osq_lock.c:111
-lr : osq_lock+0x38/0x1cc kernel/locking/osq_lock.c:94
-sp : ffff8000134eb6e0
-x29: ffff8000134eb6e0 x28: 0000000000000030 x27: ffff0000e96a4270
-x26: 0000000000000000 x25: 0000000000000000 x24: ffff0000fc36b500
-x23: 0000000000000000 x22: ffff80000d2e1a00 x21: ffff80000d37cf28
-x20: ffff0001fefefa00 x19: ffff0000f7ce6d50 x18: 0000000000000000
-x17: 6e69676e45206574 x16: 0000000000000001 x15: 0000000000000000
-x14: 0000000000000000 x13: 205d383335323154 x12: 5b5d313738343532
-x11: ff808000095ecd98 x10: 0000000000000000 x9 : 0000000000000002
-x8 : 00000000e6c7324f x7 : 545b5d3137383435 x6 : ffff800008197c80
+pstate: 604000c5 (nZCv daIF +PAN -UAO -TCO -DIT -SSBS BTYPE=--)
+pc : check_wait_context kernel/locking/lockdep.c:4727 [inline]
+pc : __lock_acquire+0x2b0/0x30a4 kernel/locking/lockdep.c:5003
+lr : hlock_class kernel/locking/lockdep.c:231 [inline]
+lr : check_wait_context kernel/locking/lockdep.c:4727 [inline]
+lr : __lock_acquire+0x298/0x30a4 kernel/locking/lockdep.c:5003
+sp : ffff800013a3b570
+x29: ffff800013a3b650 x28: 0000000000000000 x27: ffff0000ff2ccf80
+x26: ffff0000fc51f250 x25: ffff0000ff2cd9b0 x24: 0000000000000080
+x23: 0000000000000000 x22: 0000000000000001 x21: 0000000000000000
+x20: 0000000000000000 x19: aaaaaaaaaaa78f9e x18: 0000000000000041
+x17: 0000000000000000 x16: ffff80000dbb8658 x15: ffff0000ff2ccf80
+x14: 0000000000000000 x13: 0000000000000012 x12: ffff80000d65f8d0
+x11: ff808000081c39d0 x10: ffff80000dd7a698 x9 : 2d75630c93b4cc00
+x8 : 0000000000000000 x7 : 4e5241575f534b43 x6 : ffff8000081c0d80
 x5 : 0000000000000000 x4 : 0000000000000001 x3 : 0000000000000000
-x2 : 0000000000000001 x1 : ffff80000ce74037 x0 : 0000000000000001
+x2 : 0000000000000001 x1 : 0000000100000001 x0 : 0000000000000016
 Call trace:
- decode_cpu kernel/locking/osq_lock.c:32 [inline]
- osq_lock+0x60/0x1cc kernel/locking/osq_lock.c:111
- rwsem_optimistic_spin+0x38/0x1f4 kernel/locking/rwsem.c:827
- rwsem_down_write_slowpath+0xb0/0x520 kernel/locking/rwsem.c:1114
+ check_wait_context kernel/locking/lockdep.c:4727 [inline]
+ __lock_acquire+0x2b0/0x30a4 kernel/locking/lockdep.c:5003
+ lock_acquire+0x100/0x1f8 kernel/locking/lockdep.c:5666
+ __raw_spin_lock_irq include/linux/spinlock_api_smp.h:119 [inline]
+ _raw_spin_lock_irq+0x70/0x9c kernel/locking/spinlock.c:170
+ rwsem_down_write_slowpath+0xdc/0x520 kernel/locking/rwsem.c:1128
  __down_write_common kernel/locking/rwsem.c:1297 [inline]
  __down_write kernel/locking/rwsem.c:1306 [inline]
  down_write_nested+0x90/0xc4 kernel/locking/rwsem.c:1663
@@ -143,15 +89,96 @@ Call trace:
  el0_svc+0x58/0x150 arch/arm64/kernel/entry-common.c:624
  el0t_64_sync_handler+0x84/0xf0 arch/arm64/kernel/entry-common.c:642
  el0t_64_sync+0x18c/0x190
-Code: d503201f d503201f 340005e8 51000508 (f868daa8) 
+irq event stamp: 8960
+hardirqs last  enabled at (8959): [<ffff800008163d98>] raw_spin_rq_unlock_irq kernel/sched/sched.h:1367 [inline]
+hardirqs last  enabled at (8959): [<ffff800008163d98>] finish_lock_switch+0x94/0xe8 kernel/sched/core.c:4942
+hardirqs last disabled at (8960): [<ffff80000c01388c>] __raw_spin_lock_irq include/linux/spinlock_api_smp.h:117 [inline]
+hardirqs last disabled at (8960): [<ffff80000c01388c>] _raw_spin_lock_irq+0x34/0x9c kernel/locking/spinlock.c:170
+softirqs last  enabled at (8942): [<ffff80000801c1f4>] local_bh_enable+0x10/0x34 include/linux/bottom_half.h:32
+softirqs last disabled at (8940): [<ffff80000801c1c0>] local_bh_disable+0x10/0x34 include/linux/bottom_half.h:19
+---[ end trace 0000000000000000 ]---
+Unable to handle kernel NULL pointer dereference at virtual address 00000000000000b8
+Mem abort info:
+  ESR = 0x0000000096000006
+  EC = 0x25: DABT (current EL), IL = 32 bits
+  SET = 0, FnV = 0
+  EA = 0, S1PTW = 0
+  FSC = 0x06: level 2 translation fault
+Data abort info:
+  ISV = 0, ISS = 0x00000006
+  CM = 0, WnR = 0
+user pgtable: 4k pages, 48-bit VAs, pgdp=000000013ce6a000
+[00000000000000b8] pgd=080000013c54e003, p4d=080000013c54e003, pud=080000013b6f2003, pmd=0000000000000000
+Internal error: Oops: 96000006 [#1] PREEMPT SMP
+Modules linked in:
+CPU: 1 PID: 10629 Comm: syz-executor.1 Tainted: G        W          6.0.0-rc3-syzkaller-16800-g85413d1e802e #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 07/22/2022
+pstate: 604000c5 (nZCv daIF +PAN -UAO -TCO -DIT -SSBS BTYPE=--)
+pc : check_wait_context kernel/locking/lockdep.c:4727 [inline]
+pc : __lock_acquire+0x2d0/0x30a4 kernel/locking/lockdep.c:5003
+lr : hlock_class kernel/locking/lockdep.c:231 [inline]
+lr : check_wait_context kernel/locking/lockdep.c:4727 [inline]
+lr : __lock_acquire+0x298/0x30a4 kernel/locking/lockdep.c:5003
+sp : ffff800013a3b570
+x29: ffff800013a3b650 x28: 0000000000000000 x27: ffff0000ff2ccf80
+x26: ffff0000fc51f250 x25: ffff0000ff2cd9b0 x24: 0000000000000080
+x23: 0000000000000000 x22: 0000000000000001 x21: 0000000000000000
+x20: 0000000000000000 x19: aaaaaaaaaaa78f9e x18: 0000000000000041
+x17: 0000000000000000 x16: ffff80000dbb8658 x15: ffff0000ff2ccf80
+x14: 0000000000000000 x13: 0000000000000012 x12: ffff80000d65f8d0
+x11: ff808000081c39d0 x10: ffff80000dd7a698 x9 : 00000000000c0f9e
+x8 : 0000000000000000 x7 : 4e5241575f534b43 x6 : ffff8000081c0d80
+x5 : 0000000000000000 x4 : 0000000000000001 x3 : 0000000000000000
+x2 : 0000000000000001 x1 : 0000000100000001 x0 : 0000000000000016
+Call trace:
+ hlock_class kernel/locking/lockdep.c:222 [inline]
+ check_wait_context kernel/locking/lockdep.c:4728 [inline]
+ __lock_acquire+0x2d0/0x30a4 kernel/locking/lockdep.c:5003
+ lock_acquire+0x100/0x1f8 kernel/locking/lockdep.c:5666
+ __raw_spin_lock_irq include/linux/spinlock_api_smp.h:119 [inline]
+ _raw_spin_lock_irq+0x70/0x9c kernel/locking/spinlock.c:170
+ rwsem_down_write_slowpath+0xdc/0x520 kernel/locking/rwsem.c:1128
+ __down_write_common kernel/locking/rwsem.c:1297 [inline]
+ __down_write kernel/locking/rwsem.c:1306 [inline]
+ down_write_nested+0x90/0xc4 kernel/locking/rwsem.c:1663
+ inode_lock_nested include/linux/fs.h:791 [inline]
+ open_xa_root fs/reiserfs/xattr.c:127 [inline]
+ open_xa_dir+0x5c/0x2a8 fs/reiserfs/xattr.c:152
+ xattr_lookup+0x34/0x198 fs/reiserfs/xattr.c:395
+ reiserfs_xattr_get+0x8c/0x680 fs/reiserfs/xattr.c:677
+ reiserfs_get_acl+0x84/0x1ac fs/reiserfs/xattr_acl.c:214
+ get_acl+0x104/0x330 fs/posix_acl.c:152
+ check_acl+0x40/0x168 fs/namei.c:306
+ acl_permission_check fs/namei.c:351 [inline]
+ generic_permission+0x270/0x32c fs/namei.c:404
+ reiserfs_permission+0x4c/0x6c fs/reiserfs/xattr.c:954
+ do_inode_permission fs/namei.c:458 [inline]
+ inode_permission+0x128/0x244 fs/namei.c:525
+ may_open+0x1e4/0x2bc fs/namei.c:3185
+ do_open fs/namei.c:3555 [inline]
+ path_openat+0xdd0/0x11c4 fs/namei.c:3691
+ do_filp_open+0xdc/0x1b8 fs/namei.c:3718
+ do_sys_openat2+0xb8/0x22c fs/open.c:1311
+ do_sys_open fs/open.c:1327 [inline]
+ __do_sys_openat fs/open.c:1343 [inline]
+ __se_sys_openat fs/open.c:1338 [inline]
+ __arm64_sys_openat+0xb0/0xe0 fs/open.c:1338
+ __invoke_syscall arch/arm64/kernel/syscall.c:38 [inline]
+ invoke_syscall arch/arm64/kernel/syscall.c:52 [inline]
+ el0_svc_common+0x138/0x220 arch/arm64/kernel/syscall.c:142
+ do_el0_svc+0x48/0x154 arch/arm64/kernel/syscall.c:206
+ el0_svc+0x58/0x150 arch/arm64/kernel/entry-common.c:624
+ el0t_64_sync_handler+0x84/0xf0 arch/arm64/kernel/entry-common.c:642
+ el0t_64_sync+0x18c/0x190
+Code: b002deea 91196210 911a614a b9400329 (3942e114) 
 ---[ end trace 0000000000000000 ]---
 ----------------
 Code disassembly (best guess):
-   0:	d503201f 	nop
-   4:	d503201f 	nop
-   8:	340005e8 	cbz	w8, 0xc4
-   c:	51000508 	sub	w8, w8, #0x1
-* 10:	f868daa8 	ldr	x8, [x21, w8, sxtw #3] <-- trapping instruction
+   0:	b002deea 	adrp	x10, 0x5bdd000
+   4:	91196210 	add	x16, x16, #0x658
+   8:	911a614a 	add	x10, x10, #0x698
+   c:	b9400329 	ldr	w9, [x25]
+* 10:	3942e114 	ldrb	w20, [x8, #184] <-- trapping instruction
 
 
 ---
