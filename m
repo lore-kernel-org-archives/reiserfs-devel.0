@@ -1,81 +1,66 @@
-From: syzbot <syzbot+ca91a9d7f091db185abe@syzkaller.appspotmail.com>
-Subject: [syzbot] WARNING: locking bug in open_xa_dir
-Date: Wed, 07 Sep 2022 23:01:39 -0700
-Message-ID: <000000000000b2491b05e8242991@google.com>
+From: syzbot <syzbot+392ac209604cc18792e5@syzkaller.appspotmail.com>
+Subject: Re: [syzbot] WARNING in reiserfs_lookup
+Date: Fri, 09 Sep 2022 14:35:26 -0700
+Message-ID: <00000000000003c78505e845532e@google.com>
+References: <0000000000006c2bbc05e714ec79@google.com>
 Mime-Version: 1.0
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
+In-Reply-To: <0000000000006c2bbc05e714ec79@google.com>
 List-ID: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-kernel@vger.kernel.org, reiserfs-devel@vger.kernel.org, syzkaller-bugs@googlegroups.com, willy@infradead.org
+To: linux-kernel@vger.kernel.org, reiserfs-devel@vger.kernel.org, syzkaller-bugs@googlegroups.com
 
-Hello,
+syzbot has found a reproducer for the following issue on:
 
-syzbot found the following issue on:
-
-HEAD commit:    85413d1e802e Merge branch 'for-next/fixes' into for-kernelci
+HEAD commit:    92221e2af10d Merge branch 'for-next/core', remote-tracking..
 git tree:       git://git.kernel.org/pub/scm/linux/kernel/git/arm64/linux.git for-kernelci
-console output: https://syzkaller.appspot.com/x/log.txt?x=128a2817080000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=57b9bfeca947ab90
-dashboard link: https://syzkaller.appspot.com/bug?extid=ca91a9d7f091db185abe
+console output: https://syzkaller.appspot.com/x/log.txt?x=15b18f43080000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=e79d82586727c5df
+dashboard link: https://syzkaller.appspot.com/bug?extid=392ac209604cc18792e5
 compiler:       Debian clang version 13.0.1-++20220126092033+75e33f71c2da-1~exp1~20220126212112.63, GNU ld (GNU Binutils for Debian) 2.35.2
 userspace arch: arm64
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=172e6877080000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=12cad8af080000
 
-Unfortunately, I don't have any reproducer for this issue yet.
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/8ea7850f2fc1/disk-92221e2a.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/8b514f934717/vmlinux-92221e2a.xz
 
 IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+ca91a9d7f091db185abe@syzkaller.appspotmail.com
+Reported-by: syzbot+392ac209604cc18792e5@syzkaller.appspotmail.com
 
+loop0: detected capacity change from 0 to 64
+BFS-fs: bfs_fill_super(): loop0 is unclean, continuing
 ------------[ cut here ]------------
-DEBUG_LOCKS_WARN_ON(1)
-WARNING: CPU: 1 PID: 10629 at kernel/locking/lockdep.c:231 check_wait_context kernel/locking/lockdep.c:4727 [inline]
-WARNING: CPU: 1 PID: 10629 at kernel/locking/lockdep.c:231 __lock_acquire+0x2b0/0x30a4 kernel/locking/lockdep.c:5003
+DEBUG_LOCKS_WARN_ON(lock->magic != lock)
+WARNING: CPU: 0 PID: 3079 at kernel/locking/mutex.c:582 __mutex_lock_common+0x4c4/0xca8 kernel/locking/mutex.c:582
 Modules linked in:
-CPU: 1 PID: 10629 Comm: syz-executor.1 Not tainted 6.0.0-rc3-syzkaller-16800-g85413d1e802e #0
+CPU: 0 PID: 3079 Comm: syz-executor275 Not tainted 6.0.0-rc4-syzkaller-17255-g92221e2af10d #0
 Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 07/22/2022
-pstate: 604000c5 (nZCv daIF +PAN -UAO -TCO -DIT -SSBS BTYPE=--)
-pc : check_wait_context kernel/locking/lockdep.c:4727 [inline]
-pc : __lock_acquire+0x2b0/0x30a4 kernel/locking/lockdep.c:5003
-lr : hlock_class kernel/locking/lockdep.c:231 [inline]
-lr : check_wait_context kernel/locking/lockdep.c:4727 [inline]
-lr : __lock_acquire+0x298/0x30a4 kernel/locking/lockdep.c:5003
-sp : ffff800013a3b570
-x29: ffff800013a3b650 x28: 0000000000000000 x27: ffff0000ff2ccf80
-x26: ffff0000fc51f250 x25: ffff0000ff2cd9b0 x24: 0000000000000080
-x23: 0000000000000000 x22: 0000000000000001 x21: 0000000000000000
-x20: 0000000000000000 x19: aaaaaaaaaaa78f9e x18: 0000000000000041
-x17: 0000000000000000 x16: ffff80000dbb8658 x15: ffff0000ff2ccf80
-x14: 0000000000000000 x13: 0000000000000012 x12: ffff80000d65f8d0
-x11: ff808000081c39d0 x10: ffff80000dd7a698 x9 : 2d75630c93b4cc00
-x8 : 0000000000000000 x7 : 4e5241575f534b43 x6 : ffff8000081c0d80
+pstate: 60400005 (nZCv daif +PAN -UAO -TCO -DIT -SSBS BTYPE=--)
+pc : __mutex_lock_common+0x4c4/0xca8 kernel/locking/mutex.c:582
+lr : __mutex_lock_common+0x4c4/0xca8 kernel/locking/mutex.c:582
+sp : ffff8000127938e0
+x29: ffff800012793950 x28: ffff80000ee5a000 x27: ffff0000caad0618
+x26: 0000000000000000 x25: 0000000000000000 x24: 0000000000000002
+x23: ffff80000878cbbc x22: 0000000000000000 x21: 0000000000000000
+x20: 0000000000000000 x19: ffff0000c8f03e28 x18: 00000000000000c0
+x17: ffff80000dd3a698 x16: 0000000000000000 x15: 0000000000000000
+x14: 0000000000000000 x13: 0000000000000012 x12: ffff80000d61f820
+x11: ff808000081c1fa0 x10: 0000000000000000 x9 : 1d38989ac5d23000
+x8 : 1d38989ac5d23000 x7 : 4e5241575f534b43 x6 : ffff8000081965e0
 x5 : 0000000000000000 x4 : 0000000000000001 x3 : 0000000000000000
-x2 : 0000000000000001 x1 : 0000000100000001 x0 : 0000000000000016
+x2 : 0000000000000000 x1 : 0000000100000000 x0 : 0000000000000028
 Call trace:
- check_wait_context kernel/locking/lockdep.c:4727 [inline]
- __lock_acquire+0x2b0/0x30a4 kernel/locking/lockdep.c:5003
- lock_acquire+0x100/0x1f8 kernel/locking/lockdep.c:5666
- __raw_spin_lock_irq include/linux/spinlock_api_smp.h:119 [inline]
- _raw_spin_lock_irq+0x70/0x9c kernel/locking/spinlock.c:170
- rwsem_down_write_slowpath+0xdc/0x520 kernel/locking/rwsem.c:1128
- __down_write_common kernel/locking/rwsem.c:1297 [inline]
- __down_write kernel/locking/rwsem.c:1306 [inline]
- down_write_nested+0x90/0xc4 kernel/locking/rwsem.c:1663
- inode_lock_nested include/linux/fs.h:791 [inline]
- open_xa_root fs/reiserfs/xattr.c:127 [inline]
- open_xa_dir+0x5c/0x2a8 fs/reiserfs/xattr.c:152
- xattr_lookup+0x34/0x198 fs/reiserfs/xattr.c:395
- reiserfs_xattr_get+0x8c/0x680 fs/reiserfs/xattr.c:677
- reiserfs_get_acl+0x84/0x1ac fs/reiserfs/xattr_acl.c:214
- get_acl+0x104/0x330 fs/posix_acl.c:152
- check_acl+0x40/0x168 fs/namei.c:306
- acl_permission_check fs/namei.c:351 [inline]
- generic_permission+0x270/0x32c fs/namei.c:404
- reiserfs_permission+0x4c/0x6c fs/reiserfs/xattr.c:954
- do_inode_permission fs/namei.c:458 [inline]
- inode_permission+0x128/0x244 fs/namei.c:525
- may_open+0x1e4/0x2bc fs/namei.c:3185
- do_open fs/namei.c:3555 [inline]
- path_openat+0xdd0/0x11c4 fs/namei.c:3691
+ __mutex_lock_common+0x4c4/0xca8 kernel/locking/mutex.c:582
+ __mutex_lock kernel/locking/mutex.c:747 [inline]
+ mutex_lock_nested+0x38/0x44 kernel/locking/mutex.c:799
+ reiserfs_write_lock+0x3c/0x64 fs/reiserfs/lock.c:27
+ reiserfs_lookup+0xa4/0x1c4 fs/reiserfs/namei.c:364
+ lookup_open fs/namei.c:3391 [inline]
+ open_last_lookups fs/namei.c:3481 [inline]
+ path_openat+0x738/0x11c4 fs/namei.c:3688
  do_filp_open+0xdc/0x1b8 fs/namei.c:3718
  do_sys_openat2+0xb8/0x22c fs/open.c:1311
  do_sys_open fs/open.c:1327 [inline]
@@ -85,78 +70,52 @@ Call trace:
  __invoke_syscall arch/arm64/kernel/syscall.c:38 [inline]
  invoke_syscall arch/arm64/kernel/syscall.c:52 [inline]
  el0_svc_common+0x138/0x220 arch/arm64/kernel/syscall.c:142
- do_el0_svc+0x48/0x154 arch/arm64/kernel/syscall.c:206
+ do_el0_svc+0x48/0x164 arch/arm64/kernel/syscall.c:206
  el0_svc+0x58/0x150 arch/arm64/kernel/entry-common.c:624
  el0t_64_sync_handler+0x84/0xf0 arch/arm64/kernel/entry-common.c:642
  el0t_64_sync+0x18c/0x190
-irq event stamp: 8960
-hardirqs last  enabled at (8959): [<ffff800008163d98>] raw_spin_rq_unlock_irq kernel/sched/sched.h:1367 [inline]
-hardirqs last  enabled at (8959): [<ffff800008163d98>] finish_lock_switch+0x94/0xe8 kernel/sched/core.c:4942
-hardirqs last disabled at (8960): [<ffff80000c01388c>] __raw_spin_lock_irq include/linux/spinlock_api_smp.h:117 [inline]
-hardirqs last disabled at (8960): [<ffff80000c01388c>] _raw_spin_lock_irq+0x34/0x9c kernel/locking/spinlock.c:170
-softirqs last  enabled at (8942): [<ffff80000801c1f4>] local_bh_enable+0x10/0x34 include/linux/bottom_half.h:32
-softirqs last disabled at (8940): [<ffff80000801c1c0>] local_bh_disable+0x10/0x34 include/linux/bottom_half.h:19
+irq event stamp: 1073
+hardirqs last  enabled at (1073): [<ffff80000bfd8fbc>] __raw_spin_unlock_irqrestore include/linux/spinlock_api_smp.h:151 [inline]
+hardirqs last  enabled at (1073): [<ffff80000bfd8fbc>] _raw_spin_unlock_irqrestore+0x48/0x8c kernel/locking/spinlock.c:194
+hardirqs last disabled at (1072): [<ffff80000bfd8df8>] __raw_spin_lock_irqsave include/linux/spinlock_api_smp.h:108 [inline]
+hardirqs last disabled at (1072): [<ffff80000bfd8df8>] _raw_spin_lock_irqsave+0xa4/0xb4 kernel/locking/spinlock.c:162
+softirqs last  enabled at (982): [<ffff80000801c370>] local_bh_enable+0x10/0x34 include/linux/bottom_half.h:32
+softirqs last disabled at (980): [<ffff80000801c33c>] local_bh_disable+0x10/0x34 include/linux/bottom_half.h:19
 ---[ end trace 0000000000000000 ]---
-Unable to handle kernel NULL pointer dereference at virtual address 00000000000000b8
+Unable to handle kernel execute from non-executable memory at virtual address ffff80000ef5d0a8
 Mem abort info:
-  ESR = 0x0000000096000006
-  EC = 0x25: DABT (current EL), IL = 32 bits
+  ESR = 0x000000008600000e
+  EC = 0x21: IABT (current EL), IL = 32 bits
   SET = 0, FnV = 0
   EA = 0, S1PTW = 0
-  FSC = 0x06: level 2 translation fault
-Data abort info:
-  ISV = 0, ISS = 0x00000006
-  CM = 0, WnR = 0
-user pgtable: 4k pages, 48-bit VAs, pgdp=000000013ce6a000
-[00000000000000b8] pgd=080000013c54e003, p4d=080000013c54e003, pud=080000013b6f2003, pmd=0000000000000000
-Internal error: Oops: 96000006 [#1] PREEMPT SMP
+  FSC = 0x0e: level 2 permission fault
+swapper pgtable: 4k pages, 48-bit VAs, pgdp=00000001c56f6000
+[ffff80000ef5d0a8] pgd=100000023ffff003, p4d=100000023ffff003, pud=100000023fffe003, pmd=00680001c7400701
+Internal error: Oops: 8600000e [#1] PREEMPT SMP
 Modules linked in:
-CPU: 1 PID: 10629 Comm: syz-executor.1 Tainted: G        W          6.0.0-rc3-syzkaller-16800-g85413d1e802e #0
+CPU: 0 PID: 3079 Comm: syz-executor275 Tainted: G        W          6.0.0-rc4-syzkaller-17255-g92221e2af10d #0
 Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 07/22/2022
-pstate: 604000c5 (nZCv daIF +PAN -UAO -TCO -DIT -SSBS BTYPE=--)
-pc : check_wait_context kernel/locking/lockdep.c:4727 [inline]
-pc : __lock_acquire+0x2d0/0x30a4 kernel/locking/lockdep.c:5003
-lr : hlock_class kernel/locking/lockdep.c:231 [inline]
-lr : check_wait_context kernel/locking/lockdep.c:4727 [inline]
-lr : __lock_acquire+0x298/0x30a4 kernel/locking/lockdep.c:5003
-sp : ffff800013a3b570
-x29: ffff800013a3b650 x28: 0000000000000000 x27: ffff0000ff2ccf80
-x26: ffff0000fc51f250 x25: ffff0000ff2cd9b0 x24: 0000000000000080
-x23: 0000000000000000 x22: 0000000000000001 x21: 0000000000000000
-x20: 0000000000000000 x19: aaaaaaaaaaa78f9e x18: 0000000000000041
-x17: 0000000000000000 x16: ffff80000dbb8658 x15: ffff0000ff2ccf80
-x14: 0000000000000000 x13: 0000000000000012 x12: ffff80000d65f8d0
-x11: ff808000081c39d0 x10: ffff80000dd7a698 x9 : 00000000000c0f9e
-x8 : 0000000000000000 x7 : 4e5241575f534b43 x6 : ffff8000081c0d80
-x5 : 0000000000000000 x4 : 0000000000000001 x3 : 0000000000000000
-x2 : 0000000000000001 x1 : 0000000100000001 x0 : 0000000000000016
+pstate: 80400005 (Nzcv daif +PAN -UAO -TCO -DIT -SSBS BTYPE=--)
+pc : bfs_fill_super.__key+0x0/0x10
+lr : get_third_component fs/reiserfs/namei.c:196 [inline]
+lr : reiserfs_find_entry+0x130/0x298 fs/reiserfs/namei.c:317
+sp : ffff800012793960
+x29: ffff800012793990 x28: 0000000000000040 x27: ffff0000caad0618
+x26: ffff0000c057e750 x25: ffff0000c70db000 x24: 0000000010000000
+x23: ffff0000c057e7c0 x22: 000000000000000e x21: ffff8000127939e0
+x20: ffff800012793a48 x19: ffff0000cabd87b8 x18: 00000000000000c0
+x17: ffff80000dd3a698 x16: 0000000000000000 x15: 0000000000000000
+x14: 0000000000000000 x13: 0000000000000002 x12: ffff80000d4b94d8
+x11: ff80800008754e24 x10: 0000000000000000 x9 : ffff800008754e24
+x8 : ffff80000ef5d0a8 x7 : 4e5241575f534b43 x6 : ffff80000878cbbc
+x5 : 0000000000000000 x4 : ffff8000127939e0 x3 : ffff800012793a48
+x2 : 000000000000000e x1 : 000000000000000e x0 : ffff0000c057e7c0
 Call trace:
- hlock_class kernel/locking/lockdep.c:222 [inline]
- check_wait_context kernel/locking/lockdep.c:4728 [inline]
- __lock_acquire+0x2d0/0x30a4 kernel/locking/lockdep.c:5003
- lock_acquire+0x100/0x1f8 kernel/locking/lockdep.c:5666
- __raw_spin_lock_irq include/linux/spinlock_api_smp.h:119 [inline]
- _raw_spin_lock_irq+0x70/0x9c kernel/locking/spinlock.c:170
- rwsem_down_write_slowpath+0xdc/0x520 kernel/locking/rwsem.c:1128
- __down_write_common kernel/locking/rwsem.c:1297 [inline]
- __down_write kernel/locking/rwsem.c:1306 [inline]
- down_write_nested+0x90/0xc4 kernel/locking/rwsem.c:1663
- inode_lock_nested include/linux/fs.h:791 [inline]
- open_xa_root fs/reiserfs/xattr.c:127 [inline]
- open_xa_dir+0x5c/0x2a8 fs/reiserfs/xattr.c:152
- xattr_lookup+0x34/0x198 fs/reiserfs/xattr.c:395
- reiserfs_xattr_get+0x8c/0x680 fs/reiserfs/xattr.c:677
- reiserfs_get_acl+0x84/0x1ac fs/reiserfs/xattr_acl.c:214
- get_acl+0x104/0x330 fs/posix_acl.c:152
- check_acl+0x40/0x168 fs/namei.c:306
- acl_permission_check fs/namei.c:351 [inline]
- generic_permission+0x270/0x32c fs/namei.c:404
- reiserfs_permission+0x4c/0x6c fs/reiserfs/xattr.c:954
- do_inode_permission fs/namei.c:458 [inline]
- inode_permission+0x128/0x244 fs/namei.c:525
- may_open+0x1e4/0x2bc fs/namei.c:3185
- do_open fs/namei.c:3555 [inline]
- path_openat+0xdd0/0x11c4 fs/namei.c:3691
+ bfs_fill_super.__key+0x0/0x10
+ reiserfs_lookup+0xc4/0x1c4 fs/reiserfs/namei.c:368
+ lookup_open fs/namei.c:3391 [inline]
+ open_last_lookups fs/namei.c:3481 [inline]
+ path_openat+0x738/0x11c4 fs/namei.c:3688
  do_filp_open+0xdc/0x1b8 fs/namei.c:3718
  do_sys_openat2+0xb8/0x22c fs/open.c:1311
  do_sys_open fs/open.c:1327 [inline]
@@ -166,25 +125,10 @@ Call trace:
  __invoke_syscall arch/arm64/kernel/syscall.c:38 [inline]
  invoke_syscall arch/arm64/kernel/syscall.c:52 [inline]
  el0_svc_common+0x138/0x220 arch/arm64/kernel/syscall.c:142
- do_el0_svc+0x48/0x154 arch/arm64/kernel/syscall.c:206
+ do_el0_svc+0x48/0x164 arch/arm64/kernel/syscall.c:206
  el0_svc+0x58/0x150 arch/arm64/kernel/entry-common.c:624
  el0t_64_sync_handler+0x84/0xf0 arch/arm64/kernel/entry-common.c:642
  el0t_64_sync+0x18c/0x190
-Code: b002deea 91196210 911a614a b9400329 (3942e114) 
+Code: 00000000 00000000 00000000 00000000 (00000000) 
 ---[ end trace 0000000000000000 ]---
-----------------
-Code disassembly (best guess):
-   0:	b002deea 	adrp	x10, 0x5bdd000
-   4:	91196210 	add	x16, x16, #0x658
-   8:	911a614a 	add	x10, x10, #0x698
-   c:	b9400329 	ldr	w9, [x25]
-* 10:	3942e114 	ldrb	w20, [x8, #184] <-- trapping instruction
 
-
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
