@@ -1,183 +1,99 @@
-From: syzbot <syzbot+5e385bfa7d505b075d9f@syzkaller.appspotmail.com>
-Subject: [syzbot] possible deadlock in do_journal_begin_r
-Date: Sat, 01 Oct 2022 06:48:39 -0700
-Message-ID: <00000000000025378505e9f95e4e@google.com>
+From: syzbot <syzbot+27d15e986992eff93cd9@syzkaller.appspotmail.com>
+Subject: [syzbot] BUG: unable to handle kernel NULL pointer dereference in reiserfs_set_acl
+Date: Tue, 04 Oct 2022 08:06:33 -0700
+Message-ID: <0000000000004ed3c905ea36cec2@google.com>
 Mime-Version: 1.0
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
 List-ID: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: bvanassche@acm.org, damien.lemoal@opensource.wdc.com, jlayton@kernel.org, linux-kernel@vger.kernel.org, neilb@suse.de, reiserfs-devel@vger.kernel.org, song@kernel.org, syzkaller-bugs@googlegroups.com, willy@infradead.org
+To: linux-kernel@vger.kernel.org, reiserfs-devel@vger.kernel.org, syzkaller-bugs@googlegroups.com
 
 Hello,
 
 syzbot found the following issue on:
 
-HEAD commit:    c194837ebb57 Merge branch 'for-next/core', remote-tracking..
+HEAD commit:    bbed346d5a96 Merge branch 'for-next/core' into for-kernelci
 git tree:       git://git.kernel.org/pub/scm/linux/kernel/git/arm64/linux.git for-kernelci
-console output: https://syzkaller.appspot.com/x/log.txt?x=1593ce6c880000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=15a770deac0c935a
-dashboard link: https://syzkaller.appspot.com/bug?extid=5e385bfa7d505b075d9f
+console output: https://syzkaller.appspot.com/x/log.txt?x=17ec92cc880000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=aae2d21e7dd80684
+dashboard link: https://syzkaller.appspot.com/bug?extid=27d15e986992eff93cd9
 compiler:       Debian clang version 13.0.1-++20220126092033+75e33f71c2da-1~exp1~20220126212112.63, GNU ld (GNU Binutils for Debian) 2.35.2
 userspace arch: arm64
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=122b7298880000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=10565740880000
+
+Unfortunately, I don't have any reproducer for this issue yet.
 
 Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/8d8ae425e7fa/disk-c194837e.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/c540d501ebe7/vmlinux-c194837e.xz
+disk image: https://storage.googleapis.com/syzbot-assets/11078f50b80b/disk-bbed346d.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/398e5f1e6c84/vmlinux-bbed346d.xz
 
 IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+5e385bfa7d505b075d9f@syzkaller.appspotmail.com
+Reported-by: syzbot+27d15e986992eff93cd9@syzkaller.appspotmail.com
 
-REISERFS warning (device loop0): jdm-20006 create_privroot: xattrs/ACLs enabled and couldn't find/create .reiserfs_priv. Failing mount.
-======================================================
-WARNING: possible circular locking dependency detected
-6.0.0-rc6-syzkaller-17742-gc194837ebb57 #0 Not tainted
-------------------------------------------------------
-syz-executor305/3030 is trying to acquire lock:
-ffff8000126e50f0 (&journal->j_mutex){+.+.}-{3:3}, at: reiserfs_mutex_lock_safe fs/reiserfs/reiserfs.h:814 [inline]
-ffff8000126e50f0 (&journal->j_mutex){+.+.}-{3:3}, at: lock_journal fs/reiserfs/journal.c:534 [inline]
-ffff8000126e50f0 (&journal->j_mutex){+.+.}-{3:3}, at: do_journal_begin_r+0x148/0x598 fs/reiserfs/journal.c:3046
-
-but task is already holding lock:
-ffff0000cb639460 (sb_writers#8){.+.+}-{0:0}, at: mnt_want_write_file+0x28/0xd8 fs/namespace.c:437
-
-which lock already depends on the new lock.
-
-
-the existing dependency chain (in reverse order) is:
-
--> #2 (sb_writers#8){.+.+}-{0:0}:
-       percpu_down_read include/linux/percpu-rwsem.h:51 [inline]
-       __sb_start_write include/linux/fs.h:1826 [inline]
-       sb_start_write+0x78/0x1e4 include/linux/fs.h:1901
-       mnt_want_write_file+0x28/0xd8 fs/namespace.c:437
-       reiserfs_ioctl+0x118/0x2a0 fs/reiserfs/ioctl.c:103
-       vfs_ioctl fs/ioctl.c:51 [inline]
-       __do_sys_ioctl fs/ioctl.c:870 [inline]
-       __se_sys_ioctl fs/ioctl.c:856 [inline]
-       __arm64_sys_ioctl+0xd0/0x140 fs/ioctl.c:856
-       __invoke_syscall arch/arm64/kernel/syscall.c:38 [inline]
-       invoke_syscall arch/arm64/kernel/syscall.c:52 [inline]
-       el0_svc_common+0x138/0x220 arch/arm64/kernel/syscall.c:142
-       do_el0_svc+0x48/0x164 arch/arm64/kernel/syscall.c:206
-       el0_svc+0x58/0x150 arch/arm64/kernel/entry-common.c:636
-       el0t_64_sync_handler+0x84/0xf0 arch/arm64/kernel/entry-common.c:654
-       el0t_64_sync+0x18c/0x190
-
--> #1 (&sbi->lock){+.+.}-{3:3}:
-       __mutex_lock_common+0xd4/0xca8 kernel/locking/mutex.c:603
-       __mutex_lock kernel/locking/mutex.c:747 [inline]
-       mutex_lock_nested+0x38/0x44 kernel/locking/mutex.c:799
-       reiserfs_write_lock_nested+0x44/0x68 fs/reiserfs/lock.c:78
-       reiserfs_mutex_lock_safe fs/reiserfs/reiserfs.h:815 [inline]
-       lock_journal fs/reiserfs/journal.c:534 [inline]
-       do_journal_begin_r+0x154/0x598 fs/reiserfs/journal.c:3046
-       journal_begin+0x90/0x190 fs/reiserfs/journal.c:3254
-       reiserfs_remount+0x5e4/0x788 fs/reiserfs/super.c:1559
-       legacy_reconfigure+0x68/0x7c fs/fs_context.c:633
-       reconfigure_super+0x1b0/0x33c fs/super.c:934
-       do_remount fs/namespace.c:2702 [inline]
-       path_mount+0x7e4/0x914 fs/namespace.c:3362
-       do_mount fs/namespace.c:3383 [inline]
-       __do_sys_mount fs/namespace.c:3591 [inline]
-       __se_sys_mount fs/namespace.c:3568 [inline]
-       __arm64_sys_mount+0x2c4/0x3c4 fs/namespace.c:3568
-       __invoke_syscall arch/arm64/kernel/syscall.c:38 [inline]
-       invoke_syscall arch/arm64/kernel/syscall.c:52 [inline]
-       el0_svc_common+0x138/0x220 arch/arm64/kernel/syscall.c:142
-       do_el0_svc+0x48/0x164 arch/arm64/kernel/syscall.c:206
-       el0_svc+0x58/0x150 arch/arm64/kernel/entry-common.c:636
-       el0t_64_sync_handler+0x84/0xf0 arch/arm64/kernel/entry-common.c:654
-       el0t_64_sync+0x18c/0x190
-
--> #0 (&journal->j_mutex){+.+.}-{3:3}:
-       check_prev_add kernel/locking/lockdep.c:3095 [inline]
-       check_prevs_add kernel/locking/lockdep.c:3214 [inline]
-       validate_chain kernel/locking/lockdep.c:3829 [inline]
-       __lock_acquire+0x1530/0x30a4 kernel/locking/lockdep.c:5053
-       lock_acquire+0x100/0x1f8 kernel/locking/lockdep.c:5666
-       __mutex_lock_common+0xd4/0xca8 kernel/locking/mutex.c:603
-       __mutex_lock kernel/locking/mutex.c:747 [inline]
-       mutex_lock_nested+0x38/0x44 kernel/locking/mutex.c:799
-       reiserfs_mutex_lock_safe fs/reiserfs/reiserfs.h:814 [inline]
-       lock_journal fs/reiserfs/journal.c:534 [inline]
-       do_journal_begin_r+0x148/0x598 fs/reiserfs/journal.c:3046
-       journal_begin+0x90/0x190 fs/reiserfs/journal.c:3254
-       reiserfs_dirty_inode+0x6c/0x108 fs/reiserfs/super.c:710
-       __mark_inode_dirty+0x74/0x348 fs/fs-writeback.c:2381
-       mark_inode_dirty include/linux/fs.h:2462 [inline]
-       reiserfs_ioctl+0x270/0x2a0 fs/reiserfs/ioctl.c:111
-       vfs_ioctl fs/ioctl.c:51 [inline]
-       __do_sys_ioctl fs/ioctl.c:870 [inline]
-       __se_sys_ioctl fs/ioctl.c:856 [inline]
-       __arm64_sys_ioctl+0xd0/0x140 fs/ioctl.c:856
-       __invoke_syscall arch/arm64/kernel/syscall.c:38 [inline]
-       invoke_syscall arch/arm64/kernel/syscall.c:52 [inline]
-       el0_svc_common+0x138/0x220 arch/arm64/kernel/syscall.c:142
-       do_el0_svc+0x48/0x164 arch/arm64/kernel/syscall.c:206
-       el0_svc+0x58/0x150 arch/arm64/kernel/entry-common.c:636
-       el0t_64_sync_handler+0x84/0xf0 arch/arm64/kernel/entry-common.c:654
-       el0t_64_sync+0x18c/0x190
-
-other info that might help us debug this:
-
-Chain exists of:
-  &journal->j_mutex --> &sbi->lock --> sb_writers#8
-
- Possible unsafe locking scenario:
-
-       CPU0                    CPU1
-       ----                    ----
-  lock(sb_writers#8);
-                               lock(&sbi->lock);
-                               lock(sb_writers#8);
-  lock(&journal->j_mutex);
-
- *** DEADLOCK ***
-
-1 lock held by syz-executor305/3030:
- #0: ffff0000cb639460 (sb_writers#8){.+.+}-{0:0}, at: mnt_want_write_file+0x28/0xd8 fs/namespace.c:437
-
-stack backtrace:
-CPU: 1 PID: 3030 Comm: syz-executor305 Not tainted 6.0.0-rc6-syzkaller-17742-gc194837ebb57 #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 08/26/2022
+Unable to handle kernel NULL pointer dereference at virtual address 0000000000000068
+Mem abort info:
+  ESR = 0x0000000096000006
+  EC = 0x25: DABT (current EL), IL = 32 bits
+  SET = 0, FnV = 0
+  EA = 0, S1PTW = 0
+  FSC = 0x06: level 2 translation fault
+Data abort info:
+  ISV = 0, ISS = 0x00000006
+  CM = 0, WnR = 0
+user pgtable: 4k pages, 48-bit VAs, pgdp=0000000131b9c000
+[0000000000000068] pgd=080000013f9b8003, p4d=080000013f9b8003, pud=080000012eae9003, pmd=0000000000000000
+Internal error: Oops: 0000000096000006 [#1] PREEMPT SMP
+Modules linked in:
+CPU: 0 PID: 2588 Comm: syz-executor.3 Not tainted 6.0.0-rc7-syzkaller-18095-gbbed346d5a96 #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 09/30/2022
+pstate: 60400005 (nZCv daif +PAN -UAO -TCO -DIT -SSBS BTYPE=--)
+pc : d_really_is_negative include/linux/dcache.h:465 [inline]
+pc : reiserfs_xattr_jcreate_nblocks fs/reiserfs/xattr.h:79 [inline]
+pc : reiserfs_set_acl+0xd0/0x2c0 fs/reiserfs/xattr_acl.c:36
+lr : reiserfs_xattr_jcreate_nblocks fs/reiserfs/xattr.h:78 [inline]
+lr : reiserfs_set_acl+0xc0/0x2c0 fs/reiserfs/xattr_acl.c:36
+sp : ffff80001688b990
+x29: ffff80001688b9e0 x28: ffff0000c8cdfc00 x27: 0000000000000002
+x26: 0000000000000000 x25: 0000000000000036 x24: 000000000000002b
+x23: 0000000000000000 x22: ffff0000eb2ee000 x21: ffff0000ef1d5380
+x20: 0000000000004000 x19: ffff0000ed8f8de0 x18: 00000000000000c0
+x17: ffff80000dd0b198 x16: 0000000000000000 x15: 0000000000000000
+x14: 0000000000000002 x13: 0000000000000020 x12: 0000000000040000
+x11: 00000000000042eb x10: 000000000000006c x9 : 00000000000001c0
+x8 : 0000000000000000 x7 : 0000000000000000 x6 : 000000000000003f
+x5 : 0000000000000c40 x4 : 0000000000000080 x3 : 0000000000004000
+x2 : ffff0000ef1d5380 x1 : 0000000000000000 x0 : 0000000000000000
 Call trace:
- dump_backtrace+0x1c4/0x1f0 arch/arm64/kernel/stacktrace.c:156
- show_stack+0x2c/0x54 arch/arm64/kernel/stacktrace.c:163
- __dump_stack lib/dump_stack.c:88 [inline]
- dump_stack_lvl+0x104/0x16c lib/dump_stack.c:106
- dump_stack+0x1c/0x58 lib/dump_stack.c:113
- print_circular_bug+0x2c4/0x2c8 kernel/locking/lockdep.c:2053
- check_noncircular+0x14c/0x154 kernel/locking/lockdep.c:2175
- check_prev_add kernel/locking/lockdep.c:3095 [inline]
- check_prevs_add kernel/locking/lockdep.c:3214 [inline]
- validate_chain kernel/locking/lockdep.c:3829 [inline]
- __lock_acquire+0x1530/0x30a4 kernel/locking/lockdep.c:5053
- lock_acquire+0x100/0x1f8 kernel/locking/lockdep.c:5666
- __mutex_lock_common+0xd4/0xca8 kernel/locking/mutex.c:603
- __mutex_lock kernel/locking/mutex.c:747 [inline]
- mutex_lock_nested+0x38/0x44 kernel/locking/mutex.c:799
- reiserfs_mutex_lock_safe fs/reiserfs/reiserfs.h:814 [inline]
- lock_journal fs/reiserfs/journal.c:534 [inline]
- do_journal_begin_r+0x148/0x598 fs/reiserfs/journal.c:3046
- journal_begin+0x90/0x190 fs/reiserfs/journal.c:3254
- reiserfs_dirty_inode+0x6c/0x108 fs/reiserfs/super.c:710
- __mark_inode_dirty+0x74/0x348 fs/fs-writeback.c:2381
- mark_inode_dirty include/linux/fs.h:2462 [inline]
- reiserfs_ioctl+0x270/0x2a0 fs/reiserfs/ioctl.c:111
- vfs_ioctl fs/ioctl.c:51 [inline]
- __do_sys_ioctl fs/ioctl.c:870 [inline]
- __se_sys_ioctl fs/ioctl.c:856 [inline]
- __arm64_sys_ioctl+0xd0/0x140 fs/ioctl.c:856
+ reiserfs_xattr_jcreate_nblocks fs/reiserfs/xattr.h:78 [inline]
+ reiserfs_set_acl+0xd0/0x2c0 fs/reiserfs/xattr_acl.c:36
+ set_posix_acl fs/posix_acl.c:1015 [inline]
+ posix_acl_xattr_set+0x1dc/0x23c fs/posix_acl.c:1034
+ __vfs_setxattr+0x250/0x260 fs/xattr.c:182
+ __vfs_setxattr_noperm+0xcc/0x320 fs/xattr.c:216
+ __vfs_setxattr_locked+0x16c/0x194 fs/xattr.c:277
+ vfs_setxattr+0x174/0x280 fs/xattr.c:313
+ do_setxattr fs/xattr.c:600 [inline]
+ setxattr fs/xattr.c:623 [inline]
+ path_setxattr+0x354/0x414 fs/xattr.c:642
+ __do_sys_lsetxattr fs/xattr.c:665 [inline]
+ __se_sys_lsetxattr fs/xattr.c:661 [inline]
+ __arm64_sys_lsetxattr+0x2c/0x40 fs/xattr.c:661
  __invoke_syscall arch/arm64/kernel/syscall.c:38 [inline]
  invoke_syscall arch/arm64/kernel/syscall.c:52 [inline]
  el0_svc_common+0x138/0x220 arch/arm64/kernel/syscall.c:142
  do_el0_svc+0x48/0x164 arch/arm64/kernel/syscall.c:206
  el0_svc+0x58/0x150 arch/arm64/kernel/entry-common.c:636
  el0t_64_sync_handler+0x84/0xf0 arch/arm64/kernel/entry-common.c:654
- el0t_64_sync+0x18c/0x190
+ el0t_64_sync+0x18c/0x190 arch/arm64/kernel/entry.S:581
+Code: f942d388 f10002ff 52803809 52800d8a (f9403508) 
+---[ end trace 0000000000000000 ]---
+----------------
+Code disassembly (best guess):
+   0:	f942d388 	ldr	x8, [x28, #1440]
+   4:	f10002ff 	cmp	x23, #0x0
+   8:	52803809 	mov	w9, #0x1c0                 	// #448
+   c:	52800d8a 	mov	w10, #0x6c                  	// #108
+* 10:	f9403508 	ldr	x8, [x8, #104] <-- trapping instruction
 
 
 ---
@@ -187,5 +103,3 @@ syzbot engineers can be reached at syzkaller@googlegroups.com.
 
 syzbot will keep track of this issue. See:
 https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-syzbot can test patches for this issue, for details see:
-https://goo.gl/tpsmEJ#testing-patches
