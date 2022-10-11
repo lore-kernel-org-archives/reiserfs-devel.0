@@ -1,7 +1,7 @@
-From: syzbot <syzbot+3abaeed5039cc1c49c7c@syzkaller.appspotmail.com>
-Subject: [syzbot] possible deadlock in chown_common
-Date: Sun, 09 Oct 2022 20:09:37 -0700
-Message-ID: <0000000000006308a805eaa57d87@google.com>
+From: syzbot <syzbot+a844a888fbc0ba4829ce@syzkaller.appspotmail.com>
+Subject: [syzbot] possible deadlock in path_openat (2)
+Date: Mon, 10 Oct 2022 23:35:38 -0700
+Message-ID: <000000000000fd56c405eabc7b6d@google.com>
 Mime-Version: 1.0
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
 List-ID: <reiserfs-devel.vger.kernel.org>
@@ -13,36 +13,35 @@ Hello,
 
 syzbot found the following issue on:
 
-HEAD commit:    2bca25eaeba6 Merge tag 'spi-v6.1' of git://git.kernel.org/..
+HEAD commit:    833477fce7a1 Merge tag 'sound-6.1-rc1' of git://git.kernel..
 git tree:       upstream
-console+strace: https://syzkaller.appspot.com/x/log.txt?x=169d7034880000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=9df203be43a870b5
-dashboard link: https://syzkaller.appspot.com/bug?extid=3abaeed5039cc1c49c7c
+console+strace: https://syzkaller.appspot.com/x/log.txt?x=14ea9e2a880000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=dd3623e135f4c106
+dashboard link: https://syzkaller.appspot.com/bug?extid=a844a888fbc0ba4829ce
 compiler:       Debian clang version 13.0.1-++20220126092033+75e33f71c2da-1~exp1~20220126212112.63, GNU ld (GNU Binutils for Debian) 2.35.2
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1539e7b8880000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=16c6cb32880000
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=10dfb81a880000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=15a68f24880000
 
 Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/9885e6765755/disk-2bca25ea.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/6e78c91286aa/vmlinux-2bca25ea.xz
-mounted in repro: https://storage.googleapis.com/syzbot-assets/a0aa130c8e62/mount_0.gz
+disk image: https://storage.googleapis.com/syzbot-assets/7c58f480421f/disk-833477fc.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/8a50ac7bd40b/vmlinux-833477fc.xz
+mounted in repro: https://storage.googleapis.com/syzbot-assets/a95d12af3a6f/mount_0.gz
 
 IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+3abaeed5039cc1c49c7c@syzkaller.appspotmail.com
+Reported-by: syzbot+a844a888fbc0ba4829ce@syzkaller.appspotmail.com
 
-REISERFS (device loop0): checking transaction log (loop0)
-REISERFS (device loop0): Using rupasov hash to sort names
 REISERFS (device loop0): Created .reiserfs_priv - reserved for xattr storage.
 ======================================================
 WARNING: possible circular locking dependency detected
-6.0.0-syzkaller-03015-g2bca25eaeba6 #0 Not tainted
+6.0.0-syzkaller-05118-g833477fce7a1 #0 Not tainted
 ------------------------------------------------------
-syz-executor428/3608 is trying to acquire lock:
-ffff8880704302e0 (&type->i_mutex_dir_key#6){+.+.}-{3:3}, at: inode_lock include/linux/fs.h:756 [inline]
-ffff8880704302e0 (&type->i_mutex_dir_key#6){+.+.}-{3:3}, at: chown_common+0x414/0x8f0 fs/open.c:729
+syz-executor874/3610 is trying to acquire lock:
+ffff888073d582e0 (&type->i_mutex_dir_key#6){+.+.}-{3:3}, at: inode_lock include/linux/fs.h:756 [inline]
+ffff888073d582e0 (&type->i_mutex_dir_key#6){+.+.}-{3:3}, at: open_last_lookups fs/namei.c:3478 [inline]
+ffff888073d582e0 (&type->i_mutex_dir_key#6){+.+.}-{3:3}, at: path_openat+0x7b9/0x2df0 fs/namei.c:3688
 
 but task is already holding lock:
-ffff888020438460 (sb_writers#9){.+.+}-{0:0}, at: mnt_want_write+0x3b/0x80 fs/namespace.c:393
+ffff888075052460 (sb_writers#9){.+.+}-{0:0}, at: mnt_want_write+0x3b/0x80 fs/namespace.c:393
 
 which lock already depends on the new lock.
 
@@ -93,11 +92,14 @@ the existing dependency chain (in reverse order) is:
        lock_acquire+0x182/0x3c0 kernel/locking/lockdep.c:5666
        down_write+0x95/0x170 kernel/locking/rwsem.c:1552
        inode_lock include/linux/fs.h:756 [inline]
-       chown_common+0x414/0x8f0 fs/open.c:729
-       do_fchownat+0x165/0x240 fs/open.c:767
-       __do_sys_lchown fs/open.c:792 [inline]
-       __se_sys_lchown fs/open.c:790 [inline]
-       __x64_sys_lchown+0x81/0x90 fs/open.c:790
+       open_last_lookups fs/namei.c:3478 [inline]
+       path_openat+0x7b9/0x2df0 fs/namei.c:3688
+       do_filp_open+0x264/0x4f0 fs/namei.c:3718
+       do_sys_openat2+0x124/0x4e0 fs/open.c:1313
+       do_sys_open fs/open.c:1329 [inline]
+       __do_sys_creat fs/open.c:1405 [inline]
+       __se_sys_creat fs/open.c:1399 [inline]
+       __x64_sys_creat+0x11f/0x160 fs/open.c:1399
        do_syscall_x64 arch/x86/entry/common.c:50 [inline]
        do_syscall_64+0x3d/0xb0 arch/x86/entry/common.c:80
        entry_SYSCALL_64_after_hwframe+0x63/0xcd
@@ -118,11 +120,11 @@ Chain exists of:
 
  *** DEADLOCK ***
 
-1 lock held by syz-executor428/3608:
- #0: ffff888020438460 (sb_writers#9){.+.+}-{0:0}, at: mnt_want_write+0x3b/0x80 fs/namespace.c:393
+1 lock held by syz-executor874/3610:
+ #0: ffff888075052460 (sb_writers#9){.+.+}-{0:0}, at: mnt_want_write+0x3b/0x80 fs/namespace.c:393
 
 stack backtrace:
-CPU: 0 PID: 3608 Comm: syz-executor428 Not tainted 6.0.0-syzkaller-03015-g2bca25eaeba6 #0
+CPU: 0 PID: 3610 Comm: syz-executor874 Not tainted 6.0.0-syzkaller-05118-g833477fce7a1 #0
 Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 09/22/2022
 Call Trace:
  <TASK>
@@ -136,21 +138,24 @@ Call Trace:
  lock_acquire+0x182/0x3c0 kernel/locking/lockdep.c:5666
  down_write+0x95/0x170 kernel/locking/rwsem.c:1552
  inode_lock include/linux/fs.h:756 [inline]
- chown_common+0x414/0x8f0 fs/open.c:729
- do_fchownat+0x165/0x240 fs/open.c:767
- __do_sys_lchown fs/open.c:792 [inline]
- __se_sys_lchown fs/open.c:790 [inline]
- __x64_sys_lchown+0x81/0x90 fs/open.c:790
+ open_last_lookups fs/namei.c:3478 [inline]
+ path_openat+0x7b9/0x2df0 fs/namei.c:3688
+ do_filp_open+0x264/0x4f0 fs/namei.c:3718
+ do_sys_openat2+0x124/0x4e0 fs/open.c:1313
+ do_sys_open fs/open.c:1329 [inline]
+ __do_sys_creat fs/open.c:1405 [inline]
+ __se_sys_creat fs/open.c:1399 [inline]
+ __x64_sys_creat+0x11f/0x160 fs/open.c:1399
  do_syscall_x64 arch/x86/entry/common.c:50 [inline]
  do_syscall_64+0x3d/0xb0 arch/x86/entry/common.c:80
  entry_SYSCALL_64_after_hwframe+0x63/0xcd
-RIP: 0033:0x7f7b93991899
+RIP: 0033:0x7f4f0b64b899
 Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 c0 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007ffcd35199f8 EFLAGS: 00000246 ORIG_RAX: 000000000000005e
-RAX: ffffffffffffffda RBX: 0000000000000000 RCX: 00007f7b93991899
-RDX: 0000000000000000 RSI: 000000000000ee01 RDI: 0000000020000080
-RBP: 0000000000000000 R08: 00007f7b939ffec0 R09: 00007f7b939ffec0
-R10: 0000000000000000 R11: 0000000000000246 R12: 00007ffcd3519a20
+RSP: 002b:00007fffdc5eba48 EFLAGS: 00000246 ORIG_RAX: 0000000000000055
+RAX: ffffffffffffffda RBX: 0000000000000000 RCX: 00007f4f0b64b899
+RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000020000040
+RBP: 0000000000000000 R08: 00007f4f0b6b9ec0 R09: 00007f4f0b6b9ec0
+R10: 0000000000000000 R11: 0000000000000246 R12: 00007fffdc5eba70
 R13: 0000000000000000 R14: 431bde82d7b634db R15: 0000000000000000
  </TASK>
 
