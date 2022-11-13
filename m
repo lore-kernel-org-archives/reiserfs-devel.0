@@ -1,7 +1,7 @@
-From: syzbot <syzbot+79c303ad05f4041e0dad@syzkaller.appspotmail.com>
-Subject: [syzbot] possible deadlock in reiserfs_ioctl
-Date: Fri, 11 Nov 2022 10:26:49 -0800
-Message-ID: <000000000000779efd05ed36086d@google.com>
+From: syzbot <syzbot+abe01a74653f00aabe3e@syzkaller.appspotmail.com>
+Subject: [syzbot] possible deadlock in vfs_fileattr_set
+Date: Sun, 13 Nov 2022 07:51:06 -0800
+Message-ID: <00000000000041665a05ed5c17db@google.com>
 Mime-Version: 1.0
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
 List-ID: <reiserfs-devel.vger.kernel.org>
@@ -13,43 +13,59 @@ Hello,
 
 syzbot found the following issue on:
 
-HEAD commit:    0cdb3579f1ee Add linux-next specific files for 20221104
+HEAD commit:    f8f60f322f06 Add linux-next specific files for 20221111
 git tree:       linux-next
-console+strace: https://syzkaller.appspot.com/x/log.txt?x=1608948e880000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=f8b29628d1d8538b
-dashboard link: https://syzkaller.appspot.com/bug?extid=79c303ad05f4041e0dad
+console+strace: https://syzkaller.appspot.com/x/log.txt?x=16cdceae880000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=85ba52c07cd97289
+dashboard link: https://syzkaller.appspot.com/bug?extid=abe01a74653f00aabe3e
 compiler:       gcc (Debian 10.2.1-6) 10.2.1 20210110, GNU ld (GNU Binutils for Debian) 2.35.2
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=12f2b215880000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=14d3c525880000
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=138b76ae880000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=16ab1bfe880000
 
 Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/3d0fa4b872bd/disk-0cdb3579.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/797f855f0497/vmlinux-0cdb3579.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/2c5c130d649d/bzImage-0cdb3579.xz
-mounted in repro: https://storage.googleapis.com/syzbot-assets/41524a2c0287/mount_0.gz
+disk image: https://storage.googleapis.com/syzbot-assets/6008df424195/disk-f8f60f32.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/394340525f66/vmlinux-f8f60f32.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/b13604a3343a/bzImage-f8f60f32.xz
+mounted in repro: https://storage.googleapis.com/syzbot-assets/1398dc40e272/mount_0.gz
 
 IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+79c303ad05f4041e0dad@syzkaller.appspotmail.com
+Reported-by: syzbot+abe01a74653f00aabe3e@syzkaller.appspotmail.com
 
 REISERFS (device loop0): checking transaction log (loop0)
 REISERFS (device loop0): Using rupasov hash to sort names
 REISERFS (device loop0): Created .reiserfs_priv - reserved for xattr storage.
 ======================================================
 WARNING: possible circular locking dependency detected
-6.1.0-rc3-next-20221104-syzkaller #0 Not tainted
+6.1.0-rc4-next-20221111-syzkaller #0 Not tainted
 ------------------------------------------------------
-syz-executor418/5242 is trying to acquire lock:
-ffff8880289b2460 (sb_writers#9){.+.+}-{0:0}, at: reiserfs_ioctl+0x19e/0x320 fs/reiserfs/ioctl.c:103
+syz-executor405/5247 is trying to acquire lock:
+ffff888072c302e0 (&type->i_mutex_dir_key#6){+.+.}-{3:3}, at: inode_lock include/linux/fs.h:756 [inline]
+ffff888072c302e0 (&type->i_mutex_dir_key#6){+.+.}-{3:3}, at: vfs_fileattr_set+0x148/0xbe0 fs/ioctl.c:681
 
 but task is already holding lock:
-ffff888016eec090 (&sbi->lock){+.+.}-{3:3}, at: reiserfs_write_lock+0x75/0xf0 fs/reiserfs/lock.c:27
+ffff88802ac5a460 (sb_writers#9){.+.+}-{0:0}, at: ioctl_setflags fs/ioctl.c:725 [inline]
+ffff88802ac5a460 (sb_writers#9){.+.+}-{0:0}, at: do_vfs_ioctl+0xe0b/0x1580 fs/ioctl.c:839
 
 which lock already depends on the new lock.
 
 
 the existing dependency chain (in reverse order) is:
 
--> #2 (&sbi->lock){+.+.}-{3:3}:
+-> #2 (sb_writers#9){.+.+}-{0:0}:
+       percpu_down_read include/linux/percpu-rwsem.h:51 [inline]
+       __sb_start_write include/linux/fs.h:1792 [inline]
+       sb_start_write include/linux/fs.h:1867 [inline]
+       mnt_want_write_file+0x8e/0x590 fs/namespace.c:552
+       reiserfs_ioctl+0x19e/0x320 fs/reiserfs/ioctl.c:103
+       vfs_ioctl fs/ioctl.c:51 [inline]
+       __do_sys_ioctl fs/ioctl.c:870 [inline]
+       __se_sys_ioctl fs/ioctl.c:856 [inline]
+       __x64_sys_ioctl+0x193/0x200 fs/ioctl.c:856
+       do_syscall_x64 arch/x86/entry/common.c:50 [inline]
+       do_syscall_64+0x35/0xb0 arch/x86/entry/common.c:80
+       entry_SYSCALL_64_after_hwframe+0x63/0xcd
+
+-> #1 (&sbi->lock){+.+.}-{3:3}:
        __mutex_lock_common kernel/locking/mutex.c:603 [inline]
        __mutex_lock+0x12f/0x1350 kernel/locking/mutex.c:747
        reiserfs_write_lock+0x75/0xf0 fs/reiserfs/lock.c:27
@@ -71,34 +87,21 @@ the existing dependency chain (in reverse order) is:
        do_syscall_64+0x35/0xb0 arch/x86/entry/common.c:80
        entry_SYSCALL_64_after_hwframe+0x63/0xcd
 
--> #1 (&type->i_mutex_dir_key#6){+.+.}-{3:3}:
-       down_write+0x90/0x220 kernel/locking/rwsem.c:1562
-       inode_lock include/linux/fs.h:756 [inline]
-       chmod_common+0x14b/0x410 fs/open.c:600
-       vfs_fchmod fs/open.c:622 [inline]
-       __do_sys_fchmod fs/open.c:631 [inline]
-       __se_sys_fchmod fs/open.c:625 [inline]
-       __x64_sys_fchmod+0x10e/0x190 fs/open.c:625
-       do_syscall_x64 arch/x86/entry/common.c:50 [inline]
-       do_syscall_64+0x35/0xb0 arch/x86/entry/common.c:80
-       entry_SYSCALL_64_after_hwframe+0x63/0xcd
-
--> #0 (sb_writers#9){.+.+}-{0:0}:
+-> #0 (&type->i_mutex_dir_key#6){+.+.}-{3:3}:
        check_prev_add kernel/locking/lockdep.c:3097 [inline]
        check_prevs_add kernel/locking/lockdep.c:3216 [inline]
        validate_chain kernel/locking/lockdep.c:3831 [inline]
        __lock_acquire+0x2a43/0x56d0 kernel/locking/lockdep.c:5055
        lock_acquire kernel/locking/lockdep.c:5668 [inline]
        lock_acquire+0x1df/0x630 kernel/locking/lockdep.c:5633
-       percpu_down_read include/linux/percpu-rwsem.h:51 [inline]
-       __sb_start_write include/linux/fs.h:1792 [inline]
-       sb_start_write include/linux/fs.h:1867 [inline]
-       mnt_want_write_file+0x8e/0x590 fs/namespace.c:552
-       reiserfs_ioctl+0x19e/0x320 fs/reiserfs/ioctl.c:103
-       vfs_ioctl fs/ioctl.c:51 [inline]
-       __do_sys_ioctl fs/ioctl.c:870 [inline]
+       down_write+0x90/0x220 kernel/locking/rwsem.c:1562
+       inode_lock include/linux/fs.h:756 [inline]
+       vfs_fileattr_set+0x148/0xbe0 fs/ioctl.c:681
+       ioctl_fssetxattr fs/ioctl.c:758 [inline]
+       do_vfs_ioctl+0xe46/0x1580 fs/ioctl.c:845
+       __do_sys_ioctl fs/ioctl.c:868 [inline]
        __se_sys_ioctl fs/ioctl.c:856 [inline]
-       __x64_sys_ioctl+0x193/0x200 fs/ioctl.c:856
+       __x64_sys_ioctl+0x108/0x200 fs/ioctl.c:856
        do_syscall_x64 arch/x86/entry/common.c:50 [inline]
        do_syscall_64+0x35/0xb0 arch/x86/entry/common.c:80
        entry_SYSCALL_64_after_hwframe+0x63/0xcd
@@ -106,24 +109,25 @@ the existing dependency chain (in reverse order) is:
 other info that might help us debug this:
 
 Chain exists of:
-  sb_writers#9 --> &type->i_mutex_dir_key#6 --> &sbi->lock
+  &type->i_mutex_dir_key#6 --> &sbi->lock --> sb_writers#9
 
  Possible unsafe locking scenario:
 
        CPU0                    CPU1
        ----                    ----
-  lock(&sbi->lock);
-                               lock(&type->i_mutex_dir_key#6);
-                               lock(&sbi->lock);
   lock(sb_writers#9);
+                               lock(&sbi->lock);
+                               lock(sb_writers#9);
+  lock(&type->i_mutex_dir_key#6);
 
  *** DEADLOCK ***
 
-1 lock held by syz-executor418/5242:
- #0: ffff888016eec090 (&sbi->lock){+.+.}-{3:3}, at: reiserfs_write_lock+0x75/0xf0 fs/reiserfs/lock.c:27
+1 lock held by syz-executor405/5247:
+ #0: ffff88802ac5a460 (sb_writers#9){.+.+}-{0:0}, at: ioctl_setflags fs/ioctl.c:725 [inline]
+ #0: ffff88802ac5a460 (sb_writers#9){.+.+}-{0:0}, at: do_vfs_ioctl+0xe0b/0x1580 fs/ioctl.c:839
 
 stack backtrace:
-CPU: 1 PID: 5242 Comm: syz-executor418 Not tainted 6.1.0-rc3-next-20221104-syzkaller #0
+CPU: 0 PID: 5247 Comm: syz-executor405 Not tainted 6.1.0-rc4-next-20221111-syzkaller #0
 Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 10/26/2022
 Call Trace:
  <TASK>
@@ -136,25 +140,24 @@ Call Trace:
  __lock_acquire+0x2a43/0x56d0 kernel/locking/lockdep.c:5055
  lock_acquire kernel/locking/lockdep.c:5668 [inline]
  lock_acquire+0x1df/0x630 kernel/locking/lockdep.c:5633
- percpu_down_read include/linux/percpu-rwsem.h:51 [inline]
- __sb_start_write include/linux/fs.h:1792 [inline]
- sb_start_write include/linux/fs.h:1867 [inline]
- mnt_want_write_file+0x8e/0x590 fs/namespace.c:552
- reiserfs_ioctl+0x19e/0x320 fs/reiserfs/ioctl.c:103
- vfs_ioctl fs/ioctl.c:51 [inline]
- __do_sys_ioctl fs/ioctl.c:870 [inline]
+ down_write+0x90/0x220 kernel/locking/rwsem.c:1562
+ inode_lock include/linux/fs.h:756 [inline]
+ vfs_fileattr_set+0x148/0xbe0 fs/ioctl.c:681
+ ioctl_fssetxattr fs/ioctl.c:758 [inline]
+ do_vfs_ioctl+0xe46/0x1580 fs/ioctl.c:845
+ __do_sys_ioctl fs/ioctl.c:868 [inline]
  __se_sys_ioctl fs/ioctl.c:856 [inline]
- __x64_sys_ioctl+0x193/0x200 fs/ioctl.c:856
+ __x64_sys_ioctl+0x108/0x200 fs/ioctl.c:856
  do_syscall_x64 arch/x86/entry/common.c:50 [inline]
  do_syscall_64+0x35/0xb0 arch/x86/entry/common.c:80
  entry_SYSCALL_64_after_hwframe+0x63/0xcd
-RIP: 0033:0x7f157998c889
+RIP: 0033:0x7fceb6e16899
 Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 c0 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007ffe2dd23488 EFLAGS: 00000246 ORIG_RAX: 0000000000000010
-RAX: ffffffffffffffda RBX: 0000000000000000 RCX: 00007f157998c889
-RDX: 0000000000000000 RSI: 0000000040087602 RDI: 0000000000000005
-RBP: 0000000000000000 R08: 00007f15799faec0 R09: 00007f15799faec0
-R10: 0000000000000000 R11: 0000000000000246 R12: 00007ffe2dd234b0
+RSP: 002b:00007ffcd70f3258 EFLAGS: 00000246 ORIG_RAX: 0000000000000010
+RAX: ffffffffffffffda RBX: 0000000000000000 RCX: 00007fceb6e16899
+RDX: 0000000020000600 RSI: 0000000040086602 RDI: 0000000000000005
+RBP: 0000000000000000 R08: 00007fceb6e84ec0 R09: 00007fceb6e84ec0
+R10: 0000000000000000 R11: 0000000000000246 R12: 00007ffcd70f3280
 R13: 0000000000000000 R14: 431bde82d7b634db R15: 0000000000000000
  </TASK>
 
