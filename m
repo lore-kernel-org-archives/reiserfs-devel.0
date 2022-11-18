@@ -1,57 +1,115 @@
-From: Roberto Sassu <roberto.sassu@huaweicloud.com>
-Subject: Re: [PATCH v4 3/5] security: Allow all LSMs to provide xattrs for
- inode_init_security hook
-Date: Fri, 18 Nov 2022 10:32:15 +0100
-Message-ID: <2e493258-b267-b8ad-0812-53f4e9c849ae@huaweicloud.com>
+From: Mimi Zohar <zohar@linux.ibm.com>
+Subject: Re: [PATCH v4 4/5] evm: Align evm_inode_init_security() definition
+ with LSM infrastructure
+Date: Fri, 18 Nov 2022 09:45:46 -0500
+Message-ID: <fb34ffdd09b7eb43ec5e97d7d8a356648218a8d8.camel@linux.ibm.com>
 References: <20221110094639.3086409-1-roberto.sassu@huaweicloud.com>
- <20221110094639.3086409-4-roberto.sassu@huaweicloud.com>
- <4c1349f670dc3c23214a5a5036e43ddaa0a7bc89.camel@linux.ibm.com>
- <026075fa-0b58-9041-0727-b75e19499356@schaufler-ca.com>
+         <20221110094639.3086409-5-roberto.sassu@huaweicloud.com>
+         <5ff23992ab249af4fd5ef967691f8986c5898583.camel@linux.ibm.com>
+         <6e4da6d6-5a0c-98ba-9841-07a316f8631e@huaweicloud.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
-Content-Language: en-US
-In-Reply-To: <026075fa-0b58-9041-0727-b75e19499356@schaufler-ca.com>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=message-id : subject :
+ from : to : cc : date : in-reply-to : references : content-type :
+ mime-version : content-transfer-encoding; s=pp1;
+ bh=iMM5oivNJa+sP0gkSNtngKGpdo00X2aXogAjZxh19+U=;
+ b=bvB6y0dF6KFsiOnyNiUBEJM8GBBenptDNHBxJPdpU2d3DIJf1N82uu62/cVI5BLsR11T
+ GU7LK1ftR5UQJ+t5+cyGYTIOQr9Ad1zmLWcq5oS/9U4RjmEIR1/dST1Wsapbu8Dzfw29
+ 712KKkc5i9VYgK5SUs1aMRc/fCTqOvFX3i3gilwvLRrrvofa4WEqVjmH00y0J4B2YC1r
+ Hn62YZ2N1BNdEgThNd+791VuyPBv5YzbvsqbL6Y/B5XN8lffBLwYv3wGDMxyIf4lt8tM
+ wJjIcF4q3XXk6FGFE7QiFAiyKpvC+5I8LYTiq6GtF/p+Cw7kiX0VFFQMzhtgn78hTM0C UA== 
+In-Reply-To: <6e4da6d6-5a0c-98ba-9841-07a316f8631e@huaweicloud.com>
 List-ID: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: Casey Schaufler <casey@schaufler-ca.com>, Mimi Zohar <zohar@linux.ibm.com>, dmitry.kasatkin@gmail.com, paul@paul-moore.com, jmorris@namei.org, serge@hallyn.com, stephen.smalley.work@gmail.com, eparis@parisplace.org
+Content-Type: text/plain; charset="us-ascii"
+To: Roberto Sassu <roberto.sassu@huaweicloud.com>, dmitry.kasatkin@gmail.com, paul@paul-moore.com, jmorris@namei.org, serge@hallyn.com, stephen.smalley.work@gmail.com, eparis@parisplace.org, casey@schaufler-ca.com
 Cc: linux-integrity@vger.kernel.org, linux-security-module@vger.kernel.org, selinux@vger.kernel.org, reiserfs-devel@vger.kernel.org, linux-kernel@vger.kernel.org, keescook@chromium.org, nicolas.bouchinet@clip-os.org, Roberto Sassu <roberto.sassu@huawei.com>
 
-On 11/17/2022 6:18 PM, Casey Schaufler wrote:
-> On 11/17/2022 8:05 AM, Mimi Zohar wrote:
->> hOn Thu, 2022-11-10 at 10:46 +0100, Roberto Sassu wrote:
->>> From: Roberto Sassu <roberto.sassu@huawei.com>
->>>
->>> Currently, security_inode_init_security() supports only one LSM providing
->>> an xattr and EVM calculating the HMAC on that xattr, plus other inode
->>> metadata.
->>>
->>> Allow all LSMs to provide one or multiple xattrs, by extending the security
->>> blob reservation mechanism. Introduce the new lbs_xattr field of the
->>> lsm_blob_sizes structure, so that each LSM can specify how many xattrs it
->>> needs, and the LSM infrastructure knows how many xattr slots it should
->>> allocate.
->> Perhaps supporting per LSM multiple xattrs is a nice idea, but EVM
->> doesn't currently support it.  The LSM xattrs are hard coded in
->> evm_config_default_xattrnames[],  based on whether the LSM is
->> configured.  Additional security xattrs may be included in the
->> security.evm calculation, by extending the list via
->> security/integrity/evm/evm_xattrs.
+On Fri, 2022-11-18 at 10:30 +0100, Roberto Sassu wrote:
+> On 11/17/2022 6:07 PM, Mimi Zohar wrote:
+> > On Thu, 2022-11-10 at 10:46 +0100, Roberto Sassu wrote:
+> >> From: Roberto Sassu <roberto.sassu@huawei.com>
+> >>
+> >> Change the evm_inode_init_security() definition to align with the LSM
+> >> infrastructure, in preparation for moving IMA and EVM to that
+> >> infrastructure.
+> >>
+> >> This requires passing only the xattr array allocated by
+> >> security_inode_init_security(), instead of the first LSM xattr and the
+> >> place where the EVM xattr should be filled.
+> >>
+> >> It also requires positioning after the last filled xattr (by checking the
+> >> xattr name), since the beginning of the xattr array is given.
+> > 
+> > Perhaps combine this sentence to the previous paragraph and start the
+> > sentence with
+> > "In lieu of passing the EVM xattr, ..."
 > 
-> Smack uses multiple xattrs. All file system objects have a SMACK64
-> attribute, which is used for access control. A program file may have
-> a SMACK64EXEC attribute, which is the label the program will run with.
-> A library may have a SMACK64MMAP attribute to restrict loading. A
-> directory may have a SMACK64TRANSMUTE attribute, which modifies the
-> new object creation behavior.
+> Ok.
 > 
-> The point being that it may be more than a "nice idea" to support
-> multiple xattrs. It's not a hypothetical situation.
+> >> If EVM is moved to the LSM infrastructure, it will use the xattr
+> >> reservation mechanism too, i.e. it positions itself in the xattr array with
+> >> the offset given by the LSM infrastructure.
+> > 
+> > The LSM infrastructure will need to support EVM as the last LSM.  Is
+> > there a reason for including this comment in this patch description.
+> 
+> The idea is to first make EVM work like other LSMs, and then add 
+> limitations that are EVM-specific.
+> 
+> As a regular LSM, EVM could be placed anywhere in the list of LSMs. This 
+> would mean that whenever EVM is called, it will process xattrs that are 
+> set by previous LSMs, not the subsequent ones.
+> 
+> What we would need to do EVM-specific is that EVM is the last in the 
+> list of LSMs, to ensure that all xattrs are protected.
+> 
+> >> Finally, make evm_inode_init_security() return value compatible with the
+> >> inode_init_security hook conventions, i.e. return -EOPNOTSUPP if it is not
+> >> setting an xattr.
+> > 
+> >> EVM is a bit tricky, because xattrs is both an input and an output. If it
+> >> was just output, EVM should have returned zero if xattrs is NULL. But,
+> >> since xattrs is also input, EVM is unable to do its calculations, so return
+> >> -EOPNOTSUPP and handle this error in security_inode_init_security().
+> >>
+> >> Don't change the return value in the inline function
+> >> evm_inode_init_security() in include/linux/evm.h, as the function will be
+> >> removed if EVM is moved to the LSM infrastructure.
+> >>
+> >> Last note, this patch does not fix a possible crash if the xattr array is
+> >> empty (due to calling evm_protected_xattr() with a NULL argument). It will
+> >> be fixed with 'evm: Support multiple LSMs providing an xattr', as it will
+> >> first ensure that the xattr name is not NULL before calling
+> >> evm_protected_xattr().
+> > 
+> >  From my reading of the code, although there might be multiple LSM
+> > xattrs, this patch only includes the first LSM xattr in the security
+> > EVM calculation.  So it only checks the first xattr's name.  Support
+> > for including multiple LSM xattrs in the EVM hmac calculation is added
+> > in the subsequent patch.
+> 
+> I tried to include in this patch just the function definition change and 
+> keep the existing behavior.
 
-Ok, that means that I have to change the number of xattrs reserved by 
-Smack in patch 3.
+That's fine.
+> 
+> The problem is trying to access xattr->name at the beginning of 
+> evm_inode_init_security().
+> 
+> That would disappear in patch 5, where there is a loop checking 
+> xattr->value first. Patch 3 disallows combination of NULL name - !NULL 
+> value and !NULL name - NULL value. Not sure if the latter is correct 
+> (empty xattr?). Will check what callers do.
 
-Thanks
+My comments here and above were for improving the patch description:
+- Just say what this patch is doing, not what subsequent changes will
+do in the future.  We'll come to that when the time comes.
 
-Roberto
+- Say something only the lines that this patch includes only one LSM
+security xattr in the EVM calculation, like previously.
+
+thanks,
+
+Mimi
 
