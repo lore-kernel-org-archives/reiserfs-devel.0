@@ -1,61 +1,151 @@
-From: Roberto Sassu <roberto.sassu@huaweicloud.com>
-Subject: Re: [PATCH v4 3/5] security: Allow all LSMs to provide xattrs for
- inode_init_security hook
-Date: Mon, 21 Nov 2022 14:29:20 +0100
-Message-ID: <ad7bfa59a3a89ccad52574e2f9fb8965dbaa1620.camel@huaweicloud.com>
-References: <20221110094639.3086409-1-roberto.sassu@huaweicloud.com>
-         <20221110094639.3086409-4-roberto.sassu@huaweicloud.com>
-         <4c1349f670dc3c23214a5a5036e43ddaa0a7bc89.camel@linux.ibm.com>
-         <fe16a03a-102e-b3e1-cc3f-5bad3c28fad7@huaweicloud.com>
-         <3ffb9bb4ab203b5e0459c3892ded4ae0cd80458b.camel@linux.ibm.com>
-         <fb3f423a-a56e-b6ed-d1e7-476605d607f8@schaufler-ca.com>
+From: syzbot <syzbot+3c4ce3260a74215d1deb@syzkaller.appspotmail.com>
+Subject: [syzbot] WARNING in reiserfs_dir_fsync
+Date: Mon, 21 Nov 2022 05:58:38 -0800
+Message-ID: <000000000000ca546e05edfb7356@google.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
-In-Reply-To: <fb3f423a-a56e-b6ed-d1e7-476605d607f8@schaufler-ca.com>
 List-ID: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: Casey Schaufler <casey@schaufler-ca.com>, Mimi Zohar <zohar@linux.ibm.com>, dmitry.kasatkin@gmail.com, paul@paul-moore.com, jmorris@namei.org, serge@hallyn.com, stephen.smalley.work@gmail.com, eparis@parisplace.org
-Cc: linux-integrity@vger.kernel.org, linux-security-module@vger.kernel.org, selinux@vger.kernel.org, reiserfs-devel@vger.kernel.org, linux-kernel@vger.kernel.org, keescook@chromium.org, nicolas.bouchinet@clip-os.org, Roberto Sassu <roberto.sassu@huawei.com>
+Content-Transfer-Encoding: 7bit
+To: linux-kernel@vger.kernel.org, reiserfs-devel@vger.kernel.org, syzkaller-bugs@googlegroups.com
 
-On Fri, 2022-11-18 at 09:31 -0800, Casey Schaufler wrote:
-> On 11/18/2022 7:10 AM, Mimi Zohar wrote:
-> > On Fri, 2022-11-18 at 10:14 +0100, Roberto Sassu wrote:
-> > > > > +static int security_check_compact_xattrs(struct xattr *xattrs,
-> > > > > +                                     int num_xattrs, int *checked_xattrs)
-> > > > Perhaps the variable naming is off, making it difficult to read.   So
-> > > > although this is a static function, which normally doesn't require a
-> > > > comment, it's definitely needs one.
-> > > Ok, will improve it.
-> > > 
-> > > > > +{
-> > > > > +    int i;
-> > > > > +
-> > > > > +    for (i = *checked_xattrs; i < num_xattrs; i++) {
-> > > > If the number of "checked" xattrs was kept up to date, removing the
-> > > > empty xattr gaps wouldn't require a loop.  Is the purpose of this loop
-> > > > to support multiple per LSM xattrs?
-> > > An LSM might reserve one or more xattrs, but not set it/them (for 
-> > > example because it is not initialized). In this case, removing the gaps 
-> > > is needed for all subsequent LSMs.
-> > Including this sort of info in the function description or as a comment
-> > in the code would definitely simplify review.
-> > 
-> > security_check_compact_xattrs() is called in the loop after getting
-> > each LSM's xattr(s).  Only the current LSMs xattrs need to be
-> > compressed, yet the loop goes to the maximum number of xattrs each
-> > time. Just wondering if there is a way of improving it.
-> 
-> At security module registration each module could identify how
-> many xattrs it uses. That number could be used to limit the range
-> of the loop. I have to do similar things for the forthcoming LSM
-> syscalls and module stacking beyond that.
+Hello,
 
-Yes, blob_sizes.lbs_xattr contains the total number of xattrs requested
-by LSMs. To stop the loop earlier, at the offset of the next LSM, we
-would need to search the LSM's lsm_info, using the LSM name in
-the security_hook_list structure. Although it is not optimal, not doing
-it makes the code simpler. I could do that, if preferred.
+syzbot found the following issue on:
 
-Roberto
+HEAD commit:    9500fc6e9e60 Merge branch 'for-next/core' into for-kernelci
+git tree:       git://git.kernel.org/pub/scm/linux/kernel/git/arm64/linux.git for-kernelci
+console output: https://syzkaller.appspot.com/x/log.txt?x=1540810d880000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=b25c9f218686dd5e
+dashboard link: https://syzkaller.appspot.com/bug?extid=3c4ce3260a74215d1deb
+compiler:       Debian clang version 13.0.1-++20220126092033+75e33f71c2da-1~exp1~20220126212112.63, GNU ld (GNU Binutils for Debian) 2.35.2
+userspace arch: arm64
 
+Unfortunately, I don't have any reproducer for this issue yet.
+
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/1363e60652f7/disk-9500fc6e.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/fcc4da811bb6/vmlinux-9500fc6e.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/0b554298f1fa/Image-9500fc6e.gz.xz
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+3c4ce3260a74215d1deb@syzkaller.appspotmail.com
+
+EXT2-fs (loop5): error: revision level too high, forcing read-only mode
+------------[ cut here ]------------
+DEBUG_LOCKS_WARN_ON(lock->magic != lock)
+WARNING: CPU: 0 PID: 23017 at kernel/locking/mutex.c:582 __mutex_lock_common+0x4c4/0xca8 kernel/locking/mutex.c:582
+Modules linked in:
+CPU: 0 PID: 23017 Comm: syz-executor.5 Not tainted 6.1.0-rc5-syzkaller-32269-g9500fc6e9e60 #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 09/30/2022
+pstate: 60400005 (nZCv daif +PAN -UAO -TCO -DIT -SSBS BTYPE=--)
+pc : __mutex_lock_common+0x4c4/0xca8 kernel/locking/mutex.c:582
+lr : __mutex_lock_common+0x4c4/0xca8 kernel/locking/mutex.c:582
+sp : ffff800013ee3ca0
+x29: ffff800013ee3d10 x28: ffff80000eefa000 x27: 0000000000000000
+x26: 0000000000000000 x25: 0000000000000000 x24: 0000000000000002
+x23: ffff80000879d3d4 x22: 0000000000000000 x21: 0000000000000000
+x20: 0000000000000000 x19: ffff0000f751c428 x18: 0000000000000157
+x17: ffff80000c0ed83c x16: 0000000000000000 x15: 0000000000000000
+x14: 0000000000000000 x13: 0000000000000012 x12: 0000000000040000
+x11: 0000000000000c6a x10: ffff80001ad76000 x9 : 72cc9bc43b455200
+x8 : 72cc9bc43b455200 x7 : 4e5241575f534b43 x6 : ffff80000c0b2b74
+x5 : 0000000000000000 x4 : 0000000000000001 x3 : 0000000000000000
+x2 : 0000000000000000 x1 : 0000000100000000 x0 : 0000000000000028
+Call trace:
+ __mutex_lock_common+0x4c4/0xca8 kernel/locking/mutex.c:582
+ __mutex_lock kernel/locking/mutex.c:747 [inline]
+ mutex_lock_nested+0x38/0x44 kernel/locking/mutex.c:799
+ reiserfs_write_lock+0x3c/0x64 fs/reiserfs/lock.c:27
+ reiserfs_dir_fsync+0x70/0xb8 fs/reiserfs/dir.c:42
+ vfs_fsync_range fs/sync.c:188 [inline]
+ vfs_fsync fs/sync.c:202 [inline]
+ do_fsync fs/sync.c:212 [inline]
+ __do_sys_fdatasync fs/sync.c:225 [inline]
+ __se_sys_fdatasync fs/sync.c:223 [inline]
+ __arm64_sys_fdatasync+0x60/0xb8 fs/sync.c:223
+ __invoke_syscall arch/arm64/kernel/syscall.c:38 [inline]
+ invoke_syscall arch/arm64/kernel/syscall.c:52 [inline]
+ el0_svc_common+0x138/0x220 arch/arm64/kernel/syscall.c:142
+ do_el0_svc+0x48/0x164 arch/arm64/kernel/syscall.c:206
+ el0_svc+0x58/0x150 arch/arm64/kernel/entry-common.c:637
+ el0t_64_sync_handler+0x84/0xf0 arch/arm64/kernel/entry-common.c:655
+ el0t_64_sync+0x190/0x194 arch/arm64/kernel/entry.S:584
+irq event stamp: 831
+hardirqs last  enabled at (831): [<ffff8000080388c4>] local_daif_restore arch/arm64/include/asm/daifflags.h:75 [inline]
+hardirqs last  enabled at (831): [<ffff8000080388c4>] el0_svc_common+0x40/0x220 arch/arm64/kernel/syscall.c:107
+hardirqs last disabled at (830): [<ffff80000c0a53a4>] el0t_64_sync_handler+0x84/0xf0 arch/arm64/kernel/entry-common.c:655
+softirqs last  enabled at (826): [<ffff80000801c38c>] local_bh_enable+0x10/0x34 include/linux/bottom_half.h:32
+softirqs last disabled at (824): [<ffff80000801c358>] local_bh_disable+0x10/0x34 include/linux/bottom_half.h:19
+---[ end trace 0000000000000000 ]---
+Unable to handle kernel NULL pointer dereference at virtual address 0000000000000054
+Mem abort info:
+  ESR = 0x0000000096000006
+  EC = 0x25: DABT (current EL), IL = 32 bits
+  SET = 0, FnV = 0
+  EA = 0, S1PTW = 0
+  FSC = 0x06: level 2 translation fault
+Data abort info:
+  ISV = 0, ISS = 0x00000006
+  CM = 0, WnR = 0
+user pgtable: 4k pages, 48-bit VAs, pgdp=000000010acce000
+[0000000000000054] pgd=08000001413b5003, p4d=08000001413b5003, pud=08000001371ff003, pmd=0000000000000000
+Internal error: Oops: 0000000096000006 [#1] PREEMPT SMP
+Modules linked in:
+CPU: 0 PID: 23017 Comm: syz-executor.5 Tainted: G        W          6.1.0-rc5-syzkaller-32269-g9500fc6e9e60 #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 09/30/2022
+pstate: 00400005 (nzcv daif +PAN -UAO -TCO -DIT -SSBS BTYPE=--)
+pc : owner_on_cpu include/linux/sched.h:2290 [inline]
+pc : mutex_can_spin_on_owner kernel/locking/mutex.c:409 [inline]
+pc : mutex_optimistic_spin+0x1c8/0x254 kernel/locking/mutex.c:452
+lr : __mutex_lock_common+0x1b4/0xca8 kernel/locking/mutex.c:607
+sp : ffff800013ee3c40
+x29: ffff800013ee3c50 x28: ffff80000eefa000 x27: ffff80000cbd7d0f
+x26: 0000000000000000 x25: 0000000000000000 x24: ffff0000f751c490
+x23: ffff80000879d3d4 x22: ffff80000d3ac000 x21: 0000000000000000
+x20: 0000000000000000 x19: ffff0000f751c428 x18: 0000000000000157
+x17: ffff80000c0ed83c x16: 0000000000000000 x15: 0000000000000000
+x14: 0000000000000000 x13: 0000000000000012 x12: 0000000000040000
+x11: 0000000000000c6a x10: ffff80000d3ac000 x9 : 0000000000000003
+x8 : 0000000000000020 x7 : 4e5241575f534b43 x6 : ffff80000879d3d4
+x5 : 0000000000000000 x4 : 0000000000000001 x3 : 0000000000000000
+x2 : 0000000000000000 x1 : 0000000000000000 x0 : ffff0000f751c428
+Call trace:
+ mutex_can_spin_on_owner kernel/locking/mutex.c:408 [inline]
+ mutex_optimistic_spin+0x1c8/0x254 kernel/locking/mutex.c:452
+ __mutex_lock_common+0x1b4/0xca8 kernel/locking/mutex.c:607
+ __mutex_lock kernel/locking/mutex.c:747 [inline]
+ mutex_lock_nested+0x38/0x44 kernel/locking/mutex.c:799
+ reiserfs_write_lock+0x3c/0x64 fs/reiserfs/lock.c:27
+ reiserfs_dir_fsync+0x70/0xb8 fs/reiserfs/dir.c:42
+ vfs_fsync_range fs/sync.c:188 [inline]
+ vfs_fsync fs/sync.c:202 [inline]
+ do_fsync fs/sync.c:212 [inline]
+ __do_sys_fdatasync fs/sync.c:225 [inline]
+ __se_sys_fdatasync fs/sync.c:223 [inline]
+ __arm64_sys_fdatasync+0x60/0xb8 fs/sync.c:223
+ __invoke_syscall arch/arm64/kernel/syscall.c:38 [inline]
+ invoke_syscall arch/arm64/kernel/syscall.c:52 [inline]
+ el0_svc_common+0x138/0x220 arch/arm64/kernel/syscall.c:142
+ do_el0_svc+0x48/0x164 arch/arm64/kernel/syscall.c:206
+ el0_svc+0x58/0x150 arch/arm64/kernel/entry-common.c:637
+ el0t_64_sync_handler+0x84/0xf0 arch/arm64/kernel/entry-common.c:655
+ el0t_64_sync+0x190/0x194 arch/arm64/kernel/entry.S:584
+Code: 37080148 f9400268 f27df108 54000080 (b9403509) 
+---[ end trace 0000000000000000 ]---
+----------------
+Code disassembly (best guess):
+   0:	37080148 	tbnz	w8, #1, 0x28
+   4:	f9400268 	ldr	x8, [x19]
+   8:	f27df108 	ands	x8, x8, #0xfffffffffffffff8
+   c:	54000080 	b.eq	0x1c  // b.none
+* 10:	b9403509 	ldr	w9, [x8, #52] <-- trapping instruction
+
+
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
