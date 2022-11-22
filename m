@@ -1,77 +1,75 @@
-From: Roberto Sassu <roberto.sassu@huaweicloud.com>
-Subject: Re: [PATCH v4 2/5] security: Rewrite
- security_old_inode_init_security()
-Date: Tue, 22 Nov 2022 09:29:40 +0100
-Message-ID: <339eff96ebcd4c7ecba2ed56751fd2636fa52f73.camel@huaweicloud.com>
+From: Paul Moore <paul@paul-moore.com>
+Subject: Re: [PATCH v4 1/5] reiserfs: Add missing calls to reiserfs_security_free()
+Date: Tue, 22 Nov 2022 17:47:31 -0500
+Message-ID: <CAHC9VhRBc_XeeCki3zqP40tpO-z2xja=yyMadr9_yLhGcgU3Vg@mail.gmail.com>
 References: <20221110094639.3086409-1-roberto.sassu@huaweicloud.com>
-         <20221110094639.3086409-3-roberto.sassu@huaweicloud.com>
-         <3dc4f389ead98972cb7d09ef285a0065decb0ad0.camel@linux.ibm.com>
-         <aa5fa8c5f231115c58012352124df57d16a01e41.camel@huaweicloud.com>
-         <7812899531b2bd936b25fde8fc2f1c2a6080b2bd.camel@linux.ibm.com>
-         <CAHC9VhTvcgOjXAH51Vnk66kEjXfjUS2aJjXjJmU-rwLT53vWPw@mail.gmail.com>
+ <20221110094639.3086409-2-roberto.sassu@huaweicloud.com> <CAHC9VhQ9WftDrF1R--ZYJXOv-YbVU-Pr1Ob_deDwEWm8OcQ-TA@mail.gmail.com>
+ <aa51b845dca6021282b5b2ae260020a3a5cfb5c6.camel@huaweicloud.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
-In-Reply-To: <CAHC9VhTvcgOjXAH51Vnk66kEjXfjUS2aJjXjJmU-rwLT53vWPw@mail.gmail.com>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paul-moore-com.20210112.gappssmtp.com; s=20210112;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=OhM08xoktc6ZKNdEIG+FP/1L4abUAxOrd/YTmOzlE3I=;
+        b=6HmnQaIAantqrLzDIs1GjTCygWym7grq9246f18l84sVPSkZfEkVFN+W2jIZ+PKiwV
+         7NV62WeikSpliju9ikhNf0Y5nTCZcwZpG8MvcDxyOKPDWTzYp1I4MmYPc4TKasYJLHMW
+         YHYfcAC63t/ADeojSlZVxmdz4TcX8+FQkvveHe7GRoSHHjcyzqpfcAq45xwfgMQekOGM
+         6DNHDmEFfWIZi6oNNMsf4+ixjZLItHxN38ifIKwu6xGsLZ9plHyTZ6PLhqE2wLii7DhR
+         z3dDzLgBzGz4Yh9tb7q7IAv9AbRsVruHZlo+vrMROW2GZz5qgB1cDCMzhpZd2lIEItoQ
+         L9Kg==
+In-Reply-To: <aa51b845dca6021282b5b2ae260020a3a5cfb5c6.camel@huaweicloud.com>
 List-ID: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: Paul Moore <paul@paul-moore.com>, Mimi Zohar <zohar@linux.ibm.com>
-Cc: dmitry.kasatkin@gmail.com, jmorris@namei.org, serge@hallyn.com, stephen.smalley.work@gmail.com, eparis@parisplace.org, casey@schaufler-ca.com, linux-integrity@vger.kernel.org, linux-security-module@vger.kernel.org, selinux@vger.kernel.org, reiserfs-devel@vger.kernel.org, linux-kernel@vger.kernel.org, keescook@chromium.org, nicolas.bouchinet@clip-os.org, Roberto Sassu <roberto.sassu@huawei.com>, ocfs2-devel@oss.oracle.com
+Content-Transfer-Encoding: 7bit
+To: Roberto Sassu <roberto.sassu@huaweicloud.com>
+Cc: zohar@linux.ibm.com, dmitry.kasatkin@gmail.com, jmorris@namei.org, serge@hallyn.com, stephen.smalley.work@gmail.com, eparis@parisplace.org, casey@schaufler-ca.com, linux-integrity@vger.kernel.org, linux-security-module@vger.kernel.org, selinux@vger.kernel.org, reiserfs-devel@vger.kernel.org, linux-kernel@vger.kernel.org, keescook@chromium.org, nicolas.bouchinet@clip-os.org, Roberto Sassu <roberto.sassu@huawei.com>, stable@vger.kernel.org, Jeff Mahoney <jeffm@suse.com>, Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
 
-On Mon, 2022-11-21 at 18:55 -0500, Paul Moore wrote:
-> On Mon, Nov 21, 2022 at 3:54 PM Mimi Zohar <zohar@linux.ibm.com> wrote:
-> > On Mon, 2022-11-21 at 10:45 +0100, Roberto Sassu wrote:
-> > > > As ocfs2 already defines initxattrs, that leaves only reiserfs missing
-> > > > initxattrs().  A better, cleaner solution would be to define one.
-> > > 
-> > > If I understood why security_old_inode_init_security() is called
-> > > instead of security_inode_init_security(), the reason seems that the
-> > > filesystem code uses the length of the obtained xattr to make some
-> > > calculations (e.g. reserve space). The xattr is written at a later
-> > > time.
-> > > 
-> > > Since for reiserfs there is a plan to deprecate it, it probably
-> > > wouldn't be worth to support the creation of multiple xattrs. I would
-> > > define a callback to take the first xattr and make a copy, so that
-> > > calling security_inode_init_security() + reiserfs_initxattrs() is
-> > > equivalent to calling security_old_inode_init_security().
-> 
-> FWIW, reiserfs isn't going to be removed until 2025, I'm hopeful we
-> can remove the IMA/EVM special cases before then :)
+On Tue, Nov 22, 2022 at 3:12 AM Roberto Sassu
+<roberto.sassu@huaweicloud.com> wrote:
+> On Mon, 2022-11-21 at 18:41 -0500, Paul Moore wrote:
+> > On Thu, Nov 10, 2022 at 4:47 AM Roberto Sassu
+> > <roberto.sassu@huaweicloud.com> wrote:
+> > > From: Roberto Sassu <roberto.sassu@huawei.com>
+> > >
+> > > Commit 57fe60df6241 ("reiserfs: add atomic addition of selinux attributes
+> > > during inode creation") defined reiserfs_security_free() to free the name
+> > > and value of a security xattr allocated by the active LSM through
+> > > security_old_inode_init_security(). However, this function is not called
+> > > in the reiserfs code.
+> > >
+> > > Thus, add a call to reiserfs_security_free() whenever
+> > > reiserfs_security_init() is called, and initialize value to NULL, to avoid
+> > > to call kfree() on an uninitialized pointer.
+> > >
+> > > Finally, remove the kfree() for the xattr name, as it is not allocated
+> > > anymore.
+> > >
+> > > Fixes: 57fe60df6241 ("reiserfs: add atomic addition of selinux attributes during inode creation")
+> > > Cc: stable@vger.kernel.org
+> > > Cc: Jeff Mahoney <jeffm@suse.com>
+> > > Cc: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+> > > Reported-by: Mimi Zohar <zohar@linux.ibm.com>
+> > > Reported-by: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+> > > Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
+> > > ---
+> > >  fs/reiserfs/namei.c          | 4 ++++
+> > >  fs/reiserfs/xattr_security.c | 2 +-
+> > >  2 files changed, 5 insertions(+), 1 deletion(-)
+> >
+> > If I'm understanding this patch correctly, this is a standalone
+> > bugfix, right?  Any reason this shouldn't be merged now, independent
+> > of the rest of patches in this patchset?
+>
+> Yes. It would be fine for me to pick this sooner.
 
-Well, we are not that far...
+Okay, as it's been almost two weeks with no comments from the reiserfs
+folks and this looks okay to me I'm going to go ahead and pull this
+into the lsm/next branch as it's at least "LSM adjacent" :)  As it is
+lsm/next and not lsm/stable-6.1, this should give the reiserfs folks
+another couple of weeks to object if they find this to be problematic.
 
-> > > But then, this is what anyway I was doing with the
-> > > security_initxattrs() callback, for all callers of security_old_inode_i
-> > > nit_security().
-> > > 
-> > > Also, security_old_inode_init_security() is exported to kernel modules.
-> > > Maybe, it is used somewhere. So, unless we plan to remove it
-> > > completely, it should be probably be fixed to avoid multiple LSMs
-> > > successfully setting an xattr, and losing the memory of all except the
-> > > last (which this patch fixes by calling security_inode_init_security()).
-> 
-> I would much rather remove security_old_inode_init_security() then
-> worry about what out-of-tree modules might be using it.  Hopefully we
-> can resolve the ocfs2 usage and get ocfs2 exclusively on the new hook
-> without too much trouble, which means all we have left is reiserfs ...
-> how difficult would you expect the conversion to be for reiserfs?
+Thanks all.
 
-Ok for removing security_old_inode_init_security().
-
-For reiserfs, I guess maintaining the current behavior of setting only
-one xattr should be easy. For multiple xattrs, I need to understand
-exactly how many blocks need to be reserved.
-
-> > > If there is still the preference, I will implement the reiserfs
-> > > callback and make a fix for security_old_inode_init_security().
-> > 
-> > There's no sense in doing both, as the purpose of defining a reiserfs
-> > initxattrs function was to clean up this code making it more readable.
-
-The fix for security_old_inode_init_security(), stopping at the first
-LSM returning zero, was to avoid the memory leak. Will not be needed if
-the function is removed.
-
-Roberto
-
+-- 
+paul-moore.com
