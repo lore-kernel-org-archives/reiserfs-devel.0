@@ -1,100 +1,108 @@
-From: Mimi Zohar <zohar@linux.ibm.com>
-Subject: Re: [PATCH v5 1/6] reiserfs: Switch to
- security_inode_init_security()
-Date: Wed, 23 Nov 2022 08:12:27 -0500
-Message-ID: <c5cea3cad1eaf79c29e91e9ecf8e8b7dcee2ce2c.camel@linux.ibm.com>
-References: <20221123095202.599252-1-roberto.sassu@huaweicloud.com>
-         <20221123095202.599252-2-roberto.sassu@huaweicloud.com>
+From: syzbot <syzbot+3c530d01065fbfab6070@syzkaller.appspotmail.com>
+Subject: Re: [syzbot] BUG: unable to handle kernel paging request in open_xa_dir
+Date: Wed, 23 Nov 2022 05:39:42 -0800
+Message-ID: <000000000000b8acd305ee236b14@google.com>
+References: <000000000000b04b4705e7ea36fb@google.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=message-id : subject :
- from : to : cc : date : in-reply-to : references : content-type :
- mime-version : content-transfer-encoding; s=pp1;
- bh=9PXQukpxuogl+8l31b8WwhvCbvp+U7J+XqCX2qkFTGE=;
- b=ieoJPpTfsIcCtPXvKSpUqs6UfKHqFjLGBdXPXTWDX9kLITBSJQkI4eRL/YTgUx19nMG0
- 7IYmKhlPfE4sk2o655ekHeTIY2y+rO2ctE5x6TTSJwzN2cOjMzhD+w17h7wZvS+naXgu
- /i+CRkTTazmTk+kVp4j3A8srGQsMSirQVZ3JWj14Zouvh67riSn+ZBFCgNW5510Wzt09
- a1HuV8vZlRlg2fyXyq2EI8RgJ0V/p37IKFRUL3xmAUxOdDkG7APYRuD+dq2TzV2Mhl1l
- x6ZB8GXBgIWfrB9hQQRG/KfqEj0P+1Un1P1nJQRZGzw6QlXcLGtioBIccPxENfZIgxDR yw== 
-In-Reply-To: <20221123095202.599252-2-roberto.sassu@huaweicloud.com>
+In-Reply-To: <000000000000b04b4705e7ea36fb@google.com>
 List-ID: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: Roberto Sassu <roberto.sassu@huaweicloud.com>, mark@fasheh.com, jlbec@evilplan.org, joseph.qi@linux.alibaba.com, dmitry.kasatkin@gmail.com, paul@paul-moore.com, jmorris@namei.org, serge@hallyn.com, stephen.smalley.work@gmail.com, eparis@parisplace.org, casey@schaufler-ca.com
-Cc: ocfs2-devel@oss.oracle.com, reiserfs-devel@vger.kernel.org, linux-integrity@vger.kernel.org, linux-security-module@vger.kernel.org, selinux@vger.kernel.org, linux-kernel@vger.kernel.org, keescook@chromium.org, nicolas.bouchinet@clip-os.org, Roberto Sassu <roberto.sassu@huawei.com>
+Content-Transfer-Encoding: 7bit
+To: brauner@kernel.org, linux-kernel@vger.kernel.org, reiserfs-devel@vger.kernel.org, syzkaller-bugs@googlegroups.com, viro@zeniv.linux.org.uk, willy@infradead.org
 
-On Wed, 2022-11-23 at 10:51 +0100, Roberto Sassu wrote:
-> From: Roberto Sassu <roberto.sassu@huawei.com>
-> 
-> In preparation for removing security_old_inode_init_security(), switch to
-> security_inode_init_security().
-> 
-> Define the initxattrs callback reiserfs_initxattrs(), to populate the
-> name/value/len triple in the reiserfs_security_handle() with the first
-> xattr provided by LSMs. Multiple xattrs are currently not supported, as the
-> reiserfs_security_handle structure is exported to user space.
+syzbot has found a reproducer for the following issue on:
 
-The security_old_inode_init_security() hook doesn't support EVM. 
-Missing from this patch description is whether the move to the
-security_inode_init_security() hook changes security.evm.  FYI, I'm not
-suggesting it should.  Please update the patch description accordingly.
+HEAD commit:    65762d97e6fa Merge branch 'for-next/perf' into for-kernelci
+git tree:       git://git.kernel.org/pub/scm/linux/kernel/git/arm64/linux.git for-kernelci
+console output: https://syzkaller.appspot.com/x/log.txt?x=12a2de53880000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=56d0c7c3a2304e8f
+dashboard link: https://syzkaller.appspot.com/bug?extid=3c530d01065fbfab6070
+compiler:       Debian clang version 13.0.1-++20220126092033+75e33f71c2da-1~exp1~20220126212112.63, GNU ld (GNU Binutils for Debian) 2.35.2
+userspace arch: arm64
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=17de2dfd880000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=16df682d880000
 
-Mimi
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/52f702197b30/disk-65762d97.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/72189c2789ce/vmlinux-65762d97.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/ec0349196c98/Image-65762d97.gz.xz
+mounted in repro #1: https://storage.googleapis.com/syzbot-assets/68a9fabb474d/mount_0.gz
+mounted in repro #2: https://storage.googleapis.com/syzbot-assets/8ac3adab6aa9/mount_1.gz
 
-> 
-> In reiserfs_initxattrs(), make a copy of the first xattr value, as
-> security_inode_init_security() frees it.
-> 
-> After the call to security_inode_init_security(), remove the check for
-> returning -EOPNOTSUPP, as security_inode_init_security() changes it to
-> zero.
-> 
-> Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
-> ---
->  fs/reiserfs/xattr_security.c | 23 ++++++++++++++++++-----
->  1 file changed, 18 insertions(+), 5 deletions(-)
-> 
-> diff --git a/fs/reiserfs/xattr_security.c b/fs/reiserfs/xattr_security.c
-> index 857a65b05726..0ba96757681d 100644
-> --- a/fs/reiserfs/xattr_security.c
-> +++ b/fs/reiserfs/xattr_security.c
-> @@ -39,6 +39,22 @@ static bool security_list(struct dentry *dentry)
->  	return !IS_PRIVATE(d_inode(dentry));
->  }
->  
-> +static int
-> +reiserfs_initxattrs(struct inode *inode, const struct xattr *xattr_array,
-> +		    void *fs_info)
-> +{
-> +	struct reiserfs_security_handle *sec = fs_info;
-> +
-> +	sec->value = kmemdup(xattr_array->value, xattr_array->value_len,
-> +			     GFP_KERNEL);
-> +	if (!sec->value)
-> +		return -ENOMEM;
-> +
-> +	sec->name = xattr_array->name;
-> +	sec->length = xattr_array->value_len;
-> +	return 0;
-> +}
-> +
->  /* Initializes the security context for a new inode and returns the number
->   * of blocks needed for the transaction. If successful, reiserfs_security
->   * must be released using reiserfs_security_free when the caller is done. */
-> @@ -56,12 +72,9 @@ int reiserfs_security_init(struct inode *dir, struct inode *inode,
->  	if (IS_PRIVATE(dir))
->  		return 0;
->  
-> -	error = security_old_inode_init_security(inode, dir, qstr, &sec->name,
-> -						 &sec->value, &sec->length);
-> +	error = security_inode_init_security(inode, dir, qstr,
-> +					     &reiserfs_initxattrs, sec);
->  	if (error) {
-> -		if (error == -EOPNOTSUPP)
-> -			error = 0;
-> -
->  		sec->name = NULL;
->  		sec->value = NULL;
->  		sec->length = 0;
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+3c530d01065fbfab6070@syzkaller.appspotmail.com
 
+REISERFS (device loop0): Using tea hash to sort names
+REISERFS warning (device loop0): jdm-20006 create_privroot: xattrs/ACLs enabled and couldn't find/create .reiserfs_priv. Failing mount.
+loop0: detected capacity change from 0 to 32768
+Unable to handle kernel paging request at virtual address dead4ead00000068
+Mem abort info:
+  ESR = 0x0000000096000004
+  EC = 0x25: DABT (current EL), IL = 32 bits
+  SET = 0, FnV = 0
+  EA = 0, S1PTW = 0
+  FSC = 0x04: level 0 translation fault
+Data abort info:
+  ISV = 0, ISS = 0x00000004
+  CM = 0, WnR = 0
+[dead4ead00000068] address between user and kernel address ranges
+Internal error: Oops: 0000000096000004 [#1] PREEMPT SMP
+Modules linked in:
+CPU: 1 PID: 3114 Comm: syz-executor354 Not tainted 6.1.0-rc6-syzkaller-32653-g65762d97e6fa #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 09/30/2022
+pstate: 80400005 (Nzcv daif +PAN -UAO -TCO -DIT -SSBS BTYPE=--)
+pc : d_really_is_negative include/linux/dcache.h:466 [inline]
+pc : open_xa_root fs/reiserfs/xattr.c:124 [inline]
+pc : open_xa_dir+0x48/0x2a8 fs/reiserfs/xattr.c:152
+lr : open_xa_dir+0x34/0x2a8 fs/reiserfs/xattr.c:148
+sp : ffff80000fc6b850
+x29: ffff80000fc6b870 x28: 0000000000000030 x27: ffff0000c71289c0
+x26: 0000000000000000 x25: 0000000000000000 x24: dead4ead00000000
+x23: 0000000000000000 x22: 0000000000000002 x21: ffff0000caf387b8
+x20: 0000000000000002 x19: ffff0000c9dd6000 x18: 0000000000000000
+x17: 0000000000000000 x16: 0000000000000000 x15: 0000000000000000
+x14: 0000000000000000 x13: 0000000000008000 x12: ffff80000d4fdd40
+x11: ff8080000879c764 x10: 0000000000000000 x9 : ffff80000879c764
+x8 : ffff0000c6bd2d00 x7 : ffff8000086b4590 x6 : 0000000000000000
+x5 : 0000000000000000 x4 : 0000000000000000 x3 : 0000000000000000
+x2 : 0000000000000002 x1 : 0000000000000002 x0 : ffff0000caf387b8
+Call trace:
+ open_xa_root fs/reiserfs/xattr.c:121 [inline]
+ open_xa_dir+0x48/0x2a8 fs/reiserfs/xattr.c:152
+ xattr_lookup+0x34/0x198 fs/reiserfs/xattr.c:395
+ reiserfs_xattr_get+0x8c/0x6a8 fs/reiserfs/xattr.c:677
+ reiserfs_get_acl+0x84/0x1ac fs/reiserfs/xattr_acl.c:214
+ get_acl+0x104/0x398 fs/posix_acl.c:153
+ check_acl+0x40/0x178 fs/namei.c:306
+ acl_permission_check fs/namei.c:351 [inline]
+ generic_permission+0x270/0x32c fs/namei.c:404
+ reiserfs_permission+0x4c/0x6c fs/reiserfs/xattr.c:954
+ do_inode_permission fs/namei.c:458 [inline]
+ inode_permission+0x128/0x244 fs/namei.c:525
+ may_open+0x1e4/0x2bc fs/namei.c:3185
+ do_open fs/namei.c:3555 [inline]
+ path_openat+0xdd0/0x11c4 fs/namei.c:3713
+ do_filp_open+0xdc/0x1b8 fs/namei.c:3740
+ do_sys_openat2+0xb8/0x22c fs/open.c:1310
+ do_sys_open fs/open.c:1326 [inline]
+ __do_sys_openat fs/open.c:1342 [inline]
+ __se_sys_openat fs/open.c:1337 [inline]
+ __arm64_sys_openat+0xb0/0xe0 fs/open.c:1337
+ __invoke_syscall arch/arm64/kernel/syscall.c:38 [inline]
+ invoke_syscall arch/arm64/kernel/syscall.c:52 [inline]
+ el0_svc_common+0x138/0x220 arch/arm64/kernel/syscall.c:142
+ do_el0_svc+0x48/0x164 arch/arm64/kernel/syscall.c:206
+ el0_svc+0x58/0x150 arch/arm64/kernel/entry-common.c:637
+ el0t_64_sync_handler+0x84/0xf0 arch/arm64/kernel/entry-common.c:655
+ el0t_64_sync+0x190/0x194 arch/arm64/kernel/entry.S:584
+Code: 390043ff a9007fff f9433e68 f942cd18 (f9403708) 
+---[ end trace 0000000000000000 ]---
+----------------
+Code disassembly (best guess):
+   0:	390043ff 	strb	wzr, [sp, #16]
+   4:	a9007fff 	stp	xzr, xzr, [sp]
+   8:	f9433e68 	ldr	x8, [x19, #1656]
+   c:	f942cd18 	ldr	x24, [x8, #1432]
+* 10:	f9403708 	ldr	x8, [x24, #104] <-- trapping instruction
 
