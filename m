@@ -1,113 +1,97 @@
-From: Mimi Zohar <zohar@linux.ibm.com>
-Subject: Re: [PATCH v6 4/6] security: Allow all LSMs to provide xattrs for
- inode_init_security hook
-Date: Wed, 23 Nov 2022 20:14:01 -0500
-Message-ID: <13350b79f708cb089e2ff2ee5cead52bafb10982.camel@linux.ibm.com>
-References: <20221123154712.752074-1-roberto.sassu@huaweicloud.com>
-         <20221123154712.752074-5-roberto.sassu@huaweicloud.com>
+From: syzbot <syzbot+6450929faa7a97cd42d1@syzkaller.appspotmail.com>
+Subject: [syzbot] KMSAN: uninit-value in reiserfs_new_inode (2)
+Date: Wed, 23 Nov 2022 22:39:35 -0800
+Message-ID: <00000000000027f81605ee31ab88@google.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-security-module-owner@vger.kernel.org>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=message-id : subject :
- from : to : cc : date : in-reply-to : references : content-type :
- mime-version : content-transfer-encoding; s=pp1;
- bh=KNq219/5AVdZrleS+HirjEBdvGLdqbdgtgWzIWGXyCk=;
- b=Uj3CEeSyH9PbA/ailDEEdrVjqprldCjGRbSvnLejn7XsSbLCT1pWWu2LHwuUqLq0lfiy
- 7xzqseFXrouvygarEDI2CVuckpDJ+Y+ISFXAWIjMrAM0FQWCfzcwouzrfBirQsNjC0Mh
- 6Dw6n+XoSf0iyai1DEb5kbTj2HAtjqtltRG9HG0Ar1+/6e5TG04N+T4f2cOkKjpJiCpC
- +0Zwsl55eFpfoOUlIhHGdSCkUGiGwYkNPrpY/pFzuSWProxIme9MAAB14Rxng/EPUMS2
- 5Wzl7ydcPK47hh5WqtlH/RGemLRIwN5/gb5MKXzK3N2KblIdoGc+SHjV8Rvq2o5X6Eys Ag== 
-In-Reply-To: <20221123154712.752074-5-roberto.sassu@huaweicloud.com>
+Return-path: <reiserfs-devel-owner@vger.kernel.org>
 List-ID: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: Roberto Sassu <roberto.sassu@huaweicloud.com>, mark@fasheh.com, jlbec@evilplan.org, joseph.qi@linux.alibaba.com, dmitry.kasatkin@gmail.com, paul@paul-moore.com, jmorris@namei.org, serge@hallyn.com, stephen.smalley.work@gmail.com, eparis@parisplace.org, casey@schaufler-ca.com
-Cc: ocfs2-devel@oss.oracle.com, reiserfs-devel@vger.kernel.org, linux-integrity@vger.kernel.org, linux-security-module@vger.kernel.org, selinux@vger.kernel.org, linux-kernel@vger.kernel.org, keescook@chromium.org, nicolas.bouchinet@clip-os.org, Roberto Sassu <roberto.sassu@huawei.com>
+Content-Transfer-Encoding: 7bit
+To: brauner@kernel.org, damien.lemoal@opensource.wdc.com, edward.shishkin@gmail.com, glider@google.com, jack@suse.cz, jlayton@kernel.org, linuszeng@tencent.com, linux-kernel@vger.kernel.org, reiserfs-devel@vger.kernel.org, syzkaller-bugs@googlegroups.com, willy@infradead.org
 
-Hi Roberto,
+Hello,
 
-On Wed, 2022-11-23 at 16:47 +0100, Roberto Sassu wrote:
->  int security_inode_init_security(struct inode *inode, struct inode *dir,
->                                  const struct qstr *qstr,
->                                  const initxattrs initxattrs, void *fs_data)
->  {
-> -       struct xattr new_xattrs[MAX_LSM_EVM_XATTR + 1];
-> -       struct xattr *lsm_xattr, *evm_xattr, *xattr;
-> -       int ret;
-> +       struct security_hook_list *P;
-> +       struct xattr *new_xattrs;
-> +       struct xattr *xattr;
-> +       int ret = -EOPNOTSUPP, num_filled_xattrs = 0;
->  
->         if (unlikely(IS_PRIVATE(inode)))
->                 return 0;
->  
-> +       if (!blob_sizes.lbs_xattr)
-> +               return 0;
-> +
->         if (!initxattrs)
->                 return call_int_hook(inode_init_security, -EOPNOTSUPP, inode,
-> -                                    dir, qstr, NULL, NULL, NULL);
-> -       memset(new_xattrs, 0, sizeof(new_xattrs));
-> -       lsm_xattr = new_xattrs;
-> -       ret = call_int_hook(inode_init_security, -EOPNOTSUPP, inode, dir, qstr,
-> -                                               &lsm_xattr->name,
-> -                                               &lsm_xattr->value,
-> -                                               &lsm_xattr->value_len);
-> -       if (ret)
-> +                                   dir, qstr, NULL);
-> +       /* Allocate +1 for EVM and +1 as terminator. */
-> +       new_xattrs = kcalloc(blob_sizes.lbs_xattr + 2, sizeof(*new_xattrs),
-> +                            GFP_NOFS);
-> +       if (!new_xattrs)
-> +               return -ENOMEM;
-> +
-> +       hlist_for_each_entry(P, &security_hook_heads.inode_init_security,
-> +                            list) {
-> +               ret = P->hook.inode_init_security(inode, dir, qstr, new_xattrs);
-> +               if (ret && ret != -EOPNOTSUPP)
-> +                       goto out;
-> +               if (ret == -EOPNOTSUPP)
-> +                       continue;
+syzbot found the following issue on:
 
-In this context, -EOPNOTSUPP originally signified that the filesystem
-does not support writing xattrs.  Writing any xattr would fail. 
-Returning -ENODATA for no LSM xattr(s) data would seem to be more
-appropriate than -EOPNOTSUPP.
+HEAD commit:    ddce02aa9c40 net: kmsan: check sk_buffs passed to __netdev..
+git tree:       https://github.com/google/kmsan.git master
+console output: https://syzkaller.appspot.com/x/log.txt?x=1200559b880000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=1429f86b132e6d40
+dashboard link: https://syzkaller.appspot.com/bug?extid=6450929faa7a97cd42d1
+compiler:       clang version 15.0.0 (https://github.com/llvm/llvm-project.git 610139d2d9ce6746b3c617fb3e2f7886272d26ff), GNU ld (GNU Binutils for Debian) 2.35.2
+userspace arch: i386
 
-thanks,
+Unfortunately, I don't have any reproducer for this issue yet.
 
-Mimi
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/40435685a7d7/disk-ddce02aa.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/4960172e71de/vmlinux-ddce02aa.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/5d91bc515d95/bzImage-ddce02aa.xz
 
-> +               /*
-> +                * As the number of xattrs reserved by LSMs is not directly
-> +                * available, directly use the total number blob_sizes.lbs_xattr
-> +                * to keep the code simple, while being not the most efficient
-> +                * way.
-> +                */
-> +               ret = security_check_compact_filled_xattrs(new_xattrs,
-> +                                                          blob_sizes.lbs_xattr,
-> +                                                          &num_filled_xattrs);
-> +               if (ret < 0) {
-> +                       ret = -ENOMEM;
-> +                       goto out;
-> +               }
-> +       }
-> +
-> +       if (!num_filled_xattrs)
->                 goto out;
->  
-> -       evm_xattr = lsm_xattr + 1;
-> -       ret = evm_inode_init_security(inode, lsm_xattr, evm_xattr);
-> +       ret = evm_inode_init_security(inode, new_xattrs,
-> +                                     new_xattrs + num_filled_xattrs);
->         if (ret)
->                 goto out;
->         ret = initxattrs(inode, new_xattrs, fs_data);
->  out:
->         for (xattr = new_xattrs; xattr->value != NULL; xattr++)
->                 kfree(xattr->value);
-> +       kfree(new_xattrs);
->         return (ret == -EOPNOTSUPP) ? 0 : ret;
->  }
-b
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+6450929faa7a97cd42d1@syzkaller.appspotmail.com
 
+=====================================================
+BUG: KMSAN: uninit-value in reiserfs_new_inode+0x193a/0x24e0 fs/reiserfs/inode.c:2050
+ reiserfs_new_inode+0x193a/0x24e0 fs/reiserfs/inode.c:2050
+ reiserfs_create+0x738/0xe60 fs/reiserfs/namei.c:668
+ lookup_open fs/namei.c:3413 [inline]
+ open_last_lookups fs/namei.c:3481 [inline]
+ path_openat+0x28e9/0x5600 fs/namei.c:3710
+ do_filp_open+0x249/0x660 fs/namei.c:3740
+ do_sys_openat2+0x1f0/0x910 fs/open.c:1310
+ do_sys_open fs/open.c:1326 [inline]
+ __do_sys_creat fs/open.c:1402 [inline]
+ __se_sys_creat fs/open.c:1396 [inline]
+ __ia32_sys_creat+0xed/0x160 fs/open.c:1396
+ do_syscall_32_irqs_on arch/x86/entry/common.c:112 [inline]
+ __do_fast_syscall_32+0xa2/0x100 arch/x86/entry/common.c:178
+ do_fast_syscall_32+0x33/0x70 arch/x86/entry/common.c:203
+ do_SYSENTER_32+0x1b/0x20 arch/x86/entry/common.c:246
+ entry_SYSENTER_compat_after_hwframe+0x70/0x82
+
+Uninit was created at:
+ __alloc_pages+0x9f1/0xe80 mm/page_alloc.c:5578
+ alloc_pages+0xaae/0xd80 mm/mempolicy.c:2285
+ alloc_slab_page mm/slub.c:1794 [inline]
+ allocate_slab+0x1b5/0x1010 mm/slub.c:1939
+ new_slab mm/slub.c:1992 [inline]
+ ___slab_alloc+0x10c3/0x2d60 mm/slub.c:3180
+ __slab_alloc mm/slub.c:3279 [inline]
+ slab_alloc_node mm/slub.c:3364 [inline]
+ slab_alloc mm/slub.c:3406 [inline]
+ __kmem_cache_alloc_lru mm/slub.c:3413 [inline]
+ kmem_cache_alloc_lru+0x6f3/0xb30 mm/slub.c:3429
+ alloc_inode_sb include/linux/fs.h:3117 [inline]
+ reiserfs_alloc_inode+0x5e/0x140 fs/reiserfs/super.c:642
+ alloc_inode+0x83/0x440 fs/inode.c:259
+ iget5_locked+0xa5/0x200 fs/inode.c:1241
+ reiserfs_fill_super+0x212b/0x3a00 fs/reiserfs/super.c:2053
+ mount_bdev+0x508/0x840 fs/super.c:1401
+ get_super_block+0x49/0x60 fs/reiserfs/super.c:2601
+ legacy_get_tree+0x10c/0x280 fs/fs_context.c:610
+ vfs_get_tree+0xa1/0x500 fs/super.c:1531
+ do_new_mount+0x694/0x1580 fs/namespace.c:3040
+ path_mount+0x71a/0x1eb0 fs/namespace.c:3370
+ do_mount fs/namespace.c:3383 [inline]
+ __do_sys_mount fs/namespace.c:3591 [inline]
+ __se_sys_mount+0x734/0x840 fs/namespace.c:3568
+ __ia32_sys_mount+0xdf/0x140 fs/namespace.c:3568
+ do_syscall_32_irqs_on arch/x86/entry/common.c:112 [inline]
+ __do_fast_syscall_32+0xa2/0x100 arch/x86/entry/common.c:178
+ do_fast_syscall_32+0x33/0x70 arch/x86/entry/common.c:203
+ do_SYSENTER_32+0x1b/0x20 arch/x86/entry/common.c:246
+ entry_SYSENTER_compat_after_hwframe+0x70/0x82
+
+CPU: 0 PID: 3857 Comm: syz-executor.2 Not tainted 6.1.0-rc6-syzkaller-63553-gddce02aa9c40 #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 10/26/2022
+=====================================================
+
+
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
