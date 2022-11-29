@@ -1,78 +1,123 @@
-From: syzbot <syzbot+d43f346675e449548021@syzkaller.appspotmail.com>
-Subject: [syzbot] WARNING in journal_end
-Date: Tue, 29 Nov 2022 05:49:37 -0800
-Message-ID: <00000000000043463e05ee9c4277@google.com>
+From: Casey Schaufler <casey@schaufler-ca.com>
+Subject: Re: [PATCH v6 4/6] security: Allow all LSMs to provide xattrs for
+ inode_init_security hook
+Date: Tue, 29 Nov 2022 07:39:42 -0800
+Message-ID: <50232f2b-d5ce-1e5a-3f5b-8d3eb53fe1ec@schaufler-ca.com>
+References: <20221123154712.752074-1-roberto.sassu@huaweicloud.com>
+ <20221123154712.752074-5-roberto.sassu@huaweicloud.com>
+ <13350b79f708cb089e2ff2ee5cead52bafb10982.camel@linux.ibm.com>
+ <bb63eba9a9f24558f4a1acd9bf012b59b5c6e98e.camel@huaweicloud.com>
+ <9859294adb0a9b9587ea7fb70a836a312aaf3c69.camel@linux.ibm.com>
 Mime-Version: 1.0
-Return-path: <reiserfs-devel-owner@vger.kernel.org>
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-security-module-owner@vger.kernel.org>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1669736389; bh=aS4qJAF4z8K3/s5yGPKxlY1D2luVFB8NMnvEFjOx3S8=; h=Date:Subject:To:Cc:References:From:In-Reply-To:From:Subject:Reply-To; b=UCIRYfwJp5dnGKfLWNOCIDvxQZp4JMl8Ebh7ryzXxAMfE1mc5NF4igvFnWL6+NkGFVF3rxe4/oa5TDAMPqAqpuw5CGUu0Rusos4DjUc1BbQXt8gMGQiJ49V8gCaeC3NFpQQZHol8bfrjtLBujY01g3wDrHrstNbOckEkj+r4//CafwKbpv3a+A5hfZ1IsiiG+tZvOETbXPheXY/binn4bWW08BxM7QLHh0Vie9Y2zED9iW+BCbijyfyf2eTDPG66WcsIPzf3FxcSrzp1coaPJqnCx0GzeNLbMJzvNvHXyl3ubcDaBC3m/jEuOzEH093wMqhStd+C5zyJpux9iYozCw==
+Content-Language: en-US
+In-Reply-To: <9859294adb0a9b9587ea7fb70a836a312aaf3c69.camel@linux.ibm.com>
 List-ID: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: axboe@kernel.dk, bvanassche@acm.org, jlayton@kernel.org, linux-kernel@vger.kernel.org, reiserfs-devel@vger.kernel.org, song@kernel.org, syzkaller-bugs@googlegroups.com, willy@infradead.org, yi.zhang@huawei.com
+To: Mimi Zohar <zohar@linux.ibm.com>, Roberto Sassu <roberto.sassu@huaweicloud.com>, mark@fasheh.com, jlbec@evilplan.org, joseph.qi@linux.alibaba.com, dmitry.kasatkin@gmail.com, paul@paul-moore.com, jmorris@namei.org, serge@hallyn.com, stephen.smalley.work@gmail.com, eparis@parisplace.org
+Cc: ocfs2-devel@oss.oracle.com, reiserfs-devel@vger.kernel.org, linux-integrity@vger.kernel.org, linux-security-module@vger.kernel.org, selinux@vger.kernel.org, linux-kernel@vger.kernel.org, keescook@chromium.org, nicolas.bouchinet@clip-os.org, Roberto Sassu <roberto.sassu@huawei.com>, casey@schaufler-ca.com
 
-Hello,
+On 11/29/2022 3:23 AM, Mimi Zohar wrote:
+> On Thu, 2022-11-24 at 09:17 +0100, Roberto Sassu wrote:
+>> On Wed, 2022-11-23 at 20:14 -0500, Mimi Zohar wrote:
+>>> Hi Roberto,
+>>>
+>>> On Wed, 2022-11-23 at 16:47 +0100, Roberto Sassu wrote:
+>>>>  int security_inode_init_security(struct inode *inode, struct inode *dir,
+>>>>                                  const struct qstr *qstr,
+>>>>                                  const initxattrs initxattrs, void *fs_data)
+>>>>  {
+>>>> -       struct xattr new_xattrs[MAX_LSM_EVM_XATTR + 1];
+>>>> -       struct xattr *lsm_xattr, *evm_xattr, *xattr;
+>>>> -       int ret;
+>>>> +       struct security_hook_list *P;
+>>>> +       struct xattr *new_xattrs;
+>>>> +       struct xattr *xattr;
+>>>> +       int ret = -EOPNOTSUPP, num_filled_xattrs = 0;
+>>>>  
+>>>>         if (unlikely(IS_PRIVATE(inode)))
+>>>>                 return 0;
+>>>>  
+>>>> +       if (!blob_sizes.lbs_xattr)
+>>>> +               return 0;
+>>>> +
+>>>>         if (!initxattrs)
+>>>>                 return call_int_hook(inode_init_security, -EOPNOTSUPP, inode,
+>>>> -                                    dir, qstr, NULL, NULL, NULL);
+>>>> -       memset(new_xattrs, 0, sizeof(new_xattrs));
+>>>> -       lsm_xattr = new_xattrs;
+>>>> -       ret = call_int_hook(inode_init_security, -EOPNOTSUPP, inode, dir, qstr,
+>>>> -                                               &lsm_xattr->name,
+>>>> -                                               &lsm_xattr->value,
+>>>> -                                               &lsm_xattr->value_len);
+>>>> -       if (ret)
+>>>> +                                   dir, qstr, NULL);
+>>>> +       /* Allocate +1 for EVM and +1 as terminator. */
+>>>> +       new_xattrs = kcalloc(blob_sizes.lbs_xattr + 2, sizeof(*new_xattrs),
+>>>> +                            GFP_NOFS);
+>>>> +       if (!new_xattrs)
+>>>> +               return -ENOMEM;
+>>>> +
+>>>> +       hlist_for_each_entry(P, &security_hook_heads.inode_init_security,
+>>>> +                            list) {
+>>>> +               ret = P->hook.inode_init_security(inode, dir, qstr, new_xattrs);
+>>>> +               if (ret && ret != -EOPNOTSUPP)
+>>>> +                       goto out;
+>>>> +               if (ret == -EOPNOTSUPP)
+>>>> +                       continue;
+>>> In this context, -EOPNOTSUPP originally signified that the filesystem
+>>> does not support writing xattrs.  Writing any xattr would fail. 
+>>> Returning -ENODATA for no LSM xattr(s) data would seem to be more
+>>> appropriate than -EOPNOTSUPP.
+>> Hi Mimi
+>>
+>> I thought about adding new return values. Currently only -EOPNOTSUPP
+>> and -ENOMEM are expected as errors.
+>>
+>> However, changing the conventions would mean revisiting the LSMs code
+>> and ensuring that they follow the new conventions.
+>>
+>> I would be more in favor of not touching it.
+> Casey, Paul, any comment?
 
-syzbot found the following issue on:
+I don't see value in adding -ENODATA as a value special to
+the infrastructure. What would the infrastructure do differently?
+The use of -EOPNOTSUPP isn't consistent throughout, and the amount
+of "correctness" you get by returning -ENODATA is really small.
 
-HEAD commit:    9e46a7996732 Add linux-next specific files for 20221125
-git tree:       linux-next
-console output: https://syzkaller.appspot.com/x/log.txt?x=12c4ff75880000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=11e19c740a0b2926
-dashboard link: https://syzkaller.appspot.com/bug?extid=d43f346675e449548021
-compiler:       gcc (Debian 10.2.1-6) 10.2.1 20210110, GNU ld (GNU Binutils for Debian) 2.35.2
-
-Unfortunately, I don't have any reproducer for this issue yet.
-
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/758d818cf966/disk-9e46a799.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/f7c8696b40a5/vmlinux-9e46a799.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/810f9750b87f/bzImage-9e46a799.xz
-
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+d43f346675e449548021@syzkaller.appspotmail.com
-
-------------[ cut here ]------------
-WARNING: CPU: 1 PID: 28237 at fs/reiserfs/journal.c:3395 journal_end+0x2da/0x330 fs/reiserfs/journal.c:3395
-Modules linked in:
-CPU: 0 PID: 28237 Comm: syz-executor.0 Not tainted 6.1.0-rc6-next-20221125-syzkaller #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 10/26/2022
-RIP: 0010:journal_end+0x2da/0x330 fs/reiserfs/journal.c:3395
-Code: ff 4c 89 e7 e8 17 80 b5 ff e9 c0 fd ff ff 4c 89 e7 e8 aa 80 b5 ff e9 01 ff ff ff e8 00 80 b5 ff e9 3a ff ff ff e8 36 5e 67 ff <0f> 0b 41 bc fb ff ff ff e9 ef fe ff ff e8 04 80 b5 ff e9 4c fd ff
-RSP: 0018:ffffc9000367fb40 EFLAGS: 00010212
-RAX: 0000000000029f05 RBX: 0000000000000000 RCX: ffffc9000f945000
-RDX: 0000000000040000 RSI: ffffffff82196b8a RDI: 0000000000000005
-RBP: ffffc9000367fbb8 R08: 0000000000000005 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000000 R12: ffffc9000367fbcc
-R13: 0000000000000001 R14: ffff888072d58ef8 R15: ffffc9000367fbb8
-FS:  00007f6730b9f700(0000) GS:ffff8880b9800000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 0000555557391848 CR3: 00000000175c7000 CR4: 00000000003506f0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
- <TASK>
- reiserfs_truncate_file+0x1c0/0xee0 fs/reiserfs/inode.c:2311
- reiserfs_setattr+0xed3/0x1460 fs/reiserfs/inode.c:3395
- notify_change+0xca7/0x1420 fs/attr.c:482
- do_truncate+0x143/0x200 fs/open.c:65
- do_sys_ftruncate+0x51f/0x710 fs/open.c:193
- do_syscall_x64 arch/x86/entry/common.c:50 [inline]
- do_syscall_64+0x39/0xb0 arch/x86/entry/common.c:80
- entry_SYSCALL_64_after_hwframe+0x63/0xcd
-RIP: 0033:0x7f672fe8c0d9
-Code: 28 00 00 00 75 05 48 83 c4 28 c3 e8 f1 19 00 00 90 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b8 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007f6730b9f168 EFLAGS: 00000246 ORIG_RAX: 000000000000004d
-RAX: ffffffffffffffda RBX: 00007f672ffac120 RCX: 00007f672fe8c0d9
-RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000000000004
-RBP: 00007f672fee7ae9 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
-R13: 00007ffe43a9deef R14: 00007f6730b9f300 R15: 0000000000022000
- </TASK>
-
-
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+>
+>>>> +               /*
+>>>> +                * As the number of xattrs reserved by LSMs is not directly
+>>>> +                * available, directly use the total number blob_sizes.lbs_xattr
+>>>> +                * to keep the code simple, while being not the most efficient
+>>>> +                * way.
+>>>> +                */
+>>>> +               ret = security_check_compact_filled_xattrs(new_xattrs,
+>>>> +                                                          blob_sizes.lbs_xattr,
+>>>> +                                                          &num_filled_xattrs);
+>>>> +               if (ret < 0) {
+>>>> +                       ret = -ENOMEM;
+>>>> +                       goto out;
+>>>> +               }
+>>>> +       }
+>>>> +
+>>>> +       if (!num_filled_xattrs)
+>>>>                 goto out;
+>>>>  
+>>>> -       evm_xattr = lsm_xattr + 1;
+>>>> -       ret = evm_inode_init_security(inode, lsm_xattr, evm_xattr);
+>>>> +       ret = evm_inode_init_security(inode, new_xattrs,
+>>>> +                                     new_xattrs + num_filled_xattrs);
+>>>>         if (ret)
+>>>>                 goto out;
+>>>>         ret = initxattrs(inode, new_xattrs, fs_data);
+>>>>  out:
+>>>>         for (xattr = new_xattrs; xattr->value != NULL; xattr++)
+>>>>                 kfree(xattr->value);
+>>>> +       kfree(new_xattrs);
+>>>>         return (ret == -EOPNOTSUPP) ? 0 : ret;
+>>>>  }
+>>> b
+>
