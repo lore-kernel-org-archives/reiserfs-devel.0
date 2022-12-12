@@ -1,7 +1,7 @@
-From: syzbot <syzbot+9b9bbfea68487857fb9c@syzkaller.appspotmail.com>
-Subject: [syzbot] possible deadlock in fs_reclaim_acquire (4)
-Date: Tue, 06 Dec 2022 08:13:56 -0800
-Message-ID: <00000000000044198805ef2b17cb@google.com>
+From: syzbot <syzbot+ff866d16791d4984b3c7@syzkaller.appspotmail.com>
+Subject: [syzbot] possible deadlock in do_page_mkwrite
+Date: Sun, 11 Dec 2022 23:03:03 -0800
+Message-ID: <00000000000032654605ef9c1846@google.com>
 Mime-Version: 1.0
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
 List-ID: <reiserfs-devel.vger.kernel.org>
@@ -13,195 +13,155 @@ Hello,
 
 syzbot found the following issue on:
 
-HEAD commit:    a4412fdd49dc error-injection: Add prompt for function erro..
+HEAD commit:    296a7b7eb792 Merge tag 'for-linus' of git://git.armlinux.o..
 git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=1418c55b880000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=4aa2a38f1d88bd1c
-dashboard link: https://syzkaller.appspot.com/bug?extid=9b9bbfea68487857fb9c
-compiler:       gcc (Debian 10.2.1-6) 10.2.1 20210110, GNU ld (GNU Binutils for Debian) 2.35.2
+console output: https://syzkaller.appspot.com/x/log.txt?x=17a4643f880000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=d58e7fe7f9cf5e24
+dashboard link: https://syzkaller.appspot.com/bug?extid=ff866d16791d4984b3c7
+compiler:       Debian clang version 13.0.1-++20220126092033+75e33f71c2da-1~exp1~20220126212112.63, GNU ld (GNU Binutils for Debian) 2.35.2
 
 Unfortunately, I don't have any reproducer for this issue yet.
 
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/e884bd14818f/disk-296a7b7e.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/9d1ad945db61/vmlinux-296a7b7e.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/1295336774a6/bzImage-296a7b7e.xz
+
 IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+9b9bbfea68487857fb9c@syzkaller.appspotmail.com
+Reported-by: syzbot+ff866d16791d4984b3c7@syzkaller.appspotmail.com
 
 ======================================================
 WARNING: possible circular locking dependency detected
-6.1.0-rc7-syzkaller-00123-ga4412fdd49dc #0 Not tainted
+6.1.0-rc8-syzkaller-00154-g296a7b7eb792 #0 Not tainted
 ------------------------------------------------------
-klogd/3144 is trying to acquire lock:
-ffff88801ef6d090 (&sbi->lock){+.+.}-{3:3}, at: reiserfs_write_lock+0x79/0x100 fs/reiserfs/lock.c:27
+syz-executor.4/7705 is trying to acquire lock:
+ffff88807ba26090 (&sbi->lock){+.+.}-{3:3}, at: reiserfs_write_lock+0x77/0xd0 fs/reiserfs/lock.c:27
 
 but task is already holding lock:
-ffffffff8c6c9a40 (fs_reclaim){+.+.}-{0:0}, at: __perform_reclaim mm/page_alloc.c:4755 [inline]
-ffffffff8c6c9a40 (fs_reclaim){+.+.}-{0:0}, at: __alloc_pages_direct_reclaim mm/page_alloc.c:4780 [inline]
-ffffffff8c6c9a40 (fs_reclaim){+.+.}-{0:0}, at: __alloc_pages_slowpath.constprop.0+0x808/0x23d0 mm/page_alloc.c:5186
+ffff88807b57c558 (sb_pagefaults#3){.+.+}-{0:0}, at: do_page_mkwrite+0x19e/0x5e0 mm/memory.c:2977
 
 which lock already depends on the new lock.
 
 
 the existing dependency chain (in reverse order) is:
 
--> #1 (fs_reclaim){+.+.}-{0:0}:
-       __fs_reclaim_acquire mm/page_alloc.c:4682 [inline]
-       fs_reclaim_acquire+0x11d/0x160 mm/page_alloc.c:4696
-       might_alloc include/linux/sched/mm.h:271 [inline]
-       slab_pre_alloc_hook mm/slab.h:710 [inline]
-       slab_alloc_node mm/slab.c:3241 [inline]
-       slab_alloc mm/slab.c:3265 [inline]
-       __kmem_cache_alloc_lru mm/slab.c:3442 [inline]
-       kmem_cache_alloc_lru+0x3e/0x7b0 mm/slab.c:3468
-       __d_alloc+0x32/0x980 fs/dcache.c:1769
-       d_alloc_anon fs/dcache.c:1868 [inline]
-       d_make_root+0x49/0x110 fs/dcache.c:2069
-       reiserfs_fill_super+0x12eb/0x2e90 fs/reiserfs/super.c:2083
-       mount_bdev+0x351/0x410 fs/super.c:1401
-       legacy_get_tree+0x109/0x220 fs/fs_context.c:610
-       vfs_get_tree+0x8d/0x2f0 fs/super.c:1531
-       do_new_mount fs/namespace.c:3040 [inline]
-       path_mount+0x132a/0x1e20 fs/namespace.c:3370
-       do_mount fs/namespace.c:3383 [inline]
-       __do_sys_mount fs/namespace.c:3591 [inline]
-       __se_sys_mount fs/namespace.c:3568 [inline]
-       __x64_sys_mount+0x283/0x300 fs/namespace.c:3568
+-> #2 (sb_pagefaults#3){.+.+}-{0:0}:
+       lock_acquire+0x182/0x3c0 kernel/locking/lockdep.c:5668
+       percpu_down_read include/linux/percpu-rwsem.h:51 [inline]
+       __sb_start_write include/linux/fs.h:1826 [inline]
+       sb_start_pagefault include/linux/fs.h:1930 [inline]
+       filemap_page_mkwrite+0x15c/0x7a0 mm/filemap.c:3420
+       do_page_mkwrite+0x19e/0x5e0 mm/memory.c:2977
+       do_shared_fault mm/memory.c:4618 [inline]
+       do_fault mm/memory.c:4686 [inline]
+       handle_pte_fault mm/memory.c:4954 [inline]
+       __handle_mm_fault mm/memory.c:5096 [inline]
+       handle_mm_fault+0x1c63/0x3630 mm/memory.c:5217
+       do_user_addr_fault+0x69b/0xcb0 arch/x86/mm/fault.c:1428
+       handle_page_fault arch/x86/mm/fault.c:1519 [inline]
+       exc_page_fault+0x7a/0x110 arch/x86/mm/fault.c:1575
+       asm_exc_page_fault+0x22/0x30 arch/x86/include/asm/idtentry.h:570
+
+-> #1 (&mm->mmap_lock#2){++++}-{3:3}:
+       lock_acquire+0x182/0x3c0 kernel/locking/lockdep.c:5668
+       __might_fault+0xb2/0x110 mm/memory.c:5645
+       reiserfs_ioctl+0x11c/0x340 fs/reiserfs/ioctl.c:96
+       vfs_ioctl fs/ioctl.c:51 [inline]
+       __do_sys_ioctl fs/ioctl.c:870 [inline]
+       __se_sys_ioctl+0xfb/0x170 fs/ioctl.c:856
        do_syscall_x64 arch/x86/entry/common.c:50 [inline]
-       do_syscall_64+0x39/0xb0 arch/x86/entry/common.c:80
+       do_syscall_64+0x3d/0xb0 arch/x86/entry/common.c:80
        entry_SYSCALL_64_after_hwframe+0x63/0xcd
 
 -> #0 (&sbi->lock){+.+.}-{3:3}:
        check_prev_add kernel/locking/lockdep.c:3097 [inline]
        check_prevs_add kernel/locking/lockdep.c:3216 [inline]
-       validate_chain kernel/locking/lockdep.c:3831 [inline]
-       __lock_acquire+0x2a43/0x56d0 kernel/locking/lockdep.c:5055
-       lock_acquire kernel/locking/lockdep.c:5668 [inline]
-       lock_acquire+0x1e3/0x630 kernel/locking/lockdep.c:5633
-       __mutex_lock_common kernel/locking/mutex.c:603 [inline]
-       __mutex_lock+0x12f/0x1360 kernel/locking/mutex.c:747
-       reiserfs_write_lock+0x79/0x100 fs/reiserfs/lock.c:27
-       reiserfs_dirty_inode+0xd2/0x260 fs/reiserfs/super.c:704
-       __mark_inode_dirty+0x247/0x11e0 fs/fs-writeback.c:2408
-       mark_inode_dirty_sync include/linux/fs.h:2480 [inline]
-       iput.part.0+0x57/0x880 fs/inode.c:1770
-       iput+0x5c/0x80 fs/inode.c:1763
-       dentry_unlink_inode+0x2b1/0x460 fs/dcache.c:401
-       __dentry_kill+0x3c0/0x640 fs/dcache.c:607
-       shrink_dentry_list+0x240/0x800 fs/dcache.c:1201
-       prune_dcache_sb+0xeb/0x150 fs/dcache.c:1282
-       super_cache_scan+0x33a/0x590 fs/super.c:104
-       do_shrink_slab+0x464/0xce0 mm/vmscan.c:842
-       shrink_slab_memcg mm/vmscan.c:911 [inline]
-       shrink_slab+0x388/0x660 mm/vmscan.c:990
-       shrink_node_memcgs mm/vmscan.c:6112 [inline]
-       shrink_node+0x93d/0x1f30 mm/vmscan.c:6141
-       shrink_zones mm/vmscan.c:6379 [inline]
-       do_try_to_free_pages+0x3b4/0x17a0 mm/vmscan.c:6441
-       try_to_free_pages+0x2e5/0x960 mm/vmscan.c:6676
-       __perform_reclaim mm/page_alloc.c:4758 [inline]
-       __alloc_pages_direct_reclaim mm/page_alloc.c:4780 [inline]
-       __alloc_pages_slowpath.constprop.0+0x8b6/0x23d0 mm/page_alloc.c:5186
-       __alloc_pages+0x4aa/0x5b0 mm/page_alloc.c:5571
-       alloc_pages+0x1aa/0x270 mm/mempolicy.c:2285
-       folio_alloc+0x20/0x70 mm/mempolicy.c:2295
-       filemap_alloc_folio+0x30a/0x3a0 mm/filemap.c:971
-       __filemap_get_folio+0x32c/0xd90 mm/filemap.c:1965
-       filemap_fault+0x15aa/0x2400 mm/filemap.c:3145
-       __do_fault+0x107/0x600 mm/memory.c:4203
-       do_read_fault mm/memory.c:4554 [inline]
-       do_fault mm/memory.c:4683 [inline]
-       handle_pte_fault mm/memory.c:4955 [inline]
-       __handle_mm_fault+0x2184/0x3a40 mm/memory.c:5097
-       handle_mm_fault+0x1cc/0x780 mm/memory.c:5218
-       do_user_addr_fault+0x475/0x1210 arch/x86/mm/fault.c:1428
+       validate_chain+0x1898/0x6ae0 kernel/locking/lockdep.c:3831
+       __lock_acquire+0x1292/0x1f60 kernel/locking/lockdep.c:5055
+       lock_acquire+0x182/0x3c0 kernel/locking/lockdep.c:5668
+       __mutex_lock_common+0x1bd/0x26e0 kernel/locking/mutex.c:603
+       __mutex_lock kernel/locking/mutex.c:747 [inline]
+       mutex_lock_nested+0x17/0x20 kernel/locking/mutex.c:799
+       reiserfs_write_lock+0x77/0xd0 fs/reiserfs/lock.c:27
+       reiserfs_dirty_inode+0xdf/0x230 fs/reiserfs/super.c:704
+       __mark_inode_dirty+0x1e7/0x600 fs/fs-writeback.c:2408
+       generic_update_time fs/inode.c:1859 [inline]
+       inode_update_time fs/inode.c:1872 [inline]
+       __file_update_time fs/inode.c:2088 [inline]
+       file_update_time+0x551/0x5d0 fs/inode.c:2119
+       filemap_page_mkwrite+0x248/0x7a0 mm/filemap.c:3421
+       do_page_mkwrite+0x19e/0x5e0 mm/memory.c:2977
+       wp_page_shared+0x15e/0x380 mm/memory.c:3323
+       handle_pte_fault mm/memory.c:4972 [inline]
+       __handle_mm_fault mm/memory.c:5096 [inline]
+       handle_mm_fault+0x1e72/0x3630 mm/memory.c:5217
+       do_user_addr_fault+0x69b/0xcb0 arch/x86/mm/fault.c:1428
        handle_page_fault arch/x86/mm/fault.c:1519 [inline]
-       exc_page_fault+0x98/0x170 arch/x86/mm/fault.c:1575
-       asm_exc_page_fault+0x26/0x30 arch/x86/include/asm/idtentry.h:570
+       exc_page_fault+0x7a/0x110 arch/x86/mm/fault.c:1575
+       asm_exc_page_fault+0x22/0x30 arch/x86/include/asm/idtentry.h:570
 
 other info that might help us debug this:
+
+Chain exists of:
+  &sbi->lock --> &mm->mmap_lock#2 --> sb_pagefaults#3
 
  Possible unsafe locking scenario:
 
        CPU0                    CPU1
        ----                    ----
-  lock(fs_reclaim);
-                               lock(&sbi->lock);
-                               lock(fs_reclaim);
+  lock(sb_pagefaults#3);
+                               lock(&mm->mmap_lock#2);
+                               lock(sb_pagefaults#3);
   lock(&sbi->lock);
 
  *** DEADLOCK ***
 
-4 locks held by klogd/3144:
- #0: ffff8880210a28a0 (mapping.invalidate_lock){++++}-{3:3}, at: filemap_invalidate_lock_shared include/linux/fs.h:811 [inline]
- #0: ffff8880210a28a0 (mapping.invalidate_lock){++++}-{3:3}, at: filemap_fault+0x1564/0x2400 mm/filemap.c:3142
- #1: ffffffff8c6c9a40 (fs_reclaim){+.+.}-{0:0}, at: __perform_reclaim mm/page_alloc.c:4755 [inline]
- #1: ffffffff8c6c9a40 (fs_reclaim){+.+.}-{0:0}, at: __alloc_pages_direct_reclaim mm/page_alloc.c:4780 [inline]
- #1: ffffffff8c6c9a40 (fs_reclaim){+.+.}-{0:0}, at: __alloc_pages_slowpath.constprop.0+0x808/0x23d0 mm/page_alloc.c:5186
- #2: ffffffff8c688470 (shrinker_rwsem){++++}-{3:3}, at: shrink_slab_memcg mm/vmscan.c:884 [inline]
- #2: ffffffff8c688470 (shrinker_rwsem){++++}-{3:3}, at: shrink_slab+0x2a0/0x660 mm/vmscan.c:990
- #3: ffff88801c1200e0 (&type->s_umount_key#63){++++}-{3:3}, at: trylock_super fs/super.c:415 [inline]
- #3: ffff88801c1200e0 (&type->s_umount_key#63){++++}-{3:3}, at: super_cache_scan+0x70/0x590 fs/super.c:79
+2 locks held by syz-executor.4/7705:
+ #0: ffff888017d7f558 (&mm->mmap_lock#2){++++}-{3:3}, at: mmap_read_trylock include/linux/mmap_lock.h:136 [inline]
+ #0: ffff888017d7f558 (&mm->mmap_lock#2){++++}-{3:3}, at: do_user_addr_fault+0x2e2/0xcb0 arch/x86/mm/fault.c:1369
+ #1: ffff88807b57c558 (sb_pagefaults#3){.+.+}-{0:0}, at: do_page_mkwrite+0x19e/0x5e0 mm/memory.c:2977
 
 stack backtrace:
-CPU: 2 PID: 3144 Comm: klogd Not tainted 6.1.0-rc7-syzkaller-00123-ga4412fdd49dc #0
-Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.14.0-2 04/01/2014
+CPU: 0 PID: 7705 Comm: syz-executor.4 Not tainted 6.1.0-rc8-syzkaller-00154-g296a7b7eb792 #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 10/26/2022
 Call Trace:
  <TASK>
  __dump_stack lib/dump_stack.c:88 [inline]
- dump_stack_lvl+0xd1/0x138 lib/dump_stack.c:106
- check_noncircular+0x25f/0x2e0 kernel/locking/lockdep.c:2177
+ dump_stack_lvl+0x1b1/0x28e lib/dump_stack.c:106
+ check_noncircular+0x2cc/0x390 kernel/locking/lockdep.c:2177
  check_prev_add kernel/locking/lockdep.c:3097 [inline]
  check_prevs_add kernel/locking/lockdep.c:3216 [inline]
- validate_chain kernel/locking/lockdep.c:3831 [inline]
- __lock_acquire+0x2a43/0x56d0 kernel/locking/lockdep.c:5055
- lock_acquire kernel/locking/lockdep.c:5668 [inline]
- lock_acquire+0x1e3/0x630 kernel/locking/lockdep.c:5633
- __mutex_lock_common kernel/locking/mutex.c:603 [inline]
- __mutex_lock+0x12f/0x1360 kernel/locking/mutex.c:747
- reiserfs_write_lock+0x79/0x100 fs/reiserfs/lock.c:27
- reiserfs_dirty_inode+0xd2/0x260 fs/reiserfs/super.c:704
- __mark_inode_dirty+0x247/0x11e0 fs/fs-writeback.c:2408
- mark_inode_dirty_sync include/linux/fs.h:2480 [inline]
- iput.part.0+0x57/0x880 fs/inode.c:1770
- iput+0x5c/0x80 fs/inode.c:1763
- dentry_unlink_inode+0x2b1/0x460 fs/dcache.c:401
- __dentry_kill+0x3c0/0x640 fs/dcache.c:607
- shrink_dentry_list+0x240/0x800 fs/dcache.c:1201
- prune_dcache_sb+0xeb/0x150 fs/dcache.c:1282
- super_cache_scan+0x33a/0x590 fs/super.c:104
- do_shrink_slab+0x464/0xce0 mm/vmscan.c:842
- shrink_slab_memcg mm/vmscan.c:911 [inline]
- shrink_slab+0x388/0x660 mm/vmscan.c:990
- shrink_node_memcgs mm/vmscan.c:6112 [inline]
- shrink_node+0x93d/0x1f30 mm/vmscan.c:6141
- shrink_zones mm/vmscan.c:6379 [inline]
- do_try_to_free_pages+0x3b4/0x17a0 mm/vmscan.c:6441
- try_to_free_pages+0x2e5/0x960 mm/vmscan.c:6676
- __perform_reclaim mm/page_alloc.c:4758 [inline]
- __alloc_pages_direct_reclaim mm/page_alloc.c:4780 [inline]
- __alloc_pages_slowpath.constprop.0+0x8b6/0x23d0 mm/page_alloc.c:5186
- __alloc_pages+0x4aa/0x5b0 mm/page_alloc.c:5571
- alloc_pages+0x1aa/0x270 mm/mempolicy.c:2285
- folio_alloc+0x20/0x70 mm/mempolicy.c:2295
- filemap_alloc_folio+0x30a/0x3a0 mm/filemap.c:971
- __filemap_get_folio+0x32c/0xd90 mm/filemap.c:1965
- filemap_fault+0x15aa/0x2400 mm/filemap.c:3145
- __do_fault+0x107/0x600 mm/memory.c:4203
- do_read_fault mm/memory.c:4554 [inline]
- do_fault mm/memory.c:4683 [inline]
- handle_pte_fault mm/memory.c:4955 [inline]
- __handle_mm_fault+0x2184/0x3a40 mm/memory.c:5097
- handle_mm_fault+0x1cc/0x780 mm/memory.c:5218
- do_user_addr_fault+0x475/0x1210 arch/x86/mm/fault.c:1428
+ validate_chain+0x1898/0x6ae0 kernel/locking/lockdep.c:3831
+ __lock_acquire+0x1292/0x1f60 kernel/locking/lockdep.c:5055
+ lock_acquire+0x182/0x3c0 kernel/locking/lockdep.c:5668
+ __mutex_lock_common+0x1bd/0x26e0 kernel/locking/mutex.c:603
+ __mutex_lock kernel/locking/mutex.c:747 [inline]
+ mutex_lock_nested+0x17/0x20 kernel/locking/mutex.c:799
+ reiserfs_write_lock+0x77/0xd0 fs/reiserfs/lock.c:27
+ reiserfs_dirty_inode+0xdf/0x230 fs/reiserfs/super.c:704
+ __mark_inode_dirty+0x1e7/0x600 fs/fs-writeback.c:2408
+ generic_update_time fs/inode.c:1859 [inline]
+ inode_update_time fs/inode.c:1872 [inline]
+ __file_update_time fs/inode.c:2088 [inline]
+ file_update_time+0x551/0x5d0 fs/inode.c:2119
+ filemap_page_mkwrite+0x248/0x7a0 mm/filemap.c:3421
+ do_page_mkwrite+0x19e/0x5e0 mm/memory.c:2977
+ wp_page_shared+0x15e/0x380 mm/memory.c:3323
+ handle_pte_fault mm/memory.c:4972 [inline]
+ __handle_mm_fault mm/memory.c:5096 [inline]
+ handle_mm_fault+0x1e72/0x3630 mm/memory.c:5217
+ do_user_addr_fault+0x69b/0xcb0 arch/x86/mm/fault.c:1428
  handle_page_fault arch/x86/mm/fault.c:1519 [inline]
- exc_page_fault+0x98/0x170 arch/x86/mm/fault.c:1575
- asm_exc_page_fault+0x26/0x30 arch/x86/include/asm/idtentry.h:570
-RIP: 0033:0x7fb9df1a0df1
-Code: Unable to access opcode bytes at 0x7fb9df1a0dc7.
-RSP: 002b:00007ffd6af99d40 EFLAGS: 00010206
-RAX: 0000000000000003 RBX: 0000000000000000 RCX: 0000000000000006
-RDX: 00007fb9df2626c6 RSI: 00007fb9df26423e RDI: 00007fb9df2626c6
-RBP: 0000559d3192c2e4 R08: 0000000000000001 R09: 00007ffd6af99e5f
-R10: 0000000000000000 R11: 0000559d3192c2e4 R12: 00000000ffffffff
-R13: 0000000000000000 R14: 00007fb9df26423e R15: 0000000000000000
+ exc_page_fault+0x7a/0x110 arch/x86/mm/fault.c:1575
+ asm_exc_page_fault+0x22/0x30 arch/x86/include/asm/idtentry.h:570
+RIP: 0033:0x7f2f83486b3f
+Code: d0 eb 0b 0f 1f 84 00 00 00 00 00 48 89 f8 48 83 fa 10 0f 82 da 00 00 00 48 83 fa 20 0f 87 1f 01 00 00 0f 10 06 0f 10 4c 16 f0 <0f> 11 07 0f 11 4c 17 f0 c3 0f 1f 84 00 00 00 00 00 48 39 d1 0f 82
+RSP: 002b:00007ffd6e289b38 EFLAGS: 00010287
+RAX: 0000000020000080 RBX: 0000000000000000 RCX: 00007f2f83000000
+RDX: 0000000000000013 RSI: 00007f2f83001548 RDI: 0000000020000080
+RBP: 00007ffd6e289bf8 R08: 00007f2f83400000 R09: 00007f2f83000000
+R10: 00007f2f83001530 R11: 0000000000000246 R12: 000000000004b63d
+R13: 00007ffd6e289c20 R14: 00007f2f835abf80 R15: 0000000000000032
  </TASK>
 
 
