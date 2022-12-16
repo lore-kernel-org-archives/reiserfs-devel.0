@@ -1,7 +1,7 @@
 From: "Matthew Wilcox (Oracle)" <willy@infradead.org>
-Subject: [PATCH 6/8] reiserfs: Convert map_block_for_writepage() to use kmap_local_folio()
-Date: Fri, 16 Dec 2022 20:53:45 +0000
-Message-ID: <20221216205348.3781217-7-willy@infradead.org>
+Subject: [PATCH 4/8] reiserfs: Convert reiserfs_delete_item() to use kmap_local_folio()
+Date: Fri, 16 Dec 2022 20:53:43 +0000
+Message-ID: <20221216205348.3781217-5-willy@infradead.org>
 References: <20221216205348.3781217-1-willy@infradead.org>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -10,66 +10,47 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:MIME-Version:
         References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:
         Content-Type:Content-ID:Content-Description;
-        bh=+76OCwXauKS5IMcODdPmW9Pj8wgbgGmSARwzkRMnoeA=; b=kOrwVUNNcHVvXRjI/2ixcYizSv
-        X1zaI9sZ6+JN9+pmVOE3W+Vl87jZjb7GM0S9LC7TJ/eBREm47jpbxaHg/6QxQPA6CerFN3/qCxL8M
-        CoOk/8cmkreYMejYssnA0mUuBjmcpboXmKhs+IsJg0MQnOdJBVwYD02MRm33c2rjKfxk3odETw9xN
-        uJIHQPzIio3MtyuXvGTQkXJc+DPxXy/ku5+RUa4ouwoDvisjSeP4P6syWPSVPqaTy/erGLKbzPdw2
-        8BGTlwTQzFI1OLjWRwBLVMMAvjA5jCjgogVJVFptIBJQvphwEu62DGe7iPDbVxUM0awHOMvxU4Pf7
-        4h64kaoA==;
+        bh=Axde40IIYnLKGgHM+KLoKUK+4c/QX0KAEOS8G4YPE4k=; b=uafEFe2OC9tj5Bfbw7SW+6Q9VS
+        qUrULM2Nu6G2v9FnuwFtal6ZWyOdUi4TAm77ZhTRrW8Y9SM2ZW6iL90wbrt2BIAagseKjOE7bIO/L
+        FoAA97k1Twq/d4KOarYci6kYF6wVNC9mHfVA2vI5OQJToAIbwlf75w9mi0rELiMTBhTJDMnNnlmxp
+        1NdKtBiYdqRp7NeG63PjGe1ZGHwN7+O4pDHOHMZ8GFT7bMQBecrVpXX3luji5DOPqYF9yyIk7wPmR
+        PJS5vVTCEOdgmta/CCsg0apK1hY6e+MxRahh1Z/ngZaQp/UEzKfabdxfYpMFS/5xyjD629WqrG+aZ
+        WzkBO6kw==;
 In-Reply-To: <20221216205348.3781217-1-willy@infradead.org>
 List-ID: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
 To: reiserfs-devel@vger.kernel.org
 Cc: "Matthew Wilcox (Oracle)" <willy@infradead.org>, Jan Kara <jack@suse.cz>, linux-fsdevel@vger.kernel.org, "Fabio M. De Francesco" <fmdefrancesco@gmail.com>, Ira Weiny <ira.weiny@intel.com>
 
-Removes uses of kmap() and b_page.
+kmap_atomic() is deprecated, and so is bh->b_page.
 
 Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
 ---
- fs/reiserfs/inode.c | 9 ++++-----
- 1 file changed, 4 insertions(+), 5 deletions(-)
+ fs/reiserfs/stree.c | 9 +++++----
+ 1 file changed, 5 insertions(+), 4 deletions(-)
 
-diff --git a/fs/reiserfs/inode.c b/fs/reiserfs/inode.c
-index 0ca2d439510a..b79848111957 100644
---- a/fs/reiserfs/inode.c
-+++ b/fs/reiserfs/inode.c
-@@ -2360,6 +2360,7 @@ static int map_block_for_writepage(struct inode *inode,
- 	struct item_head tmp_ih;
- 	struct item_head *ih;
- 	struct buffer_head *bh;
-+	char *p;
- 	__le32 *item;
- 	struct cpu_key key;
- 	INITIALIZE_PATH(path);
-@@ -2382,7 +2383,8 @@ static int map_block_for_writepage(struct inode *inode,
- 		return -EIO;
+diff --git a/fs/reiserfs/stree.c b/fs/reiserfs/stree.c
+index 84c12a1947b2..309c61bd90e0 100644
+--- a/fs/reiserfs/stree.c
++++ b/fs/reiserfs/stree.c
+@@ -1359,12 +1359,13 @@ int reiserfs_delete_item(struct reiserfs_transaction_handle *th,
+ 		 * -clm
+ 		 */
+ 
+-		data = kmap_atomic(un_bh->b_page);
+-		off = ((le_ih_k_offset(&s_ih) - 1) & (PAGE_SIZE - 1));
+-		memcpy(data + off,
++		off = offset_in_folio(un_bh->b_folio,
++					le_ih_k_offset(&s_ih) - 1);
++		data = kmap_local_folio(un_bh->b_folio, off);
++		memcpy(data,
+ 		       ih_item_body(PATH_PLAST_BUFFER(path), &s_ih),
+ 		       ret_value);
+-		kunmap_atomic(data);
++		kunmap_local(data);
  	}
  
--	kmap(bh_result->b_page);
-+	p = kmap_local_folio(bh_result->b_folio,
-+			offset_in_folio(bh_result->b_folio, byte_offset - 1));
- start_over:
- 	reiserfs_write_lock(inode->i_sb);
- 	make_cpu_key(&key, inode, byte_offset, TYPE_ANY, 3);
-@@ -2413,9 +2415,6 @@ static int map_block_for_writepage(struct inode *inode,
- 		set_block_dev_mapped(bh_result,
- 				     get_block_num(item, pos_in_item), inode);
- 	} else if (is_direct_le_ih(ih)) {
--		char *p;
--		p = page_address(bh_result->b_page);
--		p += (byte_offset - 1) & (PAGE_SIZE - 1);
- 		copy_size = ih_item_len(ih) - pos_in_item;
- 
- 		fs_gen = get_generation(inode->i_sb);
-@@ -2491,7 +2490,7 @@ static int map_block_for_writepage(struct inode *inode,
- 			}
- 		}
- 	}
--	kunmap(bh_result->b_page);
-+	kunmap_local(p);
- 
- 	if (!retval && buffer_mapped(bh_result) && bh_result->b_blocknr == 0) {
- 		/*
+ 	/* Perform balancing after all resources have been collected at once. */
 -- 
 2.35.1
 
