@@ -1,102 +1,68 @@
-From: "Fabio M. De Francesco" <fmdefrancesco@gmail.com>
-Subject: Re: [PATCH 0/8] Convert reiserfs from b_page to b_folio
-Date: Sat, 17 Dec 2022 21:43:11 +0100
-Message-ID: <11295613.F0gNSz5aLb@suse>
+From: Ira Weiny <ira.weiny@intel.com>
+Subject: Re: [PATCH 3/8] reiserfs: Convert direct2indirect() to call
+ folio_zero_range()
+Date: Sat, 17 Dec 2022 13:08:49 -0800
+Message-ID: <Y54v4TYAT/nGd8WA@iweiny-mobl>
 References: <20221216205348.3781217-1-willy@infradead.org>
+ <20221216205348.3781217-4-willy@infradead.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="us-ascii"
 Return-path: <linux-fsdevel-owner@vger.kernel.org>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=AU2IHu9IHMCR1i1u9LEoX9i/onRwkHb2knf00zrEks4=;
-        b=GCR5sXlcaFKQMc4NLH4mTaeumKn6omx6zF4b3X1iJAolWtsv6akZkBhaS/+8e2U5gp
-         kDsdkyIc6DN2OXHSpjMhKMFaBrzxyvm1vj9wVrghsu5aUWshsN2sx7zYLXWQofplaROy
-         m6WZqjRom1vzLPgb1MdZj6RBVjo8m1mpQ/RKvbgqac+FcMXF0VJETpqox6Frw1oVp+rk
-         AU3xddx/oB0e9Y2kqkdiXKKGm7Dd9wWeAuppLjUef7dmFaWrvI/ERqYqjdhPr+deM4K6
-         bHEgsePwoYWpNkXCt3yFGTjqt4EGs+REeXIMvTRakv7zCLwuGXxNS9OECyob4Q6grnK4
-         H3Jw==
-In-Reply-To: <20221216205348.3781217-1-willy@infradead.org>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1671311341; x=1702847341;
+  h=date:from:to:cc:subject:message-id:references:
+   in-reply-to:mime-version;
+  bh=dgtx/CX3T7J7wIOTm1h0hsUaAGsN9FOjFPXuQGLgHgQ=;
+  b=WvVKeBo+HUwuOtwnQ1u9oBECbki5ogu5JRQgnnXtXjfpgqMkw+9BrEmr
+   0phG1Bru4OCwwZl0pbDCy6GlEm9RxPQHAoM9SoSSKJuYf4VNKVamcGhJ0
+   mode+0XIndC4HVmex0hTG/MP1b0q/TZEl+eJ4B49+QglFNxBUY6K3nIgZ
+   3kXFTF8SW66aYzIY669OtE1cvbF82kYXhm7KW/Fwq5X9FYSqws8tTF4vB
+   szPdEy8OzP1h86+B9gIOiko9o8ok3o/+b46nupvjRVSkXSIWnlXuH+ztv
+   BX/XrD/zDgyyHCyG13Pkk1d+cWzHECOos7iM9x7nFnHjiE/CgAkS+nbg7
+   g==;
+Content-Disposition: inline
+In-Reply-To: <20221216205348.3781217-4-willy@infradead.org>
 List-ID: <reiserfs-devel.vger.kernel.org>
+Content-Transfer-Encoding: 7bit
 To: "Matthew Wilcox (Oracle)" <willy@infradead.org>
-Cc: reiserfs-devel@vger.kernel.org, Jan Kara <jack@suse.cz>, linux-fsdevel@vger.kernel.org, Ira Weiny <ira.weiny@intel.com>
+Cc: reiserfs-devel@vger.kernel.org, Jan Kara <jack@suse.cz>, linux-fsdevel@vger.kernel.org, "Fabio M. De Francesco" <fmdefrancesco@gmail.com>
 
-On venerd=EC 16 dicembre 2022 21:53:39 CET Matthew Wilcox (Oracle) wrote:
-> These patches apply on top of
-> https://lore.kernel.org/linux-fsdevel/20221215214402.3522366-1-willy@infr=
-adead
-> .org/
->=20
-> The non-trivial ones mostly revolve around uses of kmap()/kmap_atomic(),
-> so review from the experts on those would be welcome.
+On Fri, Dec 16, 2022 at 08:53:42PM +0000, Matthew Wilcox (Oracle) wrote:
+> Remove this open-coded call to kmap()/memset()/kunmap() with the
+> higher-level abstraction folio_zero_range().
+> 
+> Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
 
-I took a quick look at your conversions and they made me recall that months=
-=20
-ago you converted to kmap_local_folio() a previous conversion from kmap() t=
-o=20
-kmap_local_page() in ext2_get_page(): commit 37ce0b319b287 ("ext2: Use a fo=
-lio=20
-in ext2_get_page()").
+LGTM
 
-So I just saw kmap_local_folio again. Unfortunately, because of my=20
-inexperience,  I'm not able to see why we should prefer the use of this=20
-function instead of kmap_local_page().
+Reviewed-by: Ira Weiny <ira.weiny@intel.com>
 
-Can you please tell me why and when we should prefer kmap_local_folio() in=
-=20
-those cases too where kmap_local_page() can work properly? I'm asking becau=
-se=20
-these days I'm converting other *_get_page() from kmap() (including the ser=
-ies=20
-to fs/ufs that I sent today).
-
-> If these all look
-> good to people, I can pass them off to Andrew for the 6.3 merge window.
->=20
-> Running xfstests against reiserfs gives me 313/701 failures before and
-> after this set of patches.
-
-It has happened several times to me too. Some patches of mine have failures=
-=20
-from xfstests whose amounts and types don't change with or without my chang=
-es.
-
-Several of them have already been merged. I guess that if they don't add=20
-further failures everything is alright.
-
-However, something is broken for sure... xfstests or the filesystems? :-/=20
-
-Thanks,
-
-=46abio
-
-> I don't have a huge amount of confidence
-> that we're really getting good coverage from that test run!
->=20
-> Matthew Wilcox (Oracle) (8):
->   reiserfs: use b_folio instead of b_page in some obvious cases
->   reiserfs: use kmap_local_folio() in _get_block_create_0()
->   reiserfs: Convert direct2indirect() to call folio_zero_range()
->   reiserfs: Convert reiserfs_delete_item() to use kmap_local_folio()
->   reiserfs: Convert do_journal_end() to use kmap_local_folio()
->   reiserfs: Convert map_block_for_writepage() to use kmap_local_folio()
->   reiserfs: Convert convert_tail_for_hole() to use folios
->   reiserfs: Use flush_dcache_folio() in reiserfs_quota_write()
->=20
->  fs/reiserfs/inode.c           | 73 +++++++++++++++++------------------
->  fs/reiserfs/journal.c         | 12 +++---
->  fs/reiserfs/prints.c          |  4 +-
->  fs/reiserfs/stree.c           |  9 +++--
->  fs/reiserfs/super.c           |  2 +-
->  fs/reiserfs/tail_conversion.c | 19 ++++-----
->  6 files changed, 59 insertions(+), 60 deletions(-)
->=20
-> --
+> ---
+>  fs/reiserfs/tail_conversion.c | 10 +++++-----
+>  1 file changed, 5 insertions(+), 5 deletions(-)
+> 
+> diff --git a/fs/reiserfs/tail_conversion.c b/fs/reiserfs/tail_conversion.c
+> index a61bca73c45f..ca36bb88b8b0 100644
+> --- a/fs/reiserfs/tail_conversion.c
+> +++ b/fs/reiserfs/tail_conversion.c
+> @@ -151,11 +151,11 @@ int direct2indirect(struct reiserfs_transaction_handle *th, struct inode *inode,
+>  	 * out the unused part of the block (it was not up to date before)
+>  	 */
+>  	if (up_to_date_bh) {
+> -		unsigned pgoff =
+> -		    (tail_offset + total_tail - 1) & (PAGE_SIZE - 1);
+> -		char *kaddr = kmap_atomic(up_to_date_bh->b_page);
+> -		memset(kaddr + pgoff, 0, blk_size - total_tail);
+> -		kunmap_atomic(kaddr);
+> +		size_t start = offset_in_folio(up_to_date_bh->b_folio,
+> +					(tail_offset + total_tail - 1));
+> +
+> +		folio_zero_range(up_to_date_bh->b_folio, start,
+> +				blk_size - total_tail);
+>  	}
+>  
+>  	REISERFS_I(inode)->i_first_direct_byte = U32_MAX;
+> -- 
 > 2.35.1
-
-
-
-
+> 
