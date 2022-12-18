@@ -1,81 +1,86 @@
 From: Ira Weiny <ira.weiny@intel.com>
-Subject: Re: [PATCH 5/8] reiserfs: Convert do_journal_end() to use
+Subject: Re: [PATCH 6/8] reiserfs: Convert map_block_for_writepage() to use
  kmap_local_folio()
-Date: Sat, 17 Dec 2022 15:52:50 -0800
-Message-ID: <Y55WUrzblTsw6FfQ@iweiny-mobl>
+Date: Sat, 17 Dec 2022 16:02:23 -0800
+Message-ID: <Y55YjyfVYasvNP+y@iweiny-mobl>
 References: <20221216205348.3781217-1-willy@infradead.org>
- <20221216205348.3781217-6-willy@infradead.org>
+ <20221216205348.3781217-7-willy@infradead.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1671321176; x=1702857176;
+  t=1671321749; x=1702857749;
   h=date:from:to:cc:subject:message-id:references:
    in-reply-to:mime-version;
-  bh=8e4OHvTcjKoq7caHteBf5fXQwMifysA3N5itboT7r/c=;
-  b=B0Zg/7/4JOpaeWYgZHnIiwXXhnb5uKnWgQDwoq2ZY7Di+RYwuRBaqITL
-   v7Y5S00cgSMJW6GdtRiXNncgQtKhFBPJw0xrSoCmeQhVQcTwxxAS+sovr
-   d4a/wa/fjk86b2P7zTAMoh5h+AiCS/BDvgnhpLrBkkMy6v5CiXu9nsY9L
-   /fAI/jH4Y+rWKdx21iVujOvAA4/oHu15m7UV0wng6sdSPzJxzdaBchypY
-   1glN7IKOem4eCNPnOkZKzJgaKmhnG0WMKqVzqcTKJpBs9qO9YZQtrv6uj
-   Dh6lp5Cv5sMJFnYKbCtKtc2GA2EWnrggrY2F8Wzc4Z1tZzOwjX2AmSWwL
-   A==;
+  bh=LuUZHqDqWS5uS2B9KJLvxSicYJsy1AHHzqAzGQk+Oqg=;
+  b=by/TuxgI9t5un3aK3ovcmgX2ZYLUnbwy6IELCUsfLSt0uTQPK3oU9SXz
+   xiHXMmLe0Z3KZip39GCsN3yCAPqnKkZ7slj2UiCWHn4Qv/Orxu6jceUws
+   PpuChzmt+UnJnfn9SAOIbjd4PjpjRm5QJYWxHFQ02MJmsSVrGUJ6X5cBL
+   zxliLYTPOs884iXVRH1UbLXclF92Wst0tRadY89tjqsTSl66/IeKeDBe3
+   gnFtU7rSHXZQBDkZ94sdFELbBoDaeoGVlPyQCvZ5VCsXEe3Zhe8BrGppD
+   h5a+MO3xAkznzLe5zYAY5yQ4wm7/gV40r2ZSvW0fURrsmE6uvtEEQIckW
+   w==;
 Content-Disposition: inline
-In-Reply-To: <20221216205348.3781217-6-willy@infradead.org>
+In-Reply-To: <20221216205348.3781217-7-willy@infradead.org>
 List-ID: <reiserfs-devel.vger.kernel.org>
 Content-Transfer-Encoding: 7bit
 To: "Matthew Wilcox (Oracle)" <willy@infradead.org>
 Cc: reiserfs-devel@vger.kernel.org, Jan Kara <jack@suse.cz>, linux-fsdevel@vger.kernel.org, "Fabio M. De Francesco" <fmdefrancesco@gmail.com>
 
-On Fri, Dec 16, 2022 at 08:53:44PM +0000, Matthew Wilcox (Oracle) wrote:
-> Remove uses of kmap() and b_page.  Also move the set_buffer_uptodate()
-> call to after the memcpy() so that the memory barrier in
-> set_buffer_uptodate() actually ensures that the old data can't be visible.
+On Fri, Dec 16, 2022 at 08:53:45PM +0000, Matthew Wilcox (Oracle) wrote:
+> Removes uses of kmap() and b_page.
 > 
 > Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
+
+LGTM
+Reviewed-by: Ira Weiny <ira.weiny@intel.com>
+
 > ---
->  fs/reiserfs/journal.c | 12 +++++-------
->  1 file changed, 5 insertions(+), 7 deletions(-)
+>  fs/reiserfs/inode.c | 9 ++++-----
+>  1 file changed, 4 insertions(+), 5 deletions(-)
 > 
-> diff --git a/fs/reiserfs/journal.c b/fs/reiserfs/journal.c
-> index 9ce4ec296b74..faf2f09d82e1 100644
-> --- a/fs/reiserfs/journal.c
-> +++ b/fs/reiserfs/journal.c
-> @@ -4200,21 +4200,19 @@ static int do_journal_end(struct reiserfs_transaction_handle *th, int flags)
->  		/* copy all the real blocks into log area.  dirty log blocks */
->  		if (buffer_journaled(cn->bh)) {
->  			struct buffer_head *tmp_bh;
-> +			size_t offset = offset_in_folio(cn->bh->b_folio,
-> +							cn->bh->b_data);
->  			char *addr;
-> -			struct page *page;
->  			tmp_bh =
->  			    journal_getblk(sb,
->  					   SB_ONDISK_JOURNAL_1st_BLOCK(sb) +
->  					   ((cur_write_start +
->  					     jindex) %
->  					    SB_ONDISK_JOURNAL_SIZE(sb)));
-> +			addr = kmap_local_folio(cn->bh->b_folio, offset);
-> +			memcpy(tmp_bh->b_data, addr, cn->bh->b_size);
-> +			kunmap_local(addr);
-
-I think we should have a memcpy_{to|from}_folio() like we do for the pages.
-
-Did I miss this in the earlier patch?
-
-Ira
-
->  			set_buffer_uptodate(tmp_bh);
-> -			page = cn->bh->b_page;
-> -			addr = kmap(page);
-> -			memcpy(tmp_bh->b_data,
-> -			       addr + offset_in_page(cn->bh->b_data),
-> -			       cn->bh->b_size);
-> -			kunmap(page);
->  			mark_buffer_dirty(tmp_bh);
->  			jindex++;
->  			set_buffer_journal_dirty(cn->bh);
+> diff --git a/fs/reiserfs/inode.c b/fs/reiserfs/inode.c
+> index 0ca2d439510a..b79848111957 100644
+> --- a/fs/reiserfs/inode.c
+> +++ b/fs/reiserfs/inode.c
+> @@ -2360,6 +2360,7 @@ static int map_block_for_writepage(struct inode *inode,
+>  	struct item_head tmp_ih;
+>  	struct item_head *ih;
+>  	struct buffer_head *bh;
+> +	char *p;
+>  	__le32 *item;
+>  	struct cpu_key key;
+>  	INITIALIZE_PATH(path);
+> @@ -2382,7 +2383,8 @@ static int map_block_for_writepage(struct inode *inode,
+>  		return -EIO;
+>  	}
+>  
+> -	kmap(bh_result->b_page);
+> +	p = kmap_local_folio(bh_result->b_folio,
+> +			offset_in_folio(bh_result->b_folio, byte_offset - 1));
+>  start_over:
+>  	reiserfs_write_lock(inode->i_sb);
+>  	make_cpu_key(&key, inode, byte_offset, TYPE_ANY, 3);
+> @@ -2413,9 +2415,6 @@ static int map_block_for_writepage(struct inode *inode,
+>  		set_block_dev_mapped(bh_result,
+>  				     get_block_num(item, pos_in_item), inode);
+>  	} else if (is_direct_le_ih(ih)) {
+> -		char *p;
+> -		p = page_address(bh_result->b_page);
+> -		p += (byte_offset - 1) & (PAGE_SIZE - 1);
+>  		copy_size = ih_item_len(ih) - pos_in_item;
+>  
+>  		fs_gen = get_generation(inode->i_sb);
+> @@ -2491,7 +2490,7 @@ static int map_block_for_writepage(struct inode *inode,
+>  			}
+>  		}
+>  	}
+> -	kunmap(bh_result->b_page);
+> +	kunmap_local(p);
+>  
+>  	if (!retval && buffer_mapped(bh_result) && bh_result->b_blocknr == 0) {
+>  		/*
 > -- 
 > 2.35.1
 > 
