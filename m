@@ -1,112 +1,116 @@
-From: syzbot <syzbot+74b838cfa47fc9554471@syzkaller.appspotmail.com>
-Subject: [syzbot] [reiserfs?] divide error in do_journal_end (3)
-Date: Thu, 22 Dec 2022 18:34:35 -0800
-Message-ID: <000000000000520d3405f075a026@google.com>
+From: syzbot <syzbot+90392eaed540afcc8fc3@syzkaller.appspotmail.com>
+Subject: Re: [syzbot] [reiserfs?] [fat?] BUG: unable to handle kernel paging
+ request in take_dentry_name_snapshot
+Date: Thu, 22 Dec 2022 21:32:35 -0800
+Message-ID: <000000000000f213ae05f0781c98@google.com>
+References: <0000000000003b7fee05eec392a8@google.com>
 Mime-Version: 1.0
-Return-path: <reiserfs-devel-owner@vger.kernel.org>
+Return-path: <linux-unionfs-owner@vger.kernel.org>
+In-Reply-To: <0000000000003b7fee05eec392a8@google.com>
 List-ID: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: axboe@kernel.dk, bvanassche@acm.org, jlayton@kernel.org, linux-kernel@vger.kernel.org, reiserfs-devel@vger.kernel.org, song@kernel.org, syzkaller-bugs@googlegroups.com, willy@infradead.org, yi.zhang@huawei.com
+To: linux-kernel@vger.kernel.org, linux-unionfs@vger.kernel.org, miklos@szeredi.hu, reiserfs-devel@vger.kernel.org, syzkaller-bugs@googlegroups.com
 
-Hello,
+syzbot has found a reproducer for the following issue on:
 
-syzbot found the following issue on:
-
-HEAD commit:    f9ff5644bcc0 Merge tag 'hsi-for-6.2' of git://git.kernel.o..
+HEAD commit:    8395ae05cb5a Merge tag 'scsi-misc' of git://git.kernel.org..
 git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=13ee69e7880000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=c163713cf9186fe7
-dashboard link: https://syzkaller.appspot.com/bug?extid=74b838cfa47fc9554471
-compiler:       Debian clang version 13.0.1-++20220126092033+75e33f71c2da-1~exp1~20220126212112.63, GNU ld (GNU Binutils for Debian) 2.35.2
-
-Unfortunately, I don't have any reproducer for this issue yet.
+console output: https://syzkaller.appspot.com/x/log.txt?x=1310a5f8480000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=85327a149d5f50f
+dashboard link: https://syzkaller.appspot.com/bug?extid=90392eaed540afcc8fc3
+compiler:       gcc (Debian 10.2.1-6) 10.2.1 20210110, GNU ld (GNU Binutils for Debian) 2.35.2
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=16199460480000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=1797f274480000
 
 Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/95eb66f6b569/disk-f9ff5644.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/fb05e1a5a9de/vmlinux-f9ff5644.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/e2f1f698973a/bzImage-f9ff5644.xz
+disk image: https://storage.googleapis.com/syzbot-assets/71f6a8070e91/disk-8395ae05.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/0f742b65488c/vmlinux-8395ae05.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/6e5588eaf267/bzImage-8395ae05.xz
+mounted in repro: https://storage.googleapis.com/syzbot-assets/4673a4f9cbbb/mount_0.gz
 
 IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+74b838cfa47fc9554471@syzkaller.appspotmail.com
+Reported-by: syzbot+90392eaed540afcc8fc3@syzkaller.appspotmail.com
 
-divide error: 0000 [#1] PREEMPT SMP KASAN
-CPU: 1 PID: 8065 Comm: syz-executor.4 Not tainted 6.1.0-syzkaller-13139-gf9ff5644bcc0 #0
+BUG: unable to handle page fault for address: fffffffffff81629
+#PF: supervisor read access in kernel mode
+#PF: error_code(0x0000) - not-present page
+PGD c48f067 P4D c48f067 PUD c491067 PMD 0 
+Oops: 0000 [#1] PREEMPT SMP KASAN
+CPU: 0 PID: 5251 Comm: syz-executor130 Not tainted 6.1.0-syzkaller-14446-g8395ae05cb5a #0
 Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 10/26/2022
-RIP: 0010:do_journal_end+0x1822/0x4a30 fs/reiserfs/journal.c:4091
-Code: 04 28 84 c0 0f 85 f7 2b 00 00 4a 8d 5c 33 01 4c 89 e0 48 c1 e8 03 42 8a 04 28 84 c0 0f 85 ff 2b 00 00 41 8b 0f 48 89 d8 31 d2 <48> f7 f1 48 89 d3 48 03 5c 24 20 48 8b 84 24 d8 00 00 00 42 80 3c
-RSP: 0018:ffffc90003c5fae0 EFLAGS: 00010246
-RAX: 0000000000000003 RBX: 0000000000000003 RCX: 0000000000000000
-RDX: 0000000000000000 RSI: 0000000000000000 RDI: ffff888026c42000
-RBP: ffffc90003c5fd50 R08: dffffc0000000000 R09: ffff888026c42000
-R10: 0000000000000000 R11: 0000000000000000 R12: ffff888037308017
-R13: dffffc0000000000 R14: 0000000000000002 R15: ffff888037308014
-FS:  00007f623dd00700(0000) GS:ffff8880b9900000(0000) knlGS:0000000000000000
+RIP: 0010:__lock_acquire+0xd8d/0x56d0 kernel/locking/lockdep.c:4925
+Code: c8 00 00 00 89 05 83 4e 3c 0f e9 bd 00 00 00 48 b8 00 00 00 00 00 fc ff df 4c 89 f2 48 c1 ea 03 80 3c 02 00 0f 85 4e 31 00 00 <49> 81 3e e0 e5 f6 8f 0f 84 4c f3 ff ff 41 83 fc 01 0f 87 54 f3 ff
+RSP: 0018:ffffc90004e0f7e8 EFLAGS: 00010046
+RAX: dffffc0000000000 RBX: 1ffff920009c1f2d RCX: 0000000000000000
+RDX: 1fffffffffff02c5 RSI: 0000000000000000 RDI: 0000000000000001
+RBP: 0000000000000000 R08: 0000000000000001 R09: 0000000000000000
+R10: fffffbfff1ce5ada R11: 0000000000000000 R12: 0000000000000000
+R13: ffff88802c3a1d40 R14: fffffffffff81629 R15: 0000000000000000
+FS:  00007fab0371d700(0000) GS:ffff8880b9800000(0000) knlGS:0000000000000000
 CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 000000002012d000 CR3: 0000000018049000 CR4: 00000000003506e0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+CR2: fffffffffff81629 CR3: 000000006e8d9000 CR4: 0000000000350ef0
 Call Trace:
  <TASK>
- reiserfs_sync_fs+0xbb/0x130 fs/reiserfs/super.c:78
- iterate_supers+0x137/0x1f0 fs/super.c:724
- ksys_sync+0xc6/0x1c0 fs/sync.c:103
- __do_sys_sync+0xa/0x10 fs/sync.c:113
+ lock_acquire kernel/locking/lockdep.c:5668 [inline]
+ lock_acquire+0x1e3/0x630 kernel/locking/lockdep.c:5633
+ __raw_spin_lock include/linux/spinlock_api_smp.h:133 [inline]
+ _raw_spin_lock+0x2e/0x40 kernel/locking/spinlock.c:154
+ spin_lock include/linux/spinlock.h:350 [inline]
+ take_dentry_name_snapshot+0x2b/0x170 fs/dcache.c:315
+ ovl_check_rename_whiteout fs/overlayfs/super.c:1207 [inline]
+ ovl_make_workdir fs/overlayfs/super.c:1329 [inline]
+ ovl_get_workdir fs/overlayfs/super.c:1444 [inline]
+ ovl_fill_super+0x1dd2/0x6330 fs/overlayfs/super.c:2000
+ mount_nodev+0x64/0x120 fs/super.c:1405
+ legacy_get_tree+0x109/0x220 fs/fs_context.c:610
+ vfs_get_tree+0x8d/0x2f0 fs/super.c:1489
+ do_new_mount fs/namespace.c:3145 [inline]
+ path_mount+0x132a/0x1e20 fs/namespace.c:3475
+ do_mount fs/namespace.c:3488 [inline]
+ __do_sys_mount fs/namespace.c:3697 [inline]
+ __se_sys_mount fs/namespace.c:3674 [inline]
+ __x64_sys_mount+0x283/0x300 fs/namespace.c:3674
  do_syscall_x64 arch/x86/entry/common.c:50 [inline]
- do_syscall_64+0x3d/0xb0 arch/x86/entry/common.c:80
+ do_syscall_64+0x39/0xb0 arch/x86/entry/common.c:80
  entry_SYSCALL_64_after_hwframe+0x63/0xcd
-RIP: 0033:0x7f623d08c0d9
-Code: 28 00 00 00 75 05 48 83 c4 28 c3 e8 f1 19 00 00 90 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b8 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007f623dd00168 EFLAGS: 00000246 ORIG_RAX: 00000000000000a2
-RAX: ffffffffffffffda RBX: 00007f623d1abf80 RCX: 00007f623d08c0d9
-RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000000000000
-RBP: 00007f623d0e7ae9 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
-R13: 00007fffa3f7577f R14: 00007f623dd00300 R15: 0000000000022000
+RIP: 0033:0x7fab03f80209
+Code: 28 00 00 00 75 05 48 83 c4 28 c3 e8 31 19 00 00 90 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b8 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007fab0371d208 EFLAGS: 00000246 ORIG_RAX: 00000000000000a5
+RAX: ffffffffffffffda RBX: 00007fab04005528 RCX: 00007fab03f80209
+RDX: 0000000020000080 RSI: 00000000200000c0 RDI: 0000000000000000
+RBP: 00007fab04005520 R08: 0000000020000480 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 00007fab0400552c
+R13: 00007ffcd399fc6f R14: 00007fab0371d300 R15: 0000000000022000
  </TASK>
 Modules linked in:
+CR2: fffffffffff81629
 ---[ end trace 0000000000000000 ]---
-RIP: 0010:do_journal_end+0x1822/0x4a30 fs/reiserfs/journal.c:4091
-Code: 04 28 84 c0 0f 85 f7 2b 00 00 4a 8d 5c 33 01 4c 89 e0 48 c1 e8 03 42 8a 04 28 84 c0 0f 85 ff 2b 00 00 41 8b 0f 48 89 d8 31 d2 <48> f7 f1 48 89 d3 48 03 5c 24 20 48 8b 84 24 d8 00 00 00 42 80 3c
-RSP: 0018:ffffc90003c5fae0 EFLAGS: 00010246
-RAX: 0000000000000003 RBX: 0000000000000003 RCX: 0000000000000000
-RDX: 0000000000000000 RSI: 0000000000000000 RDI: ffff888026c42000
-RBP: ffffc90003c5fd50 R08: dffffc0000000000 R09: ffff888026c42000
-R10: 0000000000000000 R11: 0000000000000000 R12: ffff888037308017
-R13: dffffc0000000000 R14: 0000000000000002 R15: ffff888037308014
-FS:  00007f623dd00700(0000) GS:ffff8880b9900000(0000) knlGS:0000000000000000
+RIP: 0010:__lock_acquire+0xd8d/0x56d0 kernel/locking/lockdep.c:4925
+Code: c8 00 00 00 89 05 83 4e 3c 0f e9 bd 00 00 00 48 b8 00 00 00 00 00 fc ff df 4c 89 f2 48 c1 ea 03 80 3c 02 00 0f 85 4e 31 00 00 <49> 81 3e e0 e5 f6 8f 0f 84 4c f3 ff ff 41 83 fc 01 0f 87 54 f3 ff
+RSP: 0018:ffffc90004e0f7e8 EFLAGS: 00010046
+RAX: dffffc0000000000 RBX: 1ffff920009c1f2d RCX: 0000000000000000
+RDX: 1fffffffffff02c5 RSI: 0000000000000000 RDI: 0000000000000001
+RBP: 0000000000000000 R08: 0000000000000001 R09: 0000000000000000
+R10: fffffbfff1ce5ada R11: 0000000000000000 R12: 0000000000000000
+R13: ffff88802c3a1d40 R14: fffffffffff81629 R15: 0000000000000000
+FS:  00007fab0371d700(0000) GS:ffff8880b9800000(0000) knlGS:0000000000000000
 CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 0000000021000000 CR3: 0000000018049000 CR4: 00000000003506e0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+CR2: fffffffffff81629 CR3: 000000006e8d9000 CR4: 0000000000350ef0
 ----------------
 Code disassembly (best guess):
-   0:	04 28                	add    $0x28,%al
-   2:	84 c0                	test   %al,%al
-   4:	0f 85 f7 2b 00 00    	jne    0x2c01
-   a:	4a 8d 5c 33 01       	lea    0x1(%rbx,%r14,1),%rbx
-   f:	4c 89 e0             	mov    %r12,%rax
-  12:	48 c1 e8 03          	shr    $0x3,%rax
-  16:	42 8a 04 28          	mov    (%rax,%r13,1),%al
-  1a:	84 c0                	test   %al,%al
-  1c:	0f 85 ff 2b 00 00    	jne    0x2c21
-  22:	41 8b 0f             	mov    (%r15),%ecx
-  25:	48 89 d8             	mov    %rbx,%rax
-  28:	31 d2                	xor    %edx,%edx
-* 2a:	48 f7 f1             	div    %rcx <-- trapping instruction
-  2d:	48 89 d3             	mov    %rdx,%rbx
-  30:	48 03 5c 24 20       	add    0x20(%rsp),%rbx
-  35:	48 8b 84 24 d8 00 00 	mov    0xd8(%rsp),%rax
-  3c:	00
-  3d:	42                   	rex.X
-  3e:	80                   	.byte 0x80
-  3f:	3c                   	.byte 0x3c
+   0:	c8 00 00 00          	enterq $0x0,$0x0
+   4:	89 05 83 4e 3c 0f    	mov    %eax,0xf3c4e83(%rip)        # 0xf3c4e8d
+   a:	e9 bd 00 00 00       	jmpq   0xcc
+   f:	48 b8 00 00 00 00 00 	movabs $0xdffffc0000000000,%rax
+  16:	fc ff df
+  19:	4c 89 f2             	mov    %r14,%rdx
+  1c:	48 c1 ea 03          	shr    $0x3,%rdx
+  20:	80 3c 02 00          	cmpb   $0x0,(%rdx,%rax,1)
+  24:	0f 85 4e 31 00 00    	jne    0x3178
+* 2a:	49 81 3e e0 e5 f6 8f 	cmpq   $0xffffffff8ff6e5e0,(%r14) <-- trapping instruction
+  31:	0f 84 4c f3 ff ff    	je     0xfffff383
+  37:	41 83 fc 01          	cmp    $0x1,%r12d
+  3b:	0f                   	.byte 0xf
+  3c:	87 54 f3 ff          	xchg   %edx,-0x1(%rbx,%rsi,8)
 
-
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
