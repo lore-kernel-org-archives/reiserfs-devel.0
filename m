@@ -1,67 +1,98 @@
-From: syzbot <syzbot+ff866d16791d4984b3c7@syzkaller.appspotmail.com>
-Subject: Re: [syzbot] [reiserfs?] possible deadlock in do_page_mkwrite
-Date: Fri, 23 Dec 2022 02:50:40 -0800
-Message-ID: <0000000000007c321405f07c8e00@google.com>
-References: <00000000000032654605ef9c1846@google.com>
+From: syzbot <syzbot+8a4c84020c63609f15ec@syzkaller.appspotmail.com>
+Subject: [syzbot] [reiserfs?] possible deadlock in reiserfs_get_block
+Date: Fri, 23 Dec 2022 08:13:41 -0800
+Message-ID: <000000000000b145f905f081118e@google.com>
 Mime-Version: 1.0
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
-In-Reply-To: <00000000000032654605ef9c1846@google.com>
 List-ID: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: linux-kernel@vger.kernel.org, reiserfs-devel@vger.kernel.org, syzkaller-bugs@googlegroups.com
 
-syzbot has found a reproducer for the following issue on:
+Hello,
 
-HEAD commit:    8395ae05cb5a Merge tag 'scsi-misc' of git://git.kernel.org..
+syzbot found the following issue on:
+
+HEAD commit:    f9ff5644bcc0 Merge tag 'hsi-for-6.2' of git://git.kernel.o..
 git tree:       upstream
-console+strace: https://syzkaller.appspot.com/x/log.txt?x=14e189f8480000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=4e2d7bfa2d6d5a76
-dashboard link: https://syzkaller.appspot.com/bug?extid=ff866d16791d4984b3c7
+console output: https://syzkaller.appspot.com/x/log.txt?x=1246ddbf880000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=c163713cf9186fe7
+dashboard link: https://syzkaller.appspot.com/bug?extid=8a4c84020c63609f15ec
 compiler:       Debian clang version 13.0.1-++20220126092033+75e33f71c2da-1~exp1~20220126212112.63, GNU ld (GNU Binutils for Debian) 2.35.2
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1282218c480000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=148aa0a8480000
+
+Unfortunately, I don't have any reproducer for this issue yet.
 
 Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/801dbf77dd1d/disk-8395ae05.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/2a057f4aa500/vmlinux-8395ae05.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/70a630e3d523/bzImage-8395ae05.xz
-mounted in repro: https://storage.googleapis.com/syzbot-assets/1b64a5dd0f67/mount_0.gz
+disk image: https://storage.googleapis.com/syzbot-assets/95eb66f6b569/disk-f9ff5644.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/fb05e1a5a9de/vmlinux-f9ff5644.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/e2f1f698973a/bzImage-f9ff5644.xz
 
 IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+ff866d16791d4984b3c7@syzkaller.appspotmail.com
+Reported-by: syzbot+8a4c84020c63609f15ec@syzkaller.appspotmail.com
 
+REISERFS (device loop2): Created .reiserfs_priv - reserved for xattr storage.
+======================================================
 WARNING: possible circular locking dependency detected
-6.1.0-syzkaller-14446-g8395ae05cb5a #0 Not tainted
+6.1.0-syzkaller-13139-gf9ff5644bcc0 #0 Not tainted
 ------------------------------------------------------
-syz-executor409/5148 is trying to acquire lock:
-ffff888017eac090 (&sbi->lock){+.+.}-{3:3}, at: reiserfs_write_lock+0x77/0xd0 fs/reiserfs/lock.c:27
+syz-executor.2/16192 is trying to acquire lock:
+ffff8880220f5018 (&mm->mmap_lock#2){++++}-{3:3}, at: __might_fault+0x8f/0x110 mm/memory.c:5646
 
 but task is already holding lock:
-ffff88802081e558 (sb_pagefaults){.+.+}-{0:0}, at: do_page_mkwrite+0x19e/0x5e0 mm/memory.c:2947
+ffff88801f15e090 (&sbi->lock){+.+.}-{3:3}, at: reiserfs_write_lock+0x77/0xd0 fs/reiserfs/lock.c:27
 
 which lock already depends on the new lock.
 
 
 the existing dependency chain (in reverse order) is:
 
--> #2 (sb_pagefaults){.+.+}-{0:0}:
+-> #2 (&sbi->lock){+.+.}-{3:3}:
        lock_acquire+0x182/0x3c0 kernel/locking/lockdep.c:5668
-       percpu_down_read include/linux/percpu-rwsem.h:51 [inline]
-       __sb_start_write include/linux/fs.h:1811 [inline]
-       sb_start_pagefault include/linux/fs.h:1915 [inline]
-       filemap_page_mkwrite+0x15c/0x7a0 mm/filemap.c:3439
-       do_page_mkwrite+0x19e/0x5e0 mm/memory.c:2947
-       wp_page_shared+0x15e/0x380 mm/memory.c:3295
-       handle_pte_fault mm/memory.c:4949 [inline]
+       __mutex_lock_common+0x1bd/0x26e0 kernel/locking/mutex.c:603
+       __mutex_lock kernel/locking/mutex.c:747 [inline]
+       mutex_lock_nested+0x17/0x20 kernel/locking/mutex.c:799
+       reiserfs_write_lock+0x77/0xd0 fs/reiserfs/lock.c:27
+       reiserfs_get_block+0x24e/0x5180 fs/reiserfs/inode.c:680
+       do_mpage_readpage+0x970/0x1c50 fs/mpage.c:208
+       mpage_readahead+0x210/0x380 fs/mpage.c:361
+       read_pages+0x169/0x9c0 mm/readahead.c:161
+       page_cache_ra_unbounded+0x194/0x820 mm/readahead.c:242
+       page_cache_sync_readahead include/linux/pagemap.h:1210 [inline]
+       filemap_get_pages+0x465/0x10d0 mm/filemap.c:2600
+       filemap_read+0x3cf/0xea0 mm/filemap.c:2694
+       call_read_iter include/linux/fs.h:2180 [inline]
+       generic_file_splice_read+0x1ff/0x5d0 fs/splice.c:309
+       do_splice_to fs/splice.c:793 [inline]
+       splice_direct_to_actor+0x41b/0xc00 fs/splice.c:865
+       do_splice_direct+0x279/0x3d0 fs/splice.c:974
+       do_sendfile+0x5fb/0xf80 fs/read_write.c:1255
+       __do_sys_sendfile64 fs/read_write.c:1323 [inline]
+       __se_sys_sendfile64+0x14f/0x1b0 fs/read_write.c:1309
+       do_syscall_x64 arch/x86/entry/common.c:50 [inline]
+       do_syscall_64+0x3d/0xb0 arch/x86/entry/common.c:80
+       entry_SYSCALL_64_after_hwframe+0x63/0xcd
+
+-> #1 (mapping.invalidate_lock#7){.+.+}-{3:3}:
+       lock_acquire+0x182/0x3c0 kernel/locking/lockdep.c:5668
+       down_read+0x39/0x50 kernel/locking/rwsem.c:1509
+       filemap_invalidate_lock_shared include/linux/fs.h:811 [inline]
+       filemap_fault+0x2fb/0x1060 mm/filemap.c:3146
+       __do_fault+0x136/0x4f0 mm/memory.c:4163
+       do_shared_fault mm/memory.c:4569 [inline]
+       do_fault mm/memory.c:4647 [inline]
+       handle_pte_fault mm/memory.c:4931 [inline]
        __handle_mm_fault mm/memory.c:5073 [inline]
-       handle_mm_fault+0x1b79/0x26b0 mm/memory.c:5219
+       handle_mm_fault+0x17fa/0x2640 mm/memory.c:5219
        do_user_addr_fault+0x69b/0xcb0 arch/x86/mm/fault.c:1428
        handle_page_fault arch/x86/mm/fault.c:1519 [inline]
        exc_page_fault+0x7a/0x110 arch/x86/mm/fault.c:1575
        asm_exc_page_fault+0x22/0x30 arch/x86/include/asm/idtentry.h:570
 
--> #1 (&mm->mmap_lock){++++}-{3:3}:
+-> #0 (&mm->mmap_lock#2){++++}-{3:3}:
+       check_prev_add kernel/locking/lockdep.c:3097 [inline]
+       check_prevs_add kernel/locking/lockdep.c:3216 [inline]
+       validate_chain+0x1898/0x6ae0 kernel/locking/lockdep.c:3831
+       __lock_acquire+0x1292/0x1f60 kernel/locking/lockdep.c:5055
        lock_acquire+0x182/0x3c0 kernel/locking/lockdep.c:5668
        __might_fault+0xb2/0x110 mm/memory.c:5647
        reiserfs_ioctl+0x11c/0x340 fs/reiserfs/ioctl.c:96
@@ -72,56 +103,27 @@ the existing dependency chain (in reverse order) is:
        do_syscall_64+0x3d/0xb0 arch/x86/entry/common.c:80
        entry_SYSCALL_64_after_hwframe+0x63/0xcd
 
--> #0 (&sbi->lock){+.+.}-{3:3}:
-       check_prev_add kernel/locking/lockdep.c:3097 [inline]
-       check_prevs_add kernel/locking/lockdep.c:3216 [inline]
-       validate_chain+0x1898/0x6ae0 kernel/locking/lockdep.c:3831
-       __lock_acquire+0x1292/0x1f60 kernel/locking/lockdep.c:5055
-       lock_acquire+0x182/0x3c0 kernel/locking/lockdep.c:5668
-       __mutex_lock_common+0x1bd/0x26e0 kernel/locking/mutex.c:603
-       __mutex_lock kernel/locking/mutex.c:747 [inline]
-       mutex_lock_nested+0x17/0x20 kernel/locking/mutex.c:799
-       reiserfs_write_lock+0x77/0xd0 fs/reiserfs/lock.c:27
-       reiserfs_dirty_inode+0xdf/0x230 fs/reiserfs/super.c:704
-       __mark_inode_dirty+0x1e7/0x600 fs/fs-writeback.c:2419
-       generic_update_time fs/inode.c:1859 [inline]
-       inode_update_time fs/inode.c:1872 [inline]
-       __file_update_time fs/inode.c:2057 [inline]
-       file_update_time+0x551/0x5d0 fs/inode.c:2088
-       filemap_page_mkwrite+0x248/0x7a0 mm/filemap.c:3440
-       do_page_mkwrite+0x19e/0x5e0 mm/memory.c:2947
-       wp_page_shared+0x15e/0x380 mm/memory.c:3295
-       handle_pte_fault mm/memory.c:4949 [inline]
-       __handle_mm_fault mm/memory.c:5073 [inline]
-       handle_mm_fault+0x1b79/0x26b0 mm/memory.c:5219
-       do_user_addr_fault+0x69b/0xcb0 arch/x86/mm/fault.c:1428
-       handle_page_fault arch/x86/mm/fault.c:1519 [inline]
-       exc_page_fault+0x7a/0x110 arch/x86/mm/fault.c:1575
-       asm_exc_page_fault+0x22/0x30 arch/x86/include/asm/idtentry.h:570
-
 other info that might help us debug this:
 
 Chain exists of:
-  &sbi->lock --> &mm->mmap_lock --> sb_pagefaults
+  &mm->mmap_lock#2 --> mapping.invalidate_lock#7 --> &sbi->lock
 
  Possible unsafe locking scenario:
 
        CPU0                    CPU1
        ----                    ----
-  lock(sb_pagefaults);
-                               lock(&mm->mmap_lock);
-                               lock(sb_pagefaults);
   lock(&sbi->lock);
+                               lock(mapping.invalidate_lock#7);
+                               lock(&sbi->lock);
+  lock(&mm->mmap_lock#2);
 
  *** DEADLOCK ***
 
-2 locks held by syz-executor409/5148:
- #0: ffff88801d47c758 (&mm->mmap_lock){++++}-{3:3}, at: mmap_read_trylock include/linux/mmap_lock.h:136 [inline]
- #0: ffff88801d47c758 (&mm->mmap_lock){++++}-{3:3}, at: do_user_addr_fault+0x2e2/0xcb0 arch/x86/mm/fault.c:1369
- #1: ffff88802081e558 (sb_pagefaults){.+.+}-{0:0}, at: do_page_mkwrite+0x19e/0x5e0 mm/memory.c:2947
+1 lock held by syz-executor.2/16192:
+ #0: ffff88801f15e090 (&sbi->lock){+.+.}-{3:3}, at: reiserfs_write_lock+0x77/0xd0 fs/reiserfs/lock.c:27
 
 stack backtrace:
-CPU: 0 PID: 5148 Comm: syz-executor409 Not tainted 6.1.0-syzkaller-14446-g8395ae05cb5a #0
+CPU: 0 PID: 16192 Comm: syz-executor.2 Not tainted 6.1.0-syzkaller-13139-gf9ff5644bcc0 #0
 Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 10/26/2022
 Call Trace:
  <TASK>
@@ -133,33 +135,29 @@ Call Trace:
  validate_chain+0x1898/0x6ae0 kernel/locking/lockdep.c:3831
  __lock_acquire+0x1292/0x1f60 kernel/locking/lockdep.c:5055
  lock_acquire+0x182/0x3c0 kernel/locking/lockdep.c:5668
- __mutex_lock_common+0x1bd/0x26e0 kernel/locking/mutex.c:603
- __mutex_lock kernel/locking/mutex.c:747 [inline]
- mutex_lock_nested+0x17/0x20 kernel/locking/mutex.c:799
- reiserfs_write_lock+0x77/0xd0 fs/reiserfs/lock.c:27
- reiserfs_dirty_inode+0xdf/0x230 fs/reiserfs/super.c:704
- __mark_inode_dirty+0x1e7/0x600 fs/fs-writeback.c:2419
- generic_update_time fs/inode.c:1859 [inline]
- inode_update_time fs/inode.c:1872 [inline]
- __file_update_time fs/inode.c:2057 [inline]
- file_update_time+0x551/0x5d0 fs/inode.c:2088
- filemap_page_mkwrite+0x248/0x7a0 mm/filemap.c:3440
- do_page_mkwrite+0x19e/0x5e0 mm/memory.c:2947
- wp_page_shared+0x15e/0x380 mm/memory.c:3295
- handle_pte_fault mm/memory.c:4949 [inline]
- __handle_mm_fault mm/memory.c:5073 [inline]
- handle_mm_fault+0x1b79/0x26b0 mm/memory.c:5219
- do_user_addr_fault+0x69b/0xcb0 arch/x86/mm/fault.c:1428
- handle_page_fault arch/x86/mm/fault.c:1519 [inline]
- exc_page_fault+0x7a/0x110 arch/x86/mm/fault.c:1575
- asm_exc_page_fault+0x22/0x30 arch/x86/include/asm/idtentry.h:570
-RIP: 0033:0x7f61a34e95a0
-Code: 00 e8 14 26 04 00 48 8b 35 bd 5b 0b 00 31 c9 31 c0 ba 01 76 08 80 bf 10 00 00 00 e8 fa 25 04 00 b8 98 00 00 20 b9 20 00 00 00 <c7> 04 25 80 00 00 20 08 00 00 00 66 c7 04 25 84 00 00 20 20 01 48
-RSP: 002b:00007ffd03dae660 EFLAGS: 00010286
-RAX: 0000000020000098 RBX: 000000000000f4c9 RCX: 0000000000000020
-RDX: 0000000000000000 RSI: 0000000080087601 RDI: 0000000000000004
-RBP: 0000000000000000 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 00007ffd03dae68c
-R13: 00007ffd03dae6c0 R14: 00007ffd03dae6a0 R15: 0000000000000006
+ __might_fault+0xb2/0x110 mm/memory.c:5647
+ reiserfs_ioctl+0x11c/0x340 fs/reiserfs/ioctl.c:96
+ vfs_ioctl fs/ioctl.c:51 [inline]
+ __do_sys_ioctl fs/ioctl.c:870 [inline]
+ __se_sys_ioctl+0xfb/0x170 fs/ioctl.c:856
+ do_syscall_x64 arch/x86/entry/common.c:50 [inline]
+ do_syscall_64+0x3d/0xb0 arch/x86/entry/common.c:80
+ entry_SYSCALL_64_after_hwframe+0x63/0xcd
+RIP: 0033:0x7f5a8b88c0d9
+Code: 28 00 00 00 75 05 48 83 c4 28 c3 e8 f1 19 00 00 90 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b8 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007f5a8c578168 EFLAGS: 00000246 ORIG_RAX: 0000000000000010
+RAX: ffffffffffffffda RBX: 00007f5a8b9abf80 RCX: 00007f5a8b88c0d9
+RDX: 00000000200000c0 RSI: 0000000080087601 RDI: 0000000000000004
+RBP: 00007f5a8b8e7ae9 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
+R13: 00007fff6e17e56f R14: 00007f5a8c578300 R15: 0000000000022000
  </TASK>
 
+
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
