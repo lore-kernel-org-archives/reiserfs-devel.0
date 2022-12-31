@@ -1,7 +1,7 @@
-From: syzbot <syzbot+8fb64a61fdd96b50f3b8@syzkaller.appspotmail.com>
-Subject: [syzbot] [reiserfs?] possible deadlock in open_xa_dir
-Date: Fri, 30 Dec 2022 22:35:44 -0800
-Message-ID: <0000000000007bedb605f119ed9f@google.com>
+From: syzbot <syzbot+2c493ef16c1927e777f8@syzkaller.appspotmail.com>
+Subject: [syzbot] [reiserfs?] possible deadlock in vfs_setxattr
+Date: Sat, 31 Dec 2022 01:30:38 -0800
+Message-ID: <000000000000037f2205f11c5fde@google.com>
 Mime-Version: 1.0
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
 List-ID: <reiserfs-devel.vger.kernel.org>
@@ -15,163 +15,145 @@ syzbot found the following issue on:
 
 HEAD commit:    1b929c02afd3 Linux 6.2-rc1
 git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=11da7f8c480000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=2651619a26b4d687
-dashboard link: https://syzkaller.appspot.com/bug?extid=8fb64a61fdd96b50f3b8
-compiler:       gcc (Debian 10.2.1-6) 10.2.1 20210110, GNU ld (GNU Binutils for Debian) 2.35.2
+console output: https://syzkaller.appspot.com/x/log.txt?x=11fc3d44480000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=555d27e379d75ff1
+dashboard link: https://syzkaller.appspot.com/bug?extid=2c493ef16c1927e777f8
+compiler:       Debian clang version 13.0.1-++20220126092033+75e33f71c2da-1~exp1~20220126212112.63, GNU ld (GNU Binutils for Debian) 2.35.2
 
 Unfortunately, I don't have any reproducer for this issue yet.
 
 Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/d562ace1a56c/disk-1b929c02.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/39f000fe6b9e/vmlinux-1b929c02.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/1c67e48de5a0/bzImage-1b929c02.xz
+disk image: https://storage.googleapis.com/syzbot-assets/2824225be62b/disk-1b929c02.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/ff607a05be90/vmlinux-1b929c02.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/c0b523d63d64/bzImage-1b929c02.xz
 
 IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+8fb64a61fdd96b50f3b8@syzkaller.appspotmail.com
+Reported-by: syzbot+2c493ef16c1927e777f8@syzkaller.appspotmail.com
 
 ======================================================
 WARNING: possible circular locking dependency detected
 6.2.0-rc1-syzkaller #0 Not tainted
 ------------------------------------------------------
-syz-executor.1/19784 is trying to acquire lock:
-ffff88807d682090 (&sbi->lock){+.+.}-{3:3}, at: reiserfs_write_lock+0x79/0x100 fs/reiserfs/lock.c:27
+syz-executor.2/20058 is trying to acquire lock:
+ffff88809c454bc0 (&type->i_mutex_dir_key#13){++++}-{3:3}, at: inode_lock include/linux/fs.h:756 [inline]
+ffff88809c454bc0 (&type->i_mutex_dir_key#13){++++}-{3:3}, at: vfs_setxattr+0x1e8/0x450 fs/xattr.c:322
 
 but task is already holding lock:
-ffff8880899d6ce0 (&type->i_mutex_dir_key#9/3){+.+.}-{3:3}, at: inode_lock_nested include/linux/fs.h:791 [inline]
-ffff8880899d6ce0 (&type->i_mutex_dir_key#9/3){+.+.}-{3:3}, at: open_xa_root fs/reiserfs/xattr.c:127 [inline]
-ffff8880899d6ce0 (&type->i_mutex_dir_key#9/3){+.+.}-{3:3}, at: open_xa_dir+0x127/0x830 fs/reiserfs/xattr.c:152
+ffff8880238a0460 (sb_writers#25){.+.+}-{0:0}, at: mnt_want_write+0x3b/0x80 fs/namespace.c:508
 
 which lock already depends on the new lock.
 
 
 the existing dependency chain (in reverse order) is:
 
--> #1 (&type->i_mutex_dir_key#9/3){+.+.}-{3:3}:
-       down_write_nested+0x98/0x220 kernel/locking/rwsem.c:1672
-       inode_lock_nested include/linux/fs.h:791 [inline]
-       open_xa_root fs/reiserfs/xattr.c:127 [inline]
-       open_xa_dir+0x127/0x830 fs/reiserfs/xattr.c:152
-       reiserfs_for_each_xattr+0x1ab/0x9a0 fs/reiserfs/xattr.c:252
-       reiserfs_delete_xattrs+0x20/0xa0 fs/reiserfs/xattr.c:364
-       reiserfs_evict_inode+0x2e7/0x540 fs/reiserfs/inode.c:53
-       evict+0x2ed/0x6b0 fs/inode.c:664
-       iput_final fs/inode.c:1747 [inline]
-       iput.part.0+0x59b/0x880 fs/inode.c:1773
-       iput+0x5c/0x80 fs/inode.c:1763
-       reiserfs_create+0x65a/0x730 fs/reiserfs/namei.c:688
-       vfs_create fs/namei.c:3115 [inline]
-       vfs_create+0x3ed/0x670 fs/namei.c:3101
-       do_mknodat+0x3c4/0x510 fs/namei.c:3965
-       __do_sys_mknod fs/namei.c:3998 [inline]
-       __se_sys_mknod fs/namei.c:3996 [inline]
-       __x64_sys_mknod+0x11e/0x180 fs/namei.c:3996
+-> #2 (sb_writers#25){.+.+}-{0:0}:
+       lock_acquire+0x1a7/0x400 kernel/locking/lockdep.c:5668
+       percpu_down_read include/linux/percpu-rwsem.h:51 [inline]
+       __sb_start_write include/linux/fs.h:1811 [inline]
+       sb_start_write+0x4d/0x1a0 include/linux/fs.h:1886
+       mnt_want_write_file+0x5a/0x1f0 fs/namespace.c:552
+       reiserfs_ioctl+0x16e/0x340 fs/reiserfs/ioctl.c:103
+       vfs_ioctl fs/ioctl.c:51 [inline]
+       __do_sys_ioctl fs/ioctl.c:870 [inline]
+       __se_sys_ioctl+0xfb/0x170 fs/ioctl.c:856
        do_syscall_x64 arch/x86/entry/common.c:50 [inline]
-       do_syscall_64+0x39/0xb0 arch/x86/entry/common.c:80
+       do_syscall_64+0x2b/0x70 arch/x86/entry/common.c:80
        entry_SYSCALL_64_after_hwframe+0x63/0xcd
 
--> #0 (&sbi->lock){+.+.}-{3:3}:
+-> #1 (&sbi->lock){+.+.}-{3:3}:
+       lock_acquire+0x1a7/0x400 kernel/locking/lockdep.c:5668
+       __mutex_lock_common+0x1de/0x26c0 kernel/locking/mutex.c:603
+       __mutex_lock kernel/locking/mutex.c:747 [inline]
+       mutex_lock_nested+0x17/0x20 kernel/locking/mutex.c:799
+       reiserfs_write_lock+0x77/0xd0 fs/reiserfs/lock.c:27
+       reiserfs_lookup+0x15a/0x4a0 fs/reiserfs/namei.c:364
+       __lookup_slow+0x286/0x3e0 fs/namei.c:1685
+       lookup_one_len+0x430/0x690 fs/namei.c:2711
+       reiserfs_lookup_privroot+0x85/0x1e0 fs/reiserfs/xattr.c:973
+       reiserfs_fill_super+0x1964/0x2620 fs/reiserfs/super.c:2192
+       mount_bdev+0x26c/0x3a0 fs/super.c:1359
+       legacy_get_tree+0xea/0x180 fs/fs_context.c:610
+       vfs_get_tree+0x88/0x270 fs/super.c:1489
+       do_new_mount+0x289/0xad0 fs/namespace.c:3145
+       do_mount fs/namespace.c:3488 [inline]
+       __do_sys_mount fs/namespace.c:3697 [inline]
+       __se_sys_mount+0x2e3/0x3d0 fs/namespace.c:3674
+       do_syscall_x64 arch/x86/entry/common.c:50 [inline]
+       do_syscall_64+0x2b/0x70 arch/x86/entry/common.c:80
+       entry_SYSCALL_64_after_hwframe+0x63/0xcd
+
+-> #0 (&type->i_mutex_dir_key#13){++++}-{3:3}:
        check_prev_add kernel/locking/lockdep.c:3097 [inline]
        check_prevs_add kernel/locking/lockdep.c:3216 [inline]
-       validate_chain kernel/locking/lockdep.c:3831 [inline]
-       __lock_acquire+0x2a43/0x56d0 kernel/locking/lockdep.c:5055
-       lock_acquire kernel/locking/lockdep.c:5668 [inline]
-       lock_acquire+0x1e3/0x630 kernel/locking/lockdep.c:5633
-       __mutex_lock_common kernel/locking/mutex.c:603 [inline]
-       __mutex_lock+0x12f/0x1360 kernel/locking/mutex.c:747
-       reiserfs_write_lock+0x79/0x100 fs/reiserfs/lock.c:27
-       reiserfs_mkdir+0x31c/0x990 fs/reiserfs/namei.c:831
-       xattr_mkdir fs/reiserfs/xattr.c:76 [inline]
-       open_xa_root fs/reiserfs/xattr.c:136 [inline]
-       open_xa_dir+0x6a3/0x830 fs/reiserfs/xattr.c:152
-       xattr_lookup+0x21/0x3d0 fs/reiserfs/xattr.c:395
-       reiserfs_xattr_set_handle+0xfb/0xb00 fs/reiserfs/xattr.c:533
-       reiserfs_xattr_set+0x454/0x5b0 fs/reiserfs/xattr.c:633
-       trusted_set+0xa7/0xd0 fs/reiserfs/xattr_trusted.c:31
-       __vfs_setxattr+0x173/0x1e0 fs/xattr.c:202
-       __vfs_setxattr_noperm+0x129/0x5f0 fs/xattr.c:236
-       __vfs_setxattr_locked+0x1d3/0x260 fs/xattr.c:297
-       vfs_setxattr+0x143/0x340 fs/xattr.c:323
-       do_setxattr+0x151/0x190 fs/xattr.c:608
-       setxattr+0x146/0x160 fs/xattr.c:631
-       path_setxattr+0x197/0x1c0 fs/xattr.c:650
+       validate_chain+0x184a/0x6470 kernel/locking/lockdep.c:3831
+       __lock_acquire+0x1292/0x1f60 kernel/locking/lockdep.c:5055
+       lock_acquire+0x1a7/0x400 kernel/locking/lockdep.c:5668
+       down_write+0x9c/0x270 kernel/locking/rwsem.c:1562
+       inode_lock include/linux/fs.h:756 [inline]
+       vfs_setxattr+0x1e8/0x450 fs/xattr.c:322
+       do_setxattr fs/xattr.c:608 [inline]
+       setxattr fs/xattr.c:631 [inline]
+       path_setxattr+0x393/0x4c0 fs/xattr.c:650
        __do_sys_setxattr fs/xattr.c:666 [inline]
        __se_sys_setxattr fs/xattr.c:662 [inline]
-       __x64_sys_setxattr+0xc4/0x160 fs/xattr.c:662
+       __x64_sys_setxattr+0xb7/0xd0 fs/xattr.c:662
        do_syscall_x64 arch/x86/entry/common.c:50 [inline]
-       do_syscall_64+0x39/0xb0 arch/x86/entry/common.c:80
+       do_syscall_64+0x2b/0x70 arch/x86/entry/common.c:80
        entry_SYSCALL_64_after_hwframe+0x63/0xcd
 
 other info that might help us debug this:
+
+Chain exists of:
+  &type->i_mutex_dir_key#13 --> &sbi->lock --> sb_writers#25
 
  Possible unsafe locking scenario:
 
        CPU0                    CPU1
        ----                    ----
-  lock(&type->i_mutex_dir_key#9/3);
+  lock(sb_writers#25);
                                lock(&sbi->lock);
-                               lock(&type->i_mutex_dir_key#9/3);
-  lock(&sbi->lock);
+                               lock(sb_writers#25);
+  lock(&type->i_mutex_dir_key#13);
 
  *** DEADLOCK ***
 
-3 locks held by syz-executor.1/19784:
- #0: ffff88801c7fe460 (sb_writers#17){.+.+}-{0:0}, at: path_setxattr+0xb2/0x1c0 fs/xattr.c:648
- #1: ffff8880899d7a20 (&type->i_mutex_dir_key#9){++++}-{3:3}, at: inode_lock include/linux/fs.h:756 [inline]
- #1: ffff8880899d7a20 (&type->i_mutex_dir_key#9){++++}-{3:3}, at: vfs_setxattr+0x120/0x340 fs/xattr.c:322
- #2: ffff8880899d6ce0 (&type->i_mutex_dir_key#9/3){+.+.}-{3:3}, at: inode_lock_nested include/linux/fs.h:791 [inline]
- #2: ffff8880899d6ce0 (&type->i_mutex_dir_key#9/3){+.+.}-{3:3}, at: open_xa_root fs/reiserfs/xattr.c:127 [inline]
- #2: ffff8880899d6ce0 (&type->i_mutex_dir_key#9/3){+.+.}-{3:3}, at: open_xa_dir+0x127/0x830 fs/reiserfs/xattr.c:152
+1 lock held by syz-executor.2/20058:
+ #0: ffff8880238a0460 (sb_writers#25){.+.+}-{0:0}, at: mnt_want_write+0x3b/0x80 fs/namespace.c:508
 
 stack backtrace:
-CPU: 1 PID: 19784 Comm: syz-executor.1 Not tainted 6.2.0-rc1-syzkaller #0
+CPU: 1 PID: 20058 Comm: syz-executor.2 Not tainted 6.2.0-rc1-syzkaller #0
 Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 10/26/2022
 Call Trace:
  <TASK>
  __dump_stack lib/dump_stack.c:88 [inline]
- dump_stack_lvl+0xd1/0x138 lib/dump_stack.c:106
- check_noncircular+0x25f/0x2e0 kernel/locking/lockdep.c:2177
+ dump_stack_lvl+0x1e3/0x2d0 lib/dump_stack.c:106
+ check_noncircular+0x2f9/0x3b0 kernel/locking/lockdep.c:2177
  check_prev_add kernel/locking/lockdep.c:3097 [inline]
  check_prevs_add kernel/locking/lockdep.c:3216 [inline]
- validate_chain kernel/locking/lockdep.c:3831 [inline]
- __lock_acquire+0x2a43/0x56d0 kernel/locking/lockdep.c:5055
- lock_acquire kernel/locking/lockdep.c:5668 [inline]
- lock_acquire+0x1e3/0x630 kernel/locking/lockdep.c:5633
- __mutex_lock_common kernel/locking/mutex.c:603 [inline]
- __mutex_lock+0x12f/0x1360 kernel/locking/mutex.c:747
- reiserfs_write_lock+0x79/0x100 fs/reiserfs/lock.c:27
- reiserfs_mkdir+0x31c/0x990 fs/reiserfs/namei.c:831
- xattr_mkdir fs/reiserfs/xattr.c:76 [inline]
- open_xa_root fs/reiserfs/xattr.c:136 [inline]
- open_xa_dir+0x6a3/0x830 fs/reiserfs/xattr.c:152
- xattr_lookup+0x21/0x3d0 fs/reiserfs/xattr.c:395
- reiserfs_xattr_set_handle+0xfb/0xb00 fs/reiserfs/xattr.c:533
- reiserfs_xattr_set+0x454/0x5b0 fs/reiserfs/xattr.c:633
- trusted_set+0xa7/0xd0 fs/reiserfs/xattr_trusted.c:31
- __vfs_setxattr+0x173/0x1e0 fs/xattr.c:202
- __vfs_setxattr_noperm+0x129/0x5f0 fs/xattr.c:236
- __vfs_setxattr_locked+0x1d3/0x260 fs/xattr.c:297
- vfs_setxattr+0x143/0x340 fs/xattr.c:323
- do_setxattr+0x151/0x190 fs/xattr.c:608
- setxattr+0x146/0x160 fs/xattr.c:631
- path_setxattr+0x197/0x1c0 fs/xattr.c:650
+ validate_chain+0x184a/0x6470 kernel/locking/lockdep.c:3831
+ __lock_acquire+0x1292/0x1f60 kernel/locking/lockdep.c:5055
+ lock_acquire+0x1a7/0x400 kernel/locking/lockdep.c:5668
+ down_write+0x9c/0x270 kernel/locking/rwsem.c:1562
+ inode_lock include/linux/fs.h:756 [inline]
+ vfs_setxattr+0x1e8/0x450 fs/xattr.c:322
+ do_setxattr fs/xattr.c:608 [inline]
+ setxattr fs/xattr.c:631 [inline]
+ path_setxattr+0x393/0x4c0 fs/xattr.c:650
  __do_sys_setxattr fs/xattr.c:666 [inline]
  __se_sys_setxattr fs/xattr.c:662 [inline]
- __x64_sys_setxattr+0xc4/0x160 fs/xattr.c:662
+ __x64_sys_setxattr+0xb7/0xd0 fs/xattr.c:662
  do_syscall_x64 arch/x86/entry/common.c:50 [inline]
- do_syscall_64+0x39/0xb0 arch/x86/entry/common.c:80
+ do_syscall_64+0x2b/0x70 arch/x86/entry/common.c:80
  entry_SYSCALL_64_after_hwframe+0x63/0xcd
-RIP: 0033:0x7fd78168c0a9
+RIP: 0033:0x7f153aa8c0a9
 Code: 28 00 00 00 75 05 48 83 c4 28 c3 e8 f1 19 00 00 90 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b8 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007fd78242a168 EFLAGS: 00000246 ORIG_RAX: 00000000000000bc
-RAX: ffffffffffffffda RBX: 00007fd7817abf80 RCX: 00007fd78168c0a9
-RDX: 0000000020000440 RSI: 00000000200002c0 RDI: 0000000020000280
-RBP: 00007fd7816e7ae9 R08: 0000000000000000 R09: 0000000000000000
+RSP: 002b:00007f153139b168 EFLAGS: 00000246 ORIG_RAX: 00000000000000bc
+RAX: ffffffffffffffda RBX: 00007f153abac1f0 RCX: 00007f153aa8c0a9
+RDX: 0000000020000280 RSI: 0000000020000240 RDI: 0000000020000200
+RBP: 00007f153aae7ae9 R08: 0000000000000002 R09: 0000000000000000
 R10: 000000000000010c R11: 0000000000000246 R12: 0000000000000000
-R13: 00007fff9b71513f R14: 00007fd78242a300 R15: 0000000000022000
+R13: 00007ffe487bc7ef R14: 00007f153139b300 R15: 0000000000022000
  </TASK>
-REISERFS warning (device loop1): vs-13060 reiserfs_update_sd_size: stat data of object [3 6 0x0 SD] (nlink == 2) not found (pos 5)
-REISERFS warning (device loop1): vs-13060 reiserfs_update_sd_size: stat data of object [3 6 0x0 SD] (nlink == 3) not found (pos 3)
 
 
 ---
