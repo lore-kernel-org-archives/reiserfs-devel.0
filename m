@@ -1,100 +1,106 @@
-From: syzbot <syzbot+6a0877ace12bfad107fc@syzkaller.appspotmail.com>
-Subject: [syzbot] [reiserfs?] kernel BUG in balance_leaf
-Date: Wed, 04 Jan 2023 00:21:47 -0800
-Message-ID: <0000000000001eae4605f16be009@google.com>
+From: syzbot <syzbot+3f6ef04b7cf85153b528@syzkaller.appspotmail.com>
+Subject: [syzbot] [reiserfs?] [jfs?] BUG: unable to handle kernel paging
+ request in reiserfs_readdir_inode
+Date: Thu, 05 Jan 2023 11:12:56 -0800
+Message-ID: <000000000000a3818b05f18916e0@google.com>
 Mime-Version: 1.0
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
 List-ID: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: jack@suse.cz, linux-kernel@vger.kernel.org, reiserfs-devel@vger.kernel.org, syzkaller-bugs@googlegroups.com, yijiangshan@kylinos.cn
+To: jfs-discussion@lists.sourceforge.net, linux-kernel@vger.kernel.org, reiserfs-devel@vger.kernel.org, shaggy@kernel.org, syzkaller-bugs@googlegroups.com
 
 Hello,
 
 syzbot found the following issue on:
 
-HEAD commit:    88603b6dc419 Linux 6.2-rc2
-git tree:       upstream
-console+strace: https://syzkaller.appspot.com/x/log.txt?x=156f88b8480000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=9babfdc3dd4772d0
-dashboard link: https://syzkaller.appspot.com/bug?extid=6a0877ace12bfad107fc
+HEAD commit:    247f34f7b803 Linux 6.1-rc2
+git tree:       git://git.kernel.org/pub/scm/linux/kernel/git/arm64/linux.git for-kernelci
+console output: https://syzkaller.appspot.com/x/log.txt?x=15de909a480000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=fa9bed8d6a8992a0
+dashboard link: https://syzkaller.appspot.com/bug?extid=3f6ef04b7cf85153b528
 compiler:       Debian clang version 13.0.1-++20220126092033+75e33f71c2da-1~exp1~20220126212112.63, GNU ld (GNU Binutils for Debian) 2.35.2
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=12bdb82a480000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=108acc94480000
+userspace arch: arm64
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=100896ec480000
 
 Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/a44a84e5e4e6/disk-88603b6d.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/df723f71c09d/vmlinux-88603b6d.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/3db040a6ceef/bzImage-88603b6d.xz
-mounted in repro: https://storage.googleapis.com/syzbot-assets/5c2f508ccf3c/mount_0.gz
+disk image: https://storage.googleapis.com/syzbot-assets/05f9a7fca332/disk-247f34f7.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/ec50c3ad7d48/vmlinux-247f34f7.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/1446f94b11ed/Image-247f34f7.gz.xz
+mounted in repro #1: https://storage.googleapis.com/syzbot-assets/b331beed692c/mount_0.gz
+mounted in repro #2: https://storage.googleapis.com/syzbot-assets/980b2ce32188/mount_1.gz
 
 IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+6a0877ace12bfad107fc@syzkaller.appspotmail.com
+Reported-by: syzbot+3f6ef04b7cf85153b528@syzkaller.appspotmail.com
 
-REISERFS (device loop0): Using r5 hash to sort names
-REISERFS (device loop0): Created .reiserfs_priv - reserved for xattr storage.
-REISERFS panic (device loop0): vs-12195 balance_leaf: CFR not initialized
-------------[ cut here ]------------
-kernel BUG at fs/reiserfs/prints.c:390!
-invalid opcode: 0000 [#1] PREEMPT SMP KASAN
-CPU: 0 PID: 5070 Comm: syz-executor245 Not tainted 6.2.0-rc2-syzkaller #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 10/26/2022
-RIP: 0010:__reiserfs_panic+0x12f/0x140 fs/reiserfs/prints.c:390
-Code: c0 50 03 8b 48 0f 44 c8 48 0f 44 d8 48 c7 c7 80 51 03 8b 4c 89 fe 48 89 da 4d 89 f0 49 c7 c1 40 46 16 92 31 c0 e8 01 ec 82 08 <0f> 0b 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 44 00 00 55 48 89 e5 41
-RSP: 0018:ffffc90003d5e7e0 EFLAGS: 00010246
-RAX: 0000000000000049 RBX: ffffffff8b02e520 RCX: 37780e38b943e200
-RDX: 0000000000000000 RSI: 0000000080000000 RDI: 0000000000000000
-RBP: ffffc90003d5e8d0 R08: ffffffff816f2c9d R09: fffff520007abcb5
-R10: fffff520007abcb5 R11: 1ffff920007abcb4 R12: ffffffff8b02e540
-R13: ffffc90003d5e800 R14: ffffffff8cc70ec0 R15: ffff888028b806a8
-FS:  00007fd74c6aa700(0000) GS:ffff8880b9800000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007fd744689718 CR3: 0000000079f45000 CR4: 00000000003506f0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
- <TASK>
- balance_leaf+0x109eb/0x123a0 fs/reiserfs/do_balan.c:1439
- do_balance+0x2d6/0x8d0 fs/reiserfs/do_balan.c:1888
- reiserfs_insert_item+0xb54/0xcb0 fs/reiserfs/stree.c:2261
- reiserfs_new_inode+0x11c7/0x1cd0 fs/reiserfs/inode.c:2054
- reiserfs_create+0x3a6/0x660 fs/reiserfs/namei.c:668
- lookup_open fs/namei.c:3413 [inline]
- open_last_lookups fs/namei.c:3481 [inline]
- path_openat+0x12ac/0x2dd0 fs/namei.c:3711
- do_filp_open+0x264/0x4f0 fs/namei.c:3741
- do_sys_openat2+0x124/0x4e0 fs/open.c:1310
- do_sys_open fs/open.c:1326 [inline]
- __do_sys_openat fs/open.c:1342 [inline]
- __se_sys_openat fs/open.c:1337 [inline]
- __x64_sys_openat+0x243/0x290 fs/open.c:1337
- do_syscall_x64 arch/x86/entry/common.c:50 [inline]
- do_syscall_64+0x3d/0xb0 arch/x86/entry/common.c:80
- entry_SYSCALL_64_after_hwframe+0x63/0xcd
-RIP: 0033:0x7fd74c6fe559
-Code: 28 00 00 00 75 05 48 83 c4 28 c3 e8 71 15 00 00 90 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b8 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007fd74c6aa2f8 EFLAGS: 00000246 ORIG_RAX: 0000000000000101
-RAX: ffffffffffffffda RBX: 00007fd74c7847a0 RCX: 00007fd74c6fe559
-RDX: 0000000000000241 RSI: 0000000020000000 RDI: 00000000ffffff9c
-RBP: 00007fd74c7512b0 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 00007fd74c7511b8
-R13: 0030656c69662f2e R14: 7366726573696572 R15: 00007fd74c7847a8
- </TASK>
+REISERFS (device loop0): Using rupasov hash to sort names
+REISERFS warning (device loop0): jdm-20006 create_privroot: xattrs/ACLs enabled and couldn't find/create .reiserfs_priv. Failing mount.
+loop0: detected capacity change from 0 to 32768
+Unable to handle kernel paging request at virtual address ffff00001a06e183
+Mem abort info:
+  ESR = 0x0000000096000021
+  EC = 0x25: DABT (current EL), IL = 32 bits
+  SET = 0, FnV = 0
+  EA = 0, S1PTW = 0
+  FSC = 0x21: alignment fault
+Data abort info:
+  ISV = 0, ISS = 0x00000021
+  CM = 0, WnR = 0
+swapper pgtable: 4k pages, 48-bit VAs, pgdp=00000001c54db000
+[ffff00001a06e183] pgd=180000023fff8003, p4d=180000023fff8003, pud=180000023fff7003, pmd=180000023ff26003, pte=006800005a06e707
+Internal error: Oops: 0000000096000021 [#1] PREEMPT SMP
 Modules linked in:
+CPU: 0 PID: 3121 Comm: syz-executor.0 Not tainted 6.1.0-rc2-syzkaller-154433-g247f34f7b803 #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 10/26/2022
+pstate: 60400005 (nZCv daif +PAN -UAO -TCO -DIT -SSBS BTYPE=--)
+pc : __lse__cmpxchg_case_mb_64 arch/arm64/include/asm/atomic_lse.h:287 [inline]
+pc : __cmpxchg_case_mb_64 arch/arm64/include/asm/cmpxchg.h:130 [inline]
+pc : __cmpxchg_mb arch/arm64/include/asm/cmpxchg.h:175 [inline]
+pc : osq_lock+0x110/0x1f8 kernel/locking/osq_lock.c:162
+lr : osq_lock+0x38/0x1f8 kernel/locking/osq_lock.c:94
+sp : ffff80001305b980
+x29: ffff80001305b980 x28: ffff80000eec9000 x27: ffff80000cbb6d47
+x26: 0000000000000000 x25: ffff800008774160 x24: ffff0000cbd3ce90
+x23: ffff80000879e1b8 x22: ffff80000d2e2c40 x21: ffff00001a06e183
+x20: ffff0001fefd0c40 x19: ffff0000cbd3ce70 x18: 0000000000000000
+x17: 0000000000000000 x16: 0000000000000000 x15: 0000000000000000
+x14: 0000000000000000 x13: 0000000000000000 x12: 0000000000000000
+x11: 0000000000000000 x10: ffff0001fefd0c50 x9 : 0000000000000002
+x8 : ffff0001fefd0c40 x7 : 0000000000000000 x6 : ffff80000879e1b8
+x5 : 0000000000000000 x4 : 0000000000000001 x3 : 0000000000000000
+x2 : 0000000000000000 x1 : ffff0001fefd0c40 x0 : ffff00001a06e183
+Call trace:
+ __lse__cmpxchg_case_mb_64 arch/arm64/include/asm/atomic_lse.h:287 [inline]
+ __cmpxchg_case_mb_64 arch/arm64/include/asm/cmpxchg.h:130 [inline]
+ __cmpxchg_mb arch/arm64/include/asm/cmpxchg.h:175 [inline]
+ osq_lock+0x110/0x1f8 kernel/locking/osq_lock.c:162
+ mutex_optimistic_spin+0x1dc/0x254 kernel/locking/mutex.c:460
+ __mutex_lock_common+0x1b4/0xca8 kernel/locking/mutex.c:607
+ __mutex_lock kernel/locking/mutex.c:747 [inline]
+ mutex_lock_nested+0x38/0x44 kernel/locking/mutex.c:799
+ reiserfs_write_lock+0x3c/0x64 fs/reiserfs/lock.c:27
+ reiserfs_readdir_inode+0x9c/0x684 fs/reiserfs/dir.c:79
+ reiserfs_readdir+0x28/0x38 fs/reiserfs/dir.c:274
+ iterate_dir+0x114/0x28c
+ __do_sys_getdents64 fs/readdir.c:369 [inline]
+ __se_sys_getdents64 fs/readdir.c:354 [inline]
+ __arm64_sys_getdents64+0x80/0x204 fs/readdir.c:354
+ __invoke_syscall arch/arm64/kernel/syscall.c:38 [inline]
+ invoke_syscall arch/arm64/kernel/syscall.c:52 [inline]
+ el0_svc_common+0x138/0x220 arch/arm64/kernel/syscall.c:142
+ do_el0_svc+0x48/0x164 arch/arm64/kernel/syscall.c:206
+ el0_svc+0x58/0x150 arch/arm64/kernel/entry-common.c:636
+ el0t_64_sync_handler+0x84/0xf0 arch/arm64/kernel/entry-common.c:654
+ el0t_64_sync+0x18c/0x190 arch/arm64/kernel/entry.S:581
+Code: aa1503e0 aa1403e1 aa1f03e2 aa0103e8 (c8e8fea2) 
 ---[ end trace 0000000000000000 ]---
-RIP: 0010:__reiserfs_panic+0x12f/0x140 fs/reiserfs/prints.c:390
-Code: c0 50 03 8b 48 0f 44 c8 48 0f 44 d8 48 c7 c7 80 51 03 8b 4c 89 fe 48 89 da 4d 89 f0 49 c7 c1 40 46 16 92 31 c0 e8 01 ec 82 08 <0f> 0b 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 44 00 00 55 48 89 e5 41
-RSP: 0018:ffffc90003d5e7e0 EFLAGS: 00010246
-RAX: 0000000000000049 RBX: ffffffff8b02e520 RCX: 37780e38b943e200
-RDX: 0000000000000000 RSI: 0000000080000000 RDI: 0000000000000000
-RBP: ffffc90003d5e8d0 R08: ffffffff816f2c9d R09: fffff520007abcb5
-R10: fffff520007abcb5 R11: 1ffff920007abcb4 R12: ffffffff8b02e540
-R13: ffffc90003d5e800 R14: ffffffff8cc70ec0 R15: ffff888028b806a8
-FS:  00007fd74c6aa700(0000) GS:ffff8880b9800000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007fd744689718 CR3: 0000000079f45000 CR4: 00000000003506f0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+----------------
+Code disassembly (best guess):
+   0:	aa1503e0 	mov	x0, x21
+   4:	aa1403e1 	mov	x1, x20
+   8:	aa1f03e2 	mov	x2, xzr
+   c:	aa0103e8 	mov	x8, x1
+* 10:	c8e8fea2 	casal	x8, x2, [x21] <-- trapping instruction
 
 
 ---
