@@ -1,109 +1,178 @@
-From: syzbot <syzbot+a99186f624245fd88b94@syzkaller.appspotmail.com>
-Subject: [syzbot] [reiserfs?] BUG: unable to handle kernel paging request in reiserfs_lookup
-Date: Mon, 09 Jan 2023 07:47:37 -0800
-Message-ID: <000000000000be991505f1d6afb3@google.com>
+From: Roberto Sassu <roberto.sassu@huaweicloud.com>
+Subject: Re: [PATCH v7 2/6] ocfs2: Switch to security_inode_init_security()
+Date: Tue, 10 Jan 2023 09:55:50 +0100
+Message-ID: <6905166125130c22c244ebf234723d1587a01ae8.camel@huaweicloud.com>
+References: <20221201104125.919483-1-roberto.sassu@huaweicloud.com>
+         <20221201104125.919483-3-roberto.sassu@huaweicloud.com>
 Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
+In-Reply-To: <20221201104125.919483-3-roberto.sassu@huaweicloud.com>
 List-ID: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: linux-kernel@vger.kernel.org, reiserfs-devel@vger.kernel.org, syzkaller-bugs@googlegroups.com
+To: mark@fasheh.com, jlbec@evilplan.org, joseph.qi@linux.alibaba.com, zohar@linux.ibm.com, dmitry.kasatkin@gmail.com, paul@paul-moore.com, jmorris@namei.org, serge@hallyn.com, stephen.smalley.work@gmail.com, eparis@parisplace.org, casey@schaufler-ca.com
+Cc: ocfs2-devel@oss.oracle.com, reiserfs-devel@vger.kernel.org, linux-integrity@vger.kernel.org, linux-security-module@vger.kernel.org, selinux@vger.kernel.org, linux-kernel@vger.kernel.org, keescook@chromium.org, nicolas.bouchinet@clip-os.org, Roberto Sassu <roberto.sassu@huawei.com>
 
-Hello,
+On Thu, 2022-12-01 at 11:41 +0100, Roberto Sassu wrote:
+> From: Roberto Sassu <roberto.sassu@huawei.com>
+> 
+> In preparation for removing security_old_inode_init_security(), switch to
+> security_inode_init_security().
+> 
+> Extend the existing ocfs2_initxattrs() to take the
+> ocfs2_security_xattr_info structure from fs_info, and populate the
+> name/value/len triple with the first xattr provided by LSMs.
 
-syzbot found the following issue on:
+Hi Mark, Joel, Joseph
 
-HEAD commit:    247f34f7b803 Linux 6.1-rc2
-git tree:       git://git.kernel.org/pub/scm/linux/kernel/git/arm64/linux.git for-kernelci
-console output: https://syzkaller.appspot.com/x/log.txt?x=1619246e480000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=fa9bed8d6a8992a0
-dashboard link: https://syzkaller.appspot.com/bug?extid=a99186f624245fd88b94
-compiler:       Debian clang version 13.0.1-++20220126092033+75e33f71c2da-1~exp1~20220126212112.63, GNU ld (GNU Binutils for Debian) 2.35.2
-userspace arch: arm64
+some time ago I sent this patch set to switch to the newer
+function security_inode_init_security(). Almost all the other parts of
+this patch set have been reviewed, and the patch set itself should be
+ready to be merged.
 
-Unfortunately, I don't have any reproducer for this issue yet.
+I kindly ask if you could have a look at this patch and give your
+Reviewed-by, so that Paul could take the patch set.
 
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/05f9a7fca332/disk-247f34f7.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/ec50c3ad7d48/vmlinux-247f34f7.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/1446f94b11ed/Image-247f34f7.gz.xz
+Thanks a lot!
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+a99186f624245fd88b94@syzkaller.appspotmail.com
+Roberto
 
-Unable to handle kernel paging request at virtual address ffff80000d2e2c80
-Mem abort info:
-  ESR = 0x0000000096000047
-  EC = 0x25: DABT (current EL), IL = 32 bits
-  SET = 0, FnV = 0
-  EA = 0, S1PTW = 0
-  FSC = 0x07: level 3 translation fault
-Data abort info:
-  ISV = 0, ISS = 0x00000047
-  CM = 0, WnR = 1
-swapper pgtable: 4k pages, 48-bit VAs, pgdp=00000001c54db000
-[ffff80000d2e2c80] pgd=100000023ffff003, p4d=100000023ffff003, pud=100000023fffe003, pmd=100000023fffa003, pte=0000000000000000
-Internal error: Oops: 0000000096000047 [#1] PREEMPT SMP
-Modules linked in:
-CPU: 1 PID: 21788 Comm: syz-executor.3 Not tainted 6.1.0-rc2-syzkaller-154433-g247f34f7b803 #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 10/26/2022
-pstate: 00400005 (nzcv daif +PAN -UAO -TCO -DIT -SSBS BTYPE=--)
-pc : queued_spin_lock_slowpath+0x198/0x394 kernel/locking/qspinlock.c:474
-lr : queued_spin_lock_slowpath+0x114/0x394 kernel/locking/qspinlock.c:405
-sp : ffff80001400b850
-x29: ffff80001400b850 x28: ffff80000eec9000 x27: ffff80000cbb6d47
-x26: 0000000000000000 x25: 0000000000000000 x24: ffff0001fefefc80
-x23: 0000000000000000 x22: ffff80000d37d050 x21: ffff80000d2e2c80
-x20: 0000000000000001 x19: ffff00011e189430 x18: 0000000000000000
-x17: 0000000000000000 x16: 0000000000000000 x15: 0000000000000000
-x14: 0000000000000000 x13: 0000000000001fb8 x12: 0000000000000000
-x11: ffff80000d2e2c80 x10: 0000000000080000 x9 : ffff0001fefefc88
-x8 : ffff0001fefefc80 x7 : 0000000000000000 x6 : ffff80000c08f3c8
-x5 : 0000000000000000 x4 : 0000000000000001 x3 : 0000000000000000
-x2 : 0000000000000001 x1 : ffff80000ce889e3 x0 : 0000000000000001
-Call trace:
- decode_tail kernel/locking/qspinlock.c:131 [inline]
- queued_spin_lock_slowpath+0x198/0x394 kernel/locking/qspinlock.c:471
- queued_spin_lock include/asm-generic/qspinlock.h:114 [inline]
- do_raw_spin_lock+0x10c/0x110 kernel/locking/spinlock_debug.c:115
- __raw_spin_lock include/linux/spinlock_api_smp.h:134 [inline]
- _raw_spin_lock+0x5c/0x6c kernel/locking/spinlock.c:154
- __mutex_lock_common+0x2a4/0xca8 kernel/locking/mutex.c:617
- __mutex_lock kernel/locking/mutex.c:747 [inline]
- mutex_lock_nested+0x38/0x44 kernel/locking/mutex.c:799
- reiserfs_write_lock+0x3c/0x64 fs/reiserfs/lock.c:27
- reiserfs_lookup+0xa4/0x1c4 fs/reiserfs/namei.c:364
- lookup_open fs/namei.c:3391 [inline]
- open_last_lookups fs/namei.c:3481 [inline]
- path_openat+0x738/0x11c4 fs/namei.c:3710
- do_filp_open+0xdc/0x1b8 fs/namei.c:3740
- do_sys_openat2+0xb8/0x22c fs/open.c:1310
- do_sys_open fs/open.c:1326 [inline]
- __do_sys_openat fs/open.c:1342 [inline]
- __se_sys_openat fs/open.c:1337 [inline]
- __arm64_sys_openat+0xb0/0xe0 fs/open.c:1337
- __invoke_syscall arch/arm64/kernel/syscall.c:38 [inline]
- invoke_syscall arch/arm64/kernel/syscall.c:52 [inline]
- el0_svc_common+0x138/0x220 arch/arm64/kernel/syscall.c:142
- do_el0_svc+0x48/0x164 arch/arm64/kernel/syscall.c:206
- el0_svc+0x58/0x150 arch/arm64/kernel/entry-common.c:636
- el0t_64_sync_handler+0x84/0xf0 arch/arm64/kernel/entry-common.c:654
- el0t_64_sync+0x18c/0x190 arch/arm64/kernel/entry.S:581
-Code: 8b2c4ecc f85f818c 1200056b 8b2b52ab (f82b6988) 
----[ end trace 0000000000000000 ]---
-----------------
-Code disassembly (best guess):
-   0:	8b2c4ecc 	add	x12, x22, w12, uxtw #3
-   4:	f85f818c 	ldur	x12, [x12, #-8]
-   8:	1200056b 	and	w11, w11, #0x3
-   c:	8b2b52ab 	add	x11, x21, w11, uxtw #4
-* 10:	f82b6988 	str	x8, [x12, x11] <-- trapping instruction
+> As fs_info was not used before, ocfs2_initxattrs() can now handle the case
+> of replicating the behavior of security_old_inode_init_security(), i.e.
+> just obtaining the xattr, in addition to setting all xattrs provided by
+> LSMs.
+> 
+> Supporting multiple xattrs is not currently supported where
+> security_old_inode_init_security() was called (mknod, symlink), as it
+> requires non-trivial changes that can be done at a later time. Like for
+> reiserfs, even if EVM is invoked, it will not provide an xattr (if it is
+> not the first to set it, its xattr will be discarded; if it is the first,
+> it does not have xattrs to calculate the HMAC on).
+> 
+> Finally, modify the handling of the return value from
+> ocfs2_init_security_get(). As security_inode_init_security() does not
+> return -EOPNOTSUPP, remove this case and directly handle the error if the
+> return value is not zero.
+> 
+> However, the previous case of receiving -EOPNOTSUPP should be still
+> taken into account, as security_inode_init_security() could return zero
+> without setting xattrs and ocfs2 would consider it as if the xattr was set.
+> 
+> Instead, if security_inode_init_security() returned zero, look at the xattr
+> if it was set, and behave accordingly, i.e. set si->enable to zero to
+> notify to the functions following ocfs2_init_security_get() that the xattr
+> is not available (same as if security_old_inode_init_security() returned
+> -EOPNOTSUPP).
+> 
+> Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
+> Reviewed-by: Casey Schaufler <casey@schaufler-ca.com>
+> ---
+>  fs/ocfs2/namei.c | 18 ++++++------------
+>  fs/ocfs2/xattr.c | 30 ++++++++++++++++++++++++++----
+>  2 files changed, 32 insertions(+), 16 deletions(-)
+> 
+> diff --git a/fs/ocfs2/namei.c b/fs/ocfs2/namei.c
+> index 05f32989bad6..55fba81cd2d1 100644
+> --- a/fs/ocfs2/namei.c
+> +++ b/fs/ocfs2/namei.c
+> @@ -242,6 +242,7 @@ static int ocfs2_mknod(struct user_namespace *mnt_userns,
+>  	int want_meta = 0;
+>  	int xattr_credits = 0;
+>  	struct ocfs2_security_xattr_info si = {
+> +		.name = NULL,
+>  		.enable = 1,
+>  	};
+>  	int did_quota_inode = 0;
+> @@ -315,12 +316,8 @@ static int ocfs2_mknod(struct user_namespace *mnt_userns,
+>  	/* get security xattr */
+>  	status = ocfs2_init_security_get(inode, dir, &dentry->d_name, &si);
+>  	if (status) {
+> -		if (status == -EOPNOTSUPP)
+> -			si.enable = 0;
+> -		else {
+> -			mlog_errno(status);
+> -			goto leave;
+> -		}
+> +		mlog_errno(status);
+> +		goto leave;
+>  	}
+>  
+>  	/* calculate meta data/clusters for setting security and acl xattr */
+> @@ -1805,6 +1802,7 @@ static int ocfs2_symlink(struct user_namespace *mnt_userns,
+>  	int want_clusters = 0;
+>  	int xattr_credits = 0;
+>  	struct ocfs2_security_xattr_info si = {
+> +		.name = NULL,
+>  		.enable = 1,
+>  	};
+>  	int did_quota = 0, did_quota_inode = 0;
+> @@ -1875,12 +1873,8 @@ static int ocfs2_symlink(struct user_namespace *mnt_userns,
+>  	/* get security xattr */
+>  	status = ocfs2_init_security_get(inode, dir, &dentry->d_name, &si);
+>  	if (status) {
+> -		if (status == -EOPNOTSUPP)
+> -			si.enable = 0;
+> -		else {
+> -			mlog_errno(status);
+> -			goto bail;
+> -		}
+> +		mlog_errno(status);
+> +		goto bail;
+>  	}
+>  
+>  	/* calculate meta data/clusters for setting security xattr */
+> diff --git a/fs/ocfs2/xattr.c b/fs/ocfs2/xattr.c
+> index 95d0611c5fc7..55699c573541 100644
+> --- a/fs/ocfs2/xattr.c
+> +++ b/fs/ocfs2/xattr.c
+> @@ -7259,9 +7259,21 @@ static int ocfs2_xattr_security_set(const struct xattr_handler *handler,
+>  static int ocfs2_initxattrs(struct inode *inode, const struct xattr *xattr_array,
+>  		     void *fs_info)
+>  {
+> +	struct ocfs2_security_xattr_info *si = fs_info;
+>  	const struct xattr *xattr;
+>  	int err = 0;
+>  
+> +	if (si) {
+> +		si->value = kmemdup(xattr_array->value, xattr_array->value_len,
+> +				    GFP_KERNEL);
+> +		if (!si->value)
+> +			return -ENOMEM;
+> +
+> +		si->name = xattr_array->name;
+> +		si->value_len = xattr_array->value_len;
+> +		return 0;
+> +	}
+> +
+>  	for (xattr = xattr_array; xattr->name != NULL; xattr++) {
+>  		err = ocfs2_xattr_set(inode, OCFS2_XATTR_INDEX_SECURITY,
+>  				      xattr->name, xattr->value,
+> @@ -7277,13 +7289,23 @@ int ocfs2_init_security_get(struct inode *inode,
+>  			    const struct qstr *qstr,
+>  			    struct ocfs2_security_xattr_info *si)
+>  {
+> +	int ret;
+> +
+>  	/* check whether ocfs2 support feature xattr */
+>  	if (!ocfs2_supports_xattr(OCFS2_SB(dir->i_sb)))
+>  		return -EOPNOTSUPP;
+> -	if (si)
+> -		return security_old_inode_init_security(inode, dir, qstr,
+> -							&si->name, &si->value,
+> -							&si->value_len);
+> +	if (si) {
+> +		ret = security_inode_init_security(inode, dir, qstr,
+> +						   &ocfs2_initxattrs, si);
+> +		/*
+> +		 * security_inode_init_security() does not return -EOPNOTSUPP,
+> +		 * we have to check the xattr ourselves.
+> +		 */
+> +		if (!ret && !si->name)
+> +			si->enable = 0;
+> +
+> +		return ret;
+> +	}
+>  
+>  	return security_inode_init_security(inode, dir, qstr,
+>  					    &ocfs2_initxattrs, NULL);
 
-
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
