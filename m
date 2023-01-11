@@ -1,178 +1,69 @@
-From: Roberto Sassu <roberto.sassu@huaweicloud.com>
-Subject: Re: [PATCH v7 2/6] ocfs2: Switch to security_inode_init_security()
-Date: Tue, 10 Jan 2023 09:55:50 +0100
-Message-ID: <6905166125130c22c244ebf234723d1587a01ae8.camel@huaweicloud.com>
-References: <20221201104125.919483-1-roberto.sassu@huaweicloud.com>
-         <20221201104125.919483-3-roberto.sassu@huaweicloud.com>
+From: syzbot <syzbot+67d4d8261283b46b21ac@syzkaller.appspotmail.com>
+Subject: [syzbot] [reiserfs?] memory leak in reiserfs_parse_options (2)
+Date: Wed, 11 Jan 2023 02:44:41 -0800
+Message-ID: <000000000000091dff05f1fab036@google.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-devel-owner@vger.kernel.org>
-In-Reply-To: <20221201104125.919483-3-roberto.sassu@huaweicloud.com>
+Return-path: <linux-kernel-owner@vger.kernel.org>
 List-ID: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: mark@fasheh.com, jlbec@evilplan.org, joseph.qi@linux.alibaba.com, zohar@linux.ibm.com, dmitry.kasatkin@gmail.com, paul@paul-moore.com, jmorris@namei.org, serge@hallyn.com, stephen.smalley.work@gmail.com, eparis@parisplace.org, casey@schaufler-ca.com
-Cc: ocfs2-devel@oss.oracle.com, reiserfs-devel@vger.kernel.org, linux-integrity@vger.kernel.org, linux-security-module@vger.kernel.org, selinux@vger.kernel.org, linux-kernel@vger.kernel.org, keescook@chromium.org, nicolas.bouchinet@clip-os.org, Roberto Sassu <roberto.sassu@huawei.com>
+Content-Transfer-Encoding: 7bit
+To: akpm@linux-foundation.org, bvanassche@acm.org, jack@suse.cz, linux-kernel@vger.kernel.org, muchun.song@linux.dev, reiserfs-devel@vger.kernel.org, roman.gushchin@linux.dev, syzkaller-bugs@googlegroups.com, tytso@mit.edu, yi.zhang@huawei.com, yijiangshan@kylinos.cn
 
-On Thu, 2022-12-01 at 11:41 +0100, Roberto Sassu wrote:
-> From: Roberto Sassu <roberto.sassu@huawei.com>
-> 
-> In preparation for removing security_old_inode_init_security(), switch to
-> security_inode_init_security().
-> 
-> Extend the existing ocfs2_initxattrs() to take the
-> ocfs2_security_xattr_info structure from fs_info, and populate the
-> name/value/len triple with the first xattr provided by LSMs.
+Hello,
 
-Hi Mark, Joel, Joseph
+syzbot found the following issue on:
 
-some time ago I sent this patch set to switch to the newer
-function security_inode_init_security(). Almost all the other parts of
-this patch set have been reviewed, and the patch set itself should be
-ready to be merged.
+HEAD commit:    a689b938df39 Merge tag 'block-2023-01-06' of git://git.ker..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=14e229c2480000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=5ddca4921a53cff2
+dashboard link: https://syzkaller.appspot.com/bug?extid=67d4d8261283b46b21ac
+compiler:       gcc (Debian 10.2.1-6) 10.2.1 20210110, GNU ld (GNU Binutils for Debian) 2.35.2
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=15adc3fc480000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=150b3bcc480000
 
-I kindly ask if you could have a look at this patch and give your
-Reviewed-by, so that Paul could take the patch set.
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/a368fc04c846/disk-a689b938.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/b6771146e261/vmlinux-a689b938.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/ac22fc91deb9/bzImage-a689b938.xz
+mounted in repro: https://storage.googleapis.com/syzbot-assets/15583b49f0c4/mount_0.gz
 
-Thanks a lot!
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+67d4d8261283b46b21ac@syzkaller.appspotmail.com
 
-Roberto
+BUG: memory leak
+unreferenced object 0xffff88810f4f5600 (size 32):
+  comm "syz-executor300", pid 5077, jiffies 4294958926 (age 8.040s)
+  hex dump (first 32 bytes):
+    73 79 7a 00 00 00 00 00 00 00 00 00 00 00 00 00  syz.............
+    00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
+  backtrace:
+    [<ffffffff814f9c67>] __do_kmalloc_node mm/slab_common.c:967 [inline]
+    [<ffffffff814f9c67>] __kmalloc_node_track_caller+0x47/0x120 mm/slab_common.c:988
+    [<ffffffff814e9feb>] kstrdup+0x3b/0x70 mm/util.c:61
+    [<ffffffff8177b635>] reiserfs_parse_options+0xad5/0x1090 fs/reiserfs/super.c:1279
+    [<ffffffff8177f73d>] reiserfs_fill_super+0x17d/0x15d0 fs/reiserfs/super.c:1933
+    [<ffffffff8160f503>] mount_bdev+0x223/0x260 fs/super.c:1359
+    [<ffffffff81673a1b>] legacy_get_tree+0x2b/0x90 fs/fs_context.c:610
+    [<ffffffff8160d088>] vfs_get_tree+0x28/0x100 fs/super.c:1489
+    [<ffffffff81650f27>] do_new_mount fs/namespace.c:3145 [inline]
+    [<ffffffff81650f27>] path_mount+0xc37/0x10d0 fs/namespace.c:3475
+    [<ffffffff81651b5e>] do_mount fs/namespace.c:3488 [inline]
+    [<ffffffff81651b5e>] __do_sys_mount fs/namespace.c:3697 [inline]
+    [<ffffffff81651b5e>] __se_sys_mount fs/namespace.c:3674 [inline]
+    [<ffffffff81651b5e>] __x64_sys_mount+0x18e/0x1d0 fs/namespace.c:3674
+    [<ffffffff848ef725>] do_syscall_x64 arch/x86/entry/common.c:50 [inline]
+    [<ffffffff848ef725>] do_syscall_64+0x35/0xb0 arch/x86/entry/common.c:80
+    [<ffffffff84a00087>] entry_SYSCALL_64_after_hwframe+0x63/0xcd
 
-> As fs_info was not used before, ocfs2_initxattrs() can now handle the case
-> of replicating the behavior of security_old_inode_init_security(), i.e.
-> just obtaining the xattr, in addition to setting all xattrs provided by
-> LSMs.
-> 
-> Supporting multiple xattrs is not currently supported where
-> security_old_inode_init_security() was called (mknod, symlink), as it
-> requires non-trivial changes that can be done at a later time. Like for
-> reiserfs, even if EVM is invoked, it will not provide an xattr (if it is
-> not the first to set it, its xattr will be discarded; if it is the first,
-> it does not have xattrs to calculate the HMAC on).
-> 
-> Finally, modify the handling of the return value from
-> ocfs2_init_security_get(). As security_inode_init_security() does not
-> return -EOPNOTSUPP, remove this case and directly handle the error if the
-> return value is not zero.
-> 
-> However, the previous case of receiving -EOPNOTSUPP should be still
-> taken into account, as security_inode_init_security() could return zero
-> without setting xattrs and ocfs2 would consider it as if the xattr was set.
-> 
-> Instead, if security_inode_init_security() returned zero, look at the xattr
-> if it was set, and behave accordingly, i.e. set si->enable to zero to
-> notify to the functions following ocfs2_init_security_get() that the xattr
-> is not available (same as if security_old_inode_init_security() returned
-> -EOPNOTSUPP).
-> 
-> Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
-> Reviewed-by: Casey Schaufler <casey@schaufler-ca.com>
-> ---
->  fs/ocfs2/namei.c | 18 ++++++------------
->  fs/ocfs2/xattr.c | 30 ++++++++++++++++++++++++++----
->  2 files changed, 32 insertions(+), 16 deletions(-)
-> 
-> diff --git a/fs/ocfs2/namei.c b/fs/ocfs2/namei.c
-> index 05f32989bad6..55fba81cd2d1 100644
-> --- a/fs/ocfs2/namei.c
-> +++ b/fs/ocfs2/namei.c
-> @@ -242,6 +242,7 @@ static int ocfs2_mknod(struct user_namespace *mnt_userns,
->  	int want_meta = 0;
->  	int xattr_credits = 0;
->  	struct ocfs2_security_xattr_info si = {
-> +		.name = NULL,
->  		.enable = 1,
->  	};
->  	int did_quota_inode = 0;
-> @@ -315,12 +316,8 @@ static int ocfs2_mknod(struct user_namespace *mnt_userns,
->  	/* get security xattr */
->  	status = ocfs2_init_security_get(inode, dir, &dentry->d_name, &si);
->  	if (status) {
-> -		if (status == -EOPNOTSUPP)
-> -			si.enable = 0;
-> -		else {
-> -			mlog_errno(status);
-> -			goto leave;
-> -		}
-> +		mlog_errno(status);
-> +		goto leave;
->  	}
->  
->  	/* calculate meta data/clusters for setting security and acl xattr */
-> @@ -1805,6 +1802,7 @@ static int ocfs2_symlink(struct user_namespace *mnt_userns,
->  	int want_clusters = 0;
->  	int xattr_credits = 0;
->  	struct ocfs2_security_xattr_info si = {
-> +		.name = NULL,
->  		.enable = 1,
->  	};
->  	int did_quota = 0, did_quota_inode = 0;
-> @@ -1875,12 +1873,8 @@ static int ocfs2_symlink(struct user_namespace *mnt_userns,
->  	/* get security xattr */
->  	status = ocfs2_init_security_get(inode, dir, &dentry->d_name, &si);
->  	if (status) {
-> -		if (status == -EOPNOTSUPP)
-> -			si.enable = 0;
-> -		else {
-> -			mlog_errno(status);
-> -			goto bail;
-> -		}
-> +		mlog_errno(status);
-> +		goto bail;
->  	}
->  
->  	/* calculate meta data/clusters for setting security xattr */
-> diff --git a/fs/ocfs2/xattr.c b/fs/ocfs2/xattr.c
-> index 95d0611c5fc7..55699c573541 100644
-> --- a/fs/ocfs2/xattr.c
-> +++ b/fs/ocfs2/xattr.c
-> @@ -7259,9 +7259,21 @@ static int ocfs2_xattr_security_set(const struct xattr_handler *handler,
->  static int ocfs2_initxattrs(struct inode *inode, const struct xattr *xattr_array,
->  		     void *fs_info)
->  {
-> +	struct ocfs2_security_xattr_info *si = fs_info;
->  	const struct xattr *xattr;
->  	int err = 0;
->  
-> +	if (si) {
-> +		si->value = kmemdup(xattr_array->value, xattr_array->value_len,
-> +				    GFP_KERNEL);
-> +		if (!si->value)
-> +			return -ENOMEM;
-> +
-> +		si->name = xattr_array->name;
-> +		si->value_len = xattr_array->value_len;
-> +		return 0;
-> +	}
-> +
->  	for (xattr = xattr_array; xattr->name != NULL; xattr++) {
->  		err = ocfs2_xattr_set(inode, OCFS2_XATTR_INDEX_SECURITY,
->  				      xattr->name, xattr->value,
-> @@ -7277,13 +7289,23 @@ int ocfs2_init_security_get(struct inode *inode,
->  			    const struct qstr *qstr,
->  			    struct ocfs2_security_xattr_info *si)
->  {
-> +	int ret;
-> +
->  	/* check whether ocfs2 support feature xattr */
->  	if (!ocfs2_supports_xattr(OCFS2_SB(dir->i_sb)))
->  		return -EOPNOTSUPP;
-> -	if (si)
-> -		return security_old_inode_init_security(inode, dir, qstr,
-> -							&si->name, &si->value,
-> -							&si->value_len);
-> +	if (si) {
-> +		ret = security_inode_init_security(inode, dir, qstr,
-> +						   &ocfs2_initxattrs, si);
-> +		/*
-> +		 * security_inode_init_security() does not return -EOPNOTSUPP,
-> +		 * we have to check the xattr ourselves.
-> +		 */
-> +		if (!ret && !si->name)
-> +			si->enable = 0;
-> +
-> +		return ret;
-> +	}
->  
->  	return security_inode_init_security(inode, dir, qstr,
->  					    &ocfs2_initxattrs, NULL);
 
+
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+syzbot can test patches for this issue, for details see:
+https://goo.gl/tpsmEJ#testing-patches
