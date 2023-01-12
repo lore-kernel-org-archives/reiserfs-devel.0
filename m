@@ -1,69 +1,62 @@
-From: syzbot <syzbot+67d4d8261283b46b21ac@syzkaller.appspotmail.com>
-Subject: [syzbot] [reiserfs?] memory leak in reiserfs_parse_options (2)
-Date: Wed, 11 Jan 2023 02:44:41 -0800
-Message-ID: <000000000000091dff05f1fab036@google.com>
+From: Paul Moore <paul@paul-moore.com>
+Subject: Re: [PATCH v7 0/6] evm: Do HMAC of multiple per LSM xattrs for new inodes
+Date: Thu, 12 Jan 2023 12:15:51 -0500
+Message-ID: <CAHC9VhS0SnEb46-FBpn2JpC2dJ7OnkeJ2EtLBvVvkOLdfFmcbg@mail.gmail.com>
+References: <20221201104125.919483-1-roberto.sassu@huaweicloud.com>
 Mime-Version: 1.0
-Return-path: <linux-kernel-owner@vger.kernel.org>
+Return-path: <linux-security-module-owner@vger.kernel.org>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paul-moore.com; s=google;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=nzSuljwXCaXyiAVCXAx1oRKKeIjSI3nJRRGJJx1quUQ=;
+        b=MFOcCfEZ7Cjmr3WB5GH4eeEn0165eiypBPdejoqXwokek49v/AySoZEAZw9j2oDcmq
+         y4J6DEeYf3KOdxex0i3awGU/lJNKOesgPify/ePlg8mxB+jk23/SKGnDkwfjKWs723G+
+         5fTI4dD97IJHbv3KYFmaYeEhLvdEO5RWppT7C9xSdlKh60iFFNFBADUu4kCkp7oLBgpM
+         RQWj59jEMMtexCUU92taNzVkPyGJ6EsQ4nGL8WFfh1sHrh7w0DJkEzpsadnRGZ+k5KlX
+         9RKXsLyYhkqNOIn6C//zs9Slur/qUqHuCKIuWKiASSuuMe2SyhJoPMmQAvRwAOR8UYA5
+         lbew==
+In-Reply-To: <20221201104125.919483-1-roberto.sassu@huaweicloud.com>
 List-ID: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: akpm@linux-foundation.org, bvanassche@acm.org, jack@suse.cz, linux-kernel@vger.kernel.org, muchun.song@linux.dev, reiserfs-devel@vger.kernel.org, roman.gushchin@linux.dev, syzkaller-bugs@googlegroups.com, tytso@mit.edu, yi.zhang@huawei.com, yijiangshan@kylinos.cn
+To: Roberto Sassu <roberto.sassu@huaweicloud.com>
+Cc: mark@fasheh.com, jlbec@evilplan.org, joseph.qi@linux.alibaba.com, zohar@linux.ibm.com, dmitry.kasatkin@gmail.com, jmorris@namei.org, serge@hallyn.com, stephen.smalley.work@gmail.com, eparis@parisplace.org, casey@schaufler-ca.com, ocfs2-devel@oss.oracle.com, reiserfs-devel@vger.kernel.org, linux-integrity@vger.kernel.org, linux-security-module@vger.kernel.org, selinux@vger.kernel.org, linux-kernel@vger.kernel.org, keescook@chromium.org, nicolas.bouchinet@clip-os.org, Roberto Sassu <roberto.sassu@huawei.com>
 
-Hello,
+On Thu, Dec 1, 2022 at 5:42 AM Roberto Sassu
+<roberto.sassu@huaweicloud.com> wrote:
+>
+> From: Roberto Sassu <roberto.sassu@huawei.com>
+>
+> One of the major goals of LSM stacking is to run multiple LSMs side by side
+> without interfering with each other. The ultimate decision will depend on
+> individual LSM decision.
+>
+> Several changes need to be made to the LSM infrastructure to be able to
+> support that. This patch set tackles one of them: gives to each LSM the
+> ability to specify one or multiple xattrs to be set at inode creation
+> time and, at the same time, gives to EVM the ability to access all those
+> xattrs and calculate the HMAC on them.
 
-syzbot found the following issue on:
+...
 
-HEAD commit:    a689b938df39 Merge tag 'block-2023-01-06' of git://git.ker..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=14e229c2480000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=5ddca4921a53cff2
-dashboard link: https://syzkaller.appspot.com/bug?extid=67d4d8261283b46b21ac
-compiler:       gcc (Debian 10.2.1-6) 10.2.1 20210110, GNU ld (GNU Binutils for Debian) 2.35.2
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=15adc3fc480000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=150b3bcc480000
+> The patch set has been tested with both the SElinux and Smack test suites.
+> Below, there is the summary of the test results:
+>
+> SELinux Test Suite result (without patches):
+> Files=73, Tests=1346, 225 wallclock secs ( 0.43 usr  0.23 sys +  6.11 cusr 58.70 csys = 65.47 CPU)
+> Result: FAIL
+> Failed 4/73 test programs. 13/1346 subtests failed.
+>
+> SELinux Test Suite result (with patches):
+> Files=73, Tests=1346, 225 wallclock secs ( 0.44 usr  0.22 sys +  6.15 cusr 59.94 csys = 66.75 CPU)
+> Result: FAIL
+> Failed 4/73 test programs. 13/1346 subtests failed.
 
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/a368fc04c846/disk-a689b938.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/b6771146e261/vmlinux-a689b938.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/ac22fc91deb9/bzImage-a689b938.xz
-mounted in repro: https://storage.googleapis.com/syzbot-assets/15583b49f0c4/mount_0.gz
+Can you provide some more information on which of the
+selinux-testsuite tests failed?  That shouldn't be happening and I'm a
+little concerned that these test failures, even if unrelated to your
+work here, could be masking failures which are related.
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+67d4d8261283b46b21ac@syzkaller.appspotmail.com
-
-BUG: memory leak
-unreferenced object 0xffff88810f4f5600 (size 32):
-  comm "syz-executor300", pid 5077, jiffies 4294958926 (age 8.040s)
-  hex dump (first 32 bytes):
-    73 79 7a 00 00 00 00 00 00 00 00 00 00 00 00 00  syz.............
-    00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
-  backtrace:
-    [<ffffffff814f9c67>] __do_kmalloc_node mm/slab_common.c:967 [inline]
-    [<ffffffff814f9c67>] __kmalloc_node_track_caller+0x47/0x120 mm/slab_common.c:988
-    [<ffffffff814e9feb>] kstrdup+0x3b/0x70 mm/util.c:61
-    [<ffffffff8177b635>] reiserfs_parse_options+0xad5/0x1090 fs/reiserfs/super.c:1279
-    [<ffffffff8177f73d>] reiserfs_fill_super+0x17d/0x15d0 fs/reiserfs/super.c:1933
-    [<ffffffff8160f503>] mount_bdev+0x223/0x260 fs/super.c:1359
-    [<ffffffff81673a1b>] legacy_get_tree+0x2b/0x90 fs/fs_context.c:610
-    [<ffffffff8160d088>] vfs_get_tree+0x28/0x100 fs/super.c:1489
-    [<ffffffff81650f27>] do_new_mount fs/namespace.c:3145 [inline]
-    [<ffffffff81650f27>] path_mount+0xc37/0x10d0 fs/namespace.c:3475
-    [<ffffffff81651b5e>] do_mount fs/namespace.c:3488 [inline]
-    [<ffffffff81651b5e>] __do_sys_mount fs/namespace.c:3697 [inline]
-    [<ffffffff81651b5e>] __se_sys_mount fs/namespace.c:3674 [inline]
-    [<ffffffff81651b5e>] __x64_sys_mount+0x18e/0x1d0 fs/namespace.c:3674
-    [<ffffffff848ef725>] do_syscall_x64 arch/x86/entry/common.c:50 [inline]
-    [<ffffffff848ef725>] do_syscall_64+0x35/0xb0 arch/x86/entry/common.c:80
-    [<ffffffff84a00087>] entry_SYSCALL_64_after_hwframe+0x63/0xcd
-
-
-
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-syzbot can test patches for this issue, for details see:
-https://goo.gl/tpsmEJ#testing-patches
+-- 
+paul-moore.com
