@@ -1,114 +1,149 @@
-From: syzbot <syzbot+74b838cfa47fc9554471@syzkaller.appspotmail.com>
-Subject: Re: [syzbot] [reiserfs?] divide error in do_journal_end (3)
-Date: Mon, 16 Jan 2023 02:21:57 -0800
-Message-ID: <000000000000f17bea05f25ef32b@google.com>
-References: <000000000000520d3405f075a026@google.com>
+From: Christian Brauner <brauner@kernel.org>
+Subject: [PATCH 00/12] acl: remove remaining posix acl handlers
+Date: Wed, 25 Jan 2023 12:28:45 +0100
+Message-ID: <20230125-fs-acl-remove-generic-xattr-handlers-v1-0-6cf155b492b6@kernel.org>
 Mime-Version: 1.0
-Return-path: <reiserfs-devel-owner@vger.kernel.org>
-In-Reply-To: <000000000000520d3405f075a026@google.com>
-List-ID: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: axboe@kernel.dk, bvanassche@acm.org, jack@suse.cz, jlayton@kernel.org, linux-kernel@vger.kernel.org, reiserfs-devel@vger.kernel.org, song@kernel.org, syzkaller-bugs@googlegroups.com, willy@infradead.org, yi.zhang@huawei.com
+Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+ d=sourceforge.net; s=x; h=Cc:To:Content-Transfer-Encoding:Content-Type:
+ MIME-Version:Message-Id:Date:Subject:From:Sender:Reply-To:Content-ID:
+ Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+ :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
+ List-Subscribe:List-Post:List-Owner:List-Archive;
+ bh=XArVxmj+IwvPr9caruOG1hNSMWRWNwrrhrJGhaz21Gc=; b=BWVQieRzmPJzeGryTPT30uOA6L
+ AXUX/vPgb4/WvYzp7ezOvqIKGpuVTIcorx5O3x8xwGxNfXusbqTPNf1rmKjSfA64wZ0xMmVhBULme
+ hU5ixR4AoiIV+Vw4CQYlCnPgZ/VnK2Vjee/r9Xghx9ukPj3j5CS/RFM31Dqu7jdICfaA=;
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
+ ;
+ h=Cc:To:Content-Transfer-Encoding:Content-Type:MIME-Version:Message-Id:Date
+ :Subject:From:Sender:Reply-To:Content-ID:Content-Description:Resent-Date:
+ Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:
+ References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:
+ List-Owner:List-Archive; bh=XArVxmj+IwvPr9caruOG1hNSMWRWNwrrhrJGhaz21Gc=; b=S
+ 0yUzAMQCCuO/c0OnXBIZYpwMlAKtVbofFN0Fl8aXfm+HAArwfksEC8NNtgWFSDE/OMwTolk6hW/od
+ 0Lm7luEokUD36o57n1CHl/7v0tyqsnHIyco3on4OJdNajwlKbAXSmA3JQrXTaZ90dKiEF4Lr7yR2K
+ Hrbo4Thga55b71fY=;
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+ s=k20201202; t=1674646165;
+ bh=iVepgeT7psmWqr/2L8LpCH4RngFmQJ2i/zddXU3Ybms=;
+ h=From:Subject:Date:To:Cc:From;
+ b=aa0adWk8JIHYbDKjUCphZ1mzhrcTx2e5m+zTBZn9obQWuMBhYiKhvxE/PfkC0DrMo
+ n+Ti2ja6VfjxgUnPOpsi1+/EmtHqmyra/AonZ5w9wjQlfzKpsP+4TOI050CJaL0N1y
+ bKz7YhLgOmOvqok9PjXvsoVl3tKqVYUbksPXEapn+w0KefS9YB16xUcTypEO9pAwIN
+ evQ3wG1KZlyA608u+IFmR08EX1UGoUJze8vveYRXvWqAxEv1eQ5rc5zD6Fc879yXFq
+ 13JMMXTEhD0lFVC6szsgPPomAG4klotXLnPAg8gEVmP0MH1tcrAZMyEp+bDrceHz66
+ q2f2/uwZQY7jw==
+X-Developer-Signature: v=1; a=openpgp-sha256; l=3964; i=brauner@kernel.org;
+ h=from:subject:message-id; bh=iVepgeT7psmWqr/2L8LpCH4RngFmQJ2i/zddXU3Ybms=;
+ b=owGbwMvMwCU28Zj0gdSKO4sYT6slMSRfFJq42SCo7mej0syzO7/VS69Ps21sFO48f9znuHr/fZEX
+ p52lO0pZGMS4GGTFFFkc2k3C5ZbzVGw2ytSAmcPKBDKEgYtTACYSeIbhn+X/3zmPrKtsko21fh3Smv
+ 5k/WvP2Uo6Sw92TuXesanV+BYjw7wCO68bLxsFprMsyP59RaXIcbL7hMBFnntnmxRL2pSJsAIA
+X-Developer-Key: i=brauner@kernel.org; a=openpgp;
+ fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
+List-Id: <reiserfs-devel.vger.kernel.org>
+List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>, 
+ <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
+List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
+List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
+List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
+List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
+ <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
+Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
+To: linux-fsdevel@vger.kernel.org, Christoph Hellwig <hch@lst.de>
+Cc: "Christian Brauner (Microsoft)" <brauner@kernel.org>, reiserfs-devel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net, linux-mtd@lists.infradead.org, Al Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.com>, linux-ext4@vger.kernel.org, linux-erofs@lists.ozlabs.org, ocfs2-devel@oss.oracle.com, Seth Forshee <sforshee@kernel.org>
 
-syzbot has found a reproducer for the following issue on:
+Hey everyone,
 
-HEAD commit:    5dc4c995db9e Linux 6.2-rc4
-git tree:       upstream
-console+strace: https://syzkaller.appspot.com/x/log.txt?x=17104a36480000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=2d1e01fb80d3df97
-dashboard link: https://syzkaller.appspot.com/bug?extid=74b838cfa47fc9554471
-compiler:       Debian clang version 13.0.1-++20220126092033+75e33f71c2da-1~exp1~20220126212112.63, GNU ld (GNU Binutils for Debian) 2.35.2
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=10169b86480000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=10b27089480000
+after we finished the introduction of the new posix acl api last cycle
+we still left the generic POSIX ACL xattr handler around for two
+reasons. First, because a few filesystems relied on the ->list() method
+of the generic POSIX ACL xattr handlers in their ->listxattr() inode
+operation. Second, during inode initalization in inode_init_always() the
+registered xattr handlers in sb->s_xattr are used to raise IOP_XATTR in
+inode->i_opflags.
 
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/e52acf94631e/disk-5dc4c995.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/8ead5c940574/vmlinux-5dc4c995.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/f6b43b71bf31/bzImage-5dc4c995.xz
-mounted in repro: https://storage.googleapis.com/syzbot-assets/964c239d9caf/mount_0.gz
+With the removal of the legacy POSIX ACL handlers it is at least
+possible for a filesystem to only implement POSIX ACLs but no other
+xattrs. If that were to happen we would miss to raise IOP_XATTR because
+sb->s_xattr would be NULL.
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+74b838cfa47fc9554471@syzkaller.appspotmail.com
+Fix these things and then get rid of the misleading and effectively
+already unused generic POSIX ACL handlers.
 
-divide error: 0000 [#1] PREEMPT SMP KASAN
-CPU: 1 PID: 5068 Comm: syz-executor317 Not tainted 6.2.0-rc4-syzkaller #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 10/26/2022
-RIP: 0010:do_journal_end+0x1822/0x4a30 fs/reiserfs/journal.c:4091
-Code: 04 28 84 c0 0f 85 f7 2b 00 00 4a 8d 5c 33 01 4c 89 e0 48 c1 e8 03 42 8a 04 28 84 c0 0f 85 ff 2b 00 00 41 8b 0f 48 89 d8 31 d2 <48> f7 f1 48 89 d3 48 03 5c 24 20 48 8b 84 24 d8 00 00 00 42 80 3c
-RSP: 0018:ffffc90003b7f820 EFLAGS: 00010246
-RAX: 0000000000000003 RBX: 0000000000000003 RCX: 0000000000000000
-RDX: 0000000000000000 RSI: 0000000000000000 RDI: ffff888029c4f000
-RBP: ffffc90003b7fa90 R08: dffffc0000000000 R09: ffff888029c4f000
-R10: 0000000000000000 R11: 0000000000000000 R12: ffff88807a8e9017
-R13: dffffc0000000000 R14: 0000000000000002 R15: ffff88807a8e9014
-FS:  0000000000000000(0000) GS:ffff8880b9900000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00000000005fdeb8 CR3: 0000000026e6b000 CR4: 00000000003506e0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
- <TASK>
- reiserfs_sync_fs+0xbb/0x130 fs/reiserfs/super.c:78
- sync_filesystem+0xe8/0x220 fs/sync.c:56
- generic_shutdown_super+0x6b/0x310 fs/super.c:474
- kill_block_super+0x79/0xd0 fs/super.c:1386
- deactivate_locked_super+0xa7/0xf0 fs/super.c:332
- cleanup_mnt+0x494/0x520 fs/namespace.c:1291
- task_work_run+0x243/0x300 kernel/task_work.c:179
- exit_task_work include/linux/task_work.h:38 [inline]
- do_exit+0x644/0x2150 kernel/exit.c:867
- do_group_exit+0x1fd/0x2b0 kernel/exit.c:1012
- __do_sys_exit_group kernel/exit.c:1023 [inline]
- __se_sys_exit_group kernel/exit.c:1021 [inline]
- __x64_sys_exit_group+0x3b/0x40 kernel/exit.c:1021
- do_syscall_x64 arch/x86/entry/common.c:50 [inline]
- do_syscall_64+0x3d/0xb0 arch/x86/entry/common.c:80
- entry_SYSCALL_64_after_hwframe+0x63/0xcd
-RIP: 0033:0x7f24fcf1bad9
-Code: Unable to access opcode bytes at 0x7f24fcf1baaf.
-RSP: 002b:00007ffda2e53128 EFLAGS: 00000246 ORIG_RAX: 00000000000000e7
-RAX: ffffffffffffffda RBX: 00007f24fcf91350 RCX: 00007f24fcf1bad9
-RDX: 000000000000003c RSI: 00000000000000e7 RDI: 0000000000000001
-RBP: 0000000000000001 R08: ffffffffffffffc0 R09: 00007f24fcf8be40
-R10: 000000000001ff01 R11: 0000000000000246 R12: 00007f24fcf91350
-R13: 0000000000000001 R14: 0000000000000000 R15: 0000000000000001
- </TASK>
-Modules linked in:
----[ end trace 0000000000000000 ]---
-RIP: 0010:do_journal_end+0x1822/0x4a30 fs/reiserfs/journal.c:4091
-Code: 04 28 84 c0 0f 85 f7 2b 00 00 4a 8d 5c 33 01 4c 89 e0 48 c1 e8 03 42 8a 04 28 84 c0 0f 85 ff 2b 00 00 41 8b 0f 48 89 d8 31 d2 <48> f7 f1 48 89 d3 48 03 5c 24 20 48 8b 84 24 d8 00 00 00 42 80 3c
-RSP: 0018:ffffc90003b7f820 EFLAGS: 00010246
-RAX: 0000000000000003 RBX: 0000000000000003 RCX: 0000000000000000
-RDX: 0000000000000000 RSI: 0000000000000000 RDI: ffff888029c4f000
-RBP: ffffc90003b7fa90 R08: dffffc0000000000 R09: ffff888029c4f000
-R10: 0000000000000000 R11: 0000000000000000 R12: ffff88807a8e9017
-R13: dffffc0000000000 R14: 0000000000000002 R15: ffff88807a8e9014
-FS:  0000000000000000(0000) GS:ffff8880b9800000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 000056252d1db088 CR3: 000000001da35000 CR4: 00000000003506f0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-----------------
-Code disassembly (best guess):
-   0:	04 28                	add    $0x28,%al
-   2:	84 c0                	test   %al,%al
-   4:	0f 85 f7 2b 00 00    	jne    0x2c01
-   a:	4a 8d 5c 33 01       	lea    0x1(%rbx,%r14,1),%rbx
-   f:	4c 89 e0             	mov    %r12,%rax
-  12:	48 c1 e8 03          	shr    $0x3,%rax
-  16:	42 8a 04 28          	mov    (%rax,%r13,1),%al
-  1a:	84 c0                	test   %al,%al
-  1c:	0f 85 ff 2b 00 00    	jne    0x2c21
-  22:	41 8b 0f             	mov    (%r15),%ecx
-  25:	48 89 d8             	mov    %rbx,%rax
-  28:	31 d2                	xor    %edx,%edx
-* 2a:	48 f7 f1             	div    %rcx <-- trapping instruction
-  2d:	48 89 d3             	mov    %rdx,%rbx
-  30:	48 03 5c 24 20       	add    0x20(%rsp),%rbx
-  35:	48 8b 84 24 d8 00 00 	mov    0xd8(%rsp),%rax
-  3c:	00
-  3d:	42                   	rex.X
-  3e:	80                   	.byte 0x80
-  3f:	3c                   	.byte 0x3c
+For most filesystems it is a trivial removal of the generic POSIX ACL
+handlers. Only for erofs, ext2, ext4, f2fs, jffs2, reiserfs, oc2fs the
+handler is used but rather easy to fix.
 
+All filesystems with reasonable integration into xfstests have been
+tested with:
+
+        ./check -g acl,attr,cap,idmapped,io_uring,perms,unlink
+
+All tests pass without regression on xfstests for-next branch.
+
+Since erofs doesn't have integration into xfstests yet afaict I have
+tested it with the testuite available in erofs-utils. They also all pass
+without any regressions.
+
+This branch depends on [1] which hopefully should be merged soon and can
+be pulled from [2] which already includes [1] so it's easy to test and
+compile.
+
+With this all remnants of the old POSIX ACL xattr handling will be gone.
+
+Thanks!
+Christian
+
+[1]: https://lore.kernel.org/lkml/20230125100040.374709-1-brauner@kernel.org
+[2]: ssh://git@gitolite.kernel.org/pub/scm/linux/kernel/git/vfs/idmapping.git tags/fs.acl.remove.generic.xattr.handlers.v1
+
+Signed-off-by: Christian Brauner (Microsoft) <brauner@kernel.org>
+---
+Christian Brauner (12):
+      xattr: simplify listxattr helpers
+      xattr, posix acl: add listxattr helpers
+      xattr: remove unused argument
+      fs: drop unused posix acl handlers
+      erofs: drop posix acl handlers
+      ext2: drop posix acl handlers
+      ext4: drop posix acl handlers
+      f2fs: drop posix acl handlers
+      jffs2: drop posix acl handlers
+      ocfs2: drop posix acl handlers
+      reiserfs: drop posix acl handlers
+      acl: remove posix acl handlers
+
+ fs/9p/xattr.c                   |   4 --
+ fs/btrfs/xattr.c                |   4 --
+ fs/ceph/xattr.c                 |   4 --
+ fs/cifs/xattr.c                 |   4 --
+ fs/ecryptfs/inode.c             |   4 --
+ fs/erofs/xattr.c                |  49 ++++++++++++----
+ fs/erofs/xattr.h                |  21 -------
+ fs/ext2/xattr.c                 |  60 +++++++++++--------
+ fs/ext4/xattr.c                 |  71 +++++++++++++----------
+ fs/f2fs/xattr.c                 |  63 ++++++++++++--------
+ fs/gfs2/xattr.c                 |   2 -
+ fs/jffs2/xattr.c                |  42 +++++++-------
+ fs/jfs/xattr.c                  |   4 --
+ fs/nfs/nfs3_fs.h                |   1 -
+ fs/nfs/nfs3acl.c                |   6 --
+ fs/nfs/nfs3super.c              |   3 -
+ fs/nfsd/nfs4xdr.c               |   3 +-
+ fs/ntfs3/xattr.c                |   4 --
+ fs/ocfs2/xattr.c                |  41 +++++++------
+ fs/orangefs/xattr.c             |   2 -
+ fs/overlayfs/super.c            |   8 ---
+ fs/posix_acl.c                  |  20 -------
+ fs/reiserfs/xattr.c             |  38 ++++++------
+ fs/xattr.c                      | 124 ++++++++++++++++++++--------------------
+ fs/xfs/xfs_xattr.c              |   4 --
+ include/linux/posix_acl_xattr.h |   6 +-
+ include/linux/xattr.h           |   8 ++-
+ mm/shmem.c                      |   4 --
+ 28 files changed, 290 insertions(+), 314 deletions(-)
+---
+base-commit: 1b929c02afd37871d5afb9d498426f83432e71c2
+change-id: 20230125-fs-acl-remove-generic-xattr-handlers-4cfed8558d88
