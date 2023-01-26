@@ -1,77 +1,49 @@
-From: Fedor Pchelkin <pchelkin@ispras.ru>
-Subject: [PATCH 4.14/4.19/5.4/5.10/5.15 1/1] fs: reiserfs: remove useless new_opts in reiserfs_remount
-Date: Thu, 26 Jan 2023 11:58:46 +0300
-Message-ID: <20230126085846.466209-2-pchelkin@ispras.ru>
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Subject: Re: [PATCH 4.14/4.19/5.4/5.10/5.15 1/1] fs: reiserfs: remove useless
+ new_opts in reiserfs_remount
+Date: Thu, 26 Jan 2023 10:13:23 +0100
+Message-ID: <Y9JEM9toMBcEfDak@kroah.com>
 References: <20230126085846.466209-1-pchelkin@ispras.ru>
+ <20230126085846.466209-2-pchelkin@ispras.ru>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Return-path: <stable-owner@vger.kernel.org>
-DKIM-Filter: OpenDKIM Filter v2.11.0 mail.ispras.ru ADF0D44C1019
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ispras.ru;
-        s=default; t=1674723570;
-        bh=3+YMP5uQItOPeyz0DXAukyJSBmkHOU6buO5hiOYrjyc=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=J1Glr9iDV6y3Ooza+EZpcoS3Ab2bDvKMA/1slAvhdeMpjApTa7cnUP/ylSp3tF6Ev
-         cCQn9yO6N//BDcxM2l81sfyKciqNh+Q4/BvaYD+ryPo98MSiszTuYHla84nCLNpbw0
-         i6uNb89UH4dxaZkclyKsUdJRZUJz+mno+iV5XTWc=
-In-Reply-To: <20230126085846.466209-1-pchelkin@ispras.ru>
+Return-path: <reiserfs-devel-owner@vger.kernel.org>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+        s=korg; t=1674724406;
+        bh=K75+4I/AEzlBnGR65u1uXoshesabW5aquBFF3e097hE=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=cgEFonWHQd0j+9vg/6yFSo1TQCFTWPOHgcDUrmOpeSJ1XJmbfX3pORkXx50Lhib3y
+         rnkx3Q6LeDa6Fq7FVBoKP/GAXsAIUoiCyHx7S753ilEzevsOyUYnah4oq0CU55S1kJ
+         QdwjoGMQQPIz8zAeZcWUF3vo3blc+Zx2i1erAMDY=
+Content-Disposition: inline
+In-Reply-To: <20230126085846.466209-2-pchelkin@ispras.ru>
 List-ID: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: stable@vger.kernel.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Fedor Pchelkin <pchelkin@ispras.ru>, Jan Kara <jack@suse.cz>, Dongliang Mu <mudongliangabcd@gmail.com>, Al Viro <viro@zeniv.linux.org.uk>, David Howells <dhowells@redhat.com>, reiserfs-devel@vger.kernel.org, linux-kernel@vger.kernel.org, Alexey Khoroshilov <khoroshilov@ispras.ru>, lvc-project@linuxtesting.org
+Content-Transfer-Encoding: 7bit
+To: Fedor Pchelkin <pchelkin@ispras.ru>
+Cc: stable@vger.kernel.org, Jan Kara <jack@suse.cz>, Dongliang Mu <mudongliangabcd@gmail.com>, Al Viro <viro@zeniv.linux.org.uk>, David Howells <dhowells@redhat.com>, reiserfs-devel@vger.kernel.org, linux-kernel@vger.kernel.org, Alexey Khoroshilov <khoroshilov@ispras.ru>, lvc-project@linuxtesting.org
 
-From: Dongliang Mu <mudongliangabcd@gmail.com>
+On Thu, Jan 26, 2023 at 11:58:46AM +0300, Fedor Pchelkin wrote:
+> From: Dongliang Mu <mudongliangabcd@gmail.com>
+> 
+> commit 81dedaf10c20959bdf5624f9783f408df26ba7a4 upstream.
+> 
+> Since the commit c3d98ea08291 ("VFS: Don't use save/replace_mount_options
+> if not using generic_show_options") eliminates replace_mount_options
+> in reiserfs_remount, but does not handle the allocated new_opts,
+> it will cause memory leak in the reiserfs_remount.
+> 
+> Because new_opts is useless in reiserfs_mount, so we fix this bug by
+> removing the useless new_opts in reiserfs_remount.
+> 
+> Fixes: c3d98ea08291 ("VFS: Don't use save/replace_mount_options if not using generic_show_options")
+> Link: https://lore.kernel.org/r/20211027143445.4156459-1-mudongliangabcd@gmail.com
+> Signed-off-by: Dongliang Mu <mudongliangabcd@gmail.com>
+> Signed-off-by: Jan Kara <jack@suse.cz>
+> Signed-off-by: Fedor Pchelkin <pchelkin@ispras.ru>
+> ---
+>  fs/reiserfs/super.c | 6 ------
+>  1 file changed, 6 deletions(-)
 
-commit 81dedaf10c20959bdf5624f9783f408df26ba7a4 upstream.
+Now queued up, thanks.
 
-Since the commit c3d98ea08291 ("VFS: Don't use save/replace_mount_options
-if not using generic_show_options") eliminates replace_mount_options
-in reiserfs_remount, but does not handle the allocated new_opts,
-it will cause memory leak in the reiserfs_remount.
-
-Because new_opts is useless in reiserfs_mount, so we fix this bug by
-removing the useless new_opts in reiserfs_remount.
-
-Fixes: c3d98ea08291 ("VFS: Don't use save/replace_mount_options if not using generic_show_options")
-Link: https://lore.kernel.org/r/20211027143445.4156459-1-mudongliangabcd@gmail.com
-Signed-off-by: Dongliang Mu <mudongliangabcd@gmail.com>
-Signed-off-by: Jan Kara <jack@suse.cz>
-Signed-off-by: Fedor Pchelkin <pchelkin@ispras.ru>
----
- fs/reiserfs/super.c | 6 ------
- 1 file changed, 6 deletions(-)
-
-diff --git a/fs/reiserfs/super.c b/fs/reiserfs/super.c
-index 58481f8d63d5..f7b05c6b3dcf 100644
---- a/fs/reiserfs/super.c
-+++ b/fs/reiserfs/super.c
-@@ -1437,7 +1437,6 @@ static int reiserfs_remount(struct super_block *s, int *mount_flags, char *arg)
- 	unsigned long safe_mask = 0;
- 	unsigned int commit_max_age = (unsigned int)-1;
- 	struct reiserfs_journal *journal = SB_JOURNAL(s);
--	char *new_opts;
- 	int err;
- 	char *qf_names[REISERFS_MAXQUOTAS];
- 	unsigned int qfmt = 0;
-@@ -1445,10 +1444,6 @@ static int reiserfs_remount(struct super_block *s, int *mount_flags, char *arg)
- 	int i;
- #endif
- 
--	new_opts = kstrdup(arg, GFP_KERNEL);
--	if (arg && !new_opts)
--		return -ENOMEM;
--
- 	sync_filesystem(s);
- 	reiserfs_write_lock(s);
- 
-@@ -1599,7 +1594,6 @@ static int reiserfs_remount(struct super_block *s, int *mount_flags, char *arg)
- out_err_unlock:
- 	reiserfs_write_unlock(s);
- out_err:
--	kfree(new_opts);
- 	return err;
- }
- 
--- 
-2.34.1
-
+greg k-h
