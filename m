@@ -1,152 +1,135 @@
 From: Christian Brauner <brauner@kernel.org>
-Subject: [PATCH v3 00/10] acl: drop posix acl handlers from xattr handlers
-Date: Wed, 01 Feb 2023 14:14:51 +0100
-Message-ID: <20230125-fs-acl-remove-generic-xattr-handlers-v3-0-f760cc58967d@kernel.org>
+Subject: [PATCH v3 06/10] reiserfs: rework ->listxattr() implementation
+Date: Wed, 01 Feb 2023 14:14:57 +0100
+Message-ID: <20230125-fs-acl-remove-generic-xattr-handlers-v3-6-f760cc58967d@kernel.org>
+References: <20230125-fs-acl-remove-generic-xattr-handlers-v3-0-f760cc58967d@kernel.org>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-unionfs-owner@vger.kernel.org>
+Return-path: <reiserfs-devel-owner@vger.kernel.org>
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1675257333;
-        bh=XAJ9eI3svGJuqVTJUnSxvv9YTA0l+xndj1Jw+Z1jagQ=;
-        h=From:Subject:Date:To:Cc:From;
-        b=L6kcghG3qlSeMxpxJRTGEDsALZmiJfrEU0V/1HEmYbKdW3rFnVUs9UIDGEzRKYWtg
-         tNZzlaYWaIZ/V/zWFYd268DI///8vZp3gH/a3eMLEBUra7aFO5vCuAX3ny4Qg2knsu
-         7SkTsf7m5s+phGrgqngNkAkoJynRpIjDp8j8ze7OkExaens9ORzfEpQk0u7+zU+os7
-         yzrAYpV28OZVUPw87eK7VkGLUZRaFhvqXpHMjCFYujJU0xpJxhkiKFVDQbZEJW5S2X
-         E23YVPr1cktPKIhzi9VOTFNrcHU9h4XmlnPv8G3KBrajxBmW890T7Bup3Dn/V6lTSV
-         PrqccGKzSWKiA==
-X-Developer-Signature: v=1; a=openpgp-sha256; l=5419; i=brauner@kernel.org;
- h=from:subject:message-id; bh=XAJ9eI3svGJuqVTJUnSxvv9YTA0l+xndj1Jw+Z1jagQ=;
- b=owGbwMvMwCU28Zj0gdSKO4sYT6slMSTfSv1oIS8Y+vZS+2+RiV9u2ffcfnlfcMkFr9JtvM2zv/pV
- e8oXdJSyMIhxMciKKbI4tJuEyy3nqdhslKkBM4eVCWQIAxenAExEeRPDP42QU9NFLmeXcj38M226z9
- yHHdvWpMwS360qvenTKoW1lfsZ/rttUTXnv7b10sa2GD7dbdfYvI9mB9qqrE44tEiQ+fXxRcwA
+        s=k20201202; t=1675257344;
+        bh=II0UajdE9ohwBxHvkJkD9FTLcof7NP2OWj60slCtwMA=;
+        h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
+        b=ThnyH2S0ENQbgmpFC3cKvbHPPryZh0stW8SIUC2kaBKDj7Z0nb0P8KBYuq/4f6OHb
+         j9sTmja+DKe8AUd+WBPz1xgmgILFLYdn6K7WqpBLe//QshH92SVZQl/3GeajDDU59Z
+         urd27k+crzYc69xo8qiCIOQgr5AnuqGBO/rXuFCqRwW4mEicoQhJ3WeI+120j6LNsA
+         T+wEHEelb+rLuCEpE9ySYu53NT7htEt/gM5pRcBnBIEjGUZqbRSHp7//4dM/58Y6rY
+         ZX778OpuKo7Re7ajwCUG6ss4GgsFOp6IPQViVI4PAz5kKekB7bdu7mpEiPR5d3xOdU
+         zc4jOD1ez0RNA==
+In-Reply-To: <20230125-fs-acl-remove-generic-xattr-handlers-v3-0-f760cc58967d@kernel.org>
+X-Developer-Signature: v=1; a=openpgp-sha256; l=3107; i=brauner@kernel.org;
+ h=from:subject:message-id; bh=II0UajdE9ohwBxHvkJkD9FTLcof7NP2OWj60slCtwMA=;
+ b=owGbwMvMwCU28Zj0gdSKO4sYT6slMSTfSv00v2Drin+3m467byz/y9GR9IxFdA9XxNwpwQHXHge5
+ MwhJd5SyMIhxMciKKbI4tJuEyy3nqdhslKkBM4eVCWQIAxenAEzkhh4jw+xJVzZ//nL2cVj0jadVPU
+ c5DDkaHlaab3u6+GFzvVD4ZRmG/y67OZj4fruHeUV4zv+QauAx/ccuyyRjn9ne6g1Sr2xjGQA=
 X-Developer-Key: i=brauner@kernel.org; a=openpgp;
  fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
 List-ID: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
 To: linux-fsdevel@vger.kernel.org, Christoph Hellwig <hch@lst.de>
-Cc: Al Viro <viro@zeniv.linux.org.uk>, Seth Forshee <sforshee@kernel.org>, "Christian Brauner (Microsoft)" <brauner@kernel.org>, linux-f2fs-devel@lists.sourceforge.net, linux-erofs@lists.ozlabs.org, linux-ext4@vger.kernel.org, linux-mtd@lists.infradead.org, reiserfs-devel@vger.kernel.org, linux-unionfs@vger.kernel.org
+Cc: Al Viro <viro@zeniv.linux.org.uk>, Seth Forshee <sforshee@kernel.org>, "Christian Brauner (Microsoft)" <brauner@kernel.org>, reiserfs-devel@vger.kernel.org
 
-Hey everyone,
+Rework reiserfs so it doesn't have to rely on the dummy xattr handlers
+in its s_xattr list anymore as this is completely unused for setting and
+getting posix acls.
 
-After we finished the introduction of the new posix acl api last cycle
-we still left the generic POSIX ACL xattr handlers around in the
-filesystems xattr handlers for two reasons:
-
-(1) Because a few filesystems rely on the ->list() method of the generic
-    POSIX ACL xattr handlers in their ->listxattr() inode operation.
-(2) POSIX ACLs are only available if IOP_XATTR is raised. The IOP_XATTR
-    flag is raised in inode_init_always() based on whether the
-    sb->s_xattr pointer is non-NULL. IOW, the registered xattr handlers
-    of the filesystem are used to raise IOP_XATTR.
-    If we were to remove the generic POSIX ACL xattr handlers from all
-    filesystems we would risk regressing filesystems that only implement
-    POSIX ACL support and no other xattrs (nfs3 comes to mind).
-
-This series makes it possible to remove the generic POSIX ACL xattr
-handlers from the sb->s_xattr list of all filesystems. This is a crucial
-step as the generic POSIX ACL xattr handlers aren't used for POSIX ACLs
-anymore and POSIX ACLs don't depend on the xattr infrastructure in a
-meaningful way anymore.
-
-Adressing problem (1) will require more work long-term. It would be best
-to get rid of the ->list() method of xattr handlers completely if we
-can.
-
-For erofs, ext{2,4}, f2fs, jffs2, ocfs2, and reiserfs we keep the dummy
-handler around so they can continue to use array-based xattr handler
-indexing. The series does simplify the ->listxattr() implementation of
-all these filesystems.
-
-This series decouples POSIX ACLs from IOP_XATTR as they don't depend on
-xattr handlers anymore. With this we can finally remove the dummy xattr
-handlers from all filesystems xattr handlers.
-
-All filesystems with reasonable integration into xfstests have been
-tested with:
-
-        ./check -g acl,attr,cap,idmapped,io_uring,perms,unlink
-
-All tests pass without regression on xfstests for-next branch.
-
-Since erofs doesn't have integration into xfstests yet afaict I have
-tested it with the testuite available in erofs-utils. They also all pass
-without any regressions.
-
-Thanks!
-Christian
-
+Cc: reiserfs-devel@vger.kernel.org
 Signed-off-by: Christian Brauner (Microsoft) <brauner@kernel.org>
 ---
 Changes in v3:
-- Decouple POSIX ACLs from IOP_XATTR.
-- Allow vfs_listxattr() to function without checking for IOP_XATTR
-  making it possible to list POSIX ACLs for filesystems that only
-  implement POSIX ACLs and no other xattrs.
-- Give reiserfs a set of dedicated inode operation for private inodes
-  that have turned of xattrs completely.
-- Link to v2: https://lore.kernel.org/r/20230125-fs-acl-remove-generic-xattr-handlers-v2-0-214cfb88bb56@kernel.org
+  - Patch unchanged.
 
 Changes in v2:
-- Please see changelogs of the individual patches.
-- Christoph & Christian:
-  Remove SB_I_XATTR and instead introduce IOP_NOACL so filesystems can
-  opt out of POSIX ACLs for specific inodes. Decouple POSIX ACLs from
-  IOP_XATTR.
-- Keep generic posix acl xattr handlers so filesystems that use array
-  based indexing on xattr handlers can continue to do so.
-- Minor fixes.
-- Link to v1: https://lore.kernel.org/r/20230125-fs-acl-remove-generic-xattr-handlers-v1-0-6cf155b492b6@kernel.org
-
+- Rework patch to account for reiserfs quirks.
 ---
-Christian Brauner (10):
-      xattr: simplify listxattr helpers
-      xattr: add listxattr helper
-      xattr: remove unused argument
-      fs: drop unused posix acl handlers
-      fs: simplify ->listxattr() implementation
-      reiserfs: rework ->listxattr() implementation
-      fs: rename generic posix acl handlers
-      reiserfs: rework priv inode handling
-      ovl: check for ->listxattr() support
-      acl: don't depend on IOP_XATTR
+ fs/reiserfs/xattr.c | 46 +++++++++++++++++++++++++---------------------
+ 1 file changed, 25 insertions(+), 21 deletions(-)
 
- fs/9p/xattr.c                   |   4 --
- fs/btrfs/xattr.c                |   4 --
- fs/ceph/xattr.c                 |   4 --
- fs/cifs/xattr.c                 |   4 --
- fs/ecryptfs/inode.c             |   4 --
- fs/erofs/xattr.c                |  12 +---
- fs/erofs/xattr.h                |  20 ++++---
- fs/ext2/xattr.c                 |  25 ++++----
- fs/ext4/xattr.c                 |  25 ++++----
- fs/f2fs/xattr.c                 |  24 ++++----
- fs/gfs2/xattr.c                 |   2 -
- fs/jffs2/xattr.c                |  29 +++++-----
- fs/jfs/xattr.c                  |   4 --
- fs/nfs/nfs3_fs.h                |   1 -
- fs/nfs/nfs3acl.c                |   6 --
- fs/nfs/nfs3super.c              |   3 -
- fs/nfsd/nfs4xdr.c               |   3 +-
- fs/ntfs3/xattr.c                |   4 --
- fs/ocfs2/xattr.c                |  14 ++---
- fs/orangefs/xattr.c             |   2 -
- fs/overlayfs/copy_up.c          |   3 +-
- fs/overlayfs/super.c            |   8 ---
- fs/posix_acl.c                  |  61 +++++++++++++++-----
- fs/reiserfs/file.c              |   7 +++
- fs/reiserfs/inode.c             |   6 +-
- fs/reiserfs/namei.c             |  50 ++++++++++++++--
- fs/reiserfs/reiserfs.h          |   2 +
- fs/reiserfs/xattr.c             |  55 +++++++++---------
- fs/xattr.c                      | 124 ++++++++++++++++++++--------------------
- fs/xfs/xfs_xattr.c              |   4 --
- include/linux/posix_acl.h       |   7 +++
- include/linux/posix_acl_xattr.h |   5 +-
- include/linux/xattr.h           |  19 +++++-
- mm/shmem.c                      |   4 --
- 34 files changed, 292 insertions(+), 257 deletions(-)
----
-base-commit: ab072681eabe1ce0a9a32d4baa1a27a2d046bc4a
-change-id: 20230125-fs-acl-remove-generic-xattr-handlers-4cfed8558d88
+diff --git a/fs/reiserfs/xattr.c b/fs/reiserfs/xattr.c
+index 8b2d52443f41..0b949dc45484 100644
+--- a/fs/reiserfs/xattr.c
++++ b/fs/reiserfs/xattr.c
+@@ -52,6 +52,7 @@
+ #include <linux/quotaops.h>
+ #include <linux/security.h>
+ #include <linux/posix_acl_xattr.h>
++#include <linux/xattr.h>
+ 
+ #define PRIVROOT_NAME ".reiserfs_priv"
+ #define XAROOT_NAME   "xattrs"
+@@ -770,23 +771,34 @@ reiserfs_xattr_get(struct inode *inode, const char *name, void *buffer,
+ 			(handler) != NULL;			\
+ 			(handler) = *(handlers)++)
+ 
++static inline bool reiserfs_posix_acl_list(const char *name,
++					   struct dentry *dentry)
++{
++	return (posix_acl_type(name) >= 0) &&
++	       IS_POSIXACL(d_backing_inode(dentry));
++}
++
+ /* This is the implementation for the xattr plugin infrastructure */
+-static inline const struct xattr_handler *
+-find_xattr_handler_prefix(const struct xattr_handler **handlers,
+-			   const char *name)
++static inline bool reiserfs_xattr_list(const struct xattr_handler **handlers,
++				       const char *name, struct dentry *dentry)
+ {
+-	const struct xattr_handler *xah;
++	if (handlers) {
++		const struct xattr_handler *xah = NULL;
+ 
+-	if (!handlers)
+-		return NULL;
++		for_each_xattr_handler(handlers, xah) {
++			const char *prefix = xattr_prefix(xah);
+ 
+-	for_each_xattr_handler(handlers, xah) {
+-		const char *prefix = xattr_prefix(xah);
+-		if (strncmp(prefix, name, strlen(prefix)) == 0)
+-			break;
++			if (strncmp(prefix, name, strlen(prefix)))
++				continue;
++
++			if (!xattr_handler_can_list(xah, dentry))
++				return false;
++
++			return true;
++		}
+ 	}
+ 
+-	return xah;
++	return reiserfs_posix_acl_list(name, dentry);
+ }
+ 
+ struct listxattr_buf {
+@@ -807,12 +819,8 @@ static bool listxattr_filler(struct dir_context *ctx, const char *name,
+ 
+ 	if (name[0] != '.' ||
+ 	    (namelen != 1 && (name[1] != '.' || namelen != 2))) {
+-		const struct xattr_handler *handler;
+-
+-		handler = find_xattr_handler_prefix(b->dentry->d_sb->s_xattr,
+-						    name);
+-		if (!handler /* Unsupported xattr name */ ||
+-		    (handler->list && !handler->list(b->dentry)))
++		if (!reiserfs_xattr_list(b->dentry->d_sb->s_xattr, name,
++					 b->dentry))
+ 			return true;
+ 		size = namelen + 1;
+ 		if (b->buf) {
+@@ -910,10 +918,6 @@ const struct xattr_handler *reiserfs_xattr_handlers[] = {
+ #endif
+ #ifdef CONFIG_REISERFS_FS_SECURITY
+ 	&reiserfs_xattr_security_handler,
+-#endif
+-#ifdef CONFIG_REISERFS_FS_POSIX_ACL
+-	&posix_acl_access_xattr_handler,
+-	&posix_acl_default_xattr_handler,
+ #endif
+ 	NULL
+ };
+
+-- 
+2.34.1
 
