@@ -1,37 +1,57 @@
-From: Christian Brauner <brauner@kernel.org>
-Subject: Re: [PATCH v3 00/10] acl: drop posix acl handlers from xattr handlers
-Date: Wed, 1 Feb 2023 14:42:54 +0100
-Message-ID: <20230201134254.fai2vc7gtzj6iikx@wittgenstein>
-References: <20230125-fs-acl-remove-generic-xattr-handlers-v3-0-f760cc58967d@kernel.org>
- <20230201133020.GA31902@lst.de>
+From: lujiongjia <lujiongjia@iscas.ac.cn>
+Subject: reiserfsprogs: fail to build from sources on riscv64gc machine
+Date: Thu, 2 Feb 2023 17:27:09 +0800
+Message-ID: <3e450ff5-f084-4a33-bff7-4ef1061d1f30@iscas.ac.cn>
 Mime-Version: 1.0
-Return-path: <linux-unionfs-owner@vger.kernel.org>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1675258979;
-        bh=236qP/C90Z1wdMee922mWauOTL0WF+oXGDgnJ96vQFg=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=lMMF4aTsthtPu0qSDZz5BvWT3Pmxnz+NILt33rgl1+vXpJfzqEv41DYzKsqYGtoGo
-         RfbSM457WNfz2Hj+9ntpXQApKcCjAJVksXRu34iUU27WSsyzFHxu28zKksBwqEgFjq
-         bEmZWftDL1skahY8fxJIf/X2bYWhUr5/ruKGAoT6wF16to0EWnPfOxShNm4aNuTyFH
-         TllIEyGeIvTdR60qHVy/Feh2ApS62j8QtGi5QRujJzXjmj7KFrOB8C3HaUwsJdZUwf
-         P83wP7ZfiBKmcU8JDkWwvICV8r+9vwyn/20bGSvqbW6MrkafLuuV0989PpLRqSWgss
-         U+lNph1qFbXHw==
-Content-Disposition: inline
-In-Reply-To: <20230201133020.GA31902@lst.de>
-List-ID: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Christoph Hellwig <hch@lst.de>
-Cc: linux-fsdevel@vger.kernel.org, Al Viro <viro@zeniv.linux.org.uk>, Seth Forshee <sforshee@kernel.org>, linux-f2fs-devel@lists.sourceforge.net, linux-erofs@lists.ozlabs.org, linux-ext4@vger.kernel.org, linux-mtd@lists.infradead.org, reiserfs-devel@vger.kernel.org, linux-unionfs@vger.kernel.org
+Return-path: <reiserfs-devel-owner@vger.kernel.org>
+Content-Language: en-US
+List-ID: <reiserfs-devel.vger.kernel.org>
+Content-Type: text/plain; charset="us-ascii"; format="flowed"
+To: reiserfs-devel@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org
 
-On Wed, Feb 01, 2023 at 02:30:20PM +0100, Christoph Hellwig wrote:
-> This version looks good to me, but I'd really prefer if a reiserfs
-> insider could look over the reiserfs patches.
+The config.guess file contained in source tarball is too old that it 
+cannot guess build type on riscv64. Please release new source code 
+tarball with the latest autotools.
 
-I consider this material for v6.4 even with an -rc8 for v6.3. So there's
-time but we shouldn't block it on reiserfs. Especially, since it's
-marked deprecated.
+Full configure error output:
 
-Fwiw, I've tested reiserfs with xfstests on a kernel with and without
-this series applied and there's no regressions. But it's overall pretty
-buggy at least according to xfstests. Which is expected, I guess.
+> checking build system type... ./config.guess: unable to guess system type
+> 
+> This script, last modified 2014-11-04, has failed to recognize
+> the operating system you are using. It is advised that you
+> download the most up to date version of the config scripts from
+> 
+>   http://git.savannah.gnu.org/gitweb/?p=config.git;a=blob_plain;f=config.guess;hb=HEAD
+> and
+>   http://git.savannah.gnu.org/gitweb/?p=config.git;a=blob_plain;f=config.sub;hb=HEAD
+> 
+> If the version you run (./config.guess) is already up to date, please
+> send the following data and any information you think might be
+> pertinent to <config-patches@gnu.org> in order to provide the needed
+> information to handle your system.
+> 
+> config.guess timestamp = 2014-11-04
+> 
+> uname -m = riscv64
+> uname -r = 6.1.7-arch1-1
+> uname -s = Linux
+> uname -v = #1 SMP PREEMPT_DYNAMIC Wed, 18 Jan 2023 19:54:38 +0000
+> 
+> /usr/bin/uname -p = unknown
+> /bin/uname -X     = 
+> 
+> hostinfo               = 
+> /bin/universe          = 
+> /usr/bin/arch -k       = 
+> /bin/arch              = 
+> /usr/bin/oslevel       = 
+> /usr/convex/getsysinfo = 
+> 
+> UNAME_MACHINE = riscv64
+> UNAME_RELEASE = 6.1.7-arch1-1
+> UNAME_SYSTEM  = Linux
+> UNAME_VERSION = #1 SMP PREEMPT_DYNAMIC Wed, 18 Jan 2023 19:54:38 +0000
+> configure: error: cannot guess build type; you must specify one
+
