@@ -1,50 +1,196 @@
-From: Mimi Zohar <zohar@linux.ibm.com>
-Subject: Re: [PATCH v7 6/6] evm: Support multiple LSMs providing an xattr
-Date: Sun, 19 Feb 2023 14:42:11 -0500
-Message-ID: <1f252850086a39e3c15736f252600d388f6b9c24.camel@linux.ibm.com>
+From: Roberto Sassu <roberto.sassu@huaweicloud.com>
+Subject: Re: [PATCH v7 2/6] ocfs2: Switch to security_inode_init_security()
+Date: Mon, 20 Feb 2023 09:34:15 +0100
+Message-ID: <b8801e0112b246e774ed687e83469ffdc1148010.camel@huaweicloud.com>
 References: <20221201104125.919483-1-roberto.sassu@huaweicloud.com>
-         <20221201104125.919483-7-roberto.sassu@huaweicloud.com>
+         <20221201104125.919483-3-roberto.sassu@huaweicloud.com>
+         <a20a6d84d8e682fbff546b80eda75a1918d7c108.camel@linux.ibm.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=message-id : subject :
- from : to : cc : date : in-reply-to : references : content-type :
- mime-version : content-transfer-encoding; s=pp1;
- bh=CYJ3eVTHiOWV/HXfh9LoWzkEjLJj1zuaaERAokCGMZs=;
- b=bjvkbRBpdRlQYGx8F56LZ84vecCQkZCmXwUUKkStfqw17eZhU5SifB+n2Zi0Mg5Wj9sN
- qF96Ef4o2I+KpYf56z7dDs9QTSrIkIpr1/4kyD4kHcATim1bhy8CcQkJx62tSW4boqZZ
- Ues6C+peWWA9xHhZRSqFAIMoP5eQ4R/eg/4NaeojKtHgD5cvlGuGo2nXcnGU0NoHrTsW
- IX+f7mQr+qCWdlgjEO/7bqygXpVKD3guhiiFnhZwAsHBF4XyZONsk9pFkyhdHZH/Sal7
- Ag7nvl+ztC18vkJm4mOogFRItX/Wo0GYVuwgo9JTa+BvSrgvpmSm0yOLNpsxG/5fxB0g Hg== 
-In-Reply-To: <20221201104125.919483-7-roberto.sassu@huaweicloud.com>
+Return-path: <linux-security-module-owner@vger.kernel.org>
+In-Reply-To: <a20a6d84d8e682fbff546b80eda75a1918d7c108.camel@linux.ibm.com>
 List-ID: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: Roberto Sassu <roberto.sassu@huaweicloud.com>, mark@fasheh.com, jlbec@evilplan.org, joseph.qi@linux.alibaba.com, dmitry.kasatkin@gmail.com, paul@paul-moore.com, jmorris@namei.org, serge@hallyn.com, stephen.smalley.work@gmail.com, eparis@parisplace.org, casey@schaufler-ca.com
+To: Mimi Zohar <zohar@linux.ibm.com>, mark@fasheh.com, jlbec@evilplan.org, joseph.qi@linux.alibaba.com, dmitry.kasatkin@gmail.com, paul@paul-moore.com, jmorris@namei.org, serge@hallyn.com, stephen.smalley.work@gmail.com, eparis@parisplace.org, casey@schaufler-ca.com
 Cc: ocfs2-devel@oss.oracle.com, reiserfs-devel@vger.kernel.org, linux-integrity@vger.kernel.org, linux-security-module@vger.kernel.org, selinux@vger.kernel.org, linux-kernel@vger.kernel.org, keescook@chromium.org, nicolas.bouchinet@clip-os.org, Roberto Sassu <roberto.sassu@huawei.com>
 
-On Thu, 2022-12-01 at 11:41 +0100, Roberto Sassu wrote:
-> From: Roberto Sassu <roberto.sassu@huawei.com>
+On Fri, 2023-02-17 at 14:51 -0500, Mimi Zohar wrote:
+> On Thu, 2022-12-01 at 11:41 +0100, Roberto Sassu wrote:
+> > From: Roberto Sassu <roberto.sassu@huawei.com>
+> > 
+> > In preparation for removing security_old_inode_init_security(), switch to
+> > security_inode_init_security().
+> > 
+> > Extend the existing ocfs2_initxattrs() to take the
+> > ocfs2_security_xattr_info structure from fs_info, and populate the
+> > name/value/len triple with the first xattr provided by LSMs.
+> > 
+> > As fs_info was not used before, ocfs2_initxattrs() can now handle the case
+> > of replicating the behavior of security_old_inode_init_security(), i.e.
+> > just obtaining the xattr, in addition to setting all xattrs provided by
+> > LSMs.
+> > 
+> > Supporting multiple xattrs is not currently supported where
+> > security_old_inode_init_security() was called (mknod, symlink), as it
+> > requires non-trivial changes that can be done at a later time. Like for
+> > reiserfs, even if EVM is invoked, it will not provide an xattr (if it is
+> > not the first to set it, its xattr will be discarded; if it is the first,
+> > it does not have xattrs to calculate the HMAC on).
+> > 
+> > Finally, modify the handling of the return value from
+> > ocfs2_init_security_get(). As security_inode_init_security() does not
+> > return -EOPNOTSUPP, remove this case and directly handle the error if the
+> > return value is not zero.
+> > 
+> > However, the previous case of receiving -EOPNOTSUPP should be still
+> > taken into account, as security_inode_init_security() could return zero
+> > without setting xattrs and ocfs2 would consider it as if the xattr was set.
+> > 
+> > Instead, if security_inode_init_security() returned zero, look at the xattr
+> > if it was set, and behave accordingly, i.e. set si->enable to zero to
+> > notify to the functions following ocfs2_init_security_get() that the xattr
+> > is not available (same as if security_old_inode_init_security() returned
+> > -EOPNOTSUPP).
+> > 
+> > Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
+> > Reviewed-by: Casey Schaufler <casey@schaufler-ca.com>
 > 
-> Currently, evm_inode_init_security() processes a single LSM xattr from
-> the array passed by security_inode_init_security(), and calculates the
-> HMAC on it and other inode metadata.
+> My previous review missed a couple of concerns.
 > 
-> Given that initxattrs() callbacks, called by
-> security_inode_init_security(), expect that this array is terminated when
-> the xattr name is set to NULL, reuse the same assumption to scan all xattrs
-> and to calculate the HMAC on all of them.
+> > ---
+> >  fs/ocfs2/namei.c | 18 ++++++------------
+> >  fs/ocfs2/xattr.c | 30 ++++++++++++++++++++++++++----
+> >  2 files changed, 32 insertions(+), 16 deletions(-)
+> > 
+> > diff --git a/fs/ocfs2/namei.c b/fs/ocfs2/namei.c
+> > index 05f32989bad6..55fba81cd2d1 100644
+> > --- a/fs/ocfs2/namei.c
+> > +++ b/fs/ocfs2/namei.c
+> > @@ -242,6 +242,7 @@ static int ocfs2_mknod(struct user_namespace *mnt_userns,
+> >  	int want_meta = 0;
+> >  	int xattr_credits = 0;
+> >  	struct ocfs2_security_xattr_info si = {
+> > +		.name = NULL,
+> >  		.enable = 1,
+> >  	};
+> >  	int did_quota_inode = 0;
+> > @@ -315,12 +316,8 @@ static int ocfs2_mknod(struct user_namespace *mnt_userns,
+> >  	/* get security xattr */
+> >  	status = ocfs2_init_security_get(inode, dir, &dentry->d_name, &si);
+> >  	if (status) {
+> > -		if (status == -EOPNOTSUPP)
+> > -			si.enable = 0;
+> > -		else {
+> > -			mlog_errno(status);
+> > -			goto leave;
+> > -		}
 > 
-> Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
-> Reviewed-by: Casey Schaufler <casey@schaufler-ca.com>
+> Although security_inode_init_security() does not return -EOPNOTSUPP, 
+> ocfs2_init_security_get() could.  Refer to commit 8154da3d2114 ("ocfs2:
+> Add incompatible flag for extended attribute").   It was added as a
+> temporary solution back in 2008, so it is highly unlikely that it is
+> still needed.
+> 
+> > +		mlog_errno(status);
+> > +		goto leave;
+> 
+> Without the -EOPNOTSUPP test, ocfs2_mknod() would not create the inode;
+> and similarly ocfs2_symlink(), below, would not create the symlink.  It
+> would be safer not to remove the -EOPNOTSUPP test.
 
+You are absolutely right. Will add it back.
 
-Normally changing the contents of the EVM HMAC calculation would break
-existing systems.  Assuming for the time being this is safe, at what
-point will it affect backwards compatability?  Should it be documented
-now or then?
+Thanks
 
--- 
-thanks,
+Roberto
 
-Mimi
+> >  	}
+> >  
+> >  	/* calculate meta data/clusters for setting security and acl xattr */
+> > @@ -1805,6 +1802,7 @@ static int ocfs2_symlink(struct user_namespace *mnt_userns,
+> >  	int want_clusters = 0;
+> >  	int xattr_credits = 0;
+> >  	struct ocfs2_security_xattr_info si = {
+> > +		.name = NULL,
+> >  		.enable = 1,
+> >  	};
+> >  	int did_quota = 0, did_quota_inode = 0;
+> > @@ -1875,12 +1873,8 @@ static int ocfs2_symlink(struct user_namespace *mnt_userns,
+> >  	/* get security xattr */
+> >  	status = ocfs2_init_security_get(inode, dir, &dentry->d_name, &si);
+> >  	if (status) {
+> > -		if (status == -EOPNOTSUPP)
+> > -			si.enable = 0;
+> > -		else {
+> > -			mlog_errno(status);
+> > -			goto bail;
+> > -		}
+> > +		mlog_errno(status);
+> > +		goto bail;
+> >  	}
+> >  
+> >  	/* calculate meta data/clusters for setting security xattr */
+> > diff --git a/fs/ocfs2/xattr.c b/fs/ocfs2/xattr.c
+> > index 95d0611c5fc7..55699c573541 100644
+> > --- a/fs/ocfs2/xattr.c
+> > +++ b/fs/ocfs2/xattr.c
+> > @@ -7259,9 +7259,21 @@ static int ocfs2_xattr_security_set(const struct xattr_handler *handler,
+> >  static int ocfs2_initxattrs(struct inode *inode, const struct xattr *xattr_array,
+> >  		     void *fs_info)
+> >  {
+> > +	struct ocfs2_security_xattr_info *si = fs_info;
+> >  	const struct xattr *xattr;
+> >  	int err = 0;
+> >  
+> > +	if (si) {
+> > +		si->value = kmemdup(xattr_array->value, xattr_array->value_len,
+> > +				    GFP_KERNEL);
+> > +		if (!si->value)
+> > +			return -ENOMEM;
+> > +
+> > +		si->name = xattr_array->name;
+> > +		si->value_len = xattr_array->value_len;
+> > +		return 0;
+> > +	}
+> > +
+> >  	for (xattr = xattr_array; xattr->name != NULL; xattr++) {
+> >  		err = ocfs2_xattr_set(inode, OCFS2_XATTR_INDEX_SECURITY,
+> >  				      xattr->name, xattr->value,
+> > @@ -7277,13 +7289,23 @@ int ocfs2_init_security_get(struct inode *inode,
+> >  			    const struct qstr *qstr,
+> >  			    struct ocfs2_security_xattr_info *si)
+> >  {
+> > +	int ret;
+> > +
+> >  	/* check whether ocfs2 support feature xattr */
+> >  	if (!ocfs2_supports_xattr(OCFS2_SB(dir->i_sb)))
+> >  		return -EOPNOTSUPP;
+> > -	if (si)
+> > -		return security_old_inode_init_security(inode, dir, qstr,
+> > -							&si->name, &si->value,
+> > -							&si->value_len);
+> > +	if (si) {
+> > +		ret = security_inode_init_security(inode, dir, qstr,
+> > +						   &ocfs2_initxattrs, si);
+> 
+> The "if (unlikely(IS_PRIVATE(inode))"  test exists in both
+> security_old_inode_init_security() and security_inode_init_security(),
+> but return different values.  In the former case, it returns
+> -EOPNOTSUPP.  In the latter case, it returns 0.  The question is
+> whether or not we need to be concerned about private inodes on ocfs2.  
+> If private inodes on ocfs2 are possible, then ocsf2_mknod() or
+> ocfs2_symlink() would fail to create the inode or symlink.
+> 
+> > +		/*
+> > +		 * security_inode_init_security() does not return -EOPNOTSUPP,
+> > +		 * we have to check the xattr ourselves.
+> > +		 */
+> > +		if (!ret && !si->name)
+> > +			si->enable = 0;
+> > +
+> > +		return ret;
+> > +	}
+> >  
+> >  	return security_inode_init_security(inode, dir, qstr,
+> >  					    &ocfs2_initxattrs, NULL);
 
