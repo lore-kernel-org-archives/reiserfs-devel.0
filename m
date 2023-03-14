@@ -1,7 +1,7 @@
 From: Roberto Sassu <roberto.sassu@huaweicloud.com>
-Subject: [PATCH v8 5/6] evm: Align evm_inode_init_security() definition with LSM infrastructure
-Date: Tue, 14 Mar 2023 09:17:19 +0100
-Message-ID: <20230314081720.4158676-6-roberto.sassu@huaweicloud.com>
+Subject: [PATCH v8 6/6] evm: Support multiple LSMs providing an xattr
+Date: Tue, 14 Mar 2023 09:17:20 +0100
+Message-ID: <20230314081720.4158676-7-roberto.sassu@huaweicloud.com>
 References: <20230314081720.4158676-1-roberto.sassu@huaweicloud.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -14,127 +14,107 @@ Cc: ocfs2-devel@oss.oracle.com, reiserfs-devel@vger.kernel.org, linux-integrity@
 
 From: Roberto Sassu <roberto.sassu@huawei.com>
 
-Change the evm_inode_init_security() definition to align with the LSM
-infrastructure. Keep the existing behavior of including in the HMAC
-calculation only the first xattr provided by LSMs.
+Currently, evm_inode_init_security() processes a single LSM xattr from
+the array passed by security_inode_init_security(), and calculates the
+HMAC on it and other inode metadata.
 
-Changing the evm_inode_init_security() definition requires passing only the
-xattr array allocated by security_inode_init_security(), instead of the
-first LSM xattr and the place where the EVM xattr should be filled. In lieu
-of passing the EVM xattr, EVM must position itself after the last filled
-xattr (by checking the xattr name), since only the beginning of the xattr
-array is given.
-
-Finally, make evm_inode_init_security() return value compatible with the
-inode_init_security hook conventions, i.e. return -EOPNOTSUPP if it is not
-setting an xattr.
-
-EVM is a bit tricky, because xattrs is both an input and an output. If it
-was just output, EVM should have returned zero if xattrs is NULL. But,
-since xattrs is also input, EVM is unable to do its calculations, so return
--EOPNOTSUPP and handle this error in security_inode_init_security().
+Given that initxattrs() callbacks, called by
+security_inode_init_security(), expect that this array is terminated when
+the xattr name is set to NULL, reuse the same assumption to scan all xattrs
+and to calculate the HMAC on all of them.
 
 Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
 Reviewed-by: Casey Schaufler <casey@schaufler-ca.com>
 Reviewed-by: Mimi Zohar <zohar@linux.ibm.com>
 ---
- include/linux/evm.h               | 12 ++++++------
- security/integrity/evm/evm_main.c | 25 ++++++++++++++++++-------
- security/security.c               |  5 ++---
- 3 files changed, 26 insertions(+), 16 deletions(-)
+ security/integrity/evm/evm.h        |  2 ++
+ security/integrity/evm/evm_crypto.c |  9 ++++++++-
+ security/integrity/evm/evm_main.c   | 16 +++++++++++-----
+ 3 files changed, 21 insertions(+), 6 deletions(-)
 
-diff --git a/include/linux/evm.h b/include/linux/evm.h
-index 7dc1ee74169..cc64cea354e 100644
---- a/include/linux/evm.h
-+++ b/include/linux/evm.h
-@@ -56,9 +56,9 @@ static inline void evm_inode_post_set_acl(struct dentry *dentry,
- {
- 	return evm_inode_post_setxattr(dentry, acl_name, NULL, 0);
- }
--extern int evm_inode_init_security(struct inode *inode,
--				   const struct xattr *xattr_array,
--				   struct xattr *evm);
-+extern int evm_inode_init_security(struct inode *inode, struct inode *dir,
-+				   const struct qstr *qstr,
-+				   struct xattr *xattrs);
- extern bool evm_revalidate_status(const char *xattr_name);
- extern int evm_protected_xattr_if_enabled(const char *req_xattr_name);
- extern int evm_read_protected_xattrs(struct dentry *dentry, u8 *buffer,
-@@ -157,9 +157,9 @@ static inline void evm_inode_post_set_acl(struct dentry *dentry,
- 	return;
- }
+diff --git a/security/integrity/evm/evm.h b/security/integrity/evm/evm.h
+index f8b8c5004fc..f799d72a59f 100644
+--- a/security/integrity/evm/evm.h
++++ b/security/integrity/evm/evm.h
+@@ -46,6 +46,8 @@ struct evm_digest {
+ 	char digest[IMA_MAX_DIGEST_SIZE];
+ } __packed;
  
--static inline int evm_inode_init_security(struct inode *inode,
--					  const struct xattr *xattr_array,
--					  struct xattr *evm)
-+static inline int evm_inode_init_security(struct inode *inode, struct inode *dir,
-+					  const struct qstr *qstr,
-+					  struct xattr *xattrs)
++int evm_protected_xattr(const char *req_xattr_name);
++
+ int evm_init_key(void);
+ int evm_update_evmxattr(struct dentry *dentry,
+ 			const char *req_xattr_name,
+diff --git a/security/integrity/evm/evm_crypto.c b/security/integrity/evm/evm_crypto.c
+index 033804f5a5f..5d8b5ecf594 100644
+--- a/security/integrity/evm/evm_crypto.c
++++ b/security/integrity/evm/evm_crypto.c
+@@ -389,6 +389,7 @@ int evm_init_hmac(struct inode *inode, const struct xattr *lsm_xattr,
+ 		  char *hmac_val)
  {
+ 	struct shash_desc *desc;
++	const struct xattr *xattr;
+ 
+ 	desc = init_desc(EVM_XATTR_HMAC, HASH_ALGO_SHA1);
+ 	if (IS_ERR(desc)) {
+@@ -396,7 +397,13 @@ int evm_init_hmac(struct inode *inode, const struct xattr *lsm_xattr,
+ 		return PTR_ERR(desc);
+ 	}
+ 
+-	crypto_shash_update(desc, lsm_xattr->value, lsm_xattr->value_len);
++	for (xattr = lsm_xattr; xattr->name != NULL; xattr++) {
++		if (!evm_protected_xattr(xattr->name))
++			continue;
++
++		crypto_shash_update(desc, xattr->value, xattr->value_len);
++	}
++
+ 	hmac_add_misc(desc, inode, EVM_XATTR_HMAC, hmac_val);
+ 	kfree(desc);
  	return 0;
- }
 diff --git a/security/integrity/evm/evm_main.c b/security/integrity/evm/evm_main.c
-index cf24c525558..7d20ce83915 100644
+index 7d20ce83915..013eb220cc5 100644
 --- a/security/integrity/evm/evm_main.c
 +++ b/security/integrity/evm/evm_main.c
-@@ -864,23 +864,34 @@ void evm_inode_post_setattr(struct dentry *dentry, int ia_valid)
- /*
-  * evm_inode_init_security - initializes security.evm HMAC value
-  */
--int evm_inode_init_security(struct inode *inode,
--				 const struct xattr *lsm_xattr,
--				 struct xattr *evm_xattr)
-+int evm_inode_init_security(struct inode *inode, struct inode *dir,
-+			    const struct qstr *qstr,
-+			    struct xattr *xattrs)
+@@ -305,7 +305,7 @@ static int evm_protected_xattr_common(const char *req_xattr_name,
+ 	return found;
+ }
+ 
+-static int evm_protected_xattr(const char *req_xattr_name)
++int evm_protected_xattr(const char *req_xattr_name)
+ {
+ 	return evm_protected_xattr_common(req_xattr_name, false);
+ }
+@@ -870,10 +870,10 @@ int evm_inode_init_security(struct inode *inode, struct inode *dir,
  {
  	struct evm_xattr *xattr_data;
-+	struct xattr *xattr, *evm_xattr;
+ 	struct xattr *xattr, *evm_xattr;
++	bool evm_protected_xattrs = false;
  	int rc;
  
--	if (!(evm_initialized & EVM_INIT_HMAC) ||
--	    !evm_protected_xattr(lsm_xattr->name))
--		return 0;
-+	if (!(evm_initialized & EVM_INIT_HMAC) || !xattrs ||
-+	    !evm_protected_xattr(xattrs->name))
+-	if (!(evm_initialized & EVM_INIT_HMAC) || !xattrs ||
+-	    !evm_protected_xattr(xattrs->name))
++	if (!(evm_initialized & EVM_INIT_HMAC) || !xattrs)
+ 		return -EOPNOTSUPP;
+ 
+ 	/*
+@@ -881,8 +881,14 @@ int evm_inode_init_security(struct inode *inode, struct inode *dir,
+ 	 * contiguous, there is enough space for security.evm, and that there is
+ 	 * a terminator at the end of the array.
+ 	 */
+-	for (xattr = xattrs; xattr->name != NULL; xattr++)
+-		;
++	for (xattr = xattrs; xattr->name != NULL; xattr++) {
++		if (evm_protected_xattr(xattr->name))
++			evm_protected_xattrs = true;
++	}
++
++	/* EVM xattr not needed. */
++	if (!evm_protected_xattrs)
 +		return -EOPNOTSUPP;
-+
-+	/*
-+	 * security_inode_init_security() makes sure that the xattrs array is
-+	 * contiguous, there is enough space for security.evm, and that there is
-+	 * a terminator at the end of the array.
-+	 */
-+	for (xattr = xattrs; xattr->name != NULL; xattr++)
-+		;
-+
-+	evm_xattr = xattr;
  
- 	xattr_data = kzalloc(sizeof(*xattr_data), GFP_NOFS);
- 	if (!xattr_data)
- 		return -ENOMEM;
+ 	evm_xattr = xattr;
  
- 	xattr_data->data.type = EVM_XATTR_HMAC;
--	rc = evm_init_hmac(inode, lsm_xattr, xattr_data->digest);
-+	rc = evm_init_hmac(inode, xattrs, xattr_data->digest);
- 	if (rc < 0)
- 		goto out;
- 
-diff --git a/security/security.c b/security/security.c
-index f1f5f62f7fa..d0e20b26b6c 100644
---- a/security/security.c
-+++ b/security/security.c
-@@ -1705,9 +1705,8 @@ int security_inode_init_security(struct inode *inode, struct inode *dir,
- 	if (!num_filled_xattrs)
- 		goto out;
- 
--	ret = evm_inode_init_security(inode, new_xattrs,
--				      new_xattrs + num_filled_xattrs);
--	if (ret)
-+	ret = evm_inode_init_security(inode, dir, qstr, new_xattrs);
-+	if (ret && ret != -EOPNOTSUPP)
- 		goto out;
- 	ret = initxattrs(inode, new_xattrs, fs_data);
- out:
 -- 
 2.25.1
 
