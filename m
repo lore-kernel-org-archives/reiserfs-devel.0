@@ -1,11 +1,11 @@
 From: Roberto Sassu <roberto.sassu@huaweicloud.com>
-Subject: [PATCH v8 2/6] ocfs2: Switch to security_inode_init_security()
-Date: Tue, 14 Mar 2023 09:17:16 +0100
-Message-ID: <20230314081720.4158676-3-roberto.sassu@huaweicloud.com>
+Subject: [PATCH v8 3/6] security: Remove security_old_inode_init_security()
+Date: Tue, 14 Mar 2023 09:17:17 +0100
+Message-ID: <20230314081720.4158676-4-roberto.sassu@huaweicloud.com>
 References: <20230314081720.4158676-1-roberto.sassu@huaweicloud.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Return-path: <reiserfs-devel-owner@vger.kernel.org>
+Return-path: <linux-security-module-owner@vger.kernel.org>
 In-Reply-To: <20230314081720.4158676-1-roberto.sassu@huaweicloud.com>
 List-ID: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
@@ -14,116 +14,73 @@ Cc: ocfs2-devel@oss.oracle.com, reiserfs-devel@vger.kernel.org, linux-integrity@
 
 From: Roberto Sassu <roberto.sassu@huawei.com>
 
-In preparation for removing security_old_inode_init_security(), switch to
-security_inode_init_security().
+As the remaining two users reiserfs and ocfs2 switched to
+security_inode_init_security(), security_old_inode_init_security() can be
+now removed.
 
-Extend the existing ocfs2_initxattrs() to take the
-ocfs2_security_xattr_info structure from fs_info, and populate the
-name/value/len triple with the first xattr provided by LSMs.
-
-As fs_info was not used before, ocfs2_initxattrs() can now handle the case
-of replicating the behavior of security_old_inode_init_security(), i.e.
-just obtaining the xattr, in addition to setting all xattrs provided by
-LSMs.
-
-Supporting multiple xattrs is not currently supported where
-security_old_inode_init_security() was called (mknod, symlink), as it
-requires non-trivial changes that can be done at a later time. Like for
-reiserfs, even if EVM is invoked, it will not provide an xattr (if it is
-not the first to set it, its xattr will be discarded; if it is the first,
-it does not have xattrs to calculate the HMAC on).
-
-Finally, since security_inode_init_security(), unlike
-security_old_inode_init_security(), returns zero instead of -EOPNOTSUPP if
-no xattrs were provided by LSMs or if inodes are private, additionally
-check in ocfs2_init_security_get() if the xattr name is set.
-
-If not, act as if security_old_inode_init_security() returned -EOPNOTSUPP,
-and set si->enable to zero to notify to the functions following
-ocfs2_init_security_get() that no xattrs are available.
+Out-of-tree kernel modules should switch to security_inode_init_security()
+too.
 
 Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
 Reviewed-by: Casey Schaufler <casey@schaufler-ca.com>
-Acked-by: Joseph Qi <joseph.qi@linux.alibaba.com>
+Reviewed-by: Mimi Zohar <zohar@linux.ibm.com>
 ---
- fs/ocfs2/namei.c |  2 ++
- fs/ocfs2/xattr.c | 30 ++++++++++++++++++++++++++----
- 2 files changed, 28 insertions(+), 4 deletions(-)
+ include/linux/security.h | 12 ------------
+ security/security.c      | 11 -----------
+ 2 files changed, 23 deletions(-)
 
-diff --git a/fs/ocfs2/namei.c b/fs/ocfs2/namei.c
-index 9175dbc4720..17c52225b87 100644
---- a/fs/ocfs2/namei.c
-+++ b/fs/ocfs2/namei.c
-@@ -242,6 +242,7 @@ static int ocfs2_mknod(struct mnt_idmap *idmap,
- 	int want_meta = 0;
- 	int xattr_credits = 0;
- 	struct ocfs2_security_xattr_info si = {
-+		.name = NULL,
- 		.enable = 1,
- 	};
- 	int did_quota_inode = 0;
-@@ -1805,6 +1806,7 @@ static int ocfs2_symlink(struct mnt_idmap *idmap,
- 	int want_clusters = 0;
- 	int xattr_credits = 0;
- 	struct ocfs2_security_xattr_info si = {
-+		.name = NULL,
- 		.enable = 1,
- 	};
- 	int did_quota = 0, did_quota_inode = 0;
-diff --git a/fs/ocfs2/xattr.c b/fs/ocfs2/xattr.c
-index 389308efe85..469ec45baee 100644
---- a/fs/ocfs2/xattr.c
-+++ b/fs/ocfs2/xattr.c
-@@ -7259,9 +7259,21 @@ static int ocfs2_xattr_security_set(const struct xattr_handler *handler,
- static int ocfs2_initxattrs(struct inode *inode, const struct xattr *xattr_array,
- 		     void *fs_info)
- {
-+	struct ocfs2_security_xattr_info *si = fs_info;
- 	const struct xattr *xattr;
- 	int err = 0;
+diff --git a/include/linux/security.h b/include/linux/security.h
+index 5984d0d550b..cd23221ce9e 100644
+--- a/include/linux/security.h
++++ b/include/linux/security.h
+@@ -336,9 +336,6 @@ int security_inode_init_security(struct inode *inode, struct inode *dir,
+ int security_inode_init_security_anon(struct inode *inode,
+ 				      const struct qstr *name,
+ 				      const struct inode *context_inode);
+-int security_old_inode_init_security(struct inode *inode, struct inode *dir,
+-				     const struct qstr *qstr, const char **name,
+-				     void **value, size_t *len);
+ int security_inode_create(struct inode *dir, struct dentry *dentry, umode_t mode);
+ int security_inode_link(struct dentry *old_dentry, struct inode *dir,
+ 			 struct dentry *new_dentry);
+@@ -778,15 +775,6 @@ static inline int security_inode_init_security_anon(struct inode *inode,
+ 	return 0;
+ }
  
-+	if (si) {
-+		si->value = kmemdup(xattr_array->value, xattr_array->value_len,
-+				    GFP_KERNEL);
-+		if (!si->value)
-+			return -ENOMEM;
-+
-+		si->name = xattr_array->name;
-+		si->value_len = xattr_array->value_len;
-+		return 0;
-+	}
-+
- 	for (xattr = xattr_array; xattr->name != NULL; xattr++) {
- 		err = ocfs2_xattr_set(inode, OCFS2_XATTR_INDEX_SECURITY,
- 				      xattr->name, xattr->value,
-@@ -7277,13 +7289,23 @@ int ocfs2_init_security_get(struct inode *inode,
- 			    const struct qstr *qstr,
- 			    struct ocfs2_security_xattr_info *si)
- {
-+	int ret;
-+
- 	/* check whether ocfs2 support feature xattr */
- 	if (!ocfs2_supports_xattr(OCFS2_SB(dir->i_sb)))
- 		return -EOPNOTSUPP;
--	if (si)
--		return security_old_inode_init_security(inode, dir, qstr,
--							&si->name, &si->value,
--							&si->value_len);
-+	if (si) {
-+		ret = security_inode_init_security(inode, dir, qstr,
-+						   &ocfs2_initxattrs, si);
-+		/*
-+		 * security_inode_init_security() does not return -EOPNOTSUPP,
-+		 * we have to check the xattr ourselves.
-+		 */
-+		if (!ret && !si->name)
-+			si->enable = 0;
-+
-+		return ret;
-+	}
+-static inline int security_old_inode_init_security(struct inode *inode,
+-						   struct inode *dir,
+-						   const struct qstr *qstr,
+-						   const char **name,
+-						   void **value, size_t *len)
+-{
+-	return -EOPNOTSUPP;
+-}
+-
+ static inline int security_inode_create(struct inode *dir,
+ 					 struct dentry *dentry,
+ 					 umode_t mode)
+diff --git a/security/security.c b/security/security.c
+index b808e1b8655..f4170efcddd 100644
+--- a/security/security.c
++++ b/security/security.c
+@@ -1655,17 +1655,6 @@ int security_inode_init_security_anon(struct inode *inode,
+ 			     context_inode);
+ }
  
- 	return security_inode_init_security(inode, dir, qstr,
- 					    &ocfs2_initxattrs, NULL);
+-int security_old_inode_init_security(struct inode *inode, struct inode *dir,
+-				     const struct qstr *qstr, const char **name,
+-				     void **value, size_t *len)
+-{
+-	if (unlikely(IS_PRIVATE(inode)))
+-		return -EOPNOTSUPP;
+-	return call_int_hook(inode_init_security, -EOPNOTSUPP, inode, dir,
+-			     qstr, name, value, len);
+-}
+-EXPORT_SYMBOL(security_old_inode_init_security);
+-
+ #ifdef CONFIG_SECURITY_PATH
+ /**
+  * security_path_mknod() - Check if creating a special file is allowed
 -- 
 2.25.1
 
