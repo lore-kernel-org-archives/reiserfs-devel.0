@@ -1,54 +1,61 @@
-From: Matthew Wilcox <willy-wEGCiKHe2LqWVfeAwA7xHQ@public.gmane.org>
-Subject: RFC: Filesystem metadata in HIGHMEM
-Date: Tue, 14 Mar 2023 14:51:03 +0000
-Message-ID: <ZBCJ11qT8AWGA9y8@casper.infradead.org>
+From: Mimi Zohar <zohar@linux.ibm.com>
+Subject: Re: [PATCH v8 2/6] ocfs2: Switch to security_inode_init_security()
+Date: Fri, 17 Mar 2023 15:39:05 -0400
+Message-ID: <31fc7724c9689e8ec5bd6bfe026652d238d9fb84.camel@linux.ibm.com>
+References: <20230314081720.4158676-1-roberto.sassu@huaweicloud.com>
+         <20230314081720.4158676-3-roberto.sassu@huaweicloud.com>
 Mime-Version: 1.0
-Return-path: <linux-nilfs-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=casper.20170209; h=Content-Type:MIME-Version:Message-ID:
-        Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
-        Content-Description:In-Reply-To:References;
-        bh=H1QGXFGueBuHBkdVnY1gVNgWxdg/uqRKaISs/k4X5k8=; b=S7EeSUpGaZlBdHu4WUHAIdr25V
-        ixFY7YsdAbe5O4aABq5JSzhjm6AQQEt3eXVPOFTCWjSNtDCgQFZErMmKupnpF9Y/4skbRxraN6HkX
-        TqmDE1TcO5R6zBSPSKRc5doATbZgmLE4SGmmnROLttR98UmmdtbKjQjHzeTUwv1E1p/bjEoFFy+iH
-        nyqmOOJUi5ry9SunSrF7pQBYspmk5uLVQJF6SmWk5LWJAeaLgy3Zr7wr5xxwd+hQMMwpvWD+yVxuy
-        /CaVhXopsc+90LrYwApR0yOX/0l4LaCriYpzBh1LHFmzupT2UryDjtJai0v3ndjSU6zPsYceoZ+bh
-        bp/MSRHg==;
-Content-Disposition: inline
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-devel-owner@vger.kernel.org>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=message-id : subject :
+ from : to : cc : date : in-reply-to : references : content-type :
+ mime-version : content-transfer-encoding; s=pp1;
+ bh=1URlbCasJqipj7wwAu3MyeP8tjG8naLb0x+gto5CH0E=;
+ b=Pefo3U+lud4skk509kTTR+mhHmLTPOJvxx+Wv6DaLae1M24kbAhsa3/5WNzpvDFNkbrq
+ wiTxibGXwGRpT7XkXvj7mqYp86h6z1EWERlGT+dsZ45G+Rpc0t7enir2XbcXiwM0lrnw
+ gYIfhFhlnPdI8bkJjbLWBs8hjB9+kCRZpNqFy1aKAl606W/vQG4Trh27QqCOeGVYd53H
+ zy87NURsiYjOLinVrdr6qBIa75cXbHVtDFBjnis+eEa59OzXZo3PGXfqAYHU//LnYDFF
+ KsFQzFrvugKuh4SHXPhJqeNtBKnXHNK8xxFAxu3Pn4ojwpJV/c3MGS/2L9pKXofrcKiP HA== 
+In-Reply-To: <20230314081720.4158676-3-roberto.sassu@huaweicloud.com>
 List-ID: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: linux-fsdevel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-Cc: linux-mm-Bw31MaZKKs3YtjvyW6yDsg@public.gmane.org, linux-afs-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, ceph-devel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-ext4-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-nfs-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-nilfs-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-ntfs-dev-5NWGOfrQmneRv+LV9MX5uipxlwaOVQ5f@public.gmane.org, ntfs3-cunTk1MwBs/YUNznpcFYbw@public.gmane.org, ocfs2-devel-N0ozoZBvEnrZJqsBc5GL+g@public.gmane.org, devel-urhm25FSIHzptaDgeN77Px2eb7JE58TQ@public.gmane.org, reiserfs-devel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Evgeniy Dushistov <dushistov-JGs/UdohzUI@public.gmane.org>
+To: Roberto Sassu <roberto.sassu@huaweicloud.com>, mark@fasheh.com, jlbec@evilplan.org, joseph.qi@linux.alibaba.com, dmitry.kasatkin@gmail.com, paul@paul-moore.com, jmorris@namei.org, serge@hallyn.com, stephen.smalley.work@gmail.com, eparis@parisplace.org, casey@schaufler-ca.com
+Cc: ocfs2-devel@oss.oracle.com, reiserfs-devel@vger.kernel.org, linux-integrity@vger.kernel.org, linux-security-module@vger.kernel.org, selinux@vger.kernel.org, linux-kernel@vger.kernel.org, keescook@chromium.org, nicolas.bouchinet@clip-os.org, Roberto Sassu <roberto.sassu@huawei.com>
 
-TLDR: I think we should rip out support for fs metadata in highmem
+On Tue, 2023-03-14 at 09:17 +0100, Roberto Sassu wrote:
+> From: Roberto Sassu <roberto.sassu@huawei.com>
+> 
+> In preparation for removing security_old_inode_init_security(), switch to
+> security_inode_init_security().
+> 
+> Extend the existing ocfs2_initxattrs() to take the
+> ocfs2_security_xattr_info structure from fs_info, and populate the
+> name/value/len triple with the first xattr provided by LSMs.
+> 
+> As fs_info was not used before, ocfs2_initxattrs() can now handle the case
+> of replicating the behavior of security_old_inode_init_security(), i.e.
+> just obtaining the xattr, in addition to setting all xattrs provided by
+> LSMs.
+> 
+> Supporting multiple xattrs is not currently supported where
+> security_old_inode_init_security() was called (mknod, symlink), as it
+> requires non-trivial changes that can be done at a later time. Like for
+> reiserfs, even if EVM is invoked, it will not provide an xattr (if it is
+> not the first to set it, its xattr will be discarded; if it is the first,
+> it does not have xattrs to calculate the HMAC on).
+> 
+> Finally, since security_inode_init_security(), unlike
+> security_old_inode_init_security(), returns zero instead of -EOPNOTSUPP if
+> no xattrs were provided by LSMs or if inodes are private, additionally
+> check in ocfs2_init_security_get() if the xattr name is set.
+> 
+> If not, act as if security_old_inode_init_security() returned -EOPNOTSUPP,
+> and set si->enable to zero to notify to the functions following
+> ocfs2_init_security_get() that no xattrs are available.
+> 
+> Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
+> Reviewed-by: Casey Schaufler <casey@schaufler-ca.com>
+> Acked-by: Joseph Qi <joseph.qi@linux.alibaba.com>
 
-We want to support filesystems on devices with LBA size > PAGE_SIZE.
-That's subtly different and slightly harder than fsblk size > PAGE_SIZE.
-We can use large folios to read the blocks into, but reading/writing
-the data in those folios is harder if it's in highmem.  The kmap family
-of functions can only map a single page at a time (and changing that
-is hard).  We could vmap, but that's slow and can't be used from atomic
-context.  Working a single page at a time can be tricky (eg consider an
-ext2 directory entry that spans a page boundary).
+Reviewed-by: Mimi Zohar <zohar@linux.ibm.com>
 
-Many filesystems do not support having their metadata in highmem.
-ext4 doesn't.  xfs doesn't.  f2fs doesn't.  afs, ceph, ext2, hfs,
-minix, nfs, nilfs2, ntfs, ntfs3, ocfs2, orangefs, qnx6, reiserfs, sysv
-and ufs do.
-
-Originally, ext2 directories in the page cache were done by Al Viro
-in 2001.  At that time, the important use-case was machines with tens of
-gigabytes of highmem and ~800MB of lowmem.  Since then, the x86 systems
-have gone to 64-bit and the only real uses for highmem are cheap systems
-with ~8GB of memory total and 2-4GB of lowmem.  These systems really
-don't need to keep directories in highmem; using highmem for file &
-anon memory is enough to keep the system in balance.
-
-So let's just rip out the ability to keep directories (and other fs
-metadata) in highmem.  Many filesystems already don't support this,
-and it makes supporting LBA size > PAGE_SIZE hard.
-
-I'll turn this into an LSFMM topic if we don't reach resolution on the
-mailing list, but I'm optimistic that everybody will just agree with
-me ;-)
