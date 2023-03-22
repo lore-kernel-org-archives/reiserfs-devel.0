@@ -1,33 +1,30 @@
-From: syzbot <syzbot+2da5e132dd0268a9c0e4@syzkaller.appspotmail.com>
-Subject: Re: [syzbot] [reiserfs?] kernel BUG in do_journal_begin_r
-Date: Tue, 21 Mar 2023 14:26:23 -0700
-Message-ID: <00000000000000f2d005f76fb25e@google.com>
-References: <00000000000022a65705ec7f923c@google.com>
+From: S V <nerfur@gmail.com>
+Subject: Want to try luck with OpenBSD?
+Date: Thu, 23 Mar 2023 02:48:57 +0300
+Message-ID: <CAKDfvLbmX6xNiUAdsTmWrN4PK9zC_LRbqmNEG_wu=YedpaH33A@mail.gmail.com>
 Mime-Version: 1.0
-Return-path: <linux-fsdevel-owner@vger.kernel.org>
-In-Reply-To: <00000000000022a65705ec7f923c@google.com>
+Return-path: <reiserfs-devel-owner@vger.kernel.org>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112; t=1679528948;
+        h=to:subject:message-id:date:from:mime-version:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=91UiJeEJ1mze14WbHMd5QA14OarckVBimVzBrDtBEh8=;
+        b=b9viAn/QX2ir0mYpG7uim+/ubehS0DQyw6jcgTK3+ae2zG3IImHS2QfTDnUM6JssiY
+         62+JO9gkyJyCjO7jCQugUQQV5IPgc4R7Lh+XzyK3FcTbj9p0J+wRtwfsaZQ1EzEpOm6p
+         aKUdn8FSSozTFwcvkyq8eBJ51A/wqN6v3t412kaCvEuKfAv/noobjvEzn/NfxVIwF4G8
+         bc1zfWE9HrnPygx2lzUt+e2PkvV+0ahsJik8IirmUCrvTThhSr5cwTAJjQNnEGFmD/6v
+         dezoTkhKzs2Be4CanpEFYlY0rkERwK3mnBqC9iV/sbYL+uJWToUbiBU9mjamNbbRwsNX
+         5LUQ==
 List-ID: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: akpm@linux-foundation.org, axboe@kernel.dk, bvanassche@acm.org, idosch@nvidia.com, jack@suse.cz, jacob.e.keller@intel.com, jiri@nvidia.com, jlayton@kernel.org, kuba@kernel.org, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, neilb@suse.de, pabeni@redhat.com, reiserfs-devel@vger.kernel.org, syzkaller-bugs@googlegroups.com, willy@infradead.org, yi.zhang@huawei.com
+To: reiserfs-devel@vger.kernel.org
 
-syzbot suspects this issue was fixed by commit:
+Hello, I know it may sound pretty rude, but don't you consider
+possibility of porting your fs to OpenBSD or any other *BSD OS?
+All of them have lean, understandable code base and high demand for
+some additional fs, why not?
 
-commit b20b8aec6ffc07bb547966b356780cd344f20f5b
-Author: Ido Schimmel <idosch@nvidia.com>
-Date:   Wed Feb 15 07:31:39 2023 +0000
-
-    devlink: Fix netdev notifier chain corruption
-
-bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=139af019c80000
-start commit:   033c40a89f55 Merge tag 'apparmor-v6.2-rc9' of git://git.ke..
-git tree:       upstream
-kernel config:  https://syzkaller.appspot.com/x/.config?x=fe56f7d193926860
-dashboard link: https://syzkaller.appspot.com/bug?extid=2da5e132dd0268a9c0e4
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1264a8d7480000
-
-If the result looks correct, please mark the issue as fixed by replying with:
-
-#syz fix: devlink: Fix netdev notifier chain corruption
-
-For information about bisection process see: https://goo.gl/tpsmEJ#bisection
+-- 
+Nerfur Dragon
+-==(UDIC)==-
