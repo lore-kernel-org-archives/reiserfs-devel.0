@@ -1,147 +1,97 @@
-From: Roberto Sassu <roberto.sassu@huaweicloud.com>
-Subject: [PATCH v9 4/4] evm: Support multiple LSMs providing an xattr
-Date: Wed, 29 Mar 2023 15:04:15 +0200
-Message-ID: <20230329130415.2312521-5-roberto.sassu@huaweicloud.com>
-References: <20230329130415.2312521-1-roberto.sassu@huaweicloud.com>
+From: Paul Moore <paul@paul-moore.com>
+Subject: Re: [PATCH v9 1/4] reiserfs: Add security prefix to xattr name in reiserfs_security_write()
+Date: Thu, 30 Mar 2023 17:15:40 -0400
+Message-ID: <CAHC9VhRg7twUWXLH0xTaWc2MeSFExkGr9tJztYopzD0JEM-npw@mail.gmail.com>
+References: <20230329130415.2312521-1-roberto.sassu@huaweicloud.com> <20230329130415.2312521-2-roberto.sassu@huaweicloud.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Return-path: <linux-security-module-owner@vger.kernel.org>
-In-Reply-To: <20230329130415.2312521-1-roberto.sassu@huaweicloud.com>
+Content-Transfer-Encoding: quoted-printable
+Return-path: <bpf-owner@vger.kernel.org>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paul-moore.com; s=google; t=1680210951;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=qF+oDwPkmVm7Qzdori7BA3QXVGteSFkr5JVJlHDMV5M=;
+        b=Uyr/tXATNpJkiRXDw5jPhZvgg3yTmAqevZZQdIgzznbFGsdDGcvLYswsrKbDTlEbMp
+         0LSn4lVMaDd0wz6FRdC83zkC9WXvs5MZLt8Ezz/yEAUr5XD9sPPFK9RjoAgsIn3U0h4I
+         gYuL5Ayy9wn8jZjai/fRYcKSYspooI5ovRLEaMHzzo8NCkszVDJxZmVNhxkVp7ZPUAYe
+         6X+7REVFzscjLqZp5XXx+ntsKfb1TTkOJgq8WTSlHnLpbq6nMEoKVm3W8LmnAyFmswVt
+         km2jGPsYbdVJAS1gD6b2EUDdbT8pq8TG2onjt1eCr+gUVqqUdyce819NSJz/07NP0ZIj
+         4YDA==
+In-Reply-To: <20230329130415.2312521-2-roberto.sassu@huaweicloud.com>
 List-ID: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-To: zohar@linux.ibm.com, dmitry.kasatkin@gmail.com, paul@paul-moore.com, jmorris@namei.org, serge@hallyn.com, stephen.smalley.work@gmail.com, eparis@parisplace.org, casey@schaufler-ca.com
-Cc: reiserfs-devel@vger.kernel.org, linux-kernel@vger.kernel.org, linux-integrity@vger.kernel.org, linux-security-module@vger.kernel.org, selinux@vger.kernel.org, bpf@vger.kernel.org, kpsingh@kernel.org, keescook@chromium.org, nicolas.bouchinet@clip-os.org, Roberto Sassu <roberto.sassu@huawei.com>
+Content-Type: text/plain; charset="windows-1252"
+To: Roberto Sassu <roberto.sassu@huaweicloud.com>
+Cc: zohar@linux.ibm.com, dmitry.kasatkin@gmail.com, jmorris@namei.org, serge@hallyn.com, stephen.smalley.work@gmail.com, eparis@parisplace.org, casey@schaufler-ca.com, reiserfs-devel@vger.kernel.org, linux-kernel@vger.kernel.org, linux-integrity@vger.kernel.org, linux-security-module@vger.kernel.org, selinux@vger.kernel.org, bpf@vger.kernel.org, kpsingh@kernel.org, keescook@chromium.org, nicolas.bouchinet@clip-os.org, Roberto Sassu <roberto.sassu@huawei.com>, stable@vger.kernel.org
 
-From: Roberto Sassu <roberto.sassu@huawei.com>
+On Wed, Mar 29, 2023 at 9:05=E2=80=AFAM Roberto Sassu
+<roberto.sassu@huaweicloud.com> wrote:
+> From: Roberto Sassu <roberto.sassu@huawei.com>
+>
+> Reiserfs sets a security xattr at inode creation time in two stages: firs=
+t,
+> it calls reiserfs_security_init() to obtain the xattr from active LSMs;
+> then, it calls reiserfs_security_write() to actually write that xattr.
+>
+> Unfortunately, it seems there is a wrong expectation that LSMs provide th=
+e
+> full xattr name in the form 'security.<suffix>'. However, LSMs always
+> provided just the suffix, causing reiserfs to not write the xattr at all
+> (if the suffix is shorter than the prefix), or to write an xattr with the
+> wrong name.
+>
+> Add a temporary buffer in reiserfs_security_write(), and write to it the
+> full xattr name, before passing it to reiserfs_xattr_set_handle().
+>
+> Since the 'security.' prefix is always prepended, remove the name length
+> check.
+>
+> Cc: stable@vger.kernel.org # v2.6.x
+> Fixes: 57fe60df6241 ("reiserfs: add atomic addition of selinux attributes=
+ during inode creation")
+> Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
+> ---
+>  fs/reiserfs/xattr_security.c | 8 +++++---
+>  1 file changed, 5 insertions(+), 3 deletions(-)
+>
+> diff --git a/fs/reiserfs/xattr_security.c b/fs/reiserfs/xattr_security.c
+> index 6bffdf9a4fd..b0c354ab113 100644
+> --- a/fs/reiserfs/xattr_security.c
+> +++ b/fs/reiserfs/xattr_security.c
+> @@ -95,11 +95,13 @@ int reiserfs_security_write(struct reiserfs_transacti=
+on_handle *th,
+>                             struct inode *inode,
+>                             struct reiserfs_security_handle *sec)
+>  {
+> +       char xattr_name[XATTR_NAME_MAX + 1];
+>         int error;
+> -       if (strlen(sec->name) < sizeof(XATTR_SECURITY_PREFIX))
+> -               return -EINVAL;
 
-Currently, evm_inode_init_security() processes a single LSM xattr from the
-array passed by security_inode_init_security(), and calculates the HMAC on
-it and other inode metadata.
+If one really wanted to be paranoid they could verify that
+'XATTR_SECURITY_PREFIX_LEN + strlen(sec->name) <=3D XATTR_NAME_MAX' and
+return EINVAL, but that really shouldn't be an issue and if the
+concatenation does result in a xattr name that is too big, the
+snprintf() will safely truncate/managle it.
 
-As the LSM infrastructure now can pass to EVM an array with multiple
-xattrs, scan them until the terminator (xattr name NULL), and calculate the
-HMAC on all of them.
+Regardless, this patch is fine with me, but it would be nice if at
+least of the reiserfs/VFS folks could provide an ACK/Reviewed-by tag,
+although I think we can still move forward on this without one of
+those.
 
-Also, double check that the xattrs array terminator is the first non-filled
-slot (obtained with lsm_find_xattr_slot()). Consumers of the xattrs array,
-such as the initxattrs() callbacks, rely on the terminator.
+> -       error =3D reiserfs_xattr_set_handle(th, inode, sec->name, sec->va=
+lue,
+> +       snprintf(xattr_name, sizeof(xattr_name), "%s%s", XATTR_SECURITY_P=
+REFIX,
+> +                sec->name);
+> +
+> +       error =3D reiserfs_xattr_set_handle(th, inode, xattr_name, sec->v=
+alue,
+>                                           sec->length, XATTR_CREATE);
+>         if (error =3D=3D -ENODATA || error =3D=3D -EOPNOTSUPP)
+>                 error =3D 0;
+> --
+> 2.25.1
 
-Finally, change the name of the lsm_xattr parameter of evm_init_hmac() to
-xattrs, to reflect the new type of information passed.
-
-Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
----
- security/integrity/evm/evm.h        |  4 +++-
- security/integrity/evm/evm_crypto.c | 11 +++++++++--
- security/integrity/evm/evm_main.c   | 29 +++++++++++++++++++++++++----
- 3 files changed, 37 insertions(+), 7 deletions(-)
-
-diff --git a/security/integrity/evm/evm.h b/security/integrity/evm/evm.h
-index f8b8c5004fc..53bd7fec93f 100644
---- a/security/integrity/evm/evm.h
-+++ b/security/integrity/evm/evm.h
-@@ -46,6 +46,8 @@ struct evm_digest {
- 	char digest[IMA_MAX_DIGEST_SIZE];
- } __packed;
- 
-+int evm_protected_xattr(const char *req_xattr_name);
-+
- int evm_init_key(void);
- int evm_update_evmxattr(struct dentry *dentry,
- 			const char *req_xattr_name,
-@@ -58,7 +60,7 @@ int evm_calc_hash(struct dentry *dentry, const char *req_xattr_name,
- 		  const char *req_xattr_value,
- 		  size_t req_xattr_value_len, char type,
- 		  struct evm_digest *data);
--int evm_init_hmac(struct inode *inode, const struct xattr *xattr,
-+int evm_init_hmac(struct inode *inode, const struct xattr *xattrs,
- 		  char *hmac_val);
- int evm_init_secfs(void);
- 
-diff --git a/security/integrity/evm/evm_crypto.c b/security/integrity/evm/evm_crypto.c
-index 033804f5a5f..0fdd382b58e 100644
---- a/security/integrity/evm/evm_crypto.c
-+++ b/security/integrity/evm/evm_crypto.c
-@@ -385,10 +385,11 @@ int evm_update_evmxattr(struct dentry *dentry, const char *xattr_name,
- 	return rc;
- }
- 
--int evm_init_hmac(struct inode *inode, const struct xattr *lsm_xattr,
-+int evm_init_hmac(struct inode *inode, const struct xattr *xattrs,
- 		  char *hmac_val)
- {
- 	struct shash_desc *desc;
-+	const struct xattr *xattr;
- 
- 	desc = init_desc(EVM_XATTR_HMAC, HASH_ALGO_SHA1);
- 	if (IS_ERR(desc)) {
-@@ -396,7 +397,13 @@ int evm_init_hmac(struct inode *inode, const struct xattr *lsm_xattr,
- 		return PTR_ERR(desc);
- 	}
- 
--	crypto_shash_update(desc, lsm_xattr->value, lsm_xattr->value_len);
-+	for (xattr = xattrs; xattr->name != NULL; xattr++) {
-+		if (!evm_protected_xattr(xattr->name))
-+			continue;
-+
-+		crypto_shash_update(desc, xattr->value, xattr->value_len);
-+	}
-+
- 	hmac_add_misc(desc, inode, EVM_XATTR_HMAC, hmac_val);
- 	kfree(desc);
- 	return 0;
-diff --git a/security/integrity/evm/evm_main.c b/security/integrity/evm/evm_main.c
-index 9e75759150c..6cbd739cf84 100644
---- a/security/integrity/evm/evm_main.c
-+++ b/security/integrity/evm/evm_main.c
-@@ -306,7 +306,7 @@ static int evm_protected_xattr_common(const char *req_xattr_name,
- 	return found;
- }
- 
--static int evm_protected_xattr(const char *req_xattr_name)
-+int evm_protected_xattr(const char *req_xattr_name)
- {
- 	return evm_protected_xattr_common(req_xattr_name, false);
- }
-@@ -870,14 +870,35 @@ int evm_inode_init_security(struct inode *inode, struct inode *dir,
- 			    int *num_filled_xattrs)
- {
- 	struct evm_xattr *xattr_data;
--	struct xattr *evm_xattr;
-+	struct xattr *xattr, *evm_xattr;
-+	bool evm_protected_xattrs = false;
- 	int rc;
- 
--	if (!(evm_initialized & EVM_INIT_HMAC) || !xattrs ||
--	    !evm_protected_xattr(xattrs->name))
-+	if (!(evm_initialized & EVM_INIT_HMAC) || !xattrs)
-+		return -EOPNOTSUPP;
-+
-+	/*
-+	 * security_inode_init_security() makes sure that the xattrs array is
-+	 * contiguous, there is enough space for security.evm, and that there is
-+	 * a terminator at the end of the array.
-+	 */
-+	for (xattr = xattrs; xattr->name != NULL; xattr++) {
-+		if (evm_protected_xattr(xattr->name))
-+			evm_protected_xattrs = true;
-+	}
-+
-+	/* EVM xattr not needed. */
-+	if (!evm_protected_xattrs)
- 		return -EOPNOTSUPP;
- 
- 	evm_xattr = lsm_find_xattr_slot(xattrs, num_filled_xattrs);
-+	/*
-+	 * Array terminator (xattr name = NULL) must be the first non-filled
-+	 * xattr slot.
-+	 */
-+	WARN_ONCE(evm_xattr != xattr,
-+		  "%s: xattrs terminator is not the first non-filled slot\n",
-+		  __func__);
- 
- 	xattr_data = kzalloc(sizeof(*xattr_data), GFP_NOFS);
- 	if (!xattr_data)
--- 
-2.25.1
-
+--=20
+paul-moore.com
