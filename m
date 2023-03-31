@@ -1,544 +1,182 @@
 From: Roberto Sassu <roberto.sassu@huaweicloud.com>
-Subject: Re: [PATCH v9 2/4] security: Allow all LSMs to provide xattrs for
- inode_init_security hook
-Date: Fri, 31 Mar 2023 09:17:25 +0200
-Message-ID: <35f2b3e04fba01d9002e549a1a3e9f5771053793.camel@huaweicloud.com>
+Subject: Re: [PATCH v9 3/4] evm: Align evm_inode_init_security() definition
+ with LSM infrastructure
+Date: Fri, 31 Mar 2023 09:32:52 +0200
+Message-ID: <bfe74fff24a5a7a8059acc00c29ac957bf0b7880.camel@huaweicloud.com>
 References: <20230329130415.2312521-1-roberto.sassu@huaweicloud.com>
-         <20230329130415.2312521-3-roberto.sassu@huaweicloud.com>
-         <CAHC9VhTTcejig61X1Qf_rXWzjyz8HNLNg=KqExRqDH7+McChkw@mail.gmail.com>
+         <20230329130415.2312521-4-roberto.sassu@huaweicloud.com>
+         <CAHC9VhSDVv30ce2652kridRU7iaQQ19tiGubWpyP0mi7pf+JJw@mail.gmail.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
 Return-path: <linux-security-module-owner@vger.kernel.org>
-In-Reply-To: <CAHC9VhTTcejig61X1Qf_rXWzjyz8HNLNg=KqExRqDH7+McChkw@mail.gmail.com>
+In-Reply-To: <CAHC9VhSDVv30ce2652kridRU7iaQQ19tiGubWpyP0mi7pf+JJw@mail.gmail.com>
 List-ID: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="windows-1252"
 To: Paul Moore <paul@paul-moore.com>
 Cc: zohar@linux.ibm.com, dmitry.kasatkin@gmail.com, jmorris@namei.org, serge@hallyn.com, stephen.smalley.work@gmail.com, eparis@parisplace.org, casey@schaufler-ca.com, reiserfs-devel@vger.kernel.org, linux-kernel@vger.kernel.org, linux-integrity@vger.kernel.org, linux-security-module@vger.kernel.org, selinux@vger.kernel.org, bpf@vger.kernel.org, kpsingh@kernel.org, keescook@chromium.org, nicolas.bouchinet@clip-os.org, Roberto Sassu <roberto.sassu@huawei.com>
 
-On Thu, 2023-03-30 at 18:50 -0400, Paul Moore wrote:
+On Thu, 2023-03-30 at 18:55 -0400, Paul Moore wrote:
 > On Wed, Mar 29, 2023 at 9:05=E2=80=AFAM Roberto Sassu
 > <roberto.sassu@huaweicloud.com> wrote:
 > > From: Roberto Sassu <roberto.sassu@huawei.com>
 > >=20
-> > Currently, security_inode_init_security() supports only one LSM providi=
-ng
-> > an xattr and EVM calculating the HMAC on that xattr, plus other inode
-> > metadata.
+> > Change the evm_inode_init_security() definition to align with the LSM
+> > infrastructure. Keep the existing behavior of including in the HMAC
+> > calculation only the first xattr provided by LSMs.
 > >=20
-> > Allow all LSMs to provide one or multiple xattrs, by extending the secu=
-rity
-> > blob reservation mechanism. Introduce the new lbs_xattr_count field of =
-the
-> > lsm_blob_sizes structure, so that each LSM can specify how many xattrs =
+> > Changing the evm_inode_init_security() definition requires passing the
+> > xattr array allocated by security_inode_init_security(), and the number=
+ of
+> > xattrs filled by previously invoked LSMs.
+> >=20
+> > Use the newly introduced lsm_find_xattr_slot() to position EVM correctl=
+y in
+> > the xattrs array, like a regular LSM, and to increment the number of fi=
+lled
+> > slots. For now, the LSM infrastructure allocates enough xattrs slots to
+> > store the EVM xattr, without using the reservation mechanism.
+> >=20
+> > Finally, make evm_inode_init_security() return value compatible with the
+> > inode_init_security hook conventions, i.e. return -EOPNOTSUPP if it is =
+not
+> > setting an xattr.
+> >=20
+> > EVM is a bit tricky, because xattrs is both an input and an output. If =
 it
-> > needs, and the LSM infrastructure knows how many xattr slots it should
-> > allocate.
-> >=20
-> > Dynamically allocate the new_xattrs array to be populated by LSMs with =
-the
-> > inode_init_security hook, and pass it to the latter instead of the
-> > name/value/len triple.
-> >=20
-> > Also, pass to the hook the number of xattrs filled by each LSM, so that
-> > there are no gaps when the next LSM fills the array. Gaps might occur
-> > because an LSM can legitimately request xattrs to the LSM infrastructur=
-e,
-> > but not fill the reserved slots, if it was not initialized.
-> >=20
-> > Update the documentation of security_inode_init_security() to reflect t=
-he
-> > changes, and fix the description of the xattr name, as it is not alloca=
-ted
-> > anymore.
-> >=20
-> > On the security_inode_init_security() side, ensure that if LSMs returned
-> > zero from the hook, they correctly filled a new_xattrs slot. Consequent=
-ly,
-> > change the default return value of the hook to -EOPNOTSUPP, so that BPF=
- LSM
-> > returns that, and does not cause security_inode_init_security() to fail.
-> >=20
-> > Finally, adapt both SELinux and Smack to use the new definition of the
-> > inode_init_security hook, and to fill the reserved slots in the xattr
-> > array. Introduce the lsm_find_xattr_slot() helper to retrieve an availa=
-ble
-> > slot to fill, and to increment the number of filled slots.
-> >=20
-> > Move the xattr->name assignment after the xattr->value one, so that it =
-is
-> > done only in case of successful memory allocation. For Smack, also rese=
-rve
-> > space for the other defined xattrs although they are not set yet in
-> > smack_inode_init_security().
-> >=20
-> > Reported-by: Nicolas Bouchinet <nicolas.bouchinet@clip-os.org> (EVM cra=
-sh)
-> > Link: https://lore.kernel.org/linux-integrity/Y1FTSIo+1x+4X0LS@archlinu=
-x/
-> > Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
-> > ---
-> >  include/linux/lsm_hook_defs.h |  6 +--
-> >  include/linux/lsm_hooks.h     | 14 ++++++
-> >  security/security.c           | 92 +++++++++++++++++++++++++++--------
-> >  security/selinux/hooks.c      | 18 ++++---
-> >  security/smack/smack_lsm.c    | 33 ++++++++-----
-> >  5 files changed, 120 insertions(+), 43 deletions(-)
-> >=20
-> > diff --git a/include/linux/lsm_hook_defs.h b/include/linux/lsm_hook_def=
-s.h
-> > index 6bb55e61e8e..1fd95db0087 100644
-> > --- a/include/linux/lsm_hook_defs.h
-> > +++ b/include/linux/lsm_hook_defs.h
-> > @@ -111,9 +111,9 @@ LSM_HOOK(int, 0, path_notify, const struct path *pa=
-th, u64 mask,
-> >          unsigned int obj_type)
-> >  LSM_HOOK(int, 0, inode_alloc_security, struct inode *inode)
-> >  LSM_HOOK(void, LSM_RET_VOID, inode_free_security, struct inode *inode)
-> > -LSM_HOOK(int, 0, inode_init_security, struct inode *inode,
-> > -        struct inode *dir, const struct qstr *qstr, const char **name,
-> > -        void **value, size_t *len)
-> > +LSM_HOOK(int, -EOPNOTSUPP, inode_init_security, struct inode *inode,
-> > +        struct inode *dir, const struct qstr *qstr, struct xattr *xatt=
-rs,
-> > +        int *num_filled_xattrs)
-> >  LSM_HOOK(int, 0, inode_init_security_anon, struct inode *inode,
-> >          const struct qstr *name, const struct inode *context_inode)
-> >  LSM_HOOK(int, 0, inode_create, struct inode *dir, struct dentry *dentr=
-y,
-> > diff --git a/include/linux/lsm_hooks.h b/include/linux/lsm_hooks.h
-> > index c2be66c669a..b60de5f2f34 100644
-> > --- a/include/linux/lsm_hooks.h
-> > +++ b/include/linux/lsm_hooks.h
-> > @@ -28,6 +28,7 @@
-> >  #include <linux/security.h>
-> >  #include <linux/init.h>
-> >  #include <linux/rculist.h>
-> > +#include <linux/xattr.h>
-> >=20
-> >  union security_list_options {
-> >         #define LSM_HOOK(RET, DEFAULT, NAME, ...) RET (*NAME)(__VA_ARGS=
-__);
-> > @@ -63,8 +64,21 @@ struct lsm_blob_sizes {
-> >         int     lbs_ipc;
-> >         int     lbs_msg_msg;
-> >         int     lbs_task;
-> > +       int     lbs_xattr_count; /* number of xattr slots in new_xattrs=
- array */
-> >  };
-> >=20
-> > +/*
-> > + * Retrieve the first available slot to fill with an xattr, and increm=
-ent
-> > + * the number of filled slots.
-> > + */
-> > +static inline struct xattr *lsm_find_xattr_slot(struct xattr *xattrs,
-> > +                                               int *num_filled_xattrs)
-> > +{
-> > +       if (unlikely(!xattrs))
-> > +               return NULL;
-> > +       return xattrs + (*num_filled_xattrs)++;
-> > +}
+> > was just output, EVM should have returned zero if xattrs is NULL. But,
+> > since xattrs is also input, EVM is unable to do its calculations, so re=
+turn
+> > -EOPNOTSUPP and handle this error in security_inode_init_security().
 >=20
-> Since this function increments the @num_filled_xattrs parameter in
-> addition to returning the next available xattr array slot, let's
-> replace the "find" with "get" so there is some hint that the state is
-> changing, i.e. the count is being bumped (similar to the "get" and
-> "put" concept).
->=20
-> It would also be nice if you could use the kdoc style for the function
-> comment block; if nothing else it is a known format and consistent
-> documentation is good, even if it never makes it out of the source
-> file.
+> I don't quite understand why EVM would return EOPNOTSUPP if it is
+> enabled but there are not xattrs to measure.  It seems like EVM should
+> return success/0 in the no-xattr case; there were no xattrs to
+> measure, so it succeeded in measuring nothing.  Am I missing
+> something?
 
-Ok, will do.
+From a very quick look at what other LSMs do, it seems that they return
+zero even if they are not initialized.
 
-> >  /*
-> >   * LSM_RET_VOID is used as the default value in LSM_HOOK definitions f=
-or void
-> >   * LSM hooks (in include/linux/lsm_hook_defs.h).
-> > diff --git a/security/security.c b/security/security.c
-> > index f4170efcddd..be33d643a81 100644
-> > --- a/security/security.c
-> > +++ b/security/security.c
-> > @@ -31,8 +31,6 @@
-> >  #include <linux/msg.h>
-> >  #include <net/flow.h>
-> >=20
-> > -#define MAX_LSM_EVM_XATTR      2
-> > -
-> >  /* How many LSMs were built into the kernel? */
-> >  #define LSM_COUNT (__end_lsm_info - __start_lsm_info)
-> >=20
-> > @@ -212,6 +210,8 @@ static void __init lsm_set_blob_sizes(struct lsm_bl=
-ob_sizes *needed)
-> >         lsm_set_blob_size(&needed->lbs_msg_msg, &blob_sizes.lbs_msg_msg=
-);
-> >         lsm_set_blob_size(&needed->lbs_superblock, &blob_sizes.lbs_supe=
-rblock);
-> >         lsm_set_blob_size(&needed->lbs_task, &blob_sizes.lbs_task);
-> > +       lsm_set_blob_size(&needed->lbs_xattr_count,
-> > +                         &blob_sizes.lbs_xattr_count);
-> >  }
-> >=20
-> >  /* Prepare LSM for initialization. */
-> > @@ -378,6 +378,7 @@ static void __init ordered_lsm_init(void)
-> >         init_debug("msg_msg blob size    =3D %d\n", blob_sizes.lbs_msg_=
-msg);
-> >         init_debug("superblock blob size =3D %d\n", blob_sizes.lbs_supe=
-rblock);
-> >         init_debug("task blob size       =3D %d\n", blob_sizes.lbs_task=
-);
-> > +       init_debug("xattr slots          =3D %d\n", blob_sizes.lbs_xatt=
-r_count);
-> >=20
-> >         /*
-> >          * Create any kmem_caches needed for blobs
-> > @@ -1591,11 +1592,15 @@ EXPORT_SYMBOL(security_dentry_create_files_as);
-> >   * created inode and set up the incore security field for the new inod=
-e.  This
-> >   * hook is called by the fs code as part of the inode creation transac=
-tion and
-> >   * provides for atomic labeling of the inode, unlike the post_create/m=
-kdir/...
-> > - * hooks called by the VFS.  The hook function is expected to allocate=
- the name
-> > - * and value via kmalloc, with the caller being responsible for callin=
-g kfree
-> > - * after using them.  If the security module does not use security att=
-ributes
-> > - * or does not wish to put a security attribute on this particular ino=
-de, then
-> > - * it should return -EOPNOTSUPP to skip this processing.
-> > + * hooks called by the VFS.  The hook function is expected to populate=
- the
-> > + * @xattrs array, by calling lsm_find_xattr_slot() to retrieve the slo=
-ts
-> > + * reserved by the security module with the lbs_xattr_count field of t=
-he
-> > + * lsm_blob_sizes structure.  For each slot, the hook function should =
-set ->name
-> > + * to the attribute name suffix (e.g. selinux), to allocate ->value (w=
-ill be
-> > + * freed by the caller) and set it to the attribute value, to set ->va=
-lue_len to
-> > + * the length of the value.  If the security module does not use secur=
-ity
-> > + * attributes or does not wish to put a security attribute on this par=
-ticular
-> > + * inode, then it should return -EOPNOTSUPP to skip this processing.
-> >   *
-> >   * Return: Returns 0 on success, -EOPNOTSUPP if no security attribute =
-is
-> >   * needed, or -ENOMEM on memory allocation failure.
-> > @@ -1604,33 +1609,80 @@ int security_inode_init_security(struct inode *=
-inode, struct inode *dir,
-> >                                  const struct qstr *qstr,
-> >                                  const initxattrs initxattrs, void *fs_=
-data)
-> >  {
-> > -       struct xattr new_xattrs[MAX_LSM_EVM_XATTR + 1];
-> > -       struct xattr *lsm_xattr, *evm_xattr, *xattr;
-> > -       int ret;
-> > +       struct security_hook_list *P;
-> > +       struct xattr *new_xattrs;
-> > +       struct xattr *xattr;
-> > +       int num_filled_xattrs =3D 0, old_num_filled_xattrs;
->=20
-> I think you can get rid of @old_num_filled_xattrs (see below), but how
-> about changing @num_filled_xattrs to @xattr_count, it's shorter and
-> just as accurate.
-
-Ok.
-
-> > +       int ret =3D -EOPNOTSUPP, i;
-> >=20
-> >         if (unlikely(IS_PRIVATE(inode)))
-> >                 return 0;
-> >=20
-> > +       if (!blob_sizes.lbs_xattr_count)
-> > +               return 0;
-> > +
-> >         if (!initxattrs)
-> >                 return call_int_hook(inode_init_security, -EOPNOTSUPP, =
-inode,
-> > -                                    dir, qstr, NULL, NULL, NULL);
->=20
-> I would have expected the !initxattrs case to still be handled in the
-> hook loop below, is there a reason why we don't want to do that?  If
-> including it in the loop below is too much of a hassle (conditional
-> array allocation, etc.), should we at least put it in it's own loop?
-> It seems wrong that we wouldn't run through all of the LSM hooks in
-> this case ...
-
-Uhm, you are right. If you add another loop, the function starts to be
-too long. I would just check if initxattrs is not NULL below.
-
-> > -       memset(new_xattrs, 0, sizeof(new_xattrs));
-> > -       lsm_xattr =3D new_xattrs;
-> > -       ret =3D call_int_hook(inode_init_security, -EOPNOTSUPP, inode, =
-dir, qstr,
-> > -                           &lsm_xattr->name,
-> > -                           &lsm_xattr->value,
-> > -                           &lsm_xattr->value_len);
-> > -       if (ret)
-> > +                                   dir, qstr, NULL, NULL);
-> > +       /* Allocate +1 for EVM and +1 as terminator. */
-> > +       new_xattrs =3D kcalloc(blob_sizes.lbs_xattr_count + 2,
-> > +                            sizeof(*new_xattrs), GFP_NOFS);
-> > +       if (!new_xattrs)
-> > +               return -ENOMEM;
-> > +
-> > +       hlist_for_each_entry(P, &security_hook_heads.inode_init_securit=
-y,
-> > +                            list) {
-> > +               old_num_filled_xattrs =3D num_filled_xattrs;
-> > +
-> > +               ret =3D P->hook.inode_init_security(inode, dir, qstr, n=
-ew_xattrs,
-> > +                                                 &num_filled_xattrs);
-> > +               if (ret && ret !=3D -EOPNOTSUPP)
-> > +                       goto out;
-> > +               /*
-> > +                * As documented in lsm_hooks.h, -EOPNOTSUPP in this co=
-ntext
-> > +                * means that the LSM is not willing to provide an xatt=
-r, not
-> > +                * that it wants to signal an error. Thus, continue to =
-invoke
-> > +                * the remaining LSMs.
-> > +                */
-> > +               if (ret =3D=3D -EOPNOTSUPP)
-> > +                       continue;
-> > +
-> > +               /* LSM should fill new_xattrs if it returns zero. */
-> > +               if (old_num_filled_xattrs =3D=3D num_filled_xattrs) {
-> > +                       WARN_ONCE(1, "LSM %s: returned zero but didn't =
-fill any slot\n",
-> > +                                 P->lsm);
-> > +                       ret =3D -EINVAL;
-> > +                       goto out;
-> > +               }
->=20
-> Do we really need this check?  We don't currently check that LSMs
-> setup their xattrs properly and we are doing okay.
->=20
-> > +               /*
-> > +                * For filled xattr slots, name and value must be non-N=
-ULL.
-> > +                *
-> > +                * NULL value is interpreted by filesystems as a remove=
- op, see
-> > +                * ext4_xattr_set_handle() for more details.
-> > +                */
-> > +               for (i =3D old_num_filled_xattrs; i < num_filled_xattrs=
-; i++) {
-> > +                       if (!new_xattrs[i].name || !new_xattrs[i].value=
-) {
-> > +                               WARN_ONCE(1, "LSM %s: NULL xattr name a=
-nd/or value\n",
-> > +                                         P->lsm);
-> > +                               ret =3D -EINVAL;
-> > +                               goto out;
-> > +                       }
-> > +               }
->=20
-> Same here.  I worry this is extra processing with little benefit.  The
-> LSM updates the xattr count and we should trust it is correct.
-
-Ok, no problem for me to remove.
-
-Sometimes more checks help to detect undesired changes in other parts
-of the code.
-
-> > +       }
-> > +
-> > +       if (!num_filled_xattrs)
-> >                 goto out;
-> >=20
-> > -       evm_xattr =3D lsm_xattr + 1;
-> > -       ret =3D evm_inode_init_security(inode, lsm_xattr, evm_xattr);
-> > +       ret =3D evm_inode_init_security(inode, new_xattrs,
-> > +                                     new_xattrs + num_filled_xattrs);
-> >         if (ret)
-> >                 goto out;
-> >         ret =3D initxattrs(inode, new_xattrs, fs_data);
-> >  out:
-> >         for (xattr =3D new_xattrs; xattr->value !=3D NULL; xattr++)
-> >                 kfree(xattr->value);
->=20
-> We can probably drop the need for the @xattr variable by using @xattr_cou=
-nt.
->=20
->   for (; xattr_count > 0; xattr_count--)
->     kfree(new_xattrs[xattr_count - 1]->value);
-
-Ok.
-
-> > +       kfree(new_xattrs);
-> >         return (ret =3D=3D -EOPNOTSUPP) ? 0 : ret;
-> >  }
-> >  EXPORT_SYMBOL(security_inode_init_security);
-> > diff --git a/security/selinux/hooks.c b/security/selinux/hooks.c
-> > index 9a5bdfc2131..dc349cf34e8 100644
-> > --- a/security/selinux/hooks.c
-> > +++ b/security/selinux/hooks.c
-> > @@ -104,6 +104,8 @@
-> >  #include "audit.h"
-> >  #include "avc_ss.h"
-> >=20
-> > +#define SELINUX_INODE_INIT_XATTRS 1
-> > +
-> >  struct selinux_state selinux_state;
-> >=20
-> >  /* SECMARK reference count */
-> > @@ -2868,11 +2870,12 @@ static int selinux_dentry_create_files_as(struc=
-t dentry *dentry, int mode,
-> >=20
-> >  static int selinux_inode_init_security(struct inode *inode, struct ino=
-de *dir,
-> >                                        const struct qstr *qstr,
-> > -                                      const char **name,
-> > -                                      void **value, size_t *len)
-> > +                                      struct xattr *xattrs,
-> > +                                      int *num_filled_xattrs)
->=20
-> Use 'xattr_count'.
->=20
-> >  {
-> >         const struct task_security_struct *tsec =3D selinux_cred(curren=
-t_cred());
-> >         struct superblock_security_struct *sbsec;
-> > +       struct xattr *xattr =3D lsm_find_xattr_slot(xattrs, num_filled_=
-xattrs);
-> >         u32 newsid, clen;
-> >         int rc;
-> >         char *context;
-> > @@ -2899,16 +2902,14 @@ static int selinux_inode_init_security(struct i=
-node *inode, struct inode *dir,
-> >             !(sbsec->flags & SBLABEL_MNT))
-> >                 return -EOPNOTSUPP;
-> >=20
-> > -       if (name)
-> > -               *name =3D XATTR_SELINUX_SUFFIX;
-> > -
-> > -       if (value && len) {
-> > +       if (xattr) {
-> >                 rc =3D security_sid_to_context_force(&selinux_state, ne=
-wsid,
-> >                                                    &context, &clen);
-> >                 if (rc)
-> >                         return rc;
-> > -               *value =3D context;
-> > -               *len =3D clen;
-> > +               xattr->value =3D context;
-> > +               xattr->value_len =3D clen;
-> > +               xattr->name =3D XATTR_SELINUX_SUFFIX;
-> >         }
-> >=20
-> >         return 0;
-> > @@ -6918,6 +6919,7 @@ struct lsm_blob_sizes selinux_blob_sizes __lsm_ro=
-_after_init =3D {
-> >         .lbs_ipc =3D sizeof(struct ipc_security_struct),
-> >         .lbs_msg_msg =3D sizeof(struct msg_security_struct),
-> >         .lbs_superblock =3D sizeof(struct superblock_security_struct),
-> > +       .lbs_xattr_count =3D SELINUX_INODE_INIT_XATTRS,
-> >  };
-> >=20
-> >  #ifdef CONFIG_PERF_EVENTS
-> > diff --git a/security/smack/smack_lsm.c b/security/smack/smack_lsm.c
-> > index cfcbb748da2..ba10f4e8632 100644
-> > --- a/security/smack/smack_lsm.c
-> > +++ b/security/smack/smack_lsm.c
-> > @@ -52,6 +52,15 @@
-> >  #define SMK_RECEIVING  1
-> >  #define SMK_SENDING    2
-> >=20
-> > +/*
-> > + * Smack uses multiple xattrs.
-> > + * SMACK64 - for access control, SMACK64EXEC - label for the program,
-> > + * SMACK64MMAP - controls library loading,
-> > + * SMACK64TRANSMUTE - label initialization,
-> > + * Not saved on files - SMACK64IPIN and SMACK64IPOUT
-> > + */
-> > +#define SMACK_INODE_INIT_XATTRS 4
-> > +
-> >  #ifdef SMACK_IPV6_PORT_LABELING
-> >  static DEFINE_MUTEX(smack_ipv6_lock);
-> >  static LIST_HEAD(smk_ipv6_port_list);
-> > @@ -939,26 +948,24 @@ static int smack_inode_alloc_security(struct inod=
-e *inode)
-> >   * @inode: the newly created inode
-> >   * @dir: containing directory object
-> >   * @qstr: unused
-> > - * @name: where to put the attribute name
-> > - * @value: where to put the attribute value
-> > - * @len: where to put the length of the attribute
-> > + * @xattrs: where to put the attributes
-> > + * @num_filled_xattrs: current number of filled xattrs (updated)
-> >   *
-> >   * Returns 0 if it all works out, -ENOMEM if there's no memory
-> >   */
-> >  static int smack_inode_init_security(struct inode *inode, struct inode=
- *dir,
-> > -                                    const struct qstr *qstr, const cha=
-r **name,
-> > -                                    void **value, size_t *len)
-> > +                                    const struct qstr *qstr,
-> > +                                    struct xattr *xattrs,
-> > +                                    int *num_filled_xattrs)
->=20
-> I'll leave this up to Casey, but 'xattr_count' would be my vote :)
-
-Ok, fine also for me.
+So, it makes sense to return zero also here.
 
 Thanks
 
 Roberto
 
+> > Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
+> > ---
+> >  include/linux/evm.h               | 14 ++++++++------
+> >  security/integrity/evm/evm_main.c | 18 +++++++++++-------
+> >  security/security.c               |  6 +++---
+> >  3 files changed, 22 insertions(+), 16 deletions(-)
+> >=20
+> > diff --git a/include/linux/evm.h b/include/linux/evm.h
+> > index 7dc1ee74169..3c0e8591b69 100644
+> > --- a/include/linux/evm.h
+> > +++ b/include/linux/evm.h
+> > @@ -56,9 +56,10 @@ static inline void evm_inode_post_set_acl(struct den=
+try *dentry,
 > >  {
-> >         struct inode_smack *issp =3D smack_inode(inode);
-> >         struct smack_known *skp =3D smk_of_current();
-> >         struct smack_known *isp =3D smk_of_inode(inode);
-> >         struct smack_known *dsp =3D smk_of_inode(dir);
-> > +       struct xattr *xattr =3D lsm_find_xattr_slot(xattrs, num_filled_=
-xattrs);
-> >         int may;
+> >         return evm_inode_post_setxattr(dentry, acl_name, NULL, 0);
+> >  }
+> > -extern int evm_inode_init_security(struct inode *inode,
+> > -                                  const struct xattr *xattr_array,
+> > -                                  struct xattr *evm);
+> > +extern int evm_inode_init_security(struct inode *inode, struct inode *=
+dir,
+> > +                                  const struct qstr *qstr,
+> > +                                  struct xattr *xattrs,
+> > +                                  int *num_filled_xattrs);
+> >  extern bool evm_revalidate_status(const char *xattr_name);
+> >  extern int evm_protected_xattr_if_enabled(const char *req_xattr_name);
+> >  extern int evm_read_protected_xattrs(struct dentry *dentry, u8 *buffer,
+> > @@ -157,9 +158,10 @@ static inline void evm_inode_post_set_acl(struct d=
+entry *dentry,
+> >         return;
+> >  }
 > >=20
-> > -       if (name)
-> > -               *name =3D XATTR_SMACK_SUFFIX;
-> > -
-> > -       if (value && len) {
-> > +       if (xattr) {
-> >                 rcu_read_lock();
-> >                 may =3D smk_access_entry(skp->smk_known, dsp->smk_known,
-> >                                        &skp->smk_rules);
-> > @@ -976,11 +983,12 @@ static int smack_inode_init_security(struct inode=
- *inode, struct inode *dir,
-> >                         issp->smk_flags |=3D SMK_INODE_CHANGED;
-> >                 }
-> >=20
-> > -               *value =3D kstrdup(isp->smk_known, GFP_NOFS);
-> > -               if (*value =3D=3D NULL)
-> > +               xattr->value =3D kstrdup(isp->smk_known, GFP_NOFS);
-> > +               if (xattr->value =3D=3D NULL)
-> >                         return -ENOMEM;
-> >=20
-> > -               *len =3D strlen(isp->smk_known);
-> > +               xattr->value_len =3D strlen(isp->smk_known);
-> > +               xattr->name =3D XATTR_SMACK_SUFFIX;
-> >         }
-> >=20
+> > -static inline int evm_inode_init_security(struct inode *inode,
+> > -                                         const struct xattr *xattr_arr=
+ay,
+> > -                                         struct xattr *evm)
+> > +static inline int evm_inode_init_security(struct inode *inode, struct =
+inode *dir,
+> > +                                         const struct qstr *qstr,
+> > +                                         struct xattr *xattrs,
+> > +                                         int *num_filled_xattrs)
+> >  {
 > >         return 0;
-> > @@ -4854,6 +4862,7 @@ struct lsm_blob_sizes smack_blob_sizes __lsm_ro_a=
-fter_init =3D {
-> >         .lbs_ipc =3D sizeof(struct smack_known *),
-> >         .lbs_msg_msg =3D sizeof(struct smack_known *),
-> >         .lbs_superblock =3D sizeof(struct superblock_smack),
-> > +       .lbs_xattr_count =3D SMACK_INODE_INIT_XATTRS,
-> >  };
+> >  }
+> > diff --git a/security/integrity/evm/evm_main.c b/security/integrity/evm=
+/evm_main.c
+> > index cf24c525558..9e75759150c 100644
+> > --- a/security/integrity/evm/evm_main.c
+> > +++ b/security/integrity/evm/evm_main.c
+> > @@ -21,6 +21,7 @@
+> >  #include <linux/evm.h>
+> >  #include <linux/magic.h>
+> >  #include <linux/posix_acl_xattr.h>
+> > +#include <linux/lsm_hooks.h>
 > >=20
-> >  static struct security_hook_list smack_hooks[] __lsm_ro_after_init =3D=
- {
+> >  #include <crypto/hash.h>
+> >  #include <crypto/hash_info.h>
+> > @@ -864,23 +865,26 @@ void evm_inode_post_setattr(struct dentry *dentry=
+, int ia_valid)
+> >  /*
+> >   * evm_inode_init_security - initializes security.evm HMAC value
+> >   */
+> > -int evm_inode_init_security(struct inode *inode,
+> > -                                const struct xattr *lsm_xattr,
+> > -                                struct xattr *evm_xattr)
+> > +int evm_inode_init_security(struct inode *inode, struct inode *dir,
+> > +                           const struct qstr *qstr, struct xattr *xatt=
+rs,
+> > +                           int *num_filled_xattrs)
+> >  {
+> >         struct evm_xattr *xattr_data;
+> > +       struct xattr *evm_xattr;
+> >         int rc;
+> >=20
+> > -       if (!(evm_initialized & EVM_INIT_HMAC) ||
+> > -           !evm_protected_xattr(lsm_xattr->name))
+> > -               return 0;
+> > +       if (!(evm_initialized & EVM_INIT_HMAC) || !xattrs ||
+> > +           !evm_protected_xattr(xattrs->name))
+> > +               return -EOPNOTSUPP;
+> > +
+> > +       evm_xattr =3D lsm_find_xattr_slot(xattrs, num_filled_xattrs);
+> >=20
+> >         xattr_data =3D kzalloc(sizeof(*xattr_data), GFP_NOFS);
+> >         if (!xattr_data)
+> >                 return -ENOMEM;
+> >=20
+> >         xattr_data->data.type =3D EVM_XATTR_HMAC;
+> > -       rc =3D evm_init_hmac(inode, lsm_xattr, xattr_data->digest);
+> > +       rc =3D evm_init_hmac(inode, xattrs, xattr_data->digest);
+> >         if (rc < 0)
+> >                 goto out;
+> >=20
+> > diff --git a/security/security.c b/security/security.c
+> > index be33d643a81..22ab4fb7ebf 100644
+> > --- a/security/security.c
+> > +++ b/security/security.c
+> > @@ -1674,9 +1674,9 @@ int security_inode_init_security(struct inode *in=
+ode, struct inode *dir,
+> >         if (!num_filled_xattrs)
+> >                 goto out;
+> >=20
+> > -       ret =3D evm_inode_init_security(inode, new_xattrs,
+> > -                                     new_xattrs + num_filled_xattrs);
+> > -       if (ret)
+> > +       ret =3D evm_inode_init_security(inode, dir, qstr, new_xattrs,
+> > +                                     &num_filled_xattrs);
+> > +       if (ret && ret !=3D -EOPNOTSUPP)
+> >                 goto out;
+> >         ret =3D initxattrs(inode, new_xattrs, fs_data);
+> >  out:
 > > --
 > > 2.25.1
+> >=20
+>=20
+>=20
 
