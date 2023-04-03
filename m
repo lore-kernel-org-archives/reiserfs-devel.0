@@ -1,221 +1,76 @@
-From: Mimi Zohar <zohar@linux.ibm.com>
-Subject: Re: [PATCH v9 3/4] evm: Align evm_inode_init_security() definition
- with LSM infrastructure
-Date: Mon, 03 Apr 2023 06:37:48 -0400
-Message-ID: <ef1ff552e16eadf5bc8d6219d463b35511103c38.camel@linux.ibm.com>
-References: <20230329130415.2312521-1-roberto.sassu@huaweicloud.com>
-         <20230329130415.2312521-4-roberto.sassu@huaweicloud.com>
-         <CAHC9VhSDVv30ce2652kridRU7iaQQ19tiGubWpyP0mi7pf+JJw@mail.gmail.com>
-         <bfe74fff24a5a7a8059acc00c29ac957bf0b7880.camel@huaweicloud.com>
-         <ca6d4080b0f234b5321d965fb1350bfcd291646e.camel@huaweicloud.com>
+From: Jan Kara <jack-AlSwsSmVLrQ@public.gmane.org>
+Subject: Re: RFC: Filesystem metadata in HIGHMEM
+Date: Mon, 3 Apr 2023 16:22:40 +0200
+Message-ID: <20230403142240.ftkywr3vn3r73yva@quack3>
+References: <ZBCJ11qT8AWGA9y8@casper.infradead.org>
 Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Return-path: <bpf-owner@vger.kernel.org>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=message-id : subject :
- from : to : cc : date : in-reply-to : references : content-type :
- mime-version : content-transfer-encoding; s=pp1;
- bh=CFuKEPFFQM7kQzgTrYjPL4AY7Pi37UZRMecFHRosweE=;
- b=U+Osj3dttd61Gqkleo8NodD0T4dqNYPSeEQx1MUa1nPU+/OtvwYkQz6LRHalAtrN0vBb
- ESZKWdyxWgGyUifAqZIGH74kJid1NxqYHjbNoxJJiJGybzaPyLqUjxxVd6o1vnvz+TR4
- QGJ44mq3lvCpI/qxWhpzmw69mKIw1HcGeVSaXU0Z1LYpnOo/d+RAMgzueyf0QWpzORN7
- hdtusqCqf/tmafHx4x3qsmDpsG1eM13aHhzMYfINO856vZLFQ9G5EM/IIIQnuANtdLO+
- pSS7+Jo6rzdTRnOQe0csEiLkPJXZMSbp+LmOkj0OxxhUDQp6SNfnDG/Gnns8eRYry2Cq fg== 
-In-Reply-To: <ca6d4080b0f234b5321d965fb1350bfcd291646e.camel@huaweicloud.com>
+Return-path: <linux-nfs-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+        t=1680531761; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=R46s3dzmAWjax7iXZKikFYCLr1xSbo6uFhX0zzjg4pU=;
+        b=XViU3+ETjmX+Zv1i3Q4VVTn7Ny+KHI+pcGRnoPPT3r61aXIzJBxPYzNkNl9++TJ9aBjV6M
+        pj5xzmCEcljzJ3VrWr7zg8WDaJErfGUilAp+755lKhp6uAWpsjuSCcyiyy9snmSveJO8Pa
+        dYp4hCNxKq+rm1Sy8iI/zHvhEXqBk/Y=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+        s=susede2_ed25519; t=1680531761;
+        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=R46s3dzmAWjax7iXZKikFYCLr1xSbo6uFhX0zzjg4pU=;
+        b=U1FjLpLfehFJEz9putWhis2w9XqHu0U3h3oaiL98jCSHliu31HtoSv01Qgpvds/nc1S0hp
+        frS9z8ZPoJjwAoCw==
+Content-Disposition: inline
+In-Reply-To: <ZBCJ11qT8AWGA9y8-FZi0V3Vbi30CUdFEqe4BF2D2FQJk+8+b@public.gmane.org>
 List-ID: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="windows-1252"
-To: Roberto Sassu <roberto.sassu@huaweicloud.com>, Paul Moore <paul@paul-moore.com>
-Cc: dmitry.kasatkin@gmail.com, jmorris@namei.org, serge@hallyn.com, stephen.smalley.work@gmail.com, eparis@parisplace.org, casey@schaufler-ca.com, reiserfs-devel@vger.kernel.org, linux-kernel@vger.kernel.org, linux-integrity@vger.kernel.org, linux-security-module@vger.kernel.org, selinux@vger.kernel.org, bpf@vger.kernel.org, kpsingh@kernel.org, keescook@chromium.org, nicolas.bouchinet@clip-os.org, Roberto Sassu <roberto.sassu@huawei.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Matthew Wilcox <willy-wEGCiKHe2LqWVfeAwA7xHQ@public.gmane.org>
+Cc: linux-fsdevel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-mm-Bw31MaZKKs3YtjvyW6yDsg@public.gmane.org, linux-afs-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, ceph-devel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-ext4-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-nfs-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-nilfs-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-ntfs-dev-5NWGOfrQmneRv+LV9MX5uipxlwaOVQ5f@public.gmane.org, ntfs3-cunTk1MwBs/YUNznpcFYbw@public.gmane.org, ocfs2-devel-N0ozoZBvEnrZJqsBc5GL+g@public.gmane.org, devel-urhm25FSIHzptaDgeN77Px2eb7JE58TQ@public.gmane.org, reiserfs-devel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Evgeniy Dushistov <dushistov-JGs/UdohzUI@public.gmane.org>
 
-On Fri, 2023-03-31 at 14:18 +0200, Roberto Sassu wrote:
-> On Fri, 2023-03-31 at 09:32 +0200, Roberto Sassu wrote:
-> > On Thu, 2023-03-30 at 18:55 -0400, Paul Moore wrote:
-> > > On Wed, Mar 29, 2023 at 9:05=E2=80=AFAM Roberto Sassu
-> > > <roberto.sassu@huaweicloud.com> wrote:
-> > > > From: Roberto Sassu <roberto.sassu@huawei.com>
-> > > >=20
-> > > > Change the evm_inode_init_security() definition to align with the L=
-SM
-> > > > infrastructure. Keep the existing behavior of including in the HMAC
-> > > > calculation only the first xattr provided by LSMs.
-> > > >=20
-> > > > Changing the evm_inode_init_security() definition requires passing =
-the
-> > > > xattr array allocated by security_inode_init_security(), and the nu=
-mber of
-> > > > xattrs filled by previously invoked LSMs.
-> > > >=20
-> > > > Use the newly introduced lsm_find_xattr_slot() to position EVM corr=
-ectly in
-> > > > the xattrs array, like a regular LSM, and to increment the number o=
-f filled
-> > > > slots. For now, the LSM infrastructure allocates enough xattrs slot=
-s to
-> > > > store the EVM xattr, without using the reservation mechanism.
-> > > >=20
-> > > > Finally, make evm_inode_init_security() return value compatible wit=
-h the
-> > > > inode_init_security hook conventions, i.e. return -EOPNOTSUPP if it=
- is not
-> > > > setting an xattr.
-> > > >=20
-> > > > EVM is a bit tricky, because xattrs is both an input and an output.=
- If it
-> > > > was just output, EVM should have returned zero if xattrs is NULL. B=
-ut,
-> > > > since xattrs is also input, EVM is unable to do its calculations, s=
-o return
-> > > > -EOPNOTSUPP and handle this error in security_inode_init_security().
-> > >=20
-> > > I don't quite understand why EVM would return EOPNOTSUPP if it is
-> > > enabled but there are not xattrs to measure.  It seems like EVM should
-> > > return success/0 in the no-xattr case; there were no xattrs to
-> > > measure, so it succeeded in measuring nothing.  Am I missing
-> > > something?
-> >=20
-> > From a very quick look at what other LSMs do, it seems that they return
-> > zero even if they are not initialized.
-> >=20
-> > So, it makes sense to return zero also here.
->=20
-> Oh, actually there was a reason to do that. If an LSM does not wish to
-> provide an xattr, it should return -EOPNOTSUPP.
+On Tue 14-03-23 14:51:03, Matthew Wilcox wrote:
+> TLDR: I think we should rip out support for fs metadata in highmem
+> 
+> We want to support filesystems on devices with LBA size > PAGE_SIZE.
+> That's subtly different and slightly harder than fsblk size > PAGE_SIZE.
+> We can use large folios to read the blocks into, but reading/writing
+> the data in those folios is harder if it's in highmem.  The kmap family
+> of functions can only map a single page at a time (and changing that
+> is hard).  We could vmap, but that's slow and can't be used from atomic
+> context.  Working a single page at a time can be tricky (eg consider an
+> ext2 directory entry that spans a page boundary).
+> 
+> Many filesystems do not support having their metadata in highmem.
+> ext4 doesn't.  xfs doesn't.  f2fs doesn't.  afs, ceph, ext2, hfs,
+> minix, nfs, nilfs2, ntfs, ntfs3, ocfs2, orangefs, qnx6, reiserfs, sysv
+> and ufs do.
+> 
+> Originally, ext2 directories in the page cache were done by Al Viro
+> in 2001.  At that time, the important use-case was machines with tens of
+> gigabytes of highmem and ~800MB of lowmem.  Since then, the x86 systems
+> have gone to 64-bit and the only real uses for highmem are cheap systems
+> with ~8GB of memory total and 2-4GB of lowmem.  These systems really
+> don't need to keep directories in highmem; using highmem for file &
+> anon memory is enough to keep the system in balance.
+> 
+> So let's just rip out the ability to keep directories (and other fs
+> metadata) in highmem.  Many filesystems already don't support this,
+> and it makes supporting LBA size > PAGE_SIZE hard.
+> 
+> I'll turn this into an LSFMM topic if we don't reach resolution on the
+> mailing list, but I'm optimistic that everybody will just agree with
+> me ;-)
 
-In general, the original purpose of -EOPNOTSUPP was to indicate that
-the filesystem itself did not support security xattrs.  This can be
-seen in evm_verify_hmac(), which returns different values (e.g.
-INTEGRITY_NOLABEL, INTEGRITY_NOXATTRS, INTEGRITY_UNKNOWN) based on
-whether security.evm or any protected security xattrs exist.
+FWIW I won't object for the local filesystems I know about ;). But you
+mention some networking filesystems above like NFS, AFS, orangefs - how are
+they related to the LBA size problem you mention and what exactly you want
+to get rid of there? FWIW I can imagine some 32-bit system (possibly
+diskless) that uses NFS and that would benefit in caching stuff in
+highmem...
 
->=20
-> As we are not checking this convention anymore, it is probably fine to
-> return zero. I already made the change, will send the new version
-> shortly.
+								Honza
 
-For security xattr initialization, agreed.
-
-Mimi
-
->=20
-> >=20
-> > > > Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
-> > > > ---
-> > > >  include/linux/evm.h               | 14 ++++++++------
-> > > >  security/integrity/evm/evm_main.c | 18 +++++++++++-------
-> > > >  security/security.c               |  6 +++---
-> > > >  3 files changed, 22 insertions(+), 16 deletions(-)
-> > > >=20
-> > > > diff --git a/include/linux/evm.h b/include/linux/evm.h
-> > > > index 7dc1ee74169..3c0e8591b69 100644
-> > > > --- a/include/linux/evm.h
-> > > > +++ b/include/linux/evm.h
-> > > > @@ -56,9 +56,10 @@ static inline void evm_inode_post_set_acl(struct=
- dentry *dentry,
-> > > >  {
-> > > >         return evm_inode_post_setxattr(dentry, acl_name, NULL, 0);
-> > > >  }
-> > > > -extern int evm_inode_init_security(struct inode *inode,
-> > > > -                                  const struct xattr *xattr_array,
-> > > > -                                  struct xattr *evm);
-> > > > +extern int evm_inode_init_security(struct inode *inode, struct ino=
-de *dir,
-> > > > +                                  const struct qstr *qstr,
-> > > > +                                  struct xattr *xattrs,
-> > > > +                                  int *num_filled_xattrs);
-> > > >  extern bool evm_revalidate_status(const char *xattr_name);
-> > > >  extern int evm_protected_xattr_if_enabled(const char *req_xattr_na=
-me);
-> > > >  extern int evm_read_protected_xattrs(struct dentry *dentry, u8 *bu=
-ffer,
-> > > > @@ -157,9 +158,10 @@ static inline void evm_inode_post_set_acl(stru=
-ct dentry *dentry,
-> > > >         return;
-> > > >  }
-> > > >=20
-> > > > -static inline int evm_inode_init_security(struct inode *inode,
-> > > > -                                         const struct xattr *xattr=
-_array,
-> > > > -                                         struct xattr *evm)
-> > > > +static inline int evm_inode_init_security(struct inode *inode, str=
-uct inode *dir,
-> > > > +                                         const struct qstr *qstr,
-> > > > +                                         struct xattr *xattrs,
-> > > > +                                         int *num_filled_xattrs)
-> > > >  {
-> > > >         return 0;
-> > > >  }
-> > > > diff --git a/security/integrity/evm/evm_main.c b/security/integrity=
-/evm/evm_main.c
-> > > > index cf24c525558..9e75759150c 100644
-> > > > --- a/security/integrity/evm/evm_main.c
-> > > > +++ b/security/integrity/evm/evm_main.c
-> > > > @@ -21,6 +21,7 @@
-> > > >  #include <linux/evm.h>
-> > > >  #include <linux/magic.h>
-> > > >  #include <linux/posix_acl_xattr.h>
-> > > > +#include <linux/lsm_hooks.h>
-> > > >=20
-> > > >  #include <crypto/hash.h>
-> > > >  #include <crypto/hash_info.h>
-> > > > @@ -864,23 +865,26 @@ void evm_inode_post_setattr(struct dentry *de=
-ntry, int ia_valid)
-> > > >  /*
-> > > >   * evm_inode_init_security - initializes security.evm HMAC value
-> > > >   */
-> > > > -int evm_inode_init_security(struct inode *inode,
-> > > > -                                const struct xattr *lsm_xattr,
-> > > > -                                struct xattr *evm_xattr)
-> > > > +int evm_inode_init_security(struct inode *inode, struct inode *dir,
-> > > > +                           const struct qstr *qstr, struct xattr *=
-xattrs,
-> > > > +                           int *num_filled_xattrs)
-> > > >  {
-> > > >         struct evm_xattr *xattr_data;
-> > > > +       struct xattr *evm_xattr;
-> > > >         int rc;
-> > > >=20
-> > > > -       if (!(evm_initialized & EVM_INIT_HMAC) ||
-> > > > -           !evm_protected_xattr(lsm_xattr->name))
-> > > > -               return 0;
-> > > > +       if (!(evm_initialized & EVM_INIT_HMAC) || !xattrs ||
-> > > > +           !evm_protected_xattr(xattrs->name))
-> > > > +               return -EOPNOTSUPP;
-> > > > +
-> > > > +       evm_xattr =3D lsm_find_xattr_slot(xattrs, num_filled_xattrs=
-);
-> > > >=20
-> > > >         xattr_data =3D kzalloc(sizeof(*xattr_data), GFP_NOFS);
-> > > >         if (!xattr_data)
-> > > >                 return -ENOMEM;
-> > > >=20
-> > > >         xattr_data->data.type =3D EVM_XATTR_HMAC;
-> > > > -       rc =3D evm_init_hmac(inode, lsm_xattr, xattr_data->digest);
-> > > > +       rc =3D evm_init_hmac(inode, xattrs, xattr_data->digest);
-> > > >         if (rc < 0)
-> > > >                 goto out;
-> > > >=20
-> > > > diff --git a/security/security.c b/security/security.c
-> > > > index be33d643a81..22ab4fb7ebf 100644
-> > > > --- a/security/security.c
-> > > > +++ b/security/security.c
-> > > > @@ -1674,9 +1674,9 @@ int security_inode_init_security(struct inode=
- *inode, struct inode *dir,
-> > > >         if (!num_filled_xattrs)
-> > > >                 goto out;
-> > > >=20
-> > > > -       ret =3D evm_inode_init_security(inode, new_xattrs,
-> > > > -                                     new_xattrs + num_filled_xattr=
-s);
-> > > > -       if (ret)
-> > > > +       ret =3D evm_inode_init_security(inode, dir, qstr, new_xattr=
-s,
-> > > > +                                     &num_filled_xattrs);
-> > > > +       if (ret && ret !=3D -EOPNOTSUPP)
-> > > >                 goto out;
-> > > >         ret =3D initxattrs(inode, new_xattrs, fs_data);
-> > > >  out:
-> > > > --
-> > > > 2.25.1
-> > > >=20
->=20
-
-
+-- 
+Jan Kara <jack-IBi9RG/b67k@public.gmane.org>
+SUSE Labs, CR
