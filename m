@@ -1,76 +1,66 @@
-From: Jan Kara <jack-AlSwsSmVLrQ@public.gmane.org>
-Subject: Re: RFC: Filesystem metadata in HIGHMEM
-Date: Mon, 3 Apr 2023 16:22:40 +0200
-Message-ID: <20230403142240.ftkywr3vn3r73yva@quack3>
-References: <ZBCJ11qT8AWGA9y8@casper.infradead.org>
+From: Paul Moore <paul@paul-moore.com>
+Subject: Re: [PATCH v10 1/4] reiserfs: Add security prefix to xattr name in reiserfs_security_write()
+Date: Tue, 4 Apr 2023 14:25:54 -0400
+Message-ID: <CAHC9VhT17mtnncuKVNzqr0zTU+E5R+8wMaxF4AYXS_bG9L0HZQ@mail.gmail.com>
+References: <20230331123221.3273328-1-roberto.sassu@huaweicloud.com> <20230331123221.3273328-2-roberto.sassu@huaweicloud.com>
 Mime-Version: 1.0
-Return-path: <linux-nfs-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-        t=1680531761; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=R46s3dzmAWjax7iXZKikFYCLr1xSbo6uFhX0zzjg4pU=;
-        b=XViU3+ETjmX+Zv1i3Q4VVTn7Ny+KHI+pcGRnoPPT3r61aXIzJBxPYzNkNl9++TJ9aBjV6M
-        pj5xzmCEcljzJ3VrWr7zg8WDaJErfGUilAp+755lKhp6uAWpsjuSCcyiyy9snmSveJO8Pa
-        dYp4hCNxKq+rm1Sy8iI/zHvhEXqBk/Y=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-        s=susede2_ed25519; t=1680531761;
-        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=R46s3dzmAWjax7iXZKikFYCLr1xSbo6uFhX0zzjg4pU=;
-        b=U1FjLpLfehFJEz9putWhis2w9XqHu0U3h3oaiL98jCSHliu31HtoSv01Qgpvds/nc1S0hp
-        frS9z8ZPoJjwAoCw==
-Content-Disposition: inline
-In-Reply-To: <ZBCJ11qT8AWGA9y8-FZi0V3Vbi30CUdFEqe4BF2D2FQJk+8+b@public.gmane.org>
+Content-Transfer-Encoding: quoted-printable
+Return-path: <reiserfs-devel-owner@vger.kernel.org>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paul-moore.com; s=google; t=1680632765;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=xyjoFpVijlAvxTCbOhJJ22iDzQUactcN5oOMXtPKyqU=;
+        b=fcxPf/i8xq/kSQfoVdznWlATaPoee6x4Dem/NHTsVKRgZLeTmjolTZLa/+wlaVzoo2
+         9wvH9iZDHP0vTlVzDnxPCaPpHN3tDUjPt67SQO61fkm34DihtHBMRLAFcs2rMItJTIhy
+         I6ffUk8HIw91u9pqKUvjV5A2g74DjoemZoBP07KThvSgH49wdGzmNq3+3McXhZUTP6Pp
+         haNgzYnEbjtZi+tD+GbjOtszKTPwrkXxqpENHShf5NPe98Q7/dEGAs3IkKkA7iFl8wl0
+         Nim2er0csMAF8UUSFkm0qwDshTzU0tzM7EOY6pkH15hkYpDAVagWgrcgvIf+Y7NEmhNw
+         8ElQ==
+In-Reply-To: <20230331123221.3273328-2-roberto.sassu@huaweicloud.com>
 List-ID: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Matthew Wilcox <willy-wEGCiKHe2LqWVfeAwA7xHQ@public.gmane.org>
-Cc: linux-fsdevel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-mm-Bw31MaZKKs3YtjvyW6yDsg@public.gmane.org, linux-afs-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, ceph-devel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-ext4-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-nfs-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-nilfs-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-ntfs-dev-5NWGOfrQmneRv+LV9MX5uipxlwaOVQ5f@public.gmane.org, ntfs3-cunTk1MwBs/YUNznpcFYbw@public.gmane.org, ocfs2-devel-N0ozoZBvEnrZJqsBc5GL+g@public.gmane.org, devel-urhm25FSIHzptaDgeN77Px2eb7JE58TQ@public.gmane.org, reiserfs-devel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Evgeniy Dushistov <dushistov-JGs/UdohzUI@public.gmane.org>
+Content-Type: text/plain; charset="windows-1252"
+To: Roberto Sassu <roberto.sassu@huaweicloud.com>
+Cc: zohar@linux.ibm.com, dmitry.kasatkin@gmail.com, jmorris@namei.org, serge@hallyn.com, stephen.smalley.work@gmail.com, eparis@parisplace.org, casey@schaufler-ca.com, reiserfs-devel@vger.kernel.org, linux-kernel@vger.kernel.org, linux-integrity@vger.kernel.org, linux-security-module@vger.kernel.org, selinux@vger.kernel.org, bpf@vger.kernel.org, kpsingh@kernel.org, keescook@chromium.org, nicolas.bouchinet@clip-os.org, Roberto Sassu <roberto.sassu@huawei.com>, stable@vger.kernel.org
 
-On Tue 14-03-23 14:51:03, Matthew Wilcox wrote:
-> TLDR: I think we should rip out support for fs metadata in highmem
-> 
-> We want to support filesystems on devices with LBA size > PAGE_SIZE.
-> That's subtly different and slightly harder than fsblk size > PAGE_SIZE.
-> We can use large folios to read the blocks into, but reading/writing
-> the data in those folios is harder if it's in highmem.  The kmap family
-> of functions can only map a single page at a time (and changing that
-> is hard).  We could vmap, but that's slow and can't be used from atomic
-> context.  Working a single page at a time can be tricky (eg consider an
-> ext2 directory entry that spans a page boundary).
-> 
-> Many filesystems do not support having their metadata in highmem.
-> ext4 doesn't.  xfs doesn't.  f2fs doesn't.  afs, ceph, ext2, hfs,
-> minix, nfs, nilfs2, ntfs, ntfs3, ocfs2, orangefs, qnx6, reiserfs, sysv
-> and ufs do.
-> 
-> Originally, ext2 directories in the page cache were done by Al Viro
-> in 2001.  At that time, the important use-case was machines with tens of
-> gigabytes of highmem and ~800MB of lowmem.  Since then, the x86 systems
-> have gone to 64-bit and the only real uses for highmem are cheap systems
-> with ~8GB of memory total and 2-4GB of lowmem.  These systems really
-> don't need to keep directories in highmem; using highmem for file &
-> anon memory is enough to keep the system in balance.
-> 
-> So let's just rip out the ability to keep directories (and other fs
-> metadata) in highmem.  Many filesystems already don't support this,
-> and it makes supporting LBA size > PAGE_SIZE hard.
-> 
-> I'll turn this into an LSFMM topic if we don't reach resolution on the
-> mailing list, but I'm optimistic that everybody will just agree with
-> me ;-)
+On Fri, Mar 31, 2023 at 8:33=E2=80=AFAM Roberto Sassu
+<roberto.sassu@huaweicloud.com> wrote:
+>
+> From: Roberto Sassu <roberto.sassu@huawei.com>
+>
+> Reiserfs sets a security xattr at inode creation time in two stages: firs=
+t,
+> it calls reiserfs_security_init() to obtain the xattr from active LSMs;
+> then, it calls reiserfs_security_write() to actually write that xattr.
+>
+> Unfortunately, it seems there is a wrong expectation that LSMs provide th=
+e
+> full xattr name in the form 'security.<suffix>'. However, LSMs always
+> provided just the suffix, causing reiserfs to not write the xattr at all
+> (if the suffix is shorter than the prefix), or to write an xattr with the
+> wrong name.
+>
+> Add a temporary buffer in reiserfs_security_write(), and write to it the
+> full xattr name, before passing it to reiserfs_xattr_set_handle().
+>
+> Also replace the name length check with a check that the full xattr name =
+is
+> not larger than XATTR_NAME_MAX.
+>
+> Cc: stable@vger.kernel.org # v2.6.x
+> Fixes: 57fe60df6241 ("reiserfs: add atomic addition of selinux attributes=
+ during inode creation")
+> Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
+> ---
+>  fs/reiserfs/xattr_security.c | 8 ++++++--
+>  1 file changed, 6 insertions(+), 2 deletions(-)
 
-FWIW I won't object for the local filesystems I know about ;). But you
-mention some networking filesystems above like NFS, AFS, orangefs - how are
-they related to the LBA size problem you mention and what exactly you want
-to get rid of there? FWIW I can imagine some 32-bit system (possibly
-diskless) that uses NFS and that would benefit in caching stuff in
-highmem...
+This looks good to me, thanks.  While normally I would merge something
+like this into the lsm/stable-X.Y branch, I'm going to merge it into
+lsm/next to give it a week or two of extra testing.  I think anyone
+who is using reiserfs+LSM (doubtful as it looks horribly broken) would
+be okay with waiting a few more days at this point :)
 
-								Honza
-
--- 
-Jan Kara <jack-IBi9RG/b67k@public.gmane.org>
-SUSE Labs, CR
+--=20
+paul-moore.com
