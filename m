@@ -1,127 +1,91 @@
-From: Casey Schaufler <casey@schaufler-ca.com>
-Subject: Re: [PATCH v10 2/4] security: Allow all LSMs to provide xattrs for
- inode_init_security hook
-Date: Thu, 6 Apr 2023 09:17:05 -0700
-Message-ID: <733a7896-0b0e-f86f-0068-0285d646d563@schaufler-ca.com>
-References: <20230331123221.3273328-1-roberto.sassu@huaweicloud.com>
- <20230331123221.3273328-3-roberto.sassu@huaweicloud.com>
- <CAHC9VhSbGdij6xz9D49my37kD9qYrBmh2x7=cNFFDL2dZ=EZTw@mail.gmail.com>
- <5dbb9430-1e26-ec12-26a2-3718c84e33c2@schaufler-ca.com>
- <7549b624-421e-30b9-ca99-de42929354c7@huaweicloud.com>
- <CAHC9VhTsSUM6_g5+ZOqZ=P6307hCAJW+-xEc4fKQcymPs5pYjQ@mail.gmail.com>
- <83ddfcb9-b4a6-71b4-a20c-62f484c8e040@schaufler-ca.com>
- <CAHC9VhTO02CGUt0DUUmx=TUYS7Q81fas_Qy5miOFonaye0NEmw@mail.gmail.com>
- <c3751b2b-aa4b-2105-c238-29816bc85607@schaufler-ca.com>
- <841747d7-ab17-2904-ea1d-6adb3d35c711@huaweicloud.com>
+From: syzbot <syzbot+5184326923f180b9d11a@syzkaller.appspotmail.com>
+Subject: [syzbot] [reiserfs?] KASAN: null-ptr-deref Read in fix_nodes
+Date: Mon, 10 Apr 2023 23:54:45 -0700
+Message-ID: <0000000000007fcc9c05f909f7f3@google.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1680797835; bh=VuSERGq4d+Cfe8sCq/lVtoww/oUbwbdKqqQ64i5D7LE=; h=Date:Subject:To:Cc:References:From:In-Reply-To:From:Subject:Reply-To; b=CsZM3TfsFQb7BNQgiB/R9kYXLI4Q2KKUe9O9pONITa1Dx+4yOTGTRTKpQ446oHSdudyl0+JADNfEqGgygI9f2Pm34+rCj2P+WjSIVpf2mVoy4z0L4yAgmJazkEmQXyBK5ftOECMulXkgn68LXi0pMiJAiMidP9hz3z+S39wbNliwxB3nN/OGViHW/D3C8U7dTQySEP1QB0ikfvsYBbr0kQ2hFjLjYmEn27YL8OcKXlQfw93drrHiXkrQ2KYMSFU3IQDYMTnJRpvDB/by4+0quD9/FZQzBpclu4WcnavOD1XptAMxhJVsXeu6RrtvH5+ziDnJ9KdXG3qxxqZqc02cJA==
-Content-Language: en-US
-In-Reply-To: <841747d7-ab17-2904-ea1d-6adb3d35c711@huaweicloud.com>
 List-ID: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="utf-8"
-To: Roberto Sassu <roberto.sassu@huaweicloud.com>, Paul Moore <paul@paul-moore.com>
-Cc: zohar@linux.ibm.com, dmitry.kasatkin@gmail.com, jmorris@namei.org, serge@hallyn.com, stephen.smalley.work@gmail.com, eparis@parisplace.org, reiserfs-devel@vger.kernel.org, linux-kernel@vger.kernel.org, linux-integrity@vger.kernel.org, linux-security-module@vger.kernel.org, selinux@vger.kernel.org, bpf@vger.kernel.org, kpsingh@kernel.org, keescook@chromium.org, nicolas.bouchinet@clip-os.org, Roberto Sassu <roberto.sassu@huawei.com>, Casey Schaufler <casey@schaufler-ca.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, reiserfs-devel@vger.kernel.org, syzkaller-bugs@googlegroups.com
 
-On 4/6/2023 2:14 AM, Roberto Sassu wrote:
-> On 4/5/2023 11:07 PM, Casey Schaufler wrote:
->> On 4/5/2023 1:49 PM, Paul Moore wrote:
->>> On Wed, Apr 5, 2023 at 4:43 PM Casey Schaufler
->>> <casey@schaufler-ca.com> wrote:
->>>> On 4/5/2023 12:59 PM, Paul Moore wrote:
->>>>> On Wed, Apr 5, 2023 at 5:44 AM Roberto Sassu
->>>>> <roberto.sassu@huaweicloud.com> wrote:
->>>>>> On 4/5/2023 4:08 AM, Casey Schaufler wrote:
->>>>>>> On 4/4/2023 11:54 AM, Paul Moore wrote:
->>>>>>>> On Fri, Mar 31, 2023 at 8:33 AM Roberto Sassu
->>>>>>>> <roberto.sassu@huaweicloud.com> wrote:
->>>>> ..
->>>>>
->>>>>>>>> diff --git a/security/smack/smack_lsm.c
->>>>>>>>> b/security/smack/smack_lsm.c
->>>>>>>>> index cfcbb748da2..8392983334b 100644
->>>>>>>>> --- a/security/smack/smack_lsm.c
->>>>>>>>> +++ b/security/smack/smack_lsm.c
->>>>>>>>> @@ -52,6 +52,15 @@
->>>>>>>>>    #define SMK_RECEIVING  1
->>>>>>>>>    #define SMK_SENDING    2
->>>>>>>>>
->>>>>>>>> +/*
->>>>>>>>> + * Smack uses multiple xattrs.
->>>>>>>>> + * SMACK64 - for access control, SMACK64EXEC - label for the
->>>>>>>>> program,
->>>>>>>> I think it would be good to move SMACK64EXEC to its own line;
->>>>>>>> it took
->>>>>>>> me a minute to figure out why SMACK_INODE_INIT_XATTRS was set
->>>>>>>> to '4'
->>>>>>>> when I only say three comment lines ... ;)
->>>>>>>>
->>>>>>>>> + * SMACK64MMAP - controls library loading,
->>>>>>>>> + * SMACK64TRANSMUTE - label initialization,
->>>>>>>>> + * Not saved on files - SMACK64IPIN and SMACK64IPOUT
->>>>>>>>> + */
->>>>>>>>> +#define SMACK_INODE_INIT_XATTRS 4
->>>>>>>> If smack_inode_init_security() only ever populates a single
->>>>>>>> xattr, and
->>>>>>>> that is the only current user of SMACK_INODE_INIT_XATTRS, can
->>>>>>>> we make
->>>>>>>> this '1' and shrink the xattr allocation a bit?
->>>>>>> If the parent directory is marked with SMACK64_TRANSMUTE, the
->>>>>>> access
->>>>>>> rule allowing the access has the "t" mode, and the object being
->>>>>>> initialized
->>>>>>> is a directory, the new inode should get the SMACK64_TRANSMUTE
->>>>>>> attribute.
->>>>>>> The callers of security_inode_init_security() don't seem to care.
->>>>>>> I can't say if the evm code is getting SMACK64_TRANSMUTE or, for
->>>>>>> that
->>>>>>> matter, SMACK64_EXEC and SMACK64_MMAP, some other way. The older
->>>>>>> system
->>>>>>> allowed for multiple Smack xattrs, but I'm not clear on exactly
->>>>>>> how.
->>>>>> If you like to set an additional xattr, that would be possible now.
->>>>>> Since we reserve multiple xattrs, we can call lsm_get_xattr_slot()
->>>>>> another time and set SMACK64_TRANSMUTE.
->>>>>>
->>>>>> I think, if the kernel config has CONFIG_EVM_EXTRA_SMACK_XATTRS set,
->>>>>> EVM would protect SMACK64_TRANSMUTE too.
->>>>> Ooookay, but can someone explain to me how either the current, or
->>>>> patched, smack_inode_init_security() function can return multiple
->>>>> xattrs via the security_inode_init_security() LSM hook?
->>>> It can't.
->>> I didn't think so.
->>>
->>> To be really specific, that's what we're talking about with this
->>> patch: the number of xattrs that smack_inode_init_security() can
->>> return to the LSM hook (and EVM, and the caller ...).  If it's only
->>> ever going to be one, I think we can adjust the
->>> 'SMACK_INODE_INIT_XATTRS' down to '1' and save ourselves some
->>> allocation space.
->>
->> Does evm have an expectation that mumble_inode_init_security() is
->> going to report all the relevant attributes? It has to be getting
->> them somehow, which leads me to wonder if we might want to extend
->> smack_inode_init_security() to do so. Even if we did, the maximum
->> value would be '2', SMACK64 and SMACK64_TRANSMUTE. Now that would
->> require a whole lot of work in the calling filesystems, as setting
->> the transmute attribute would be moving out of smack_d_instantiate()
->> and into the callers. Or something like that.
->
-> After changing the inode_init_security hook definition to pass the
-> full xattr array, this is not going to be a problem. EVM sees all
-> xattrs that are going to be set when an inode is created, and adds its
-> own too.
->
-> If you have enough information to set security.SMACK_TRANSMUTE64 in
-> smack_inode_init_security(),
+Hello,
 
-I think there's enough information to do that. I'm going to have to look
-at your patch more closely.
+syzbot found the following issue on:
 
-> this patch sets already allows to set both xattrs at the same time. We
-> would just need to call lsm_get_xattr_slot() another time, assuming
-> that we reserve two xattrs.
->
-> Roberto
->
+HEAD commit:    148341f0a2f5 Merge tag 'vfs.misc.fixes.v6.3-rc6' of git://..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=131e7b5dc80000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=d3500b143c204867
+dashboard link: https://syzkaller.appspot.com/bug?extid=5184326923f180b9d11a
+compiler:       gcc (Debian 10.2.1-6) 10.2.1 20210110, GNU ld (GNU Binutils for Debian) 2.35.2
+
+Unfortunately, I don't have any reproducer for this issue yet.
+
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/bd1a34836b5e/disk-148341f0.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/04a1edfc1dd9/vmlinux-148341f0.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/ec7cb22838b5/bzImage-148341f0.xz
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+5184326923f180b9d11a@syzkaller.appspotmail.com
+
+REISERFS (device loop2): Remounting filesystem read-only
+==================================================================
+BUG: KASAN: null-ptr-deref in instrument_atomic_read include/linux/instrumented.h:72 [inline]
+BUG: KASAN: null-ptr-deref in _test_bit include/asm-generic/bitops/instrumented-non-atomic.h:141 [inline]
+BUG: KASAN: null-ptr-deref in buffer_locked include/linux/buffer_head.h:126 [inline]
+BUG: KASAN: null-ptr-deref in fix_nodes+0x464/0x8660 fs/reiserfs/fix_node.c:2578
+Read of size 8 at addr 0000000000000000 by task syz-executor.2/4037
+
+CPU: 1 PID: 4037 Comm: syz-executor.2 Not tainted 6.3.0-rc5-syzkaller-00005-g148341f0a2f5 #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 03/02/2023
+Call Trace:
+ <TASK>
+ __dump_stack lib/dump_stack.c:88 [inline]
+ dump_stack_lvl+0xd9/0x150 lib/dump_stack.c:106
+ print_report mm/kasan/report.c:433 [inline]
+ kasan_report+0xec/0x130 mm/kasan/report.c:536
+ check_region_inline mm/kasan/generic.c:181 [inline]
+ kasan_check_range+0x141/0x190 mm/kasan/generic.c:187
+ instrument_atomic_read include/linux/instrumented.h:72 [inline]
+ _test_bit include/asm-generic/bitops/instrumented-non-atomic.h:141 [inline]
+ buffer_locked include/linux/buffer_head.h:126 [inline]
+ fix_nodes+0x464/0x8660 fs/reiserfs/fix_node.c:2578
+ reiserfs_cut_from_item+0x2bd/0x1b20 fs/reiserfs/stree.c:1742
+ reiserfs_do_truncate+0x630/0x1080 fs/reiserfs/stree.c:1973
+ reiserfs_truncate_file+0x1b5/0x1070 fs/reiserfs/inode.c:2310
+ reiserfs_setattr+0xddf/0x1370 fs/reiserfs/inode.c:3395
+ notify_change+0xb2c/0x1180 fs/attr.c:482
+ do_truncate+0x143/0x200 fs/open.c:66
+ handle_truncate fs/namei.c:3219 [inline]
+ do_open fs/namei.c:3564 [inline]
+ path_openat+0x2083/0x2750 fs/namei.c:3715
+ do_filp_open+0x1ba/0x410 fs/namei.c:3742
+ do_sys_openat2+0x16d/0x4c0 fs/open.c:1348
+ do_sys_open fs/open.c:1364 [inline]
+ __do_sys_creat fs/open.c:1440 [inline]
+ __se_sys_creat fs/open.c:1434 [inline]
+ __x64_sys_creat+0xcd/0x120 fs/open.c:1434
+ do_syscall_x64 arch/x86/entry/common.c:50 [inline]
+ do_syscall_64+0x39/0xb0 arch/x86/entry/common.c:80
+ entry_SYSCALL_64_after_hwframe+0x63/0xcd
+RIP: 0033:0x7fd96be8c169
+Code: 28 00 00 00 75 05 48 83 c4 28 c3 e8 f1 19 00 00 90 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b8 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007fd96cb5a168 EFLAGS: 00000246 ORIG_RAX: 0000000000000055
+RAX: ffffffffffffffda RBX: 00007fd96bfac1f0 RCX: 00007fd96be8c169
+RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000020000040
+RBP: 00007fd96bee7ca1 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
+R13: 00007ffcd572849f R14: 00007fd96cb5a300 R15: 0000000000022000
+ </TASK>
+==================================================================
+
+
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
