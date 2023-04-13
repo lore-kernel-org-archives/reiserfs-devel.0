@@ -1,166 +1,195 @@
-From: Dmitry Vyukov <dvyukov@google.com>
-Subject: Re: KFENCE: invalid read in leaf_paste_entries
-Date: Thu, 13 Apr 2023 08:54:28 +0200
-Message-ID: <CACT4Y+b0shUc7rm0cxrzQLTCBD8=zwr6mAUFB3aDKOHY6P=s6A@mail.gmail.com>
-References: <CAGyP=7cJAUf=LTEPW9QLgd-6bJDMKCuqssPH=yyuKLE5=CKB_w@mail.gmail.com>
+From: Roberto Sassu <roberto.sassu@huaweicloud.com>
+Subject: Re: [PATCH] Smack modifications for: security: Allow all LSMs to
+ provide xattrs for inode_init_security hook
+Date: Thu, 13 Apr 2023 09:11:24 +0200
+Message-ID: <82ee6ddf66bb34470aa7b591df4d70783fdb2422.camel@huaweicloud.com>
+References: <c7f38789-fe47-8289-e73a-4d07fbaf791d@schaufler-ca.com>
+         <20230411172337.340518-1-roberto.sassu@huaweicloud.com>
+         <2dc6486f-ce9b-f171-14fe-48a90386e1b7@schaufler-ca.com>
+         <8e7705972a0f306922d8bc4893cf940e319abb19.camel@huaweicloud.com>
+         <72b46d0f-75c7-ac18-4984-2bf1d6dad352@schaufler-ca.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Return-path: <linux-kernel-owner@vger.kernel.org>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20221208; t=1681368881; x=1683960881;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=h/K5PLW/4u0dZBSlDOqGinFywRsD9JVJuvLBimsjEjg=;
-        b=My0kMspgRIZJRdJJzFMXvzTNRNJBrwxeve7+UCgi65gl/J8xE2/30FW2AUbWWJ9zcX
-         /eYABTk0sKN3TBC3RO1Rcos4sQVSOqdDoEMCiBlVJKuq1YRZtgBhgt9fGmBhDYYrLgjQ
-         69J7htvq0+rwXbpQ29fWK1Jq66D7X/QU5w687NOqfzQIlydecjnEjnt7G5xf3Nl5maWM
-         JyoF17Y6u6Z6buydezp2rg1IaXY4uTzNFON6ST5smeSPzgDMllssgl48wMo1nbVFWrx9
-         MSjuKhHsBTEUU4G7/3Vty4CqGIwlCbruT0XfrzMc4ql4Wtwx+xiPtXXi1KMSLob+kG4l
-         qj2g==
-In-Reply-To: <CAGyP=7cJAUf=LTEPW9QLgd-6bJDMKCuqssPH=yyuKLE5=CKB_w@mail.gmail.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-devel-owner@vger.kernel.org>
+In-Reply-To: <72b46d0f-75c7-ac18-4984-2bf1d6dad352@schaufler-ca.com>
 List-ID: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: Palash Oswal <oswalpalash@gmail.com>
-Cc: reiserfs-devel@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, syzkaller-bugs <syzkaller-bugs@googlegroups.com>
+To: Casey Schaufler <casey@schaufler-ca.com>, zohar@linux.ibm.com, dmitry.kasatkin@gmail.com, paul@paul-moore.com, jmorris@namei.org, serge@hallyn.com, stephen.smalley.work@gmail.com, eparis@parisplace.org
+Cc: reiserfs-devel@vger.kernel.org, linux-kernel@vger.kernel.org, linux-integrity@vger.kernel.org, linux-security-module@vger.kernel.org, selinux@vger.kernel.org, bpf@vger.kernel.org, kpsingh@kernel.org, keescook@chromium.org, nicolas.bouchinet@clip-os.org, Roberto Sassu <roberto.sassu@huawei.com>
 
-On Thu, 13 Apr 2023 at 06:50, Palash Oswal <oswalpalash@gmail.com> wrote:
->
-> Hello,
-> I found the following issue using syzkaller with enriched corpus on:
-> HEAD commit : 0bcc4025550403ae28d2984bddacafbca0a2f112
-> git tree: linux
->
-> C Reproducer : https://gist.github.com/oswalpalash/c2589138be95e1c5da52f9=
-08ad80c041
-> Kernel .config :
-> https://gist.github.com/oswalpalash/d9580b0bfce202b37445fa5fd426e41f
+On Wed, 2023-04-12 at 13:29 -0700, Casey Schaufler wrote:
+> On 4/12/2023 12:22 AM, Roberto Sassu wrote:
+> > On Tue, 2023-04-11 at 10:54 -0700, Casey Schaufler wrote:
+> > > On 4/11/2023 10:23 AM, Roberto Sassu wrote:
+> > > > From: Roberto Sassu <roberto.sassu@huawei.com>
+> > > > 
+> > > > Very very quick modification. Not tested.
+> > > > 
+> > > > Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
+> > > > ---
+> > > >  security/smack/smack.h     |  2 +-
+> > > >  security/smack/smack_lsm.c | 42 ++++++++++++++++++++------------------
+> > > >  2 files changed, 23 insertions(+), 21 deletions(-)
+> > > > 
+> > > > diff --git a/security/smack/smack.h b/security/smack/smack.h
+> > > > index e2239be7bd6..f00c8498c60 100644
+> > > > --- a/security/smack/smack.h
+> > > > +++ b/security/smack/smack.h
+> > > > @@ -127,7 +127,7 @@ struct task_smack {
+> > > >  
+> > > >  #define	SMK_INODE_INSTANT	0x01	/* inode is instantiated */
+> > > >  #define	SMK_INODE_TRANSMUTE	0x02	/* directory is transmuting */
+> > > > -#define	SMK_INODE_CHANGED	0x04	/* smack was transmuted */
+> > > > +#define	SMK_INODE_CHANGED	0x04	/* smack was transmuted (unused) */
+> > > See below ...
+> > > 
+> > > >  #define	SMK_INODE_IMPURE	0x08	/* involved in an impure transaction */
+> > > >  
+> > > >  /*
+> > > > diff --git a/security/smack/smack_lsm.c b/security/smack/smack_lsm.c
+> > > > index 8392983334b..b43820bdbd0 100644
+> > > > --- a/security/smack/smack_lsm.c
+> > > > +++ b/security/smack/smack_lsm.c
+> > > > @@ -54,12 +54,12 @@
+> > > >  
+> > > >  /*
+> > > >   * Smack uses multiple xattrs.
+> > > > - * SMACK64 - for access control, SMACK64EXEC - label for the program,
+> > > > - * SMACK64MMAP - controls library loading,
+> > > > + * SMACK64 - for access control,
+> > > >   * SMACK64TRANSMUTE - label initialization,
+> > > > - * Not saved on files - SMACK64IPIN and SMACK64IPOUT
+> > > > + * Not saved on files - SMACK64IPIN and SMACK64IPOUT,
+> > > > + * Must be set explicitly - SMACK64EXEC and SMACK64MMAP
+> > > >   */
+> > > > -#define SMACK_INODE_INIT_XATTRS 4
+> > > > +#define SMACK_INODE_INIT_XATTRS 2
+> > > >  
+> > > >  #ifdef SMACK_IPV6_PORT_LABELING
+> > > >  static DEFINE_MUTEX(smack_ipv6_lock);
+> > > > @@ -957,11 +957,11 @@ static int smack_inode_init_security(struct inode *inode, struct inode *dir,
+> > > >  				     const struct qstr *qstr,
+> > > >  				     struct xattr *xattrs, int *xattr_count)
+> > > >  {
+> > > > -	struct inode_smack *issp = smack_inode(inode);
+> > > >  	struct smack_known *skp = smk_of_current();
+> > > >  	struct smack_known *isp = smk_of_inode(inode);
+> > > >  	struct smack_known *dsp = smk_of_inode(dir);
+> > > >  	struct xattr *xattr = lsm_get_xattr_slot(xattrs, xattr_count);
+> > > > +	struct xattr *xattr2;
+> > > I'm going to channel Paul and suggest this be xattr_transmute instead of xattr2.
+> > > It also looks like it could move to be declared in the if clause.
+> > > 
+> > > >  	int may;
+> > > >  
+> > > >  	if (xattr) {
+> > > > @@ -979,7 +979,17 @@ static int smack_inode_init_security(struct inode *inode, struct inode *dir,
+> > > >  		if (may > 0 && ((may & MAY_TRANSMUTE) != 0) &&
+> > > >  		    smk_inode_transmutable(dir)) {
+> > > >  			isp = dsp;
+> > > > -			issp->smk_flags |= SMK_INODE_CHANGED;
+> > > I think you need to keep this. More below.
+> > > 
+> > > > +			xattr2 = lsm_get_xattr_slot(xattrs, xattr_count);
+> > > > +			if (xattr2) {
+> > > > +				xattr2->value = kmemdup(TRANS_TRUE,
+> > > > +							TRANS_TRUE_SIZE,
+> > > > +							GFP_NOFS);
+> > > > +				if (xattr2->value == NULL)
+> > > > +					return -ENOMEM;
+> > > > +
+> > > > +				xattr2->value_len = TRANS_TRUE_SIZE;
+> > > > +				xattr2->name = XATTR_NAME_SMACKTRANSMUTE;
+> > > > +			}
+> > > >  		}
+> > > >  
+> > > >  		xattr->value = kstrdup(isp->smk_known, GFP_NOFS);
+> > > > @@ -3512,20 +3522,12 @@ static void smack_d_instantiate(struct dentry *opt_dentry, struct inode *inode)
+> > > >  			 * If there is a transmute attribute on the
+> > > >  			 * directory mark the inode.
+> > > >  			 */
+> > > > -			if (isp->smk_flags & SMK_INODE_CHANGED) {
+> > > > -				isp->smk_flags &= ~SMK_INODE_CHANGED;
+> > > > -				rc = __vfs_setxattr(&nop_mnt_idmap, dp, inode,
+> > > > -					XATTR_NAME_SMACKTRANSMUTE,
+> > > > -					TRANS_TRUE, TRANS_TRUE_SIZE,
+> > > > -					0);
+> > > > -			} else {
+> > > > -				rc = __vfs_getxattr(dp, inode,
+> > > > -					XATTR_NAME_SMACKTRANSMUTE, trattr,
+> > > > -					TRANS_TRUE_SIZE);
+> > > > -				if (rc >= 0 && strncmp(trattr, TRANS_TRUE,
+> > > > -						       TRANS_TRUE_SIZE) != 0)
+> > > > -					rc = -EINVAL;
+> > > > -			}
+> > > > +			rc = __vfs_getxattr(dp, inode,
+> > > > +					    XATTR_NAME_SMACKTRANSMUTE, trattr,
+> > > > +					    TRANS_TRUE_SIZE);
+> > > > +			if (rc >= 0 && strncmp(trattr, TRANS_TRUE,
+> > > > +					       TRANS_TRUE_SIZE) != 0)
+> > > > +				rc = -EINVAL;
+> > > Where is the SMACK64_TRANSMUTE attribute going to get set on the file?
+> > > It's not going to get set in smack_init_inode_security(). The inode will
+> > Isn't that the purpose of the inode_init_security hook?
+> 
+> No. It initializes the in-memory inode. 
 
-Looks similar to:
-https://lore.kernel.org/all/000000000000467dff05d30bf75a@google.com/T/
-https://syzkaller.appspot.com/bug?id=3D942f20de484a0ecf6b4c2cc9a1f818859543=
-3000
+I hope I'm not mistaken here...
 
-> syz-repro :
-> syz_mount_image$reiserfs(&(0x7f0000000000),
-> &(0x7f0000000100)=3D'./file0\x00', 0x4000000, 0x5,
-> &(0x7f0000000200)=3D[{&(0x7f0000010000)=3D"0040000068020000973d0000120000=
-0000000000843d00000004000073564d38840300001e000000000000000010cc03020001005=
-2654973457233467300000001000000020001000200853d0000000001000000123123121233=
-1233123112341341241273797a6b616c6c65720000000000000001001e003bc1655f004eed0=
-0",
-> 0x80, 0x10000},
-> {&(0x7f0000010100)=3D"000000000000000000000000010000000300"/32, 0x20,
-> 0x100c0}, {&(0x7f0000011200)=3D"00000000000000000000000012000000000000008=
-43d00000004000073564d38840300001e00"/64,
-> 0x40, 0x3d96000},
-> {&(0x7f0000011300)=3D"010002005c0f000000000000000000000000000000000000010=
-0000002000000000000000000000000002c00d40f0100010000000200000001000000f40100=
-0002003000a40f00"/96,
-> 0x60, 0x3d97000},
-> {&(0x7f0000000080)=3D"0000000001000000010e0000020000002800040002000000000=
-08cee00000000000004002e2e0000000000002e00000000000000ed41000003000000300000=
-00000000005cf90100535f01003bc165f354dffa32ec94ed23bb5568cfa05f3bc1655f3bc16=
-55f010000290000000000",
-> 0x6f, 0x3d97fa0}], 0x0, &(0x7f00000003c0)=3DANY=3D[@ANYBLOB], 0x0)
->
-> Console log :
->
-> REISERFS (device loop1): Using tea hash to sort names
-> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-> BUG: KFENCE: invalid read in memmove+0x4b/0x1b0
->
-> Invalid read at 0xffff888135a00000:
->  memmove+0x4b/0x1b0
->  leaf_paste_entries+0x44d/0x910
->  balance_leaf+0x9853/0xddb0
->  do_balance+0x319/0x810
->  reiserfs_paste_into_item+0x74b/0x8d0
->  reiserfs_add_entry+0x8cb/0xcf0
->  reiserfs_mkdir+0x683/0x990
->  reiserfs_xattr_init+0x57e/0xc30
->  reiserfs_fill_super+0x2127/0x2ea0
->  mount_bdev+0x351/0x410
->  legacy_get_tree+0x109/0x220
->  vfs_get_tree+0x8d/0x350
->  path_mount+0x1342/0x1e40
->  __x64_sys_mount+0x283/0x300
->  do_syscall_64+0x39/0xb0
->  entry_SYSCALL_64_after_hwframe+0x63/0xcd
->
-> CPU: 0 PID: 5167 Comm: syz-executor.1 Not tainted
-> 6.3.0-rc6-pasta-00035-g0bcc40255504 #1
-> Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS
-> 1.13.0-1ubuntu1.1 04/01/2014
-> RIP: 0010:memmove+0x4b/0x1b0
-> Code: 01 01 00 00 0f 1f 44 00 00 48 81 fa a8 02 00 00 72 05 40 38 fe
-> 74 48 48 83 ea 20 48 83 ea 20 4c 8b 1e 4c 8b 56 08 4c 8b 4e 10 <4c> 8b
-> 46 18 48 8d 76 20 4c 89 1f 4c 89 57 08 4c 89 4f 10 4c 89 47
-> RSP: 0018:ffffc9000312efb0 EFLAGS: 00010286
-> RAX: ffff888128a45fb4 RBX: 0000000000000002 RCX: 0000000000000000
-> RDX: fffffffff3045f60 RSI: ffff8881359fffe4 RDI: ffff8881359ffff4
-> RBP: 0000000000000020 R08: 0000000000000000 R09: 0000000000000000
-> R10: 0000000000000000 R11: 0000000000000000 R12: 0000000000000001
-> R13: 0000000000000000 R14: ffff888128a45fa4 R15: 0000000000000010
-> FS:  00007fb847280700(0000) GS:ffff888063a00000(0000) knlGS:0000000000000=
-000
-> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> CR2: ffff888135a00000 CR3: 000000011e331000 CR4: 00000000000006f0
-> DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-> DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-> Call Trace:
->  <TASK>
->  leaf_paste_entries+0x44d/0x910
->  balance_leaf+0x9853/0xddb0
->  do_balance+0x319/0x810
->  reiserfs_paste_into_item+0x74b/0x8d0
->  reiserfs_add_entry+0x8cb/0xcf0
->  reiserfs_mkdir+0x683/0x990
->  reiserfs_xattr_init+0x57e/0xc30
->  reiserfs_fill_super+0x2127/0x2ea0
->  mount_bdev+0x351/0x410
->  legacy_get_tree+0x109/0x220
->  vfs_get_tree+0x8d/0x350
->  path_mount+0x1342/0x1e40
->  __x64_sys_mount+0x283/0x300
->  do_syscall_64+0x39/0xb0
->  entry_SYSCALL_64_after_hwframe+0x63/0xcd
-> RIP: 0033:0x7fb84649146e
-> Code: 48 c7 c1 b8 ff ff ff f7 d8 64 89 01 48 83 c8 ff c3 66 2e 0f 1f
-> 84 00 00 00 00 00 90 f3 0f 1e fa 49 89 ca b8 a5 00 00 00 0f 05 <48> 3d
-> 01 f0 ff ff 73 01 c3 48 c7 c1 b8 ff ff ff f7 d8 64 89 01 48
-> RSP: 002b:00007fb84727fa08 EFLAGS: 00000206 ORIG_RAX: 00000000000000a5
-> RAX: ffffffffffffffda RBX: 0000000020000200 RCX: 00007fb84649146e
-> RDX: 0000000020000000 RSI: 0000000020000100 RDI: 00007fb84727fa60
-> RBP: 00007fb84727faa0 R08: 00007fb84727faa0 R09: 0000000020000000
-> R10: 0000000000000000 R11: 0000000000000206 R12: 0000000020000000
-> R13: 0000000020000100 R14: 00007fb84727fa60 R15: 00000000200003c0
->  </TASK>
-> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-> ----------------
-> Code disassembly (best guess):
->    0: 01 01                 add    %eax,(%rcx)
->    2: 00 00                 add    %al,(%rax)
->    4: 0f 1f 44 00 00       nopl   0x0(%rax,%rax,1)
->    9: 48 81 fa a8 02 00 00 cmp    $0x2a8,%rdx
->   10: 72 05                 jb     0x17
->   12: 40 38 fe             cmp    %dil,%sil
->   15: 74 48                 je     0x5f
->   17: 48 83 ea 20           sub    $0x20,%rdx
->   1b: 48 83 ea 20           sub    $0x20,%rdx
->   1f: 4c 8b 1e             mov    (%rsi),%r11
->   22: 4c 8b 56 08           mov    0x8(%rsi),%r10
->   26: 4c 8b 4e 10           mov    0x10(%rsi),%r9
-> * 2a: 4c 8b 46 18           mov    0x18(%rsi),%r8 <-- trapping instructio=
-n
->   2e: 48 8d 76 20           lea    0x20(%rsi),%rsi
->   32: 4c 89 1f             mov    %r11,(%rdi)
->   35: 4c 89 57 08           mov    %r10,0x8(%rdi)
->   39: 4c 89 4f 10           mov    %r9,0x10(%rdi)
->   3d: 4c                   rex.WR
->   3e: 89                   .byte 0x89
->   3f: 47                   rex.RXB
+I make a small example. Filesystems call
+security_inode_init_security(). Ext4 does:
+
+https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/fs/ext4/xattr_security.c?h=v6.3-rc6#n54
+
+security_inode_init_security() allocates new_xattrs. Each LSM fills
+new_xattrs. At the end of the loop, if there is at least one xattr
+filled, the initxattrs() callback passed by the caller of
+security_inode_init_security() is called.
+
+The ext4 initxattrs() callback is:
+
+https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/fs/ext4/xattr_security.c?h=v6.3-rc6#n35
+
+which scans the xattr array and, for each xattr,
+calls ext4_xattr_set_handle().
+
+Maybe I'm overlooking it, but ext4_xattr_set_handle() is setting xattrs
+on the disk. Am I wrong?
+
+Thanks
+
+Roberto
+
+> > After all LSMs provide one or multiple xattrs, xattrs are going to be
+> > written to the disk with the initxattr() callback of filesystems.
+> > 
+> > There is a small mistake above (XATTR_SMACK_TRANSMUTE instead
+> > of XATTR_NAME_SMACKTRANSMUTE, as we are providing just the suffix).
+> > 
+> > After fixing that, Smack tests succeed:
+> 
+> It's over a decade since I seriously looked at this code path,
+> but I'm pretty sure the __vfs_setxattr() call is necessary to get
+> the attribute written out. With your change the in-memory inode will
+> get the attribute, but if you reboot it won't be on the directory.
+> 
+> > 95 Passed, 0 Failed, 100% Success rate
+> > 
+> > There was a test failing in dir-transmute.sh, before I fixed the xattr
+> > name.
+> > 
+> > Thanks
+> > 
+> > Roberto
+> > 
+> > > know it's transmuting, but it won't get to disk without the __vfs_setxattr()
+> > > here in smack_d_instantiate(). Now, it's been a long time since that code
+> > > was written, so I could be wrong, but I'm pretty sure about that.
+> > > 
+> > > I think that you should be fine with the changes in smack_init_inode_security(),
+> > > and leaving smack_d_instantiate() untouched. 
+> > > 
+> > > >  			if (rc >= 0)
+> > > >  				transflag = SMK_INODE_TRANSMUTE;
+> > > >  		}
+
