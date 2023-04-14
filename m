@@ -1,195 +1,91 @@
-From: Roberto Sassu <roberto.sassu@huaweicloud.com>
-Subject: Re: [PATCH] Smack modifications for: security: Allow all LSMs to
- provide xattrs for inode_init_security hook
-Date: Thu, 13 Apr 2023 09:11:24 +0200
-Message-ID: <82ee6ddf66bb34470aa7b591df4d70783fdb2422.camel@huaweicloud.com>
-References: <c7f38789-fe47-8289-e73a-4d07fbaf791d@schaufler-ca.com>
-         <20230411172337.340518-1-roberto.sassu@huaweicloud.com>
-         <2dc6486f-ce9b-f171-14fe-48a90386e1b7@schaufler-ca.com>
-         <8e7705972a0f306922d8bc4893cf940e319abb19.camel@huaweicloud.com>
-         <72b46d0f-75c7-ac18-4984-2bf1d6dad352@schaufler-ca.com>
+From: syzbot <syzbot+f91110fac7f22eb6284f@syzkaller.appspotmail.com>
+Subject: [syzbot] [reiserfs?] KASAN: null-ptr-deref Read in __wait_on_buffer
+Date: Fri, 14 Apr 2023 02:50:47 -0700
+Message-ID: <00000000000088e26d05f948c634@google.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
-In-Reply-To: <72b46d0f-75c7-ac18-4984-2bf1d6dad352@schaufler-ca.com>
 List-ID: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: Casey Schaufler <casey@schaufler-ca.com>, zohar@linux.ibm.com, dmitry.kasatkin@gmail.com, paul@paul-moore.com, jmorris@namei.org, serge@hallyn.com, stephen.smalley.work@gmail.com, eparis@parisplace.org
-Cc: reiserfs-devel@vger.kernel.org, linux-kernel@vger.kernel.org, linux-integrity@vger.kernel.org, linux-security-module@vger.kernel.org, selinux@vger.kernel.org, bpf@vger.kernel.org, kpsingh@kernel.org, keescook@chromium.org, nicolas.bouchinet@clip-os.org, Roberto Sassu <roberto.sassu@huawei.com>
+Content-Transfer-Encoding: 7bit
+To: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, reiserfs-devel@vger.kernel.org, syzkaller-bugs@googlegroups.com
 
-On Wed, 2023-04-12 at 13:29 -0700, Casey Schaufler wrote:
-> On 4/12/2023 12:22 AM, Roberto Sassu wrote:
-> > On Tue, 2023-04-11 at 10:54 -0700, Casey Schaufler wrote:
-> > > On 4/11/2023 10:23 AM, Roberto Sassu wrote:
-> > > > From: Roberto Sassu <roberto.sassu@huawei.com>
-> > > > 
-> > > > Very very quick modification. Not tested.
-> > > > 
-> > > > Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
-> > > > ---
-> > > >  security/smack/smack.h     |  2 +-
-> > > >  security/smack/smack_lsm.c | 42 ++++++++++++++++++++------------------
-> > > >  2 files changed, 23 insertions(+), 21 deletions(-)
-> > > > 
-> > > > diff --git a/security/smack/smack.h b/security/smack/smack.h
-> > > > index e2239be7bd6..f00c8498c60 100644
-> > > > --- a/security/smack/smack.h
-> > > > +++ b/security/smack/smack.h
-> > > > @@ -127,7 +127,7 @@ struct task_smack {
-> > > >  
-> > > >  #define	SMK_INODE_INSTANT	0x01	/* inode is instantiated */
-> > > >  #define	SMK_INODE_TRANSMUTE	0x02	/* directory is transmuting */
-> > > > -#define	SMK_INODE_CHANGED	0x04	/* smack was transmuted */
-> > > > +#define	SMK_INODE_CHANGED	0x04	/* smack was transmuted (unused) */
-> > > See below ...
-> > > 
-> > > >  #define	SMK_INODE_IMPURE	0x08	/* involved in an impure transaction */
-> > > >  
-> > > >  /*
-> > > > diff --git a/security/smack/smack_lsm.c b/security/smack/smack_lsm.c
-> > > > index 8392983334b..b43820bdbd0 100644
-> > > > --- a/security/smack/smack_lsm.c
-> > > > +++ b/security/smack/smack_lsm.c
-> > > > @@ -54,12 +54,12 @@
-> > > >  
-> > > >  /*
-> > > >   * Smack uses multiple xattrs.
-> > > > - * SMACK64 - for access control, SMACK64EXEC - label for the program,
-> > > > - * SMACK64MMAP - controls library loading,
-> > > > + * SMACK64 - for access control,
-> > > >   * SMACK64TRANSMUTE - label initialization,
-> > > > - * Not saved on files - SMACK64IPIN and SMACK64IPOUT
-> > > > + * Not saved on files - SMACK64IPIN and SMACK64IPOUT,
-> > > > + * Must be set explicitly - SMACK64EXEC and SMACK64MMAP
-> > > >   */
-> > > > -#define SMACK_INODE_INIT_XATTRS 4
-> > > > +#define SMACK_INODE_INIT_XATTRS 2
-> > > >  
-> > > >  #ifdef SMACK_IPV6_PORT_LABELING
-> > > >  static DEFINE_MUTEX(smack_ipv6_lock);
-> > > > @@ -957,11 +957,11 @@ static int smack_inode_init_security(struct inode *inode, struct inode *dir,
-> > > >  				     const struct qstr *qstr,
-> > > >  				     struct xattr *xattrs, int *xattr_count)
-> > > >  {
-> > > > -	struct inode_smack *issp = smack_inode(inode);
-> > > >  	struct smack_known *skp = smk_of_current();
-> > > >  	struct smack_known *isp = smk_of_inode(inode);
-> > > >  	struct smack_known *dsp = smk_of_inode(dir);
-> > > >  	struct xattr *xattr = lsm_get_xattr_slot(xattrs, xattr_count);
-> > > > +	struct xattr *xattr2;
-> > > I'm going to channel Paul and suggest this be xattr_transmute instead of xattr2.
-> > > It also looks like it could move to be declared in the if clause.
-> > > 
-> > > >  	int may;
-> > > >  
-> > > >  	if (xattr) {
-> > > > @@ -979,7 +979,17 @@ static int smack_inode_init_security(struct inode *inode, struct inode *dir,
-> > > >  		if (may > 0 && ((may & MAY_TRANSMUTE) != 0) &&
-> > > >  		    smk_inode_transmutable(dir)) {
-> > > >  			isp = dsp;
-> > > > -			issp->smk_flags |= SMK_INODE_CHANGED;
-> > > I think you need to keep this. More below.
-> > > 
-> > > > +			xattr2 = lsm_get_xattr_slot(xattrs, xattr_count);
-> > > > +			if (xattr2) {
-> > > > +				xattr2->value = kmemdup(TRANS_TRUE,
-> > > > +							TRANS_TRUE_SIZE,
-> > > > +							GFP_NOFS);
-> > > > +				if (xattr2->value == NULL)
-> > > > +					return -ENOMEM;
-> > > > +
-> > > > +				xattr2->value_len = TRANS_TRUE_SIZE;
-> > > > +				xattr2->name = XATTR_NAME_SMACKTRANSMUTE;
-> > > > +			}
-> > > >  		}
-> > > >  
-> > > >  		xattr->value = kstrdup(isp->smk_known, GFP_NOFS);
-> > > > @@ -3512,20 +3522,12 @@ static void smack_d_instantiate(struct dentry *opt_dentry, struct inode *inode)
-> > > >  			 * If there is a transmute attribute on the
-> > > >  			 * directory mark the inode.
-> > > >  			 */
-> > > > -			if (isp->smk_flags & SMK_INODE_CHANGED) {
-> > > > -				isp->smk_flags &= ~SMK_INODE_CHANGED;
-> > > > -				rc = __vfs_setxattr(&nop_mnt_idmap, dp, inode,
-> > > > -					XATTR_NAME_SMACKTRANSMUTE,
-> > > > -					TRANS_TRUE, TRANS_TRUE_SIZE,
-> > > > -					0);
-> > > > -			} else {
-> > > > -				rc = __vfs_getxattr(dp, inode,
-> > > > -					XATTR_NAME_SMACKTRANSMUTE, trattr,
-> > > > -					TRANS_TRUE_SIZE);
-> > > > -				if (rc >= 0 && strncmp(trattr, TRANS_TRUE,
-> > > > -						       TRANS_TRUE_SIZE) != 0)
-> > > > -					rc = -EINVAL;
-> > > > -			}
-> > > > +			rc = __vfs_getxattr(dp, inode,
-> > > > +					    XATTR_NAME_SMACKTRANSMUTE, trattr,
-> > > > +					    TRANS_TRUE_SIZE);
-> > > > +			if (rc >= 0 && strncmp(trattr, TRANS_TRUE,
-> > > > +					       TRANS_TRUE_SIZE) != 0)
-> > > > +				rc = -EINVAL;
-> > > Where is the SMACK64_TRANSMUTE attribute going to get set on the file?
-> > > It's not going to get set in smack_init_inode_security(). The inode will
-> > Isn't that the purpose of the inode_init_security hook?
-> 
-> No. It initializes the in-memory inode. 
+Hello,
 
-I hope I'm not mistaken here...
+syzbot found the following issue on:
 
-I make a small example. Filesystems call
-security_inode_init_security(). Ext4 does:
+HEAD commit:    09a9639e56c0 Linux 6.3-rc6
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=12ad32adc80000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=c21559e740385326
+dashboard link: https://syzkaller.appspot.com/bug?extid=f91110fac7f22eb6284f
+compiler:       gcc (Debian 10.2.1-6) 10.2.1 20210110, GNU ld (GNU Binutils for Debian) 2.35.2
 
-https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/fs/ext4/xattr_security.c?h=v6.3-rc6#n54
+Unfortunately, I don't have any reproducer for this issue yet.
 
-security_inode_init_security() allocates new_xattrs. Each LSM fills
-new_xattrs. At the end of the loop, if there is at least one xattr
-filled, the initxattrs() callback passed by the caller of
-security_inode_init_security() is called.
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/723a785e56e6/disk-09a9639e.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/140da8057460/vmlinux-09a9639e.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/d73b2f2c297c/bzImage-09a9639e.xz
 
-The ext4 initxattrs() callback is:
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+f91110fac7f22eb6284f@syzkaller.appspotmail.com
 
-https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/fs/ext4/xattr_security.c?h=v6.3-rc6#n35
+==================================================================
+BUG: KASAN: null-ptr-deref in instrument_atomic_read include/linux/instrumented.h:72 [inline]
+BUG: KASAN: null-ptr-deref in _test_bit_acquire include/asm-generic/bitops/instrumented-non-atomic.h:153 [inline]
+BUG: KASAN: null-ptr-deref in wait_on_bit_io include/linux/wait_bit.h:99 [inline]
+BUG: KASAN: null-ptr-deref in __wait_on_buffer+0x31/0x70 fs/buffer.c:123
+Read of size 8 at addr 0000000000000000 by task syz-executor.2/5538
 
-which scans the xattr array and, for each xattr,
-calls ext4_xattr_set_handle().
+CPU: 1 PID: 5538 Comm: syz-executor.2 Not tainted 6.3.0-rc6-syzkaller #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 03/30/2023
+Call Trace:
+ <TASK>
+ __dump_stack lib/dump_stack.c:88 [inline]
+ dump_stack_lvl+0xd9/0x150 lib/dump_stack.c:106
+ print_report mm/kasan/report.c:433 [inline]
+ kasan_report+0xec/0x130 mm/kasan/report.c:536
+ check_region_inline mm/kasan/generic.c:181 [inline]
+ kasan_check_range+0x141/0x190 mm/kasan/generic.c:187
+ instrument_atomic_read include/linux/instrumented.h:72 [inline]
+ _test_bit_acquire include/asm-generic/bitops/instrumented-non-atomic.h:153 [inline]
+ wait_on_bit_io include/linux/wait_bit.h:99 [inline]
+ __wait_on_buffer+0x31/0x70 fs/buffer.c:123
+ flush_commit_list.isra.0+0xdd6/0x1e70 fs/reiserfs/journal.c:1072
+ do_journal_end+0x3714/0x4af0 fs/reiserfs/journal.c:4302
+ do_journal_release fs/reiserfs/journal.c:1917 [inline]
+ journal_release+0x149/0x630 fs/reiserfs/journal.c:1971
+ reiserfs_put_super+0xe4/0x5c0 fs/reiserfs/super.c:616
+ generic_shutdown_super+0x158/0x480 fs/super.c:500
+ kill_block_super+0x9b/0xf0 fs/super.c:1407
+ deactivate_locked_super+0x98/0x160 fs/super.c:331
+ deactivate_super+0xb1/0xd0 fs/super.c:362
+ cleanup_mnt+0x2ae/0x3d0 fs/namespace.c:1177
+ task_work_run+0x16f/0x270 kernel/task_work.c:179
+ exit_task_work include/linux/task_work.h:38 [inline]
+ do_exit+0xad3/0x2960 kernel/exit.c:869
+ __do_sys_exit kernel/exit.c:986 [inline]
+ __se_sys_exit kernel/exit.c:984 [inline]
+ __x64_sys_exit+0x42/0x50 kernel/exit.c:984
+ do_syscall_x64 arch/x86/entry/common.c:50 [inline]
+ do_syscall_64+0x39/0xb0 arch/x86/entry/common.c:80
+ entry_SYSCALL_64_after_hwframe+0x63/0xcd
+RIP: 0033:0x7fee0e88c169
+Code: Unable to access opcode bytes at 0x7fee0e88c13f.
+RSP: 002b:00007fee0f592118 EFLAGS: 00000246 ORIG_RAX: 000000000000003c
+RAX: ffffffffffffffda RBX: 00007fee0e9abf80 RCX: 00007fee0e88c169
+RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000000000000
+RBP: 00007fee0e8e7ca1 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
+R13: 00007ffc0cf63b9f R14: 00007fee0f592300 R15: 0000000000022000
+ </TASK>
+==================================================================
 
-Maybe I'm overlooking it, but ext4_xattr_set_handle() is setting xattrs
-on the disk. Am I wrong?
 
-Thanks
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-Roberto
-
-> > After all LSMs provide one or multiple xattrs, xattrs are going to be
-> > written to the disk with the initxattr() callback of filesystems.
-> > 
-> > There is a small mistake above (XATTR_SMACK_TRANSMUTE instead
-> > of XATTR_NAME_SMACKTRANSMUTE, as we are providing just the suffix).
-> > 
-> > After fixing that, Smack tests succeed:
-> 
-> It's over a decade since I seriously looked at this code path,
-> but I'm pretty sure the __vfs_setxattr() call is necessary to get
-> the attribute written out. With your change the in-memory inode will
-> get the attribute, but if you reboot it won't be on the directory.
-> 
-> > 95 Passed, 0 Failed, 100% Success rate
-> > 
-> > There was a test failing in dir-transmute.sh, before I fixed the xattr
-> > name.
-> > 
-> > Thanks
-> > 
-> > Roberto
-> > 
-> > > know it's transmuting, but it won't get to disk without the __vfs_setxattr()
-> > > here in smack_d_instantiate(). Now, it's been a long time since that code
-> > > was written, so I could be wrong, but I'm pretty sure about that.
-> > > 
-> > > I think that you should be fine with the changes in smack_init_inode_security(),
-> > > and leaving smack_d_instantiate() untouched. 
-> > > 
-> > > >  			if (rc >= 0)
-> > > >  				transflag = SMK_INODE_TRANSMUTE;
-> > > >  		}
-
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
