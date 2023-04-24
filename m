@@ -1,76 +1,162 @@
-From: Roberto Sassu <roberto.sassu@huaweicloud.com>
-Subject: Re: [PATCH] Smack modifications for: security: Allow all LSMs to
- provide xattrs for inode_init_security hook
-Date: Thu, 20 Apr 2023 16:10:42 +0200
-Message-ID: <5a9ba6618b37a592cda13ce36ea35cf78c98122b.camel@huaweicloud.com>
-References: <c7f38789-fe47-8289-e73a-4d07fbaf791d@schaufler-ca.com>
-         <20230411172337.340518-1-roberto.sassu@huaweicloud.com>
-         <2dc6486f-ce9b-f171-14fe-48a90386e1b7@schaufler-ca.com>
-         <8e7705972a0f306922d8bc4893cf940e319abb19.camel@huaweicloud.com>
-         <72b46d0f-75c7-ac18-4984-2bf1d6dad352@schaufler-ca.com>
-         <82ee6ddf66bb34470aa7b591df4d70783fdb2422.camel@huaweicloud.com>
-         <91f05dc4-a4b7-b40a-ba1a-0ccc489c84b2@schaufler-ca.com>
-         <5c50d98f1e5745c88270ae4ad3de6d9a803db4c6.camel@huaweicloud.com>
-         <48c6073f-59b0-f5d1-532e-fe4b912b939d@schaufler-ca.com>
-         <0fccab67e496f10f4ee7bf2220e70a655013935f.camel@huaweicloud.com>
-         <c16dd895-f488-241d-0be8-e56e5f0c1adb@schaufler-ca.com>
-         <a98ddf946c474a3500bdcd72766c6cb0043278ff.camel@huaweicloud.com>
-         <97849695ef53ab3186e59d8a2c6b74812f13ee19.camel@linux.ibm.com>
+From: syzbot <syzbot+dc5bf13993c4b32ec0cb@syzkaller.appspotmail.com>
+Subject: [syzbot] [reiserfs?] possible deadlock in chmod_common
+Date: Sun, 23 Apr 2023 23:46:46 -0700
+Message-ID: <000000000000df076505fa0f5e84@google.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-unionfs-owner@vger.kernel.org>
-In-Reply-To: <97849695ef53ab3186e59d8a2c6b74812f13ee19.camel@linux.ibm.com>
+Return-path: <reiserfs-devel-owner@vger.kernel.org>
 List-ID: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: Mimi Zohar <zohar@linux.ibm.com>, Casey Schaufler <casey@schaufler-ca.com>, dmitry.kasatkin@gmail.com, paul@paul-moore.com, jmorris@namei.org, serge@hallyn.com, stephen.smalley.work@gmail.com, eparis@parisplace.org
-Cc: reiserfs-devel@vger.kernel.org, linux-kernel@vger.kernel.org, linux-integrity@vger.kernel.org, linux-security-module@vger.kernel.org, selinux@vger.kernel.org, bpf@vger.kernel.org, kpsingh@kernel.org, keescook@chromium.org, nicolas.bouchinet@clip-os.org, Roberto Sassu <roberto.sassu@huawei.com>, Mengchi Cheng <mengcc@amazon.com>, miklos@szeredi.hu, linux-unionfs@vger.kernel.org, kamatam@amazon.com, yoonjaeh@amazon.com
+Content-Transfer-Encoding: 7bit
+To: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, reiserfs-devel@vger.kernel.org, syzkaller-bugs@googlegroups.com
 
-On Thu, 2023-04-20 at 06:44 -0400, Mimi Zohar wrote:
-> On Thu, 2023-04-20 at 10:50 +0200, Roberto Sassu wrote:
-> > > It's possible. It's been a long time since I've looked at this.
-> > > I'm tempted to take a change to make overlayfs work upstream and
-> > > then worry about the ima changes. There seems to be a lot more
-> > > going on with the ima changes than is obvious from what's in the
-> > > Smack code.
-> 
-> It doesn't sound like the patch set introduces the overlayfs bug.
+Hello,
 
-Correct.
+syzbot found the following issue on:
 
-The first problem of overlayfs is that smack_dentry_create_files_as()
-override the credentials in a way that transmuting is not detected
-correctly anymore in smack_inode_init_security(). The process label is
-already overwritten with the directory label, at the time smack_inode_i
-nit_security() calls smk_access_entry(), so the latter will not find
-the transmuting rule that refers to the original process label.
+HEAD commit:    2caeeb9d4a1b Merge tag 'for-linus' of git://git.kernel.org..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=109cffafc80000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=4afb87f3ec27b7fd
+dashboard link: https://syzkaller.appspot.com/bug?extid=dc5bf13993c4b32ec0cb
+compiler:       Debian clang version 15.0.7, GNU ld (GNU Binutils for Debian) 2.35.2
 
-The second problem is that overlayfs temporarily creates the new
-directory in the working directory, that does not necessarily have the
-same label of the parent directory the new file/directory will be added
-to, causing the transmuting to be computed incorrectly.
+Unfortunately, I don't have any reproducer for this issue yet.
 
-> The security_inode_init_security() change to initialize multiple LSMs
-> and IMA xattrs and include them in the EVM hmac calculation is straight
-> forward.
-> 
-> In addition, the patch set creates the infrastructure for allowing
-> multiple per LSM xattrs, as requested, to be initialized in
-> security_inode_init_security() and included in the EVM hmac.
-> 
-> Mimi
-> 
-> > We could also set only SMACK64 in smack_inode_init_security(), and move
-> > SMACKTRANSMUTE64 later, when we figure out how to fix the case of
-> > overlayfs.
-> > 
-> > IMA and EVM would work in both cases.
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/187205513d6f/disk-2caeeb9d.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/ae84a1e0cbd0/vmlinux-2caeeb9d.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/0f0ff6d2e1aa/bzImage-2caeeb9d.xz
 
-Thanks to Mimi, I realized that adding SMACKTRANSMUTE64 in
-smack_inode_init_security() is actually necessary.
-Calling __vfs_getxattr() in smack_d_instantiate() causes the xattr to
-be added without EVM updating the HMAC (thus, making the HMAC invalid).
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+dc5bf13993c4b32ec0cb@syzkaller.appspotmail.com
 
-Thanks
+REISERFS warning (device loop2): jdm-20006 create_privroot: xattrs/ACLs enabled and couldn't find/create .reiserfs_priv. Failing mount.
+======================================================
+WARNING: possible circular locking dependency detected
+6.3.0-rc7-syzkaller-00189-g2caeeb9d4a1b #0 Not tainted
+------------------------------------------------------
+syz-executor.2/13499 is trying to acquire lock:
+ffff88803a019020 (&type->i_mutex_dir_key#25){+.+.}-{3:3}, at: inode_lock include/linux/fs.h:758 [inline]
+ffff88803a019020 (&type->i_mutex_dir_key#25){+.+.}-{3:3}, at: chmod_common+0x1bb/0x4c0 fs/open.c:637
 
-Roberto
+but task is already holding lock:
+ffff8880281c2460 (sb_writers#30){.+.+}-{0:0}, at: mnt_want_write+0x3f/0x90 fs/namespace.c:394
 
+which lock already depends on the new lock.
+
+
+the existing dependency chain (in reverse order) is:
+
+-> #2 (sb_writers#30){.+.+}-{0:0}:
+       lock_acquire+0x1e1/0x520 kernel/locking/lockdep.c:5669
+       percpu_down_read include/linux/percpu-rwsem.h:51 [inline]
+       __sb_start_write include/linux/fs.h:1477 [inline]
+       sb_start_write+0x4d/0x1c0 include/linux/fs.h:1552
+       mnt_want_write_file+0x5e/0x1f0 fs/namespace.c:438
+       reiserfs_ioctl+0x174/0x340 fs/reiserfs/ioctl.c:103
+       vfs_ioctl fs/ioctl.c:51 [inline]
+       __do_sys_ioctl fs/ioctl.c:870 [inline]
+       __se_sys_ioctl+0xf1/0x160 fs/ioctl.c:856
+       do_syscall_x64 arch/x86/entry/common.c:50 [inline]
+       do_syscall_64+0x41/0xc0 arch/x86/entry/common.c:80
+       entry_SYSCALL_64_after_hwframe+0x63/0xcd
+
+-> #1 (&sbi->lock){+.+.}-{3:3}:
+       lock_acquire+0x1e1/0x520 kernel/locking/lockdep.c:5669
+       __mutex_lock_common+0x1d8/0x2530 kernel/locking/mutex.c:603
+       __mutex_lock kernel/locking/mutex.c:747 [inline]
+       mutex_lock_nested+0x1b/0x20 kernel/locking/mutex.c:799
+       reiserfs_write_lock+0x7a/0xd0 fs/reiserfs/lock.c:27
+       reiserfs_lookup+0x160/0x4b0 fs/reiserfs/namei.c:364
+       __lookup_slow+0x282/0x3e0 fs/namei.c:1686
+       lookup_one_len+0x18b/0x2d0 fs/namei.c:2712
+       reiserfs_lookup_privroot+0x89/0x1e0 fs/reiserfs/xattr.c:973
+       reiserfs_fill_super+0x195b/0x2620 fs/reiserfs/super.c:2192
+       mount_bdev+0x271/0x3a0 fs/super.c:1380
+       legacy_get_tree+0xef/0x190 fs/fs_context.c:610
+       vfs_get_tree+0x8c/0x270 fs/super.c:1510
+       do_new_mount+0x28f/0xae0 fs/namespace.c:3042
+       do_mount fs/namespace.c:3385 [inline]
+       __do_sys_mount fs/namespace.c:3594 [inline]
+       __se_sys_mount+0x2d9/0x3c0 fs/namespace.c:3571
+       do_syscall_x64 arch/x86/entry/common.c:50 [inline]
+       do_syscall_64+0x41/0xc0 arch/x86/entry/common.c:80
+       entry_SYSCALL_64_after_hwframe+0x63/0xcd
+
+-> #0 (&type->i_mutex_dir_key#25){+.+.}-{3:3}:
+       check_prev_add kernel/locking/lockdep.c:3098 [inline]
+       check_prevs_add kernel/locking/lockdep.c:3217 [inline]
+       validate_chain+0x166b/0x58e0 kernel/locking/lockdep.c:3832
+       __lock_acquire+0x125b/0x1f80 kernel/locking/lockdep.c:5056
+       lock_acquire+0x1e1/0x520 kernel/locking/lockdep.c:5669
+       down_write+0x3a/0x50 kernel/locking/rwsem.c:1573
+       inode_lock include/linux/fs.h:758 [inline]
+       chmod_common+0x1bb/0x4c0 fs/open.c:637
+       vfs_fchmod fs/open.c:659 [inline]
+       __do_sys_fchmod fs/open.c:668 [inline]
+       __se_sys_fchmod fs/open.c:662 [inline]
+       __x64_sys_fchmod+0xf0/0x150 fs/open.c:662
+       do_syscall_x64 arch/x86/entry/common.c:50 [inline]
+       do_syscall_64+0x41/0xc0 arch/x86/entry/common.c:80
+       entry_SYSCALL_64_after_hwframe+0x63/0xcd
+
+other info that might help us debug this:
+
+Chain exists of:
+  &type->i_mutex_dir_key#25 --> &sbi->lock --> sb_writers#30
+
+ Possible unsafe locking scenario:
+
+       CPU0                    CPU1
+       ----                    ----
+  lock(sb_writers#30);
+                               lock(&sbi->lock);
+                               lock(sb_writers#30);
+  lock(&type->i_mutex_dir_key#25);
+
+ *** DEADLOCK ***
+
+1 lock held by syz-executor.2/13499:
+ #0: ffff8880281c2460 (sb_writers#30){.+.+}-{0:0}, at: mnt_want_write+0x3f/0x90 fs/namespace.c:394
+
+stack backtrace:
+CPU: 0 PID: 13499 Comm: syz-executor.2 Not tainted 6.3.0-rc7-syzkaller-00189-g2caeeb9d4a1b #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 04/14/2023
+Call Trace:
+ <TASK>
+ __dump_stack lib/dump_stack.c:88 [inline]
+ dump_stack_lvl+0x1e7/0x2d0 lib/dump_stack.c:106
+ check_noncircular+0x2fe/0x3b0 kernel/locking/lockdep.c:2178
+ check_prev_add kernel/locking/lockdep.c:3098 [inline]
+ check_prevs_add kernel/locking/lockdep.c:3217 [inline]
+ validate_chain+0x166b/0x58e0 kernel/locking/lockdep.c:3832
+ __lock_acquire+0x125b/0x1f80 kernel/locking/lockdep.c:5056
+ lock_acquire+0x1e1/0x520 kernel/locking/lockdep.c:5669
+ down_write+0x3a/0x50 kernel/locking/rwsem.c:1573
+ inode_lock include/linux/fs.h:758 [inline]
+ chmod_common+0x1bb/0x4c0 fs/open.c:637
+ vfs_fchmod fs/open.c:659 [inline]
+ __do_sys_fchmod fs/open.c:668 [inline]
+ __se_sys_fchmod fs/open.c:662 [inline]
+ __x64_sys_fchmod+0xf0/0x150 fs/open.c:662
+ do_syscall_x64 arch/x86/entry/common.c:50 [inline]
+ do_syscall_64+0x41/0xc0 arch/x86/entry/common.c:80
+ entry_SYSCALL_64_after_hwframe+0x63/0xcd
+RIP: 0033:0x7f94a988c169
+Code: 28 00 00 00 75 05 48 83 c4 28 c3 e8 f1 19 00 00 90 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b8 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007f94aa5e0168 EFLAGS: 00000246 ORIG_RAX: 000000000000005b
+RAX: ffffffffffffffda RBX: 00007f94a99abf80 RCX: 00007f94a988c169
+RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000000000005
+RBP: 00007f94a98e7ca1 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
+R13: 00007ffe4c3619af R14: 00007f94aa5e0300 R15: 0000000000022000
+ </TASK>
+
+
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
