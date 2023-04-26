@@ -1,162 +1,54 @@
-From: syzbot <syzbot+dc5bf13993c4b32ec0cb@syzkaller.appspotmail.com>
-Subject: [syzbot] [reiserfs?] possible deadlock in chmod_common
-Date: Sun, 23 Apr 2023 23:46:46 -0700
-Message-ID: <000000000000df076505fa0f5e84@google.com>
+From: patchwork-bot+f2fs@kernel.org
+Subject: Re: [f2fs-dev] [PATCH v2 0/8] acl: remove generic posix acl handlers
+ from all xattr handlers
+Date: Wed, 26 Apr 2023 23:07:20 +0000
+Message-ID: <168255044069.16014.2458183090274454828.git-patchwork-notify@kernel.org>
+References: <20230125-fs-acl-remove-generic-xattr-handlers-v2-0-214cfb88bb56@kernel.org>
 Mime-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1682550440;
+        bh=EzrAzHGqX33HLlqpfsl59P+BWciRL4LLNL4FJ5YxYiw=;
+        h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+        b=huemn0yp2XzRUtzI1j/YWNYRt1QKV1SVDVfajDMru9/LkNbnuOgXFP3lMOAewzkEw
+         SFF3oLTNxd72taeJdoC8laOtlFG8z9pxPaFk08isrDw/5LQ+gUxIpqOwd2IOZSFHNw
+         4HYKoKLprsc12RNLmO3wSw8omR8cHmCcDPa7+6xfQmB55f1oTV8EE1H27j6Pls93PV
+         Vp8gC4W2lzsIGyOAAPyzt57VCNGwzu0LHwHQBJ7Pg0/TaE/8XeLwZP00zH/DE2R/VR
+         NQgC/FuN1OP8CVZJl+9K/8e1+I0LNNqhbulyDD+LaQvunkEVwhC25NS9T0BTLO3FNI
+         B6MP2MQraMVWA==
+In-Reply-To: <20230125-fs-acl-remove-generic-xattr-handlers-v2-0-214cfb88bb56@kernel.org>
 List-ID: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, reiserfs-devel@vger.kernel.org, syzkaller-bugs@googlegroups.com
+To: Christian Brauner <brauner@kernel.org>
+Cc: linux-fsdevel@vger.kernel.org, hch@lst.de, reiserfs-devel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net, linux-mtd@lists.infradead.org, viro@zeniv.linux.org.uk, linux-ext4@vger.kernel.org, linux-erofs@lists.ozlabs.org, sforshee@kernel.org
 
-Hello,
+Hello:
 
-syzbot found the following issue on:
+This patch was applied to jaegeuk/f2fs.git (dev)
+by Christian Brauner (Microsoft) <brauner@kernel.org>:
 
-HEAD commit:    2caeeb9d4a1b Merge tag 'for-linus' of git://git.kernel.org..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=109cffafc80000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=4afb87f3ec27b7fd
-dashboard link: https://syzkaller.appspot.com/bug?extid=dc5bf13993c4b32ec0cb
-compiler:       Debian clang version 15.0.7, GNU ld (GNU Binutils for Debian) 2.35.2
+On Mon, 30 Jan 2023 17:41:56 +0100 you wrote:
+> Hey everyone,
+> 
+> after we finished the introduction of the new posix acl api last cycle
+> we still left the generic POSIX ACL xattr handlers around in the
+> filesystems xattr handler registered at sb->s_xattr for two reasons.
+> First, because a few filesystems rely on the ->list() method of the
+> generic POSIX ACL xattr handlers in their ->listxattr() inode operation.
+> Second, during inode initalization in inode_init_always() the registered
+> xattr handlers in sb->s_xattr are used to raise IOP_XATTR in
+> inode->i_opflags.
+> 
+> [...]
 
-Unfortunately, I don't have any reproducer for this issue yet.
+Here is the summary with links:
+  - [f2fs-dev,v2,6/8] fs: simplify ->listxattr() implementation
+    https://git.kernel.org/jaegeuk/f2fs/c/a5488f29835c
 
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/187205513d6f/disk-2caeeb9d.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/ae84a1e0cbd0/vmlinux-2caeeb9d.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/0f0ff6d2e1aa/bzImage-2caeeb9d.xz
-
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+dc5bf13993c4b32ec0cb@syzkaller.appspotmail.com
-
-REISERFS warning (device loop2): jdm-20006 create_privroot: xattrs/ACLs enabled and couldn't find/create .reiserfs_priv. Failing mount.
-======================================================
-WARNING: possible circular locking dependency detected
-6.3.0-rc7-syzkaller-00189-g2caeeb9d4a1b #0 Not tainted
-------------------------------------------------------
-syz-executor.2/13499 is trying to acquire lock:
-ffff88803a019020 (&type->i_mutex_dir_key#25){+.+.}-{3:3}, at: inode_lock include/linux/fs.h:758 [inline]
-ffff88803a019020 (&type->i_mutex_dir_key#25){+.+.}-{3:3}, at: chmod_common+0x1bb/0x4c0 fs/open.c:637
-
-but task is already holding lock:
-ffff8880281c2460 (sb_writers#30){.+.+}-{0:0}, at: mnt_want_write+0x3f/0x90 fs/namespace.c:394
-
-which lock already depends on the new lock.
+You are awesome, thank you!
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
 
 
-the existing dependency chain (in reverse order) is:
-
--> #2 (sb_writers#30){.+.+}-{0:0}:
-       lock_acquire+0x1e1/0x520 kernel/locking/lockdep.c:5669
-       percpu_down_read include/linux/percpu-rwsem.h:51 [inline]
-       __sb_start_write include/linux/fs.h:1477 [inline]
-       sb_start_write+0x4d/0x1c0 include/linux/fs.h:1552
-       mnt_want_write_file+0x5e/0x1f0 fs/namespace.c:438
-       reiserfs_ioctl+0x174/0x340 fs/reiserfs/ioctl.c:103
-       vfs_ioctl fs/ioctl.c:51 [inline]
-       __do_sys_ioctl fs/ioctl.c:870 [inline]
-       __se_sys_ioctl+0xf1/0x160 fs/ioctl.c:856
-       do_syscall_x64 arch/x86/entry/common.c:50 [inline]
-       do_syscall_64+0x41/0xc0 arch/x86/entry/common.c:80
-       entry_SYSCALL_64_after_hwframe+0x63/0xcd
-
--> #1 (&sbi->lock){+.+.}-{3:3}:
-       lock_acquire+0x1e1/0x520 kernel/locking/lockdep.c:5669
-       __mutex_lock_common+0x1d8/0x2530 kernel/locking/mutex.c:603
-       __mutex_lock kernel/locking/mutex.c:747 [inline]
-       mutex_lock_nested+0x1b/0x20 kernel/locking/mutex.c:799
-       reiserfs_write_lock+0x7a/0xd0 fs/reiserfs/lock.c:27
-       reiserfs_lookup+0x160/0x4b0 fs/reiserfs/namei.c:364
-       __lookup_slow+0x282/0x3e0 fs/namei.c:1686
-       lookup_one_len+0x18b/0x2d0 fs/namei.c:2712
-       reiserfs_lookup_privroot+0x89/0x1e0 fs/reiserfs/xattr.c:973
-       reiserfs_fill_super+0x195b/0x2620 fs/reiserfs/super.c:2192
-       mount_bdev+0x271/0x3a0 fs/super.c:1380
-       legacy_get_tree+0xef/0x190 fs/fs_context.c:610
-       vfs_get_tree+0x8c/0x270 fs/super.c:1510
-       do_new_mount+0x28f/0xae0 fs/namespace.c:3042
-       do_mount fs/namespace.c:3385 [inline]
-       __do_sys_mount fs/namespace.c:3594 [inline]
-       __se_sys_mount+0x2d9/0x3c0 fs/namespace.c:3571
-       do_syscall_x64 arch/x86/entry/common.c:50 [inline]
-       do_syscall_64+0x41/0xc0 arch/x86/entry/common.c:80
-       entry_SYSCALL_64_after_hwframe+0x63/0xcd
-
--> #0 (&type->i_mutex_dir_key#25){+.+.}-{3:3}:
-       check_prev_add kernel/locking/lockdep.c:3098 [inline]
-       check_prevs_add kernel/locking/lockdep.c:3217 [inline]
-       validate_chain+0x166b/0x58e0 kernel/locking/lockdep.c:3832
-       __lock_acquire+0x125b/0x1f80 kernel/locking/lockdep.c:5056
-       lock_acquire+0x1e1/0x520 kernel/locking/lockdep.c:5669
-       down_write+0x3a/0x50 kernel/locking/rwsem.c:1573
-       inode_lock include/linux/fs.h:758 [inline]
-       chmod_common+0x1bb/0x4c0 fs/open.c:637
-       vfs_fchmod fs/open.c:659 [inline]
-       __do_sys_fchmod fs/open.c:668 [inline]
-       __se_sys_fchmod fs/open.c:662 [inline]
-       __x64_sys_fchmod+0xf0/0x150 fs/open.c:662
-       do_syscall_x64 arch/x86/entry/common.c:50 [inline]
-       do_syscall_64+0x41/0xc0 arch/x86/entry/common.c:80
-       entry_SYSCALL_64_after_hwframe+0x63/0xcd
-
-other info that might help us debug this:
-
-Chain exists of:
-  &type->i_mutex_dir_key#25 --> &sbi->lock --> sb_writers#30
-
- Possible unsafe locking scenario:
-
-       CPU0                    CPU1
-       ----                    ----
-  lock(sb_writers#30);
-                               lock(&sbi->lock);
-                               lock(sb_writers#30);
-  lock(&type->i_mutex_dir_key#25);
-
- *** DEADLOCK ***
-
-1 lock held by syz-executor.2/13499:
- #0: ffff8880281c2460 (sb_writers#30){.+.+}-{0:0}, at: mnt_want_write+0x3f/0x90 fs/namespace.c:394
-
-stack backtrace:
-CPU: 0 PID: 13499 Comm: syz-executor.2 Not tainted 6.3.0-rc7-syzkaller-00189-g2caeeb9d4a1b #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 04/14/2023
-Call Trace:
- <TASK>
- __dump_stack lib/dump_stack.c:88 [inline]
- dump_stack_lvl+0x1e7/0x2d0 lib/dump_stack.c:106
- check_noncircular+0x2fe/0x3b0 kernel/locking/lockdep.c:2178
- check_prev_add kernel/locking/lockdep.c:3098 [inline]
- check_prevs_add kernel/locking/lockdep.c:3217 [inline]
- validate_chain+0x166b/0x58e0 kernel/locking/lockdep.c:3832
- __lock_acquire+0x125b/0x1f80 kernel/locking/lockdep.c:5056
- lock_acquire+0x1e1/0x520 kernel/locking/lockdep.c:5669
- down_write+0x3a/0x50 kernel/locking/rwsem.c:1573
- inode_lock include/linux/fs.h:758 [inline]
- chmod_common+0x1bb/0x4c0 fs/open.c:637
- vfs_fchmod fs/open.c:659 [inline]
- __do_sys_fchmod fs/open.c:668 [inline]
- __se_sys_fchmod fs/open.c:662 [inline]
- __x64_sys_fchmod+0xf0/0x150 fs/open.c:662
- do_syscall_x64 arch/x86/entry/common.c:50 [inline]
- do_syscall_64+0x41/0xc0 arch/x86/entry/common.c:80
- entry_SYSCALL_64_after_hwframe+0x63/0xcd
-RIP: 0033:0x7f94a988c169
-Code: 28 00 00 00 75 05 48 83 c4 28 c3 e8 f1 19 00 00 90 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b8 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007f94aa5e0168 EFLAGS: 00000246 ORIG_RAX: 000000000000005b
-RAX: ffffffffffffffda RBX: 00007f94a99abf80 RCX: 00007f94a988c169
-RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000000000005
-RBP: 00007f94a98e7ca1 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
-R13: 00007ffe4c3619af R14: 00007f94aa5e0300 R15: 0000000000022000
- </TASK>
-
-
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
