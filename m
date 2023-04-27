@@ -1,59 +1,56 @@
-From: patchwork-bot+f2fs@kernel.org
-Subject: Re: [f2fs-dev] [PATCH v3 00/10] acl: drop posix acl handlers from xattr
- handlers
-Date: Wed, 26 Apr 2023 23:07:20 +0000
-Message-ID: <168255044073.16014.8337870090900748986.git-patchwork-notify@kernel.org>
-References: <20230125-fs-acl-remove-generic-xattr-handlers-v3-0-f760cc58967d@kernel.org>
+From: syzbot <syzbot+list516ba74fcec3023779ae@syzkaller.appspotmail.com>
+Subject: [syzbot] Monthly reiserfs report (Apr 2023)
+Date: Thu, 27 Apr 2023 03:49:52 -0700
+Message-ID: <000000000000cc835005fa4f1dd6@google.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Return-path: <linux-ext4-owner@vger.kernel.org>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1682550440;
-        bh=71/XsA8gAmo1yutYZ1cS0twFrW61Rssu2AmOx0Z5eqs=;
-        h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-        b=LCsCJGnd35MidYfxnMlF2ceb389n1B9U+KnzrgVKwgz5bAx1JzOufQeZ/SGRGVkkX
-         AkwL7o7IUXB84i3Vrp+2dYvTEB2raGyt1bPfIePkPzimyVl0QF0nykjXoFPdK/iGyF
-         xmS+0hcVEEqQ/mzOQIEuWBo+aNi0OdLZoD2sU5j7TMMHl0xiWsv3YDVAgdm/lv4bBl
-         2hkD0FnZL1h9SA7ETWRkHuT5vigtQxRgpaiySgxZcycuzc9OCObp4SvRjW6CqNYxGL
-         A85Yr6YutIEXIGmgBh1OeDzgtzNYHzp8kT1wAHqE0jDNsJNShVauqRfHNLAzt5GYDW
-         hhMvyD5bq6lZw==
-In-Reply-To: <20230125-fs-acl-remove-generic-xattr-handlers-v3-0-f760cc58967d@kernel.org>
+Return-path: <linux-fsdevel-owner@vger.kernel.org>
 List-ID: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: Christian Brauner <brauner@kernel.org>
-Cc: linux-fsdevel@vger.kernel.org, hch@lst.de, linux-unionfs@vger.kernel.org, reiserfs-devel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net, linux-mtd@lists.infradead.org, viro@zeniv.linux.org.uk, linux-ext4@vger.kernel.org, linux-erofs@lists.ozlabs.org, sforshee@kernel.org
+Content-Transfer-Encoding: 7bit
+To: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, reiserfs-devel@vger.kernel.org, syzkaller-bugs@googlegroups.com
 
-Hello:
+Hello reiserfs maintainers/developers,
 
-This patch was applied to jaegeuk/f2fs.git (dev)
-by Christian Brauner (Microsoft) <brauner@kernel.org>:
+This is a 31-day syzbot report for the reiserfs subsystem.
+All related reports/information can be found at:
+https://syzkaller.appspot.com/upstream/s/reiserfs
 
-On Wed, 01 Feb 2023 14:14:51 +0100 you wrote:
-> Hey everyone,
-> 
-> After we finished the introduction of the new posix acl api last cycle
-> we still left the generic POSIX ACL xattr handlers around in the
-> filesystems xattr handlers for two reasons:
-> 
-> (1) Because a few filesystems rely on the ->list() method of the generic
->     POSIX ACL xattr handlers in their ->listxattr() inode operation.
-> (2) POSIX ACLs are only available if IOP_XATTR is raised. The IOP_XATTR
->     flag is raised in inode_init_always() based on whether the
->     sb->s_xattr pointer is non-NULL. IOW, the registered xattr handlers
->     of the filesystem are used to raise IOP_XATTR.
->     If we were to remove the generic POSIX ACL xattr handlers from all
->     filesystems we would risk regressing filesystems that only implement
->     POSIX ACL support and no other xattrs (nfs3 comes to mind).
-> 
-> [...]
+During the period, 3 new issues were detected and 0 were fixed.
+In total, 72 issues are still open and 15 have been fixed so far.
 
-Here is the summary with links:
-  - [f2fs-dev,v3,05/10] fs: simplify ->listxattr() implementation
-    https://git.kernel.org/jaegeuk/f2fs/c/a5488f29835c
+Some of the still happening issues:
 
-You are awesome, thank you!
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
+Ref  Crashes Repro Title
+<1>  1439    Yes   kernel BUG in do_journal_begin_r
+                   https://syzkaller.appspot.com/bug?extid=2da5e132dd0268a9c0e4
+<2>  1235    No    KASAN: slab-out-of-bounds Read in search_by_key (2)
+                   https://syzkaller.appspot.com/bug?extid=b3b14fb9f8a14c5d0267
+<3>  1191    Yes   kernel BUG at fs/reiserfs/journal.c:LINE!
+                   https://syzkaller.appspot.com/bug?extid=6820505ae5978f4f8f2f
+<4>  1172    Yes   WARNING in reiserfs_lookup
+                   https://syzkaller.appspot.com/bug?extid=392ac209604cc18792e5
+<5>  439     Yes   possible deadlock in mnt_want_write_file
+                   https://syzkaller.appspot.com/bug?extid=1047e42179f502f2b0a2
+<6>  210     Yes   possible deadlock in reiserfs_ioctl
+                   https://syzkaller.appspot.com/bug?extid=79c303ad05f4041e0dad
+<7>  152     Yes   KASAN: out-of-bounds Read in leaf_paste_entries (2)
+                   https://syzkaller.appspot.com/bug?extid=38b79774b6c990637f95
+<8>  124     Yes   WARNING in reiserfs_readdir_inode
+                   https://syzkaller.appspot.com/bug?extid=798ffe5fe3e88235db59
+<9>  96      No    KASAN: slab-out-of-bounds Read in reiserfs_xattr_get
+                   https://syzkaller.appspot.com/bug?extid=72ba979b6681c3369db4
+<10> 88      Yes   WARNING in journal_end
+                   https://syzkaller.appspot.com/bug?extid=d43f346675e449548021
 
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
+To disable reminders for individual bugs, reply with the following command:
+#syz set <Ref> no-reminders
+
+To change bug's subsystems, reply with:
+#syz set <Ref> subsystems: new-subsystem
+
+You may send multiple commands in a single email message.
