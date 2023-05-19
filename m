@@ -1,36 +1,34 @@
-From: Jiapeng Chong <jiapeng.chong@linux.alibaba.com>
-Subject: [PATCH] fs/reiserfs/xattr.c: Remove duplicate include
-Date: Thu, 18 May 2023 16:30:11 +0800
-Message-ID: <20230518083011.30694-1-jiapeng.chong@linux.alibaba.com>
+From: syzbot <syzbot+5a195884ee3ad761db4e@syzkaller.appspotmail.com>
+Subject: Re: [syzbot] [reiserfs?] [overlayfs?] WARNING: locking bug in take_dentry_name_snapshot
+Date: Fri, 19 May 2023 13:56:23 -0700
+Message-ID: <00000000000058b12b05fc122703@google.com>
+References: <0000000000001b987605f47b72d3@google.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Return-path: <reiserfs-devel-owner@vger.kernel.org>
+Return-path: <linux-unionfs-owner@vger.kernel.org>
+In-Reply-To: <0000000000001b987605f47b72d3@google.com>
 List-ID: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: reiserfs-devel@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org, Jiapeng Chong <jiapeng.chong@linux.alibaba.com>, Abaci Robot <abaci@linux.alibaba.com>
+Content-Transfer-Encoding: 7bit
+To: casey@schaufler-ca.com, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, linux-unionfs@vger.kernel.org, miklos@szeredi.hu, paul@paul-moore.com, reiserfs-devel@vger.kernel.org, roberto.sassu@huawei.com, syzkaller-bugs@googlegroups.com, zohar@linux.ibm.com
 
-./fs/reiserfs/xattr.c: linux/xattr.h is included more than once.
+syzbot suspects this issue was fixed by commit:
 
-Reported-by: Abaci Robot <abaci@linux.alibaba.com>
-Link: https://bugzilla.openanolis.cn/show_bug.cgi?id=5236
-Signed-off-by: Jiapeng Chong <jiapeng.chong@linux.alibaba.com>
----
- fs/reiserfs/xattr.c | 1 -
- 1 file changed, 1 deletion(-)
+commit 52ca4b6435a493e47aaa98e7345e19e1e8710b13
+Author: Roberto Sassu <roberto.sassu@huawei.com>
+Date:   Tue Mar 14 08:17:15 2023 +0000
 
-diff --git a/fs/reiserfs/xattr.c b/fs/reiserfs/xattr.c
-index 651027967159..ed1984775a4f 100644
---- a/fs/reiserfs/xattr.c
-+++ b/fs/reiserfs/xattr.c
-@@ -43,7 +43,6 @@
- #include <linux/fs.h>
- #include <linux/file.h>
- #include <linux/pagemap.h>
--#include <linux/xattr.h>
- #include "xattr.h"
- #include "acl.h"
- #include <linux/uaccess.h>
--- 
-2.20.1.7.g153144c
+    reiserfs: Switch to security_inode_init_security()
 
+bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=121dea5a280000
+start commit:   4bdec23f971b Merge tag 'hwmon-for-v6.3-rc4' of git://git.k..
+git tree:       upstream
+kernel config:  https://syzkaller.appspot.com/x/.config?x=ea09b0836073ee4
+dashboard link: https://syzkaller.appspot.com/bug?extid=5a195884ee3ad761db4e
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1277fb1ec80000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=12543651c80000
+
+If the result looks correct, please mark the issue as fixed by replying with:
+
+#syz fix: reiserfs: Switch to security_inode_init_security()
+
+For information about bisection process see: https://goo.gl/tpsmEJ#bisection
