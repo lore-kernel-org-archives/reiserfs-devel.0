@@ -1,94 +1,124 @@
-From: syzbot <syzbot+b8d61a58b7c7ebd2c8e0@syzkaller.appspotmail.com>
-Subject: [syzbot] [block?] [reiserfs?] KASAN: user-memory-access Write in zram_slot_lock
-Date: Mon, 22 May 2023 06:47:52 -0700
-Message-ID: <00000000000066a94205fc488445@google.com>
+From: syzbot <syzbot+0a684c061589dcc30e51@syzkaller.appspotmail.com>
+Subject: [syzbot] [reiserfs?] INFO: task hung in flush_old_commits
+Date: Mon, 22 May 2023 20:33:58 -0700
+Message-ID: <000000000000be039005fc540ed7@google.com>
 Mime-Version: 1.0
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
 List-ID: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: axboe@kernel.dk, linux-block@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, minchan@kernel.org, reiserfs-devel@vger.kernel.org, senozhatsky@chromium.org, syzkaller-bugs@googlegroups.com
+To: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, reiserfs-devel@vger.kernel.org, syzkaller-bugs@googlegroups.com
 
 Hello,
 
 syzbot found the following issue on:
 
-HEAD commit:    44c026a73be8 Linux 6.4-rc3
-git tree:       upstream
-console+strace: https://syzkaller.appspot.com/x/log.txt?x=10741fe9280000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=7d8067683055e3f5
-dashboard link: https://syzkaller.appspot.com/bug?extid=b8d61a58b7c7ebd2c8e0
+HEAD commit:    f1fcbaa18b28 Linux 6.4-rc2
+git tree:       git://git.kernel.org/pub/scm/linux/kernel/git/arm64/linux.git for-kernelci
+console output: https://syzkaller.appspot.com/x/log.txt?x=16a6382e280000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=3dc1cdd68141cdc3
+dashboard link: https://syzkaller.appspot.com/bug?extid=0a684c061589dcc30e51
 compiler:       Debian clang version 15.0.7, GNU ld (GNU Binutils for Debian) 2.35.2
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1223f7d9280000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=1245326a280000
+userspace arch: arm64
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=163079f9280000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=1239f37e280000
 
 Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/51c970de1750/disk-44c026a7.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/799aacdbebeb/vmlinux-44c026a7.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/0afc45e7f608/bzImage-44c026a7.xz
-mounted in repro: https://storage.googleapis.com/syzbot-assets/fd3a214bd6ba/mount_0.gz
+disk image: https://storage.googleapis.com/syzbot-assets/f9e1748cceea/disk-f1fcbaa1.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/6dea99343621/vmlinux-f1fcbaa1.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/f5a93f86012d/Image-f1fcbaa1.gz.xz
+mounted in repro: https://storage.googleapis.com/syzbot-assets/f87acf2fade6/mount_1.gz
 
 IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+b8d61a58b7c7ebd2c8e0@syzkaller.appspotmail.com
+Reported-by: syzbot+0a684c061589dcc30e51@syzkaller.appspotmail.com
 
-loop0: detected capacity change from 0 to 8192
-REISERFS warning:  read_super_block: reiserfs filesystem is deprecated and scheduled to be removed from the kernel in 2025
-REISERFS (device loop0): found reiserfs format "3.5" with non-standard journal
-REISERFS (device loop0): using ordered data mode
-reiserfs: using flush barriers
-==================================================================
-BUG: KASAN: user-memory-access in instrument_atomic_read_write include/linux/instrumented.h:96 [inline]
-BUG: KASAN: user-memory-access in test_and_set_bit_lock include/asm-generic/bitops/instrumented-lock.h:57 [inline]
-BUG: KASAN: user-memory-access in bit_spin_lock include/linux/bit_spinlock.h:27 [inline]
-BUG: KASAN: user-memory-access in zram_slot_lock+0x57/0x150 drivers/block/zram/zram_drv.c:67
-Write of size 8 at addr 0000000000004128 by task syz-executor326/4993
+INFO: task kworker/0:2:1599 blocked for more than 143 seconds.
+      Not tainted 6.4.0-rc2-syzkaller-gf1fcbaa18b28 #0
+"echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
+task:kworker/0:2     state:D stack:0     pid:1599  ppid:2      flags:0x00000008
+Workqueue: events_long flush_old_commits
+Call trace:
+ __switch_to+0x320/0x754 arch/arm64/kernel/process.c:556
+ context_switch kernel/sched/core.c:5343 [inline]
+ __schedule+0x1368/0x23b8 kernel/sched/core.c:6669
+ schedule+0xc4/0x170 kernel/sched/core.c:6745
+ schedule_preempt_disabled+0x18/0x2c kernel/sched/core.c:6804
+ __mutex_lock_common+0xbd8/0x21a0 kernel/locking/mutex.c:679
+ __mutex_lock kernel/locking/mutex.c:747 [inline]
+ mutex_lock_nested+0x2c/0x38 kernel/locking/mutex.c:799
+ reiserfs_write_lock+0x7c/0xe8 fs/reiserfs/lock.c:27
+ reiserfs_sync_fs fs/reiserfs/super.c:76 [inline]
+ flush_old_commits+0x1b0/0x2b8 fs/reiserfs/super.c:111
+ process_one_work+0x788/0x12d4 kernel/workqueue.c:2405
+ worker_thread+0x8e0/0xfe8 kernel/workqueue.c:2552
+ kthread+0x288/0x310 kernel/kthread.c:379
+ ret_from_fork+0x10/0x20 arch/arm64/kernel/entry.S:870
 
-CPU: 1 PID: 4993 Comm: syz-executor326 Not tainted 6.4.0-rc3-syzkaller #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 04/28/2023
-Call Trace:
- <TASK>
- __dump_stack lib/dump_stack.c:88 [inline]
- dump_stack_lvl+0x1e7/0x2d0 lib/dump_stack.c:106
- print_report+0xe6/0x540 mm/kasan/report.c:465
- kasan_report+0x176/0x1b0 mm/kasan/report.c:572
- kasan_check_range+0x283/0x290 mm/kasan/generic.c:187
- instrument_atomic_read_write include/linux/instrumented.h:96 [inline]
- test_and_set_bit_lock include/asm-generic/bitops/instrumented-lock.h:57 [inline]
- bit_spin_lock include/linux/bit_spinlock.h:27 [inline]
- zram_slot_lock+0x57/0x150 drivers/block/zram/zram_drv.c:67
- zram_read_page drivers/block/zram/zram_drv.c:1362 [inline]
- zram_bvec_read drivers/block/zram/zram_drv.c:1409 [inline]
- zram_bio_read drivers/block/zram/zram_drv.c:1883 [inline]
- zram_submit_bio+0x18bc/0x26d0 drivers/block/zram/zram_drv.c:1933
- __submit_bio+0x205/0x2e0 block/blk-core.c:598
- __submit_bio_noacct block/blk-core.c:641 [inline]
- submit_bio_noacct_nocheck+0x467/0xc60 block/blk-core.c:704
- submit_bh fs/buffer.c:2782 [inline]
- __bread_slow fs/buffer.c:1226 [inline]
- __bread_gfp+0x1ec/0x380 fs/buffer.c:1419
- __bread include/linux/buffer_head.h:471 [inline]
- journal_init+0xf61/0x24b0 fs/reiserfs/journal.c:2788
- reiserfs_fill_super+0x1039/0x2620 fs/reiserfs/super.c:2022
- mount_bdev+0x274/0x3a0 fs/super.c:1380
- legacy_get_tree+0xef/0x190 fs/fs_context.c:610
- vfs_get_tree+0x8c/0x270 fs/super.c:1510
- do_new_mount+0x28f/0xae0 fs/namespace.c:3039
- do_mount fs/namespace.c:3382 [inline]
- __do_sys_mount fs/namespace.c:3591 [inline]
- __se_sys_mount+0x2d9/0x3c0 fs/namespace.c:3568
- do_syscall_x64 arch/x86/entry/common.c:50 [inline]
- do_syscall_64+0x41/0xc0 arch/x86/entry/common.c:80
- entry_SYSCALL_64_after_hwframe+0x63/0xcd
-RIP: 0033:0x7f185eef5b0a
-Code: 83 c4 08 5b 5d c3 66 2e 0f 1f 84 00 00 00 00 00 c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 44 00 00 49 89 ca b8 a5 00 00 00 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 c0 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007ffe122853a8 EFLAGS: 00000286 ORIG_RAX: 00000000000000a5
-RAX: ffffffffffffffda RBX: 0000000000000003 RCX: 00007f185eef5b0a
-RDX: 0000000020000080 RSI: 0000000020000140 RDI: 00007ffe122853b0
-RBP: 00007ffe122853b0 R08: 00007ffe122853f0 R09: 0000000000001121
-R10: 000000000120c083 R11: 0000000000000286 R12: 0000000000000004
-R13: 00005555570882c0 R14: 00007ffe122853f0 R15: 0000000000000000
- </TASK>
-==================================================================
+Showing all locks held in the system:
+1 lock held by rcu_tasks_kthre/13:
+ #0: 
+ffff8000160810d0
+ (
+rcu_tasks.tasks_gp_mutex
+){+.+.}-{3:3}
+, at: rcu_tasks_one_gp+0x44/0xcf4 kernel/rcu/tasks.h:518
+1 lock held by rcu_tasks_trace/14:
+ #0: 
+ffff800016081490
+ (
+rcu_tasks_trace.tasks_gp_mutex
+){+.+.}-{3:3}
+, at: rcu_tasks_one_gp+0x44/0xcf4 kernel/rcu/tasks.h:518
+1 lock held by khungtaskd/28:
+ #0: 
+ffff800016080f00
+ (
+rcu_read_lock
+){....}-{1:2}
+, at: rcu_lock_acquire+0xc/0x44 include/linux/rcupdate.h:326
+4 locks held by kworker/0:2/1599:
+ #0: 
+ffff0000c0021538
+ (
+(wq_completion)events_long
+){+.+.}-{0:0}
+, at: process_one_work+0x664/0x12d4 kernel/workqueue.c:2378
+ #1: 
+ffff800022d77c20
+ (
+(work_completion)(&(&sbi->old_work)->work)
+){+.+.}-{0:0}
+, at: process_one_work+0x6a8/0x12d4 kernel/workqueue.c:2380
+ #2: 
+ffff0000df14e0e0
+ (
+&type->s_umount_key
+#40
+){++++}-{3:3}
+, at: flush_old_commits+0xcc/0x2b8 fs/reiserfs/super.c:97
+ #3: 
+ffff0000c5d07090
+ (
+&sbi->lock
+){+.+.}-{3:3}
+, at: reiserfs_write_lock+0x7c/0xe8 fs/reiserfs/lock.c:27
+2 locks held by getty/5732:
+ #0: 
+ffff0000d4c6f098
+ (
+&tty->ldisc_sem
+){++++}-{0:0}
+, at: ldsem_down_read+0x3c/0x4c drivers/tty/tty_ldsem.c:340
+ #1: 
+ffff80001ae302f0
+ (
+&ldata->atomic_read_lock
+){+.+.}-{3:3}
+, at: n_tty_read+0x414/0x1210 drivers/tty/n_tty.c:2176
+7 locks held by syz-executor247/6003:
+
+=============================================
+
 
 
 ---
