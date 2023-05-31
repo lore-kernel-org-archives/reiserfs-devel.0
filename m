@@ -1,191 +1,143 @@
-From: syzbot <syzbot+c98692bac73aedb459c3@syzkaller.appspotmail.com>
-Subject: [syzbot] [reiserfs?] possible deadlock in vfs_setxattr (2)
-Date: Tue, 30 May 2023 10:20:56 -0700
-Message-ID: <0000000000001bd66b05fcec6d92@google.com>
+From: Roberto Sassu <roberto.sassu@huaweicloud.com>
+Subject: Re: [syzbot] [reiserfs?] possible deadlock in open_xa_dir
+Date: Wed, 31 May 2023 11:49:30 +0200
+Message-ID: <1020d006-c698-aacc-bcc3-92e5b237ef91@huaweicloud.com>
+References: <0000000000007bedb605f119ed9f@google.com>
+ <00000000000000964605faf87416@google.com>
+ <CAHC9VhTZ=Esk+JxgAjch2J44WuLixe-SZMXW2iGHpLdrdMKQ=g@mail.gmail.com>
 Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
+Content-Language: en-US
+In-Reply-To: <CAHC9VhTZ=Esk+JxgAjch2J44WuLixe-SZMXW2iGHpLdrdMKQ=g@mail.gmail.com>
 List-ID: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, reiserfs-devel@vger.kernel.org, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="windows-1252"; format="flowed"
+To: Paul Moore <paul@paul-moore.com>, syzbot <syzbot+8fb64a61fdd96b50f3b8@syzkaller.appspotmail.com>
+Cc: hdanton@sina.com, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, reiserfs-devel@vger.kernel.org, roberto.sassu@huawei.com, syzkaller-bugs@googlegroups.com, peterz@infradead.org, mingo@redhat.com, will@kernel.org
 
-Hello,
+On 5/5/2023 11:36 PM, Paul Moore wrote:
+> On Fri, May 5, 2023 at 4:51=E2=80=AFPM syzbot
+> <syzbot+8fb64a61fdd96b50f3b8@syzkaller.appspotmail.com> wrote:
+>>
+>> syzbot has bisected this issue to:
+>>
+>> commit d82dcd9e21b77d338dc4875f3d4111f0db314a7c
+>> Author: Roberto Sassu <roberto.sassu@huawei.com>
+>> Date:   Fri Mar 31 12:32:18 2023 +0000
+>>
+>>      reiserfs: Add security prefix to xattr name in reiserfs_security_wr=
+ite()
+>>
+>> bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=3D144031822=
+80000
+>> start commit:   3c4aa4434377 Merge tag 'ceph-for-6.4-rc1' of https://git=
+hu..
+>> git tree:       upstream
+>> final oops:     https://syzkaller.appspot.com/x/report.txt?x=3D164031822=
+80000
+>> console output: https://syzkaller.appspot.com/x/log.txt?x=3D124031822800=
+00
+>> kernel config:  https://syzkaller.appspot.com/x/.config?x=3D73a06f6ef2d5=
+b492
+>> dashboard link: https://syzkaller.appspot.com/bug?extid=3D8fb64a61fdd96b=
+50f3b8
+>> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=3D1244241428=
+0000
+>> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=3D176a73182800=
+00
+>>
+>> Reported-by: syzbot+8fb64a61fdd96b50f3b8@syzkaller.appspotmail.com
+>> Fixes: d82dcd9e21b7 ("reiserfs: Add security prefix to xattr name in rei=
+serfs_security_write()")
+>>
+>> For information about bisection process see: https://goo.gl/tpsmEJ#bisec=
+tion
+>=20
+> I don't think Roberto's patch identified above is the actual root
+> cause of this problem as reiserfs_xattr_set_handle() is called in
+> reiserfs_security_write() both before and after the patch.  However,
+> due to some bad logic in reiserfs_security_write() which Roberto
+> corrected, I'm thinking that it is possible this code is being
+> exercised for the first time and syzbot is starting to trigger a
+> locking issue in the reiserfs code ... ?
 
-syzbot found the following issue on:
++ Jan, Jeff (which basically restructured the lock)
 
-HEAD commit:    eb0f1697d729 Merge branch 'for-next/core', remote-tracking..
-git tree:       git://git.kernel.org/pub/scm/linux/kernel/git/arm64/linux.git for-kernelci
-console output: https://syzkaller.appspot.com/x/log.txt?x=1545e64d280000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=8860074b9a9d6c45
-dashboard link: https://syzkaller.appspot.com/bug?extid=c98692bac73aedb459c3
-compiler:       Debian clang version 15.0.7, GNU ld (GNU Binutils for Debian) 2.35.2
-userspace arch: arm64
++ Petr, Ingo, Will
 
-Unfortunately, I don't have any reproducer for this issue yet.
+I involve the lockdep experts, to get a bit of help on this.
 
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/034232da7cff/disk-eb0f1697.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/b11411bec33e/vmlinux-eb0f1697.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/a53c52e170dd/Image-eb0f1697.gz.xz
+First of all, the lockdep warning is trivial to reproduce:
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+c98692bac73aedb459c3@syzkaller.appspotmail.com
+# dd if=3D/dev/zero of=3Dreiserfs.img bs=3D1M count=3D100
+# losetup -f --show reiserfs.img
+/dev/loop0
+# mkfs.reiserfs /dev/loop0
+# mount /dev/loop0 /mnt/
+# touch file0
 
-reiserfs: enabling write barrier flush mode
-REISERFS (device loop5): Created .reiserfs_priv - reserved for xattr storage.
-======================================================
-WARNING: possible circular locking dependency detected
-6.4.0-rc3-syzkaller-geb0f1697d729 #0 Not tainted
-------------------------------------------------------
-syz-executor.5/11246 is trying to acquire lock:
-ffff0000e040a400 (&type->i_mutex_dir_key#10){+.+.}-{3:3}, at: inode_lock include/linux/fs.h:775 [inline]
-ffff0000e040a400 (&type->i_mutex_dir_key#10){+.+.}-{3:3}, at: vfs_setxattr+0x17c/0x344 fs/xattr.c:321
+In the testing system, Smack is the major LSM.
 
-but task is already holding lock:
-ffff000113b8a460 (sb_writers#12){.+.+}-{0:0}, at: mnt_want_write_file+0x64/0x1e8 fs/namespace.c:438
+Ok, so the warning here is clear:
 
-which lock already depends on the new lock.
+https://syzkaller.appspot.com/x/log.txt?x=3D12403182280000
 
+However, I was looking if that can really happen. From this:
 
-the existing dependency chain (in reverse order) is:
+[   77.746561][ T5418] -> #1 (&sbi->lock){+.+.}-{3:3}:
+[   77.753772][ T5418]        lock_acquire+0x23e/0x630
+[   77.758792][ T5418]        __mutex_lock_common+0x1d8/0x2530
+[   77.764504][ T5418]        mutex_lock_nested+0x1b/0x20
+[   77.769868][ T5418]        reiserfs_write_lock+0x70/0xc0
+[   77.775321][ T5418]        reiserfs_mkdir+0x321/0x870
 
--> #2 (sb_writers#12){.+.+}-{0:0}:
-       percpu_down_read include/linux/percpu-rwsem.h:51 [inline]
-       __sb_start_write include/linux/fs.h:1494 [inline]
-       sb_start_write+0x60/0x2ec include/linux/fs.h:1569
-       mnt_want_write_file+0x64/0x1e8 fs/namespace.c:438
-       reiserfs_ioctl+0x184/0x454 fs/reiserfs/ioctl.c:103
-       vfs_ioctl fs/ioctl.c:51 [inline]
-       __do_sys_ioctl fs/ioctl.c:870 [inline]
-       __se_sys_ioctl fs/ioctl.c:856 [inline]
-       __arm64_sys_ioctl+0x14c/0x1c8 fs/ioctl.c:856
-       __invoke_syscall arch/arm64/kernel/syscall.c:38 [inline]
-       invoke_syscall+0x98/0x2c0 arch/arm64/kernel/syscall.c:52
-       el0_svc_common+0x138/0x258 arch/arm64/kernel/syscall.c:142
-       do_el0_svc+0x64/0x198 arch/arm64/kernel/syscall.c:193
-       el0_svc+0x4c/0x15c arch/arm64/kernel/entry-common.c:637
-       el0t_64_sync_handler+0x84/0xf0 arch/arm64/kernel/entry-common.c:655
-       el0t_64_sync+0x190/0x194 arch/arm64/kernel/entry.S:591
+I see that the lock is taken in reiserfs_write_lock(), while lockdep says:
 
--> #1 (&sbi->lock){+.+.}-{3:3}:
-       __mutex_lock_common+0x190/0x21a0 kernel/locking/mutex.c:603
-       __mutex_lock kernel/locking/mutex.c:747 [inline]
-       mutex_lock_nested+0x2c/0x38 kernel/locking/mutex.c:799
-       reiserfs_write_lock+0x7c/0xe8 fs/reiserfs/lock.c:27
-       reiserfs_lookup+0x128/0x45c fs/reiserfs/namei.c:364
-       __lookup_slow+0x250/0x374 fs/namei.c:1690
-       lookup_one_len+0x178/0x28c fs/namei.c:2742
-       reiserfs_lookup_privroot+0x8c/0x184 fs/reiserfs/xattr.c:976
-       reiserfs_fill_super+0x15b4/0x2028 fs/reiserfs/super.c:2192
-       mount_bdev+0x26c/0x368 fs/super.c:1380
-       get_super_block+0x44/0x58 fs/reiserfs/super.c:2601
-       legacy_get_tree+0xd4/0x16c fs/fs_context.c:610
-       vfs_get_tree+0x90/0x274 fs/super.c:1510
-       do_new_mount+0x25c/0x8c8 fs/namespace.c:3039
-       path_mount+0x590/0xe04 fs/namespace.c:3369
-       do_mount fs/namespace.c:3382 [inline]
-       __do_sys_mount fs/namespace.c:3591 [inline]
-       __se_sys_mount fs/namespace.c:3568 [inline]
-       __arm64_sys_mount+0x45c/0x594 fs/namespace.c:3568
-       __invoke_syscall arch/arm64/kernel/syscall.c:38 [inline]
-       invoke_syscall+0x98/0x2c0 arch/arm64/kernel/syscall.c:52
-       el0_svc_common+0x138/0x258 arch/arm64/kernel/syscall.c:142
-       do_el0_svc+0x64/0x198 arch/arm64/kernel/syscall.c:193
-       el0_svc+0x4c/0x15c arch/arm64/kernel/entry-common.c:637
-       el0t_64_sync_handler+0x84/0xf0 arch/arm64/kernel/entry-common.c:655
-       el0t_64_sync+0x190/0x194 arch/arm64/kernel/entry.S:591
+[   77.710227][ T5418] but task is already holding lock:
+[   77.717587][ T5418] ffff88807568d090 (&sbi->lock){+.+.}-{3:3}, at:=20
+reiserfs_write_lock_nested+0x4a/0xb0
 
--> #0 (&type->i_mutex_dir_key#10){+.+.}-{3:3}:
-       check_prev_add kernel/locking/lockdep.c:3108 [inline]
-       check_prevs_add kernel/locking/lockdep.c:3227 [inline]
-       validate_chain kernel/locking/lockdep.c:3842 [inline]
-       __lock_acquire+0x3310/0x75f0 kernel/locking/lockdep.c:5074
-       lock_acquire+0x23c/0x71c kernel/locking/lockdep.c:5691
-       down_write+0x50/0xc0 kernel/locking/rwsem.c:1573
-       inode_lock include/linux/fs.h:775 [inline]
-       vfs_setxattr+0x17c/0x344 fs/xattr.c:321
-       do_setxattr fs/xattr.c:630 [inline]
-       setxattr+0x208/0x29c fs/xattr.c:653
-       __do_sys_fsetxattr fs/xattr.c:709 [inline]
-       __se_sys_fsetxattr fs/xattr.c:698 [inline]
-       __arm64_sys_fsetxattr+0x1a8/0x224 fs/xattr.c:698
-       __invoke_syscall arch/arm64/kernel/syscall.c:38 [inline]
-       invoke_syscall+0x98/0x2c0 arch/arm64/kernel/syscall.c:52
-       el0_svc_common+0x138/0x258 arch/arm64/kernel/syscall.c:142
-       do_el0_svc+0x64/0x198 arch/arm64/kernel/syscall.c:193
-       el0_svc+0x4c/0x15c arch/arm64/kernel/entry-common.c:637
-       el0t_64_sync_handler+0x84/0xf0 arch/arm64/kernel/entry-common.c:655
-       el0t_64_sync+0x190/0x194 arch/arm64/kernel/entry.S:591
+which is in a different place, I believe here:
 
-other info that might help us debug this:
+int reiserfs_paste_into_item(struct reiserfs_transaction_handle *th,
+                              /* Path to the pasted item. */
+[...]
 
-Chain exists of:
-  &type->i_mutex_dir_key#10 --> &sbi->lock --> sb_writers#12
+         depth =3D reiserfs_write_unlock_nested(sb);
+         dquot_free_space_nodirty(inode, pasted_size);
+         reiserfs_write_lock_nested(sb, depth);
+         return retval;
+}
 
- Possible unsafe locking scenario:
+This is called by reiserfs_add_entry(), which is called by=20
+reiserfs_create() (it is in the lockdep trace). After returning to=20
+reiserfs_create(), d_instantiate_new() is called.
 
-       CPU0                    CPU1
-       ----                    ----
-  rlock(sb_writers#12);
-                               lock(&sbi->lock);
-                               lock(sb_writers#12);
-  lock(&type->i_mutex_dir_key#10);
+I don't know exactly, I take the part that the lock is held. But if it=20
+is held, how d_instantiate_new() can be executed in another task?
 
- *** DEADLOCK ***
+static int reiserfs_create(struct mnt_idmap *idmap, struct inode *dir,
+                         struct dentry *dentry, umode_t mode, bool excl)
+{
 
-1 lock held by syz-executor.5/11246:
- #0: ffff000113b8a460 (sb_writers#12){.+.+}-{0:0}, at: mnt_want_write_file+0x64/0x1e8 fs/namespace.c:438
+[...]
 
-stack backtrace:
-CPU: 0 PID: 11246 Comm: syz-executor.5 Not tainted 6.4.0-rc3-syzkaller-geb0f1697d729 #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 04/28/2023
-Call trace:
- dump_backtrace+0x1b8/0x1e4 arch/arm64/kernel/stacktrace.c:233
- show_stack+0x2c/0x44 arch/arm64/kernel/stacktrace.c:240
- __dump_stack lib/dump_stack.c:88 [inline]
- dump_stack_lvl+0xd0/0x124 lib/dump_stack.c:106
- dump_stack+0x1c/0x28 lib/dump_stack.c:113
- print_circular_bug+0x150/0x1b8 kernel/locking/lockdep.c:2066
- check_noncircular+0x2cc/0x378 kernel/locking/lockdep.c:2188
- check_prev_add kernel/locking/lockdep.c:3108 [inline]
- check_prevs_add kernel/locking/lockdep.c:3227 [inline]
- validate_chain kernel/locking/lockdep.c:3842 [inline]
- __lock_acquire+0x3310/0x75f0 kernel/locking/lockdep.c:5074
- lock_acquire+0x23c/0x71c kernel/locking/lockdep.c:5691
- down_write+0x50/0xc0 kernel/locking/rwsem.c:1573
- inode_lock include/linux/fs.h:775 [inline]
- vfs_setxattr+0x17c/0x344 fs/xattr.c:321
- do_setxattr fs/xattr.c:630 [inline]
- setxattr+0x208/0x29c fs/xattr.c:653
- __do_sys_fsetxattr fs/xattr.c:709 [inline]
- __se_sys_fsetxattr fs/xattr.c:698 [inline]
- __arm64_sys_fsetxattr+0x1a8/0x224 fs/xattr.c:698
- __invoke_syscall arch/arm64/kernel/syscall.c:38 [inline]
- invoke_syscall+0x98/0x2c0 arch/arm64/kernel/syscall.c:52
- el0_svc_common+0x138/0x258 arch/arm64/kernel/syscall.c:142
- do_el0_svc+0x64/0x198 arch/arm64/kernel/syscall.c:193
- el0_svc+0x4c/0x15c arch/arm64/kernel/entry-common.c:637
- el0t_64_sync_handler+0x84/0xf0 arch/arm64/kernel/entry-common.c:655
- el0t_64_sync+0x190/0x194 arch/arm64/kernel/entry.S:591
+         reiserfs_write_lock(dir->i_sb);
 
+         retval =3D journal_begin(&th, dir->i_sb, jbegin_count);
 
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
+[...]
 
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+         d_instantiate_new(dentry, inode);
+         retval =3D journal_end(&th);
 
-If the bug is already fixed, let syzbot know by replying with:
-#syz fix: exact-commit-title
+out_failed:
+         reiserfs_write_unlock(dir->i_sb);
 
-If you want to change bug's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
+If the lock is held, the scenario lockdep describes cannot happen. Any=20
+thoughts?
 
-If the bug is a duplicate of another bug, reply with:
-#syz dup: exact-subject-of-another-report
+Thanks
 
-If you want to undo deduplication, reply with:
-#syz undup
+Roberto
+
