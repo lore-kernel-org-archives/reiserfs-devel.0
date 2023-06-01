@@ -1,147 +1,105 @@
 From: Roberto Sassu <roberto.sassu@huaweicloud.com>
 Subject: Re: [syzbot] [reiserfs?] possible deadlock in open_xa_dir
-Date: Wed, 31 May 2023 11:52:06 +0200
-Message-ID: <38048f0a-7706-12c4-dc85-4d2fa13df015@huaweicloud.com>
-References: <0000000000007bedb605f119ed9f@google.com>
- <00000000000000964605faf87416@google.com>
- <CAHC9VhTZ=Esk+JxgAjch2J44WuLixe-SZMXW2iGHpLdrdMKQ=g@mail.gmail.com>
- <1020d006-c698-aacc-bcc3-92e5b237ef91@huaweicloud.com>
+Date: Thu, 1 Jun 2023 22:30:51 +0200
+Message-ID: <ffde7908-be73-cc56-2646-72f4f94cb51b@huaweicloud.com>
+References: <00000000000000964605faf87416@google.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Return-path: <linux-fsdevel-owner@vger.kernel.org>
+Content-Type: multipart/mixed; boundary="------------9s1UkhsFMSGVUfhtFoW0w0E7"
+Return-path: <reiserfs-devel-owner@vger.kernel.org>
 Content-Language: en-US
-In-Reply-To: <1020d006-c698-aacc-bcc3-92e5b237ef91@huaweicloud.com>
+In-Reply-To: <00000000000000964605faf87416@google.com>
 List-ID: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="utf-8"; format="flowed"
-To: Paul Moore <paul@paul-moore.com>, syzbot <syzbot+8fb64a61fdd96b50f3b8@syzkaller.appspotmail.com>
-Cc: hdanton@sina.com, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, reiserfs-devel@vger.kernel.org, roberto.sassu@huawei.com, syzkaller-bugs@googlegroups.com, peterz@infradead.org, mingo@redhat.com, will@kernel.org, Jeff Mahoney <jeffm@suse.com>, Jan Kara <jack@suse.cz>
+To: syzbot <syzbot+8fb64a61fdd96b50f3b8@syzkaller.appspotmail.com>, hdanton@sina.com, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, paul@paul-moore.com, reiserfs-devel@vger.kernel.org, roberto.sassu@huawei.com, syzkaller-bugs@googlegroups.com
 
-On 5/31/2023 11:49 AM, Roberto Sassu wrote:
-> On 5/5/2023 11:36 PM, Paul Moore wrote:
->> On Fri, May 5, 2023 at 4:51 PM syzbot
->> <syzbot+8fb64a61fdd96b50f3b8@syzkaller.appspotmail.com> wrote:
->>>
->>> syzbot has bisected this issue to:
->>>
->>> commit d82dcd9e21b77d338dc4875f3d4111f0db314a7c
->>> Author: Roberto Sassu <roberto.sassu@huawei.com>
->>> Date:   Fri Mar 31 12:32:18 2023 +0000
->>>
->>>      reiserfs: Add security prefix to xattr name in 
->>> reiserfs_security_write()
->>>
->>> bisection log:  
->>> https://syzkaller.appspot.com/x/bisect.txt?x=14403182280000
->>> start commit:   3c4aa4434377 Merge tag 'ceph-for-6.4-rc1' of 
->>> https://githu..
->>> git tree:       upstream
->>> final oops:     
->>> https://syzkaller.appspot.com/x/report.txt?x=16403182280000
->>> console output: https://syzkaller.appspot.com/x/log.txt?x=12403182280000
->>> kernel config:  
->>> https://syzkaller.appspot.com/x/.config?x=73a06f6ef2d5b492
->>> dashboard link: 
->>> https://syzkaller.appspot.com/bug?extid=8fb64a61fdd96b50f3b8
->>> syz repro:      
->>> https://syzkaller.appspot.com/x/repro.syz?x=12442414280000
->>> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=176a7318280000
->>>
->>> Reported-by: syzbot+8fb64a61fdd96b50f3b8@syzkaller.appspotmail.com
->>> Fixes: d82dcd9e21b7 ("reiserfs: Add security prefix to xattr name in 
->>> reiserfs_security_write()")
->>>
->>> For information about bisection process see: 
->>> https://goo.gl/tpsmEJ#bisection
->>
->> I don't think Roberto's patch identified above is the actual root
->> cause of this problem as reiserfs_xattr_set_handle() is called in
->> reiserfs_security_write() both before and after the patch.  However,
->> due to some bad logic in reiserfs_security_write() which Roberto
->> corrected, I'm thinking that it is possible this code is being
->> exercised for the first time and syzbot is starting to trigger a
->> locking issue in the reiserfs code ... ?
-> 
-> + Jan, Jeff (which basically restructured the lock)
+This is a multi-part message in MIME format.
+--------------9s1UkhsFMSGVUfhtFoW0w0E7
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Actually adding Jan and Jeff.
+On 5/5/2023 10:51 PM, syzbot wrote:
+> syzbot has bisected this issue to:
+> 
+> commit d82dcd9e21b77d338dc4875f3d4111f0db314a7c
+> Author: Roberto Sassu <roberto.sassu@huawei.com>
+> Date:   Fri Mar 31 12:32:18 2023 +0000
+> 
+>      reiserfs: Add security prefix to xattr name in reiserfs_security_write()
+> 
+> bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=14403182280000
+> start commit:   3c4aa4434377 Merge tag 'ceph-for-6.4-rc1' of https://githu..
+> git tree:       upstream
+> final oops:     https://syzkaller.appspot.com/x/report.txt?x=16403182280000
+> console output: https://syzkaller.appspot.com/x/log.txt?x=12403182280000
+> kernel config:  https://syzkaller.appspot.com/x/.config?x=73a06f6ef2d5b492
+> dashboard link: https://syzkaller.appspot.com/bug?extid=8fb64a61fdd96b50f3b8
+> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=12442414280000
+> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=176a7318280000
+> 
+> Reported-by: syzbot+8fb64a61fdd96b50f3b8@syzkaller.appspotmail.com
+> Fixes: d82dcd9e21b7 ("reiserfs: Add security prefix to xattr name in reiserfs_security_write()")
+> 
+> For information about bisection process see: https://goo.gl/tpsmEJ#bisection
 
-Roberto
+#syz test: git://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
+--------------9s1UkhsFMSGVUfhtFoW0w0E7
+Content-Type: text/plain; charset=UTF-8;
+ name="0001-reiserfs-Move-d_instantiate_new-out-of-the-write-loc.patch"
+Content-Disposition: attachment;
+ filename*0="0001-reiserfs-Move-d_instantiate_new-out-of-the-write-loc.pa";
+ filename*1="tch"
+Content-Transfer-Encoding: base64
 
-> + Petr, Ingo, Will
-> 
-> I involve the lockdep experts, to get a bit of help on this.
-> 
-> First of all, the lockdep warning is trivial to reproduce:
-> 
-> # dd if=/dev/zero of=reiserfs.img bs=1M count=100
-> # losetup -f --show reiserfs.img
-> /dev/loop0
-> # mkfs.reiserfs /dev/loop0
-> # mount /dev/loop0 /mnt/
-> # touch file0
-> 
-> In the testing system, Smack is the major LSM.
-> 
-> Ok, so the warning here is clear:
-> 
-> https://syzkaller.appspot.com/x/log.txt?x=12403182280000
-> 
-> However, I was looking if that can really happen. From this:
-> 
-> [   77.746561][ T5418] -> #1 (&sbi->lock){+.+.}-{3:3}:
-> [   77.753772][ T5418]        lock_acquire+0x23e/0x630
-> [   77.758792][ T5418]        __mutex_lock_common+0x1d8/0x2530
-> [   77.764504][ T5418]        mutex_lock_nested+0x1b/0x20
-> [   77.769868][ T5418]        reiserfs_write_lock+0x70/0xc0
-> [   77.775321][ T5418]        reiserfs_mkdir+0x321/0x870
-> 
-> I see that the lock is taken in reiserfs_write_lock(), while lockdep says:
-> 
-> [   77.710227][ T5418] but task is already holding lock:
-> [   77.717587][ T5418] ffff88807568d090 (&sbi->lock){+.+.}-{3:3}, at: 
-> reiserfs_write_lock_nested+0x4a/0xb0
-> 
-> which is in a different place, I believe here:
-> 
-> int reiserfs_paste_into_item(struct reiserfs_transaction_handle *th,
->                               /* Path to the pasted item. */
-> [...]
-> 
->          depth = reiserfs_write_unlock_nested(sb);
->          dquot_free_space_nodirty(inode, pasted_size);
->          reiserfs_write_lock_nested(sb, depth);
->          return retval;
-> }
-> 
-> This is called by reiserfs_add_entry(), which is called by 
-> reiserfs_create() (it is in the lockdep trace). After returning to 
-> reiserfs_create(), d_instantiate_new() is called.
-> 
-> I don't know exactly, I take the part that the lock is held. But if it 
-> is held, how d_instantiate_new() can be executed in another task?
-> 
-> static int reiserfs_create(struct mnt_idmap *idmap, struct inode *dir,
->                          struct dentry *dentry, umode_t mode, bool excl)
-> {
-> 
-> [...]
-> 
->          reiserfs_write_lock(dir->i_sb);
-> 
->          retval = journal_begin(&th, dir->i_sb, jbegin_count);
-> 
-> [...]
-> 
->          d_instantiate_new(dentry, inode);
->          retval = journal_end(&th);
-> 
-> out_failed:
->          reiserfs_write_unlock(dir->i_sb);
-> 
-> If the lock is held, the scenario lockdep describes cannot happen. Any 
-> thoughts?
-> 
-> Thanks
-> 
-> Roberto
+RnJvbSBjZjU0NDVhZmMzNTFiYmM1NWEwMDgwZjFiYzQwOGZmNDk2YWViODc5IE1vbiBTZXAg
+MTcgMDA6MDA6MDAgMjAwMQpGcm9tOiBSb2JlcnRvIFNhc3N1IDxyb2JlcnRvLnNhc3N1QGh1
+YXdlaS5jb20+CkRhdGU6IFRodSwgMSBKdW4gMjAyMyAyMDozNjozNyArMDIwMApTdWJqZWN0
+OiBbUkZDXVtQQVRDSF0gcmVpc2VyZnM6IE1vdmUgZF9pbnN0YW50aWF0ZV9uZXcoKSBvdXQg
+b2YgdGhlIHdyaXRlIGxvY2sKCkNvbW1pdCA0YzA1MTQxZGY1N2YgKCJyZWlzZXJmczogbG9j
+a2luZywgcHVzaCB3cml0ZSBsb2NrIG91dCBvZiB4YXR0cgpjb2RlIikgbW92ZWQgeGF0dHIg
+b3BlcmF0aW9ucyBvdXRzaWRlIHRoZSB3cml0ZSBsb2NrLiBUaGUgcHJvYmxlbSBpcyB0aGF0
+Cm5vdCBhbGwgeGF0dHIgb3BlcmF0aW9ucyBhcmUgb3V0c2lkZSB0aGF0IGxvY2suICBGb3Ig
+ZXhhbXBsZSwgdGhlIHdyaXRlCmxvY2sgaXMgbm90IHJlbGVhc2VkIHdoZW4gZF9pbnN0YW50
+aWF0ZV9uZXcoKSBpcyBjYWxsZWQuIEF0IHRoYXQgdGltZSwKYWN0aXZlIExTTXMgbGlrZWx5
+IGZldGNoIHRoZSBjb250ZW50IGZyb20gdGhlaXIgeGF0dHJzLgoKTWl4aW5nIHRoZSB0d28g
+Y2FzZXMgKHhhdHRyIG9wZXJhdGlvbnMgd2l0aG91dCBhbmQgd2l0aCBhIHdyaXRlIGxvY2sp
+CmNvdWxkIGNhdXNlIGEgZGVhZGxvY2suIEZvciBleGFtcGxlLCBhIGRlYWRsb2NrIGNvdWxk
+IGhhcHBlbiBkdWUgdG8gdGhlCmZvbGxvd2luZyBjaXJjdWxhciBkZXBlbmRlbmNpZXM6Cgp3
+cml0ZSBsb2NrICh0YXNrIEEpIC0+IGlub2RlIGxvY2sgKHRhc2sgQikgLT53cml0ZSBsb2Nr
+ICh0YXNrIEIpCi0+IGlub2RlIGxvY2sgKHRhc2sgQSkKCk1ha2Ugc3VyZSB0aGF0IGFsbCB4
+YXR0ciBvcGVyYXRpb25zIGFyZSBvdXRzaWRlIHRoZSB3cml0ZSBsb2NrLCBieQp3cmFwcGlu
+ZyBhbGwgZF9pbnN0YW50aWF0ZV9uZXcoKSBjYWxscyB3aXRoIHJlaXNlcmZzX3dyaXRlX3Vu
+bG9jaygpIGFuZApyZWlzZXJmc193cml0ZV9sb2NrKCkuCgpGaXhlczogZDgyZGNkOWUyMWI3
+ICgicmVpc2VyZnM6IEFkZCBzZWN1cml0eSBwcmVmaXggdG8geGF0dHIgbmFtZSBpbiByZWlz
+ZXJmc19zZWN1cml0eV93cml0ZSgpIikKUmVwb3J0ZWQtYnk6IHN5emJvdCs4ZmI2NGE2MWZk
+ZDk2YjUwZjNiOEBzeXprYWxsZXIuYXBwc3BvdG1haWwuY29tClNpZ25lZC1vZmYtYnk6IFJv
+YmVydG8gU2Fzc3UgPHJvYmVydG8uc2Fzc3VAaHVhd2VpLmNvbT4KLS0tCiBmcy9yZWlzZXJm
+cy9uYW1laS5jIHwgOCArKysrKysrKwogMSBmaWxlIGNoYW5nZWQsIDggaW5zZXJ0aW9ucygr
+KQoKZGlmZiAtLWdpdCBhL2ZzL3JlaXNlcmZzL25hbWVpLmMgYi9mcy9yZWlzZXJmcy9uYW1l
+aS5jCmluZGV4IDUyMjQwY2M4OTFjLi4zNTA4YmYxYTc1ZSAxMDA2NDQKLS0tIGEvZnMvcmVp
+c2VyZnMvbmFtZWkuYworKysgYi9mcy9yZWlzZXJmcy9uYW1laS5jCkBAIC02ODksNyArNjg5
+LDkgQEAgc3RhdGljIGludCByZWlzZXJmc19jcmVhdGUoc3RydWN0IG1udF9pZG1hcCAqaWRt
+YXAsIHN0cnVjdCBpbm9kZSAqZGlyLAogCXJlaXNlcmZzX3VwZGF0ZV9pbm9kZV90cmFuc2Fj
+dGlvbihpbm9kZSk7CiAJcmVpc2VyZnNfdXBkYXRlX2lub2RlX3RyYW5zYWN0aW9uKGRpcik7
+CiAKKwlyZWlzZXJmc193cml0ZV91bmxvY2soZGlyLT5pX3NiKTsKIAlkX2luc3RhbnRpYXRl
+X25ldyhkZW50cnksIGlub2RlKTsKKwlyZWlzZXJmc193cml0ZV9sb2NrKGRpci0+aV9zYik7
+CiAJcmV0dmFsID0gam91cm5hbF9lbmQoJnRoKTsKIAogb3V0X2ZhaWxlZDoKQEAgLTc3Myw3
+ICs3NzUsOSBAQCBzdGF0aWMgaW50IHJlaXNlcmZzX21rbm9kKHN0cnVjdCBtbnRfaWRtYXAg
+KmlkbWFwLCBzdHJ1Y3QgaW5vZGUgKmRpciwKIAkJZ290byBvdXRfZmFpbGVkOwogCX0KIAor
+CXJlaXNlcmZzX3dyaXRlX3VubG9jayhkaXItPmlfc2IpOwogCWRfaW5zdGFudGlhdGVfbmV3
+KGRlbnRyeSwgaW5vZGUpOworCXJlaXNlcmZzX3dyaXRlX2xvY2soZGlyLT5pX3NiKTsKIAly
+ZXR2YWwgPSBqb3VybmFsX2VuZCgmdGgpOwogCiBvdXRfZmFpbGVkOgpAQCAtODc0LDcgKzg3
+OCw5IEBAIHN0YXRpYyBpbnQgcmVpc2VyZnNfbWtkaXIoc3RydWN0IG1udF9pZG1hcCAqaWRt
+YXAsIHN0cnVjdCBpbm9kZSAqZGlyLAogCS8qIHRoZSBhYm92ZSBhZGRfZW50cnkgZGlkIG5v
+dCB1cGRhdGUgZGlyJ3Mgc3RhdCBkYXRhICovCiAJcmVpc2VyZnNfdXBkYXRlX3NkKCZ0aCwg
+ZGlyKTsKIAorCXJlaXNlcmZzX3dyaXRlX3VubG9jayhkaXItPmlfc2IpOwogCWRfaW5zdGFu
+dGlhdGVfbmV3KGRlbnRyeSwgaW5vZGUpOworCXJlaXNlcmZzX3dyaXRlX2xvY2soZGlyLT5p
+X3NiKTsKIAlyZXR2YWwgPSBqb3VybmFsX2VuZCgmdGgpOwogb3V0X2ZhaWxlZDoKIAlyZWlz
+ZXJmc193cml0ZV91bmxvY2soZGlyLT5pX3NiKTsKQEAgLTExOTEsNyArMTE5Nyw5IEBAIHN0
+YXRpYyBpbnQgcmVpc2VyZnNfc3ltbGluayhzdHJ1Y3QgbW50X2lkbWFwICppZG1hcCwKIAkJ
+Z290byBvdXRfZmFpbGVkOwogCX0KIAorCXJlaXNlcmZzX3dyaXRlX3VubG9jayhwYXJlbnRf
+ZGlyLT5pX3NiKTsKIAlkX2luc3RhbnRpYXRlX25ldyhkZW50cnksIGlub2RlKTsKKwlyZWlz
+ZXJmc193cml0ZV9sb2NrKHBhcmVudF9kaXItPmlfc2IpOwogCXJldHZhbCA9IGpvdXJuYWxf
+ZW5kKCZ0aCk7CiBvdXRfZmFpbGVkOgogCXJlaXNlcmZzX3dyaXRlX3VubG9jayhwYXJlbnRf
+ZGlyLT5pX3NiKTsKLS0gCjIuMjUuMQoK
+
+--------------9s1UkhsFMSGVUfhtFoW0w0E7--
 
