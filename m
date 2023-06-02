@@ -1,102 +1,30 @@
-From: Roberto Sassu <roberto.sassu@huaweicloud.com>
+From: syzbot <syzbot+8fb64a61fdd96b50f3b8@syzkaller.appspotmail.com>
 Subject: Re: [syzbot] [reiserfs?] possible deadlock in open_xa_dir
-Date: Fri, 02 Jun 2023 18:18:07 +0200
-Message-ID: <4aa799a0b87d4e2ecf3fa74079402074dc42b3c5.camel@huaweicloud.com>
-References: <0000000000009d322605fd22054a@google.com>
+Date: Fri, 02 Jun 2023 09:39:32 -0700
+Message-ID: <00000000000093d48c05fd2832a7@google.com>
+References: <4aa799a0b87d4e2ecf3fa74079402074dc42b3c5.camel@huaweicloud.com>
 Mime-Version: 1.0
-Content-Type: multipart/mixed; boundary="=-HLTbvEyGK261gp7cEwEy"
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
-In-Reply-To: <0000000000009d322605fd22054a@google.com>
+In-Reply-To: <4aa799a0b87d4e2ecf3fa74079402074dc42b3c5.camel@huaweicloud.com>
 List-ID: <reiserfs-devel.vger.kernel.org>
-To: syzbot <syzbot+8fb64a61fdd96b50f3b8@syzkaller.appspotmail.com>, hdanton@sina.com, jack@suse.cz, jeffm@suse.com, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, mingo@redhat.com, paul@paul-moore.com, peterz@infradead.org, reiserfs-devel@vger.kernel.org, roberto.sassu@huawei.com, syzkaller-bugs@googlegroups.com, will@kernel.org
-
-
---=-HLTbvEyGK261gp7cEwEy
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
+To: hdanton@sina.com, jack@suse.cz, jeffm@suse.com, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, mingo@redhat.com, paul@paul-moore.com, peterz@infradead.org, reiserfs-devel@vger.kernel.org, roberto.sassu@huawei.com, roberto.sassu@huaweicloud.com, syzkaller-bugs@googlegroups.com, will@kernel.org
 
-On Fri, 2023-06-02 at 02:17 -0700, syzbot wrote:
-> Hello,
-> 
-> syzbot has tested the proposed patch and the reproducer did not trigger any issue:
-> 
-> Reported-and-tested-by: syzbot+8fb64a61fdd96b50f3b8@syzkaller.appspotmail.com
-> 
-> Tested on:
-> 
-> commit:         4432b507 lsm: fix a number of misspellings
-> git tree:       git://git.kernel.org/pub/scm/linux/kernel/git/pcmoore/lsm.git next
-> console output: https://syzkaller.appspot.com/x/log.txt?x=166c541d280000
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=38526bf24c8d961b
-> dashboard link: https://syzkaller.appspot.com/bug?extid=8fb64a61fdd96b50f3b8
-> compiler:       Debian clang version 15.0.7, GNU ld (GNU Binutils for Debian) 2.35.2
-> patch:          https://syzkaller.appspot.com/x/patch.diff?x=1095cd79280000
-> 
-> Note: testing is done by a robot and is best-effort only.
+Hello,
 
-#syz test: git://git.kernel.org/pub/scm/linux/kernel/git/pcmoore/lsm.git next
+syzbot has tested the proposed patch and the reproducer did not trigger any issue:
 
---=-HLTbvEyGK261gp7cEwEy
-Content-Disposition: attachment;
-	filename*0=0001-reiserfs-Disable-by-default-security-xattr-init-sinc.pat;
-	filename*1=ch
-Content-Type: text/x-patch;
-	name="0001-reiserfs-Disable-by-default-security-xattr-init-sinc.patch";
-	charset="UTF-8"
-Content-Transfer-Encoding: base64
+Reported-and-tested-by: syzbot+8fb64a61fdd96b50f3b8@syzkaller.appspotmail.com
 
-RnJvbSA3M2JiMDJlYjdhNzUxYzQ0N2FmNDNkN2NhYzdjMTkxMzI5YjZkZDU1IE1vbiBTZXAgMTcg
-MDA6MDA6MDAgMjAwMQpGcm9tOiBSb2JlcnRvIFNhc3N1IDxyb2JlcnRvLnNhc3N1QGh1YXdlaS5j
-b20+CkRhdGU6IEZyaSwgMiBKdW4gMjAyMyAxMDoxMDoyOCArMDIwMApTdWJqZWN0OiBbUEFUQ0hd
-IHJlaXNlcmZzOiBEaXNhYmxlIGJ5IGRlZmF1bHQgc2VjdXJpdHkgeGF0dHIgaW5pdCBzaW5jZSBp
-dAogbmV2ZXIgd29ya2VkCgpDb21taXQgZDgyZGNkOWUyMWI3ICgicmVpc2VyZnM6IEFkZCBzZWN1
-cml0eSBwcmVmaXggdG8geGF0dHIgbmFtZSBpbgpyZWlzZXJmc19zZWN1cml0eV93cml0ZSgpIiks
-IHdoaWxlIGZpeGVkIHRoZSBzZWN1cml0eSB4YXR0ciBpbml0aWFsaXphdGlvbiwKaXQgYWxzbyBy
-ZXZlYWxlZCBhIGNpcmN1bGFyIGxvY2tpbmcgZGVwZW5kZW5jeSBiZXR3ZWVuIHRoZSByZWlzZXJm
-cyB3cml0ZQpsb2NrIGFuZCB0aGUgaW5vZGUgbG9jay4KCkFkZCB0aGUgbmV3IGNvbmZpZyBvcHRp
-b24gQ09ORklHX1JFSVNFUkZTX0ZTX1NFQ1VSSVRZX0lOSVQgdG8KZW5hYmxlL2Rpc2FibGUgdGhl
-IGZlYXR1cmUuIEFsc28sIHNpbmNlIHRoZSBidWcgaW4gc2VjdXJpdHkgeGF0dHIKaW5pdGlhbGl6
-YXRpb24gd2FzIGludHJvZHVjZWQgc2luY2UgdGhlIGJlZ2lubmluZywgZGlzYWJsZSBpdCBieSBk
-ZWZhdWx0LgoKUmVwb3J0ZWQtYW5kLXRlc3RlZC1ieTogc3l6Ym90KzhmYjY0YTYxZmRkOTZiNTBm
-M2I4QHN5emthbGxlci5hcHBzcG90bWFpbC5jb20KQ2xvc2VzOiBodHRwczovL3N5emthbGxlci5h
-cHBzcG90LmNvbS9idWc/ZXh0aWQ9OGZiNjRhNjFmZGQ5NmI1MGYzYjgKU3VnZ2VzdGVkLWJ5OiBK
-ZWZmIE1haG9uZXkgPGplZmZtQHN1c2UuY29tPgpTaWduZWQtb2ZmLWJ5OiBSb2JlcnRvIFNhc3N1
-IDxyb2JlcnRvLnNhc3N1QGh1YXdlaS5jb20+Ci0tLQogZnMvcmVpc2VyZnMvS2NvbmZpZyAgICAg
-ICAgICB8IDE1ICsrKysrKysrKysrKysrKwogZnMvcmVpc2VyZnMvc3VwZXIuYyAgICAgICAgICB8
-ICAzICsrKwogZnMvcmVpc2VyZnMveGF0dHJfc2VjdXJpdHkuYyB8ICAzICsrKwogMyBmaWxlcyBj
-aGFuZ2VkLCAyMSBpbnNlcnRpb25zKCspCgpkaWZmIC0tZ2l0IGEvZnMvcmVpc2VyZnMvS2NvbmZp
-ZyBiL2ZzL3JlaXNlcmZzL0tjb25maWcKaW5kZXggNGQyMmVjZmUwZmEuLmE2MThkMGJkYTdiIDEw
-MDY0NAotLS0gYS9mcy9yZWlzZXJmcy9LY29uZmlnCisrKyBiL2ZzL3JlaXNlcmZzL0tjb25maWcK
-QEAgLTg4LDMgKzg4LDE4IEBAIGNvbmZpZyBSRUlTRVJGU19GU19TRUNVUklUWQogCiAJICBJZiB5
-b3UgYXJlIG5vdCB1c2luZyBhIHNlY3VyaXR5IG1vZHVsZSB0aGF0IHJlcXVpcmVzIHVzaW5nCiAJ
-ICBleHRlbmRlZCBhdHRyaWJ1dGVzIGZvciBmaWxlIHNlY3VyaXR5IGxhYmVscywgc2F5IE4uCisK
-K2NvbmZpZyBSRUlTRVJGU19GU19TRUNVUklUWV9JTklUCisJYm9vbCAiUmVpc2VyRlMgU2VjdXJp
-dHkgTGFiZWxzIGluaXRpYWxpemF0aW9uIgorCWRlcGVuZHMgb24gUkVJU0VSRlNfRlNfWEFUVFIK
-KwlkZWZhdWx0IGZhbHNlCisJaGVscAorCSAgSW5pdCBuZXcgaW5vZGVzIHdpdGggc2VjdXJpdHkg
-bGFiZWxzIHByb3ZpZGVkIGJ5IExTTXMuCisKKwkgIEl0IHdhcyBicm9rZW4gZnJvbSB0aGUgYmVn
-aW5uaW5nLCBzaW5jZSB0aGUgeGF0dHIgbmFtZSB3YXMKKwkgIG1pc3NpbmcgdGhlICdzZWN1cml0
-eS4nIHByZWZpeC4KKworCSAgRW5hYmxpbmcgdGhpcyBvcHRpb24gbWlnaHQgY2F1c2UgbG9ja2Rl
-cCB3YXJuaW5ncyBhbmQKKwkgIHVsdGltYXRlbHkgZGVhZGxvY2tzLgorCisJICBJZiB1bnN1cmUs
-IHNheSBOLgpkaWZmIC0tZ2l0IGEvZnMvcmVpc2VyZnMvc3VwZXIuYyBiL2ZzL3JlaXNlcmZzL3N1
-cGVyLmMKaW5kZXggOTI5YWNjZTZlNzMuLmI0MjdkMDNkMGVhIDEwMDY0NAotLS0gYS9mcy9yZWlz
-ZXJmcy9zdXBlci5jCisrKyBiL2ZzL3JlaXNlcmZzL3N1cGVyLmMKQEAgLTE2NTQsNiArMTY1NCw5
-IEBAIHN0YXRpYyBpbnQgcmVhZF9zdXBlcl9ibG9jayhzdHJ1Y3Qgc3VwZXJfYmxvY2sgKnMsIGlu
-dCBvZmZzZXQpCiAKIAlyZWlzZXJmc193YXJuaW5nKE5VTEwsICIiLCAicmVpc2VyZnMgZmlsZXN5
-c3RlbSBpcyBkZXByZWNhdGVkIGFuZCAiCiAJCSJzY2hlZHVsZWQgdG8gYmUgcmVtb3ZlZCBmcm9t
-IHRoZSBrZXJuZWwgaW4gMjAyNSIpOworCWlmIChJU19FTkFCTEVEKENPTkZJR19SRUlTRVJGU19G
-U19TRUNVUklUWV9JTklUKSkKKwkJcmVpc2VyZnNfd2FybmluZyhOVUxMLCAiIiwgImluaXRpYWxp
-emluZyBzZWN1cml0eSB4YXR0cnMgY2FuIGNhdXNlIGRlYWRsb2NrcyIpOworCiAJU0JfQlVGRkVS
-X1dJVEhfU0IocykgPSBiaDsKIAlTQl9ESVNLX1NVUEVSX0JMT0NLKHMpID0gcnM7CiAKZGlmZiAt
-LWdpdCBhL2ZzL3JlaXNlcmZzL3hhdHRyX3NlY3VyaXR5LmMgYi9mcy9yZWlzZXJmcy94YXR0cl9z
-ZWN1cml0eS5jCmluZGV4IDA3OGRkOGNjMzEyLi5kODJjNDUwNzgwMyAxMDA2NDQKLS0tIGEvZnMv
-cmVpc2VyZnMveGF0dHJfc2VjdXJpdHkuYworKysgYi9mcy9yZWlzZXJmcy94YXR0cl9zZWN1cml0
-eS5jCkBAIC02OSw2ICs2OSw5IEBAIGludCByZWlzZXJmc19zZWN1cml0eV9pbml0KHN0cnVjdCBp
-bm9kZSAqZGlyLCBzdHJ1Y3QgaW5vZGUgKmlub2RlLAogCXNlYy0+dmFsdWUgPSBOVUxMOwogCXNl
-Yy0+bGVuZ3RoID0gMDsKIAorCWlmICghSVNfRU5BQkxFRChDT05GSUdfUkVJU0VSRlNfRlNfU0VD
-VVJJVFlfSU5JVCkpCisJCXJldHVybiAwOworCiAJLyogRG9uJ3QgYWRkIHNlbGludXggYXR0cmli
-dXRlcyBvbiB4YXR0cnMgLSB0aGV5J2xsIG5ldmVyIGdldCB1c2VkICovCiAJaWYgKElTX1BSSVZB
-VEUoZGlyKSkKIAkJcmV0dXJuIDA7Ci0tIAoyLjI1LjEKCg==
+Tested on:
 
+commit:         4432b507 lsm: fix a number of misspellings
+git tree:       git://git.kernel.org/pub/scm/linux/kernel/git/pcmoore/lsm.git next
+console output: https://syzkaller.appspot.com/x/log.txt?x=16b47dd1280000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=178a8c28652084e1
+dashboard link: https://syzkaller.appspot.com/bug?extid=8fb64a61fdd96b50f3b8
+compiler:       Debian clang version 15.0.7, GNU ld (GNU Binutils for Debian) 2.35.2
+patch:          https://syzkaller.appspot.com/x/patch.diff?x=102f6ab6280000
 
---=-HLTbvEyGK261gp7cEwEy--
-
+Note: testing is done by a robot and is best-effort only.
