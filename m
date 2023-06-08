@@ -1,137 +1,130 @@
-From: syzbot <syzbot+b23c4c9d3d228ba328d7@syzkaller.appspotmail.com>
-Subject: [syzbot] [reiserfs?] general protection fault in rcu_core (2)
-Date: Wed, 07 Jun 2023 01:20:22 -0700
-Message-ID: <0000000000009dc57505fd85ceb9@google.com>
+From: syzbot <syzbot+85fda6d9c9dfad58eaca@syzkaller.appspotmail.com>
+Subject: [syzbot] [virt?] [reiserfs?] general protection fault in psi_account_irqtime
+Date: Thu, 08 Jun 2023 03:56:49 -0700
+Message-ID: <000000000000fa721205fd9c1b6b@google.com>
 Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
 List-ID: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, reiserfs-devel@vger.kernel.org, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="iso-8859-1"
+To: david@redhat.com, jasowang@redhat.com, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, mst@redhat.com, reiserfs-devel@vger.kernel.org, syzkaller-bugs@googlegroups.com, virtualization@lists.linux-foundation.org, xuanzhuo@linux.alibaba.com
 
 Hello,
 
 syzbot found the following issue on:
 
-HEAD commit:    f8dba31b0a82 Merge tag 'asym-keys-fix-for-linus-v6.4-rc5' ..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=121b80dd280000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=3c980bfe8b399968
-dashboard link: https://syzkaller.appspot.com/bug?extid=b23c4c9d3d228ba328d7
-compiler:       gcc (Debian 10.2.1-6) 10.2.1 20210110, GNU ld (GNU Binutils for Debian) 2.35.2
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1680f7d1280000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=12fad50d280000
+HEAD commit:    715abedee4cd Add linux-next specific files for 20230515
+git tree:       linux-next
+console output: https://syzkaller.appspot.com/x/log.txt?x=3D1205c5c9280000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=3D6a2745d066dda0ec
+dashboard link: https://syzkaller.appspot.com/bug?extid=3D85fda6d9c9dfad58e=
+aca
+compiler:       gcc (Debian 10.2.1-6) 10.2.1 20210110, GNU ld (GNU Binutils=
+ for Debian) 2.35.2
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=3D14ddc72b280000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=3D1271e63b280000
 
 Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/0aac0833aa9d/disk-f8dba31b.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/06f1060b83c8/vmlinux-f8dba31b.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/8450975febdf/bzImage-f8dba31b.xz
-mounted in repro: https://storage.googleapis.com/syzbot-assets/f17b197e6309/mount_0.gz
+disk image: https://storage.googleapis.com/syzbot-assets/d4d1d06b34b8/disk-=
+715abede.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/3ef33a86fdc8/vmlinux-=
+715abede.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/e0006b413ed1/bzI=
+mage-715abede.xz
+mounted in repro: https://storage.googleapis.com/syzbot-assets/1c84902de2f0=
+/mount_0.gz
 
 IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+b23c4c9d3d228ba328d7@syzkaller.appspotmail.com
+Reported-by: syzbot+85fda6d9c9dfad58eaca@syzkaller.appspotmail.com
 
-BUG: kernel NULL pointer dereference, address: 0000000000000000
-#PF: supervisor instruction fetch in kernel mode
-#PF: error_code(0x0010) - not-present page
-PGD 737b3067 P4D 737b3067 PUD 737b2067 PMD 0 
-Oops: 0010 [#1] PREEMPT SMP KASAN
-CPU: 0 PID: 4991 Comm: syz-executor264 Not tainted 6.4.0-rc5-syzkaller-00002-gf8dba31b0a82 #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 05/25/2023
-RIP: 0010:0x0
-Code: Unable to access opcode bytes at 0xffffffffffffffd6.
-RSP: 0018:ffffc90000007e58 EFLAGS: 00010246
-RAX: 0000000000000000 RBX: ffff8880b983d4c0 RCX: 611bc496b427aee7
-RDX: 1ffff110059278c8 RSI: 0000000000000100 RDI: ffff888077a3ef00
-RBP: 0000000000000001 R08: ffffffff816f1181 R09: ffffffff91529d1f
-R10: fffffbfff22a53a3 R11: 0000000000000000 R12: dffffc0000000000
-R13: ffff888077a3ef00 R14: ffffc90000007ed8 R15: 0000000000000000
-FS:  000055555682c3c0(0000) GS:ffff8880b9800000(0000) knlGS:0000000000000000
+general protection fault, probably for non-canonical address 0xdffffc000000=
+1ff1: 0000 [#1] PREEMPT SMP KASAN
+KASAN: probably user-memory-access in range [0x000000000000ff88-0x000000000=
+000ff8f]
+CPU: 1 PID: 262176 Comm: =01=EF=BF=BD Not tainted 6.4.0-rc2-next-20230515-s=
+yzkaller #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Goo=
+gle 05/25/2023
+RIP: 0010:task_dfl_cgroup include/linux/cgroup.h:493 [inline]
+RIP: 0010:task_psi_group kernel/sched/psi.c:884 [inline]
+RIP: 0010:psi_account_irqtime+0xeb/0x520 kernel/sched/psi.c:1013
+Code: 38 13 00 00 e8 06 ef ac 08 85 c0 0f 85 b6 02 00 00 49 8d bc 24 88 00 =
+00 00 48 b8 00 00 00 00 00 fc ff df 48 89 fa 48 c1 ea 03 <80> 3c 02 00 0f 8=
+5 e7 03 00 00 49 8b 9c 24 88 00 00 00 48 b8 00 00
+RSP: 0018:ffffc900001e0c18 EFLAGS: 00010002
+RAX: dffffc0000000000 RBX: ffff888079e20000 RCX: 0000000000000001
+RDX: 0000000000001ff1 RSI: 000000000000a9cf RDI: 000000000000ff89
+RBP: 000000000072af41 R08: 0000000bfb3e0a35 R09: fffff5200003c17f
+R10: 0000000000000003 R11: 0000000000000000 R12: 000000000000ff01
+R13: 0000000000000001 R14: 0000000bfb3e0a35 R15: ffff8880b993cfd8
+FS:  00005555567f03c0(0000) GS:ffff8880b9900000(0000) knlGS:0000000000000000
 CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: ffffffffffffffd6 CR3: 00000000737b9000 CR4: 0000000000350ef0
+CR2: 00007ffc77214000 CR3: 0000000029760000 CR4: 00000000003506e0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
 Call Trace:
  <IRQ>
- rcu_do_batch kernel/rcu/tree.c:2115 [inline]
- rcu_core+0x806/0x1ad0 kernel/rcu/tree.c:2377
- __do_softirq+0x1d4/0x905 kernel/softirq.c:571
- invoke_softirq kernel/softirq.c:445 [inline]
- __irq_exit_rcu+0x114/0x190 kernel/softirq.c:650
- irq_exit_rcu+0x9/0x20 kernel/softirq.c:662
- sysvec_apic_timer_interrupt+0x97/0xc0 arch/x86/kernel/apic/apic.c:1106
+ update_rq_clock_task kernel/sched/core.c:725 [inline]
+ update_rq_clock kernel/sched/core.c:769 [inline]
+ update_rq_clock+0x241/0xb40 kernel/sched/core.c:750
+ ttwu_queue kernel/sched/core.c:3984 [inline]
+ try_to_wake_up+0xba2/0x1a50 kernel/sched/core.c:4307
+ wake_up_worker kernel/workqueue.c:863 [inline]
+ insert_work+0x287/0x360 kernel/workqueue.c:1373
+ __queue_work+0x5c6/0xfb0 kernel/workqueue.c:1526
+ queue_work_on+0xf2/0x110 kernel/workqueue.c:1556
+ queue_work include/linux/workqueue.h:505 [inline]
+ stats_request+0xf2/0x130 drivers/virtio/virtio_balloon.c:369
+ vring_interrupt drivers/virtio/virtio_ring.c:2501 [inline]
+ vring_interrupt+0x2a1/0x3d0 drivers/virtio/virtio_ring.c:2476
+ __handle_irq_event_percpu+0x22b/0x730 kernel/irq/handle.c:158
+ handle_irq_event_percpu kernel/irq/handle.c:193 [inline]
+ handle_irq_event+0xab/0x1e0 kernel/irq/handle.c:210
+ handle_edge_irq+0x263/0xd00 kernel/irq/chip.c:819
+ generic_handle_irq_desc include/linux/irqdesc.h:158 [inline]
+ handle_irq arch/x86/kernel/irq.c:231 [inline]
+ __common_interrupt+0xa1/0x220 arch/x86/kernel/irq.c:250
+ common_interrupt+0xa8/0xd0 arch/x86/kernel/irq.c:240
  </IRQ>
- <TASK>
- asm_sysvec_apic_timer_interrupt+0x1a/0x20 arch/x86/include/asm/idtentry.h:645
-RIP: 0010:memmove+0x43/0x1b0 arch/x86/lib/memmove_64.S:66
-Code: 00 00 48 83 fa 20 0f 82 01 01 00 00 0f 1f 44 00 00 48 81 fa a8 02 00 00 72 05 40 38 fe 74 48 48 83 ea 20 48 83 ea 20 4c 8b 1e <4c> 8b 56 08 4c 8b 4e 10 4c 8b 46 18 48 8d 76 20 4c 89 1f 4c 89 57
-RSP: 0018:ffffc90003afef90 EFLAGS: 00000282
-RAX: ffff88807500e030 RBX: 0000000000000000 RCX: 0000000000000000
-RDX: fffffffff9b0ee85 RSI: ffff88807b500040 RDI: ffff88807b4ff070
-RBP: dffffc0000000000 R08: 0000000034365f36 R09: 38782f34365f3638
-R10: 782f736c742f3436 R11: 0000000000000000 R12: 0000000000000001
-R13: 0000000000000fd0 R14: ffff88807500e0a8 R15: 0000000000000006
- leaf_paste_in_buffer+0x270/0xc30 fs/reiserfs/lbalance.c:1017
- balance_leaf_new_nodes_paste_whole fs/reiserfs/do_balan.c:1171 [inline]
- balance_leaf_new_nodes_paste fs/reiserfs/do_balan.c:1215 [inline]
- balance_leaf_new_nodes fs/reiserfs/do_balan.c:1246 [inline]
- balance_leaf+0x29c5/0xddc0 fs/reiserfs/do_balan.c:1450
- do_balance+0x319/0x810 fs/reiserfs/do_balan.c:1888
- reiserfs_paste_into_item+0x74b/0x8d0 fs/reiserfs/stree.c:2157
- reiserfs_get_block+0x165c/0x4100 fs/reiserfs/inode.c:1069
- __block_write_begin_int+0x3bd/0x14b0 fs/buffer.c:2064
- reiserfs_write_begin+0x36e/0xa60 fs/reiserfs/inode.c:2773
- generic_cont_expand_simple+0x117/0x1f0 fs/buffer.c:2425
- reiserfs_setattr+0x395/0x1370 fs/reiserfs/inode.c:3303
- notify_change+0xb2c/0x1180 fs/attr.c:483
- do_truncate+0x143/0x200 fs/open.c:66
- do_sys_ftruncate+0x53a/0x770 fs/open.c:194
- do_syscall_x64 arch/x86/entry/common.c:50 [inline]
- do_syscall_64+0x39/0xb0 arch/x86/entry/common.c:80
- entry_SYSCALL_64_after_hwframe+0x63/0xcd
-RIP: 0033:0x7f987e211279
-Code: Unable to access opcode bytes at 0x7f987e21124f.
-RSP: 002b:00007ffc67526118 EFLAGS: 00000246 ORIG_RAX: 000000000000004d
-RAX: ffffffffffffffda RBX: 00007ffc67526158 RCX: 00007f987e211279
-RDX: 00007f987e211279 RSI: 0000000002007fff RDI: 0000000000000004
-RBP: 00007ffc67526150 R08: aaaaaaaaaaaa0102 R09: aaaaaaaaaaaa0102
-R10: aaaaaaaaaaaa0102 R11: 0000000000000246 R12: 0000000000000000
-R13: 00007f987e2876dc R14: 0000000000000003 R15: 0000000000000001
- </TASK>
 Modules linked in:
-CR2: 0000000000000000
 ---[ end trace 0000000000000000 ]---
-RIP: 0010:0x0
-Code: Unable to access opcode bytes at 0xffffffffffffffd6.
-RSP: 0018:ffffc90000007e58 EFLAGS: 00010246
-
-RAX: 0000000000000000 RBX: ffff8880b983d4c0 RCX: 611bc496b427aee7
-RDX: 1ffff110059278c8 RSI: 0000000000000100 RDI: ffff888077a3ef00
-RBP: 0000000000000001 R08: ffffffff816f1181 R09: ffffffff91529d1f
-R10: fffffbfff22a53a3 R11: 0000000000000000 R12: dffffc0000000000
-R13: ffff888077a3ef00 R14: ffffc90000007ed8 R15: 0000000000000000
-FS:  000055555682c3c0(0000) GS:ffff8880b9800000(0000) knlGS:0000000000000000
+RIP: 0010:task_dfl_cgroup include/linux/cgroup.h:493 [inline]
+RIP: 0010:task_psi_group kernel/sched/psi.c:884 [inline]
+RIP: 0010:psi_account_irqtime+0xeb/0x520 kernel/sched/psi.c:1013
+Code: 38 13 00 00 e8 06 ef ac 08 85 c0 0f 85 b6 02 00 00 49 8d bc 24 88 00 =
+00 00 48 b8 00 00 00 00 00 fc ff df 48 89 fa 48 c1 ea 03 <80> 3c 02 00 0f 8=
+5 e7 03 00 00 49 8b 9c 24 88 00 00 00 48 b8 00 00
+RSP: 0018:ffffc900001e0c18 EFLAGS: 00010002
+RAX: dffffc0000000000 RBX: ffff888079e20000 RCX: 0000000000000001
+RDX: 0000000000001ff1 RSI: 000000000000a9cf RDI: 000000000000ff89
+RBP: 000000000072af41 R08: 0000000bfb3e0a35 R09: fffff5200003c17f
+R10: 0000000000000003 R11: 0000000000000000 R12: 000000000000ff01
+R13: 0000000000000001 R14: 0000000bfb3e0a35 R15: ffff8880b993cfd8
+FS:  00005555567f03c0(0000) GS:ffff8880b9900000(0000) knlGS:0000000000000000
 CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: ffffffffffffffd6 CR3: 00000000737b9000 CR4: 0000000000350ef0
+CR2: 00007ffc77214000 CR3: 0000000029760000 CR4: 00000000003506e0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
 ----------------
 Code disassembly (best guess):
-   0:	00 00                	add    %al,(%rax)
-   2:	48 83 fa 20          	cmp    $0x20,%rdx
-   6:	0f 82 01 01 00 00    	jb     0x10d
-   c:	0f 1f 44 00 00       	nopl   0x0(%rax,%rax,1)
-  11:	48 81 fa a8 02 00 00 	cmp    $0x2a8,%rdx
-  18:	72 05                	jb     0x1f
-  1a:	40 38 fe             	cmp    %dil,%sil
-  1d:	74 48                	je     0x67
-  1f:	48 83 ea 20          	sub    $0x20,%rdx
-  23:	48 83 ea 20          	sub    $0x20,%rdx
-  27:	4c 8b 1e             	mov    (%rsi),%r11
-* 2a:	4c 8b 56 08          	mov    0x8(%rsi),%r10 <-- trapping instruction
-  2e:	4c 8b 4e 10          	mov    0x10(%rsi),%r9
-  32:	4c 8b 46 18          	mov    0x18(%rsi),%r8
-  36:	48 8d 76 20          	lea    0x20(%rsi),%rsi
-  3a:	4c 89 1f             	mov    %r11,(%rdi)
-  3d:	4c                   	rex.WR
-  3e:	89                   	.byte 0x89
-  3f:	57                   	push   %rdi
+   0:	38 13                	cmp    %dl,(%rbx)
+   2:	00 00                	add    %al,(%rax)
+   4:	e8 06 ef ac 08       	callq  0x8acef0f
+   9:	85 c0                	test   %eax,%eax
+   b:	0f 85 b6 02 00 00    	jne    0x2c7
+  11:	49 8d bc 24 88 00 00 	lea    0x88(%r12),%rdi
+  18:	00
+  19:	48 b8 00 00 00 00 00 	movabs $0xdffffc0000000000,%rax
+  20:	fc ff df
+  23:	48 89 fa             	mov    %rdi,%rdx
+  26:	48 c1 ea 03          	shr    $0x3,%rdx
+* 2a:	80 3c 02 00          	cmpb   $0x0,(%rdx,%rax,1) <-- trapping instruct=
+ion
+  2e:	0f 85 e7 03 00 00    	jne    0x41b
+  34:	49 8b 9c 24 88 00 00 	mov    0x88(%r12),%rbx
+  3b:	00
+  3c:	48                   	rex.W
+  3d:	b8                   	.byte 0xb8
 
 
 ---
