@@ -1,151 +1,90 @@
-From: Dmitry Vyukov <dvyukov@google.com>
-Subject: Re: [syzbot] [reiserfs?] general protection fault in rcu_core (2)
-Date: Thu, 15 Jun 2023 09:33:11 +0200
-Message-ID: <CACT4Y+b3r+UeY6PDTBFYqqZ3pNuG9hbCvRa6BY-b2CHhC7A7OQ@mail.gmail.com>
-References: <000000000000556d9605fe1e5c40@google.com> <1cb93e56-f3e3-c972-1232-bbb67ad4f672@huaweicloud.com>
+From: syzbot <syzbot+5184326923f180b9d11a@syzkaller.appspotmail.com>
+Subject: Re: [syzbot] [reiserfs?] KASAN: null-ptr-deref Read in fix_nodes
+Date: Thu, 15 Jun 2023 14:25:50 -0700
+Message-ID: <00000000000063df4305fe31b6c7@google.com>
+References: <0000000000007fcc9c05f909f7f3@google.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20221208; t=1686814405; x=1689406405;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=MnmSwoYifJPcQDBqiLLFdZccmtskHS5NVMFEKw/IWo0=;
-        b=i2Y9h/xwBSasa+hIBJZUVgljLZv+3PHOYHTVuQGEqWPqmEZLUGu8D5KVjhqkUyp5h+
-         Gfa+42dFu2UUr6Dr5jnvhYEUrx+T0sL36Bhw2yNrO2GdeC7Oisf4FPHWwvN/Tq5OlUKH
-         wz2/DAvidQSK5QcfHinNhJ9TLyVG5t5r+TEnb9+0sQ0qRFj5mSOLNy7HrQrfICzBmkck
-         cKosEWmUqiML4AUHMeIxYZyoewhhu5A3/oEl8/B3YGF3aK0YMAA2J20Yaxcf8FfgSCFx
-         nZkogijqYgZRATYNDQe/KZkCuGNGIvv1zYGuH+Gaegx1x9gueR7UB4J7lAPBrdr0nv9T
-         b6Rg==
-In-Reply-To: <1cb93e56-f3e3-c972-1232-bbb67ad4f672@huaweicloud.com>
+In-Reply-To: <0000000000007fcc9c05f909f7f3@google.com>
 List-ID: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="utf-8"
-To: Yu Kuai <yukuai1@huaweicloud.com>
-Cc: syzbot <syzbot+b23c4c9d3d228ba328d7@syzkaller.appspotmail.com>, jack@suse.cz, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, luto@kernel.org, peterz@infradead.org, reiserfs-devel@vger.kernel.org, syzkaller-bugs@googlegroups.com, tglx@linutronix.de, "yukuai (C)" <yukuai3@huawei.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, reiserfs-devel@vger.kernel.org, syzkaller-bugs@googlegroups.com
 
-On Thu, 15 Jun 2023 at 04:15, Yu Kuai <yukuai1@huaweicloud.com> wrote:
->
-> Hi,
->
-> =E5=9C=A8 2023/06/15 6:20, syzbot =E5=86=99=E9=81=93:
-> > syzbot has bisected this issue to:
-> >
-> > commit 2acf15b94d5b8ea8392c4b6753a6ffac3135cd78
-> > Author: Yu Kuai <yukuai3@huawei.com>
-> > Date:   Fri Jul 2 04:07:43 2021 +0000
-> >
-> >      reiserfs: add check for root_inode in reiserfs_fill_super
-> >
-> > bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=3D1715ffdd=
-280000
->
-> git log:
->
-> 13d257503c09 reiserfs: check directory items on read from disk
-> 2acf15b94d5b reiserfs: add check for root_inode in reiserfs_fill_super
->
-> The bisect log shows that with commit 13d257503c09:
-> testing commit 13d257503c0930010ef9eed78b689cec417ab741 gcc
-> compiler: gcc (GCC) 10.2.1 20210217, GNU ld (GNU Binutils for Debian) 2.3=
-5.2
-> kernel signature:
-> fc456e669984fb9704d9e1d3cb7be68af3b83de4bb55124257ae28bb39a14dc7
-> run #0: basic kernel testing failed: possible deadlock in fs_reclaim_acqu=
-ire
-> run #1: crashed: KASAN: out-of-bounds Read in leaf_paste_in_buffer
-> run #2: crashed: KASAN: out-of-bounds Read in leaf_paste_in_buffer
-> run #3: crashed: KASAN: out-of-bounds Read in leaf_paste_in_buffer
-> run #4: crashed: KASAN: use-after-free Read in leaf_insert_into_buf
-> run #5: crashed: KASAN: out-of-bounds Read in leaf_paste_in_buffer
-> run #6: crashed: KASAN: out-of-bounds Read in leaf_paste_in_buffer
-> run #7: crashed: KASAN: out-of-bounds Read in leaf_paste_in_buffer
-> run #8: crashed: KASAN: out-of-bounds Read in leaf_paste_in_buffer
-> run #9: crashed: KASAN: out-of-bounds Read in leaf_paste_in_buffer
->
-> and think this is bad, then bisect to the last commit:
-> testing commit 2acf15b94d5b8ea8392c4b6753a6ffac3135cd78 gcc
-> compiler: gcc (GCC) 10.2.1 20210217, GNU ld (GNU Binutils for Debian) 2.3=
-5.2
-> kernel signature:
-> 6d0d5f26a4c0e15188c923383ecfb873ae57ca6a79f592493d6e9ca507949985
-> run #0: crashed: possible deadlock in fs_reclaim_acquire
-> run #1: OK
-> run #2: OK
-> run #3: OK
-> run #4: OK
-> run #5: OK
-> run #6: OK
-> run #7: OK
-> run #8: OK
-> run #9: OK
-> reproducer seems to be flaky
-> # git bisect bad 2acf15b94d5b8ea8392c4b6753a6ffac3135cd78
->
-> It seems to me the orignal crash general protection fault is not related
-> to this commit. Please kindly correct me if I'm wrong.
->
-> For the problem of lockdep warning, it first appeared in bisect log:
-> testing commit 406254918b232db198ed60f5bf1f8b84d96bca00 gcc
-> compiler: gcc (GCC) 10.2.1 20210217, GNU ld (GNU Binutils for Debian) 2.3=
-5.2
-> kernel signature:
-> 1c83f3c8b090a4702817c527e741a35506bc06911c71962d4c5fcef577de2fd3
-> run #0: basic kernel testing failed: BUG: sleeping function called from
-> invalid context in stack_depot_save
-> run #1: basic kernel testing failed: possible deadlock in fs_reclaim_acqu=
-ire
-> run #2: OK
-> run #3: OK
-> run #4: OK
-> run #5: OK
-> run #6: OK
-> run #7: OK
-> run #8: OK
-> run #9: OK
-> # git bisect good 406254918b232db198ed60f5bf1f8b84d96bca00
->
-> And I don't understand why syzbot thinks this is good, and later for the
-> same result, syzbot thinks 2acf15b94d5b is bad.
+syzbot has found a reproducer for the following issue on:
 
-I think the difference is "basic kernel testing failed", so that
-happened even before the reproducer for the bug was executed.
-So for all runs where the reproducer was executed, the result was "OK".
+HEAD commit:    b6dad5178cea Merge tag 'nios2_fix_v6.4' of git://git.kerne..
+git tree:       upstream
+console+strace: https://syzkaller.appspot.com/x/log.txt?x=1495dce3280000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=ac246111fb601aec
+dashboard link: https://syzkaller.appspot.com/bug?extid=5184326923f180b9d11a
+compiler:       gcc (Debian 10.2.1-6) 10.2.1 20210110, GNU ld (GNU Binutils for Debian) 2.35.2
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=10bbc887280000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=15c9558b280000
+
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/fb7aeb21864c/disk-b6dad517.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/3004476364b7/vmlinux-b6dad517.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/a143be294854/bzImage-b6dad517.xz
+mounted in repro #1: https://storage.googleapis.com/syzbot-assets/92adf3c12845/mount_1.gz
+mounted in repro #2: https://storage.googleapis.com/syzbot-assets/3861119d1700/mount_8.gz
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+5184326923f180b9d11a@syzkaller.appspotmail.com
+
+REISERFS error (device loop2): vs-5150 search_by_key: invalid format found in block 540. Fsck?
+==================================================================
+BUG: KASAN: null-ptr-deref in instrument_atomic_read include/linux/instrumented.h:68 [inline]
+BUG: KASAN: null-ptr-deref in _test_bit include/asm-generic/bitops/instrumented-non-atomic.h:141 [inline]
+BUG: KASAN: null-ptr-deref in buffer_locked include/linux/buffer_head.h:126 [inline]
+BUG: KASAN: null-ptr-deref in fix_nodes+0x464/0x8660 fs/reiserfs/fix_node.c:2578
+Read of size 8 at addr 0000000000000000 by task syz-executor539/5535
+
+CPU: 0 PID: 5535 Comm: syz-executor539 Not tainted 6.4.0-rc6-syzkaller-00037-gb6dad5178cea #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 05/27/2023
+Call Trace:
+ <TASK>
+ __dump_stack lib/dump_stack.c:88 [inline]
+ dump_stack_lvl+0xd9/0x150 lib/dump_stack.c:106
+ print_report mm/kasan/report.c:465 [inline]
+ kasan_report+0xec/0x130 mm/kasan/report.c:572
+ check_region_inline mm/kasan/generic.c:181 [inline]
+ kasan_check_range+0x141/0x190 mm/kasan/generic.c:187
+ instrument_atomic_read include/linux/instrumented.h:68 [inline]
+ _test_bit include/asm-generic/bitops/instrumented-non-atomic.h:141 [inline]
+ buffer_locked include/linux/buffer_head.h:126 [inline]
+ fix_nodes+0x464/0x8660 fs/reiserfs/fix_node.c:2578
+ reiserfs_cut_from_item+0x2bd/0x1b20 fs/reiserfs/stree.c:1740
+ reiserfs_do_truncate+0x630/0x1080 fs/reiserfs/stree.c:1971
+ reiserfs_truncate_file+0x1b5/0x1070 fs/reiserfs/inode.c:2308
+ reiserfs_setattr+0xddf/0x1370 fs/reiserfs/inode.c:3393
+ notify_change+0xb2c/0x1180 fs/attr.c:483
+ do_truncate+0x143/0x200 fs/open.c:66
+ handle_truncate fs/namei.c:3295 [inline]
+ do_open fs/namei.c:3640 [inline]
+ path_openat+0x2083/0x2750 fs/namei.c:3791
+ do_filp_open+0x1ba/0x410 fs/namei.c:3818
+ do_sys_openat2+0x16d/0x4c0 fs/open.c:1356
+ do_sys_open fs/open.c:1372 [inline]
+ __do_sys_open fs/open.c:1380 [inline]
+ __se_sys_open fs/open.c:1376 [inline]
+ __x64_sys_open+0x11d/0x1c0 fs/open.c:1376
+ do_syscall_x64 arch/x86/entry/common.c:50 [inline]
+ do_syscall_64+0x39/0xb0 arch/x86/entry/common.c:80
+ entry_SYSCALL_64_after_hwframe+0x63/0xcd
+RIP: 0033:0x7f7cb89c3be9
+Code: 28 00 00 00 75 05 48 83 c4 28 c3 e8 71 15 00 00 90 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b8 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007f7cb094e2f8 EFLAGS: 00000246 ORIG_RAX: 0000000000000002
+RAX: ffffffffffffffda RBX: 00007f7cb8a497f0 RCX: 00007f7cb89c3be9
+RDX: 0000000000000000 RSI: 000000000014937e RDI: 0000000020000180
+RBP: 00007f7cb8a16410 R08: 0000000000000000 R09: 0000000000000000
+R10: 00000000000010f7 R11: 0000000000000246 R12: 0030656c69662f2e
+R13: 7366726573696572 R14: 6bd71a7077694d3f R15: 00007f7cb8a497f8
+ </TASK>
+==================================================================
 
 
-
-> Thanks,
-> Kuai
-> > start commit:   f8dba31b0a82 Merge tag 'asym-keys-fix-for-linus-v6.4-rc=
-5' ..
-> > git tree:       upstream
-> > final oops:     https://syzkaller.appspot.com/x/report.txt?x=3D1495ffdd=
-280000
-> > console output: https://syzkaller.appspot.com/x/log.txt?x=3D1095ffdd280=
-000
-> > kernel config:  https://syzkaller.appspot.com/x/.config?x=3D3c980bfe8b3=
-99968
-> > dashboard link: https://syzkaller.appspot.com/bug?extid=3Db23c4c9d3d228=
-ba328d7
-> > syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=3D1680f7d12=
-80000
-> > C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=3D12fad50d280=
-000
-> >
-> > Reported-by: syzbot+b23c4c9d3d228ba328d7@syzkaller.appspotmail.com
-> > Fixes: 2acf15b94d5b ("reiserfs: add check for root_inode in reiserfs_fi=
-ll_super")
-> >
-> > For information about bisection process see: https://goo.gl/tpsmEJ#bise=
-ction
-> >
-> > .
-> >
->
-> --
-> You received this message because you are subscribed to the Google Groups=
- "syzkaller-bugs" group.
-> To unsubscribe from this group and stop receiving emails from it, send an=
- email to syzkaller-bugs+unsubscribe@googlegroups.com.
-> To view this discussion on the web visit https://groups.google.com/d/msgi=
-d/syzkaller-bugs/1cb93e56-f3e3-c972-1232-bbb67ad4f672%40huaweicloud.com.
+---
+If you want syzbot to run the reproducer, reply with:
+#syz test: git://repo/address.git branch-or-commit-hash
+If you attach or paste a git patch, syzbot will apply it before testing.
