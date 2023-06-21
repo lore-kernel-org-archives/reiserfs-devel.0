@@ -1,73 +1,268 @@
-From: Jens Axboe <axboe@kernel.dk>
-Subject: Re: [PATCH -next] reiserfs: fix blkdev_put() warning from
- release_journal_dev()
-Date: Tue, 20 Jun 2023 07:19:38 -0600
-Message-ID: <168726717847.3595984.4839375056813352937.b4-ty@kernel.dk>
-References: <20230620111322.1014775-1-yukuai1@huaweicloud.com>
+From: Jeff Layton <jlayton@kernel.org>
+Subject: [PATCH 60/79] reiserfs: switch to new ctime accessors
+Date: Wed, 21 Jun 2023 10:46:13 -0400
+Message-ID: <20230621144735.55953-59-jlayton@kernel.org>
+References: <20230621144507.55591-1-jlayton@kernel.org>
+ <20230621144735.55953-1-jlayton@kernel.org>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20221208.gappssmtp.com; s=20221208; t=1687267180; x=1689859180;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=xVUN/UeiDfdpA4Wf+eSb0/ZWuKlO/eBPU0TJTZdGiJU=;
-        b=FIpNdsuz91q5A7kLQ0j0ZfYx8Rg2FiCOpmGc8uV7yDNVSy89++Zlmlt8pSCdJPivFo
-         /Uz5y6XMRFoJcXmt7Ci7y7ipXlv9iXlvZ1Py4iFTRBLAm5KJkyrf1KPOI/IzjKYRaLSM
-         YbjINvsaxuferhK1tfQSbaY3Krmh66rQA2vaePkoHuIzajOy6a/LaAQmGjDx1U/Zb7ha
-         oiYIfTz5UqzE78DtCLNAi2FHa6eWlh10RisFvHa8Nzd5DGPjb+afJm9CB5s/CxiIc23j
-         OqbjFBuPg0QSqqsskAKgfoaw3J0G3s9/t5NLz1cggR17+Bf+GW3rtROnE7Ui0t96wqe/
-         SmGw==
-In-Reply-To: <20230620111322.1014775-1-yukuai1@huaweicloud.com>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1687358960;
+        bh=WcJHdoVjXFAYNwmKvs+DtsQu+/wxVUJsdB/1zy7Ed4c=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=KRzNvvlXaerWowU1n1skElsx8cjUkEYuXSsrGgjXayI4k1mLDSXLJJ6MITMS3TWHt
+         a/EOsAOCW34HPosJgOJ3rT1dJn63iAt4314F4S6jESdj34JtsUZDt3Et+a80gXHjWB
+         CTT/eeHHNNWcKX175fAxu9tPQz1ei84JxHvy7XBDqI6d58w2F4SLhFRbI2PHqdMyZc
+         XtX0hDRdB0iHfziF9OoN0WwaHDAtzEMmj8l85caTxbFIU2YKMi3+z8ZYzNS+dHZpXB
+         y42zayIXq60Mka7yfTPinES5ysNBXORIiiopB9xyxUOw48S8XvDpGlsfUEdEYXDGCZ
+         McRbEaIUnAIQg==
+In-Reply-To: <20230621144735.55953-1-jlayton@kernel.org>
 List-ID: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: hch@lst.de, jack@suse.cz, jinpu.wang@ionos.com, dchinner@redhat.com, hare@suse.de, trix@redhat.com, bvanassche@acm.org, yukuai3@huawei.com, willy@infradead.org, yi.zhang@huawei.com, dsterba@suse.com, brauner@kernel.org, Yu Kuai <yukuai1@huaweicloud.com>
-Cc: reiserfs-devel@vger.kernel.org, linux-kernel@vger.kernel.org, yangerkun@huawei.com
+To: Christian Brauner <brauner@kernel.org>
+Cc: Al Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>, reiserfs-devel@vger.kernel.org, linux-kernel@vger.kernel.org
 
+In later patches, we're going to change how the ctime.tv_nsec field is
+utilized. Switch to using accessor functions instead of raw accesses of
+inode->i_ctime.
 
-On Tue, 20 Jun 2023 19:13:22 +0800, Yu Kuai wrote:
-> In journal_init_dev(), if super bdev is used as 'j_dev_bd', then
-> blkdev_get_by_dev() is called with NULL holder, otherwise, holder will
-> be journal. However, later in release_journal_dev(), blkdev_put() is
-> called with journal unconditionally, cause following warning:
-> 
-> WARNING: CPU: 1 PID: 5034 at block/bdev.c:617 bd_end_claim block/bdev.c:617 [inline]
-> WARNING: CPU: 1 PID: 5034 at block/bdev.c:617 blkdev_put+0x562/0x8a0 block/bdev.c:901
-> RIP: 0010:blkdev_put+0x562/0x8a0 block/bdev.c:901
-> Call Trace:
->  <TASK>
->  release_journal_dev fs/reiserfs/journal.c:2592 [inline]
->  free_journal_ram+0x421/0x5c0 fs/reiserfs/journal.c:1896
->  do_journal_release fs/reiserfs/journal.c:1960 [inline]
->  journal_release+0x276/0x630 fs/reiserfs/journal.c:1971
->  reiserfs_put_super+0xe4/0x5c0 fs/reiserfs/super.c:616
->  generic_shutdown_super+0x158/0x480 fs/super.c:499
->  kill_block_super+0x64/0xb0 fs/super.c:1422
->  deactivate_locked_super+0x98/0x160 fs/super.c:330
->  deactivate_super+0xb1/0xd0 fs/super.c:361
->  cleanup_mnt+0x2ae/0x3d0 fs/namespace.c:1247
->  task_work_run+0x16f/0x270 kernel/task_work.c:179
->  exit_task_work include/linux/task_work.h:38 [inline]
->  do_exit+0xadc/0x2a30 kernel/exit.c:874
->  do_group_exit+0xd4/0x2a0 kernel/exit.c:1024
->  __do_sys_exit_group kernel/exit.c:1035 [inline]
->  __se_sys_exit_group kernel/exit.c:1033 [inline]
->  __x64_sys_exit_group+0x3e/0x50 kernel/exit.c:1033
->  do_syscall_x64 arch/x86/entry/common.c:50 [inline]
->  do_syscall_64+0x39/0xb0 arch/x86/entry/common.c:80
->  entry_SYSCALL_64_after_hwframe+0x63/0xcd
-> 
-> [...]
+Signed-off-by: Jeff Layton <jlayton@kernel.org>
+---
+ fs/reiserfs/inode.c     | 14 +++++++-------
+ fs/reiserfs/ioctl.c     |  4 ++--
+ fs/reiserfs/namei.c     | 21 ++++++++++-----------
+ fs/reiserfs/stree.c     |  4 ++--
+ fs/reiserfs/super.c     |  2 +-
+ fs/reiserfs/xattr.c     |  5 +++--
+ fs/reiserfs/xattr_acl.c |  2 +-
+ 7 files changed, 26 insertions(+), 26 deletions(-)
 
-Applied, thanks!
-
-[1/1] reiserfs: fix blkdev_put() warning from release_journal_dev()
-      commit: c576c4bf9ecfa3fb9f7b11681cc2f60aba5276c4
-
-Best regards,
+diff --git a/fs/reiserfs/inode.c b/fs/reiserfs/inode.c
+index 77bd3b27059f..3d4e18af8dac 100644
+--- a/fs/reiserfs/inode.c
++++ b/fs/reiserfs/inode.c
+@@ -1259,9 +1259,9 @@ static void init_inode(struct inode *inode, struct treepath *path)
+ 		inode->i_size = sd_v1_size(sd);
+ 		inode->i_atime.tv_sec = sd_v1_atime(sd);
+ 		inode->i_mtime.tv_sec = sd_v1_mtime(sd);
+-		inode->i_ctime.tv_sec = sd_v1_ctime(sd);
++		inode_ctime_set_sec(inode, sd_v1_ctime(sd));
+ 		inode->i_atime.tv_nsec = 0;
+-		inode->i_ctime.tv_nsec = 0;
++		inode_ctime_set_nsec(inode, 0);
+ 		inode->i_mtime.tv_nsec = 0;
+ 
+ 		inode->i_blocks = sd_v1_blocks(sd);
+@@ -1314,8 +1314,8 @@ static void init_inode(struct inode *inode, struct treepath *path)
+ 		i_gid_write(inode, sd_v2_gid(sd));
+ 		inode->i_mtime.tv_sec = sd_v2_mtime(sd);
+ 		inode->i_atime.tv_sec = sd_v2_atime(sd);
+-		inode->i_ctime.tv_sec = sd_v2_ctime(sd);
+-		inode->i_ctime.tv_nsec = 0;
++		inode_ctime_set_sec(inode, sd_v2_ctime(sd));
++		inode_ctime_set_nsec(inode, 0);
+ 		inode->i_mtime.tv_nsec = 0;
+ 		inode->i_atime.tv_nsec = 0;
+ 		inode->i_blocks = sd_v2_blocks(sd);
+@@ -1374,7 +1374,7 @@ static void inode2sd(void *sd, struct inode *inode, loff_t size)
+ 	set_sd_v2_gid(sd_v2, i_gid_read(inode));
+ 	set_sd_v2_mtime(sd_v2, inode->i_mtime.tv_sec);
+ 	set_sd_v2_atime(sd_v2, inode->i_atime.tv_sec);
+-	set_sd_v2_ctime(sd_v2, inode->i_ctime.tv_sec);
++	set_sd_v2_ctime(sd_v2, inode_ctime_peek(inode).tv_sec);
+ 	set_sd_v2_blocks(sd_v2, to_fake_used_blocks(inode, SD_V2_SIZE));
+ 	if (S_ISCHR(inode->i_mode) || S_ISBLK(inode->i_mode))
+ 		set_sd_v2_rdev(sd_v2, new_encode_dev(inode->i_rdev));
+@@ -1394,7 +1394,7 @@ static void inode2sd_v1(void *sd, struct inode *inode, loff_t size)
+ 	set_sd_v1_nlink(sd_v1, inode->i_nlink);
+ 	set_sd_v1_size(sd_v1, size);
+ 	set_sd_v1_atime(sd_v1, inode->i_atime.tv_sec);
+-	set_sd_v1_ctime(sd_v1, inode->i_ctime.tv_sec);
++	set_sd_v1_ctime(sd_v1, inode_ctime_peek(inode).tv_sec);
+ 	set_sd_v1_mtime(sd_v1, inode->i_mtime.tv_sec);
+ 
+ 	if (S_ISCHR(inode->i_mode) || S_ISBLK(inode->i_mode))
+@@ -1986,7 +1986,7 @@ int reiserfs_new_inode(struct reiserfs_transaction_handle *th,
+ 
+ 	/* uid and gid must already be set by the caller for quota init */
+ 
+-	inode->i_mtime = inode->i_atime = inode->i_ctime = current_time(inode);
++	inode->i_mtime = inode->i_atime = inode_ctime_set_current(inode);
+ 	inode->i_size = i_size;
+ 	inode->i_blocks = 0;
+ 	inode->i_bytes = 0;
+diff --git a/fs/reiserfs/ioctl.c b/fs/reiserfs/ioctl.c
+index 6bf9b54e58ca..5d129a0b3ce7 100644
+--- a/fs/reiserfs/ioctl.c
++++ b/fs/reiserfs/ioctl.c
+@@ -55,7 +55,7 @@ int reiserfs_fileattr_set(struct mnt_idmap *idmap,
+ 	}
+ 	sd_attrs_to_i_attrs(flags, inode);
+ 	REISERFS_I(inode)->i_attrs = flags;
+-	inode->i_ctime = current_time(inode);
++	inode_ctime_set_current(inode);
+ 	mark_inode_dirty(inode);
+ 	err = 0;
+ unlock:
+@@ -107,7 +107,7 @@ long reiserfs_ioctl(struct file *filp, unsigned int cmd, unsigned long arg)
+ 			err = -EFAULT;
+ 			goto setversion_out;
+ 		}
+-		inode->i_ctime = current_time(inode);
++		inode_ctime_set_current(inode);
+ 		mark_inode_dirty(inode);
+ setversion_out:
+ 		mnt_drop_write_file(filp);
+diff --git a/fs/reiserfs/namei.c b/fs/reiserfs/namei.c
+index 52240cc891cf..fa4d11b21279 100644
+--- a/fs/reiserfs/namei.c
++++ b/fs/reiserfs/namei.c
+@@ -572,7 +572,7 @@ static int reiserfs_add_entry(struct reiserfs_transaction_handle *th,
+ 	}
+ 
+ 	dir->i_size += paste_size;
+-	dir->i_mtime = dir->i_ctime = current_time(dir);
++	dir->i_mtime = inode_ctime_set_current(dir);
+ 	if (!S_ISDIR(inode->i_mode) && visible)
+ 		/* reiserfs_mkdir or reiserfs_rename will do that by itself */
+ 		reiserfs_update_sd(th, dir);
+@@ -966,7 +966,8 @@ static int reiserfs_rmdir(struct inode *dir, struct dentry *dentry)
+ 			       inode->i_nlink);
+ 
+ 	clear_nlink(inode);
+-	inode->i_ctime = dir->i_ctime = dir->i_mtime = current_time(dir);
++	inode_ctime_set_current(inode);
++	dir->i_mtime = inode_ctime_set_current(dir);
+ 	reiserfs_update_sd(&th, inode);
+ 
+ 	DEC_DIR_INODE_NLINK(dir)
+@@ -1070,11 +1071,11 @@ static int reiserfs_unlink(struct inode *dir, struct dentry *dentry)
+ 		inc_nlink(inode);
+ 		goto end_unlink;
+ 	}
+-	inode->i_ctime = current_time(inode);
++	inode_ctime_set_current(inode);
+ 	reiserfs_update_sd(&th, inode);
+ 
+ 	dir->i_size -= (de.de_entrylen + DEH_SIZE);
+-	dir->i_ctime = dir->i_mtime = current_time(dir);
++	dir->i_mtime = inode_ctime_set_current(dir);
+ 	reiserfs_update_sd(&th, dir);
+ 
+ 	if (!savelink)
+@@ -1250,7 +1251,7 @@ static int reiserfs_link(struct dentry *old_dentry, struct inode *dir,
+ 		return err ? err : retval;
+ 	}
+ 
+-	inode->i_ctime = current_time(inode);
++	inode_ctime_set_current(inode);
+ 	reiserfs_update_sd(&th, inode);
+ 
+ 	ihold(inode);
+@@ -1325,7 +1326,6 @@ static int reiserfs_rename(struct mnt_idmap *idmap,
+ 	int jbegin_count;
+ 	umode_t old_inode_mode;
+ 	unsigned long savelink = 1;
+-	struct timespec64 ctime;
+ 
+ 	if (flags & ~RENAME_NOREPLACE)
+ 		return -EINVAL;
+@@ -1576,14 +1576,13 @@ static int reiserfs_rename(struct mnt_idmap *idmap,
+ 
+ 	mark_de_hidden(old_de.de_deh + old_de.de_entry_num);
+ 	journal_mark_dirty(&th, old_de.de_bh);
+-	ctime = current_time(old_dir);
+-	old_dir->i_ctime = old_dir->i_mtime = ctime;
+-	new_dir->i_ctime = new_dir->i_mtime = ctime;
++	old_dir->i_mtime = inode_ctime_set_current(old_dir);
++	new_dir->i_mtime = inode_ctime_set_current(new_dir);
+ 	/*
+ 	 * thanks to Alex Adriaanse <alex_a@caltech.edu> for patch
+ 	 * which adds ctime update of renamed object
+ 	 */
+-	old_inode->i_ctime = ctime;
++	inode_ctime_set_current(old_inode);
+ 
+ 	if (new_dentry_inode) {
+ 		/* adjust link number of the victim */
+@@ -1592,7 +1591,7 @@ static int reiserfs_rename(struct mnt_idmap *idmap,
+ 		} else {
+ 			drop_nlink(new_dentry_inode);
+ 		}
+-		new_dentry_inode->i_ctime = ctime;
++		inode_ctime_set_current(new_dentry_inode);
+ 		savelink = new_dentry_inode->i_nlink;
+ 	}
+ 
+diff --git a/fs/reiserfs/stree.c b/fs/reiserfs/stree.c
+index ce5003986789..c7f0aa0e9a2e 100644
+--- a/fs/reiserfs/stree.c
++++ b/fs/reiserfs/stree.c
+@@ -2004,7 +2004,7 @@ int reiserfs_do_truncate(struct reiserfs_transaction_handle *th,
+ 
+ 			if (update_timestamps) {
+ 				inode->i_mtime = current_time(inode);
+-				inode->i_ctime = current_time(inode);
++				inode_ctime_set_current(inode);
+ 			}
+ 			reiserfs_update_sd(th, inode);
+ 
+@@ -2029,7 +2029,7 @@ int reiserfs_do_truncate(struct reiserfs_transaction_handle *th,
+ 	if (update_timestamps) {
+ 		/* this is truncate, not file closing */
+ 		inode->i_mtime = current_time(inode);
+-		inode->i_ctime = current_time(inode);
++		inode_ctime_set_current(inode);
+ 	}
+ 	reiserfs_update_sd(th, inode);
+ 
+diff --git a/fs/reiserfs/super.c b/fs/reiserfs/super.c
+index 929acce6e731..0ff67c74aac2 100644
+--- a/fs/reiserfs/super.c
++++ b/fs/reiserfs/super.c
+@@ -2587,7 +2587,7 @@ static ssize_t reiserfs_quota_write(struct super_block *sb, int type,
+ 		return err;
+ 	if (inode->i_size < off + len - towrite)
+ 		i_size_write(inode, off + len - towrite);
+-	inode->i_mtime = inode->i_ctime = current_time(inode);
++	inode->i_mtime = inode_ctime_set_current(inode);
+ 	mark_inode_dirty(inode);
+ 	return len - towrite;
+ }
+diff --git a/fs/reiserfs/xattr.c b/fs/reiserfs/xattr.c
+index 651027967159..469d700d97a9 100644
+--- a/fs/reiserfs/xattr.c
++++ b/fs/reiserfs/xattr.c
+@@ -466,12 +466,13 @@ int reiserfs_commit_write(struct file *f, struct page *page,
+ static void update_ctime(struct inode *inode)
+ {
+ 	struct timespec64 now = current_time(inode);
++	struct timespec64 ctime = inode_ctime_peek(inode);
+ 
+ 	if (inode_unhashed(inode) || !inode->i_nlink ||
+-	    timespec64_equal(&inode->i_ctime, &now))
++	    timespec64_equal(&ctime, &now))
+ 		return;
+ 
+-	inode->i_ctime = current_time(inode);
++	inode_ctime_set_current(inode);
+ 	mark_inode_dirty(inode);
+ }
+ 
+diff --git a/fs/reiserfs/xattr_acl.c b/fs/reiserfs/xattr_acl.c
+index 138060452678..07ef471aa436 100644
+--- a/fs/reiserfs/xattr_acl.c
++++ b/fs/reiserfs/xattr_acl.c
+@@ -285,7 +285,7 @@ __reiserfs_set_acl(struct reiserfs_transaction_handle *th, struct inode *inode,
+ 	if (error == -ENODATA) {
+ 		error = 0;
+ 		if (type == ACL_TYPE_ACCESS) {
+-			inode->i_ctime = current_time(inode);
++			inode_ctime_set_current(inode);
+ 			mark_inode_dirty(inode);
+ 		}
+ 	}
 -- 
-Jens Axboe
-
-
+2.41.0
 
