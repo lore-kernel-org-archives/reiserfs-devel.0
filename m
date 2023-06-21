@@ -1,106 +1,78 @@
-From: Jeff Layton <jlayton@kernel.org>
-Subject: Re: [PATCH 00/79] fs: new accessors for
- inode->i_ctime
-Date: Wed, 21 Jun 2023 15:52:27 -0400
-Message-ID: <2a5a069572b46b59dd16fe8d54e549a9b5bbb6eb.camel@kernel.org>
-References: <20230621144507.55591-1-jlayton@kernel.org>
- <20230621152141.5961cf5f@gandalf.local.home>
+From: "Gustavo A. R. Silva" <gustavoars@kernel.org>
+Subject: [PATCH][next] reiserfs: Replace one-element array with
+ flexible-array member
+Date: Wed, 21 Jun 2023 16:43:54 -0600
+Message-ID: <ZJN9Kqhcs0ZGET/8@work>
 Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Return-path: <cluster-devel-bounces@redhat.com>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1687377179;
-	h=from:from:sender:sender:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:list-id:list-help:
-	 list-unsubscribe:list-subscribe:list-post;
-	bh=vTL4Y8a8sFEsX3Xqt4OIZCRU2/7UfNvPDdjp0N/3dJE=;
-	b=LxzT5GoZ2+dfsXMsc3a2bX7LUG0C1S0BEZIjm3BMhmRH+OWz9zlR2MTAUE5PDWcZkt4GG2
-	ovJWpXlL+jzqZLKPi4XYgYpFsT01eKbbTZ5D9kNbb86M4GPM0kezDk/rHc3qhIxqI9RzmL
-	jGfBgtly1lgehRI7MnBLdzwE+eX1Pig=
-In-Reply-To: <20230621152141.5961cf5f@gandalf.local.home>
-List-Id: <reiserfs-devel.vger.kernel.org>
-List-Unsubscribe: <https://listman.redhat.com/mailman/options/cluster-devel>, 
- <mailto:cluster-devel-request@redhat.com?subject=unsubscribe>
-List-Archive: <http://listman.redhat.com/archives/cluster-devel/>
-List-Post: <mailto:cluster-devel@redhat.com>
-List-Help: <mailto:cluster-devel-request@redhat.com?subject=help>
-List-Subscribe: <https://listman.redhat.com/mailman/listinfo/cluster-devel>,
- <mailto:cluster-devel-request@redhat.com?subject=subscribe>
-Errors-To: cluster-devel-bounces@redhat.com
-Sender: "Cluster-devel" <cluster-devel-bounces@redhat.com>
-Content-Type: text/plain; charset="iso-8859-1"
-To: Steven Rostedt <rostedt@goodmis.org>
-Cc: Latchesar Ionkov <lucho@ionkov.net>, "Rafael
- J. Wysocki" <rafael@kernel.org>, "Darrick J. Wong" <djwong@kernel.org>, Anders Larsen <al@alarsen.net>, Carlos Llamas <cmllamas@google.com>, Andrii Nakryiko <andrii@kernel.org>, Hugh Dickins <hughd@google.com>, John Johansen <john.johansen@canonical.com>, Seth Forshee <sforshee@digitalocean.com>, Alexander Gordeev <agordeev@linux.ibm.com>, Christoph Hellwig <hch@lst.de>, Mike Marshall <hubcap@omnibond.com>, Paulo Alcantara <pc@manguebit.com>, linux-xfs@vger.kernel.org, Bart Van Assche <bvanassche@acm.org>, Michael Ellerman <mpe@ellerman.id.au>, John Keeping <john@keeping.me.uk>, Zhang Yi <yi.zhang@huawei.com>, James Morris <jmorris@namei.org>, Christophe Leroy <christophe.leroy@csgroup.eu>, Tyler Hicks <code@tyhicks.com>, Alan Stern <stern@rowland.harvard.edu>, Christian Borntraeger <borntraeger@linux.ibm.com>, devel@lists.ora
+Return-path: <reiserfs-devel-owner@vger.kernel.org>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1687387378;
+        bh=4kl07al0Jzvum5d8UANt44upxbmeLGvcypOHEKRd24g=;
+        h=Date:From:To:Cc:Subject:From;
+        b=a2QblHnOuvKjfWHwLNTTBOT/dKg0l/lM4+DxplEJkUhTJBJFfJfSaLpbh8VpmRh2M
+         Fdm/WkVndX/G1Jkz7Yaf4kT+3GsgDZD+doKNXwWCP3GcJrfvBPuJpKaATiwz8n2fZR
+         zkMHGCDvuhEJYb0P1StefrO2WIE2K1vdXtrNGWv6bFbzDhA4RBPC7A2tSe8q+GWwkK
+         oIQbxvwrLwpQDF1Co2k9cudV2F8MdEECv1lDox7ulPYrukl8oPD18cO1LUfo3XEiQE
+         Dkx00pw2DQ0ZnpmrWePGzR4e1Q4AU34al9+hS7sQ2q0oqDuSa5CERmUghq+IYLVeps
+         02aR1CvCvJdOg==
+Content-Disposition: inline
+List-ID: <reiserfs-devel.vger.kernel.org>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: reiserfs-devel@vger.kernel.org, linux-kernel@vger.kernel.org, "Gustavo A. R. Silva" <gustavoars@kernel.org>, linux-hardening@vger.kernel.org
+Cc: Kees Cook <keescook@chromium.org>
 
-On Wed, 2023-06-21 at 15:21 -0400, Steven Rostedt wrote:
-> On Wed, 21 Jun 2023 10:45:05 -0400
-> Jeff Layton <jlayton@kernel.org> wrote:
->=20
-> > Most of this conversion was done via coccinelle, with a few of the more
-> > non-standard accesses done by hand. There should be no behavioral
-> > changes with this set. That will come later, as we convert individual
-> > filesystems to use multigrain timestamps.
->=20
-> BTW, Linus has suggested to me that whenever a conccinelle script is used=
-,
-> it should be included in the change log.
->=20
+One-element arrays are deprecated, and we are replacing them with flexible
+array members instead. So, replace one-element array with flexible-array
+member in direntry_uarea structure, and refactor the rest of the code,
+accordingly.
 
-Ok, here's what I have. I note again that my usage of coccinelle is
-pretty primitive, so I ended up doing a fair bit of by-hand fixing after
-applying these.
+Worth mentioning is that before these changes, the original implementation
+was returning two-too many bytes in function direntry_create_vi():
 
-Given the way that this change is broken up into 77 patches by
-subsystem, to which changelogs should I add it? I could add it to the
-"infrastructure" patch, but that's the one where I _didn't_ use it.=A0
+fs/reiserfs/item_ops.c:464:     int size = sizeof(struct direntry_uarea);
+...
+fs/reiserfs/item_ops.c-490-     size += (dir_u->entry_count * sizeof(short));
+...
+fs/reiserfs/item_ops.c-517-     return size;
 
-Maybe to patch #79 (the one that renames i_ctime)?
+Link: https://github.com/KSPP/linux/issues/79
+Link: https://github.com/KSPP/linux/issues/290
+Signed-off-by: Gustavo A. R. Silva <gustavoars@kernel.org>
+---
+ fs/reiserfs/fix_node.c | 5 +++--
+ fs/reiserfs/reiserfs.h | 2 +-
+ 2 files changed, 4 insertions(+), 3 deletions(-)
 
-
-------------------------8<------------------------------
-@@
-expression inode;
-@@
-
-- inode->i_ctime =3D current_time(inode)
-+ inode_set_current_ctime(inode)
-
-@@
-expression inode;
-@@
-
-- inode->i_ctime =3D inode->i_mtime =3D current_time(inode)
-+ inode->i_mtime =3D inode_set_current_ctime(inode)
-
-@@
-struct inode *inode;
-expression value;
-@@
-
-- inode->i_ctime =3D value;
-+ inode_set_ctime(inode, value);
-
-@@
-struct inode *inode;
-expression val;
-@@
-- inode->i_ctime.tv_sec =3D val
-+ inode_set_ctime_sec(inode, val)
-
-@@
-struct inode *inode;
-expression val;
-@@
-- inode->i_ctime.tv_nsec =3D val
-+ inode_set_ctime_nsec(inode, val)
-
-@@
-struct inode *inode;
-@@
-- inode->i_ctime
-+ inode_ctime_peek(inode)
+diff --git a/fs/reiserfs/fix_node.c b/fs/reiserfs/fix_node.c
+index fefe87e1c099..6c13a8d9a73c 100644
+--- a/fs/reiserfs/fix_node.c
++++ b/fs/reiserfs/fix_node.c
+@@ -2252,8 +2252,9 @@ static int get_virtual_node_size(struct super_block *sb, struct buffer_head *bh)
+ 
+ 	return sizeof(struct virtual_node) +
+ 	    max(max_num_of_items * sizeof(struct virtual_item),
+-		sizeof(struct virtual_item) + sizeof(struct direntry_uarea) +
+-		(max_num_of_entries - 1) * sizeof(__u16));
++		sizeof(struct virtual_item) +
++		struct_size_t(struct direntry_uarea, entry_sizes,
++			      max_num_of_entries));
+ }
+ 
+ /*
+diff --git a/fs/reiserfs/reiserfs.h b/fs/reiserfs/reiserfs.h
+index 55e85256aae8..b81749492ef9 100644
+--- a/fs/reiserfs/reiserfs.h
++++ b/fs/reiserfs/reiserfs.h
+@@ -2373,7 +2373,7 @@ struct virtual_node {
+ struct direntry_uarea {
+ 	int flags;
+ 	__u16 entry_count;
+-	__u16 entry_sizes[1];
++	__u16 entry_sizes[];
+ } __attribute__ ((__packed__));
+ 
+ /***************************************************************************
+-- 
+2.34.1
 
