@@ -1,77 +1,123 @@
-From: Christian Brauner <brauner@kernel.org>
-Subject: Re: [PATCH 00/79] fs: new accessors for inode->i_ctime
-Date: Fri, 23 Jun 2023 14:41:42 +0200
-Message-ID: <20230623-wegelagerei-kanzlei-45cdcf5da157@brauner>
-References: <20230621144507.55591-1-jlayton@kernel.org>
- <20230621152141.5961cf5f@gandalf.local.home>
- <2a5a069572b46b59dd16fe8d54e549a9b5bbb6eb.camel@kernel.org>
+From: syzbot <syzbot+4a16683f5520de8e47c4@syzkaller.appspotmail.com>
+Subject: [syzbot] [reiserfs?] [fat?] BUG: corrupted list in __mark_inode_dirty
+Date: Fri, 23 Jun 2023 18:14:49 -0700
+Message-ID: <00000000000010719b05fed5d82f@google.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: base64
-Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=In-Reply-To:Content-Transfer-Encoding:Content-Type:
- MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
- Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
- Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
- List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=WDuz/mF8fj+i+/ap56of24e8/R894BB1LybagVZ6DkM=; b=IGFW4LKIDX84jFwGcLWP++jyzA
- TgV0XGQp2SpTlp1KrgXKloEk2/5Kwdfa/erbgwmgvI8U+h8xWMpvHoBx6X7vbGvA35rvlFK7R66nN
- 1uVQ322v9CUAruxOl3PMRQZlYyNdsUqPTB5pXlt4LhcPM5yA8wM03EY8u6c2a/Tu0RXc=;
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
- ;
- h=In-Reply-To:Content-Transfer-Encoding:Content-Type:MIME-Version:
- References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:Content-ID:
- Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
- :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
- List-Post:List-Owner:List-Archive;
- bh=WDuz/mF8fj+i+/ap56of24e8/R894BB1LybagVZ6DkM=; b=SlxPL7mXevoV+pq7wCAc3m1ehy
- itmAfvBYXkephuSOsXubeTp3MFvoTVZER0knXBDJKsN6a9OW3slUygC43Xy3YezoDWltyf6I425hm
- TBXyqjUyKxex9qzioJWQ1A1jpApDB+FuUlwEwz+YCbypyh07qQ4nvX1oxwpoQ4l9T0I0=;
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
- s=k20201202; t=1687524146;
- bh=ljQRDIRYG4TydFhjD0LuSn8BREerPmb4Ipkpa2QAq6Q=;
- h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
- b=apfm6xvoeO6UvUfxPwNSOl0FaLWJ7ShkzzPeuSOb0bank70626+jFCCnlqxUCd2NX
- mV+Eb3SlbyeKtShM0cPnGoccCVrProiQPYgaM4HyeW5epsbNbu8US+O9nrIP4r+ghW
- Y8FmG2CVOdPNZ1eNovI71PsOzsGS/p5EOkEcjtA4zTWfFdhpQkNKBq1hEMuzxsWytK
- w9zTBeB4xmhiyjllhLtRaoNC8lgBTTH19xNIsLsgb+18yFVUlxxLoSku7XQ5A1i1lR
- WF4IRekFC21BVGIj1AxyqNGVCxMph3jwY74VjiaGchsSc5v31PlBNGYvRkbk2aFmu+
- 9KQZIm3JpdS0g==
-Content-Disposition: inline
-In-Reply-To: <2a5a069572b46b59dd16fe8d54e549a9b5bbb6eb.camel@kernel.org>
-List-Id: <reiserfs-devel.vger.kernel.org>
-List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>, 
- <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
-List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
-List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
-List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
-List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
- <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-Content-Type: text/plain; charset="iso-8859-1"
-To: Jeff Layton <jlayton@kernel.org>
-Cc: Latchesar Ionkov <lucho@ionkov.net>, "Rafael J. Wysocki" <rafael@kernel.org>, "Darrick J. Wong" <djwong@kernel.org>, Anders Larsen <al@alarsen.net>, Carlos Llamas <cmllamas@google.com>, Andrii Nakryiko <andrii@kernel.org>, Hugh Dickins <hughd@google.com>, John Johansen <john.johansen@canonical.com>, Seth Forshee <sforshee@digitalocean.com>, Alexander Gordeev <agordeev@linux.ibm.com>, Christoph Hellwig <hch@lst.de>, Mike Marshall <hubcap@omnibond.com>, Paulo Alcantara <pc@manguebit.com>, linux-xfs@vger.kernel.org, Bart Van Assche <bvanassche@acm.org>, Michael Ellerman <mpe@ellerman.id.au>, John Keeping <john@keeping.me.uk>, Zhang Yi <yi.zhang@huawei.com>, James Morris <jmorris@namei.org>, Christophe Leroy <christophe.leroy@csgroup.eu>, Tyler Hicks <code@tyhicks.com>, Alan Stern <stern@rowland.harvard.edu>, Christian Borntraeger <borntraeger@linux.ibm.com>, devel@lists.ora
+Return-path: <reiserfs-devel-owner@vger.kernel.org>
+List-ID: <reiserfs-devel.vger.kernel.org>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: brauner@kernel.org, linkinjeon@kernel.org, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, reiserfs-devel@vger.kernel.org, sj1557.seo@samsung.com, syzkaller-bugs@googlegroups.com, viro@zeniv.linux.org.uk
 
-T24gV2VkLCBKdW4gMjEsIDIwMjMgYXQgMDM6NTI6MjdQTSAtMDQwMCwgSmVmZiBMYXl0b24gd3Jv
-dGU6Cj4gT24gV2VkLCAyMDIzLTA2LTIxIGF0IDE1OjIxIC0wNDAwLCBTdGV2ZW4gUm9zdGVkdCB3
-cm90ZToKPiA+IE9uIFdlZCwgMjEgSnVuIDIwMjMgMTA6NDU6MDUgLTA0MDAKPiA+IEplZmYgTGF5
-dG9uIDxqbGF5dG9uQGtlcm5lbC5vcmc+IHdyb3RlOgo+ID4gCj4gPiA+IE1vc3Qgb2YgdGhpcyBj
-b252ZXJzaW9uIHdhcyBkb25lIHZpYSBjb2NjaW5lbGxlLCB3aXRoIGEgZmV3IG9mIHRoZSBtb3Jl
-Cj4gPiA+IG5vbi1zdGFuZGFyZCBhY2Nlc3NlcyBkb25lIGJ5IGhhbmQuIFRoZXJlIHNob3VsZCBi
-ZSBubyBiZWhhdmlvcmFsCj4gPiA+IGNoYW5nZXMgd2l0aCB0aGlzIHNldC4gVGhhdCB3aWxsIGNv
-bWUgbGF0ZXIsIGFzIHdlIGNvbnZlcnQgaW5kaXZpZHVhbAo+ID4gPiBmaWxlc3lzdGVtcyB0byB1
-c2UgbXVsdGlncmFpbiB0aW1lc3RhbXBzLgo+ID4gCj4gPiBCVFcsIExpbnVzIGhhcyBzdWdnZXN0
-ZWQgdG8gbWUgdGhhdCB3aGVuZXZlciBhIGNvbmNjaW5lbGxlIHNjcmlwdCBpcyB1c2VkLAo+ID4g
-aXQgc2hvdWxkIGJlIGluY2x1ZGVkIGluIHRoZSBjaGFuZ2UgbG9nLgo+ID4gCj4gCj4gT2ssIGhl
-cmUncyB3aGF0IEkgaGF2ZS4gSSBub3RlIGFnYWluIHRoYXQgbXkgdXNhZ2Ugb2YgY29jY2luZWxs
-ZSBpcwo+IHByZXR0eSBwcmltaXRpdmUsIHNvIEkgZW5kZWQgdXAgZG9pbmcgYSBmYWlyIGJpdCBv
-ZiBieS1oYW5kIGZpeGluZyBhZnRlcgo+IGFwcGx5aW5nIHRoZXNlLgo+IAo+IEdpdmVuIHRoZSB3
-YXkgdGhhdCB0aGlzIGNoYW5nZSBpcyBicm9rZW4gdXAgaW50byA3NyBwYXRjaGVzIGJ5Cj4gc3Vi
-c3lzdGVtLCB0byB3aGljaCBjaGFuZ2Vsb2dzIHNob3VsZCBJIGFkZCBpdD8gSSBjb3VsZCBhZGQg
-aXQgdG8gdGhlCj4gImluZnJhc3RydWN0dXJlIiBwYXRjaCwgYnV0IHRoYXQncyB0aGUgb25lIHdo
-ZXJlIEkgX2RpZG4ndF8gdXNlIGl0LsKgCj4gCj4gTWF5YmUgdG8gcGF0Y2ggIzc5ICh0aGUgb25l
-IHRoYXQgcmVuYW1lcyBpX2N0aW1lKT8KClRoYXQgd29ya3MuIEkgY2FuIGFsc28gcHV0IHRoaXMg
-aW50byBhIG1lcmdlIGNvbW1pdCBvciBwciBtZXNzYWdlLgoKCl9fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fCkxpbnV4LWYyZnMtZGV2ZWwgbWFpbGluZyBsaXN0
-CkxpbnV4LWYyZnMtZGV2ZWxAbGlzdHMuc291cmNlZm9yZ2UubmV0Cmh0dHBzOi8vbGlzdHMuc291
-cmNlZm9yZ2UubmV0L2xpc3RzL2xpc3RpbmZvL2xpbnV4LWYyZnMtZGV2ZWwK
+Hello,
+
+syzbot found the following issue on:
+
+HEAD commit:    45a3e24f65e9 Linux 6.4-rc7
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=12848413280000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=24ce1b2abaee24cc
+dashboard link: https://syzkaller.appspot.com/bug?extid=4a16683f5520de8e47c4
+compiler:       gcc (Debian 10.2.1-6) 10.2.1 20210110, GNU ld (GNU Binutils for Debian) 2.35.2
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=16bd1013280000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=101d4adf280000
+
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/90ee4ebebbf0/disk-45a3e24f.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/01569690e4bb/vmlinux-45a3e24f.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/19f38d7ce866/bzImage-45a3e24f.xz
+mounted in repro: https://storage.googleapis.com/syzbot-assets/245a7035bcde/mount_1.gz
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+4a16683f5520de8e47c4@syzkaller.appspotmail.com
+
+list_add corruption. next->prev should be prev (ffffffff91dfe878), but was 0000060100040048. (next=ffff888070e8fc38).
+------------[ cut here ]------------
+kernel BUG at lib/list_debug.c:27!
+invalid opcode: 0000 [#1] PREEMPT SMP KASAN
+CPU: 1 PID: 4986 Comm: udevd Not tainted 6.4.0-rc7-syzkaller #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 05/27/2023
+RIP: 0010:__list_add_valid+0xa5/0x100 lib/list_debug.c:27
+Code: c7 c7 00 f8 a6 8a e8 8a df 50 fd 0f 0b 48 c7 c7 a0 f8 a6 8a e8 7c df 50 fd 0f 0b 4c 89 e1 48 c7 c7 00 f9 a6 8a e8 6b df 50 fd <0f> 0b 48 89 f1 48 c7 c7 80 f9 a6 8a 4c 89 e6 e8 57 df 50 fd 0f 0b
+RSP: 0018:ffffc900033cfa20 EFLAGS: 00010286
+RAX: 0000000000000075 RBX: ffff88802068ee08 RCX: 0000000000000000
+RDX: 0000000000000000 RSI: ffffffff8167dd6c RDI: 0000000000000005
+RBP: ffff88802068efa0 R08: 0000000000000005 R09: 0000000000000000
+R10: 0000000000000002 R11: 0000000000000001 R12: ffff888070e8fc38
+R13: ffff88802068efa0 R14: ffff88802068efa0 R15: ffff888070e8fc38
+FS:  00007fc75aad2c80(0000) GS:ffff8880b9900000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 0000060100040048 CR3: 0000000028d93000 CR4: 00000000003506e0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+ <TASK>
+ __list_add include/linux/list.h:69 [inline]
+ list_add include/linux/list.h:88 [inline]
+ list_move include/linux/list.h:218 [inline]
+ inode_io_list_move_locked+0x1fa/0x3f0 fs/fs-writeback.c:126
+ __mark_inode_dirty+0x522/0xd60 fs/fs-writeback.c:2505
+ generic_update_time fs/inode.c:1859 [inline]
+ inode_update_time fs/inode.c:1872 [inline]
+ touch_atime+0x687/0x740 fs/inode.c:1944
+ file_accessed include/linux/fs.h:2198 [inline]
+ filemap_read+0xa5a/0xc70 mm/filemap.c:2765
+ blkdev_read_iter+0x3eb/0x760 block/fops.c:606
+ call_read_iter include/linux/fs.h:1862 [inline]
+ new_sync_read fs/read_write.c:389 [inline]
+ vfs_read+0x4b1/0x8a0 fs/read_write.c:470
+ ksys_read+0x12b/0x250 fs/read_write.c:613
+ do_syscall_x64 arch/x86/entry/common.c:50 [inline]
+ do_syscall_64+0x39/0xb0 arch/x86/entry/common.c:80
+ entry_SYSCALL_64_after_hwframe+0x63/0xcd
+RIP: 0033:0x7fc75a716b6a
+Code: 00 3d 00 00 41 00 75 0d 50 48 8d 3d 2d 08 0a 00 e8 ea 7d 01 00 31 c0 e9 07 ff ff ff 64 8b 04 25 18 00 00 00 85 c0 75 1b 0f 05 <48> 3d 00 f0 ff ff 76 6c 48 8b 15 8f a2 0d 00 f7 d8 64 89 02 48 83
+RSP: 002b:00007ffdb3cd93f8 EFLAGS: 00000246 ORIG_RAX: 0000000000000000
+RAX: ffffffffffffffda RBX: 00000000003f0000 RCX: 00007fc75a716b6a
+RDX: 0000000000000040 RSI: 000055c536a3f038 RDI: 0000000000000009
+RBP: 0000000000000040 R08: 000055c536a3f010 R09: 0000000000002000
+R10: 0000000000000015 R11: 0000000000000246 R12: 000055c536a3f010
+R13: 000055c536a3f028 R14: 000055c536a58bc8 R15: 000055c536a58b70
+ </TASK>
+Modules linked in:
+---[ end trace 0000000000000000 ]---
+RIP: 0010:__list_add_valid+0xa5/0x100 lib/list_debug.c:27
+Code: c7 c7 00 f8 a6 8a e8 8a df 50 fd 0f 0b 48 c7 c7 a0 f8 a6 8a e8 7c df 50 fd 0f 0b 4c 89 e1 48 c7 c7 00 f9 a6 8a e8 6b df 50 fd <0f> 0b 48 89 f1 48 c7 c7 80 f9 a6 8a 4c 89 e6 e8 57 df 50 fd 0f 0b
+RSP: 0018:ffffc900033cfa20 EFLAGS: 00010286
+
+RAX: 0000000000000075 RBX: ffff88802068ee08 RCX: 0000000000000000
+RDX: 0000000000000000 RSI: ffffffff8167dd6c RDI: 0000000000000005
+RBP: ffff88802068efa0 R08: 0000000000000005 R09: 0000000000000000
+R10: 0000000000000002 R11: 0000000000000001 R12: ffff888070e8fc38
+R13: ffff88802068efa0 R14: ffff88802068efa0 R15: ffff888070e8fc38
+FS:  00007fc75aad2c80(0000) GS:ffff8880b9900000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 0000060100040048 CR3: 0000000028d93000 CR4: 00000000003506e0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+
+
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+
+If the bug is already fixed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want syzbot to run the reproducer, reply with:
+#syz test: git://repo/address.git branch-or-commit-hash
+If you attach or paste a git patch, syzbot will apply it before testing.
+
+If you want to change bug's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the bug is a duplicate of another bug, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
