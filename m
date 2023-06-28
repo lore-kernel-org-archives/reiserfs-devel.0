@@ -1,95 +1,128 @@
-From: syzbot <syzbot+702d8ffe347fa9623624@syzkaller.appspotmail.com>
-Subject: [syzbot] [reiserfs?] kernel BUG in flush_commit_list
-Date: Wed, 28 Jun 2023 00:07:44 -0700
-Message-ID: <0000000000008a36d105ff2b3d83@google.com>
+From: syzbot <syzbot+f13a9546e229c1a6e378@syzkaller.appspotmail.com>
+Subject: [syzbot] [reiserfs?] general protection fault in __hrtimer_run_queues (3)
+Date: Wed, 28 Jun 2023 16:05:59 -0700
+Message-ID: <0000000000008023b805ff38a0af@google.com>
 Mime-Version: 1.0
 Return-path: <linux-fsdevel-owner@vger.kernel.org>
 List-ID: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, reiserfs-devel@vger.kernel.org, syzkaller-bugs@googlegroups.com
+To: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, reiserfs-devel@vger.kernel.org, syzkaller-bugs@googlegroups.com, tglx@linutronix.de
 
 Hello,
 
 syzbot found the following issue on:
 
-HEAD commit:    61dabacdad4e Merge tag 'sound-6.4' of git://git.kernel.org..
+HEAD commit:    e8f75c0270d9 Merge tag 'x86_sgx_for_v6.5' of git://git.ker..
 git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=17d009af280000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=e74b395fe4978721
-dashboard link: https://syzkaller.appspot.com/bug?extid=702d8ffe347fa9623624
-compiler:       Debian clang version 15.0.7, GNU ld (GNU Binutils for Debian) 2.35.2
-
-Unfortunately, I don't have any reproducer for this issue yet.
+console output: https://syzkaller.appspot.com/x/log.txt?x=13710670a80000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=a98ec7f738e43bd4
+dashboard link: https://syzkaller.appspot.com/bug?extid=f13a9546e229c1a6e378
+compiler:       gcc (Debian 10.2.1-6) 10.2.1 20210110, GNU ld (GNU Binutils for Debian) 2.35.2
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1227af7b280000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=13803daf280000
 
 Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/eba067fe8c35/disk-61dabacd.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/6800499a8694/vmlinux-61dabacd.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/4b4f8a7eda0e/bzImage-61dabacd.xz
+disk image: https://storage.googleapis.com/syzbot-assets/f27c1d41217a/disk-e8f75c02.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/843ae5d5c810/vmlinux-e8f75c02.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/da48bc4c0ec1/bzImage-e8f75c02.xz
+mounted in repro: https://storage.googleapis.com/syzbot-assets/667a76526623/mount_0.gz
 
 IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+702d8ffe347fa9623624@syzkaller.appspotmail.com
+Reported-by: syzbot+f13a9546e229c1a6e378@syzkaller.appspotmail.com
 
-------------[ cut here ]------------
-kernel BUG at fs/reiserfs/journal.c:1108!
-invalid opcode: 0000 [#1] PREEMPT SMP KASAN
-CPU: 0 PID: 5035 Comm: syz-executor.0 Not tainted 6.4.0-rc7-syzkaller-00204-g61dabacdad4e #0
+==================================================================
+BUG: KASAN: global-out-of-bounds in lookup_object lib/debugobjects.c:195 [inline]
+BUG: KASAN: global-out-of-bounds in debug_object_deactivate lib/debugobjects.c:785 [inline]
+BUG: KASAN: global-out-of-bounds in debug_object_deactivate+0x27b/0x300 lib/debugobjects.c:771
+Read of size 8 at addr ffffffff8a49cd78 by task kauditd/27
+
+CPU: 1 PID: 27 Comm: kauditd Not tainted 6.4.0-syzkaller-01406-ge8f75c0270d9 #0
 Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 05/27/2023
-RIP: 0010:flush_commit_list+0x1bc3/0x1bf0 fs/reiserfs/journal.c:1108
-Code: ff ff e8 60 49 59 ff 0f 0b e8 59 49 59 ff 0f 0b e8 52 49 59 ff 0f 0b e8 4b 49 59 ff 0f 0b e8 44 49 59 ff 0f 0b e8 3d 49 59 ff <0f> 0b e8 36 49 59 ff 0f 0b 44 89 f1 80 e1 07 80 c1 03 38 c1 0f 8c
-RSP: 0018:ffffc9000409f748 EFLAGS: 00010293
-RAX: ffffffff82323bb3 RBX: ffff88807b35a0d0 RCX: ffff888028279dc0
-RDX: 0000000000000000 RSI: 0000000000000002 RDI: 0000000000000000
-RBP: 0000000000000002 R08: ffffffff82323044 R09: ffffed1011ebcce9
-R10: 0000000000000000 R11: dffffc0000000001 R12: ffff88807b35a01c
-R13: dffffc0000000000 R14: ffff88803c25c000 R15: 1ffff1100f66b41a
-FS:  0000555555b4f400(0000) GS:ffff8880b9800000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007f40f3952000 CR3: 0000000035d67000 CR4: 00000000003506f0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
 Call Trace:
+ <IRQ>
+ __dump_stack lib/dump_stack.c:88 [inline]
+ dump_stack_lvl+0xd9/0x150 lib/dump_stack.c:106
+ print_address_description.constprop.0+0x2c/0x3c0 mm/kasan/report.c:351
+ print_report mm/kasan/report.c:462 [inline]
+ kasan_report+0x11c/0x130 mm/kasan/report.c:572
+ lookup_object lib/debugobjects.c:195 [inline]
+ debug_object_deactivate lib/debugobjects.c:785 [inline]
+ debug_object_deactivate+0x27b/0x300 lib/debugobjects.c:771
+ debug_hrtimer_deactivate kernel/time/hrtimer.c:427 [inline]
+ debug_deactivate kernel/time/hrtimer.c:483 [inline]
+ __run_hrtimer kernel/time/hrtimer.c:1656 [inline]
+ __hrtimer_run_queues+0x3f3/0xbe0 kernel/time/hrtimer.c:1752
+ hrtimer_interrupt+0x320/0x7b0 kernel/time/hrtimer.c:1814
+ local_apic_timer_interrupt arch/x86/kernel/apic/apic.c:1098 [inline]
+ __sysvec_apic_timer_interrupt+0x14a/0x430 arch/x86/kernel/apic/apic.c:1115
+ sysvec_apic_timer_interrupt+0x92/0xc0 arch/x86/kernel/apic/apic.c:1109
+ </IRQ>
  <TASK>
- do_journal_end+0x3160/0x4770 fs/reiserfs/journal.c:4300
- do_journal_release+0x178/0x4d0 fs/reiserfs/journal.c:1917
- journal_release+0x1f/0x30 fs/reiserfs/journal.c:1971
- reiserfs_put_super+0x23b/0x4c0 fs/reiserfs/super.c:616
- generic_shutdown_super+0x134/0x340 fs/super.c:500
- kill_block_super+0x84/0xf0 fs/super.c:1407
- deactivate_locked_super+0xa4/0x110 fs/super.c:331
- cleanup_mnt+0x426/0x4c0 fs/namespace.c:1177
- task_work_run+0x24a/0x300 kernel/task_work.c:179
- resume_user_mode_work include/linux/resume_user_mode.h:49 [inline]
- exit_to_user_mode_loop+0xd9/0x100 kernel/entry/common.c:171
- exit_to_user_mode_prepare+0xb1/0x140 kernel/entry/common.c:204
- __syscall_exit_to_user_mode_work kernel/entry/common.c:286 [inline]
- syscall_exit_to_user_mode+0x64/0x280 kernel/entry/common.c:297
- do_syscall_64+0x4d/0xc0 arch/x86/entry/common.c:86
- entry_SYSCALL_64_after_hwframe+0x63/0xcd
-RIP: 0033:0x7f5255e8d7f7
-Code: ff ff ff f7 d8 64 89 01 48 83 c8 ff c3 66 0f 1f 44 00 00 31 f6 e9 09 00 00 00 66 0f 1f 84 00 00 00 00 00 b8 a6 00 00 00 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b8 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007fffc16d9fa8 EFLAGS: 00000246 ORIG_RAX: 00000000000000a6
-RAX: 0000000000000000 RBX: 0000000000000000 RCX: 00007f5255e8d7f7
-RDX: 00007fffc16da07b RSI: 000000000000000a RDI: 00007fffc16da070
-RBP: 00007fffc16da070 R08: 00000000ffffffff R09: 00007fffc16d9e40
-R10: 0000555555b50893 R11: 0000000000000246 R12: 00007f5255ed643b
-R13: 00007fffc16db130 R14: 0000555555b50810 R15: 00007fffc16db170
+ asm_sysvec_apic_timer_interrupt+0x1a/0x20 arch/x86/include/asm/idtentry.h:645
+RIP: 0010:__sanitizer_cov_trace_pc+0x0/0x70 kernel/kcov.c:200
+Code: 66 d4 8f 02 66 0f 1f 44 00 00 f3 0f 1e fa 48 8b be b0 01 00 00 e8 b0 ff ff ff 31 c0 c3 66 66 2e 0f 1f 84 00 00 00 00 00 66 90 <f3> 0f 1e fa 65 8b 05 3d 3a 7f 7e 89 c1 48 8b 34 24 81 e1 00 01 00
+RSP: 0018:ffffc90000a3faa8 EFLAGS: 00000293
+
+RAX: 0000000000000000 RBX: 0000000000000200 RCX: 0000000000000000
+RDX: ffff88801724bb80 RSI: ffffffff81686965 RDI: 0000000000000007
+RBP: ffffffff8d26a498 R08: 0000000000000007 R09: 0000000000000000
+R10: 0000000000000200 R11: 205d373254202020 R12: 0000000000000000
+R13: ffffffff8d26a440 R14: dffffc0000000000 R15: 0000000000000001
+ console_emit_next_record arch/x86/include/asm/irqflags.h:42 [inline]
+ console_flush_all+0x61b/0xcc0 kernel/printk/printk.c:2933
+ console_unlock+0xb8/0x1f0 kernel/printk/printk.c:3007
+ vprintk_emit+0x1bd/0x600 kernel/printk/printk.c:2307
+ vprintk+0x84/0xa0 kernel/printk/printk_safe.c:50
+ _printk+0xbf/0xf0 kernel/printk/printk.c:2328
+ kauditd_printk_skb kernel/audit.c:536 [inline]
+ kauditd_hold_skb+0x1fb/0x240 kernel/audit.c:571
+ kauditd_send_queue+0x220/0x280 kernel/audit.c:756
+ kauditd_thread+0x617/0xaa0 kernel/audit.c:880
+ kthread+0x344/0x440 kernel/kthread.c:379
+ ret_from_fork+0x1f/0x30 arch/x86/entry/entry_64.S:308
  </TASK>
-Modules linked in:
----[ end trace 0000000000000000 ]---
-RIP: 0010:flush_commit_list+0x1bc3/0x1bf0 fs/reiserfs/journal.c:1108
-Code: ff ff e8 60 49 59 ff 0f 0b e8 59 49 59 ff 0f 0b e8 52 49 59 ff 0f 0b e8 4b 49 59 ff 0f 0b e8 44 49 59 ff 0f 0b e8 3d 49 59 ff <0f> 0b e8 36 49 59 ff 0f 0b 44 89 f1 80 e1 07 80 c1 03 38 c1 0f 8c
-RSP: 0018:ffffc9000409f748 EFLAGS: 00010293
-RAX: ffffffff82323bb3 RBX: ffff88807b35a0d0 RCX: ffff888028279dc0
-RDX: 0000000000000000 RSI: 0000000000000002 RDI: 0000000000000000
-RBP: 0000000000000002 R08: ffffffff82323044 R09: ffffed1011ebcce9
-R10: 0000000000000000 R11: dffffc0000000001 R12: ffff88807b35a01c
-R13: dffffc0000000000 R14: ffff88803c25c000 R15: 1ffff1100f66b41a
-FS:  0000555555b4f400(0000) GS:ffff8880b9900000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007f40f3899000 CR3: 0000000035d67000 CR4: 00000000003506e0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+
+The buggy address belongs to the variable:
+ ds.0+0x218/0x580
+
+The buggy address belongs to the physical page:
+page:ffffea0000292700 refcount:1 mapcount:0 mapping:0000000000000000 index:0x0 pfn:0xa49c
+flags: 0xfff00000001000(reserved|node=0|zone=1|lastcpupid=0x7ff)
+page_type: 0xffffffff()
+raw: 00fff00000001000 ffffea0000292708 ffffea0000292708 0000000000000000
+raw: 0000000000000000 0000000000000000 00000001ffffffff 0000000000000000
+page dumped because: kasan: bad access detected
+page_owner info is not present (never set?)
+
+Memory state around the buggy address:
+ ffffffff8a49cc00: f9 f9 f9 f9 00 00 00 00 03 f9 f9 f9 f9 f9 f9 f9
+ ffffffff8a49cc80: 07 f9 f9 f9 f9 f9 f9 f9 00 00 00 00 00 05 f9 f9
+>ffffffff8a49cd00: f9 f9 f9 f9 00 00 03 f9 f9 f9 f9 f9 00 00 01 f9
+                                                                ^
+ ffffffff8a49cd80: f9 f9 f9 f9 00 00 00 00 00 00 00 00 06 f9 f9 f9
+ ffffffff8a49ce00: f9 f9 f9 f9 00 00 00 03 f9 f9 f9 f9 00 00 00 00
+==================================================================
+----------------
+Code disassembly (best guess):
+   0:	66 d4                	data16 (bad)
+   2:	8f 02                	popq   (%rdx)
+   4:	66 0f 1f 44 00 00    	nopw   0x0(%rax,%rax,1)
+   a:	f3 0f 1e fa          	endbr64
+   e:	48 8b be b0 01 00 00 	mov    0x1b0(%rsi),%rdi
+  15:	e8 b0 ff ff ff       	callq  0xffffffca
+  1a:	31 c0                	xor    %eax,%eax
+  1c:	c3                   	retq
+  1d:	66 66 2e 0f 1f 84 00 	data16 nopw %cs:0x0(%rax,%rax,1)
+  24:	00 00 00 00
+  28:	66 90                	xchg   %ax,%ax
+* 2a:	f3 0f 1e fa          	endbr64 <-- trapping instruction
+  2e:	65 8b 05 3d 3a 7f 7e 	mov    %gs:0x7e7f3a3d(%rip),%eax        # 0x7e7f3a72
+  35:	89 c1                	mov    %eax,%ecx
+  37:	48 8b 34 24          	mov    (%rsp),%rsi
+  3b:	81                   	.byte 0x81
+  3c:	e1 00                	loope  0x3e
+  3e:	01 00                	add    %eax,(%rax)
 
 
 ---
@@ -102,6 +135,10 @@ https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
 
 If the bug is already fixed, let syzbot know by replying with:
 #syz fix: exact-commit-title
+
+If you want syzbot to run the reproducer, reply with:
+#syz test: git://repo/address.git branch-or-commit-hash
+If you attach or paste a git patch, syzbot will apply it before testing.
 
 If you want to change bug's subsystems, reply with:
 #syz set subsystems: new-subsystem
