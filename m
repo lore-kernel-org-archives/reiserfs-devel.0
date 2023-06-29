@@ -1,91 +1,56 @@
-From: "Theodore Ts'o" <tytso@mit.edu>
-Subject: Re: [syzbot] [ext4?] KASAN: slab-use-after-free Read in __ext4_iget
-Date: Thu, 29 Jun 2023 00:28:39 -0400
-Message-ID: <20230629042839.GK8954@mit.edu>
-References: <000000000000ddfe0405fd7ef847@google.com>
+From: syzbot <syzbot+list27f0754ef9e5b00bcfe9@syzkaller.appspotmail.com>
+Subject: [syzbot] Monthly reiserfs report (Jun 2023)
+Date: Thu, 29 Jun 2023 01:54:02 -0700
+Message-ID: <000000000000825f0d05ff40d7ca@google.com>
 Mime-Version: 1.0
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mit.edu; s=outgoing;
-        t=1688012921; bh=G1WywpSC7JbNF3VsEtkgr5IRIuWVWKPrradmgoLImzQ=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To;
-        b=hMd79orpIHdr7WocGloof1z2O9ZX12vsq9VbYdJ38vtZvIwjhMjKrgytgMH7FhN3i
-         0vxIbMbRlxg5jQtIPcbXHjAxmP2FJ/fEOX252QUk/cxkyY8QyIVgFOVe1oixmKmweb
-         tTIJBNjciUDhVqqz0Yn0h9LPl0z5ubaPGaqPOQ35h1xzvVjKduEG2/99IpFfogB7wh
-         w1+u4EnnqTfxch4fS3Be9CHidiTlQ9lfzeBpYU18hUGpTTBLKAPxjTyjxLl+rc88uM
-         ZNLNYPNatVwV1jRPVvhZfLu/fhUAzlbmLOxNxL6SN1Hgmvaj3lsyVZURI1IPnKAcPE
-         zn2pLhc0mGUEQ==
-Content-Disposition: inline
-In-Reply-To: <000000000000ddfe0405fd7ef847@google.com>
 List-ID: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: syzbot <syzbot+5407ecf3112f882d2ef3@syzkaller.appspotmail.com>
-Cc: adilger.kernel@dilger.ca, linux-ext4@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, reiserfs-devel@vger.kernel.org, syzkaller-bugs@googlegroups.com
+To: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, reiserfs-devel@vger.kernel.org, syzkaller-bugs@googlegroups.com
 
-#syz set subsystems: fs, reiserfs
+Hello reiserfs maintainers/developers,
 
-On Tue, Jun 06, 2023 at 05:11:06PM -0700, syzbot wrote:
-> Hello,
-> 
-> syzbot found the following issue on:
-> 
-> HEAD commit:    a4d7d7011219 Merge tag 'spi-fix-v6.4-rc5' of git://git.ker..
-> git tree:       upstream
-> console output: https://syzkaller.appspot.com/x/log.txt?x=1455f745280000
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=7474de833c217bf4
-> dashboard link: https://syzkaller.appspot.com/bug?extid=5407ecf3112f882d2ef3
-> compiler:       Debian clang version 15.0.7, GNU ld (GNU Binutils for Debian) 2.35.2
+This is a 31-day syzbot report for the reiserfs subsystem.
+All related reports/information can be found at:
+https://syzkaller.appspot.com/upstream/s/reiserfs
 
-The stack traces on this are... intersting.  The use-after free is
-coming when ext4_fill_super() tries to get the root inode, via
-iget_locked(sb, EXT2_ROOT_INO)
+During the period, 13 new issues were detected and 0 were fixed.
+In total, 84 issues are still open and 17 have been fixed so far.
 
-> BUG: KASAN: slab-use-after-free in __ext4_iget+0x2f2/0x3f30 fs/ext4/inode.c:4700
-> Read of size 8 at addr ffff888078ca5550 by task syz-executor.5/26112
-	...
->  __ext4_iget+0x2f2/0x3f30 fs/ext4/inode.c:4700
->  __ext4_fill_super fs/ext4/super.c:5446 [inline]
->  ext4_fill_super+0x545b/0x6c60 fs/ext4/super.c:5672
+Some of the still happening issues:
 
-However, we are getting back an object which is freed, and which was
-originally allocated by reiserfs(!):
+Ref  Crashes Repro Title
+<1>  3597    Yes   possible deadlock in open_xa_dir
+                   https://syzkaller.appspot.com/bug?extid=8fb64a61fdd96b50f3b8
+<2>  2491    Yes   KASAN: null-ptr-deref Read in do_journal_end (2)
+                   https://syzkaller.appspot.com/bug?extid=845cd8e5c47f2a125683
+<3>  1474    Yes   kernel BUG in do_journal_begin_r
+                   https://syzkaller.appspot.com/bug?extid=2da5e132dd0268a9c0e4
+<4>  1394    Yes   kernel BUG at fs/reiserfs/journal.c:LINE!
+                   https://syzkaller.appspot.com/bug?extid=6820505ae5978f4f8f2f
+<5>  1197    Yes   WARNING in reiserfs_lookup
+                   https://syzkaller.appspot.com/bug?extid=392ac209604cc18792e5
+<6>  912     No    UBSAN: array-index-out-of-bounds in direntry_create_vi
+                   https://syzkaller.appspot.com/bug?extid=e5bb9eb00a5a5ed2a9a2
+<7>  861     Yes   possible deadlock in mnt_want_write_file
+                   https://syzkaller.appspot.com/bug?extid=1047e42179f502f2b0a2
+<8>  291     Yes   possible deadlock in reiserfs_ioctl
+                   https://syzkaller.appspot.com/bug?extid=79c303ad05f4041e0dad
+<9>  266     Yes   WARNING in journal_end
+                   https://syzkaller.appspot.com/bug?extid=d43f346675e449548021
+<10> 233     Yes   KASAN: out-of-bounds Read in leaf_paste_entries (2)
+                   https://syzkaller.appspot.com/bug?extid=38b79774b6c990637f95
 
-> Allocated by task 20729:
->  kasan_save_stack mm/kasan/common.c:45 [inline]
->  kasan_set_track+0x4f/0x70 mm/kasan/common.c:52
->  __kasan_slab_alloc+0x66/0x70 mm/kasan/common.c:328
->  kasan_slab_alloc include/linux/kasan.h:186 [inline]
->  slab_post_alloc_hook+0x68/0x3a0 mm/slab.h:711
->  slab_alloc_node mm/slub.c:3451 [inline]
->  slab_alloc mm/slub.c:3459 [inline]
->  __kmem_cache_alloc_lru mm/slub.c:3466 [inline]
->  kmem_cache_alloc_lru+0x11f/0x2e0 mm/slub.c:3482
->  alloc_inode_sb include/linux/fs.h:2705 [inline]
->  reiserfs_alloc_inode+0x2a/0xc0 fs/reiserfs/super.c:642
->  alloc_inode fs/inode.c:260 [inline]
->  iget5_locked+0xa0/0x270 fs/inode.c:1241
->  reiserfs_fill_super+0x12e4/0x2620 fs/reiserfs/super.c:2053
->  mount_bdev+0x2d0/0x3f0 fs/super.c:1380
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-There is no reproducer, but it seems to be triggering quite frequently
-(over once day --- 20 times since June 16, 2023 as of this writing).
-I've checked a number of the reports in the Syzkaller dashboard, and
-they are all quite similar; somehow ext4 is getting an inode which is
-freed, and whose memory was originally allocated by reiserfs.
+To disable reminders for individual bugs, reply with the following command:
+#syz set <Ref> no-reminders
 
-I'm not sure if this is a reiserfs bug or a core VFS bug, since this
-seems to imply that an an old reiserfs inode was left on the
-inode_hashtable when a reiserfs file system was unmounted, and then
-the struct super was reused and returned for a fresh ext4 mount, and
-then when ext4 tried do an iget_locked(), it got the reserifs inode.
+To change bug's subsystems, reply with:
+#syz set <Ref> subsystems: new-subsystem
 
-That reiserfs inode was either freed and left on the inode_hashtable,
-or lifetime of the reiserfs root inode was allowed to last longer than
-the reiserfs superblock (maybe someone is playing RCU games?) and so
-since it was left on the inode_hashtable, the attempt to free reiserfs
-root inode raced with ext4's attempt to fetch the ext4 inode via
-iget_locked().
-
-Perhaps one of the VFS or reiserfs maintainers could take a look?
-
-       	       	  	   	      	       - Ted
+You may send multiple commands in a single email message.
