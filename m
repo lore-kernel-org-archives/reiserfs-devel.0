@@ -1,56 +1,123 @@
-From: syzbot <syzbot+list27f0754ef9e5b00bcfe9@syzkaller.appspotmail.com>
-Subject: [syzbot] Monthly reiserfs report (Jun 2023)
-Date: Thu, 29 Jun 2023 01:54:02 -0700
-Message-ID: <000000000000825f0d05ff40d7ca@google.com>
+From: syzbot <syzbot+1d7062c505b34792ef90@syzkaller.appspotmail.com>
+Subject: [syzbot] [lsm?] [reiserfs?] general protection fault in fsnotify_perm
+Date: Thu, 29 Jun 2023 10:47:47 -0700
+Message-ID: <0000000000005a9fab05ff484cc4@google.com>
 Mime-Version: 1.0
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
 List-ID: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, reiserfs-devel@vger.kernel.org, syzkaller-bugs@googlegroups.com
+To: bpf@vger.kernel.org, jmorris@namei.org, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org, paul@paul-moore.com, reiserfs-devel@vger.kernel.org, serge@hallyn.com, syzkaller-bugs@googlegroups.com
 
-Hello reiserfs maintainers/developers,
+Hello,
 
-This is a 31-day syzbot report for the reiserfs subsystem.
-All related reports/information can be found at:
-https://syzkaller.appspot.com/upstream/s/reiserfs
+syzbot found the following issue on:
 
-During the period, 13 new issues were detected and 0 were fixed.
-In total, 84 issues are still open and 17 have been fixed so far.
+HEAD commit:    a92b7d26c743 Merge tag 'drm-fixes-2023-06-23' of git://ano..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=16cd10e0a80000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=24ce1b2abaee24cc
+dashboard link: https://syzkaller.appspot.com/bug?extid=1d7062c505b34792ef90
+compiler:       gcc (Debian 10.2.1-6) 10.2.1 20210110, GNU ld (GNU Binutils for Debian) 2.35.2
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1066cc77280000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=116850bf280000
 
-Some of the still happening issues:
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/f0158c6c02c9/disk-a92b7d26.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/91b4daaa4521/vmlinux-a92b7d26.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/b5e6c2198af0/bzImage-a92b7d26.xz
+mounted in repro: https://storage.googleapis.com/syzbot-assets/d48571c9b971/mount_0.gz
 
-Ref  Crashes Repro Title
-<1>  3597    Yes   possible deadlock in open_xa_dir
-                   https://syzkaller.appspot.com/bug?extid=8fb64a61fdd96b50f3b8
-<2>  2491    Yes   KASAN: null-ptr-deref Read in do_journal_end (2)
-                   https://syzkaller.appspot.com/bug?extid=845cd8e5c47f2a125683
-<3>  1474    Yes   kernel BUG in do_journal_begin_r
-                   https://syzkaller.appspot.com/bug?extid=2da5e132dd0268a9c0e4
-<4>  1394    Yes   kernel BUG at fs/reiserfs/journal.c:LINE!
-                   https://syzkaller.appspot.com/bug?extid=6820505ae5978f4f8f2f
-<5>  1197    Yes   WARNING in reiserfs_lookup
-                   https://syzkaller.appspot.com/bug?extid=392ac209604cc18792e5
-<6>  912     No    UBSAN: array-index-out-of-bounds in direntry_create_vi
-                   https://syzkaller.appspot.com/bug?extid=e5bb9eb00a5a5ed2a9a2
-<7>  861     Yes   possible deadlock in mnt_want_write_file
-                   https://syzkaller.appspot.com/bug?extid=1047e42179f502f2b0a2
-<8>  291     Yes   possible deadlock in reiserfs_ioctl
-                   https://syzkaller.appspot.com/bug?extid=79c303ad05f4041e0dad
-<9>  266     Yes   WARNING in journal_end
-                   https://syzkaller.appspot.com/bug?extid=d43f346675e449548021
-<10> 233     Yes   KASAN: out-of-bounds Read in leaf_paste_entries (2)
-                   https://syzkaller.appspot.com/bug?extid=38b79774b6c990637f95
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+1d7062c505b34792ef90@syzkaller.appspotmail.com
+
+general protection fault, probably for non-canonical address 0xdffffc0000000005: 0000 [#1] PREEMPT SMP KASAN
+KASAN: null-ptr-deref in range [0x0000000000000028-0x000000000000002f]
+CPU: 0 PID: 4987 Comm: udevd Not tainted 6.4.0-rc7-syzkaller-00226-ga92b7d26c743 #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 05/27/2023
+RIP: 0010:fsnotify_parent include/linux/fsnotify.h:62 [inline]
+RIP: 0010:fsnotify_file include/linux/fsnotify.h:99 [inline]
+RIP: 0010:fsnotify_perm.part.0+0x12e/0x610 include/linux/fsnotify.h:124
+Code: 48 89 fa 48 c1 ea 03 80 3c 02 00 0f 85 75 04 00 00 48 b8 00 00 00 00 00 fc ff df 48 8b 5d 68 48 8d 7b 28 48 89 fa 48 c1 ea 03 <80> 3c 02 00 0f 85 5c 04 00 00 4c 8b 73 28 be 08 00 00 00 4d 8d a6
+RSP: 0018:ffffc9000347fa00 EFLAGS: 00010206
+RAX: dffffc0000000000 RBX: 0000000000000000 RCX: 0000000000000000
+RDX: 0000000000000005 RSI: ffffffff83cbf5e3 RDI: 0000000000000028
+RBP: ffff888067875bc0 R08: 0000000000000005 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000001 R12: 0000000000000000
+R13: ffff88802d0722d0 R14: ffff88802d07233c R15: 0000000000010000
+FS:  00007f538cf63c80(0000) GS:ffff8880b9800000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00007f9b7c4d8718 CR3: 000000002eb3f000 CR4: 00000000003506f0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+ <TASK>
+ fsnotify_perm include/linux/fsnotify.h:108 [inline]
+ security_file_open+0x86/0xb0 security/security.c:2801
+ do_dentry_open+0x575/0x13f0 fs/open.c:907
+ do_open fs/namei.c:3636 [inline]
+ path_openat+0x1baa/0x2750 fs/namei.c:3791
+ do_filp_open+0x1ba/0x410 fs/namei.c:3818
+ do_sys_openat2+0x16d/0x4c0 fs/open.c:1356
+ do_sys_open fs/open.c:1372 [inline]
+ __do_sys_openat fs/open.c:1388 [inline]
+ __se_sys_openat fs/open.c:1383 [inline]
+ __x64_sys_openat+0x143/0x1f0 fs/open.c:1383
+ do_syscall_x64 arch/x86/entry/common.c:50 [inline]
+ do_syscall_64+0x39/0xb0 arch/x86/entry/common.c:80
+ entry_SYSCALL_64_after_hwframe+0x63/0xcd
+RIP: 0033:0x7f538cb169a4
+Code: 24 20 48 8d 44 24 30 48 89 44 24 28 64 8b 04 25 18 00 00 00 85 c0 75 2c 44 89 e2 48 89 ee bf 9c ff ff ff b8 01 01 00 00 0f 05 <48> 3d 00 f0 ff ff 76 60 48 8b 15 55 a4 0d 00 f7 d8 64 89 02 48 83
+RSP: 002b:00007fff8a905c40 EFLAGS: 00000246 ORIG_RAX: 0000000000000101
+RAX: ffffffffffffffda RBX: 0000000000000004 RCX: 00007f538cb169a4
+RDX: 0000000000080241 RSI: 00007fff8a906188 RDI: 00000000ffffff9c
+RBP: 00007fff8a906188 R08: 0000000000000004 R09: 0000000000000001
+R10: 00000000000001b6 R11: 0000000000000246 R12: 0000000000080241
+R13: 000056095d45972e R14: 0000000000000001 R15: 000056095e6332c0
+ </TASK>
+Modules linked in:
+----------------
+Code disassembly (best guess):
+   0:	48 89 fa             	mov    %rdi,%rdx
+   3:	48 c1 ea 03          	shr    $0x3,%rdx
+   7:	80 3c 02 00          	cmpb   $0x0,(%rdx,%rax,1)
+   b:	0f 85 75 04 00 00    	jne    0x486
+  11:	48 b8 00 00 00 00 00 	movabs $0xdffffc0000000000,%rax
+  18:	fc ff df
+  1b:	48 8b 5d 68          	mov    0x68(%rbp),%rbx
+  1f:	48 8d 7b 28          	lea    0x28(%rbx),%rdi
+  23:	48 89 fa             	mov    %rdi,%rdx
+  26:	48 c1 ea 03          	shr    $0x3,%rdx
+* 2a:	80 3c 02 00          	cmpb   $0x0,(%rdx,%rax,1) <-- trapping instruction
+  2e:	0f 85 5c 04 00 00    	jne    0x490
+  34:	4c 8b 73 28          	mov    0x28(%rbx),%r14
+  38:	be 08 00 00 00       	mov    $0x8,%esi
+  3d:	4d                   	rex.WRB
+  3e:	8d                   	.byte 0x8d
+  3f:	a6                   	cmpsb  %es:(%rdi),%ds:(%rsi)
+
 
 ---
 This report is generated by a bot. It may contain errors.
 See https://goo.gl/tpsmEJ for more information about syzbot.
 syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-To disable reminders for individual bugs, reply with the following command:
-#syz set <Ref> no-reminders
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
 
-To change bug's subsystems, reply with:
-#syz set <Ref> subsystems: new-subsystem
+If the bug is already fixed, let syzbot know by replying with:
+#syz fix: exact-commit-title
 
-You may send multiple commands in a single email message.
+If you want syzbot to run the reproducer, reply with:
+#syz test: git://repo/address.git branch-or-commit-hash
+If you attach or paste a git patch, syzbot will apply it before testing.
+
+If you want to change bug's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the bug is a duplicate of another bug, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
