@@ -1,231 +1,70 @@
 From: Jeff Layton <jlayton@kernel.org>
-Subject: [PATCH v2 72/92] reiserfs: convert to ctime accessor functions
-Date: Wed,  5 Jul 2023 15:01:37 -0400
-Message-ID: <20230705190309.579783-70-jlayton@kernel.org>
-References: <20230705185755.579053-1-jlayton@kernel.org>
- <20230705190309.579783-1-jlayton@kernel.org>
+Subject: Re: [PATCH v2 00/89] fs: new accessors for inode->i_ctime
+Date: Wed, 05 Jul 2023 17:57:46 -0400
+Message-ID: <a4e6cfec345487fc9ac8ab814a817c79a61b123a.camel__49422.3166418792$1688594307$gmane$org@kernel.org>
+References: <20230705185812.579118-1-jlayton@kernel.org>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: quoted-printable
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1688583914;
-        bh=VDsHkKotGHF3rbDJV684a/iwEaoS4qQlMTVEzxa0ezs=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=DepHFp8A8vg0TRpOOrMGMOV8hm44msFe5IlcCTRq1gSum6eu4OmruzNXY5RXJkgLl
-         looBizoIhLiJLQdNZMrR+v75b+2QepWsGjg1Q5K8ox4l686bIZvLBJLC12fjiMkNpU
-         BtSFh15yBnuyirgXBN7aMu1PfKgKNcwG2BgULoNpKxNvLkU0NsaTL7LVGwqDV7DJQP
-         uA743xMrxTt0EkSUgWHYacvxpwKvooiz6R0B0U4KEQUpXlHEw0X/yTnZHk1im9Apv5
-         5Gn30irCk5gPjGk1BN3CA92mDntY0AT4YDtfwdA1GOPwxAlNp3rpyji3JED+d5vtQ6
-         nGwQvIA/hvkew==
-In-Reply-To: <20230705190309.579783-1-jlayton@kernel.org>
+        s=k20201202; t=1688594285;
+        bh=JlErKO6ytzrETfJF10RJ07fFyXoxaUt5+ApLH28Eksk=;
+        h=Subject:From:To:Date:In-Reply-To:References:From;
+        b=ox9UCUOCrMoArAN2UWINeG7QvaXvn/rW6VX3bNg/iJYSvDmftw/A4NpK1NYTdX1NF
+         gVgMoqKe4Wy+YcaUy/Dyaq00MJKT04z3nDqfKuQM4SFZsRbASIDWrt/F1bfZ/Sk9IA
+         IlCUdLT6kxy2jL8SF3nViHjnNHXzs55XV4F3VEYsgVxzqxUcCiE9JSR2Z8IfDFpjTE
+         aAs5GOvVMsx8Eye0YwI4OGGuVtit0IDRpyx+/wLT78cg1mMMLjGSPd8pWmdQxt1+Az
+         UpvwRSPwHQIIqvl4d9BIKKNlv96fZDtb/zFnJIHpMrXV8Xk+YsvNrTXbO+lqW0MMpc
+         fXzU6mvU9YhKA==
+In-Reply-To: <20230705185812.579118-1-jlayton@kernel.org>
 List-ID: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: Christian Brauner <brauner@kernel.org>
-Cc: Al Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, reiserfs-devel@vger.kernel.org
+To: jk@ozlabs.org, arnd@arndb.de, mpe@ellerman.id.au, npiggin@gmail.com, christophe.leroy@csgroup.eu, hca@linux.ibm.com, gor@linux.ibm.com, agordeev@linux.ibm.com, borntraeger@linux.ibm.com, svens@linux.ibm.com, gregkh@linuxfoundation.org, arve@android.com, tkjos@android.com, maco@android.com, joel@joelfernandes.org, brauner@kernel.org, cmllamas@google.com, surenb@google.com, dennis.dalessandro@cornelisnetworks.com, jgg@ziepe.ca, leon@kernel.org, bwarrum@linux.ibm.com, rituagar@linux.ibm.com, ericvh@kernel.org, lucho@ionkov.net, asmadeus@codewreck.org, linux_oss@crudebyte.com, dsterba@suse.com, dhowells@redhat.com, marc.dionne@auristor.com, viro@zeniv.linux.org.uk, raven@themaw.net, luisbg@kernel.org, salah.triki@gmail.com, aivazian.tigran@gmail.com, ebiederm@xmission.com, kees
 
-In later patches, we're going to change how the inode's ctime field is
-used. Switch to using accessor functions instead of raw accesses of
-inode->i_ctime.
+On Wed, 2023-07-05 at 14:58 -0400, Jeff Layton wrote:
+> v2:
+> - prepend patches to add missing ctime updates
+> - add simple_rename_timestamp helper function
+> - rename ctime accessor functions as inode_get_ctime/inode_set_ctime_*
+> - drop individual inode_ctime_set_{sec,nsec} helpers
+>=20
+> I've been working on a patchset to change how the inode->i_ctime is
+> accessed in order to give us conditional, high-res timestamps for the
+> ctime and mtime. struct timespec64 has unused bits in it that we can use
+> to implement this. In order to do that however, we need to wrap all
+> accesses of inode->i_ctime to ensure that bits used as flags are
+> appropriately handled.
+>=20
+> The patchset starts with reposts of some missing ctime updates that I
+> spotted in the tree. It then adds a new helper function for updating the
+> timestamp after a successful rename, and new ctime accessor
+> infrastructure.
+>=20
+> The bulk of the patchset is individual conversions of different
+> subsysteme to use the new infrastructure. Finally, the patchset renames
+> the i_ctime field to __i_ctime to help ensure that I didn't miss
+> anything.
+>=20
+> This should apply cleanly to linux-next as of this morning.
+>=20
+> Most of this conversion was done via 5 different coccinelle scripts, run
+> in succession, with a large swath of by-hand conversions to clean up the
+> remainder.
+>=20
 
-Signed-off-by: Jeff Layton <jlayton@kernel.org>
----
- fs/reiserfs/inode.c     | 12 +++++-------
- fs/reiserfs/ioctl.c     |  4 ++--
- fs/reiserfs/namei.c     | 11 ++++++-----
- fs/reiserfs/stree.c     |  4 ++--
- fs/reiserfs/super.c     |  2 +-
- fs/reiserfs/xattr.c     |  5 +++--
- fs/reiserfs/xattr_acl.c |  2 +-
- 7 files changed, 20 insertions(+), 20 deletions(-)
+A couple of other things I should note:
 
-diff --git a/fs/reiserfs/inode.c b/fs/reiserfs/inode.c
-index 77bd3b27059f..86e55d4bb10d 100644
---- a/fs/reiserfs/inode.c
-+++ b/fs/reiserfs/inode.c
-@@ -1259,9 +1259,8 @@ static void init_inode(struct inode *inode, struct treepath *path)
- 		inode->i_size = sd_v1_size(sd);
- 		inode->i_atime.tv_sec = sd_v1_atime(sd);
- 		inode->i_mtime.tv_sec = sd_v1_mtime(sd);
--		inode->i_ctime.tv_sec = sd_v1_ctime(sd);
-+		inode_set_ctime(inode, sd_v1_ctime(sd), 0);
- 		inode->i_atime.tv_nsec = 0;
--		inode->i_ctime.tv_nsec = 0;
- 		inode->i_mtime.tv_nsec = 0;
- 
- 		inode->i_blocks = sd_v1_blocks(sd);
-@@ -1314,8 +1313,7 @@ static void init_inode(struct inode *inode, struct treepath *path)
- 		i_gid_write(inode, sd_v2_gid(sd));
- 		inode->i_mtime.tv_sec = sd_v2_mtime(sd);
- 		inode->i_atime.tv_sec = sd_v2_atime(sd);
--		inode->i_ctime.tv_sec = sd_v2_ctime(sd);
--		inode->i_ctime.tv_nsec = 0;
-+		inode_set_ctime(inode, sd_v2_ctime(sd), 0);
- 		inode->i_mtime.tv_nsec = 0;
- 		inode->i_atime.tv_nsec = 0;
- 		inode->i_blocks = sd_v2_blocks(sd);
-@@ -1374,7 +1372,7 @@ static void inode2sd(void *sd, struct inode *inode, loff_t size)
- 	set_sd_v2_gid(sd_v2, i_gid_read(inode));
- 	set_sd_v2_mtime(sd_v2, inode->i_mtime.tv_sec);
- 	set_sd_v2_atime(sd_v2, inode->i_atime.tv_sec);
--	set_sd_v2_ctime(sd_v2, inode->i_ctime.tv_sec);
-+	set_sd_v2_ctime(sd_v2, inode_get_ctime(inode).tv_sec);
- 	set_sd_v2_blocks(sd_v2, to_fake_used_blocks(inode, SD_V2_SIZE));
- 	if (S_ISCHR(inode->i_mode) || S_ISBLK(inode->i_mode))
- 		set_sd_v2_rdev(sd_v2, new_encode_dev(inode->i_rdev));
-@@ -1394,7 +1392,7 @@ static void inode2sd_v1(void *sd, struct inode *inode, loff_t size)
- 	set_sd_v1_nlink(sd_v1, inode->i_nlink);
- 	set_sd_v1_size(sd_v1, size);
- 	set_sd_v1_atime(sd_v1, inode->i_atime.tv_sec);
--	set_sd_v1_ctime(sd_v1, inode->i_ctime.tv_sec);
-+	set_sd_v1_ctime(sd_v1, inode_get_ctime(inode).tv_sec);
- 	set_sd_v1_mtime(sd_v1, inode->i_mtime.tv_sec);
- 
- 	if (S_ISCHR(inode->i_mode) || S_ISBLK(inode->i_mode))
-@@ -1986,7 +1984,7 @@ int reiserfs_new_inode(struct reiserfs_transaction_handle *th,
- 
- 	/* uid and gid must already be set by the caller for quota init */
- 
--	inode->i_mtime = inode->i_atime = inode->i_ctime = current_time(inode);
-+	inode->i_mtime = inode->i_atime = inode_set_ctime_current(inode);
- 	inode->i_size = i_size;
- 	inode->i_blocks = 0;
- 	inode->i_bytes = 0;
-diff --git a/fs/reiserfs/ioctl.c b/fs/reiserfs/ioctl.c
-index 6bf9b54e58ca..dd33f8cc6eda 100644
---- a/fs/reiserfs/ioctl.c
-+++ b/fs/reiserfs/ioctl.c
-@@ -55,7 +55,7 @@ int reiserfs_fileattr_set(struct mnt_idmap *idmap,
- 	}
- 	sd_attrs_to_i_attrs(flags, inode);
- 	REISERFS_I(inode)->i_attrs = flags;
--	inode->i_ctime = current_time(inode);
-+	inode_set_ctime_current(inode);
- 	mark_inode_dirty(inode);
- 	err = 0;
- unlock:
-@@ -107,7 +107,7 @@ long reiserfs_ioctl(struct file *filp, unsigned int cmd, unsigned long arg)
- 			err = -EFAULT;
- 			goto setversion_out;
- 		}
--		inode->i_ctime = current_time(inode);
-+		inode_set_ctime_current(inode);
- 		mark_inode_dirty(inode);
- setversion_out:
- 		mnt_drop_write_file(filp);
-diff --git a/fs/reiserfs/namei.c b/fs/reiserfs/namei.c
-index 405ac59eb2dd..9c5704be2435 100644
---- a/fs/reiserfs/namei.c
-+++ b/fs/reiserfs/namei.c
-@@ -572,7 +572,7 @@ static int reiserfs_add_entry(struct reiserfs_transaction_handle *th,
- 	}
- 
- 	dir->i_size += paste_size;
--	dir->i_mtime = dir->i_ctime = current_time(dir);
-+	dir->i_mtime = inode_set_ctime_current(dir);
- 	if (!S_ISDIR(inode->i_mode) && visible)
- 		/* reiserfs_mkdir or reiserfs_rename will do that by itself */
- 		reiserfs_update_sd(th, dir);
-@@ -966,7 +966,8 @@ static int reiserfs_rmdir(struct inode *dir, struct dentry *dentry)
- 			       inode->i_nlink);
- 
- 	clear_nlink(inode);
--	inode->i_ctime = dir->i_ctime = dir->i_mtime = current_time(dir);
-+	dir->i_mtime = inode_set_ctime_to_ts(dir,
-+					     inode_set_ctime_current(inode));
- 	reiserfs_update_sd(&th, inode);
- 
- 	DEC_DIR_INODE_NLINK(dir)
-@@ -1070,11 +1071,11 @@ static int reiserfs_unlink(struct inode *dir, struct dentry *dentry)
- 		inc_nlink(inode);
- 		goto end_unlink;
- 	}
--	inode->i_ctime = current_time(inode);
-+	inode_set_ctime_current(inode);
- 	reiserfs_update_sd(&th, inode);
- 
- 	dir->i_size -= (de.de_entrylen + DEH_SIZE);
--	dir->i_ctime = dir->i_mtime = current_time(dir);
-+	dir->i_mtime = inode_set_ctime_current(dir);
- 	reiserfs_update_sd(&th, dir);
- 
- 	if (!savelink)
-@@ -1250,7 +1251,7 @@ static int reiserfs_link(struct dentry *old_dentry, struct inode *dir,
- 		return err ? err : retval;
- 	}
- 
--	inode->i_ctime = current_time(inode);
-+	inode_set_ctime_current(inode);
- 	reiserfs_update_sd(&th, inode);
- 
- 	ihold(inode);
-diff --git a/fs/reiserfs/stree.c b/fs/reiserfs/stree.c
-index ce5003986789..3676e02a0232 100644
---- a/fs/reiserfs/stree.c
-+++ b/fs/reiserfs/stree.c
-@@ -2004,7 +2004,7 @@ int reiserfs_do_truncate(struct reiserfs_transaction_handle *th,
- 
- 			if (update_timestamps) {
- 				inode->i_mtime = current_time(inode);
--				inode->i_ctime = current_time(inode);
-+				inode_set_ctime_current(inode);
- 			}
- 			reiserfs_update_sd(th, inode);
- 
-@@ -2029,7 +2029,7 @@ int reiserfs_do_truncate(struct reiserfs_transaction_handle *th,
- 	if (update_timestamps) {
- 		/* this is truncate, not file closing */
- 		inode->i_mtime = current_time(inode);
--		inode->i_ctime = current_time(inode);
-+		inode_set_ctime_current(inode);
- 	}
- 	reiserfs_update_sd(th, inode);
- 
-diff --git a/fs/reiserfs/super.c b/fs/reiserfs/super.c
-index 929acce6e731..7eaf36b3de12 100644
---- a/fs/reiserfs/super.c
-+++ b/fs/reiserfs/super.c
-@@ -2587,7 +2587,7 @@ static ssize_t reiserfs_quota_write(struct super_block *sb, int type,
- 		return err;
- 	if (inode->i_size < off + len - towrite)
- 		i_size_write(inode, off + len - towrite);
--	inode->i_mtime = inode->i_ctime = current_time(inode);
-+	inode->i_mtime = inode_set_ctime_current(inode);
- 	mark_inode_dirty(inode);
- 	return len - towrite;
- }
-diff --git a/fs/reiserfs/xattr.c b/fs/reiserfs/xattr.c
-index 651027967159..6000964c2b80 100644
---- a/fs/reiserfs/xattr.c
-+++ b/fs/reiserfs/xattr.c
-@@ -466,12 +466,13 @@ int reiserfs_commit_write(struct file *f, struct page *page,
- static void update_ctime(struct inode *inode)
- {
- 	struct timespec64 now = current_time(inode);
-+	struct timespec64 ctime = inode_get_ctime(inode);
- 
- 	if (inode_unhashed(inode) || !inode->i_nlink ||
--	    timespec64_equal(&inode->i_ctime, &now))
-+	    timespec64_equal(&ctime, &now))
- 		return;
- 
--	inode->i_ctime = current_time(inode);
-+	inode_set_ctime_to_ts(inode, now);
- 	mark_inode_dirty(inode);
- }
- 
-diff --git a/fs/reiserfs/xattr_acl.c b/fs/reiserfs/xattr_acl.c
-index 138060452678..064264992b49 100644
---- a/fs/reiserfs/xattr_acl.c
-+++ b/fs/reiserfs/xattr_acl.c
-@@ -285,7 +285,7 @@ __reiserfs_set_acl(struct reiserfs_transaction_handle *th, struct inode *inode,
- 	if (error == -ENODATA) {
- 		error = 0;
- 		if (type == ACL_TYPE_ACCESS) {
--			inode->i_ctime = current_time(inode);
-+			inode_set_ctime_current(inode);
- 			mark_inode_dirty(inode);
- 		}
- 	}
--- 
-2.41.0
+If you sent me an Acked-by or Reviewed-by in the previous set, then I
+tried to keep it on the patch here, since the respun patches are mostly
+just renaming stuff from v1. Let me know if I've missed any.
 
+I've also pushed the pile to my tree as this tag:
+
+    https://git.kernel.org/pub/scm/linux/kernel/git/jlayton/linux.git/tag/?=
+h=3Dctime.20230705
+
+In case that's easier to work with.
+
+Cheers,
+--=20
+Jeff Layton <jlayton@kernel.org>
