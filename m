@@ -1,61 +1,75 @@
-From: Christian Brauner <brauner@kernel.org>
-Subject: Re: [PATCH] reiserfs: Check the return value from __getblk()
-Date: Wed, 5 Jul 2023 09:08:55 +0200
-Message-ID: <20230705-gecheckt-unzumutbar-4010ffac4ea7@brauner>
-References: <ZJ32+b+3O8Z6cuRo@casper.infradead.org>
- <20230630-kerbholz-koiteich-a7395bc04eae@brauner>
- <ZKRptMjtL6X74X1B@casper.infradead.org>
+From: Jan Kara <jack-AlSwsSmVLrQ@public.gmane.org>
+Subject: Re: [PATCH 01/32] block: Provide blkdev_get_handle_*
+	functions
+Date: Wed, 5 Jul 2023 12:21:28 +0200
+Message-ID: <20230705102128.vquve4qencbbn2br@quack3>
+References: <20230629165206.383-1-jack@suse.cz>
+	<20230704122224.16257-1-jack@suse.cz> <ZKRItBRhm8f5Vba/@kbusch-mbp>
 Mime-Version: 1.0
-Return-path: <reiserfs-devel-owner@vger.kernel.org>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1688540939;
-        bh=OzfmgDFtXJCKbJ5VtxUn1n2vz3F/TIx9jNO3WUb6xxI=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=JICvmyve75o3h7NDZxOYzIfAhgkRR9zSTOSPyfCq5AvB6CzfcoETKMvjHfmQRVLoB
-         P6YuAW+Dqo1AotnqIZO7PKevdJHPSocc53AvfxMd7AaBlisZJa24KA7jcbUL2OyvPo
-         dnc0Ho1eC/LrKWj7zgkTOVNKoZ+jGy2UVFgMJMKT1Z2dFfjNanO8FHagNUGgVGTNTp
-         Kxlt+8dDf3ZYF2+GojSIlg5zbf/ykKL4OO9NMXl2fMGWW2PcOQNk31ntntp2GQH9Jl
-         0D58njpBHN4A7fG1eSxGqF3KN2VMcDjoGMmgvOCjdhqP6NO+JlLHY3cNMvHLfXYftN
-         4ZB/Z4AWN/qIQ==
-Content-Disposition: inline
-In-Reply-To: <ZKRptMjtL6X74X1B@casper.infradead.org>
-List-ID: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Matthew Wilcox <willy@infradead.org>
-Cc: reiserfs-devel@vger.kernel.org, Jan Kara <jack@suse.cz>, Andrew Morton <akpm@linux-foundation.org>, linux-fsdevel@vger.kernel.org, butt3rflyh4ck <butterflyhuangxx@gmail.com>
+Return-path: <drbd-dev-bounces-cunTk1MwBs8qoQakbn7OcQ@public.gmane.org>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1688552489;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	mime-version:mime-version:content-type:content-type:
+	in-reply-to:in-reply-to:references:references;
+	bh=qqER76PXnxWxMVZH46uY+IP0A7ISNxa4dFOpqm8Npig=;
+	b=rK+eFTza2+XXgbRvOv5tQtV93F/4zZpu7norREAepZy5yow7baD/dvvqWhpeeItBt0IPcu
+	Y5rwLWutv/on4mwv5EJraqTeqhb05mRkTW0yYXikGz/UA9AQcATVDIgxrBuvXRHMAszN6R
+	RSIAN/j2D8s9RJrt3/Umhb+lT3pvazU=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1688552489;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	mime-version:mime-version:content-type:content-type:
+	in-reply-to:in-reply-to:references:references;
+	bh=qqER76PXnxWxMVZH46uY+IP0A7ISNxa4dFOpqm8Npig=;
+	b=0Ik5A3faiNr6MKUo0ZlFf0SVDy0zGGeX4x6PTOEnPlUJVjHk96v3tsbq/TGqKcufwhGJGx
+	3sf2EXg0rHzUTICQ==
+Content-Disposition: inline
+In-Reply-To: <ZKRItBRhm8f5Vba/@kbusch-mbp>
+List-Id: <reiserfs-devel.vger.kernel.org>
+List-Unsubscribe: <https://lists.linbit.com/mailman/options/drbd-dev>,
+	<mailto:drbd-dev-request-cunTk1MwBs8qoQakbn7OcQ@public.gmane.org?subject=unsubscribe>
+List-Archive: <http://lists.linbit.com/pipermail/drbd-dev>
+List-Post: <mailto:drbd-dev-cunTk1MwBs8qoQakbn7OcQ@public.gmane.org>
+List-Help: <mailto:drbd-dev-request-cunTk1MwBs8qoQakbn7OcQ@public.gmane.org?subject=help>
+List-Subscribe: <https://lists.linbit.com/mailman/listinfo/drbd-dev>,
+	<mailto:drbd-dev-request-cunTk1MwBs8qoQakbn7OcQ@public.gmane.org?subject=subscribe>
+Sender: drbd-dev-bounces-cunTk1MwBs8qoQakbn7OcQ@public.gmane.org
+Errors-To: drbd-dev-bounces-cunTk1MwBs8qoQakbn7OcQ@public.gmane.org
+To: Keith Busch <kbusch-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+Cc: Dave Kleikamp <shaggy-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, jfs-discussion-5NWGOfrQmneRv+LV9MX5uipxlwaOVQ5f@public.gmane.org, Jan Kara <jack-AlSwsSmVLrQ@public.gmane.org>, "Darrick J. Wong" <djwong-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, linux-nvme-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Joseph Qi <joseph.qi-KPsoFbNs7GizrGE5bRqYAgC/G2K4zDHf@public.gmane.org>, dm-devel-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org, target-devel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-mtd-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Jack Wang <jinpu.wang-vEVw2sk9H7kAvxtiuMwx3w@public.gmane.org>, Alasdair Kergon <agk-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>, drbd-dev-cunTk1MwBs8qoQakbn7OcQ@public.gmane.org, linux-s390-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-nilfs-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-scsi-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Sergey Senozhatsky <senozhatsky-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Christoph Hellwig <hch-wEGCiKHe2LqWVfeAwA7xHQ@public.gmane.org>, xen-devel-GuqFBffKawtpuQazS67q72D2FQJk+8+b@public.gmane.org, Gao Xiang <xiang-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Christian Borntraeger <borntraeger-tEXmvtCZX7AybS5Ee8rs3A@public.gmane.org>, Kent Overstreet <kent.overstreet-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Sven Schnelle <svens-tEXmvtCZX7AybS5Ee8rs3A@public.gmane.org>, linux-pm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Mike Snitzer <snitzer-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Chao Yu <chao-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Joern Engel <joern-o6zPIXG8fmPj4SYmN/TMmA@public.gmane.org>, re
 
-On Tue, Jul 04, 2023 at 07:49:24PM +0100, Matthew Wilcox wrote:
-> On Fri, Jun 30, 2023 at 11:03:05AM +0200, Christian Brauner wrote:
-> > From: Matthew Wilcox <willy@infradead.org>
-> > 
-> > On Thu, 29 Jun 2023 23:26:17 +0200, Matthew Wilcox wrote:
-> > > __getblk() can return a NULL pointer if we run out of memory or if
-> > > we try to access beyond the end of the device; check it and handle it
-> > > appropriately.
-> > > 
-> > > [...]
-> > 
-> > Willy's original commit with message id
-> > <20230605142335.2883264-1-willy@infradead.org> didn't show up on lore.
-> > Might be because reiserfs-devel isn't a list tracked by lore; not sure.
-> > So I grabbed this from somewhere else.
-> > 
-> > In any case, I picked this up now.
-> > 
-> > ---
-> > 
-> > Applied to the vfs.misc branch of the vfs/vfs.git tree.
-> > Patches in the vfs.misc branch should appear in linux-next soon.
-> > 
-> > Please report any outstanding bugs that were missed during review in a
-> > new review to the original patch series allowing us to drop it.
-> > 
-> > It's encouraged to provide Acked-bys and Reviewed-bys even though the
-> > patch has now been applied. If possible patch trailers will be updated.
+On Tue 04-07-23 10:28:36, Keith Busch wrote:
+> On Tue, Jul 04, 2023 at 02:21:28PM +0200, Jan Kara wrote:
+> > +struct bdev_handle *blkdev_get_handle_by_dev(dev_t dev, blk_mode_t mode,
+> > +		void *holder, const struct blk_holder_ops *hops)
+> > +{
+> > +	struct bdev_handle *handle = kmalloc(sizeof(struct bdev_handle),
+> > +					     GFP_KERNEL);
 > 
-> Acked-by: Edward Shishkin <edward.shishkin@gmail.com>
-> 
-> was added in a response to the original, FYI
+> I believe 'sizeof(*handle)' is the preferred style.
 
-Thank you! I've updated the patch trailer accordingly.
+OK.
+
+> > +	struct block_device *bdev;
+> > +
+> > +	if (!handle)
+> > +		return ERR_PTR(-ENOMEM);
+> > +	bdev = blkdev_get_by_dev(dev, mode, holder, hops);
+> > +	if (IS_ERR(bdev))
+> > +		return ERR_CAST(bdev);
+> 
+> Need a 'kfree(handle)' before the error return. Or would it be simpler
+> to get the bdev first so you can check the mode settings against a
+> read-only bdev prior to the kmalloc?
+
+Yeah. Good point with kfree(). I'm not sure calling blkdev_get_by_dev()
+first will be "simpler" - then we need blkdev_put() in case of kmalloc()
+failure. Thanks for review!
+ 
+								Honza
+-- 
+Jan Kara <jack-IBi9RG/b67k@public.gmane.org>
+SUSE Labs, CR
