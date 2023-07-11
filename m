@@ -1,103 +1,142 @@
-From: Jeff Layton <jlayton@kernel.org>
-Subject: Re: [PATCH v2 00/89] fs: new accessors for
- inode->i_ctime
-Date: Mon, 10 Jul 2023 09:32:23 -0400
-Message-ID: <c4eaff9389fe63ec4e29404ec0d1181b74935426.camel@kernel.org>
-References: <20230705185812.579118-1-jlayton@kernel.org>
- <5e40891f6423feb5b68f025e31f26e9a50ae9390.camel@kernel.org>
- <20230710-zudem-entkam-bb508cbd8c78@brauner>
+From: syzbot <syzbot+3779764ddb7a3e19437f@syzkaller.appspotmail.com>
+Subject: [syzbot] [bpf?] [reiserfs?] WARNING: locking bug in corrupted (2)
+Date: Mon, 10 Jul 2023 18:53:46 -0700
+Message-ID: <000000000000a4a46106002c5e42@google.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Return-path: <cluster-devel-bounces@redhat.com>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1688995975;
-	h=from:from:sender:sender:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:list-id:list-help:
-	 list-unsubscribe:list-subscribe:list-post;
-	bh=ypo6EEC/a10vTp0LME1omXwBE1UiKK/mReyAl6l5UHQ=;
-	b=DXnqApzEtbWlfgwnEz+7m8CDyjIvXf2fgGhSF5qhBu7Aye1JYbTAMwSYZl82iRu13wMB+t
-	zFdX2QJ5gahRU8JBKPJQBQHv1CE/dJQC2+jeZlILdObSp860aNABLPHR0rH4yKsEhWPA1F
-	WmzHsb7UN/qIta7NKNloc6zQzs4TQ5g=
-In-Reply-To: <20230710-zudem-entkam-bb508cbd8c78@brauner>
-List-Id: <reiserfs-devel.vger.kernel.org>
-List-Unsubscribe: <https://listman.redhat.com/mailman/options/cluster-devel>, 
- <mailto:cluster-devel-request@redhat.com?subject=unsubscribe>
-List-Archive: <http://listman.redhat.com/archives/cluster-devel/>
-List-Post: <mailto:cluster-devel@redhat.com>
-List-Help: <mailto:cluster-devel-request@redhat.com?subject=help>
-List-Subscribe: <https://listman.redhat.com/mailman/listinfo/cluster-devel>,
- <mailto:cluster-devel-request@redhat.com?subject=subscribe>
-Errors-To: cluster-devel-bounces@redhat.com
-Sender: "Cluster-devel" <cluster-devel-bounces@redhat.com>
-Content-Type: text/plain; charset="iso-8859-1"
-To: Christian Brauner <brauner@kernel.org>
-Cc: lucho@ionkov.net, rafael@kernel.org, djwong@kernel.org, al@alarsen.net, cmllamas@google.com, andrii@kernel.org, hughd@google.com, john.johansen@canonical.com, agordeev@linux.ibm.com, hch@lst.de, hubcap@omnibond.com, pc@manguebit.com, linux-xfs@vger.kernel.org, bvanassche@acm.org, jeffxu@chromium.org, mpe@ellerman.id.au, john@keeping.me.uk, yi.zhang@huawei.com, jmorris@namei.org, christophe.leroy@csgroup.eu, code@tyhicks.com, stern@rowland.harvard.edu, borntraeger@linux.ibm.com, devel@lists.orangefs.org, mirimmad17@gmail.com, sprasad@microsoft.com, jaharkes@cs.cmu.edu, linux-um@lists.infradead.org, npiggin@gmail.com, viro@zeniv.linux.org.uk, ericvh@kernel.org, surenb@google.com, trond.myklebust@hammerspace.com, anton@tuxera.com, wsa+renesas@sang-engineering.com, gregkh@linuxfoundation.org, stephen.smalley.work@gmail.com, linux-usb@vger.kernel.org, linux-kernel@vger.kernel
+Return-path: <reiserfs-devel-owner@vger.kernel.org>
+List-ID: <reiserfs-devel.vger.kernel.org>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: andrii@kernel.org, ast@kernel.org, bpf@vger.kernel.org, daniel@iogearbox.net, davem@davemloft.net, haoluo@google.com, hawk@kernel.org, jack@suse.cz, john.fastabend@gmail.com, jolsa@kernel.org, kpsingh@kernel.org, kuba@kernel.org, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, luto@kernel.org, martin.lau@linux.dev, netdev@vger.kernel.org, peterz@infradead.org, reiserfs-devel@vger.kernel.org, sdf@google.com, song@kernel.org, syzkaller-bugs@googlegroups.com, tglx@linutronix.de, yhs@fb.com, yukuai3@huawei.com
 
-On Mon, 2023-07-10 at 14:35 +0200, Christian Brauner wrote:
-> On Fri, Jul 07, 2023 at 08:42:31AM -0400, Jeff Layton wrote:
-> > On Wed, 2023-07-05 at 14:58 -0400, Jeff Layton wrote:
-> > > v2:
-> > > - prepend patches to add missing ctime updates
-> > > - add simple_rename_timestamp helper function
-> > > - rename ctime accessor functions as inode_get_ctime/inode_set_ctime_=
-*
-> > > - drop individual inode_ctime_set_{sec,nsec} helpers
-> > >=20
-> >=20
-> > After review by Jan and others, and Jan's ext4 rework, the diff on top
-> > of the series I posted a couple of days ago is below. I don't really
-> > want to spam everyone with another ~100 patch v3 series, but I can if
-> > you think that's best.
-> >=20
-> > Christian, what would you like me to do here?
->=20
-> I picked up the series from the list and folded the fixups you posted
-> here into the respective fs conversion patches. I hope that helps you
-> avoid a resend. You should have received a separate "thank you" mail for
-> all of this.
->=20
-> To each patch that I folded one of the fixlets from below into I added a
-> git note that records a link to your mail here and the respective patch
-> hunk from this mail that I folded into the patch. git.kernel.org will
-> show notes by default. For example,
-> https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git/commit/?h=3Dv=
-fs.ctime&id=3D8b0e3c2e99004609a16ba145bcbdfdddb78e220e
-> should show you the note I added. You can also fetch them via
-> git fetch $remote refs/notes/*:refs/notes/*
-> (You probably know that ofc but jic.) if you're interested.
->=20
-> Based on v6.5-rc1 as of today.
->=20
+Hello,
 
-Many thanks!!! I'll get to work rebasing the multigrain timestamp series
-on top of that.
+syzbot found the following issue on:
 
-> Btw, both b4 and patchwork somehow treat the series in weird was.
-> IOW, based on the message id of the cover letter I was able to pull most
-> messages except for:
->=20
-> [07/92] fs: add ctime accessors infrastructure
-> [08/92] fs: new helper: simple_rename_timestamp
-> [92/92] fs: rename i_ctime field to __i_ctime
->=20
-> which I pulled in separately. Not sure what the cause of=A0
->=20
-> this is.
+HEAD commit:    c17414a273b8 Merge tag 'sh-for-v6.5-tag1' of git://git.ker..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=13cc4baca80000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=7ad417033279f15a
+dashboard link: https://syzkaller.appspot.com/bug?extid=3779764ddb7a3e19437f
+compiler:       gcc (Debian 10.2.1-6) 10.2.1 20210110, GNU ld (GNU Binutils for Debian) 2.35.2
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=12bbd544a80000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=13fd50b0a80000
 
-Good to know.
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/ea495e93586c/disk-c17414a2.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/bdb03e817e47/vmlinux-c17414a2.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/20ba23616f1f/bzImage-c17414a2.xz
+mounted in repro: https://storage.googleapis.com/syzbot-assets/98d086ce1a87/mount_0.gz
 
-I ended up doing the send in two phases: one for the cover letter and
-infrastructure patches that went to everyone, and one for the per-
-subsystem patches that went do individual maintainers and lists.
+The issue was bisected to:
 
-I suspect that screwed up the message IDs somehow. Hopefully I won't
-need to do a posting like that again soon, but I'll pay closer attention
-to the message id handling next time.
+commit 2acf15b94d5b8ea8392c4b6753a6ffac3135cd78
+Author: Yu Kuai <yukuai3@huawei.com>
+Date:   Fri Jul 2 04:07:43 2021 +0000
 
-Thanks again!
---=20
-Jeff Layton <jlayton@kernel.org>
+    reiserfs: add check for root_inode in reiserfs_fill_super
 
+bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=143b663ca80000
+final oops:     https://syzkaller.appspot.com/x/report.txt?x=163b663ca80000
+console output: https://syzkaller.appspot.com/x/log.txt?x=123b663ca80000
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+3779764ddb7a3e19437f@syzkaller.appspotmail.com
+Fixes: 2acf15b94d5b ("reiserfs: add check for root_inode in reiserfs_fill_super")
+
+------------[ cut here ]------------
+DEBUG_LOCKS_WARN_ON(depth >= MAX_LOCK_DEPTH)
+WARNING: CPU: 0 PID: 0 at kernel/locking/lockdep.c:5045 __lock_acquire+0x164b/0x5e20 kernel/locking/lockdep.c:5045
+Modules linked in:
+CPU: 0 PID: 0 Comm:  Not tainted 6.4.0-syzkaller-12069-gc17414a273b8 #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 05/27/2023
+RIP: 0010:__lock_acquire+0x164b/0x5e20 kernel/locking/lockdep.c:5045
+Code: d2 0f 85 be 47 00 00 44 8b 3d 0d b3 44 0d 45 85 ff 0f 85 40 f8 ff ff 48 c7 c6 40 9f 6c 8a 48 c7 c7 e0 6e 6c 8a e8 b5 46 e6 ff <0f> 0b e9 29 f8 ff ff 48 8d 7d f8 48 b8 00 00 00 00 00 fc ff df 48
+RSP: 0018:ffffc90000007ca8 EFLAGS: 00010082
+RAX: 0000000000000000 RBX: 1ffff92000000fc7 RCX: 0000000000000000
+RDX: ffff8880779d5940 RSI: ffffffff814c34f7 RDI: 0000000000000001
+RBP: 0000000000000000 R08: 0000000000000001 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000001 R12: ffff8880779d5940
+R13: ffff8880b982b898 R14: 0000000000000000 R15: 0000000000000000
+FS:  00005555573b8300(0000) GS:ffff8880b9800000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00007ffde3197000 CR3: 00000000173e2000 CR4: 0000000000350ef0
+Call Trace:
+ <IRQ>
+------------[ cut here ]------------
+WARNING: CPU: 0 PID: 0 at kernel/rcu/tree_plugin.h:431 arch_local_irq_enable arch/x86/include/asm/irqflags.h:78 [inline]
+WARNING: CPU: 0 PID: 0 at kernel/rcu/tree_plugin.h:431 arch_local_irq_restore arch/x86/include/asm/irqflags.h:135 [inline]
+WARNING: CPU: 0 PID: 0 at kernel/rcu/tree_plugin.h:431 rcu_read_unlock_special kernel/rcu/tree_plugin.h:678 [inline]
+WARNING: CPU: 0 PID: 0 at kernel/rcu/tree_plugin.h:431 __rcu_read_unlock+0x24b/0x570 kernel/rcu/tree_plugin.h:426
+Modules linked in:
+CPU: 0 PID: 0 Comm:  Not tainted 6.4.0-syzkaller-12069-gc17414a273b8 #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 05/27/2023
+RIP: 0010:__rcu_read_unlock+0x24b/0x570 kernel/rcu/tree_plugin.h:431
+Code: 00 e8 49 4f df ff 4d 85 f6 74 05 e8 cf c3 1c 00 9c 58 f6 c4 02 0f 85 78 02 00 00 4d 85 f6 0f 84 83 fe ff ff fb e9 7d fe ff ff <0f> 0b 5b 5d 41 5c 41 5d 41 5e c3 e8 25 50 69 00 e9 2a fe ff ff e8
+RSP: 0018:ffffc900000079d8 EFLAGS: 00010096
+RAX: 00000000ffff8880 RBX: ffff8880779d5940 RCX: 0000000000000000
+RDX: 0000000000000000 RSI: ffffffff8192bb90 RDI: ffff8880779d5d7c
+RBP: ffff8880779d5940 R08: 0000000000000005 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000001 R12: ffff8880779d5940
+R13: ffffc90000007bf8 R14: 0000000000000000 R15: ffffc90000007a98
+FS:  00005555573b8300(0000) GS:ffff8880b9800000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00007ffde3197000 CR3: 00000000173e2000 CR4: 0000000000350ef0
+Call Trace:
+ <IRQ>
+ rcu_read_unlock include/linux/rcupdate.h:781 [inline]
+ is_bpf_text_address+0x85/0x1b0 kernel/bpf/core.c:721
+ kernel_text_address kernel/extable.c:125 [inline]
+ kernel_text_address+0x3d/0x80 kernel/extable.c:94
+ __kernel_text_address+0xd/0x30 kernel/extable.c:79
+ show_trace_log_lvl+0x1c7/0x390 arch/x86/kernel/dumpstack.c:259
+ __warn+0xe6/0x390 kernel/panic.c:671
+ __report_bug lib/bug.c:199 [inline]
+ report_bug+0x2da/0x500 lib/bug.c:219
+ handle_bug+0x3c/0x70 arch/x86/kernel/traps.c:324
+ exc_invalid_op+0x18/0x50 arch/x86/kernel/traps.c:345
+ asm_exc_invalid_op+0x1a/0x20 arch/x86/include/asm/idtentry.h:568
+RIP: 0010:__lock_acquire+0x164b/0x5e20 kernel/locking/lockdep.c:5045
+Code: d2 0f 85 be 47 00 00 44 8b 3d 0d b3 44 0d 45 85 ff 0f 85 40 f8 ff ff 48 c7 c6 40 9f 6c 8a 48 c7 c7 e0 6e 6c 8a e8 b5 46 e6 ff <0f> 0b e9 29 f8 ff ff 48 8d 7d f8 48 b8 00 00 00 00 00 fc ff df 48
+RSP: 0018:ffffc90000007ca8 EFLAGS: 00010082
+RAX: 0000000000000000 RBX: 1ffff92000000fc7 RCX: 0000000000000000
+RDX: ffff8880779d5940 RSI: ffffffff814c34f7 RDI: 0000000000000001
+RBP: 0000000000000000 R08: 0000000000000001 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000001 R12: ffff8880779d5940
+R13: ffff8880b982b898 R14: 0000000000000000 R15: 0000000000000000
+ lock_acquire kernel/locking/lockdep.c:5761 [inline]
+ lock_acquire+0x1b1/0x520 kernel/locking/lockdep.c:5726
+ __raw_spin_lock_irqsave include/linux/spinlock_api_smp.h:110 [inline]
+ _raw_spin_lock_irqsave+0x3d/0x60 kernel/locking/spinlock.c:162
+ hrtimer_interrupt+0x107/0x7b0 kernel/time/hrtimer.c:1795
+ local_apic_timer_interrupt arch/x86/kernel/apic/apic.c:1098 [inline]
+ __sysvec_apic_timer_interrupt+0x14a/0x430 arch/x86/kernel/apic/apic.c:1115
+ sysvec_apic_timer_interrupt+0x92/0xc0 arch/x86/kernel/apic/apic.c:1109
+ </IRQ>
+
+
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+For information about bisection process see: https://goo.gl/tpsmEJ#bisection
+
+If the bug is already fixed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want syzbot to run the reproducer, reply with:
+#syz test: git://repo/address.git branch-or-commit-hash
+If you attach or paste a git patch, syzbot will apply it before testing.
+
+If you want to change bug's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the bug is a duplicate of another bug, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
