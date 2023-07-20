@@ -1,28 +1,63 @@
-From: Manas Ghandat <ghandatmanas@gmail.com>
-Subject: Fixing syzkaller bugs
-Date: Tue, 18 Jul 2023 21:13:35 +0530
-Message-ID: <59bb83c2-0914-7cee-c1d2-0360cdfbc0ee@gmail.com>
+From: Lukas Bulwahn <lukas.bulwahn@gmail.com>
+Subject: Re: [PATCH] MAINTAINERS: change reiserfs status to obsolete
+Date: Thu, 20 Jul 2023 13:57:18 +0200
+Message-ID: <CAKXUXMzL4i0jT0xPFsV4ZG6L82yDCYLtKoUL7t=21ZDZ4OMY7w@mail.gmail.com>
+References: <20230720115445.15583-1-piotr.siminski@globallogic.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Transfer-Encoding: quoted-printable
+Return-path: <linux-fsdevel-owner@vger.kernel.org>
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20221208; t=1689695020; x=1692287020;
-        h=content-transfer-encoding:subject:from:to:content-language
-         :user-agent:mime-version:date:message-id:from:to:cc:subject:date
+        d=gmail.com; s=20221208; t=1689854247; x=1690459047;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=s/koSxq77hSR24QtFVNS0QJ26GEEQWB8WVjlFvhSTls=;
-        b=Y959R8Ksn6jMbz80d40aR+I/ovr/QQfOmKWpOZsCRg1h8EeUUrV4kKRgZAEoprEjWA
-         lqwupVOb59uzvYMofQoxtvyjqkrh9X+U4rsmhzVc97sA5rqqbliUTvATfaNoH5EnEuU3
-         +MvaK03sWhodR2X9jzN2O+Rw2XBhgxeNCweQ/f2gi9Z9k6zIuoQ5Tt7lACDExd0YJNYn
-         sdGoHXMoLxvxc2sahFXIEIOke+ituT4EQ6xoV+854mPvCF79gHYsGxcIQuB6dxkM+HI8
-         hWpWBIYNl6WH/SZBuIWRmF9A4wmx+dimSEgW8LyJw+RmzlN6UTdYA2Cm+Kgpwv/OBFLM
-         rmsQ==
-Content-Language: en-US
+        bh=YEIUFqZ8/Bo/7OzswG7WehHeVU6nxJVjchlFmBJN/gc=;
+        b=sab3O3jQd+CYRloP7X1t93c1kiFsTEZMeKDriFob1uWehLbaMPJ+g2pWNgohwFwh0x
+         oAJ8KmaC+OUVyt2n9kzP+MW98HQAlGrq08ZbSx4L89P3tvD7Bzq5WGS2vhJZxfJ9zdpg
+         6aiiUlRvxYhbTm5ZkeInx8OAFeuKXreaWRLT+j1RbWse+ynByELtOsPyalFMu4boPT8O
+         fCzDsc/IkW9VlU9WT5J25rF22j8kpjBGdnLHm3R95HKg/7jofdJGa/XPqGJUlhRzAvd9
+         EEtwfheOkWWWut6YTMfP3gIpgdMfUCywCGSW700nbP0hfM8hW87xRzq4D6xtc/SpFPx+
+         QrgA==
+In-Reply-To: <20230720115445.15583-1-piotr.siminski@globallogic.com>
 List-ID: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: linux-kernel@vger.kernel.org, reiserfs-devel@vger.kernel.org
+Content-Type: text/plain; charset="windows-1252"
+To: Piotr Siminski <piotr.siminski@globallogic.com>, Jan Kara <jack@suse.cz>
+Cc: reiserfs-devel@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
 
-I was looking at the following bug 
-https://syzkaller.appspot.com/bug?extid=5184326923f180b9d11a . Adding a 
-null check at line 2556 of fix_node.c should fix this issue but i am 
-unable to understand on how to call reiserfs_panic.
+Piotr, thanks for the clean up in the MAINTAINERS file.
+
+Reviewed-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
+
+Jan, could you pick this patch?
+
+Lukas
+
+
+On Thu, Jul 20, 2023 at 1:54=E2=80=AFPM Piotr Siminski
+<piotr.siminski@globallogic.com> wrote:
+>
+> Reiserfs file system is no longer supported and is going to be removed
+> in 2025 as stated in commit eb103a51640e ("reiserfs: Deprecate reiserfs")=
+.
+>
+> Signed-off-by: Piotr Siminski <piotr.siminski@globallogic.com>
+> ---
+>  MAINTAINERS | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/MAINTAINERS b/MAINTAINERS
+> index a5c16bb92fe2..c340c6fc7923 100644
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@ -18064,7 +18064,7 @@ F:      include/linux/regmap.h
+>
+>  REISERFS FILE SYSTEM
+>  L:     reiserfs-devel@vger.kernel.org
+> -S:     Supported
+> +S:     Obsolete
+>  F:     fs/reiserfs/
+>
+>  REMOTE PROCESSOR (REMOTEPROC) SUBSYSTEM
+> --
+> 2.34.1
+>
