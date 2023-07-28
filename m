@@ -1,173 +1,102 @@
-From: Yikebaer Aizezi <yikebaer61@gmail.com>
-Subject: UBSAN array-index-out-of-bounds in do_journal_end
-Date: Thu, 27 Jul 2023 14:52:11 +0800
-Message-ID: <CALcu4rZG=idKgo4EzYYHo+Q=JBLFnqG9NmqJ-09ewB=9Cj1fQQ@mail.gmail.com>
+From: syzbot <syzbot+d843d85655e23f0f643b@syzkaller.appspotmail.com>
+Subject: [syzbot] [reiserfs?] kernel BUG in reiserfs_rename
+Date: Fri, 28 Jul 2023 16:31:02 -0700
+Message-ID: <0000000000004e88ee0601947922@google.com>
 Mime-Version: 1.0
-Return-path: <reiserfs-devel-owner@vger.kernel.org>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20221208; t=1690440744; x=1691045544;
-        h=cc:to:subject:message-id:date:from:mime-version:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=2Du0yvbf9NxdTgxrqf+OyhmCHz7Ody3Ln+8gs6M4cVY=;
-        b=RpjNCjau8+nwrrE1C1P1o4DQUts3zk9IS5QhdtjQ6bwObce4QxhLY55D0ZoGDr6mbW
-         DXQ2mWDUzb7sZakyfF3CPvb6Hz0jhKFqz69phya3u/un1Snxk/Q4qzORIwEOOIFxJ1ae
-         uKM+SPAJCO3TW0+wfsbEmxv4oMVtWG8xzmGnMA1MFhnNA5mLr6/2p4sCdXu8SbRP4w3f
-         dq3mfj9vnExLKLgEZKnqZVAvS/518815w3a3Ed2w2ldl4nmShPkc/HxcM1Q4VQ1jkrXl
-         LXF2LdVMHMKAigD2Fc599ko7ctYr32KF+YclrFeKBOqAn8kMK6pRuUUiqggsiEyaAH6E
-         aHxg==
+Return-path: <linux-kernel-owner@vger.kernel.org>
 List-ID: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: reiserfs-devel@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org
+To: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, reiserfs-devel@vger.kernel.org, syzkaller-bugs@googlegroups.com
 
 Hello,
 
-When using Healer to fuzz the latest Linux kernel, the following crash
-was triggered.
+syzbot found the following issue on:
 
-HEAD commit: fdf0eaf11452d72945af31804e2a1048ee1b574c (tag: v6.5-rc2)
+HEAD commit:    e40939bbfc68 Merge branch 'for-next/core' into for-kernelci
+git tree:       git://git.kernel.org/pub/scm/linux/kernel/git/arm64/linux.git for-kernelci
+console output: https://syzkaller.appspot.com/x/log.txt?x=16c6c14ea80000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=c4a2640e4213bc2f
+dashboard link: https://syzkaller.appspot.com/bug?extid=d843d85655e23f0f643b
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+userspace arch: arm64
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=13c0600ca80000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=122e48a1a80000
 
-git tree: upstream
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/9d87aa312c0e/disk-e40939bb.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/22a11d32a8b2/vmlinux-e40939bb.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/0978b5788b52/Image-e40939bb.gz.xz
+mounted in repro: https://storage.googleapis.com/syzbot-assets/b8490ef2d44b/mount_0.gz
 
-console output:
-https://drive.google.com/file/d/1rvB5Fwc85GjfGwkk0bcYKZksB5l-_nOX/view?usp=drive_link
-kernel config: https://drive.google.com/file/d/1V146PezNdRzu1BRVfwwYsIwNCZvAOBxJ/view?usp=drive_link
-C reproducer: https://drive.google.com/file/d/1FLDqzxv4t92J7EMPqQdkg6ca6XtZJhCd/view?usp=drive_link
-Syzlang reproducer:
-https://drive.google.com/file/d/1uPPRLIylpS116iXrlHMzKNga-fBwRAo1/view?usp=drive_link
-Similar report:
-https://groups.google.com/g/syzkaller-bugs/c/osuwOxyjReQ/m/-FJKSzllAQAJ
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+d843d85655e23f0f643b@syzkaller.appspotmail.com
 
-If you fix this issue, please add the following tag to the commit:
-Reported-by: Yikebaer Aizezi <yikebaer61@gmail.com>
+------------[ cut here ]------------
+kernel BUG at fs/reiserfs/prints.c:390!
+Internal error: Oops - BUG: 00000000f2000800 [#1] PREEMPT SMP
+Modules linked in:
+CPU: 1 PID: 6505 Comm: syz-executor261 Not tainted 6.4.0-rc7-syzkaller-ge40939bbfc68 #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 07/03/2023
+pstate: 60400005 (nZCv daif +PAN -UAO -TCO -DIT -SSBS BTYPE=--)
+pc : __reiserfs_panic+0x150/0x154 fs/reiserfs/prints.c:384
+lr : __reiserfs_panic+0x150/0x154 fs/reiserfs/prints.c:384
+sp : ffff800099bf7140
+x29: ffff800099bf7200 x28: ffff800099bf74c0
+ x27: ffff800099bf77d0
+x26: ffff0000e03be518 x25: ffff0000e03be4f0 x24: ffff800099bf71c0
+x23: ffff800099bf7180 x22: ffff80008a6b48e0 x21: ffff0000cb16e000
+x20: ffff80008a6b48c0 x19: ffff80008d5ddc15 x18: 1fffe00036846fc6
+x17: ffff80008deed000 x16: ffff80008a4483a0 x15: 0000000000000002
+x14: 1ffff00011bde0ac x13: dfff800000000000 x12: 0000000000000001
+x11: 0000000000000000
+ x10: 0000000000000000 x9 : 2ea19fe2f27a9800
+x8 : 2ea19fe2f27a9800 x7 : ffff80008028cc04
+ x6 : 0000000000000000
+x5 : 0000000000000001 x4 : 0000000000000001
+ x3 : ffff800082a98004
+x2 : 0000000000000001 x1 : 0000000100000000 x0 : 000000000000005a
 
-UBSAN: array-index-out-of-bounds in fs/reiserfs/journal.c:4166:22
-index 1 is out of range for type '__le32 [1]'
-CPU: 0 PID: 8058 Comm: syz-executor Not tainted 6.5.0-rc2 #1
-Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS
-rel-1.12.0-59-gc9ba5276e321-prebuilt.qemu.org 04/01/2014
-Call Trace:
- <TASK>
- __dump_stack lib/dump_stack.c:88 [inline]
- dump_stack_lvl+0xd4/0xf0 lib/dump_stack.c:106
- ubsan_epilogue lib/ubsan.c:217 [inline]
- __ubsan_handle_out_of_bounds+0xbf/0x100 lib/ubsan.c:348
- do_journal_end+0x3b3c/0x4750 fs/reiserfs/journal.c:4166
- reiserfs_sync_fs+0xe7/0x100 fs/reiserfs/super.c:78
- sync_filesystem fs/sync.c:56 [inline]
- sync_filesystem+0xef/0x250 fs/sync.c:30
- generic_shutdown_super+0x70/0x470 fs/super.c:472
- kill_block_super+0x60/0xb0 fs/super.c:1417
- deactivate_locked_super+0x85/0x140 fs/super.c:330
- deactivate_super+0x8c/0xa0 fs/super.c:361
- cleanup_mnt+0x28f/0x3b0 fs/namespace.c:1254
- task_work_run+0x153/0x230 kernel/task_work.c:179
- resume_user_mode_work include/linux/resume_user_mode.h:49 [inline]
- exit_to_user_mode_loop kernel/entry/common.c:171 [inline]
- exit_to_user_mode_prepare+0x210/0x240 kernel/entry/common.c:204
- __syscall_exit_to_user_mode_work kernel/entry/common.c:286 [inline]
- syscall_exit_to_user_mode+0x19/0x50 kernel/entry/common.c:297
- do_syscall_64+0x42/0xb0 arch/x86/entry/common.c:86
- entry_SYSCALL_64_after_hwframe+0x63/0xcd
-RIP: 0033:0x47afab
-Code: 5f ff d0 48 89 c7 b8 3c 00 00 00 0f 05 48 c7 c1 b4 ff ff ff f7
-d8 64 89 01 48 83 c8 ff c3 90 f3 0f 1e fa b8 a6 00 00 00 0f 05 <48> 3d
-00 f0 ff ff 77 05 c3 0f 1f 40 00 48 c7 c2 b4 ff ff ff f7 d8
-RSP: 002b:00007ffe61655568 EFLAGS: 00000246 ORIG_RAX: 00000000000000a6
-RAX: 0000000000000000 RBX: 00000000000001fc RCX: 000000000047afab
-RDX: 0000000000000000 RSI: 0000000000000002 RDI: 00007ffe61655610
-RBP: 0000000000000000 R08: 0000000000000000 R09: 00007ffe61655400
-R10: 00000000025d1b03 R11: 0000000000000246 R12: 00007ffe616566d0
-R13: 00000000025d1a70 R14: 0000000000000000 R15: 00007ffe61656710
- </TASK>
-================================================================================
+Call trace:
+ __reiserfs_panic+0x150/0x154 fs/reiserfs/prints.c:384
+ reiserfs_rename+0x19d8/0x1c88 fs/reiserfs/namei.c:1425
+ vfs_rename+0x908/0xcd4 fs/namei.c:4849
+ do_renameat2+0x9f4/0x10b0 fs/namei.c:5002
+ __do_sys_renameat fs/namei.c:5042 [inline]
+ __se_sys_renameat fs/namei.c:5039 [inline]
+ __arm64_sys_renameat+0xc8/0xe4 fs/namei.c:5039
+ __invoke_syscall arch/arm64/kernel/syscall.c:38 [inline]
+ invoke_syscall+0x98/0x2c0 arch/arm64/kernel/syscall.c:52
+ el0_svc_common+0x138/0x244 arch/arm64/kernel/syscall.c:142
+ do_el0_svc+0x64/0x198 arch/arm64/kernel/syscall.c:191
+ el0_svc+0x4c/0x160 arch/arm64/kernel/entry-common.c:647
+ el0t_64_sync_handler+0x84/0xfc arch/arm64/kernel/entry-common.c:665
+ el0t_64_sync+0x190/0x194 arch/arm64/kernel/entry.S:591
+Code: 9008b365 910000a5 aa1303e4 95c56f57 (d4210000) 
+---[ end trace 0000000000000000 ]---
 
-TITLE: kernel panic: UBSAN: panic_on_warn set ...
-CORRUPTED: false ()
-MAINTAINERS (TO): [reiserfs-devel@vger.kernel.org]
-MAINTAINERS (CC): [linux-kernel@vger.kernel.org]
 
-index 1 is out of range for type '__le32 [1]'
-CPU: 0 PID: 8058 Comm: syz-executor Not tainted 6.5.0-rc2 #1
-Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS
-rel-1.12.0-59-gc9ba5276e321-prebuilt.qemu.org 04/01/2014
-Call Trace:
- <TASK>
- __dump_stack lib/dump_stack.c:88 [inline]
- dump_stack_lvl+0xd4/0xf0 lib/dump_stack.c:106
- ubsan_epilogue lib/ubsan.c:217 [inline]
- __ubsan_handle_out_of_bounds+0xbf/0x100 lib/ubsan.c:348
- do_journal_end+0x3b3c/0x4750 fs/reiserfs/journal.c:4166
- reiserfs_sync_fs+0xe7/0x100 fs/reiserfs/super.c:78
- sync_filesystem fs/sync.c:56 [inline]
- sync_filesystem+0xef/0x250 fs/sync.c:30
- generic_shutdown_super+0x70/0x470 fs/super.c:472
- kill_block_super+0x60/0xb0 fs/super.c:1417
- deactivate_locked_super+0x85/0x140 fs/super.c:330
- deactivate_super+0x8c/0xa0 fs/super.c:361
- cleanup_mnt+0x28f/0x3b0 fs/namespace.c:1254
- task_work_run+0x153/0x230 kernel/task_work.c:179
- resume_user_mode_work include/linux/resume_user_mode.h:49 [inline]
- exit_to_user_mode_loop kernel/entry/common.c:171 [inline]
- exit_to_user_mode_prepare+0x210/0x240 kernel/entry/common.c:204
- __syscall_exit_to_user_mode_work kernel/entry/common.c:286 [inline]
- syscall_exit_to_user_mode+0x19/0x50 kernel/entry/common.c:297
- do_syscall_64+0x42/0xb0 arch/x86/entry/common.c:86
- entry_SYSCALL_64_after_hwframe+0x63/0xcd
-RIP: 0033:0x47afab
-Code: 5f ff d0 48 89 c7 b8 3c 00 00 00 0f 05 48 c7 c1 b4 ff ff ff f7
-d8 64 89 01 48 83 c8 ff c3 90 f3 0f 1e fa b8 a6 00 00 00 0f 05 <48> 3d
-00 f0 ff ff 77 05 c3 0f 1f 40 00 48 c7 c2 b4 ff ff ff f7 d8
-RSP: 002b:00007ffe61655568 EFLAGS: 00000246 ORIG_RAX: 00000000000000a6
-RAX: 0000000000000000 RBX: 00000000000001fc RCX: 000000000047afab
-RDX: 0000000000000000 RSI: 0000000000000002 RDI: 00007ffe61655610
-RBP: 0000000000000000 R08: 0000000000000000 R09: 00007ffe61655400
-R10: 00000000025d1b03 R11: 0000000000000246 R12: 00007ffe616566d0
-R13: 00000000025d1a70 R14: 0000000000000000 R15: 00007ffe61656710
- </TASK>
-================================================================================
-Kernel panic - not syncing: UBSAN: panic_on_warn set ...
-CPU: 0 PID: 8058 Comm: syz-executor Not tainted 6.5.0-rc2 #1
-Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS
-rel-1.12.0-59-gc9ba5276e321-prebuilt.qemu.org 04/01/2014
-Call Trace:
- <TASK>
- __dump_stack lib/dump_stack.c:88 [inline]
- dump_stack_lvl+0x92/0xf0 lib/dump_stack.c:106
- panic+0x570/0x620 kernel/panic.c:340
- check_panic_on_warn+0x8e/0x90 kernel/panic.c:236
- ubsan_epilogue lib/ubsan.c:223 [inline]
- __ubsan_handle_out_of_bounds+0xe7/0x100 lib/ubsan.c:348
- do_journal_end+0x3b3c/0x4750 fs/reiserfs/journal.c:4166
- reiserfs_sync_fs+0xe7/0x100 fs/reiserfs/super.c:78
- sync_filesystem fs/sync.c:56 [inline]
- sync_filesystem+0xef/0x250 fs/sync.c:30
- generic_shutdown_super+0x70/0x470 fs/super.c:472
- kill_block_super+0x60/0xb0 fs/super.c:1417
- deactivate_locked_super+0x85/0x140 fs/super.c:330
- deactivate_super+0x8c/0xa0 fs/super.c:361
- cleanup_mnt+0x28f/0x3b0 fs/namespace.c:1254
- task_work_run+0x153/0x230 kernel/task_work.c:179
- resume_user_mode_work include/linux/resume_user_mode.h:49 [inline]
- exit_to_user_mode_loop kernel/entry/common.c:171 [inline]
- exit_to_user_mode_prepare+0x210/0x240 kernel/entry/common.c:204
- __syscall_exit_to_user_mode_work kernel/entry/common.c:286 [inline]
- syscall_exit_to_user_mode+0x19/0x50 kernel/entry/common.c:297
- do_syscall_64+0x42/0xb0 arch/x86/entry/common.c:86
- entry_SYSCALL_64_after_hwframe+0x63/0xcd
-RIP: 0033:0x47afab
-Code: 5f ff d0 48 89 c7 b8 3c 00 00 00 0f 05 48 c7 c1 b4 ff ff ff f7
-d8 64 89 01 48 83 c8 ff c3 90 f3 0f 1e fa b8 a6 00 00 00 0f 05 <48> 3d
-00 f0 ff ff 77 05 c3 0f 1f 40 00 48 c7 c2 b4 ff ff ff f7 d8
-RSP: 002b:00007ffe61655568 EFLAGS: 00000246 ORIG_RAX: 00000000000000a6
-RAX: 0000000000000000 RBX: 00000000000001fc RCX: 000000000047afab
-RDX: 0000000000000000 RSI: 0000000000000002 RDI: 00007ffe61655610
-RBP: 0000000000000000 R08: 0000000000000000 R09: 00007ffe61655400
-R10: 00000000025d1b03 R11: 0000000000000246 R12: 00007ffe616566d0
-R13: 00000000025d1a70 R14: 0000000000000000 R15: 00007ffe61656710
- </TASK>
-Dumping ftrace buffer:
-   (ftrace buffer empty)
-Kernel Offset: disabled
-Rebooting in 1 seconds..
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+
+If the bug is already fixed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want syzbot to run the reproducer, reply with:
+#syz test: git://repo/address.git branch-or-commit-hash
+If you attach or paste a git patch, syzbot will apply it before testing.
+
+If you want to change bug's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the bug is a duplicate of another bug, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
