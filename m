@@ -1,35 +1,80 @@
-From: Christoph Hellwig <hch@infradead.org>
-Subject: Re: [PATCH 01/32] block: Provide blkdev_get_handle_* functions
-Date: Mon, 31 Jul 2023 04:13:17 -0700
-Message-ID: <ZMeXTUUyrOnaxGNG@infradead.org>
-References: <20230629165206.383-1-jack@suse.cz>
- <20230704122224.16257-1-jack@suse.cz>
- <ZKbgAG5OoHVyUKOG@infradead.org>
- <CAJpMwyiUcw+mH0sZa8f8UJsaSZ7NSE65s2gZDEia+pASyP_gJQ@mail.gmail.com>
- <20230731105034.43skhi5ubze563c3@quack3>
+From: Jan Kara <jack@suse.cz>
+Subject: Re: [PATCH] MAINTAINERS: change reiserfs status to obsolete
+Date: Mon, 31 Jul 2023 19:11:31 +0200
+Message-ID: <20230731171131.qpaoz7i3cto5wxyv@quack3>
+References: <20230720115445.15583-1-piotr.siminski@globallogic.com>
+ <CAKXUXMzL4i0jT0xPFsV4ZG6L82yDCYLtKoUL7t=21ZDZ4OMY7w@mail.gmail.com>
 Mime-Version: 1.0
-Return-path: <linux-bcache-owner@vger.kernel.org>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=0eXexdRtzvf9o3AbbzOynMU9Oogrhvp6ybx0nEPZW1E=; b=vK1v9C4DYLEBKbiWf/PpEfbUOr
-        ea0tKbtUfw+UjBx/HoPf26wPnlNR3k7A4MsVaVkdar3OIBATfQ3zHFcbH8P9ZuG4qU9LC9N5j1WXI
-        1jFOwZPN5LFjM5C6XYSxyg6PIhoZ/4h6jEiKtDOt40sVd4EspDmE/0Bc3dDQT8tEqCoRhRKLz9maX
-        raBlJVeHQO4UUZTV20wa+PJqkvDnQQ8hd7GU+O68QfUa/DM2K0gl+HVXCe6+FZ5xjes5Du5sz8UQy
-        x/J/fQpupjKK/pfw7RVGPayWpw0xq+T79S7uS7ZMWJxaSbk7Su09Zyo3FaLXxQsJmvK1X6hzoRb5N
-        /XYneCLA==;
+Content-Transfer-Encoding: quoted-printable
+Return-path: <reiserfs-devel-owner@vger.kernel.org>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+        t=1690823492; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=kp+ckBJwyAyY4Fsa3aNTz7y5pST0vHXGNpS2gQCzvK0=;
+        b=TBH8FHQ9+cQhCaTybTDlxJ0wL8GYcJD4e1npIBuajVrwoDgmcMrdNfTc7solttzgrt+Q44
+        VEYeJnqZkQg2n8iul6L9e0Q5fJnhd7szaASqWhkqNQYEBaKt+qIR5cL3wAa5RzjChfXCW8
+        FlyudrvM+7RUZa6WTY996MavRdYlDBg=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+        s=susede2_ed25519; t=1690823492;
+        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=kp+ckBJwyAyY4Fsa3aNTz7y5pST0vHXGNpS2gQCzvK0=;
+        b=5wTDfvHo3p1nob4EnKoRn4bnZwvAKMwR7OqRDGtsgc5k2XFTD2CxgUFClRiAfVfoNXlrON
+        wNlYUWhB78D50ICw==
 Content-Disposition: inline
-In-Reply-To: <20230731105034.43skhi5ubze563c3@quack3>
+In-Reply-To: <CAKXUXMzL4i0jT0xPFsV4ZG6L82yDCYLtKoUL7t=21ZDZ4OMY7w@mail.gmail.com>
 List-ID: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Jan Kara <jack@suse.cz>
-Cc: Haris Iqbal <haris.iqbal@ionos.com>, Christoph Hellwig <hch@infradead.org>, linux-block@vger.kernel.org, linux-fsdevel@vger.kernel.org, Jens Axboe <axboe@kernel.dk>, Alasdair Kergon <agk@redhat.com>, Andrew Morton <akpm@linux-foundation.org>, Anna Schumaker <anna@kernel.org>, Chao Yu <chao@kernel.org>, Christian Borntraeger <borntraeger@linux.ibm.com>, "Darrick J. Wong" <djwong@kernel.org>, Dave Kleikamp <shaggy@kernel.org>, David Sterba <dsterba@suse.com>, dm-devel@redhat.com, drbd-dev@lists.linbit.com, Gao Xiang <xiang@kernel.org>, Jack Wang <jinpu.wang@ionos.com>, Jaegeuk Kim <jaegeuk@kernel.org>, jfs-discussion@lists.sourceforge.net, Joern Engel <joern@lazybastard.org>, Joseph Qi <joseph.qi@linux.alibaba.com>, Kent Overstreet <kent.overstreet@gmail.com>
+Content-Type: text/plain; charset="windows-1252"
+To: Lukas Bulwahn <lukas.bulwahn@gmail.com>
+Cc: Piotr Siminski <piotr.siminski@globallogic.com>, Jan Kara <jack@suse.cz>, reiserfs-devel@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Mon, Jul 31, 2023 at 12:50:34PM +0200, Jan Kara wrote:
-> I think the bdev_handle name is fine for the struct. After all it is
-> equivalent of an open handle for the block device so IMHO bdev_handle
-> captures that better than bdev_ctx.
+On Thu 20-07-23 13:57:18, Lukas Bulwahn wrote:
+> Piotr, thanks for the clean up in the MAINTAINERS file.
+>=20
+> Reviewed-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
+>=20
+> Jan, could you pick this patch?
 
-Agreed.
+Yes, picked up now. Thanks!
+
+								Honza
+
+>=20
+> Lukas
+>=20
+>=20
+> On Thu, Jul 20, 2023 at 1:54=E2=80=AFPM Piotr Siminski
+> <piotr.siminski@globallogic.com> wrote:
+> >
+> > Reiserfs file system is no longer supported and is going to be removed
+> > in 2025 as stated in commit eb103a51640e ("reiserfs: Deprecate reiserfs=
+").
+> >
+> > Signed-off-by: Piotr Siminski <piotr.siminski@globallogic.com>
+> > ---
+> >  MAINTAINERS | 2 +-
+> >  1 file changed, 1 insertion(+), 1 deletion(-)
+> >
+> > diff --git a/MAINTAINERS b/MAINTAINERS
+> > index a5c16bb92fe2..c340c6fc7923 100644
+> > --- a/MAINTAINERS
+> > +++ b/MAINTAINERS
+> > @@ -18064,7 +18064,7 @@ F:      include/linux/regmap.h
+> >
+> >  REISERFS FILE SYSTEM
+> >  L:     reiserfs-devel@vger.kernel.org
+> > -S:     Supported
+> > +S:     Obsolete
+> >  F:     fs/reiserfs/
+> >
+> >  REMOTE PROCESSOR (REMOTEPROC) SUBSYSTEM
+> > --
+> > 2.34.1
+> >
+--=20
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
