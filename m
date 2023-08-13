@@ -1,31 +1,139 @@
-From: Christoph Hellwig <hch@infradead.org>
-Subject: Re: [PATCH v2 0/29] block: Make blkdev_get_by_*() return handle
-Date: Fri, 11 Aug 2023 05:27:28 -0700
-Message-ID: <ZNYpMPM5o4q1xcIt@infradead.org>
-References: <20230810171429.31759-1-jack@suse.cz>
+From: syzbot <syzbot+5671b8bcd5178fe56c23@syzkaller.appspotmail.com>
+Subject: [syzbot] [dri?] [reiserfs?] WARNING: bad unlock balance in vkms_vblank_simulate
+Date: Sun, 13 Aug 2023 00:24:12 -0700
+Message-ID: <00000000000021c1240602c8d549@google.com>
 Mime-Version: 1.0
-Return-path: <linux-block-owner@vger.kernel.org>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=96Jyxa0hgrG24aZgu2ilDmsPaDJbIFT8CvAcqFGq7ak=; b=Lt8QMt/qiwPklQXJKNxAAayl50
-        ejm5z3TauQQgWXDYeiy6ev7CoxuktCUjLml+tQTXB0FrmwYo9bGjhm2G8bwiVtr2qWkYfM3c8FNl1
-        cPDaz7ayPa6vktH3ev1ZeHUse0hr9sV3dSKzn62142iTuA8TTM4tDaiYAHOFhJAm7nP3aQxRbODoe
-        cl8s2GHmVFeXScu6jrXcZHGDTmN2udO8XZ0pPwfpsd5QoOiRLOiFHXD6KYR9f2MEyvA/KeT9RzHmF
-        DIvDgADu/AxqynsuMYC3hcwdLyXOsBeZQBLnrFNVOoRqDCMnS+8kcWICKZ1ml8I/4TT3bYAOcmKWy
-        N15IsxAA==;
-Content-Disposition: inline
-In-Reply-To: <20230810171429.31759-1-jack@suse.cz>
+Return-path: <reiserfs-devel-owner@vger.kernel.org>
 List-ID: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Jan Kara <jack@suse.cz>
-Cc: linux-fsdevel@vger.kernel.org, linux-block@vger.kernel.org, Christoph Hellwig <hch@infradead.org>, Alasdair Kergon <agk@redhat.com>, Andrew Morton <akpm@linux-foundation.org>, Anna Schumaker <anna@kernel.org>, Chao Yu <chao@kernel.org>, Christian Borntraeger <borntraeger@linux.ibm.com>, "Darrick J. Wong" <djwong@kernel.org>, Dave Kleikamp <shaggy@kernel.org>, David Sterba <dsterba@suse.com>, dm-devel@redhat.com, drbd-dev@lists.linbit.com, Gao Xiang <xiang@kernel.org>, Jack Wang <jinpu.wang@ionos.com>, Jaegeuk Kim <jaegeuk@kernel.org>, jfs-discussion@lists.sourceforge.net, Joern Engel <joern@lazybastard.org>, Joseph Qi <joseph.qi@linux.alibaba.com>, Kent Overstreet <kent.overstreet@gmail.com>, linux-bcache@vger.kernel.org, linux-btrfs@vger.kernel.org
+To: airlied@gmail.com, daniel@ffwll.ch, dri-devel@lists.freedesktop.org, hamohammed.sa@gmail.com, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, mairacanal@riseup.net, melissa.srw@gmail.com, reiserfs-devel@vger.kernel.org, rodrigosiqueiramelo@gmail.com, syzkaller-bugs@googlegroups.com
 
-Except for a mostly cosmetic nitpick this looks good to me:
+Hello,
 
-Acked-by: Christoph Hellwig <hch@lst.de>
+syzbot found the following issue on:
 
-That's not eactly the deep review I'd like to do, but as I'm about to
-head out for vacation that's probably as good as it gets.
+HEAD commit:    71cd4fc492ec Add linux-next specific files for 20230808
+git tree:       linux-next
+console+strace: https://syzkaller.appspot.com/x/log.txt?x=11faa1eda80000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=e36b5ba725f7349d
+dashboard link: https://syzkaller.appspot.com/bug?extid=5671b8bcd5178fe56c23
+compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=17a54d0ba80000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=13e2281ba80000
+
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/5ea26a69f422/disk-71cd4fc4.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/c4a6b00863bf/vmlinux-71cd4fc4.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/888c2025ec30/bzImage-71cd4fc4.xz
+mounted in repro: https://storage.googleapis.com/syzbot-assets/3620b064e309/mount_0.gz
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+5671b8bcd5178fe56c23@syzkaller.appspotmail.com
+
+=====================================
+WARNING: bad unlock balance detected!
+6.5.0-rc5-next-20230808-syzkaller #0 Not tainted
+-------------------------------------
+swapper/0/0 is trying to release lock (&vkms_out->enabled_lock) at:
+[<ffffffff852badf9>] vkms_vblank_simulate+0x159/0x3d0 drivers/gpu/drm/vkms/vkms_crtc.c:34
+but there are no more locks to release!
+
+other info that might help us debug this:
+no locks held by swapper/0/0.
+
+stack backtrace:
+CPU: 0 PID: 0 Comm: swapper/0 Not tainted 6.5.0-rc5-next-20230808-syzkaller #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 07/26/2023
+Call Trace:
+ <IRQ>
+ __dump_stack lib/dump_stack.c:88 [inline]
+ dump_stack_lvl+0xd9/0x1b0 lib/dump_stack.c:106
+ __lock_release kernel/locking/lockdep.c:5438 [inline]
+ lock_release+0x4b5/0x680 kernel/locking/lockdep.c:5781
+ __mutex_unlock_slowpath+0xa3/0x640 kernel/locking/mutex.c:907
+ vkms_vblank_simulate+0x159/0x3d0 drivers/gpu/drm/vkms/vkms_crtc.c:34
+ __run_hrtimer kernel/time/hrtimer.c:1688 [inline]
+ __hrtimer_run_queues+0x203/0xc10 kernel/time/hrtimer.c:1752
+ hrtimer_interrupt+0x31b/0x800 kernel/time/hrtimer.c:1814
+ local_apic_timer_interrupt arch/x86/kernel/apic/apic.c:1098 [inline]
+ __sysvec_apic_timer_interrupt+0x14a/0x430 arch/x86/kernel/apic/apic.c:1115
+ sysvec_apic_timer_interrupt+0x8e/0xc0 arch/x86/kernel/apic/apic.c:1109
+ </IRQ>
+ <TASK>
+ asm_sysvec_apic_timer_interrupt+0x1a/0x20 arch/x86/include/asm/idtentry.h:645
+RIP: 0010:native_irq_disable arch/x86/include/asm/irqflags.h:37 [inline]
+RIP: 0010:arch_local_irq_disable arch/x86/include/asm/irqflags.h:72 [inline]
+RIP: 0010:acpi_safe_halt+0x1b/0x20 drivers/acpi/processor_idle.c:113
+Code: ed c3 66 66 2e 0f 1f 84 00 00 00 00 00 66 90 65 48 8b 04 25 c0 bc 03 00 48 8b 00 a8 08 75 0c 66 90 0f 00 2d 57 9d 99 00 fb f4 <fa> c3 0f 1f 00 0f b6 47 08 3c 01 74 0b 3c 02 74 05 8b 7f 04 eb 9f
+RSP: 0000:ffffffff8c607d70 EFLAGS: 00000246
+RAX: 0000000000004000 RBX: 0000000000000001 RCX: ffffffff8a3a232e
+RDX: 0000000000000001 RSI: ffff888144e77800 RDI: ffff888144e77864
+RBP: ffff888144e77864 R08: 0000000000000001 R09: ffffed1017306dbd
+R10: ffff8880b9836deb R11: 0000000000000000 R12: ffff888141ed8000
+R13: ffffffff8d45c680 R14: 0000000000000000 R15: 0000000000000000
+ acpi_idle_enter+0xc5/0x160 drivers/acpi/processor_idle.c:707
+ cpuidle_enter_state+0x82/0x500 drivers/cpuidle/cpuidle.c:267
+ cpuidle_enter+0x4e/0xa0 drivers/cpuidle/cpuidle.c:388
+ cpuidle_idle_call kernel/sched/idle.c:215 [inline]
+ do_idle+0x315/0x3f0 kernel/sched/idle.c:282
+ cpu_startup_entry+0x18/0x20 kernel/sched/idle.c:379
+ rest_init+0x16f/0x2b0 init/main.c:726
+ arch_call_rest_init+0x13/0x30 init/main.c:823
+ start_kernel+0x39f/0x480 init/main.c:1068
+ x86_64_start_reservations+0x18/0x30 arch/x86/kernel/head64.c:556
+ x86_64_start_kernel+0xb2/0xc0 arch/x86/kernel/head64.c:537
+ secondary_startup_64_no_verify+0x167/0x16b
+ </TASK>
+----------------
+Code disassembly (best guess):
+   0:	ed                   	in     (%dx),%eax
+   1:	c3                   	ret
+   2:	66 66 2e 0f 1f 84 00 	data16 cs nopw 0x0(%rax,%rax,1)
+   9:	00 00 00 00
+   d:	66 90                	xchg   %ax,%ax
+   f:	65 48 8b 04 25 c0 bc 	mov    %gs:0x3bcc0,%rax
+  16:	03 00
+  18:	48 8b 00             	mov    (%rax),%rax
+  1b:	a8 08                	test   $0x8,%al
+  1d:	75 0c                	jne    0x2b
+  1f:	66 90                	xchg   %ax,%ax
+  21:	0f 00 2d 57 9d 99 00 	verw   0x999d57(%rip)        # 0x999d7f
+  28:	fb                   	sti
+  29:	f4                   	hlt
+* 2a:	fa                   	cli <-- trapping instruction
+  2b:	c3                   	ret
+  2c:	0f 1f 00             	nopl   (%rax)
+  2f:	0f b6 47 08          	movzbl 0x8(%rdi),%eax
+  33:	3c 01                	cmp    $0x1,%al
+  35:	74 0b                	je     0x42
+  37:	3c 02                	cmp    $0x2,%al
+  39:	74 05                	je     0x40
+  3b:	8b 7f 04             	mov    0x4(%rdi),%edi
+  3e:	eb 9f                	jmp    0xffffffdf
+
+
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+
+If the bug is already fixed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want syzbot to run the reproducer, reply with:
+#syz test: git://repo/address.git branch-or-commit-hash
+If you attach or paste a git patch, syzbot will apply it before testing.
+
+If you want to change bug's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the bug is a duplicate of another bug, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
