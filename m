@@ -1,66 +1,56 @@
-From: Jeff Layton <jlayton@kernel.org>
-Subject: Re: [PATCH v2 08/92] fs: new helper:
- simple_rename_timestamp
-Date: Tue, 29 Aug 2023 20:48:48 -0400
-Message-ID: <d73e7de5056a34578a193185770e46584450d8b7.camel@kernel.org>
-References: <20230705185812.579118-1-jlayton@kernel.org>
- <20230705185812.579118-3-jlayton@kernel.org>
- <20230830001917.GC461907@ZenIV>
+From: syzbot <syzbot+lista2084c97a93c18a7715f@syzkaller.appspotmail.com>
+Subject: [syzbot] Monthly reiserfs report (Aug 2023)
+Date: Wed, 30 Aug 2023 02:54:50 -0700
+Message-ID: <0000000000001fa20c060420eb39@google.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Return-path: <cluster-devel-bounces@redhat.com>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1693356559;
-	h=from:from:sender:sender:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:list-id:list-help:
-	 list-unsubscribe:list-subscribe:list-post;
-	bh=l6ldWDOqGKIdEumDQQZraLp712clgs44Ub5voSyAlmQ=;
-	b=ig9dVJm1VVR8k5T2cyCvm4nXAKMx49G0nD+XDkZjX9A1xsOvzcGKPG+z92m7n1BMAQU9Uz
-	WJmzNbZYJFaFp0QenUhUuOfzNGrauPookXK1UyDgfwb2TSntyndq3XQTnG1zddLSk52zbe
-	2HbXjlbNUf1uZdaNQT8CKpd4nJEsQng=
-In-Reply-To: <20230830001917.GC461907@ZenIV>
-List-Id: <reiserfs-devel.vger.kernel.org>
-List-Unsubscribe: <https://listman.redhat.com/mailman/options/cluster-devel>, 
- <mailto:cluster-devel-request@redhat.com?subject=unsubscribe>
-List-Archive: <http://listman.redhat.com/archives/cluster-devel/>
-List-Post: <mailto:cluster-devel@redhat.com>
-List-Help: <mailto:cluster-devel-request@redhat.com?subject=help>
-List-Subscribe: <https://listman.redhat.com/mailman/listinfo/cluster-devel>,
- <mailto:cluster-devel-request@redhat.com?subject=subscribe>
-Errors-To: cluster-devel-bounces@redhat.com
-Sender: "Cluster-devel" <cluster-devel-bounces@redhat.com>
+Return-path: <linux-fsdevel-owner@vger.kernel.org>
+List-ID: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: Al Viro <viro@zeniv.linux.org.uk>
-Cc: lucho@ionkov.net, rafael@kernel.org, djwong@kernel.org, al@alarsen.net, cmllamas@google.com, andrii@kernel.org, hughd@google.com, john.johansen@canonical.com, agordeev@linux.ibm.com, hch@lst.de, hubcap@omnibond.com, pc@manguebit.com, linux-xfs@vger.kernel.org, bvanassche@acm.org, jeffxu@chromium.org, mpe@ellerman.id.au, john@keeping.me.uk, yi.zhang@huawei.com, jmorris@namei.org, christophe.leroy@csgroup.eu, code@tyhicks.com, stern@rowland.harvard.edu, borntraeger@linux.ibm.com, devel@lists.orangefs.org, mirimmad17@gmail.com, sprasad@microsoft.com, jaharkes@cs.cmu.edu, linux-um@lists.infradead.org, npiggin@gmail.com, jlbec@evilplan.org, ericvh@kernel.org, surenb@google.com, trond.myklebust@hammerspace.com, anton@tuxera.com, brauner@kernel.org, wsa+renesas@sang-engineering.com, gregkh@linuxfoundation.org, stephen.smalley.work@gmail.com, linux-usb@vger.kernel.org, linux-ker
+Content-Transfer-Encoding: 7bit
+To: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, reiserfs-devel@vger.kernel.org, syzkaller-bugs@googlegroups.com
 
-On Wed, 2023-08-30 at 01:19 +0100, Al Viro wrote:
-> On Wed, Jul 05, 2023 at 02:58:11PM -0400, Jeff Layton wrote:
->=20
-> > + * POSIX mandates that the old and new parent directories have their c=
-time and
-> > + * mtime updated, and that inodes of @old_dentry and @new_dentry (if a=
-ny), have
-> > + * their ctime updated.
->=20
-> APPLICATION USAGE
-> Some implementations mark for update the last file status change timestam=
-p
-> of renamed files and some do not. Applications which make use of the
-> last file status change timestamp may behave differently with respect
-> to renamed files unless they are designed to allow for either behavior.
->
-> So for children POSIX permits rather than mandates.  Doesn't really matte=
-r;
-> Linux behaviour had been to touch ctime on children since way back, if
-> not since the very beginning.
+Hello reiserfs maintainers/developers,
 
-Mea culpa. You're quite correct. I'll plan to roll a small patch to
-update the comment over this function.
+This is a 31-day syzbot report for the reiserfs subsystem.
+All related reports/information can be found at:
+https://syzkaller.appspot.com/upstream/s/reiserfs
 
-Thanks!
---=20
-Jeff Layton <jlayton@kernel.org>
+During the period, 2 new issues were detected and 0 were fixed.
+In total, 88 issues are still open and 18 have been fixed so far.
 
+Some of the still happening issues:
+
+Ref  Crashes Repro Title
+<1>  27921   Yes   KASAN: null-ptr-deref Read in do_journal_end (2)
+                   https://syzkaller.appspot.com/bug?extid=845cd8e5c47f2a125683
+<2>  4228    Yes   possible deadlock in open_xa_dir
+                   https://syzkaller.appspot.com/bug?extid=8fb64a61fdd96b50f3b8
+<3>  4054    No    UBSAN: array-index-out-of-bounds in direntry_create_vi
+                   https://syzkaller.appspot.com/bug?extid=e5bb9eb00a5a5ed2a9a2
+<4>  1698    No    KASAN: slab-out-of-bounds Read in search_by_key (2)
+                   https://syzkaller.appspot.com/bug?extid=b3b14fb9f8a14c5d0267
+<5>  1421    Yes   kernel BUG at fs/reiserfs/journal.c:LINE!
+                   https://syzkaller.appspot.com/bug?extid=6820505ae5978f4f8f2f
+<6>  1224    Yes   WARNING in reiserfs_lookup
+                   https://syzkaller.appspot.com/bug?extid=392ac209604cc18792e5
+<7>  990     Yes   possible deadlock in mnt_want_write_file
+                   https://syzkaller.appspot.com/bug?extid=1047e42179f502f2b0a2
+<8>  297     Yes   possible deadlock in reiserfs_ioctl
+                   https://syzkaller.appspot.com/bug?extid=79c303ad05f4041e0dad
+<9>  248     Yes   KASAN: out-of-bounds Read in leaf_paste_entries (2)
+                   https://syzkaller.appspot.com/bug?extid=38b79774b6c990637f95
+<10> 218     Yes   possible deadlock in do_journal_begin_r
+                   https://syzkaller.appspot.com/bug?extid=5e385bfa7d505b075d9f
+
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+To disable reminders for individual bugs, reply with the following command:
+#syz set <Ref> no-reminders
+
+To change bug's subsystems, reply with:
+#syz set <Ref> subsystems: new-subsystem
+
+You may send multiple commands in a single email message.
