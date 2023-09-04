@@ -1,55 +1,67 @@
-From: Christian Brauner <brauner@kernel.org>
-Subject: Re: [PATCH] reiserfs: Replace 1-element array with C99 style flex-array
-Date: Mon,  4 Sep 2023 13:49:18 +0200
-Message-ID: <20230904-besuchen-aufgaben-26aa43101255@brauner>
-References: <20230821043312.1444068-1-syoshida@redhat.com>
+From: syzbot <syzbot+bdb228c3f8a87a7c9c98@syzkaller.appspotmail.com>
+Subject: [syzbot] [reiserfs?] BUG: unabSeaBIOS (version NUM.NUM.NUM-google)
+Date: Mon, 04 Sep 2023 10:02:56 -0700
+Message-ID: <00000000000059cb7006048b7b03@google.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1693828165;
-        bh=3aY1ZemcCH+DmD8wlavtiJU3GHr/szhhOTN+39gCg1I=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=O5lmdvMfRyX8MGh1z77HMSA+tE/JEyvm3agM7dnlDgGePu/Pl+qaflJSekwy+/9J2
-         z//e4244pPFCsBb7fKV8KTjkwMRiVMrKDQoeENRxLuCgNJtmAVKBygWkj325YuXvAO
-         k1eOvWeQtBUXaxTl09upFIBh9UEP65cp9LJxqxbmHxzSAVyNPNWfuiUzcOwhyE1vo2
-         IDPO87PCRUaUdikF46c9kNY5e+3QLleOMzpL/yGzWELz0ciNd/eIHskKM495d6Pi2p
-         vAkjLClhBXrDPpHRjaM/gqAs7ufMz05k1yRuM18WrqivnqmrSUrUfG5pPV3iPixhXt
-         Td5M7EWGeMQXg==
-In-Reply-To: <20230821043312.1444068-1-syoshida@redhat.com>
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1211; i=brauner@kernel.org; h=from:subject:message-id; bh=3aY1ZemcCH+DmD8wlavtiJU3GHr/szhhOTN+39gCg1I=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaR8PWIgHnBb8dbbVWr/7stfPePHt/Yi/6F3UUJd23ltb6e3 P27x7ShlYRDjYpAVU2RxaDcJl1vOU7HZKFMDZg4rE8gQBi5OAZiISCfD/7quyQZGB/6v2Pj1ymueSe Kb7S8dkp730XxpddXatJPbE64wMhx7M5F3/YTC00HNop23fhh/23DsoZwKz9NVzzLvLH3wKYkTAA==
-X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
 List-ID: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: Shigeru Yoshida <syoshida@redhat.com>
-Cc: Christian Brauner <brauner@kernel.org>, linux-kernel@vger.kernel.org, dchinner@redhat.com, dsterba@suse.com, axboe@kernel.dk, viro@zeniv.linux.org.uk, reiserfs-devel@vger.kernel.org
+Content-Transfer-Encoding: 7bit
+To: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, reiserfs-devel@vger.kernel.org, syzkaller-bugs@googlegroups.com
 
-On Mon, 21 Aug 2023 13:33:12 +0900, Shigeru Yoshida wrote:
-> UBSAN found the following issue:
-> 
-> ================================================================================
-> UBSAN: array-index-out-of-bounds in fs/reiserfs/journal.c:4166:22
-> index 1 is out of range for type '__le32 [1]'
-> 
-> This is because struct reiserfs_journal_desc uses 1-element array for
-> dynamically sized array member, j_realblock.
-> 
-> [...]
+Hello,
 
-Applied to the vfs.misc branch of the vfs/vfs.git tree.
-Patches in the vfs.misc branch should appear in linux-next soon.
+syzbot found the following issue on:
 
-Please report any outstanding bugs that were missed during review in a
-new review to the original patch series allowing us to drop it.
+HEAD commit:    a47fc304d2b6 Add linux-next specific files for 20230831
+git tree:       linux-next
+console output: https://syzkaller.appspot.com/x/log.txt?x=1124e210680000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=6ecd2a74f20953b9
+dashboard link: https://syzkaller.appspot.com/bug?extid=bdb228c3f8a87a7c9c98
+compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=10b9ba67a80000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=12170a10680000
 
-It's encouraged to provide Acked-bys and Reviewed-bys even though the
-patch has now been applied. If possible patch trailers will be updated.
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/b2e8f4217527/disk-a47fc304.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/ed6cdcc09339/vmlinux-a47fc304.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/bd9b2475bf5a/bzImage-a47fc304.xz
+mounted in repro: https://storage.googleapis.com/syzbot-assets/175d97cdd50c/mount_1.gz
 
-Note that commit hashes shown below are subject to change due to rebase,
-trailer updates or similar. If in doubt, please check the listed branch.
+Bisection is inconclusive: the issue happens on the oldest tested release.
 
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
-branch: vfs.misc
+bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=16060e13a80000
+final oops:     https://syzkaller.appspot.com/x/report.txt?x=15060e13a80000
+console output: https://syzkaller.appspot.com/x/log.txt?x=11060e13a80000
 
-[1/1] reiserfs: Replace 1-element array with C99 style flex-array
-      https://git.kernel.org/vfs/vfs/c/a7cb8be34170
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+bdb228c3f8a87a7c9c98@syzkaller.appspotmail.com
+
+BUG: unabSeaBIOS (version 1.8.2-google)
+
+
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+For information about bisection process see: https://goo.gl/tpsmEJ#bisection
+
+If the bug is already fixed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want syzbot to run the reproducer, reply with:
+#syz test: git://repo/address.git branch-or-commit-hash
+If you attach or paste a git patch, syzbot will apply it before testing.
+
+If you want to overwrite bug's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the bug is a duplicate of another bug, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
