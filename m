@@ -1,45 +1,25 @@
-From: Jan Kara <jack@suse.cz>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
 Subject: Re: [PATCH RESEND] um: Remove CONFIG_REISERFS_FS from defconfig
-Date: Mon, 18 Sep 2023 16:24:58 +0200
-Message-ID: <20230918142458.cwktedwchg5bm5cc@quack3>
-References: <20230910232640.113938-1-peter@n8pjl.ca>
- <20230918125744.4342-1-peter@n8pjl.ca>
+Date: Mon, 18 Sep 2023 16:58:05 +0200
+Message-ID: <CAMuHMdWzN0Gs2FTQDFeBLz2498dv3ZYCBL2xOvL5YdHAveaH9g@mail.gmail.com>
+References: <20230910232640.113938-1-peter@n8pjl.ca> <20230918125744.4342-1-peter@n8pjl.ca>
  <20230918132614.zmmuc72purc2psik@quack3>
- <20230918141359.11097-1-peter@n8pjl.ca>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: base64
 Return-path: <linux-um-bounces+glud-user-mode-linux-devel=m.gmane-mx.org@lists.infradead.org>
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=lists.infradead.org; s=bombadil.20210309; h=Sender:
 	Content-Transfer-Encoding:Content-Type:List-Subscribe:List-Help:List-Post:
-	List-Archive:List-Unsubscribe:List-Id:In-Reply-To:MIME-Version:References:
-	Message-ID:Subject:Cc:To:From:Date:Reply-To:Content-ID:Content-Description:
+	List-Archive:List-Unsubscribe:List-Id:Cc:To:Subject:Message-ID:Date:From:
+	In-Reply-To:References:MIME-Version:Reply-To:Content-ID:Content-Description:
 	Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:
-	List-Owner; bh=k4Jz0yWz30JkyNNWQAuleOPvY0zavGr+CYFxUXYhC4o=; b=3f9CLghtpEKRxE
-	XXdge4gArSoKUGfdMJI+xcKIWxGiIuZ7GDToVAFya9/vHNwaNBlDU/p2mFpIwrZMPiHJrNadMUS6C
-	79KeSBEiQKhOkKNIzzf2LugHG6V8GaGgXgAquA4gANmFOay3Wb3A70E/+56YxFk7BU/e3/oJLZec4
-	jY7lGb8BuDGFoBdUjGeIwWbYVH17KOIlBni2+H2OohHYEhbcuerWkXNPigZBQMfOjmX+QPPWyTroA
-	QWA5a+2oUaIRnppayUpO5GDTGhNoLP+g71/iws0tKE2TzZJF6636Opnoo/Jk+0uqK7ZMWOa0YuiBa
-	N6E5cPK4DCkqqMu06psg==;
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1695047099; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=7k/zMUERva64SewvTMtFZgYEqcH6fC89q9sFyyJsq/k=;
-	b=Cl7e3mvx918s/0zUuN7kT7+zYVdL6sMszlDz1QEmDIXo/ku1cks5d61Bx6NZyKw2Hv/Z85
-	Yphvifl7ReKud1tVOfnn0uUb7N8e2IAF29cwib2jkC511YpIoBG1XcEJyOGlF2r6yo1ggp
-	oW6Ki1FdHP4dbew/XIolCDspW/mcoUY=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1695047099;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=7k/zMUERva64SewvTMtFZgYEqcH6fC89q9sFyyJsq/k=;
-	b=Zr+B2n9JSNfwINesiPLJEqTd0qEXVM/hfLdX0H6Zf3DZN9mgd19Tm8kzd0OsK/SwmAVWh6
-	s8dNKrYGpkvt1GCg==
-Content-Disposition: inline
-In-Reply-To: <20230918141359.11097-1-peter@n8pjl.ca>
+	List-Owner; bh=oalVF5rskk13LsxYZPaMVXMiqE1K1wBZW+BOx0KtAdI=; b=HQmnpd5r1ePAJG
+	xTSflgd67v+Ju5vOA7vIiaf10p7sif0D4xmY7dmqNvS0O23eYnHMYrGptDjCSnNhI0Whg8kSqHY7I
+	8QnI18N3hck6Fb23vrlRA3RhWaGosUnn4EJO1AaPV+6yFzHUH1W3DZzQhTcVShE89n8Tv3mewFhg4
+	ykPnahcD7Sl3guX7koBfA4EElDDgM4T9HEi6IVwwVXJxw/jfiph7SHr8AjLxcG7vwBo8THTm8wP9I
+	6IWEbwhPIF/q5aonCbnD3/sqNbhbHmKB/XFGGnAJnOQmNWrLsHJxo5OpWDf4f950jfPvTiItE2chD
+	aNee7dlYTx4HZtLXD5rA==;
+In-Reply-To: <20230918132614.zmmuc72purc2psik@quack3>
 List-Id: <reiserfs-devel.vger.kernel.org>
 List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-um>,
  <mailto:linux-um-request@lists.infradead.org?subject=unsubscribe>
@@ -50,33 +30,34 @@ List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-um>,
  <mailto:linux-um-request@lists.infradead.org?subject=subscribe>
 Sender: "linux-um" <linux-um-bounces@lists.infradead.org>
 Errors-To: linux-um-bounces+glud-user-mode-linux-devel=m.gmane-mx.org@lists.infradead.org
-To: Peter Lafreniere <peter@n8pjl.ca>
-Cc: jack@suse.cz, linux-um@lists.infradead.org, anton.ivanov@cambridgegreys.com, johannes@sipsolutions.net, reiserfs-devel@vger.kernel.org, richard@nod.at
+Content-Type: text/plain; charset="windows-1252"
+To: Jan Kara <jack@suse.cz>
+Cc: Peter Lafreniere <peter@n8pjl.ca>, linux-um@lists.infradead.org, richard@nod.at, anton.ivanov@cambridgegreys.com, johannes@sipsolutions.net, reiserfs-devel@vger.kernel.org
 
-On Mon 18-09-23 14:14:21, Peter Lafreniere wrote:
-> On Monday, September 18th, 2023 at 09:26, Jan Kara <jack@suse.cz> wrote:
-> > On Mon 18-09-23 12:58:26, Peter Lafreniere wrote:
-> > 
-> > > ReiserFS has been deprecated for a year and a half, yet is still built
-> > > as part of a defconfig UML kernel.
-> > > 
-> > > According to commit eb103a51640e ("reiserfs: Deprecate reiserfs"), the
-> > > filesystem is slated to be removed in 2025. Remove it from the defconfig
-> > > profile now, as part of its deprecation process.
-> > > 
-> > > Signed-off-by: Peter Lafreniere peter@n8pjl.ca
-> > 
-> > 
-> > Makes sense but I've noticed there are many more architectures that define
-> > CONFIG_REISERFS_FS in their defconfig (sh, powerpc, mips, m68k, ia64, arm,
-> > alpha). So perhaps we should do this for all of them when we are at it?
-> 
-> I agree. I can send a patch series for those arches except for ia64, which has
-> already been removed from linux-next.
-
-Than would be great. Thanks!
-
-								Honza
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+SGkgSmFuLAoKT24gTW9uLCBTZXAgMTgsIDIwMjMgYXQgMzoyNuKAr1BNIEphbiBLYXJhIDxqYWNr
+QHN1c2UuY3o+IHdyb3RlOgo+IE9uIE1vbiAxOC0wOS0yMyAxMjo1ODoyNiwgUGV0ZXIgTGFmcmVu
+aWVyZSB3cm90ZToKPiA+IFJlaXNlckZTIGhhcyBiZWVuIGRlcHJlY2F0ZWQgZm9yIGEgeWVhciBh
+bmQgYSBoYWxmLCB5ZXQgaXMgc3RpbGwgYnVpbHQKPiA+IGFzIHBhcnQgb2YgYSBkZWZjb25maWcg
+VU1MIGtlcm5lbC4KPiA+Cj4gPiBBY2NvcmRpbmcgdG8gY29tbWl0IGViMTAzYTUxNjQwZSAoInJl
+aXNlcmZzOiBEZXByZWNhdGUgcmVpc2VyZnMiKSwgdGhlCj4gPiBmaWxlc3lzdGVtIGlzIHNsYXRl
+ZCB0byBiZSByZW1vdmVkIGluIDIwMjUuIFJlbW92ZSBpdCBmcm9tIHRoZSBkZWZjb25maWcKPiA+
+IHByb2ZpbGUgbm93LCBhcyBwYXJ0IG9mIGl0cyBkZXByZWNhdGlvbiBwcm9jZXNzLgo+ID4KPiA+
+IFNpZ25lZC1vZmYtYnk6IFBldGVyIExhZnJlbmllcmUgPHBldGVyQG44cGpsLmNhPgo+Cj4gTWFr
+ZXMgc2Vuc2UgYnV0IEkndmUgbm90aWNlZCB0aGVyZSBhcmUgbWFueSBtb3JlIGFyY2hpdGVjdHVy
+ZXMgdGhhdCBkZWZpbmUKPiBDT05GSUdfUkVJU0VSRlNfRlMgaW4gdGhlaXIgZGVmY29uZmlnIChz
+aCwgcG93ZXJwYywgbWlwcywgbTY4aywgaWE2NCwgYXJtLAo+IGFscGhhKS4gU28gcGVyaGFwcyB3
+ZSBzaG91bGQgZG8gdGhpcyBmb3IgYWxsIG9mIHRoZW0gd2hlbiB3ZSBhcmUgYXQgaXQ/CgpUaGUg
+cG9saWN5IGZvciB0aGUgbTY4ayBkZWZjb25maWdzIGlzIHRvIGVuYWJsZSBhbGwgYXZhaWxhYmxl
+IGV4b3RpYwpmaWxlIHN5c3RlbXMgYXMgbW9kdWxlcywgc28gc3VwcG9ydCBmb3IgdGhlbSBpcyBh
+dmFpbGFibGUgd2hlbiBuZWVkZWQuCgpQbGVhc2UgbGV0IG1lIGtub3cgd2h5IHRoaXMgc2hvdWxk
+IGJlIGNoYW5nZWQsIGFzIGxvbmcgYXMgUmVpc2VyRlMgaXMKc3RpbGwgYXZhaWxhYmxlIGluIHRo
+ZSB1cHN0cmVhbSBrZXJuZWwuCgpHcntvZXRqZSxlZXRpbmd9cywKCiAgICAgICAgICAgICAgICAg
+ICAgICAgIEdlZXJ0CgotLSAKR2VlcnQgVXl0dGVyaG9ldmVuIC0tIFRoZXJlJ3MgbG90cyBvZiBM
+aW51eCBiZXlvbmQgaWEzMiAtLSBnZWVydEBsaW51eC1tNjhrLm9yZwoKSW4gcGVyc29uYWwgY29u
+dmVyc2F0aW9ucyB3aXRoIHRlY2huaWNhbCBwZW9wbGUsIEkgY2FsbCBteXNlbGYgYSBoYWNrZXIu
+IEJ1dAp3aGVuIEknbSB0YWxraW5nIHRvIGpvdXJuYWxpc3RzIEkganVzdCBzYXkgInByb2dyYW1t
+ZXIiIG9yIHNvbWV0aGluZyBsaWtlIHRoYXQuCiAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
+ICAgLS0gTGludXMgVG9ydmFsZHMKCl9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fCmxpbnV4LXVtIG1haWxpbmcgbGlzdApsaW51eC11bUBsaXN0cy5pbmZyYWRl
+YWQub3JnCmh0dHA6Ly9saXN0cy5pbmZyYWRlYWQub3JnL21haWxtYW4vbGlzdGluZm8vbGludXgt
+dW0K
