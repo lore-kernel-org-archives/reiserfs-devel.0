@@ -1,82 +1,81 @@
 From: Peter Lafreniere <peter@n8pjl.ca>
-Subject: um: Remove CONFIG_REISERFS_FS from defconfig
-Date: Mon, 18 Sep 2023 16:40:22 +0000
-Message-ID: <20230918164017.8827-1-peter@n8pjl.ca>
-References: <20230910232640.113938-1-peter@n8pjl.ca> <20230918125744.4342-1-peter@n8pjl.ca> <20230918132614.zmmuc72purc2psik@quack3> <CAMuHMdWzN0Gs2FTQDFeBLz2498dv3ZYCBL2xOvL5YdHAveaH9g@mail.gmail.com> <20230918163544.8604-1-peter@n8pjl.ca>
+Subject: [PATCH 0/7] arch/*: config: Remove ReiserFS from defconfig
+Date: Mon, 18 Sep 2023 17:56:09 +0000
+Message-ID: <20230918175529.19011-1-peter@n8pjl.ca>
 Mime-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-Return-path: <reiserfs-devel-owner@vger.kernel.org>
+Return-path: <linux-kernel-owner@vger.kernel.org>
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=n8pjl.ca;
-        s=protonmail2; t=1695055231; x=1695314431;
-        bh=MxvEGHu4PtwN8mGrIyQuS2LPbQNlvfj3VnD5jiLU7lc=;
-        h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-         Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
-         Message-ID:BIMI-Selector;
-        b=VgM7sEMUObxhy8J/FthQz5uVyKAzVBVCMwGKG+3ouY5osT0Rb1fa86tMORiLFRjz8
-         cGV4vKiEX+WES/DiNV0lIlKlHd4aSr7dnzsR0QgTgFXP06iCrX/AW2yQwkLyhbqeT7
-         8lP1XTKgFPtQdDkGVx7/ZDVPz/ti0NLUlDayxIMork8EC4xUGPEMpTt1V4h2e2r1Bw
-         bX7nkazpz3KeGSWLwAS/3zQ4q/hRmSOjAjHbbf+GXOofQSbQdV5zlEzUI3MITqLG4x
-         OzqnYnrdRx7M+pWjb+3Gd64OygYOf85Uz+uvJBJRHvLdeBbMTVU9XTEZs3pelB+GWU
-         6/gdC44vi6a+Q==
-In-Reply-To: <20230918163544.8604-1-peter@n8pjl.ca>
+        s=protonmail2; t=1695059779; x=1695318979;
+        bh=KDmGL0149HMvYz0D68P8rK9iJncYI66ZFd51OEaftAc=;
+        h=Date:To:From:Cc:Subject:Message-ID:Feedback-ID:From:To:Cc:Date:
+         Subject:Reply-To:Feedback-ID:Message-ID:BIMI-Selector;
+        b=XDyAGqfxs1IhZyrSbs3kXmWVIDtAAGsbXg/jRzsX7fuS5Oxw4QNBzYWsvFGPZ+ksw
+         S5Zcze4DfsU+j4F71vMZOBVGe3BZKYabMh1wfnbZ2ABquD3iq/MryJ0VB04GGHqRW3
+         gnQBHdLwQI3E7N3+pV5UgFQGhEjTazGFHroCb4KlhwP9A18gG508T7Pqs5jbffIgxO
+         cUkXsv81IXGY6O6u6TWRNYFNwN9rAhwcn1b7zAnxuUbHTSaeD2idJu0SKxFygNCYtF
+         S9e7CJc5qlz+kEo5lV3WyEyT1tOTgZkgAyKcyZB3b18aHv/xFJwzM9+FJT8sFeXCTe
+         SfZ1idLrRGTVw==
 List-ID: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: peter@n8pjl.ca
-Cc: anton.ivanov@cambridgegreys.com, geert@linux-m68k.org, jack@suse.cz, johannes@sipsolutions.net, linux-um@lists.infradead.org, reiserfs-devel@vger.kernel.org, richard@nod.at
+To: reiserfs-devel@vger.kernel.org
+Cc: Peter Lafreniere <peter@n8pjl.ca>, jack@suse.cz, linux-kernel@vger.kernel.org, richard@nod.at, anton.ivanov@cambridgegreys.com, johannes@sipsolutions.net, linuxppc-dev@lists.ozlabs.org, linux-um@lists.infradead.org, linux-sh@vger.kernel.org, tsbogend@alpha.franken.de, linux-mips@vger.kernel.org, linux-m68k@lists.linux-m68k.org, geert@linux-m68k.org, linux-arm-kernel@lists.infradead.org, linux@armlinux.org.uk, linux-alpha@vger.kernel.org, richard.henderson@linaro.org, ink@jurassic.park.msu.ru
 
-> > > Makes sense but I've noticed there are many more architectures that d=
-efine
-> > > CONFIG_REISERFS_FS in their defconfig (sh, powerpc, mips, m68k, ia64,=
- arm,
-> > > alpha). So perhaps we should do this for all of them when we are at i=
-t?
-> >=20
-> > The policy for the m68k defconfigs is to enable all available exotic
-> > file systems as modules, so support for them is available when needed.
-> >=20
-> > Please let me know why this should be changed, as long as ReiserFS is
-> > still available in the upstream kernel.
->=20
->=20
-> I understand that policy and it makes particular sense for older/hobbyist
-> hardware like the m68k classic where ReiserFS is included in make defconf=
-ig.
->=20
-> However, ReiserFS is deprecated and should be phased out as best as possi=
-ble
-> before its removal, and pruning config options for a filesystem that is
-> considered obsolete and should not be used on the newest kernels is a ste=
-p
-> towards that.
->=20
-> ReiserFS is still availiable to be configured by anyone who builds their =
-own
-> kernel and is still availiable in all(mod|yes)config. As such I can justi=
-fy
-> the removal of some old config options that doesn't actually remove suppo=
-rt for
-> the filesystem when it simplifies the deprecation and removal processes f=
-or an
-> ancient, largely unused filesystem.
->=20
-> Please remember that users who build and install their own kernel on hobb=
-yist
-> hardware should be capable enough to select one Kconfig option if they ha=
-ppen to
-> need ReiserFS. If not, then removing ReiserFS from the defconfig on a ker=
-nel
-> update is an easier issue to work around than waiting to remove the files=
-ystem
-> from the tree entirely.
+ReiserFS has been considered deprecated for 19 months since commit
+eb103a51640e ("reiserfs: Deprecate reiserfs"). However, there are
+several architectures that still build it into their defconfig kernels.
 
-Though as Jan said, you're free to not accept a patch removing the config o=
-ption
-until the filesystem is gone for good. I just feel like it's easier to remo=
-ve
-ReiserFS from all defconfigs in one fell swoop.
+As ReiserFS will be removed in 2025, delete all ReiserFS-related options
+from defconfig files before the filesystem's removal.
 
-Cheers,
+The series is intended to be approved/rejected on an arch-by-arch basis.
+No patch is dependant upon another in the series.
 
-Peter Lafreniere
-<peter@n8pjl.ca>
+See discussion originating in,
+Link: https://lore.kernel.org/linux-um/20230918125744.4342-1-peter@n8pjl.ca=
+/
+
+Peter Lafreniere (7):
+  arch: um: remove ReiserFS from defconfig
+  arch: powerpc: remove ReiserFS from defconfig
+  arch: sh: remove ReiserFS from defconfig
+  arch: mips: remove ReiserFS from defconfig
+  arch: m68k: remove ReiserFS from defconfig
+  arch: arm: remove ReiserFS from defconfig
+  arch: alpha: remove ReiserFS from defconfig
+
+ arch/alpha/configs/defconfig                | 1 -
+ arch/arm/configs/pxa_defconfig              | 4 ----
+ arch/m68k/configs/amiga_defconfig           | 1 -
+ arch/m68k/configs/apollo_defconfig          | 1 -
+ arch/m68k/configs/atari_defconfig           | 1 -
+ arch/m68k/configs/bvme6000_defconfig        | 1 -
+ arch/m68k/configs/hp300_defconfig           | 1 -
+ arch/m68k/configs/mac_defconfig             | 1 -
+ arch/m68k/configs/multi_defconfig           | 1 -
+ arch/m68k/configs/mvme147_defconfig         | 1 -
+ arch/m68k/configs/mvme16x_defconfig         | 1 -
+ arch/m68k/configs/q40_defconfig             | 1 -
+ arch/m68k/configs/sun3_defconfig            | 1 -
+ arch/m68k/configs/sun3x_defconfig           | 1 -
+ arch/mips/configs/fuloong2e_defconfig       | 1 -
+ arch/mips/configs/jazz_defconfig            | 4 ----
+ arch/mips/configs/lemote2f_defconfig        | 3 ---
+ arch/mips/configs/malta_defconfig           | 5 -----
+ arch/mips/configs/malta_kvm_defconfig       | 5 -----
+ arch/mips/configs/maltaup_xpa_defconfig     | 5 -----
+ arch/mips/configs/rm200_defconfig           | 4 ----
+ arch/powerpc/configs/44x/sam440ep_defconfig | 1 -
+ arch/powerpc/configs/g5_defconfig           | 4 ----
+ arch/powerpc/configs/ppc64e_defconfig       | 4 ----
+ arch/powerpc/configs/ppc6xx_defconfig       | 5 -----
+ arch/sh/configs/landisk_defconfig           | 1 -
+ arch/sh/configs/titan_defconfig             | 1 -
+ arch/um/configs/i386_defconfig              | 1 -
+ arch/um/configs/x86_64_defconfig            | 1 -
+ 29 files changed, 62 deletions(-)
+
+--=20
+2.42.0
+
 
