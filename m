@@ -1,25 +1,46 @@
-From: Geert Uytterhoeven <geert@linux-m68k.org>
+From: Jan Kara <jack@suse.cz>
 Subject: Re: [PATCH RESEND] um: Remove CONFIG_REISERFS_FS from defconfig
-Date: Mon, 18 Sep 2023 16:58:05 +0200
-Message-ID: <CAMuHMdWzN0Gs2FTQDFeBLz2498dv3ZYCBL2xOvL5YdHAveaH9g@mail.gmail.com>
-References: <20230910232640.113938-1-peter@n8pjl.ca> <20230918125744.4342-1-peter@n8pjl.ca>
+Date: Mon, 18 Sep 2023 18:32:07 +0200
+Message-ID: <20230918163207.3e2hev3zxnr3bakj@quack3>
+References: <20230910232640.113938-1-peter@n8pjl.ca>
+ <20230918125744.4342-1-peter@n8pjl.ca>
  <20230918132614.zmmuc72purc2psik@quack3>
+ <CAMuHMdWzN0Gs2FTQDFeBLz2498dv3ZYCBL2xOvL5YdHAveaH9g@mail.gmail.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: base64
 Return-path: <linux-um-bounces+glud-user-mode-linux-devel=m.gmane-mx.org@lists.infradead.org>
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=lists.infradead.org; s=bombadil.20210309; h=Sender:
 	Content-Transfer-Encoding:Content-Type:List-Subscribe:List-Help:List-Post:
-	List-Archive:List-Unsubscribe:List-Id:Cc:To:Subject:Message-ID:Date:From:
-	In-Reply-To:References:MIME-Version:Reply-To:Content-ID:Content-Description:
+	List-Archive:List-Unsubscribe:List-Id:In-Reply-To:MIME-Version:References:
+	Message-ID:Subject:Cc:To:From:Date:Reply-To:Content-ID:Content-Description:
 	Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:
-	List-Owner; bh=oalVF5rskk13LsxYZPaMVXMiqE1K1wBZW+BOx0KtAdI=; b=HQmnpd5r1ePAJG
-	xTSflgd67v+Ju5vOA7vIiaf10p7sif0D4xmY7dmqNvS0O23eYnHMYrGptDjCSnNhI0Whg8kSqHY7I
-	8QnI18N3hck6Fb23vrlRA3RhWaGosUnn4EJO1AaPV+6yFzHUH1W3DZzQhTcVShE89n8Tv3mewFhg4
-	ykPnahcD7Sl3guX7koBfA4EElDDgM4T9HEi6IVwwVXJxw/jfiph7SHr8AjLxcG7vwBo8THTm8wP9I
-	6IWEbwhPIF/q5aonCbnD3/sqNbhbHmKB/XFGGnAJnOQmNWrLsHJxo5OpWDf4f950jfPvTiItE2chD
-	aNee7dlYTx4HZtLXD5rA==;
-In-Reply-To: <20230918132614.zmmuc72purc2psik@quack3>
+	List-Owner; bh=8G+AE66G2B+spT39TgokfNO5X/BIZLEyy5ECSzkNu0E=; b=l/v/w9JTsYMXBp
+	6S/C90EHlShefn8X0Ueeb9KkflBBeDA7IdiNPtvJ+b/rlmI2cQY/I05PbHgA62NelkM9xsMb1yW1E
+	9c41sS/a/rehqlSlmyN5hsqK88WkyqJmcWd0aw+VqeIwOwaVdKVGExDO4V914Ich74+agrhwSAv2B
+	4lWEnlA42Y4foCheZQLuQq50ACwTwnPQD5tvZQwTkrYLL48Z3SSwnJFl3O7o7+pn/e6JZkZgV6GnO
+	uiNEINoPI5mEeKaqCiokeyvcE/GD3lnj1Hi3uud7qnkxjYrK54yplZGlUwmRFM12omj7apx9/EZ/0
+	Ygpwplc9tXOMWdZBwzZQ==;
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1695054728; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=65viRQYpB50dold0K4n5XzmsPEOTnLbffREamdAK1tQ=;
+	b=2QwSrhbDUIp5/TQREiRUVkEyjBl+gfB80m2OcJdPAl2M3FpoSeTejfBRq0Rn6xvipQ5EYf
+	F2yW5VECNNxjlp7qf60mnz1SYtY8iwM+OWdse4ZRfXxtAUSHjUwnhXNcZmGVVfcoX+c8MF
+	RnqPC+zRffsJnd+K6h7mORl1YtDtgFY=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1695054728;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=65viRQYpB50dold0K4n5XzmsPEOTnLbffREamdAK1tQ=;
+	b=Pxgaal1PBWSS/Hac9Ux2fgXyaGG+k92ZBcLPSNgtabneSAz5Zd78iUFSV27CVkELMCaNbV
+	kAGjIUaTvxKqfLDg==
+Content-Disposition: inline
+In-Reply-To: <CAMuHMdWzN0Gs2FTQDFeBLz2498dv3ZYCBL2xOvL5YdHAveaH9g@mail.gmail.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
 List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-um>,
  <mailto:linux-um-request@lists.infradead.org?subject=unsubscribe>
@@ -31,33 +52,33 @@ List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-um>,
 Sender: "linux-um" <linux-um-bounces@lists.infradead.org>
 Errors-To: linux-um-bounces+glud-user-mode-linux-devel=m.gmane-mx.org@lists.infradead.org
 Content-Type: text/plain; charset="windows-1252"
-To: Jan Kara <jack@suse.cz>
-Cc: Peter Lafreniere <peter@n8pjl.ca>, linux-um@lists.infradead.org, richard@nod.at, anton.ivanov@cambridgegreys.com, johannes@sipsolutions.net, reiserfs-devel@vger.kernel.org
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Jan Kara <jack@suse.cz>, Peter Lafreniere <peter@n8pjl.ca>, linux-um@lists.infradead.org, richard@nod.at, anton.ivanov@cambridgegreys.com, johannes@sipsolutions.net, reiserfs-devel@vger.kernel.org
 
-SGkgSmFuLAoKT24gTW9uLCBTZXAgMTgsIDIwMjMgYXQgMzoyNuKAr1BNIEphbiBLYXJhIDxqYWNr
-QHN1c2UuY3o+IHdyb3RlOgo+IE9uIE1vbiAxOC0wOS0yMyAxMjo1ODoyNiwgUGV0ZXIgTGFmcmVu
-aWVyZSB3cm90ZToKPiA+IFJlaXNlckZTIGhhcyBiZWVuIGRlcHJlY2F0ZWQgZm9yIGEgeWVhciBh
-bmQgYSBoYWxmLCB5ZXQgaXMgc3RpbGwgYnVpbHQKPiA+IGFzIHBhcnQgb2YgYSBkZWZjb25maWcg
-VU1MIGtlcm5lbC4KPiA+Cj4gPiBBY2NvcmRpbmcgdG8gY29tbWl0IGViMTAzYTUxNjQwZSAoInJl
-aXNlcmZzOiBEZXByZWNhdGUgcmVpc2VyZnMiKSwgdGhlCj4gPiBmaWxlc3lzdGVtIGlzIHNsYXRl
-ZCB0byBiZSByZW1vdmVkIGluIDIwMjUuIFJlbW92ZSBpdCBmcm9tIHRoZSBkZWZjb25maWcKPiA+
-IHByb2ZpbGUgbm93LCBhcyBwYXJ0IG9mIGl0cyBkZXByZWNhdGlvbiBwcm9jZXNzLgo+ID4KPiA+
-IFNpZ25lZC1vZmYtYnk6IFBldGVyIExhZnJlbmllcmUgPHBldGVyQG44cGpsLmNhPgo+Cj4gTWFr
-ZXMgc2Vuc2UgYnV0IEkndmUgbm90aWNlZCB0aGVyZSBhcmUgbWFueSBtb3JlIGFyY2hpdGVjdHVy
-ZXMgdGhhdCBkZWZpbmUKPiBDT05GSUdfUkVJU0VSRlNfRlMgaW4gdGhlaXIgZGVmY29uZmlnIChz
-aCwgcG93ZXJwYywgbWlwcywgbTY4aywgaWE2NCwgYXJtLAo+IGFscGhhKS4gU28gcGVyaGFwcyB3
-ZSBzaG91bGQgZG8gdGhpcyBmb3IgYWxsIG9mIHRoZW0gd2hlbiB3ZSBhcmUgYXQgaXQ/CgpUaGUg
-cG9saWN5IGZvciB0aGUgbTY4ayBkZWZjb25maWdzIGlzIHRvIGVuYWJsZSBhbGwgYXZhaWxhYmxl
-IGV4b3RpYwpmaWxlIHN5c3RlbXMgYXMgbW9kdWxlcywgc28gc3VwcG9ydCBmb3IgdGhlbSBpcyBh
-dmFpbGFibGUgd2hlbiBuZWVkZWQuCgpQbGVhc2UgbGV0IG1lIGtub3cgd2h5IHRoaXMgc2hvdWxk
-IGJlIGNoYW5nZWQsIGFzIGxvbmcgYXMgUmVpc2VyRlMgaXMKc3RpbGwgYXZhaWxhYmxlIGluIHRo
-ZSB1cHN0cmVhbSBrZXJuZWwuCgpHcntvZXRqZSxlZXRpbmd9cywKCiAgICAgICAgICAgICAgICAg
-ICAgICAgIEdlZXJ0CgotLSAKR2VlcnQgVXl0dGVyaG9ldmVuIC0tIFRoZXJlJ3MgbG90cyBvZiBM
-aW51eCBiZXlvbmQgaWEzMiAtLSBnZWVydEBsaW51eC1tNjhrLm9yZwoKSW4gcGVyc29uYWwgY29u
-dmVyc2F0aW9ucyB3aXRoIHRlY2huaWNhbCBwZW9wbGUsIEkgY2FsbCBteXNlbGYgYSBoYWNrZXIu
-IEJ1dAp3aGVuIEknbSB0YWxraW5nIHRvIGpvdXJuYWxpc3RzIEkganVzdCBzYXkgInByb2dyYW1t
-ZXIiIG9yIHNvbWV0aGluZyBsaWtlIHRoYXQuCiAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
-ICAgLS0gTGludXMgVG9ydmFsZHMKCl9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fCmxpbnV4LXVtIG1haWxpbmcgbGlzdApsaW51eC11bUBsaXN0cy5pbmZyYWRl
-YWQub3JnCmh0dHA6Ly9saXN0cy5pbmZyYWRlYWQub3JnL21haWxtYW4vbGlzdGluZm8vbGludXgt
-dW0K
+T24gTW9uIDE4LTA5LTIzIDE2OjU4OjA1LCBHZWVydCBVeXR0ZXJob2V2ZW4gd3JvdGU6Cj4gSGkg
+SmFuLAo+IAo+IE9uIE1vbiwgU2VwIDE4LCAyMDIzIGF0IDM6MjbigK9QTSBKYW4gS2FyYSA8amFj
+a0BzdXNlLmN6PiB3cm90ZToKPiA+IE9uIE1vbiAxOC0wOS0yMyAxMjo1ODoyNiwgUGV0ZXIgTGFm
+cmVuaWVyZSB3cm90ZToKPiA+ID4gUmVpc2VyRlMgaGFzIGJlZW4gZGVwcmVjYXRlZCBmb3IgYSB5
+ZWFyIGFuZCBhIGhhbGYsIHlldCBpcyBzdGlsbCBidWlsdAo+ID4gPiBhcyBwYXJ0IG9mIGEgZGVm
+Y29uZmlnIFVNTCBrZXJuZWwuCj4gPiA+Cj4gPiA+IEFjY29yZGluZyB0byBjb21taXQgZWIxMDNh
+NTE2NDBlICgicmVpc2VyZnM6IERlcHJlY2F0ZSByZWlzZXJmcyIpLCB0aGUKPiA+ID4gZmlsZXN5
+c3RlbSBpcyBzbGF0ZWQgdG8gYmUgcmVtb3ZlZCBpbiAyMDI1LiBSZW1vdmUgaXQgZnJvbSB0aGUg
+ZGVmY29uZmlnCj4gPiA+IHByb2ZpbGUgbm93LCBhcyBwYXJ0IG9mIGl0cyBkZXByZWNhdGlvbiBw
+cm9jZXNzLgo+ID4gPgo+ID4gPiBTaWduZWQtb2ZmLWJ5OiBQZXRlciBMYWZyZW5pZXJlIDxwZXRl
+ckBuOHBqbC5jYT4KPiA+Cj4gPiBNYWtlcyBzZW5zZSBidXQgSSd2ZSBub3RpY2VkIHRoZXJlIGFy
+ZSBtYW55IG1vcmUgYXJjaGl0ZWN0dXJlcyB0aGF0IGRlZmluZQo+ID4gQ09ORklHX1JFSVNFUkZT
+X0ZTIGluIHRoZWlyIGRlZmNvbmZpZyAoc2gsIHBvd2VycGMsIG1pcHMsIG02OGssIGlhNjQsIGFy
+bSwKPiA+IGFscGhhKS4gU28gcGVyaGFwcyB3ZSBzaG91bGQgZG8gdGhpcyBmb3IgYWxsIG9mIHRo
+ZW0gd2hlbiB3ZSBhcmUgYXQgaXQ/Cj4gCj4gVGhlIHBvbGljeSBmb3IgdGhlIG02OGsgZGVmY29u
+ZmlncyBpcyB0byBlbmFibGUgYWxsIGF2YWlsYWJsZSBleG90aWMKPiBmaWxlIHN5c3RlbXMgYXMg
+bW9kdWxlcywgc28gc3VwcG9ydCBmb3IgdGhlbSBpcyBhdmFpbGFibGUgd2hlbiBuZWVkZWQuCj4g
+Cj4gUGxlYXNlIGxldCBtZSBrbm93IHdoeSB0aGlzIHNob3VsZCBiZSBjaGFuZ2VkLCBhcyBsb25n
+IGFzIFJlaXNlckZTIGlzCj4gc3RpbGwgYXZhaWxhYmxlIGluIHRoZSB1cHN0cmVhbSBrZXJuZWwu
+CgpUaGVyZSdzIG5vIG5lZWQgdG8gY2hhbmdlIGlmIHlvdSBkb24ndCB3YW50IHRvLiBJIGNhbiBq
+dXN0IGltYWdpbmUgaG93IGZvcgpvdGhlciBhcmNocyB3aGljaCBzZWVtIHRvIGVuYWJsZSBvbmx5
+ICJ1c2VmdWwiIGZpbGVzeXN0ZW1zIGluIGRlZmNvbmZpZwpkaXNhYmxpbmcgYSBkZXByZWNhdGVk
+IGZpbGVzeXN0ZW0gbWFrZXMgc2Vuc2UuCgoJCQkJCQkJCUhvbnphCi0tIApKYW4gS2FyYSA8amFj
+a0BzdXNlLmNvbT4KU1VTRSBMYWJzLCBDUgoKX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX18KbGludXgtdW0gbWFpbGluZyBsaXN0CmxpbnV4LXVtQGxpc3RzLmlu
+ZnJhZGVhZC5vcmcKaHR0cDovL2xpc3RzLmluZnJhZGVhZC5vcmcvbWFpbG1hbi9saXN0aW5mby9s
+aW51eC11bQo=
