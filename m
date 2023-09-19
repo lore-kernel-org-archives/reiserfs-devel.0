@@ -1,68 +1,61 @@
-From: Peter Lafreniere <peter@n8pjl.ca>
-Subject: Re: [PATCH 5/7] arch: m68k: remove ReiserFS from defconfig
-Date: Tue, 19 Sep 2023 13:32:33 +0000
-Message-ID: <20230919133227.6448-1-peter@n8pjl.ca>
-References: <20230918175529.19011-1-peter@n8pjl.ca> <20230918175529.19011-6-peter@n8pjl.ca> <CAMuHMdVQaBBZgSsgZyNR2HxMsck2fWNjG6fK93eBFFeyDz0Hkw@mail.gmail.com>
+From: Segher Boessenkool <segher@kernel.crashing.org>
+Subject: Re: [PATCH 0/7] arch/*: config: Remove ReiserFS from defconfig
+Date: Tue, 19 Sep 2023 10:16:30 -0500
+Message-ID: <20230919151630.GO19790@gate.crashing.org>
+References: <20230918175529.19011-1-peter@n8pjl.ca> <20230918234108.GN19790@gate.crashing.org> <20230919000026.7409-1-peter@n8pjl.ca>
 Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Return-path: <reiserfs-devel-owner@vger.kernel.org>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=n8pjl.ca;
-        s=protonmail2; t=1695130371; x=1695389571;
-        bh=dDMUxu8xdJRGaY5VRYNxHnseAs3vdrFdlwDlLav2wbg=;
-        h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-         Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
-         Message-ID:BIMI-Selector;
-        b=LzsTdFtGLQAwW+llY1Dr9BYJpxyqO6voiqQddF0oGd6ND77zWF7xxOl9q2pQA2UIQ
-         ENpsVsXXRaGP0T3YoA+Cd4KiL1N6zq9Pwn+ChNxoVYgeF14SqKy8fEx486oNKtTcu9
-         xv+vMFuzJi9wrRbOmlSc00H59502hGN0tgmfS1UaZRLUHzb+xhQRnXKdjPR6mJ20W5
-         xd3+jvozi7TlW5CoADthJeV7hpRCeLk6DuMoLdpTkGYlYqJ4yNLAiAxfb6csec8qa5
-         jar+TrgUNZipUSyahX8m2PLn4dfwd/ZxGsb4/Etup+Y8g0FFVWAHq3M+2+P8DQ1MuR
-         E8hUbEUUg4v2g==
-In-Reply-To: <CAMuHMdVQaBBZgSsgZyNR2HxMsck2fWNjG6fK93eBFFeyDz0Hkw@mail.gmail.com>
-List-ID: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="windows-1252"
-To: geert@linux-m68k.org
-Cc: jack@suse.cz, linux-kernel@vger.kernel.org, linux-m68k@lists.linux-m68k.org, peter@n8pjl.ca, reiserfs-devel@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-um-bounces+glud-user-mode-linux-devel=m.gmane-mx.org@lists.infradead.org>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=lists.infradead.org; s=bombadil.20210309; h=Sender:
+	Content-Transfer-Encoding:Content-Type:List-Subscribe:List-Help:List-Post:
+	List-Archive:List-Unsubscribe:List-Id:In-Reply-To:Mime-Version:References:
+	Message-ID:Subject:Cc:To:From:Date:Reply-To:Content-ID:Content-Description:
+	Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:
+	List-Owner; bh=XSTBneXKidC4BTIGvqoLJxkx5VUwA6PrFjh5pcnAIzE=; b=MJ1kFECY6IxAJN
+	9O/biUTRzSFXH2eyibcApHUzFBo/aDMhvqGtVdYjEeUuCRyCK3GR9LP9fiPH+uxKbLC8E/t3Pzn7K
+	RJerYb/YUwLUeGM1FXHCEvJX72mk43TFB7SIM5PSumrKv+9epK4Rr6XSuoOcxTSRRifqhJzqgiNJp
+	X1IYl4KEgq5jJuxlRGhFpPSvQKBZH3Pid+S1k5dsywByTe12FLBWkC4EPN9J/45wfcQmWiFvyR8wV
+	yFTqGXM2OAlSpuKflkjU1PDPbHO2cp5jNw+EGkzcxWiCruLxCuCPdDo2yvdp6woLNN2y00d2JPd7H
+	7i832EkfTKFCjJnITvtg==;
+Content-Disposition: inline
+In-Reply-To: <20230919000026.7409-1-peter@n8pjl.ca>
+List-Id: <reiserfs-devel.vger.kernel.org>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-um>,
+ <mailto:linux-um-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-um/>
+List-Post: <mailto:linux-um@lists.infradead.org>
+List-Help: <mailto:linux-um-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-um>,
+ <mailto:linux-um-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-um" <linux-um-bounces@lists.infradead.org>
+Errors-To: linux-um-bounces+glud-user-mode-linux-devel=m.gmane-mx.org@lists.infradead.org
+To: Peter Lafreniere <peter@n8pjl.ca>
+Cc: anton.ivanov@cambridgegreys.com, geert@linux-m68k.org, ink@jurassic.park.msu.ru, jack@suse.cz, johannes@sipsolutions.net, linux-alpha@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, linux-m68k@vger.kernel.org, linux-mips@vger.kernel.org, linux-sh@vger.kernel.org, linux-um@lists.infradead.org, linux@armlinux.org.uk, linuxppc-dev@lists.ozlabs.org, reiserfs-devel@vger.kernel.org, richard.henderson@linaro.org, richard@nod.at, tsbogend@alpha.franken.de
 
-On Mon, Sep 19, 2023 at 03:19, Geert Uytterhoeven <geert@linux-m68k.org> wr=
-ote:
-> Hi Peter,
->=20
-> On Mon, Sep 18, 2023 at 7:57=E2=80=AFPM Peter Lafreniere peter@n8pjl.ca w=
-rote:
->=20
-> > ReiserFS has been deprecated for a year and a half, yet is still built
-> > as part of a defconfig kernel.
-> >=20
-> > According to commit eb103a51640e ("reiserfs: Deprecate reiserfs"), the
-> > filesystem is slated to be removed in 2025. Remove it from the defconfi=
-g
-> > profiles now, as part of its deprecation process.
-> >=20
-> > Signed-off-by: Peter Lafreniere peter@n8pjl.ca
->=20
->=20
-> Thanks for your patch!
->=20
-> Given these defconfigs enable ReiserFS as a module (not built-in),
-> and that ReiserFS is still available upstream, and enabled by distros
-> like Debian, I would like to keep it that way.
-> The m68k defconfigs will be updated after the removal of ReiserFS,
-> as part of the regular defconfig resync.
+On Tue, Sep 19, 2023 at 12:00:34AM +0000, Peter Lafreniere wrote:
+> On Monday, September 18th, 2023 at 19:41, Segher Boessenkool <segher@kernel.crashing.org> wrote:
+> > On Mon, Sep 18, 2023 at 05:56:09PM +0000, Peter Lafreniere wrote:
+> > 
+> > > ReiserFS has been considered deprecated for 19 months since commit
+> > > eb103a51640e ("reiserfs: Deprecate reiserfs"). However, there are
+> > > several architectures that still build it into their defconfig kernels.
+> > > 
+> > > As ReiserFS will be removed in 2025, delete all ReiserFS-related options
+> > > from defconfig files before the filesystem's removal.
+> > 
+> > 
+> > This is essentially equivalent to deleting the filesystem now. Why do
+> > this? Is there such a hurry?
+> 
+> This is not equivalent to deleting the filesystem. The filesystem can still
+> be configured into kernels, and few distros use a defconfig kernel anyway.
 
-I still think that since ReiserFS is being removed soon enough and that the=
-re
-are a negligible number of users, it should be left out of defconfig builds=
-.
-allmodconfig and custom configs (like Debian's) exist for a reason.
+Most people who compile kernels use defconfigs though.  Distros are a
+tiny minority if you look at builds.
 
-But yours is a reasonable approach anyhow. Especially for an arch that is i=
-n
-the same position as some of the more exotic filesystems that you build as
-modules. Thanks for taking a look.
+Again: why do you want this?
 
-Cheers,
 
-Peter Lafreniere
-<peter@n8pjl.ca>
-
+Segher
