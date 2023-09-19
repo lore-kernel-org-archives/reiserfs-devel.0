@@ -1,47 +1,160 @@
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Subject: Re: [PATCH 5/7] arch: m68k: remove ReiserFS from defconfig
-Date: Tue, 19 Sep 2023 09:19:56 +0200
-Message-ID: <CAMuHMdVQaBBZgSsgZyNR2HxMsck2fWNjG6fK93eBFFeyDz0Hkw@mail.gmail.com>
-References: <20230918175529.19011-1-peter@n8pjl.ca> <20230918175529.19011-6-peter@n8pjl.ca>
+From: Ryusuke Konishi <konishi.ryusuke@gmail.com>
+Subject: Re: [PATCH 11/26] nilfs2: Convert nilfs_copy_page() to nilfs_copy_folio()
+Date: Tue, 19 Sep 2023 22:01:27 +0900
+Message-ID: <CAKFNMonjfsWBageg6vfWok9vvNEzjhXiqCCb+=cDFuwnTER95A@mail.gmail.com>
+References: <20230919045135.3635437-1-willy@infradead.org> <20230919045135.3635437-12-willy@infradead.org>
 Mime-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-Return-path: <reiserfs-devel-owner@vger.kernel.org>
-In-Reply-To: <20230918175529.19011-6-peter@n8pjl.ca>
+Return-path: <linux-fsdevel-owner@vger.kernel.org>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1695128504; x=1695733304; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=2w/wQ8V2E6A/A9h71MT3wsUIExlrWO06vblA9KgaYVM=;
+        b=JASdwCEnfgAb+ft+LfrupnfREkabkKh+Q1dnk9x5iaDpzTEIn8g+Rj7oPgJzQ8eVPI
+         xg2l6e4Dnao6cNTgfXTivP2PHl0y+4qrBJv9qR5mbmjQtcJDrwc96/mMH6f1p0AkxsIE
+         4JFcBiviHvGRtepNJ9KhkaYdVyKkMOSJrXz1UwwW8iyt7j9onZnZvHZ5iWdsxyXbyoVj
+         /uh6X5OdInRxukWgUCQpBur9qkyAt5HiCjPWKCMj+3O5jtpkPo3ifd8D/1TbTgxHxBGG
+         KXck9S9Pad0T3ogphS3h3xF4elhUJvTuJbqeHhddq4oQ9xWhklKXWV4Be+6uR1UqGkDw
+         bPxw==
+In-Reply-To: <20230919045135.3635437-12-willy@infradead.org>
 List-ID: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="windows-1252"
-To: Peter Lafreniere <peter@n8pjl.ca>
-Cc: linux-m68k@lists.linux-m68k.org, jack@suse.cz, reiserfs-devel@vger.kernel.org, linux-kernel@vger.kernel.org
+To: "Matthew Wilcox (Oracle)" <willy@infradead.org>
+Cc: Andrew Morton <akpm@linux-foundation.org>, linux-fsdevel@vger.kernel.org, gfs2@lists.linux.dev, linux-nilfs@vger.kernel.org, linux-ntfs-dev@lists.sourceforge.net, ntfs3@lists.linux.dev, ocfs2-devel@lists.linux.dev, reiserfs-devel@vger.kernel.org, linux-ext4@vger.kernel.org, Pankaj Raghav <p.raghav@samsung.com>
 
-Hi Peter,
+Hi,
 
-On Mon, Sep 18, 2023 at 7:57=E2=80=AFPM Peter Lafreniere <peter@n8pjl.ca> w=
-rote:
-> ReiserFS has been deprecated for a year and a half, yet is still built
-> as part of a defconfig kernel.
+On Tue, Sep 19, 2023 at 1:56=E2=80=AFPM Matthew Wilcox (Oracle) wrote:
 >
-> According to commit eb103a51640e ("reiserfs: Deprecate reiserfs"), the
-> filesystem is slated to be removed in 2025. Remove it from the defconfig
-> profiles now, as part of its deprecation process.
+> Both callers already have a folio, so pass it in and use it directly.
+> Removes a lot of hidden calls to compound_head().
 >
-> Signed-off-by: Peter Lafreniere <peter@n8pjl.ca>
+> Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
+> ---
+>  fs/nilfs2/page.c | 50 +++++++++++++++++++++++++-----------------------
+>  1 file changed, 26 insertions(+), 24 deletions(-)
+>
+> diff --git a/fs/nilfs2/page.c b/fs/nilfs2/page.c
+> index 1c075bd906c9..696215d899bf 100644
+> --- a/fs/nilfs2/page.c
+> +++ b/fs/nilfs2/page.c
+> @@ -184,30 +184,32 @@ void nilfs_page_bug(struct page *page)
+>  }
+>
+>  /**
+> - * nilfs_copy_page -- copy the page with buffers
+> - * @dst: destination page
+> - * @src: source page
+> - * @copy_dirty: flag whether to copy dirty states on the page's buffer h=
+eads.
+> + * nilfs_copy_folio -- copy the folio with buffers
+> + * @dst: destination folio
+> + * @src: source folio
+> + * @copy_dirty: flag whether to copy dirty states on the folio's buffer =
+heads.
+>   *
+> - * This function is for both data pages and btnode pages.  The dirty fla=
+g
+> - * should be treated by caller.  The page must not be under i/o.
+> - * Both src and dst page must be locked
+> + * This function is for both data folios and btnode folios.  The dirty f=
+lag
+> + * should be treated by caller.  The folio must not be under i/o.
+> + * Both src and dst folio must be locked
+>   */
+> -static void nilfs_copy_page(struct page *dst, struct page *src, int copy=
+_dirty)
+> +static void nilfs_copy_folio(struct folio *dst, struct folio *src,
+> +               bool copy_dirty)
+>  {
+>         struct buffer_head *dbh, *dbufs, *sbh;
+>         unsigned long mask =3D NILFS_BUFFER_INHERENT_BITS;
+>
+> -       BUG_ON(PageWriteback(dst));
+> +       BUG_ON(folio_test_writeback(dst));
+>
+> -       sbh =3D page_buffers(src);
+> -       if (!page_has_buffers(dst))
+> -               create_empty_buffers(dst, sbh->b_size, 0);
+> +       sbh =3D folio_buffers(src);
+> +       dbh =3D folio_buffers(dst);
+> +       if (!dbh)
+> +               dbh =3D folio_create_empty_buffers(dst, sbh->b_size, 0);
+>
+>         if (copy_dirty)
+>                 mask |=3D BIT(BH_Dirty);
+>
+> -       dbh =3D dbufs =3D page_buffers(dst);
+> +       dbufs =3D dbh;
+>         do {
+>                 lock_buffer(sbh);
+>                 lock_buffer(dbh);
+> @@ -218,16 +220,16 @@ static void nilfs_copy_page(struct page *dst, struc=
+t page *src, int copy_dirty)
+>                 dbh =3D dbh->b_this_page;
+>         } while (dbh !=3D dbufs);
+>
+> -       copy_highpage(dst, src);
+> +       folio_copy(dst, src);
+>
+> -       if (PageUptodate(src) && !PageUptodate(dst))
+> -               SetPageUptodate(dst);
+> -       else if (!PageUptodate(src) && PageUptodate(dst))
+> -               ClearPageUptodate(dst);
+> -       if (PageMappedToDisk(src) && !PageMappedToDisk(dst))
+> -               SetPageMappedToDisk(dst);
+> -       else if (!PageMappedToDisk(src) && PageMappedToDisk(dst))
+> -               ClearPageMappedToDisk(dst);
+> +       if (folio_test_uptodate(src) && !folio_test_uptodate(dst))
+> +               folio_mark_uptodate(dst);
+> +       else if (!folio_test_uptodate(src) && folio_test_uptodate(dst))
+> +               folio_clear_uptodate(dst);
+> +       if (folio_test_mappedtodisk(src) && !folio_test_mappedtodisk(dst)=
+)
+> +               folio_set_mappedtodisk(dst);
+> +       else if (!folio_test_mappedtodisk(src) && folio_test_mappedtodisk=
+(dst))
+> +               folio_clear_mappedtodisk(dst);
+>
+>         do {
+>                 unlock_buffer(sbh);
+> @@ -269,7 +271,7 @@ int nilfs_copy_dirty_pages(struct address_space *dmap=
+,
+>                         NILFS_PAGE_BUG(&folio->page,
+>                                        "found empty page in dat page cach=
+e");
+>
+> -               nilfs_copy_page(&dfolio->page, &folio->page, 1);
+> +               nilfs_copy_folio(dfolio, folio, true);
+>                 filemap_dirty_folio(folio_mapping(dfolio), dfolio);
+>
+>                 folio_unlock(dfolio);
+> @@ -314,7 +316,7 @@ void nilfs_copy_back_pages(struct address_space *dmap=
+,
+>                 if (!IS_ERR(dfolio)) {
+>                         /* overwrite existing folio in the destination ca=
+che */
+>                         WARN_ON(folio_test_dirty(dfolio));
+> -                       nilfs_copy_page(&dfolio->page, &folio->page, 0);
+> +                       nilfs_copy_folio(dfolio, folio, false);
+>                         folio_unlock(dfolio);
+>                         folio_put(dfolio);
+>                         /* Do we not need to remove folio from smap here?=
+ */
+> --
+> 2.40.1
 
-Thanks for your patch!
+When I tried to test the patchset against 6.6-rc2, I encountered the
+following error during the build:
 
-Given these defconfigs enable ReiserFS as a module (not built-in),
-and that ReiserFS is still available upstream, and enabled by distros
-like Debian, I would like to keep it that way.
-The m68k defconfigs will be updated after the removal of ReiserFS,
-as part of the regular defconfig resync.
+ ERROR: modpost: "folio_copy" [fs/nilfs2/nilfs2.ko] undefined!
 
-Gr{oetje,eeting}s,
+It looks like "folio_copy" is not exported to modules.
 
-                        Geert
+I'll correct this manually for now and proceed with the review and
+testing, but could you please fix this build issue in some way ?
 
---=20
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
-.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like t=
-hat.
-                                -- Linus Torvalds
+Thanks,
+Ryusuke Konishi
