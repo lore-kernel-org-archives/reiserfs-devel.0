@@ -1,75 +1,70 @@
-From: Ryusuke Konishi <konishi.ryusuke-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH 15/26] nilfs2: Convert nilfs_lookup_dirty_data_buffers to
- use folio_create_empty_buffers
-Date: Wed, 20 Sep 2023 19:01:20 +0900
-Message-ID: <CAKFNMonL+TobLB6e6g0kKQsGY0-FP1fkQyuNQKqS8+B-QH4qig@mail.gmail.com>
-References: <20230919045135.3635437-1-willy@infradead.org> <20230919045135.3635437-16-willy@infradead.org>
+From: Jan Kara <jack@suse.cz>
+Subject: Re: [PATCH 0/7] arch/*: config: Remove ReiserFS from defconfig
+Date: Wed, 20 Sep 2023 18:56:59 +0200
+Message-ID: <20230920165659.coe7d2lydiaatoby@quack3>
+References: <20230918175529.19011-1-peter@n8pjl.ca>
+ <20230918234108.GN19790@gate.crashing.org>
+ <20230919000026.7409-1-peter@n8pjl.ca>
+ <20230919151630.GO19790@gate.crashing.org>
+ <20230919155832.4179-1-peter@n8pjl.ca>
+ <CAMuHMdXQ=xpeY3tmLXe1kgJbRtmVAn62rEhvzO+VB7GCgy4F8w@mail.gmail.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-Return-path: <linux-nilfs-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1695204097; x=1695808897; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=W2Sxc2lzUzNR93PpRUd+yVO8Zh7S3vyEBNQBpNy/0XM=;
-        b=nAIewok8Jz4uPNzrk5L5OdNdqKLfqMiMI6qHZXaKSFvdbq123fGQyOYG0RXfm++m/1
-         3JjCXqpoMC85ym+PhL2l/JMYVwA+zVNV2PBR/StsG66Sq3y/IMsGUVvt/+/uzqKI9A+6
-         0Yi5B3KcgMhzNbalG9yQyYgQpM8vqsSRNORaE1cd3798JYRmEriwoOACwvPe4hNkyFNn
-         /wFjqzn0C0JRWs7CLlOWNaBY8HXVWaE1Ju4aBSogR1+ed4dnxkJkzVmX1Ih29GFMtoue
-         Ln80b+TeysRDKz/alh3/lA2ouGnSyMQDPP4AHG2FNN+CHEW/Scx+TlyZGqSmHK+LGg9S
-         tvWg==
-In-Reply-To: <20230919045135.3635437-16-willy-wEGCiKHe2LqWVfeAwA7xHQ@public.gmane.org>
+Return-path: <reiserfs-devel-owner@vger.kernel.org>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+        t=1695229020; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=arrJUNtqjU/izONia38ns6kqz5a2Ljs8vzyYYK7Z784=;
+        b=B5zucAFR4XyR8/5tRFN24icRoW3Li46w9AYROy5fgeQHJjHHmWe1VBSTJAgJzltxBUTQfj
+        A2xO9YmlmCUAHIhnO6bcsmBlTch94Tqw9Zrs2J99gUVXgRrg7N5SnwIhK/ADmsG7DqDXb5
+        NyDsDzox8Vmqa0S6njAX9jt6GCL7qPo=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+        s=susede2_ed25519; t=1695229020;
+        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=arrJUNtqjU/izONia38ns6kqz5a2Ljs8vzyYYK7Z784=;
+        b=TEI3317KDo5yb9aq6yYTvDHKSUd5zcn5XGrWvmgB48JFj1/RVX24vTZ5l0fScD+mlAMJpN
+        CaN28xdVs9HUPMBA==
+Content-Disposition: inline
+In-Reply-To: <CAMuHMdXQ=xpeY3tmLXe1kgJbRtmVAn62rEhvzO+VB7GCgy4F8w@mail.gmail.com>
 List-ID: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="windows-1252"
-To: "Matthew Wilcox (Oracle)" <willy-wEGCiKHe2LqWVfeAwA7xHQ@public.gmane.org>
-Cc: Andrew Morton <akpm-de/tnXTf+JLsfHDXvbKv3WD2FQJk+8+b@public.gmane.org>, linux-fsdevel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, gfs2-cunTk1MwBs/YUNznpcFYbw@public.gmane.org, linux-nilfs-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-ntfs-dev-5NWGOfrQmneRv+LV9MX5uipxlwaOVQ5f@public.gmane.org, ntfs3-cunTk1MwBs/YUNznpcFYbw@public.gmane.org, ocfs2-devel-cunTk1MwBs/YUNznpcFYbw@public.gmane.org, reiserfs-devel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-ext4-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Pankaj Raghav <p.raghav-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Peter Lafreniere <peter@n8pjl.ca>, segher@kernel.crashing.org, anton.ivanov@cambridgegreys.com, ink@jurassic.park.msu.ru, jack@suse.cz, johannes@sipsolutions.net, linux-alpha@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, linux-m68k@vger.kernel.org, linux-mips@vger.kernel.org, linux-sh@vger.kernel.org, linux-um@lists.infradead.org, linux@armlinux.org.uk, linuxppc-dev@lists.ozlabs.org, reiserfs-devel@vger.kernel.org, richard.henderson@linaro.org, richard@nod.at, tsbogend@alpha.franken.de
 
-On Tue, Sep 19, 2023 at 3:47=E2=80=AFPM Matthew Wilcox (Oracle) wrote:
->
-> This function was already using a folio, so this update to the new API
-> removes a single folio->page->folio conversion.
->
-> Signed-off-by: Matthew Wilcox (Oracle) <willy-wEGCiKHe2LqWVfeAwA7xHQ@public.gmane.org>
-> ---
->  fs/nilfs2/segment.c | 7 +++----
->  1 file changed, 3 insertions(+), 4 deletions(-)
->
-> diff --git a/fs/nilfs2/segment.c b/fs/nilfs2/segment.c
-> index 7ec16879756e..94388fe83cf8 100644
-> --- a/fs/nilfs2/segment.c
-> +++ b/fs/nilfs2/segment.c
-> @@ -731,10 +731,9 @@ static size_t nilfs_lookup_dirty_data_buffers(struct=
- inode *inode,
->                         continue;
->                 }
->                 head =3D folio_buffers(folio);
-> -               if (!head) {
-> -                       create_empty_buffers(&folio->page, i_blocksize(in=
-ode), 0);
-> -                       head =3D folio_buffers(folio);
-> -               }
-> +               if (!head)
-> +                       head =3D folio_create_empty_buffers(folio,
-> +                                       i_blocksize(inode), 0);
->                 folio_unlock(folio);
->
->                 bh =3D head;
-> --
-> 2.40.1
->
+On Tue 19-09-23 18:02:39, Geert Uytterhoeven wrote:
+> Hi Peter,
+>=20
+> On Tue, Sep 19, 2023 at 5:58=E2=80=AFPM Peter Lafreniere <peter@n8pjl.ca>=
+ wrote:
+> >  2) Stops building an obsolete and largely-unused filesystem unnecessar=
+ily.
+> >     Some hobbyist targets like m68k and alpha may prefer to keep all fi=
+lesystems
+> >     available until total removal, but others like arm and UML have no =
+need for
+> >     ReiserFS to be built unless specifically configured.
+>=20
+> As UML is used a lot for testing, isn't it actually counter-productive
+> to remove ReiserFS from the UML defconfig?  The less testing it
+> receives, the higher the chance of introducing regressions.
 
-Acked-by: Ryusuke Konishi <konishi.ryusuke-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+The only testing I know about for reiserfs (besides build testing) is
+syzbot. And regarding the people / bots doing filesystem testing I know
+none of them uses UML. Rather it is x86 VMs these days where reiserfs is
+disabled in the defconfig for a *long* time (many years). Also when you do
+filesystem testing, you usually just test the few filesystems you care
+about and for which you have all the tools installed. So frankly I don't
+see a good reason to leave reiserfs enabled in defconfigs. But sure if
+m68k or other arch wants to keep reiserfs in it's defconfig for some
+consistency reasons, I'm fine with it. I just suspect that for most archs
+this is just a historical reason.
 
-
-Now, I've seen all the changes to nilfs2 including the last patch.
-It's almost a direct conversion throughout, and I don't see any issues
-with the nilfs2 part other than the build issue.
-
-With all 26 patches applied, nilfs2 is running without problems in
-actual machine tests including stress tests.
-
-Thank you very much for your efforts.
-
-Regards,
-Ryusuke Konishi
+								Honza
+--=20
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
