@@ -1,35 +1,35 @@
-From: syzbot <syzbot+5184326923f180b9d11a@syzkaller.appspotmail.com>
-Subject: Re: [syzbot] [reiserfs?] KASAN: null-ptr-deref Read in fix_nodes
-Date: Sat, 23 Sep 2023 17:02:23 -0700
-Message-ID: <00000000000061c35a06060f8eb3@google.com>
-References: <0000000000007fcc9c05f909f7f3@google.com>
+From: syzbot <syzbot+7a278bf8bfa794494110@syzkaller.appspotmail.com>
+Subject: Re: [syzbot] [reiserfs?] possible deadlock in delete_one_xattr (2)
+Date: Sun, 24 Sep 2023 23:04:35 -0700
+Message-ID: <0000000000008a3693060628bb0b@google.com>
+References: <000000000000964cb905f5e876ff@google.com>
 Mime-Version: 1.0
-Return-path: <reiserfs-devel-owner@vger.kernel.org>
-In-Reply-To: <0000000000007fcc9c05f909f7f3@google.com>
+Return-path: <linux-unionfs-owner@vger.kernel.org>
+In-Reply-To: <000000000000964cb905f5e876ff@google.com>
 List-ID: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: jack@suse.cz, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, reiserfs-devel@vger.kernel.org, rkovhaev@gmail.com, syzkaller-bugs@googlegroups.com
+To: amir73il@gmail.com, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, linux-unionfs@vger.kernel.org, miklos@szeredi.hu, mszeredi@redhat.com, reiserfs-devel@vger.kernel.org, syzkaller-bugs@googlegroups.com
 
 syzbot has bisected this issue to:
 
-commit d24396c5290ba8ab04ba505176874c4e04a2d53c
-Author: Rustam Kovhaev <rkovhaev@gmail.com>
-Date:   Sun Nov 1 14:09:58 2020 +0000
+commit 9df085f3c9a2d4658a9fe323d70c200aa00ede93
+Author: Amir Goldstein <amir73il@gmail.com>
+Date:   Mon Sep 3 06:12:09 2018 +0000
 
-    reiserfs: add check for an invalid ih_entry_count
+    ovl: relax requirement for non null uuid of lower fs
 
-bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=15244cfa680000
-start commit:   b6dad5178cea Merge tag 'nios2_fix_v6.4' of git://git.kerne..
+bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=1711e75a680000
+start commit:   ac9a78681b92 Linux 6.4-rc1
 git tree:       upstream
-final oops:     https://syzkaller.appspot.com/x/report.txt?x=17244cfa680000
-console output: https://syzkaller.appspot.com/x/log.txt?x=13244cfa680000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=ac246111fb601aec
-dashboard link: https://syzkaller.appspot.com/bug?extid=5184326923f180b9d11a
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=10bbc887280000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=15c9558b280000
+final oops:     https://syzkaller.appspot.com/x/report.txt?x=1491e75a680000
+console output: https://syzkaller.appspot.com/x/log.txt?x=1091e75a680000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=8bc832f563d8bf38
+dashboard link: https://syzkaller.appspot.com/bug?extid=7a278bf8bfa794494110
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1295e4b8280000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=140af20a280000
 
-Reported-by: syzbot+5184326923f180b9d11a@syzkaller.appspotmail.com
-Fixes: d24396c5290b ("reiserfs: add check for an invalid ih_entry_count")
+Reported-by: syzbot+7a278bf8bfa794494110@syzkaller.appspotmail.com
+Fixes: 9df085f3c9a2 ("ovl: relax requirement for non null uuid of lower fs")
 
 For information about bisection process see: https://goo.gl/tpsmEJ#bisection
