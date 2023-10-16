@@ -2,71 +2,116 @@ Return-Path: <reiserfs-devel-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4714AC46CA1
-	for <reiserfs-devel@archiver.kernel.org>; Sun, 15 Oct 2023 10:06:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 632F3C46CA1
+	for <reiserfs-devel@archiver.kernel.org>; Mon, 16 Oct 2023 20:11:28 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230315AbjJOKGf (ORCPT
+        id S234101AbjJPUL1 (ORCPT
         <rfc822;reiserfs-devel@archiver.kernel.org>);
-        Sun, 15 Oct 2023 06:06:35 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54792 "EHLO
+        Mon, 16 Oct 2023 16:11:27 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55330 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230156AbjJOKG3 (ORCPT
+        with ESMTP id S234007AbjJPULZ (ORCPT
         <rfc822;reiserfs-devel@vger.kernel.org>);
-        Sun, 15 Oct 2023 06:06:29 -0400
-Received: from gandalf.ozlabs.org (mail.ozlabs.org [IPv6:2404:9400:2221:ea00::3])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9D34D102;
-        Sun, 15 Oct 2023 03:06:25 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ellerman.id.au;
-        s=201909; t=1697364383;
-        bh=lQ471ge3JT3D/IyXiBK6OqZg4gy00/Wz1cpF1NMX1CI=;
-        h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-        b=Jgv8/cUxgQM27y6U//UT8VctmRJrqlUlqIr1QQTvvhugWnDzvcBYSj+SLZifK2jTQ
-         owmdqqRmmp8iY6chJq2Mlnpjbq6RAj8jt0kTavOSSUm2KQgIWHKXgDY5hnkI1rXRb9
-         NIdVXDDuIe1rtwQ5evX8B8s9Peo+r//MyCvLnEJu3WQv7amCnhXoAL+d5jvpc0YjYY
-         35406tFs9oyMdUOOMphj3mCWt3yUm5zVp0ckK6CxgcejWbG+0vkHDPW3MGFNsWQ5DX
-         tEUDQT8EKLC+kMhx0X8thKh1EhRV8sMxpXYvKiRh1qX2qbrIMTQ4XvICpOiJdoeKvz
-         ZQx5NpTCbYS3w==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-        (No client certificate requested)
-        by mail.ozlabs.org (Postfix) with ESMTPSA id 4S7bVc4t2xz4wnw;
-        Sun, 15 Oct 2023 21:06:16 +1100 (AEDT)
-From:   Michael Ellerman <mpe@ellerman.id.au>
-To:     reiserfs-devel@vger.kernel.org, Peter Lafreniere <peter@n8pjl.ca>
-Cc:     jack@suse.cz, linux-kernel@vger.kernel.org, richard@nod.at,
-        anton.ivanov@cambridgegreys.com, johannes@sipsolutions.net,
-        linuxppc-dev@lists.ozlabs.org, linux-um@lists.infradead.org,
-        linux-sh@vger.kernel.org, tsbogend@alpha.franken.de,
-        linux-mips@vger.kernel.org, linux-m68k@lists.linux-m68k.org,
-        geert@linux-m68k.org, linux-arm-kernel@lists.infradead.org,
-        linux@armlinux.org.uk, linux-alpha@vger.kernel.org,
-        richard.henderson@linaro.org, ink@jurassic.park.msu.ru
-In-Reply-To: <20230918175529.19011-1-peter@n8pjl.ca>
-References: <20230918175529.19011-1-peter@n8pjl.ca>
-Subject: Re: (subset) [PATCH 0/7] arch/*: config: Remove ReiserFS from defconfig
-Message-Id: <169736429854.960528.1442206910501555108.b4-ty@ellerman.id.au>
-Date:   Sun, 15 Oct 2023 21:04:58 +1100
+        Mon, 16 Oct 2023 16:11:25 -0400
+Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2E2A4F5;
+        Mon, 16 Oct 2023 13:11:20 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:MIME-Version:
+        References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:
+        Content-Type:Content-ID:Content-Description;
+        bh=7mXlnt1yRIMT4o+dXNcAaQaKhOKfQBuaGyVOIxKhilk=; b=mLOzLL1MAsvOzcF2Nfxy8DlEW9
+        KqVXhXbvURDI6XFJEenJqK0xoOqPMXJEMTTYt/w7KPuNhXf7hgVbqU/yzVTnj8xqbKKYZ848lsrsp
+        sWgSDaoVJ2u8Anm+cyMry3h+5JJKok7IPEz8XLRLV4sfjpfbCNMgvhKxmhNb4iPeOmLfw8HqfPCo+
+        GaJeKn092L2S/NhRc+Y2qApEy0Pjv+69uUInXENTG1ES3OdYfpt8uiWZNcUBxnCXVKwyn1Qdwglc0
+        dbUvBa4yfk0P8B0Pb4n9DSwIp/QZfxMHVsF52xzmuXxasjuojFnh6avfilIZeDJZt3kFLNOw1jzpj
+        k7rRI1sg==;
+Received: from willy by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
+        id 1qsTvp-0085bA-PH; Mon, 16 Oct 2023 20:11:17 +0000
+From:   "Matthew Wilcox (Oracle)" <willy@infradead.org>
+To:     Andrew Morton <akpm@linux-foundation.org>
+Cc:     "Matthew Wilcox (Oracle)" <willy@infradead.org>,
+        linux-fsdevel@vger.kernel.org, gfs2@lists.linux.dev,
+        linux-nilfs@vger.kernel.org, linux-ntfs-dev@lists.sourceforge.net,
+        ntfs3@lists.linux.dev, ocfs2-devel@lists.linux.dev,
+        reiserfs-devel@vger.kernel.org, linux-ext4@vger.kernel.org,
+        Pankaj Raghav <p.raghav@samsung.com>,
+        Ryusuke Konishi <konishi.ryusuke@gmail.com>
+Subject: [PATCH v2 11/27] nilfs2: Convert nilfs_grab_buffer() to use a folio
+Date:   Mon, 16 Oct 2023 21:10:58 +0100
+Message-Id: <20231016201114.1928083-12-willy@infradead.org>
+X-Mailer: git-send-email 2.37.1
+In-Reply-To: <20231016201114.1928083-1-willy@infradead.org>
+References: <20231016201114.1928083-1-willy@infradead.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <reiserfs-devel.vger.kernel.org>
 X-Mailing-List: reiserfs-devel@vger.kernel.org
 
-On Mon, 18 Sep 2023 17:56:09 +0000, Peter Lafreniere wrote:
-> ReiserFS has been considered deprecated for 19 months since commit
-> eb103a51640e ("reiserfs: Deprecate reiserfs"). However, there are
-> several architectures that still build it into their defconfig kernels.
-> 
-> As ReiserFS will be removed in 2025, delete all ReiserFS-related options
-> from defconfig files before the filesystem's removal.
-> 
-> [...]
+Remove a number of folio->page->folio conversions.
 
-Applied to powerpc/next.
+Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
+Acked-by: Ryusuke Konishi <konishi.ryusuke@gmail.com>
+---
+ fs/nilfs2/page.c | 26 +++++++++++++-------------
+ 1 file changed, 13 insertions(+), 13 deletions(-)
 
-[2/7] arch: powerpc: remove ReiserFS from defconfig
-      https://git.kernel.org/powerpc/c/c945e6f453a361b0e9daddd2be9c099d1b80d6f8
+diff --git a/fs/nilfs2/page.c b/fs/nilfs2/page.c
+index b4e54d079b7d..1c075bd906c9 100644
+--- a/fs/nilfs2/page.c
++++ b/fs/nilfs2/page.c
+@@ -25,19 +25,19 @@
+ 	(BIT(BH_Uptodate) | BIT(BH_Mapped) | BIT(BH_NILFS_Node) |	\
+ 	 BIT(BH_NILFS_Volatile) | BIT(BH_NILFS_Checked))
+ 
+-static struct buffer_head *
+-__nilfs_get_page_block(struct page *page, unsigned long block, pgoff_t index,
+-		       int blkbits, unsigned long b_state)
++static struct buffer_head *__nilfs_get_folio_block(struct folio *folio,
++		unsigned long block, pgoff_t index, int blkbits,
++		unsigned long b_state)
+ 
+ {
+ 	unsigned long first_block;
+-	struct buffer_head *bh;
++	struct buffer_head *bh = folio_buffers(folio);
+ 
+-	if (!page_has_buffers(page))
+-		create_empty_buffers(page, 1 << blkbits, b_state);
++	if (!bh)
++		bh = folio_create_empty_buffers(folio, 1 << blkbits, b_state);
+ 
+ 	first_block = (unsigned long)index << (PAGE_SHIFT - blkbits);
+-	bh = nilfs_page_get_nth_block(page, block - first_block);
++	bh = get_nth_bh(bh, block - first_block);
+ 
+ 	touch_buffer(bh);
+ 	wait_on_buffer(bh);
+@@ -51,17 +51,17 @@ struct buffer_head *nilfs_grab_buffer(struct inode *inode,
+ {
+ 	int blkbits = inode->i_blkbits;
+ 	pgoff_t index = blkoff >> (PAGE_SHIFT - blkbits);
+-	struct page *page;
++	struct folio *folio;
+ 	struct buffer_head *bh;
+ 
+-	page = grab_cache_page(mapping, index);
+-	if (unlikely(!page))
++	folio = filemap_grab_folio(mapping, index);
++	if (IS_ERR(folio))
+ 		return NULL;
+ 
+-	bh = __nilfs_get_page_block(page, blkoff, index, blkbits, b_state);
++	bh = __nilfs_get_folio_block(folio, blkoff, index, blkbits, b_state);
+ 	if (unlikely(!bh)) {
+-		unlock_page(page);
+-		put_page(page);
++		folio_unlock(folio);
++		folio_put(folio);
+ 		return NULL;
+ 	}
+ 	return bh;
+-- 
+2.40.1
 
-cheers
