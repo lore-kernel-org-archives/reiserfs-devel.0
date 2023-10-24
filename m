@@ -2,51 +2,58 @@ Return-Path: <reiserfs-devel-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B8B8DC001E0
-	for <reiserfs-devel@archiver.kernel.org>; Sat, 21 Oct 2023 17:55:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 72161C25B67
+	for <reiserfs-devel@archiver.kernel.org>; Tue, 24 Oct 2023 02:31:05 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229633AbjJURz4 (ORCPT
+        id S230213AbjJXCbF (ORCPT
         <rfc822;reiserfs-devel@archiver.kernel.org>);
-        Sat, 21 Oct 2023 13:55:56 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42826 "EHLO
+        Mon, 23 Oct 2023 22:31:05 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43426 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229478AbjJURzz (ORCPT
+        with ESMTP id S229510AbjJXCbE (ORCPT
         <rfc822;reiserfs-devel@vger.kernel.org>);
-        Sat, 21 Oct 2023 13:55:55 -0400
-Received: from mail-oa1-f79.google.com (mail-oa1-f79.google.com [209.85.160.79])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B7CF0121
-        for <reiserfs-devel@vger.kernel.org>; Sat, 21 Oct 2023 10:55:49 -0700 (PDT)
-Received: by mail-oa1-f79.google.com with SMTP id 586e51a60fabf-1e9c2c00182so2991656fac.1
-        for <reiserfs-devel@vger.kernel.org>; Sat, 21 Oct 2023 10:55:49 -0700 (PDT)
+        Mon, 23 Oct 2023 22:31:04 -0400
+Received: from mail-lj1-x22e.google.com (mail-lj1-x22e.google.com [IPv6:2a00:1450:4864:20::22e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6792D111;
+        Mon, 23 Oct 2023 19:31:00 -0700 (PDT)
+Received: by mail-lj1-x22e.google.com with SMTP id 38308e7fff4ca-2c51388ccebso59098961fa.3;
+        Mon, 23 Oct 2023 19:31:00 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1698114658; x=1698719458; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:mime-version:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=McFFYzsG6Jmbs6jRU6MeRFK7UV/TNd3mIQFzkLikTaI=;
+        b=OqXOaLDUUxXT+fas0DFpZ/tJe4QXRcwSvNBGOYpH1hk0gadwTlLbRfIbvNZnRGm33Y
+         Q43RLzyZNWHa8lS1MkJcCBN+JYzS3nYs7BA6tHLGHvjHx5uJGkBcfA91CJeJSljoBYyz
+         Wm0xC/RAVuWtGDtpGSzmEOVa2a5+/cFj4HG3tV5X/1ahGqqck2pBIdUTlZqf8vrx4qLo
+         XFdqYBYYZxP+7CaLrxVnDcvsIKSmnF1JxHjY5pZUp5xpdAn9p3Lu9H+kl4fFDpXxuWv3
+         m8bhXv+6vaCfnaOBnw6KXHh9OJF5UoYB26iNp0RWwJOCjwkFEZ96mO5iImMNqS1uxLXR
+         onlQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1697910949; x=1698515749;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+        d=1e100.net; s=20230601; t=1698114658; x=1698719458;
+        h=cc:to:subject:message-id:date:from:mime-version:x-gm-message-state
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=JKDp8sz1oBIHSDCcxIxblGFaeakng5Ps3VlUhQZrV+k=;
-        b=cexUhRXgJUGo0xzmB25hEVWS1IZDufuhRXUrwRqe3sfY5Y7ee77PG4S1BYXbRp3YGU
-         StT0hhYnQRDu1aBg6m7qV4Ea+XMjJmmyuvUBhYz3HSFKWasIczGv3ejthMQX2PVy5dLt
-         IWfSv3UYdCc4YiTU4/+VsVRWMqBsuNbc0TtKgMZKRlnKvYsXSpacN5xWX4WxAr9Q5l6H
-         35RqS3zPnM9b6sPst/6xCiuzUTztZe2F4WyMiImHROR2exPhuiW1bhHJrGiqt4vFpICC
-         ylunS1jsJr4IS7+iMBKtKsS/PwrcbQylTZWPWmHMxtu3hD3nFdZ801IT5Kb6xqTXHeju
-         UsXw==
-X-Gm-Message-State: AOJu0YxiWu5GAH1anUK1G9euNu8OYMStTrgfnu7rKKiKBBQGrcps1frq
-        TFRgBU/xmNyzJAJtXFlyFj1+Rn9pEWyJvtdTf5TFe4ZnG4XW
-X-Google-Smtp-Source: AGHT+IF4Y6mLZ9AWNYpSHrPGew0VWP/q1xwn5bBg3/CoMMWrIqqGLMgcj56Q+FsaP0gRZxqH+SQ/S0MH5RSjLFChnPF8UcTjwula
+        bh=McFFYzsG6Jmbs6jRU6MeRFK7UV/TNd3mIQFzkLikTaI=;
+        b=bqgjGZ8U24ai1UdjT6RxwdeCsyBbn5KD9AS/HjY+tSARsI7J2ulPgLrExJVmQtTSSE
+         6y0TZlruWvnIhIjhqtrhzCuaWo1HjKBOrpLZp3pHOkBomiZ+S4dxtlnDNJouzfUeTYUy
+         CsPTWVB35r3wTtA3/VJWo+pZR3wj7wGc7WEp52COcD7JAB/6++2X7Occ+UaO2+9pZ5ZV
+         Y/JcVecNXe87jswaPK4KkSEdRbUiH5cRr5mSpA7SOp40h1K87E5KfqPNZTT6+cgk5ARQ
+         a6fd0z5m1E6J/aLAA3hXiQeXNGeWVlihF3HsPS/BwgwneQzxHIg/b+WwqfAx0j19H70i
+         aG9A==
+X-Gm-Message-State: AOJu0Yz9oLw8E9EuhHq0U+vG1DIIFIFNf1GIK8kDNS23XSAhJOFBaPwm
+        7lI1GRC383tI6MeneK9gtL/pb7orFPESj2vSnojb2XyKYDiKJA==
+X-Google-Smtp-Source: AGHT+IFoP6xAvmmoL/BFO3fT1jPT1Edbf/THGwG3kp8xts+acJBL7hvtxbKt2QZ8p2wSdGJra/fSZPQC1KsMztjGczM=
+X-Received: by 2002:a2e:9c44:0:b0:2c5:12c4:5ff with SMTP id
+ t4-20020a2e9c44000000b002c512c405ffmr7155743ljj.17.1698114657544; Mon, 23 Oct
+ 2023 19:30:57 -0700 (PDT)
 MIME-Version: 1.0
-X-Received: by 2002:a05:6870:6489:b0:1e9:8e86:e661 with SMTP id
- cz9-20020a056870648900b001e98e86e661mr2400538oab.8.1697910949097; Sat, 21 Oct
- 2023 10:55:49 -0700 (PDT)
-Date:   Sat, 21 Oct 2023 10:55:49 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000fb386106083db243@google.com>
-Subject: [syzbot] [reiserfs?] general protection fault in ext4_file_write_iter
-From:   syzbot <syzbot+a2f32f54c8006a00d777@syzkaller.appspotmail.com>
-To:     bp@alien8.de, dave.hansen@linux.intel.com, hpa@zytor.com,
-        jpoimboe@kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, mingo@redhat.com,
-        peterz@infradead.org, reiserfs-devel@vger.kernel.org,
-        syzkaller-bugs@googlegroups.com, tglx@linutronix.de, x86@kernel.org
+From:   Yikebaer Aizezi <yikebaer61@gmail.com>
+Date:   Tue, 24 Oct 2023 10:30:46 +0800
+Message-ID: <CALcu4raE3hoh7pLNJBjxWeWv18QOR1XPt4E=XWmdg_b9CN-5Cg@mail.gmail.com>
+Subject: KASAN use-after-free Read in search_by_entry_key
+To:     reiserfs-devel@vger.kernel.org
+Cc:     brauner@kernel.org, "dchinner@redhat.com" <dchinner@redhat.com>,
+        jack@suse.cz, jlayton@kernel.org, linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <reiserfs-devel.vger.kernel.org>
@@ -54,197 +61,133 @@ X-Mailing-List: reiserfs-devel@vger.kernel.org
 
 Hello,
 
-syzbot found the following issue on:
+When using Healer to fuzz the  Linux 6.6-rc7 Linux kernel,  the following crash
+was triggered.
 
-HEAD commit:    213f891525c2 Merge tag 'probes-fixes-v6.6-rc6' of git://gi..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=126daea9680000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=20c01df4ad8f1c16
-dashboard link: https://syzkaller.appspot.com/bug?extid=a2f32f54c8006a00d777
-compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1231cae1680000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=12178005680000
+HEAD commit: 05d3ef8bba77c1b5f98d941d8b2d4aeab8118ef1 ( Linux 6.6-rc7)
+git tree: upstream
 
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/451be82930dd/disk-213f8915.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/ced0744b1f8f/vmlinux-213f8915.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/c1326b71b235/bzImage-213f8915.xz
-mounted in repro: https://storage.googleapis.com/syzbot-assets/271887eb86fe/mount_0.gz
+console output:
+https://drive.google.com/file/d/1qQhQwRydIp1SIiDJghcfp384uZ3gF8-T/view?usp=drive_link
+kernel config:https://drive.google.com/file/d/1gOeRhOnJr2htj6PPnEDTFUkli94JwVvJ/view?usp=drive_link
+C reproducer:https://drive.google.com/file/d/19te0q4_oUfcCoMarjNmkWXvnuwyvhRL-/view?usp=drive_link
+Syzlang reproducer:
+https://drive.google.com/file/d/12vmCNO8HysQ9-C5TC90mpjmZXOJ90k8C/view?usp=drive_link
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+a2f32f54c8006a00d777@syzkaller.appspotmail.com
+If you fix this issue, please add the following tag to the commit:
+Reported-by: Yikebaer Aizezi <yikebaer61@gmail.com>
 
-general protection fault, probably for non-canonical address 0xdffffc00400000c5: 0000 [#1] PREEMPT SMP KASAN
-KASAN: probably user-memory-access in range [0x0000000200000628-0x000000020000062f]
-CPU: 0 PID: 5032 Comm: syz-executor165 Not tainted 6.6.0-rc6-syzkaller-00029-g213f891525c2 #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 09/06/2023
 ==================================================================
-BUG: KASAN: out-of-bounds in console_flush_all+0xf23/0xfb0 kernel/printk/printk.c:2976
-Read of size 8 at addr ffffc9000349ef10 by task syz-executor165/5032
+BUG: KASAN: use-after-free in search_by_entry_key+0x81f/0x960
+fs/reiserfs/namei.c:165
+Read of size 4 at addr ffff8880316dcfc4 by task syz-executor.0/41572
 
-CPU: 0 PID: 5032 Comm: syz-executor165 Not tainted 6.6.0-rc6-syzkaller-00029-g213f891525c2 #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 09/06/2023
+CPU: 0 PID: 41572 Comm: syz-executor.0 Not tainted 6.6.0-rc7-g05d3ef8bba77 #8
+Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS
+rel-1.12.0-59-gc9ba5276e321-prebuilt.qemu.org 04/01/2014
 Call Trace:
  <TASK>
  __dump_stack lib/dump_stack.c:88 [inline]
- dump_stack_lvl+0xd9/0x1b0 lib/dump_stack.c:106
+ dump_stack_lvl+0xd5/0x150 lib/dump_stack.c:106
  print_address_description mm/kasan/report.c:364 [inline]
- print_report+0xc4/0x620 mm/kasan/report.c:475
- kasan_report+0xda/0x110 mm/kasan/report.c:588
- console_flush_all+0xf23/0xfb0 kernel/printk/printk.c:2976
- console_unlock+0x10c/0x260 kernel/printk/printk.c:3035
- vprintk_emit+0x17f/0x5f0 kernel/printk/printk.c:2307
- vprintk+0x7b/0x90 kernel/printk/printk_safe.c:45
- _printk+0xc8/0x100 kernel/printk/printk.c:2332
- dump_stack_print_info+0x12e/0x150 lib/dump_stack.c:66
- show_regs+0x1a/0xa0 arch/x86/kernel/dumpstack.c:469
- __die_body arch/x86/kernel/dumpstack.c:420 [inline]
- die_addr+0x4f/0xd0 arch/x86/kernel/dumpstack.c:460
- __exc_general_protection arch/x86/kernel/traps.c:697 [inline]
- exc_general_protection+0x154/0x230 arch/x86/kernel/traps.c:642
- asm_exc_general_protection+0x26/0x30 arch/x86/include/asm/idtentry.h:564
-RIP: 0010:EXT4_SB fs/ext4/ext4.h:1746 [inline]
-RIP: 0010:ext4_forced_shutdown fs/ext4/ext4.h:2231 [inline]
-RIP: 0010:ext4_file_write_iter+0x103/0x1860 fs/ext4/file.c:707
-Code: 48 c1 ea 03 80 3c 02 00 0f 85 5e 15 00 00 48 b8 00 00 00 00 00 fc ff df 48 8b 5d 28 48 8d bb 28 06 00 00 48 89 fa 48 c1 ea 03 <80> 3c 02 00 0f 85 2e 15 00 00 4c 8b a3 28 06 00 00 be 08 00 00 00
-RSP: 0000:ffffc9000349f270 EFLAGS: 00010206
-RAX: dffffc0000000000 RBX: 0000000200000001 RCX: 0000000000000000
-RDX: 00000000400000c5 RSI: ffffffff822ede7a RDI: 0000000200000629
-RBP: ffff88807365d830 R08: 0000000000000005 R09: 0000000000000007
-R10: 0000000000000004 R11: ffffffff8a601206 R12: ffffc9000349f5c8
-R13: ffffc9000349f3f0 R14: 0000000000000002 R15: ffff8880267ae2d0
- __kernel_write_iter+0x261/0x7e0 fs/read_write.c:517
- __kernel_write+0xf6/0x140 fs/read_write.c:537
- __dump_emit fs/coredump.c:813 [inline]
- dump_emit+0x21d/0x330 fs/coredump.c:850
- elf_core_dump+0x2082/0x3900 fs/binfmt_elf.c:2094
- do_coredump+0x2c96/0x3fc0 fs/coredump.c:764
- get_signal+0x2434/0x2790 kernel/signal.c:2878
- arch_do_signal_or_restart+0x90/0x7f0 arch/x86/kernel/signal.c:309
- exit_to_user_mode_loop kernel/entry/common.c:168 [inline]
- exit_to_user_mode_prepare+0x11f/0x240 kernel/entry/common.c:204
- irqentry_exit_to_user_mode+0x9/0x40 kernel/entry/common.c:309
- asm_exc_page_fault+0x26/0x30 arch/x86/include/asm/idtentry.h:570
-RIP: 0033:0x7f1369fb0833
-Code: 00 00 00 02 00 00 00 48 00 04 00 00 00 00 00 01 00 00 00 02 00 00 00 48 00 04 00 00 00 00 00 01 00 00 00 02 00 00 00 48 00 04 <00> 00 00 00 00 01 00 00 00 02 00 00 00 48 00 04 00 00 00 00 00 01
-RSP: 002b:00007fffac036608 EFLAGS: 00010202
-RAX: 0000000000000000 RBX: 00007fffac036690 RCX: 00007f1369fb0833
-RDX: 00007fffac036620 RSI: 0000000000000000 RDI: 0000000000000000
-RBP: 0000000000000002 R08: 0000000000000065 R09: 0000000000000001
-R10: 0000000000000000 R11: 0000000000000202 R12: 00000000000f4240
-R13: 0000000000018c01 R14: 00007fffac036664 R15: 00007fffac036680
+ print_report+0xc1/0x5e0 mm/kasan/report.c:475
+ kasan_report+0xba/0xf0 mm/kasan/report.c:588
+ bin_search_in_dir_item fs/reiserfs/namei.c:40 [inline]
+ search_by_entry_key+0x81f/0x960 fs/reiserfs/namei.c:165
+ reiserfs_find_entry.part.0+0x139/0xdf0 fs/reiserfs/namei.c:322
+ reiserfs_find_entry fs/reiserfs/namei.c:392 [inline]
+ reiserfs_lookup+0x24d/0x610 fs/reiserfs/namei.c:368
+ __lookup_slow+0x24c/0x460 fs/namei.c:1694
+ lookup_one_len+0x16a/0x1a0 fs/namei.c:2746
+ reiserfs_lookup_privroot+0x92/0x210 fs/reiserfs/xattr.c:977
+ reiserfs_fill_super+0x20fa/0x2ea0 fs/reiserfs/super.c:2174
+ mount_bdev+0x1fd/0x2f0 fs/super.c:1629
+ legacy_get_tree+0x105/0x220 fs/fs_context.c:662
+ vfs_get_tree+0x8d/0x370 fs/super.c:1750
+ do_new_mount fs/namespace.c:3335 [inline]
+ path_mount+0x671/0x1e40 fs/namespace.c:3662
+ do_mount fs/namespace.c:3675 [inline]
+ __do_sys_mount fs/namespace.c:3884 [inline]
+ __se_sys_mount fs/namespace.c:3861 [inline]
+ __x64_sys_mount+0x27f/0x300 fs/namespace.c:3861
+ do_syscall_x64 arch/x86/entry/common.c:50 [inline]
+ do_syscall_64+0x35/0xb0 arch/x86/entry/common.c:80
+ entry_SYSCALL_64_after_hwframe+0x63/0xcd
+RIP: 0033:0x7ff4f9690abe
+Code: 48 c7 c0 ff ff ff ff eb aa e8 be 0d 00 00 66 2e 0f 1f 84 00 00
+00 00 00 0f 1f 40 00 f3 0f 1e fa 49 89 ca b8 a5 00 00 00 0f 05 <48> 3d
+01 f0 ff ff 73 01 c3 48 c7 c1 b0 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007ff4fa3bde38 EFLAGS: 00000202 ORIG_RAX: 00000000000000a5
+RAX: ffffffffffffffda RBX: 000000000000ffe6 RCX: 00007ff4f9690abe
+RDX: 0000000020010000 RSI: 0000000020010040 RDI: 00007ff4fa3bde90
+RBP: 00007ff4fa3bded0 R08: 00007ff4fa3bded0 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000202 R12: 0000000020010000
+R13: 0000000020010040 R14: 00007ff4fa3bde90 R15: 00000000200005c0
  </TASK>
 
-The buggy address belongs to stack of task syz-executor165/5032
-
-The buggy address belongs to the virtual mapping at
- [ffffc90003498000, ffffc900034a1000) created by:
- kernel_clone+0xfd/0x920 kernel/fork.c:2909
-
 The buggy address belongs to the physical page:
-page:ffffea0001fbfac0 refcount:1 mapcount:0 mapping:0000000000000000 index:0x0 pfn:0x7efeb
+page:ffffea0000c5b700 refcount:0 mapcount:0 mapping:0000000000000000
+index:0x1 pfn:0x316dc
 flags: 0xfff00000000000(node=0|zone=1|lastcpupid=0x7ff)
 page_type: 0xffffffff()
-raw: 00fff00000000000 0000000000000000 dead000000000122 0000000000000000
-raw: 0000000000000000 0000000000000000 00000001ffffffff 0000000000000000
+raw: 00fff00000000000 dead000000000100 dead000000000122 0000000000000000
+raw: 0000000000000001 0000000000000000 00000000ffffffff 0000000000000000
 page dumped because: kasan: bad access detected
-page_owner tracks the page as allocated
-page last allocated via order 0, migratetype Unmovable, gfp_mask 0x2dc2(GFP_KERNEL|__GFP_HIGHMEM|__GFP_NOWARN|__GFP_ZERO), pid 4993, tgid 4993 (dhcpcd-run-hook), ts 88329486010, free_ts 72453205616
- set_page_owner include/linux/page_owner.h:31 [inline]
- post_alloc_hook+0x2cf/0x340 mm/page_alloc.c:1536
+page_owner tracks the page as freed
+page last allocated via order 0, migratetype Movable, gfp_mask
+0x140cca(GFP_HIGHUSER_MOVABLE|__GFP_COMP), pid 41568, tgid 41567
+(syz-executor.2), ts 1584644584471, free_ts 1585399046358
  prep_new_page mm/page_alloc.c:1543 [inline]
- get_page_from_freelist+0xee0/0x2f20 mm/page_alloc.c:3170
- __alloc_pages+0x1d0/0x4a0 mm/page_alloc.c:4426
- alloc_pages+0x1a9/0x270 mm/mempolicy.c:2297
- vm_area_alloc_pages mm/vmalloc.c:3063 [inline]
- __vmalloc_area_node mm/vmalloc.c:3139 [inline]
- __vmalloc_node_range+0xa6e/0x1540 mm/vmalloc.c:3320
- alloc_thread_stack_node kernel/fork.c:309 [inline]
- dup_task_struct kernel/fork.c:1118 [inline]
- copy_process+0x13e3/0x73f0 kernel/fork.c:2327
- kernel_clone+0xfd/0x920 kernel/fork.c:2909
- __do_sys_clone+0xba/0x100 kernel/fork.c:3052
+ get_page_from_freelist+0xf09/0x2c50 mm/page_alloc.c:3170
+ __alloc_pages+0x1c7/0x490 mm/page_alloc.c:4426
+ __folio_alloc+0x12/0x40 mm/page_alloc.c:4458
+ vma_alloc_folio+0x153/0x870 mm/mempolicy.c:2258
+ shmem_alloc_folio+0x121/0x1f0 mm/shmem.c:1658
+ shmem_alloc_and_acct_folio+0xd2/0x150 mm/shmem.c:1683
+ shmem_get_folio_gfp+0x96b/0x18e0 mm/shmem.c:2020
+ shmem_get_folio mm/shmem.c:2143 [inline]
+ shmem_write_begin+0x146/0x440 mm/shmem.c:2688
+ generic_perform_write+0x267/0x5d0 mm/filemap.c:3969
+ shmem_file_write_iter+0x10f/0x140 mm/shmem.c:2865
+ call_write_iter include/linux/fs.h:1956 [inline]
+ new_sync_write fs/read_write.c:491 [inline]
+ vfs_write+0x989/0xdb0 fs/read_write.c:584
+ ksys_write+0x11e/0x240 fs/read_write.c:637
  do_syscall_x64 arch/x86/entry/common.c:50 [inline]
- do_syscall_64+0x38/0xb0 arch/x86/entry/common.c:80
+ do_syscall_64+0x35/0xb0 arch/x86/entry/common.c:80
  entry_SYSCALL_64_after_hwframe+0x63/0xcd
 page last free stack trace:
  reset_page_owner include/linux/page_owner.h:24 [inline]
  free_pages_prepare mm/page_alloc.c:1136 [inline]
- free_unref_page_prepare+0x476/0xa40 mm/page_alloc.c:2312
- free_unref_page+0x33/0x3b0 mm/page_alloc.c:2405
- slab_destroy mm/slab.c:1608 [inline]
- slabs_destroy+0x85/0xc0 mm/slab.c:1628
- cache_flusharray mm/slab.c:3341 [inline]
- ___cache_free+0x2b7/0x420 mm/slab.c:3404
- qlink_free mm/kasan/quarantine.c:166 [inline]
- qlist_free_all+0x4c/0x1b0 mm/kasan/quarantine.c:185
- kasan_quarantine_reduce+0x18e/0x1d0 mm/kasan/quarantine.c:292
- __kasan_slab_alloc+0x65/0x90 mm/kasan/common.c:305
- kasan_slab_alloc include/linux/kasan.h:188 [inline]
- slab_post_alloc_hook mm/slab.h:762 [inline]
- slab_alloc_node mm/slab.c:3237 [inline]
- __kmem_cache_alloc_node+0x163/0x470 mm/slab.c:3521
- __do_kmalloc_node mm/slab_common.c:1022 [inline]
- __kmalloc+0x4f/0x100 mm/slab_common.c:1036
- kmalloc include/linux/slab.h:603 [inline]
- tomoyo_add_entry security/tomoyo/common.c:2023 [inline]
- tomoyo_supervisor+0xcdb/0xea0 security/tomoyo/common.c:2095
- tomoyo_audit_path_log security/tomoyo/file.c:168 [inline]
- tomoyo_path_permission security/tomoyo/file.c:587 [inline]
- tomoyo_path_permission+0x270/0x3b0 security/tomoyo/file.c:573
- tomoyo_path_perm+0x35a/0x450 security/tomoyo/file.c:838
- security_inode_getattr+0xf1/0x150 security/security.c:2153
- vfs_getattr fs/stat.c:169 [inline]
- vfs_fstat+0x4f/0xc0 fs/stat.c:194
- vfs_fstatat+0x130/0x140 fs/stat.c:291
- __do_sys_newfstatat+0x98/0x110 fs/stat.c:459
+ free_unref_page_prepare+0x450/0xa30 mm/page_alloc.c:2312
+ free_unref_page_list+0xec/0xac0 mm/page_alloc.c:2451
+ release_pages+0xca9/0x1350 mm/swap.c:1042
+ __folio_batch_release+0x73/0xd0 mm/swap.c:1062
+ folio_batch_release include/linux/pagevec.h:83 [inline]
+ shmem_undo_range+0x545/0x10f0 mm/shmem.c:1022
+ shmem_truncate_range mm/shmem.c:1114 [inline]
+ shmem_evict_inode+0x38a/0xb70 mm/shmem.c:1243
+ evict+0x2ed/0x6b0 fs/inode.c:664
+ iput_final fs/inode.c:1775 [inline]
+ iput.part.0+0x50f/0x710 fs/inode.c:1801
+ iput+0x58/0x70 fs/inode.c:1791
+ dentry_unlink_inode+0x28c/0x430 fs/dcache.c:401
+ __dentry_kill+0x3bd/0x640 fs/dcache.c:607
+ dentry_kill fs/dcache.c:733 [inline]
+ dput+0x847/0xde0 fs/dcache.c:913
+ __fput+0x543/0xa70 fs/file_table.c:392
+ task_work_run+0x164/0x250 kernel/task_work.c:180
+ resume_user_mode_work include/linux/resume_user_mode.h:49 [inline]
+ exit_to_user_mode_loop kernel/entry/common.c:171 [inline]
+ exit_to_user_mode_prepare+0x215/0x240 kernel/entry/common.c:204
+ __syscall_exit_to_user_mode_work kernel/entry/common.c:285 [inline]
+ syscall_exit_to_user_mode+0x19/0x60 kernel/entry/common.c:296
 
 Memory state around the buggy address:
- ffffc9000349ee00: 48 00 04 00 00 00 00 00 01 00 00 00 02 00 00 00
- ffffc9000349ee80: 48 00 04 00 00 00 00 00 01 00 00 00 02 00 00 00
->ffffc9000349ef00: 48 00 04 00 00 00 00 00 01 00 00 00 02 00 00 00
-                         ^
- ffffc9000349ef80: 48 00 04 00 00 00 00 00 01 00 00 00 02 00 00 00
- ffffc9000349f000: 48 00 04 00 00 00 00 00 01 00 00 00 02 00 00 00
+ ffff8880316dce80: ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff
+ ffff8880316dcf00: ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff
+>ffff8880316dcf80: ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff
+                                           ^
+ ffff8880316dd000: ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff
+ ffff8880316dd080: ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff
 ==================================================================
-----------------
-Code disassembly (best guess):
-   0:	48 c1 ea 03          	shr    $0x3,%rdx
-   4:	80 3c 02 00          	cmpb   $0x0,(%rdx,%rax,1)
-   8:	0f 85 5e 15 00 00    	jne    0x156c
-   e:	48 b8 00 00 00 00 00 	movabs $0xdffffc0000000000,%rax
-  15:	fc ff df
-  18:	48 8b 5d 28          	mov    0x28(%rbp),%rbx
-  1c:	48 8d bb 28 06 00 00 	lea    0x628(%rbx),%rdi
-  23:	48 89 fa             	mov    %rdi,%rdx
-  26:	48 c1 ea 03          	shr    $0x3,%rdx
-* 2a:	80 3c 02 00          	cmpb   $0x0,(%rdx,%rax,1) <-- trapping instruction
-  2e:	0f 85 2e 15 00 00    	jne    0x1562
-  34:	4c 8b a3 28 06 00 00 	mov    0x628(%rbx),%r12
-  3b:	be 08 00 00 00       	mov    $0x8,%esi
-
-
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-
-If the bug is already fixed, let syzbot know by replying with:
-#syz fix: exact-commit-title
-
-If you want syzbot to run the reproducer, reply with:
-#syz test: git://repo/address.git branch-or-commit-hash
-If you attach or paste a git patch, syzbot will apply it before testing.
-
-If you want to overwrite bug's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the bug is a duplicate of another bug, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
