@@ -2,94 +2,95 @@ Return-Path: <reiserfs-devel-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 44E6DC25B67
-	for <reiserfs-devel@archiver.kernel.org>; Thu, 26 Oct 2023 12:57:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E13AEC4167B
+	for <reiserfs-devel@archiver.kernel.org>; Fri,  3 Nov 2023 10:22:29 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230505AbjJZM5M (ORCPT
+        id S229592AbjKCKWa (ORCPT
         <rfc822;reiserfs-devel@archiver.kernel.org>);
-        Thu, 26 Oct 2023 08:57:12 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44668 "EHLO
+        Fri, 3 Nov 2023 06:22:30 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40876 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230330AbjJZM5M (ORCPT
+        with ESMTP id S229579AbjKCKW3 (ORCPT
         <rfc822;reiserfs-devel@vger.kernel.org>);
-        Thu, 26 Oct 2023 08:57:12 -0400
-Received: from mail-pj1-x1043.google.com (mail-pj1-x1043.google.com [IPv6:2607:f8b0:4864:20::1043])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9A21A191;
-        Thu, 26 Oct 2023 05:57:09 -0700 (PDT)
-Received: by mail-pj1-x1043.google.com with SMTP id 98e67ed59e1d1-27d5fe999caso693702a91.1;
-        Thu, 26 Oct 2023 05:57:09 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1698325029; x=1698929829; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=NAq/h84hoL+UwBKjrluHqm+iW3Vp6ePG/aMBZRWLHC0=;
-        b=WsrHlVcX97gZ26IwJlEBLHZDxFdQOjxlQs+3RCmOVsMzvax2Q19GbFPyEUYZKMoosc
-         88vIMtPnVy/vN+AxdQsh/D2p1THupDD3+XTPrDuGMbTlpLRYOeaeNQR0K4kMu40RyWnE
-         WXxTEVy/xUN4mAGqWqdcm2unZO7ew9ftP19tzJYqvj5o9ULn/ReCB4zSuYuOgpdOpjJC
-         NplywUJz1vpBmcKg/HeyeEtWBf5rqRrpYCLFOc5LmhaLrWvB3FmyqFyzt8cmUJ/m1LLz
-         FhxrhvUzgw8rn8k1Jv3qU9w/iRGeQyGDCzono5XUZNI7QCem/HGzOYdSrUYf4or4EmdP
-         I5ew==
+        Fri, 3 Nov 2023 06:22:29 -0400
+Received: from mail-oa1-f71.google.com (mail-oa1-f71.google.com [209.85.160.71])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 81043D52
+        for <reiserfs-devel@vger.kernel.org>; Fri,  3 Nov 2023 03:22:22 -0700 (PDT)
+Received: by mail-oa1-f71.google.com with SMTP id 586e51a60fabf-1efb84e655aso2482046fac.2
+        for <reiserfs-devel@vger.kernel.org>; Fri, 03 Nov 2023 03:22:22 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1698325029; x=1698929829;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=NAq/h84hoL+UwBKjrluHqm+iW3Vp6ePG/aMBZRWLHC0=;
-        b=B+6ksZ4PL7lXnsbhwH8/Y3kklj/IHVQj7KoByMLlKrzgjJ2g1XriI4Z5SnBsj6bfhT
-         HHgFBzGG6JqyuTv+sL2zcPX5GrXKWptxDeU57Yqq3685Kgv6hPC/BEFXDBdR8rDCoUSB
-         MZmR1Q5eyCxc0bS5NYRFd7TZFJWPq/3k0BZBD+qoGkJPB6+JJYFTL7CaVgOn4lXmzvmL
-         cPQITNPSEal2mHii6W82qfboSz82f3KAThZFPv+ZSXyHQSujkz/IkpTQOclPtyA7fKVO
-         xaaKVaemW8yEZf4LWlr+akvdUWPlDx/0CsQAOFkvDBNgVNZQRshkMq0kBIrGx9AEuGN3
-         u8sg==
-X-Gm-Message-State: AOJu0YzOrLLhpVWnhHC9aEB3L0KR4JGNCwpwNCYcKrlAmuvOpuW7EK06
-        GGM9eevOiFZJGwjAkvR8DOcUpnflBc5OeQ==
-X-Google-Smtp-Source: AGHT+IF6Zjz6CCP32+qe+ctnaMcuAFd07y2irysyeokfPZ6D/F458guLdKgInFI2yQDBd2b73WDJ6A==
-X-Received: by 2002:a17:90b:5287:b0:27d:1c70:23d4 with SMTP id si7-20020a17090b528700b0027d1c7023d4mr14494564pjb.44.1698325028805;
-        Thu, 26 Oct 2023 05:57:08 -0700 (PDT)
-Received: from brag-vm.. ([2409:40f4:13:48d5:f085:e875:d528:fe4c])
-        by smtp.gmail.com with ESMTPSA id g2-20020a17090a714200b002777001ee76sm1565513pjs.18.2023.10.26.05.57.06
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 26 Oct 2023 05:57:08 -0700 (PDT)
-From:   Bragatheswaran Manickavel <bragathemanick0908@gmail.com>
-To:     reiserfs-devel@vger.kernel.org
-Cc:     Bragatheswaran Manickavel <bragathemanick0908@gmail.com>,
-        linux-kernel@vger.kernel.org,
-        syzbot+e5bb9eb00a5a5ed2a9a2@syzkaller.appspotmail.com
-Subject: [PATCH] reiserfs: UBSAN: array-index-out-of-bounds in direntry_create_vi
-Date:   Thu, 26 Oct 2023 18:26:16 +0530
-Message-Id: <20231026125616.1859-1-bragathemanick0908@gmail.com>
-X-Mailer: git-send-email 2.34.1
+        d=1e100.net; s=20230601; t=1699006942; x=1699611742;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=Uc6FYLAopkgJT15uv3TdDC2GDeP4YlXHM2CzEWdADSI=;
+        b=vY+glLkTSmKk4nphiODnEGVQclKKwl4cQI7FtT768F+d8pcoh6UEE5CcqV+v3O73f+
+         B6u/PCvSXTkFzIxPf9PwqgQ4axLlHlNcoOjvwFI/hbkLjVpphE3aqvwH/Py3Tuyjir9r
+         Q/5ZIR3hPIT9YEWQJMz+6oNuTMU7PspKkd4SY1kA9Z21+coEsGGqV7S7jh9o8isfdctH
+         j1KsheYKrQeYGkvy8vCiLV+4qO2GbRDXCaH4GEf3HcsEgSUx0zxGBCOGSV+YMU3DVd/r
+         m5Q1xJAQzpK0tCZUT4qocqjqhbMhKixY20TvTNNwswDRtCKJ8mLzhn8lbHPoxDg2F5Cd
+         uNHw==
+X-Gm-Message-State: AOJu0YxIyII6Sqj2AEOzNjH3cKd/9MYVWRDnncw4KlaZyLsbPnN+/xFA
+        I/wtF/+wfIkrErJlPVaTiO/EYHpdiSunRRYnRKNxXKl+BZ8G
+X-Google-Smtp-Source: AGHT+IHvVzI4EkIrE7Q/aziOILbGKGM6tNCR5pFCuO/mUo3q1r8yizrt0z20md0SFWPfyCNGW4h+rt1uIvb1dddismjP0dry5sl3
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-Received: by 2002:a05:6870:3645:b0:1e9:dbd8:b0bd with SMTP id
+ v5-20020a056870364500b001e9dbd8b0bdmr9855586oak.10.1699006941834; Fri, 03 Nov
+ 2023 03:22:21 -0700 (PDT)
+Date:   Fri, 03 Nov 2023 03:22:21 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <0000000000003d356f06093ce16b@google.com>
+Subject: [syzbot] Monthly reiserfs report (Nov 2023)
+From:   syzbot <syzbot+listbc495c19bdf2523c9b32@syzkaller.appspotmail.com>
+To:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        reiserfs-devel@vger.kernel.org, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <reiserfs-devel.vger.kernel.org>
 X-Mailing-List: reiserfs-devel@vger.kernel.org
 
-deh defined as an array of type __u16[], and issue is
-triggered when it's trying to access an element at
-index 1, which is out of bounds because the array
-has only one element at index 0.
+Hello reiserfs maintainers/developers,
 
-Reported-by: syzbot+e5bb9eb00a5a5ed2a9a2@syzkaller.appspotmail.com
-Closes: https://syzkaller.appspot.com/bug?extid=e5bb9eb00a5a5ed2a9a2
-Signed-off-by: Bragatheswaran Manickavel <bragathemanick0908@gmail.com>
+This is a 31-day syzbot report for the reiserfs subsystem.
+All related reports/information can be found at:
+https://syzkaller.appspot.com/upstream/s/reiserfs
+
+During the period, 1 new issues were detected and 0 were fixed.
+In total, 89 issues are still open and 18 have been fixed so far.
+
+Some of the still happening issues:
+
+Ref  Crashes Repro Title
+<1>  40677   Yes   KASAN: null-ptr-deref Read in do_journal_end (2)
+                   https://syzkaller.appspot.com/bug?extid=845cd8e5c47f2a125683
+<2>  5621    Yes   possible deadlock in open_xa_dir
+                   https://syzkaller.appspot.com/bug?extid=8fb64a61fdd96b50f3b8
+<3>  2433    No    KASAN: slab-out-of-bounds Read in search_by_key (2)
+                   https://syzkaller.appspot.com/bug?extid=b3b14fb9f8a14c5d0267
+<4>  1506    Yes   kernel BUG at fs/reiserfs/journal.c:LINE!
+                   https://syzkaller.appspot.com/bug?extid=6820505ae5978f4f8f2f
+<5>  1240    Yes   WARNING in reiserfs_lookup
+                   https://syzkaller.appspot.com/bug?extid=392ac209604cc18792e5
+<6>  1219    Yes   possible deadlock in mnt_want_write_file
+                   https://syzkaller.appspot.com/bug?extid=1047e42179f502f2b0a2
+<7>  784     No    KMSAN: uninit-value in reiserfs_new_inode (2)
+                   https://syzkaller.appspot.com/bug?extid=6450929faa7a97cd42d1
+<8>  354     Yes   possible deadlock in reiserfs_ioctl
+                   https://syzkaller.appspot.com/bug?extid=79c303ad05f4041e0dad
+<9>  324     Yes   WARNING in journal_end
+                   https://syzkaller.appspot.com/bug?extid=d43f346675e449548021
+<10> 267     Yes   KASAN: out-of-bounds Read in leaf_paste_entries (2)
+                   https://syzkaller.appspot.com/bug?extid=38b79774b6c990637f95
+
 ---
- fs/reiserfs/item_ops.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-diff --git a/fs/reiserfs/item_ops.c b/fs/reiserfs/item_ops.c
-index 3a5a752d96c7..ccf547c5e8e1 100644
---- a/fs/reiserfs/item_ops.c
-+++ b/fs/reiserfs/item_ops.c
-@@ -484,7 +484,7 @@ static int direntry_create_vi(struct virtual_node *vn,
- 				  vn->vn_mode);
- 		dir_u->entry_sizes[i] =
- 		    (j ? deh_location(&deh[j - 1]) : ih_item_len(vi->vi_ih)) -
--		    deh_location(&deh[j]) + DEH_SIZE;
-+		    deh_location(&deh[j - 1]) + DEH_SIZE;
- 	}
- 
- 	size += (dir_u->entry_count * sizeof(short));
--- 
-2.34.1
+To disable reminders for individual bugs, reply with the following command:
+#syz set <Ref> no-reminders
 
+To change bug's subsystems, reply with:
+#syz set <Ref> subsystems: new-subsystem
+
+You may send multiple commands in a single email message.
