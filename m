@@ -2,106 +2,75 @@ Return-Path: <reiserfs-devel-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 020D7C4332F
-	for <reiserfs-devel@archiver.kernel.org>; Sat,  4 Nov 2023 12:58:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7827FC4332F
+	for <reiserfs-devel@archiver.kernel.org>; Mon,  6 Nov 2023 08:34:29 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229531AbjKDM6r (ORCPT
+        id S231391AbjKFIea (ORCPT
         <rfc822;reiserfs-devel@archiver.kernel.org>);
-        Sat, 4 Nov 2023 08:58:47 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38340 "EHLO
+        Mon, 6 Nov 2023 03:34:30 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34488 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229456AbjKDM6q (ORCPT
+        with ESMTP id S231407AbjKFIeX (ORCPT
         <rfc822;reiserfs-devel@vger.kernel.org>);
-        Sat, 4 Nov 2023 08:58:46 -0400
-Received: from mail-pl1-x62f.google.com (mail-pl1-x62f.google.com [IPv6:2607:f8b0:4864:20::62f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 46B68194;
-        Sat,  4 Nov 2023 05:58:44 -0700 (PDT)
-Received: by mail-pl1-x62f.google.com with SMTP id d9443c01a7336-1cc5b7057d5so26682275ad.2;
-        Sat, 04 Nov 2023 05:58:44 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1699102723; x=1699707523; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=wx/J2gGjIG7iPxsbQ8RiVASXEeZtvK2+9qIqh+JKTRU=;
-        b=OzlpU3r+PFGgsGBYurnH46QwPInO6Mvlsgq1rHzGUjm/MfUTWBLj7oa1GA7j2GltVO
-         +dWeGcdNIq4i/VLatyv/8G/eNnS3W0GtWcUkdOXceCT2nQOq8pnlejxtlITdSU0H0y0Z
-         ONNTICz1A2spuFg+w0Ms7YLJnoPw9a8HfCuRwB4icWFpWELIViwtITQ+ZE8XKcq0S/NB
-         CC7o4OcWpQrQKITu7ERUN6MM6ffLdMI+Yon/en6hetvYYYQvys9FO662oi5A6pVCXRBe
-         w5ywyV7/Y/aN3JRjMlnok3mXvECF3V1AB6My27vfXWcaEtRDXza1t6cYWMjS+uCMvCI8
-         aAMQ==
+        Mon, 6 Nov 2023 03:34:23 -0500
+Received: from mail-oo1-f70.google.com (mail-oo1-f70.google.com [209.85.161.70])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 526421B2
+        for <reiserfs-devel@vger.kernel.org>; Mon,  6 Nov 2023 00:34:08 -0800 (PST)
+Received: by mail-oo1-f70.google.com with SMTP id 006d021491bc7-587a54afb50so1627853eaf.0
+        for <reiserfs-devel@vger.kernel.org>; Mon, 06 Nov 2023 00:34:08 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1699102723; x=1699707523;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
+        d=1e100.net; s=20230601; t=1699259647; x=1699864447;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=wx/J2gGjIG7iPxsbQ8RiVASXEeZtvK2+9qIqh+JKTRU=;
-        b=lmV8QP38c76pxXCT4nL8bj1qLYbf/wbSSitts4bpb4xkHSHOYssEQIg2IqUFSKrQcD
-         gG9galSTQCJ5/Ph5ewVjvdzmpQNFzCrvKHT3rorWVZyQwNV/Gyo5+cSrulHHyuGzbtFY
-         bE2nKoRlk/BSMT4Y1tKNS2Q4umpIRBfXh66qNhsRvSsQe37j6Nx9g/iSz6g7/Y1V/tin
-         yriW0YqN6oEJIhNHB6zykkvYdTePLpNbsIfO+44eklFCNJ4WTUbESD1k2g8YM/YcNDdP
-         kWoBYB0TpzFR32V0ENRtmi1EPRLXkwGxkLWv831TDwehOVUIhTdgnNRyQIuChgltZ31Q
-         VK0w==
-X-Gm-Message-State: AOJu0YzEjL3NTZFA8BTBm+Vlu2a2JnuhkxyMKdYy/lRQo61P6sDy7zNM
-        +h7vFDwk6Nb1N2Orw8QgCg2Mc5CKN3g=
-X-Google-Smtp-Source: AGHT+IHvDkgX6K8vGdHLtjbcSIX6/lZDmWhjB4+CPW2fj6W96iJrymMnFkamCRANHgWtjI7U40WkUQ==
-X-Received: by 2002:a17:902:da87:b0:1cc:548d:4252 with SMTP id j7-20020a170902da8700b001cc548d4252mr19211508plx.57.1699102723253;
-        Sat, 04 Nov 2023 05:58:43 -0700 (PDT)
-Received: from [192.168.1.11] ([27.5.100.249])
-        by smtp.gmail.com with ESMTPSA id q16-20020a17090311d000b001ca2484e87asm2922354plh.262.2023.11.04.05.58.41
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 04 Nov 2023 05:58:42 -0700 (PDT)
-Message-ID: <11739388-1f97-4dd1-91e7-c2b0becfb75e@gmail.com>
-Date:   Sat, 4 Nov 2023 18:28:39 +0530
+        bh=R//xFC6MCX07YnTjEGgkyVytVcMHK0VcX9I6eFXmSn0=;
+        b=j+i8OoEMCcHOKGtM7Bs8tHqa3dloKqsiBh4VFAmr4duiLnEwTpNhjTo11jJGi6iWpl
+         WmOD8hHQhuy/7OgYhdeSl6RcmJWhBCeKY4DL/P793qTvbY4u2VFIi14GLUD/fTu9X3o2
+         EI4UXZoaxaRvCR7k29LOoHitFjjasfsuWx4K4kborFSyjF1H89LOGgtd7A2jM0DpEUcg
+         n6xK9gMJHYHHfXct5P/VxZSR/rwPc9+kx/T7BGytKfYTFH575Yx7XuKfYB1cxSKYcFix
+         p+UWv0LxB670Qsw5LfqXkSU6r8i6iTS/473zRQJlxKfTWIlDv4GRrfAATKd2VKCMRW07
+         v7eA==
+X-Gm-Message-State: AOJu0YwkbrA6Kelria6TUglIRsfXcLkoiAJPrPr08paLfCskq85Lkveg
+        DqvYAaCFikS8y3GB41aRlG0HjXAP2jRg0wJXnpDyG85ADyAA
+X-Google-Smtp-Source: AGHT+IGPvdUMp7cFbFWrKJV9OVBnXNdZFxJ2Ar/n96qlK/oegdaqwZk7Cnt4qpgL2n4nuLJ0ela54eQb73j/dM3UYdnpHggAwsHn
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] reiserfs: UBSAN: array-index-out-of-bounds in
- direntry_create_vi
-Content-Language: en-US
-To:     reiserfs-devel@vger.kernel.org
-Cc:     linux-kernel@vger.kernel.org,
-        syzbot+e5bb9eb00a5a5ed2a9a2@syzkaller.appspotmail.com
-References: <20231026125616.1859-1-bragathemanick0908@gmail.com>
-From:   Bragatheswaran Manickavel <bragathemanick0908@gmail.com>
-In-Reply-To: <20231026125616.1859-1-bragathemanick0908@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+X-Received: by 2002:aca:1113:0:b0:3a3:c492:9be6 with SMTP id
+ 19-20020aca1113000000b003a3c4929be6mr3745348oir.2.1699259647315; Mon, 06 Nov
+ 2023 00:34:07 -0800 (PST)
+Date:   Mon, 06 Nov 2023 00:34:07 -0800
+In-Reply-To: <000000000000cfe6f305ee84ff1f@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000a8d8e7060977b741@google.com>
+Subject: Re: [syzbot] [reiserfs?] possible deadlock in reiserfs_dirty_inode
+From:   syzbot <syzbot+c319bb5b1014113a92cf@syzkaller.appspotmail.com>
+To:     hdanton@sina.com, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, paul@paul-moore.com,
+        reiserfs-devel@vger.kernel.org, roberto.sassu@huawei.com,
+        syzkaller-bugs@googlegroups.com, syzkaller@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <reiserfs-devel.vger.kernel.org>
 X-Mailing-List: reiserfs-devel@vger.kernel.org
 
+syzbot has bisected this issue to:
 
-On 26/10/23 18:26, Bragatheswaran Manickavel wrote:
-> deh defined as an array of type __u16[], and issue is
-> triggered when it's trying to access an element at
-> index 1, which is out of bounds because the array
-> has only one element at index 0.
->
-> Reported-by: syzbot+e5bb9eb00a5a5ed2a9a2@syzkaller.appspotmail.com
-> Closes: https://syzkaller.appspot.com/bug?extid=e5bb9eb00a5a5ed2a9a2
-> Signed-off-by: Bragatheswaran Manickavel <bragathemanick0908@gmail.com>
-> ---
->   fs/reiserfs/item_ops.c | 2 +-
->   1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/fs/reiserfs/item_ops.c b/fs/reiserfs/item_ops.c
-> index 3a5a752d96c7..ccf547c5e8e1 100644
-> --- a/fs/reiserfs/item_ops.c
-> +++ b/fs/reiserfs/item_ops.c
-> @@ -484,7 +484,7 @@ static int direntry_create_vi(struct virtual_node *vn,
->   				  vn->vn_mode);
->   		dir_u->entry_sizes[i] =
->   		    (j ? deh_location(&deh[j - 1]) : ih_item_len(vi->vi_ih)) -
-> -		    deh_location(&deh[j]) + DEH_SIZE;
-> +		    deh_location(&deh[j - 1]) + DEH_SIZE;
->   	}
->   
->   	size += (dir_u->entry_count * sizeof(short));
+commit d82dcd9e21b77d338dc4875f3d4111f0db314a7c
+Author: Roberto Sassu <roberto.sassu@huawei.com>
+Date:   Fri Mar 31 12:32:18 2023 +0000
 
-Could someone help in reviewing the changes. I see reiserfs was marked with
-obsolete but still wanted to know whether this patch is correct and can be
-taken (if possible)
+    reiserfs: Add security prefix to xattr name in reiserfs_security_write()
 
-Thanks,
-Bragathe
+bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=14d0b787680000
+start commit:   90b0c2b2edd1 Merge tag 'pinctrl-v6.7-1' of git://git.kerne..
+git tree:       upstream
+final oops:     https://syzkaller.appspot.com/x/report.txt?x=16d0b787680000
+console output: https://syzkaller.appspot.com/x/log.txt?x=12d0b787680000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=93ac5233c138249e
+dashboard link: https://syzkaller.appspot.com/bug?extid=c319bb5b1014113a92cf
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=113f3717680000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=154985ef680000
 
+Reported-by: syzbot+c319bb5b1014113a92cf@syzkaller.appspotmail.com
+Fixes: d82dcd9e21b7 ("reiserfs: Add security prefix to xattr name in reiserfs_security_write()")
+
+For information about bisection process see: https://goo.gl/tpsmEJ#bisection
