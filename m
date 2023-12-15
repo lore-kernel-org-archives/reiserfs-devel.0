@@ -1,22 +1,23 @@
-Received: from wxsgout04.xfusion.com (wxsgout03.xfusion.com [36.139.52.80])
+Received: from wxsgout04.xfusion.com (wxsgout04.xfusion.com [36.139.87.180])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D05D24A0F;
-	Fri, 15 Dec 2023 10:20:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B34872555D;
+	Fri, 15 Dec 2023 10:21:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=xfusion.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=xfusion.com
 Received: from wuxshcsitd00600.xfusion.com (unknown [10.32.133.213])
-	by wxsgout04.xfusion.com (SkyGuard) with ESMTPS id 4Ss4s23RmKzB2757;
-	Fri, 15 Dec 2023 18:17:10 +0800 (CST)
+	by wxsgout04.xfusion.com (SkyGuard) with ESMTPS id 4Ss4sl24n0zB2Nhg;
+	Fri, 15 Dec 2023 18:17:47 +0800 (CST)
 Received: from localhost (10.82.147.3) by wuxshcsitd00600.xfusion.com
  (10.32.133.213) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.23; Fri, 15 Dec
- 2023 18:20:33 +0800
-Date: Fri, 15 Dec 2023 18:20:32 +0800
+ 2023 18:21:17 +0800
+Date: Fri, 15 Dec 2023 18:21:16 +0800
 From: Wang Jinchao <wangjinchao@xfusion.com>
 To: <reiserfs-devel@vger.kernel.org>, <linux-kernel@vger.kernel.org>
 CC: <stone.xulei@xfusion.com>, <wangjinchao@xfusion.com>
-Message-ID: <202312151820+0800-wangjinchao@xfusion.com>
+Subject: [PATCH] reiserfs: cleanup, remove duplicated including
+Message-ID: <202312151821+0800-wangjinchao@xfusion.com>
 Precedence: bulk
 X-Mailing-List: reiserfs-devel@vger.kernel.org
 List-Id: <reiserfs-devel.vger.kernel.org>
@@ -27,10 +28,6 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Disposition: inline
 X-ClientProxiedBy: wuxshcsitd00602.xfusion.com (10.32.132.250) To
  wuxshcsitd00600.xfusion.com (10.32.133.213)
-
-Bcc: 
-Subject: [PATCH] reiserfs: cleanup, remove duplicated including
-Reply-To: 
 
 remove the second #include <linux/xattr.h>
 
