@@ -1,51 +1,51 @@
 Received: from payinal.metztli.com (payinal.metztli.com [74.208.129.35])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F021F3CBE6E
-	for <reiserfs-devel@vger.kernel.org>; Wed, 30 Sep 2026 08:36:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B6253B42C6
+	for <reiserfs-devel@vger.kernel.org>; Wed, 30 Sep 2026 09:00:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.208.129.35
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1790757403; cv=none; b=PTTTW2p0taw9C7IMUyo6E0Z8GdB3SanHbxp5MxWCH6ynOUR2Dg21y4NuCHhww88oF6o1qBBbZf1tOj1o5lSMuwcdVmiLFVNfmUO6lQR2teo0XXFw9veeBGZfFnDEtow/88r0puV1UdEh1JITI+LCPO+6S0Jb1oItESn6AjhTs88=
+	t=1790758823; cv=none; b=UaJYEjFw/DahPEPi+gN//yWZ8eIMKRwqMo5bjo6FWrnVIE5ec64KhIwaCWOR6cEH6BXUwaUN+69RIqwpRuRWM4gxng6Ld859MCaBQDiHuPdZAfdcdbaIlq8a8eG5qdIGfUgP+tXXe1D92cT2O0pazE4cEfHNzWCMfxF5qekkV8Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1790757403; c=relaxed/simple;
-	bh=2FEDsNOLeOBjR1ANScuVzNVnmzXhAlUwvysbMecUIBs=;
+	s=arc-20240116; t=1790758823; c=relaxed/simple;
+	bh=qkBoav3IcC921MF6hw43M8MUDwRcP7jK7Q3T0BPuyYU=;
 	h=MIME-Version:Date:From:To:Cc:Subject:In-Reply-To:References:
-	 Message-ID:Content-Type; b=PXHFCGJIJVrF10IOgedlb5LMmWI/7uMtqVs+DTJ4tAwnomHS2LXskITpKAzpetxGupTFm/yzA2WMVD+kOSn10+E7n/f55DpSBuw8mUTvlyPhXJmCGETLUInpSk6BDwrYmTot921wM8ATfxRH0RDnlngCoIXBuBRWSh9paTkLFX8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=metztli.com; spf=pass smtp.mailfrom=metztli.com; dkim=pass (2048-bit key) header.d=metztli.com header.i=@metztli.com header.b=wC90EBn2; arc=none smtp.client-ip=74.208.129.35
+	 Message-ID:Content-Type; b=C3kF6+fL7srXIhCvnxVyPgROCcFsMpfWreLpLPSzScYOiFx7JG4BfcVGs5yNt8KlDWmlmfoq5m9L6sexlNzz67fliuUoJJfDyNfYsYONBTRbxol+IQLTCJ6UuSXFenhVwAtye55ezXku+7VIIFb9JRp2It3I9s/YpxXlORtZmJQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=metztli.com; spf=pass smtp.mailfrom=metztli.com; dkim=pass (2048-bit key) header.d=metztli.com header.i=@metztli.com header.b=4IItHFAR; arc=none smtp.client-ip=74.208.129.35
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=metztli.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=metztli.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=metztli.com header.i=@metztli.com header.b="wC90EBn2"
+	dkim=pass (2048-bit key) header.d=metztli.com header.i=@metztli.com header.b="4IItHFAR"
 Received: from payinal.metztli.com (localhost [127.0.0.1])
-	by payinal.metztli.com (Postfix) with ESMTP id 4hvpC90DHyzVHC9
-	for <reiserfs-devel@vger.kernel.org>; Wed, 30 Sep 2026 01:30:29 -0700 (PDT)
+	by payinal.metztli.com (Postfix) with ESMTP id 4hvpsd0L7HzVHJ6
+	for <reiserfs-devel@vger.kernel.org>; Wed, 30 Sep 2026 02:00:21 -0700 (PDT)
 Authentication-Results: payinal.metztli.com (amavis); dkim=pass (2048-bit key)
  reason="pass (just generated, assumed good)" header.d=metztli.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=metztli.com; h=
 	content-transfer-encoding:content-type:organization:message-id
 	:user-agent:references:in-reply-to:subject:to:from:date
-	:mime-version; s=dkim; t=1790757028; x=1793349029; bh=2FEDsNOLeO
-	BjR1ANScuVzNVnmzXhAlUwvysbMecUIBs=; b=wC90EBn26FbhnaA48Xnubxac7E
-	XSH5vopr6ugaCINHjXFB3/Y7kylw12bOaIjF8/Rfa3wqhtCR9E/5SEJBmq1i4GQb
-	vUQAtC3283hKBy/6YIXaO8TZaDuXNj/Wcs1YmrLXvbJLI9gxsAeF23q5Cb7lAJ9+
-	FiE6XmPteG9KGrpbPddu8V78l3S6pp/Fei7xSnmwQfKmbfvt2HZsFcgxwUvJlpFQ
-	XAElt14R0v+jmpGldd7e88PM7L5daX0PuPJcVm/fHrWBwe83ACmKMpdxcTV11h8E
-	rFhpBkTq/iySLzvrnurw85u+M3oRHhfOsf8i4q4Pi6eDXtRTS8oVR2PvM4Gg==
+	:mime-version; s=dkim; t=1790758820; x=1793350821; bh=qkBoav3IcC
+	921MF6hw43M8MUDwRcP7jK7Q3T0BPuyYU=; b=4IItHFAR62K1peyn0Ox5gISEye
+	u869ut8EcmCji8OQJ2SVg6D7+gkpHxDlxoqMjrHOYM3ZeEsKvcfkrTCoSYSjaPmr
+	JGMStynXPCLtyP9bi5qDZ2kyq+cGYih8Iik6yVl4o2ChivixDEVRNbsAh5Qt4uPn
+	PE50yPcX8ybLd9MOL3QEwNTcaMHppcS1MqiAy2KUtDsy3fUkEApBiVwg/VzyDD2z
+	yHp4t4TTbmVL2B6yEX77fYbBvxMsWkgC0InCKbyJQrgtXK/PsBOkNh0ntlzSAtDr
+	nG2nO6Oy205bM9oi2L8+m8TkSTyZ1Vk+Toalw4QP+CwNtvJ1ueFJ/wuZgjIw==
 X-Virus-Scanned: Debian amavis at payinal.metztli.com
 Received: from payinal.metztli.com ([127.0.0.1])
  by payinal.metztli.com (payinal.metztli.com [127.0.0.1]) (amavis, port 10026)
- with ESMTP id GdJLaVTgIzQP for <reiserfs-devel@vger.kernel.org>;
- Wed, 30 Sep 2026 01:30:28 -0700 (PDT)
+ with ESMTP id 5_78zOrdco0d for <reiserfs-devel@vger.kernel.org>;
+ Wed, 30 Sep 2026 02:00:20 -0700 (PDT)
 Received: from metztli.com (localhost [127.0.0.1])
-	by payinal.metztli.com (Postfix) with ESMTPSA id 4hvpC83qp9zVHBn;
-	Wed, 30 Sep 2026 01:30:28 -0700 (PDT)
+	by payinal.metztli.com (Postfix) with ESMTPSA id 4hvpsc31TTzVHHg;
+	Wed, 30 Sep 2026 02:00:20 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: reiserfs-devel@vger.kernel.org
 List-Id: <reiserfs-devel.vger.kernel.org>
 List-Subscribe: <mailto:reiserfs-devel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:reiserfs-devel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Date: Wed, 30 Sep 2026 01:30:28 -0700
+Date: Wed, 30 Sep 2026 02:00:20 -0700
 From: Jose R Rodriguez <jose.r.r@metztli.com>
 To: Eduard Shishkin <edward.shishkin@gmail.com>
 Cc: Debian kernel maintainers <debian-kernel@lists.debian.org>,
@@ -57,14 +57,12 @@ References: <d23f0bbb44f29764a45d101231ecee8e@metztli.com>
  <cde8818f90f2119cc1b19da68247a564@metztli.com>
  <7ef80c12-9a37-4eaf-a703-5542a25973a5@gmail.com>
 User-Agent: Roundcube Webmail
-Message-ID: <fb5b5c1eb3637f89c626419a4f27bca1@metztli.com>
+Message-ID: <1a3e47731b56ac7a73cf88b9ba02b510@metztli.com>
 X-Sender: jose.r.r@metztli.com
 Organization: Metztli IT
 Content-Type: text/plain; charset=US-ASCII;
  format=flowed
 Content-Transfer-Encoding: 7bit
-
-Glad to hear you are still around, Ed!
 
 On 2026-09-29 14:29, Eduard Shishkin wrote:
 > On 9/28/26 16:32, Jose R Rodriguez wrote:
@@ -77,18 +75,20 @@ On 2026-09-29 14:29, Eduard Shishkin wrote:
 >>> backports' and wrapped it over an reiser4 -enhanced 5.15.220
 > 
 > Won't an overflow occur in the third register?
-That's why I tagged you, Sr., you are the expert ;-) Notwithstanding, 
-approximately one week + of daily use / testing development has not 
-introduced anomalies, except for the dmesg flooding and missing 
-pahole-*.sh files; issues which have been resolved with integrated 
-patches into the Debian Packaging for 5.5.220 framework.
+
+..and even if that were the case, Ed, the reiser4 for 5.16 patch we are 
+still stuck with applies, with my own modifications and/or upstream 
+commit revert(s), to 5.17.15 (last)! kernel 5.18 is a totally different 
+beast which requires the reiser4 patch to substantively modify its code.
+
+And thus the reasoning for the reiser4 5.15 LTS hack is to address the 
+"Total Vulnerable CVE's in 5.17.15 : 7035" shortcomings "That's a 
+non-trivial amount..." ;-)
+< https://www.openwall.com/lists/oss-security/2026/07/30/21 >
 
 > Has anyone even tried porting Reiser4/5 to newer kernels (5.17+)? As
 > far as I remember, for this, one had to make a friendship with the
 > newly introduced "folios"..
-5.15 LTS has not introduced 'folios', yet, as far as I analyzed the 
-commits.
-
 > 
 > Thanks,
 > Edward.
