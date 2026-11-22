@@ -1,71 +1,52 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=62.210.214.84
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=202.182.106.98
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1795135545;
-	b=liA5Eh8ZLBvSkk7kxQCOouNYZEv0pUZRXx+HMNI/L0JEujbzyfVrAXZCFDfR58NvpX+H
-	 HGBXw1GNB6aYVIevVM3AG/LYDboGHTkUWhmKoqP/aXO04AVTXxjWvEb1I8giQ/weMMhk+
-	 R5ck9nK9xi2ebRSVw9gOsIeRd+I43FYC5gDggtbK9NvVr04b0dRRefyWIH67Tfc9MPEEY
-	 U5cpxIlKOEbP52lrWswYcB16fnQmXwPyEZFwNMhs053Nrg2DLQnU6TEd3kwR50P+i+rSi
-	 jMc1MBksNpM2nbOkZX+JeJcKgNiXRUD04qBouGq3ht90iSWx0fDblJNmaizGe/E4FAQ==
+	t=1795337238;
+	b=4CA9cYrrHHLhJnQkMsdwCqAVt0evHwxrq7RUpjd8r3UQVKkF+aEeZxZjvYQS+1ssPfZM
+	 2YFbeZkjddEb0mRJ3rsZX4wzl4JaQjGIQQjcN9t5HOM2cIsnb0WGRiLmtbfkEBRtHNLG5
+	 X8/4OjG1JIzFjTe8LxcWIj1XLA8MIhIAuCsUKIIHXxMRarE1a3uaRBiBo+WDjqHNk+sXI
+	 7I4lHyMUt7DSe+S+xi75QfJnvCcy6c/g0UF67itOW8TQsC5jrn9fzGMIzLTEDtUiH6dXL
+	 HI7Vup7qV7DSfYBnyp5PDpRJls2lS9a4FRAWCXiTOpwZqRCIfrVHrUhJ+UjhyuKgihg==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795135545;
-	h=DMARC-Filter:Received:DKIM-Signature:Received:Date:From:To:Cc:
-	 Subject:Message-ID:References:MIME-Version:Content-Type:
-	 Content-Disposition:Content-Transfer-Encoding:In-Reply-To;
-	bh=9fC7cg6sGw4Bs3p5ginf7FsDO1egItUtI2jmXtYH5xQ=;
-	b=cu54KDOiuLFPo+b62sWfu1eyVO7/D3OUN5NeRRfUwAdSvaMMxiLe3/y5TX8wyhPlQGd7
-	 iJlAwPl+esIyn+/+iMLIeGLjlsdShOExdqDfaPxQViCjiYJdcCtO6eIUYqD0uB5xisRNW
-	 sLlhwyEiF/b38qr2d6eDdFTN5G67cxUjZnKRrSfEh2SB7Q+2TkjtnJir8Sk8sZzXhhUUa
-	 2Crhj3PAGaoJYISNGJiYd/gqoeprbZE7Od35eYdwYvRhWuHLdA+znICT6WwXTXZKpNinQ
-	 9he9nS5+u2HBeWtflHOQgCQK0oMxQVkvC7r9ot3vozRwVlYAWtPh1lSfSb8ykakftdw==
+	a=rsa-sha256; c=relaxed/relaxed; t=1795337238;
+	h=DMARC-Filter:DKIM-Signature:Received:Content-Type:MIME-Version:
+	 Content-Transfer-Encoding:Subject:From:To:Reply-To:Message-ID:
+	 List-Unsubscribe;
+	bh=N4cR16XJaATT2ssKQ6wCDKQpcAN3wzRDdtKiwvOKkX4=;
+	b=dlrHcgxwX7ylmG33LYB4l4uNr5V6I9SIpOvlDzpDyfiSukDbL38MvTHTuMUiZASjn38Y
+	 agnu/bBimMIRXGpukSQePTM0ETLd/F3UWKLlZVA4SQmXdrgQ5N2De4YNEyYB38m7OvEYb
+	 RCn2kexexnjbMxVqkIHJGGTvMjzgIn09/prSTHR9fFZctQD5J+MJSS8EGzOjABvuXLf5H
+	 6oSyrMJPBH2jy165cqguqxIEHZEfHP/mXLu9vyKGi1mqY2p9xuk2CB+bb/bmaTb7kXq8o
+	 AQzttr/RVHNuGuPc7uoCLUm8oDyXdniwCNOKNSpuTMruT6R/aSayn3YQ5kB/pOpobjw==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=codewreck.org;
-	spf=(null) smtp.mailfrom=codewreck.org;
-	dkim=pass header.d=codewreck.org header.i=@codewreck.org header.a=rsa-sha256 header.s=2 header.b=wKuEh1Qc;
-	arc=none smtp.remote-ip=62.210.214.84
-Received: from submarine.notk.org (submarine.notk.org [62.210.214.84])
+	dmarc=pass header.from=quanmeifa.com;
+	spf=pass smtp.mailfrom=quanmeifa.com;
+	dkim=pass header.d=quanmeifa.com header.i=@quanmeifa.com header.a=rsa-sha256 header.s=default header.b=JKJ4JsGt;
+	arc=none smtp.remote-ip=202.182.106.98
+Received: from m3.textscene.com (m3.textscene.com [202.182.106.98])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 095EA606A326
-	for <reiserfs-devel@vger.kernel.org>; Fri, 20 Nov 2026 00:45:42 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 095EA606A326
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codewreck.org
-Authentication-Results: smtp.subspace.kernel.org; spf=tempfail smtp.mailfrom=codewreck.org
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BAE8B606A32A
+	for <reiserfs-devel@vger.kernel.org>; Sun, 22 Nov 2026 08:47:16 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org BAE8B606A32A
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=quanmeifa.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quanmeifa.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=codewreck.org header.i=@codewreck.org header.a=rsa-sha256 header.s=2 header.b=wKuEh1Qc
-Received: from gaia.codewreck.org (localhost [127.0.0.1])
-	by submarine.notk.org (Postfix) with ESMTPS id DC41C14C2D6;
-	Fri, 20 Nov 2026 01:45:38 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=codewreck.org;
-	s=2; t=1795135540;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=9fC7cg6sGw4Bs3p5ginf7FsDO1egItUtI2jmXtYH5xQ=;
-	b=wKuEh1QceRTitEUQpu+RThFyq6N+TtS87iEhBA899BhVvoaNtg4cmqRrfTVhICKwWukvF+
-	YvAfFIsv6uvnsSyqKjZ24XGo8w+KgN1u7vdtNdEJZvCFOvAMM/o8sCUjDQQfQqRBx12gQb
-	+RvqEmL6s6eOc4/3ek8l0lQmjuwKuHZFqoEtyXXliwOeHzYaerYSPyWFUlG89t2bX4OAFv
-	zHn85+4dDOmrwvqLdGTilOsPV6YcWBnjUyp4skq+ILLVmIlH7+g0J14PRxG8p4jt1M6P1u
-	5vtdU5VreqC5S8r2dei5nHMXyV+ET1bkemtwIyyp9sYsnhFjIUi4sh8QEKE8Rw==
-Received: from localhost (gaia.codewreck.org [local])
-	by gaia.codewreck.org (OpenSMTPD) with ESMTPA id 54ea6d8a;
-	Fri, 20 Nov 2026 00:45:37 +0000 (UTC)
-Date: Fri, 20 Nov 2026 09:45:22 +0900
-From: Dominique Martinet <asmadeus@codewreck.org>
-To: Jose R Rodriguez <jose.r.r@metztli.com>,
-	oss-security@lists.openwall.com
-Cc: Greg KH <greg@kroah.com>, Edward Shishkin <edward.shishkin@gmail.com>,
-	Reiserfs Devel <reiserfs-devel@vger.kernel.org>
-Subject: Re: [oss-security] NoisyTCP =?utf-8?B?4oCU?=
- =?utf-8?Q?_CVE-2026-99288_=28Was_Re=3A_=5Boss-security?= =?utf-8?Q?=5D?=
- Backports available - cBPF JIT spray hardening)
-Message-ID: <av-YIntXr75-vmym@codewreck.org>
-References: <dzp2vbih7jcsxjmcnxnefgi435b7re4kwxvxmvlxrmkra2p5br@vv5ckstkijym>
- <14ad9b085cb3fb4b3a9fc091dde74540@metztli.com>
- <6mqqzqzujeduybqeojfh7tmblksmqjksocri5ayeudze6l4fqm@ijx64jfxrwbt>
- <2026073004-spruce-clambake-1785@gregkh>
- <49ce58fc228f99240f9c3658622ca2d6@metztli.com>
+	dkim=pass (2048-bit key, unprotected) header.d=quanmeifa.com header.i=@quanmeifa.com header.a=rsa-sha256 header.s=default header.b=JKJ4JsGt
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=quanmeifa.com;
+	s=default; t=1795337235;
+	bh=N4cR16XJaATT2ssKQ6wCDKQpcAN3wzRDdtKiwvOKkX4=;
+	h=Subject:From:To:Reply-To:List-Unsubscribe;
+	b=JKJ4JsGtQIZRM9FsRAbPGELG8BB4dSmQwM/oXBt40nJWPzoawHqxEFnPCRnuBBqzj
+	 ykGzXGP1C9HfiUDvBMSIZJbFhmqTLINh+E+U9v40687T++7FJypBdMD778QUCwHKhV
+	 fu2lZygcNdN+xrqKQ3TeHriZn7D1Zj+BdybNUDHKng/S2AZapsQxfAu/OkW9LzeSJX
+	 9lH/0LIjlkkv+e/tU47f4H3rrtQYaNk0/ySauTkYMJ9SsfedHGbv1ByRbaz4xsmXyI
+	 FIn3lakyTWf75uiuwQutwSbrAcoHnA3e4sdY18nKildvsBwctk89ZFjH47brPSLcFV
+	 vYdPrGMTL2s0w==
+Received: from [172.30.219.47] (unknown [39.105.124.184])
+	by mail.textscene.com (Postfix) with ESMTPSA id 140E01272FA
+	for <reiserfs-devel@vger.kernel.org>; Sun, 22 Nov 2026 08:47:14 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
 X-Mailing-List: reiserfs-devel@vger.kernel.org
 List-Id: <reiserfs-devel.vger.kernel.org>
 List-Post: <mailto:reiserfs-devel@vger.kernel.org>
@@ -75,36 +56,35 @@ List-Unsubscribe: <mailto:reiserfs-devel+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:reiserfs-devel+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <49ce58fc228f99240f9c3658622ca2d6@metztli.com>
+Content-Transfer-Encoding: base64
+Subject: =?utf-8?q?One_key_for_DeepSeek=2C_Kimi=2C_Qwen_+_video?=
+From: =?utf-8?b?ODM0MVRva2Vu5bel5Y6C?= <s09@quanmeifa.com>
+To: reiserfs-devel@vger.kernel.org
+Reply-To: wuqiong@token8341.com
+Message-ID: <179533723063.3098422.15913395955413868522@quanmeifa.com>
 
-Hi Jose,
-
-(not sure why this comes as a reply to the bpf hardening CVE..)
-
-Jose R Rodriguez wrote on Thu, Nov 19, 2026 at 03:25:25PM -0800:
-> Since the time of your comment I have been keeping up with reiser4 -enhanced
-> 5.15 LTS build iterations -- with the latest being 5.15.224.
-> Notwithstanding, 'NoisyTCP — CVE-2026-99288' came along and the latest
-> 5.15.225 LTS iteration did not address the critical vulnerability. I have
-> the 5.15 LTS kernel(s) deployed online and I got spooked. Accordingly, on a
-> best effort basis, I backported the patch from upstream:
-
-The patch "inet: reject unhashed sockets during established lookups"
-marked as fixing this CVE already has been backported to older trees,
-including 5.15 already and is in the 5.15.226-rc1 (which will likely be
-released today (11/20) or tomorrow)
-
-You can already pull the patch from
-git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git
-if you want to rebuild your own kernel early
-
-
-OTOH if you want quick fixes it's best to upgrade to a newer release if
-possible - except for embedded or platforms with specific hardware it's
-generally not too hard to switch to the latest LTS.
-
--- 
-Dominique Martinet | Asmadeus
+SGksCgpSZWFkIHRocm91Z2ggeW91ciB3b3JrIOKAlCBBdCB0aGlzIGxheWVyIHRoZSBmaWRkbHkg
+cGFydCBpcyB1c3VhbGx5IGtlZXBpbmcgdGhlIHBsdW1iaW5nIG91dCBvZiB5b3VyIHdheS4gQ3Vy
+aW91cyBob3cgeW91IGhhbmRsZSBpdCBvbiB5b3VyIHNpZGUuCgpBIHNvbG8tbWFpbnRhaW5lZCBw
+cm9qZWN0IG1lYW5zIHlvdXIgZW5lcmd5IGdvZXMgdG8gcmVhbCBwcm9ibGVtcy4gU3RpY2tpbmcg
+d2l0aCBpdCB0aGlzIGxvbmcgaXMgd29ydGggdGFraW5nIHNlcmlvdXNseS4KCklmIG1vZGVsIGlu
+dGVncmF0aW9uIGlzIGFueXdoZXJlIGluIHRoZSBwaWN0dXJlLCBvdXIgQVBJIGNhbiB0YWtlIHRo
+YXQgbGF5ZXIgb2ZmIHlvdXIgcGxhdGUg4oCUIG5vIGtleXMsIHF1b3RhcyBvciBmYWxsYmFja3Mg
+dG8gbWFpbnRhaW4geW91cnNlbGYuCgpJJ20gV3UgUWlvbmcsIEkgcnVuIDgzNDFUb2tlbkZhY3Rv
+cnkgKHRva2VuODM0MS5jb20pLiBUd28gdGhpbmdzLCBicmllZmx5LgoKRmlyc3QsIEFQSSBhZ2dy
+ZWdhdGlvbjogb25lIE9wZW5BSS1jb21wYXRpYmxlIGtleSBmb3IgRGVlcFNlZWssIEtpbWksIFpo
+aXB1IEdMTSwgUXdlbiBhbmQgTWluaU1heC4KClRoZSBzYW1lIGtleSBhbHNvIHJlYWNoZXMgdmlk
+ZW8gbW9kZWxzIChIMywgV2FuIDIuMikuCgpTZWNvbmQsIHZpZGVvIGFnZW50czogc2hvcnQgZHJh
+bWEg4oCUIGZyb20gYSBzZW50ZW5jZSB0byBhIGZpbmlzaGVkIGVwaXNvZGUuCgpJZiB5b3UgYWxy
+ZWFkeSBoYXZlIHRoaXMgc29ydGVkLCBpZ25vcmUgdGhpcyBlbWFpbC4gSWYgbm90IOKAlCDCpTAu
+NSB0cmlhbCBjcmVkaXQsIMKlNSBtb3JlIG9uIGEgZmlyc3QgdG9wLXVwIG9mIMKlNSsuIFJ1bm5p
+bmcgaXQgb24geW91ciBvd24gd29ya2xvYWQgd2lsbCB0ZWxsIHlvdSBtb3JlIHRoYW4gbXkgZGVz
+Y3JpcHRpb24gd2lsbC4KCk9uZSBtb3JlIHRoaW5nIHdlIGJ1aWx0OiA8c3Ryb25nPnRva2VuLWxl
+dmVsIHNtYXJ0IHJvdXRpbmc8L3N0cm9uZz4gKGRldmVsb3BlZCB3aXRoIGEgdGVhbSBmcm9tIFRz
+aW5naHVhIFVuaXZlcnNpdHkpIOKAlCBub3QgZXZlcnkgcmVxdWVzdCBuZWVkcyBhIGZyb250aWVy
+IG1vZGVsLiBTaW1wbGUgcXVlcmllcyBnbyB0byBhIHNtYWxsIG1vZGVsLCBoYXJkIG9uZXMgZ2V0
+IGVzY2FsYXRlZC4gU2FtZSBhbnN3ZXIsIG1hdGVyaWFsbHkgZmV3ZXIgdG9rZW5zLCBsb3dlciBi
+aWxsLCBubyBxdWFsaXR5IGxvc3MuCgpSZXBseSBoZXJlIGFuZCBpdCByZWFjaGVzIG1lLgoKCgo4
+MzQxVG9rZW5GYWN0b3J5ICh0b2tlbjgzNDEuY29tKQoKLS0tCld1IFFpb25nCjgzNDFUb2tlbkZh
+Y3RvcnkKCi0tCkRvbid0IHdhbnQgdGhlc2UgZW1haWxzPyBSZXBseSAidW5zdWJzY3JpYmUiIG9y
+IHdyaXRlIHRvIGhlbGxvQHRleHRzY2VuZS5jb20gd2l0aCBzdWJqZWN0IHVuc3Vic2NyaWJlLg==
